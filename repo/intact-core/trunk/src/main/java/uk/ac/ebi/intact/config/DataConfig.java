@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.config;
 
+import uk.ac.ebi.intact.context.IntactSession;
+
 /**
  * TODO comment this!
  *
@@ -14,6 +16,13 @@ package uk.ac.ebi.intact.config;
  */
 public abstract class DataConfig<T,C>
 {
+
+    private IntactSession session;
+
+    public DataConfig(IntactSession session)
+    {
+       this.session = session;
+    }
 
     public abstract String getName();
 
@@ -42,6 +51,16 @@ public abstract class DataConfig<T,C>
     public void setInitialized(boolean initialized)
     {
         this.initialized = initialized;
+    }
+
+    public IntactSession getSession()
+    {
+        return session;
+    }
+
+    public void setSession(IntactSession session)
+    {
+        this.session = session;
     }
 
     @Override

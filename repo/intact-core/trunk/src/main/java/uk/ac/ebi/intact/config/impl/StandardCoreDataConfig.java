@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.io.File;
 
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.context.IntactSession;
 
 /**
  * TODO comment this!
@@ -27,6 +28,11 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
     private static final Log log = LogFactory.getLog(StandardCoreDataConfig.class);
 
     public static final String NAME = "uk.ac.ebi.intact.config.STANDARD_CORE";
+
+    public StandardCoreDataConfig(IntactSession session)
+    {
+        super(session);
+    }
 
     public String getName()
     {

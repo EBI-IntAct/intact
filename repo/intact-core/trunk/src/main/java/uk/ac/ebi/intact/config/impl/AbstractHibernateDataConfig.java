@@ -18,11 +18,14 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
 import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.util.List;
+import java.util.Hashtable;
+import java.util.Properties;
 
 /**
  * TODO comment this!
@@ -36,7 +39,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
     private static final Log log = LogFactory.getLog(AbstractHibernateDataConfig.class);
 
-    private static final String SESSION_FACTORY_NAME = "jndi/intact/sessionfactory";
     private static final String INTERCEPTOR_CLASS = "hibernate.util.interceptor_class";
 
     private Configuration configuration;
@@ -45,11 +47,13 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
     private List<String> packagesWithEntities;
 
-    public AbstractHibernateDataConfig()
+    public AbstractHibernateDataConfig(IntactSession session)
     {
+        super(session);
         this.packagesWithEntities = getPackagesWithEntities();
     }
 
+    @Override
     public void initialize()
     {
         File cfgFile = getConfigFile();
@@ -95,7 +99,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             // Set global interceptor from configuration
             setInterceptor(configuration, null);
 
-            if (configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
+            if (getSession().isWebapp() && configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
             {
                 // Let Hibernate bind the factory to JNDI
                 configuration.buildSessionFactory();
@@ -103,6 +107,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             else
             {
                 // or use static variable handling
+                configuration.getProperties().remove(Environment.SESSION_FACTORY_NAME);
+
                 sessionFactory = configuration.buildSessionFactory();
             }
 
@@ -116,6 +122,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         setInitialized(true);
     }
 
+    @Override
     public SessionFactory getSessionFactory()
     {
         checkInitialization();
@@ -137,6 +144,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         return sessionFactory;
     }
 
+    @Override
     public Configuration getConfiguration()
     {
         return configuration;
