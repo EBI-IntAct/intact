@@ -69,6 +69,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
+                    <argLine>-Dinstitution=ebi</argLine>
                     <forkMode>pertest</forkMode>
                     <argLine>-Xmx512M</argLine>
                 </configuration>
