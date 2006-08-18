@@ -194,7 +194,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
     public void addRange(Range range) {
         if (! this.ranges.contains(range)) {
             this.ranges.add(range);
-            range.setParentAc(getAc());
+            range.setFeature(this);
         }
     }
 
