@@ -61,9 +61,11 @@ svn co https://svn.sourceforge.net/svnroot/intact/repo/current intact-current
 
      * ebi-test: for tests. This profile is activated by default if no profiles are provided
 
-     * ebi-curators: for the internal production database used by the curators
+     * ebi-prod: for the internal production database used by the curators
 
-     * ebi-production: for the public production database
+     * ebi-pub: for the public production database
+
+     * ebi-pub2: for the public alternative production database
 
      []
 
@@ -80,23 +82,32 @@ svn co https://svn.sourceforge.net/svnroot/intact/repo/current intact-current
             <db.alias>[DATABASE SID or NAME]</db.alias>
             <db.user>[DATABASE USER]</db.user>
             <db.password>[DATABASE PASSWORD]</db.password>
+
+            <!-- Name of the hibernate session factory (arbitrary name), to reuse connections -->
+            <sessionFactoryName>[SF_NAME]</sessionFactoryName>
+
+            <!-- Path to the lucene index -->
+            <lucene.index.directory>/path/to/index</lucene.index.directory>
         </properties>
     </profile>
 <settings>
 +------+
 
-    Replace the variables between brackets [...] with your information.
+ Replace the variables between brackets [...] with your information.
 
  You can create the modules for oracle or for postgres. The database is defined by passing the 'db' variable
  to the maven command.
 
+ When building some projects, tests are executed. These tests need the Institution short label to work. For the
+ EBI installation, the institution name is 'ebi'.
+
  [[c]] For instance, if using the 'ebi-test' profile and oracle, we can execute the command like this:
 
 +---------+
-mvn -P my-profile -Ddb=oracle clean install
+mvn -P my-profile -Ddb=oracle -Dinstitution=ebi clean install
 +---------+
 
- If you execute this in the root directory (intact-current). All modules will be build. The artifact created for each
+ If you execute this in the root directory (intact-current). All modules will be built. The artifact created for each
  module is in the 'target' folder of that module. You can just build one module by executing the maven command from the
  module directory.
 
