@@ -16,6 +16,10 @@ Module Overview
 *-----+------------------------------------------------------------------+
 | search-app | the search web application |
 *-----+------------------------------------------------------------------+
+| search-ws | the search web service, in early stage of development |
+*-----+------------------------------------------------------------------+
+| search-wsclient | the client for the search web service |
+*-----+------------------------------------------------------------------+
 | maven-editortopics-plugin | maven plugin that generates a list of editor topics by parsing the intact core java sources |
 *-----+------------------------------------------------------------------+
 | editor-app | the editor web application |
@@ -30,11 +34,13 @@ Module Overview
 *-----+------------------------------------------------------------------+
 | hierarch-view-app | the hierarch-view web application, to visualise interaction networks |
 *-----+------------------------------------------------------------------+
-| statistic-view | statistics
+| statistic-view | statistics for the project |
 *-----+------------------------------------------------------------------+
-| mine-app | the mine web application
+| mine-app | the mine web application |
 *-----+------------------------------------------------------------------+
-| predict-app | web application that contain the Pay-as-you-go algorithm
+| predict-app | web application that contain the Pay-as-you-go algorithm |
+*-----+------------------------------------------------------------------+
+| devsite | root site containing development information |
 *-----+------+
 
  The dependency relation of the modules:
