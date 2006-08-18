@@ -34,7 +34,7 @@ import java.util.Map;
 public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
 {
 
-    private static final String NEW_LINE = System.getProperty("line.separator");
+    protected static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
     * Project instance

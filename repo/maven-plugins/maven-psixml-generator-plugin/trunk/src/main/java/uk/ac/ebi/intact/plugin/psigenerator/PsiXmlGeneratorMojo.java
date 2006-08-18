@@ -7,20 +7,14 @@ package uk.ac.ebi.intact.plugin.psigenerator;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
-import uk.ac.ebi.intact.application.dataConversion.NewFileGenerator;
-import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.ZipFileGenerator;
+import uk.ac.ebi.intact.application.dataConversion.*;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.context.IntactContext;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,6 +36,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
     * @parameter default-value="reverseMapping.txt"
     */
     protected File reverseMappingFile;
+
+    /**
+    * Name for the invalid files. The version will be put as a suffix
+    * @parameter default-value="invalidXml"
+    */
+    protected String invalidFilePrefix;
 
     /**
     * Psi Versions
@@ -136,15 +136,20 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
     {
         getLog().debug("\tLoading interactions");
         Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
-
+        
         for (Version version : psiVersions)
         {
             File targetFile = new File(targetPath, version.getFolderName()+"/"+item.getFilename());
 
             long start = System.currentTimeMillis();
 
-            NewFileGenerator.writePsiData(interactions, PsiVersion.valueOf(version.getNumber()), mapping,
-                    targetFile, false);
+            PsiValidatorReport validationReport = NewFileGenerator.writePsiData(interactions, PsiVersion.valueOf(version.getNumber()), mapping,
+                    targetFile, version.isValidate());
+
+            if (!validationReport.isValid())
+            {
+                writeToInvalidFile(item,version,validationReport);
+            }
 
             long elapsed = System.currentTimeMillis() - start;
 
@@ -164,5 +169,16 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
         }
 
         return new File(PsiXmlGeneratorMojo.class.getResource("/reverseMapping.txt").getFile());
+    }
+
+    private void writeToInvalidFile(ExperimentListItem item, Version version, PsiValidatorReport report) throws IOException
+    {
+        File filename = new File(targetPath, invalidFilePrefix+"_"+version.getNumber()+".log");
+
+        FileWriter writer = new FileWriter(filename, true);
+        writer.write(item.getFilename()+NEW_LINE);
+        writer.write(report.toString());
+        writer.write("---------------------------------------------------------------------"+NEW_LINE);
+        writer.close();
     }
 }

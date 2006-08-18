@@ -22,7 +22,7 @@ public class Version
 
     private String number;
     private String folderName;
-
+    private boolean validate;
 
     public Version()
     {
@@ -51,5 +51,15 @@ public class Version
     public String toString()
     {
         return getNumber();
+    }
+
+    public boolean isValidate()
+    {
+        return validate;
+    }
+
+    public void setValidate(boolean validate)
+    {
+        this.validate = validate;
     }
 }
