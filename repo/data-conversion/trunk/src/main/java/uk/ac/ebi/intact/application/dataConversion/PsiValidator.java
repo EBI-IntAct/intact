@@ -4,7 +4,8 @@
 
 package uk.ac.ebi.intact.application.dataConversion;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -17,83 +18,53 @@ import java.io.*;
 
 public class PsiValidator {
 
-    private static final Logger log = Logger.getLogger( PsiValidator.class );
+    private static final Log log = LogFactory.getLog(PsiValidator.class);
 
-    private static class MyErrorHandler extends DefaultHandler {
+    private static class PsiValidatorReportHandler extends DefaultHandler {
 
-        private PrintStream out;
-        boolean warning = false;
-        boolean error = false;
-        boolean fatal = false;
+        private PsiValidatorReport report;
 
         //////////////////////
         // Constructors
 
-        public MyErrorHandler( PrintStream out ) {
-
-            if ( out == null ) {
-                throw new NullPointerException( "You must give a valid PrintStream" );
-            }
-            this.out = out;
-        }
-
-        public MyErrorHandler() {
-            this.out = System.out;
-        }
-
-        //////////////////
-        // Getters
-
-        public boolean hasWarning() {
-            return warning;
-        }
-
-        public boolean hasError() {
-            return error;
-        }
-
-        public boolean hasFatal() {
-            return fatal;
+        public PsiValidatorReportHandler( PsiValidatorReport report ) {
+           this.report = report;
         }
 
         ///////////////
         // Overriding
-
+        @Override
         public void warning( SAXParseException e ) throws SAXException {
-            warning = true;
-            //System.out.println( "Warning: " );
-            log.warn( "SAX Warning", e );
-            printInfo( e );
+            log.warn(e.getMessage());
+
+            PsiValidatorMessage msg = new PsiValidatorMessage(PsiValidatorMessage.Level.WARN, e);
+            report.addMessage(msg);
         }
 
+        @Override
         public void error( SAXParseException e ) throws SAXException {
-            error = true;
-            //System.out.println( "Error: " );
-            log.error( "SAX Error", e );
-            printInfo( e );
+            log.error(e.getMessage());
+
+            report.setValid(false);
+
+            PsiValidatorMessage msg = new PsiValidatorMessage(PsiValidatorMessage.Level.ERROR, e);
+            report.addMessage(msg);
         }
 
+        @Override
         public void fatalError( SAXParseException e ) throws SAXException {
-            fatal = true;
-            //System.out.println( "Fattal error: " );
-            log.error( "SAX Fatal error", e );
-            printInfo( e );
+            log.error(e.getMessage());
+            
+            report.setValid(false);
+
+            PsiValidatorMessage msg = new PsiValidatorMessage(PsiValidatorMessage.Level.FATAL, e);
+            report.addMessage(msg);
         }
 
-        private void printInfo( SAXParseException e ) {
-            StringBuffer sb = new StringBuffer();
-            sb.append( "   Public ID: " + e.getPublicId() ).append( "\n" );
-            sb.append( "   System ID: " + e.getSystemId() ).append( "\n" );
-            ;
-            sb.append( "   Line number: " + e.getLineNumber() ).append( "\n" );
-            ;
-            sb.append( "   Column number: " + e.getColumnNumber() ).append( "\n" );
-            ;
-            sb.append( "   Message: " + e.getMessage() );
 
-            log.debug( sb.toString() );
-
-            out.print( sb.toString() );
+        public PsiValidatorReport getReport()
+        {
+            return report;
         }
     }
 
@@ -102,7 +73,7 @@ public class PsiValidator {
      * @param file the file with the xml to validate
      * @return if the document is valid returns true
      */
-    public static boolean validate( File file ) throws FileNotFoundException {
+    public static PsiValidatorReport validate( File file ) throws FileNotFoundException {
         String filename = file.getAbsolutePath();
 
         log.debug( "Validating " + filename );
@@ -117,7 +88,7 @@ public class PsiValidator {
      * @param xmlString the string with the xml to validate
      * @return if the document is valid returns true
      */
-    public static boolean validate( String xmlString ) {
+    public static PsiValidatorReport validate( String xmlString ) {
 
         InputSource inputSource = new InputSource( new StringReader( xmlString ) );
 
@@ -129,13 +100,13 @@ public class PsiValidator {
      * @param inputSource the source for the doc to validate
      * @return if the document is valid returns true
      */
-    public static boolean validate( InputSource inputSource ) {
+    public static PsiValidatorReport validate( InputSource inputSource ) {
 
         String parserClass = SAXParser.class.getName();
         String validationFeature = "http://xml.org/sax/features/validation";
         String schemaFeature = "http://apache.org/xml/features/validation/schema";
 
-        MyErrorHandler handler = new MyErrorHandler();
+        PsiValidatorReportHandler handler = new PsiValidatorReportHandler(new PsiValidatorReport());
 
         try {
 
@@ -155,16 +126,11 @@ public class PsiValidator {
             e.printStackTrace();
         }
 
-        log.info( "Validation completed." );
-
-        if ( handler.hasError() == false &&
-             handler.hasFatal() == false &&
-             handler.hasWarning() == false ) {
-            log.info( "The document is valid." );
-            return true;
+        if (log.isDebugEnabled())
+        {
+            log.debug( "Validation completed. Document is valid: "+handler.getReport().isValid() );
         }
 
-        log.error( "The document is not valid." );
-        return false;
+        return handler.getReport();
     }
 }
