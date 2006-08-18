@@ -175,9 +175,17 @@ public class Interaction2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements Inte
                 Component component = (Component) iterator.next();
 
                 // take care of the stoichiometry
-                for ( int i = 0; i < component.getStoichiometry(); i++ ) {
-                    Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                float stoichiometry = component.getStoichiometry();
+
+                if (stoichiometry <= 1)
+                {
+                   Component2xmlFactory.getInstance( session ).create( session, participantListElement, component ); 
                 }
+                else if (stoichiometry == 2)
+                {
+                   Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                   Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                }  
             }
 
             element.appendChild( participantListElement );

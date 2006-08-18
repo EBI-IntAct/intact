@@ -14,11 +14,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.model.SmallMoleculeImpl;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -48,9 +44,9 @@ public abstract class NewFileGenerator
      * @param baseDir The base dir where to put the files
      * @param validate whether to validate the xml
      * @throws IOException thrown if there is some problem writing to the file
-     * @return if validating, true if the document is valid. If not validating, it will always return true
+     * @return a psiValidatorReport
      */
-    public static boolean writePsiData(ExperimentListItem eli,
+    public static PsiValidatorReport writePsiData(ExperimentListItem eli,
                                     PsiVersion psiVersion,
                                     CvMapping cvMapping,
                                     File baseDir, boolean validate) throws IOException
@@ -73,7 +69,7 @@ public abstract class NewFileGenerator
      * @return
      * @throws IOException
      */
-    public static boolean writePsiData(Collection<Interaction> interactions,
+    public static PsiValidatorReport writePsiData(Collection<Interaction> interactions,
                                        PsiVersion psiVersion,
                                        CvMapping cvMapping,
                                        File xmlTargetFile, boolean validate) throws IOException
@@ -173,7 +169,7 @@ public abstract class NewFileGenerator
          return session.getPsiDocument();
     }
 
-    private static boolean writeFile(Document doc, File xmlFile, boolean validate) throws IOException
+    private static PsiValidatorReport writeFile(Document doc, File xmlFile, boolean validate) throws IOException
     {
         // create the parent dir if it does not exist
         if (!xmlFile.getParentFile().exists())
@@ -192,7 +188,7 @@ public abstract class NewFileGenerator
             return PsiValidator.validate(xmlFile);
         }
 
-        return true;
+        return new PsiValidatorReport();
     }
 
     /**
