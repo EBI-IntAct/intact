@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,8 +15,8 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released 1.3.0 -->
+    <version>1.3.1</version>
+    <!-- last released 1.3.1 -->
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
