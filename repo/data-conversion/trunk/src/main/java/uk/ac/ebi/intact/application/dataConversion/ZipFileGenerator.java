@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Build all ZIP file from PSI XML file generated with the pubmed classification.
@@ -136,7 +135,7 @@ public class ZipFileGenerator {
                 iterator.remove(); // free resource as we go
             }
         } else {
-            log.debug( "ERROR: the current directory is not writable: " + directory.getAbsolutePath() );
+            log.error( "The current directory is not writable: " + directory.getAbsolutePath() );
         }
 
         // process all subdirectories
