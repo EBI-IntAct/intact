@@ -12,6 +12,8 @@ import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Experiment;
 
 import java.io.File;
@@ -156,9 +158,10 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
         }
 
         // configure the context
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorMojoTest", hibernateConfig);
+        IntactSession session = new StandaloneSession();
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorMojoTest", hibernateConfig, session);
         testConfig.initialize();
-        IntactContext.initStandaloneContext(testConfig);
+        IntactContext.initContext(testConfig, session);
 
         experimentListGenerator = new ExperimentListGenerator(searchPattern);
         experimentListGenerator.setOnlyWithPmid(onlyWithPmid);
