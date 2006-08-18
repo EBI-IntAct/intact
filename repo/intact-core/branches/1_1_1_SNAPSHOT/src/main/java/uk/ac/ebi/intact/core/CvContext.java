@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.ServletContext;
 import java.util.HashMap;
@@ -142,7 +144,10 @@ public abstract class CvContext {
      */
     public CvName getKeyForCvObject( CvObject cvObject ) {
         for ( Map.Entry<CvName, CvObject> entry : cvMap.entrySet() ) {
-            if ( entry.getValue().equals( cvObject ) ) {
+            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            CvObject value = entry.getValue();
+            value = cvObjectDao.getByAc(value.getAc());
+            if ( value.equals( cvObject ) ) {
                 return entry.getKey();
             }
         }
