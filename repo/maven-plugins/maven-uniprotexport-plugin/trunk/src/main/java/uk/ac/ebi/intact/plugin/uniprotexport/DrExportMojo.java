@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.Iterator;
 
 /**
- * TODO comment this!
+ * Creates a file containing the DR lines to be exported to Uniprot
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
