@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>data-conversion</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released: 1.3.4 -->
+    <version>1.3.5</version>
+    <!-- last released: 1.3.5 -->
     <name>Data conversions</name>
     <description>Import/Exports from/to PSI files</description>
 
