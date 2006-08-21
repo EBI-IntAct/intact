@@ -10,6 +10,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.FileWriter;
 import java.sql.SQLException;
 
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
@@ -27,6 +29,7 @@ import uk.ac.ebi.intact.context.impl.StandaloneSession;
  */
 public abstract class UniprotExportAbstractMojo extends AbstractMojo
 {
+    protected static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
     * Project instance
@@ -47,6 +50,11 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
      * @required
      */
     protected File hibernateConfig;
+
+    /**
+     * @parameter default-value="target/uniprot-export/line_exported_summary.log"
+     */
+    protected File summaryFile;
 
     /**
      * Whether to update the existing project files or overwrite them.
@@ -132,5 +140,12 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
     public void setUniprotLinksFilename(String uniprotLinksFilename)
     {
         this.uniprotLinksFilename = uniprotLinksFilename;
+    }
+
+    protected void writeLineToSummary(String line) throws IOException
+    {
+        FileWriter writer = new FileWriter(summaryFile, true);
+        writer.write(line+NEW_LINE);
+        writer.close();
     }
 }

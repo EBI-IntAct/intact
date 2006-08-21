@@ -8,11 +8,10 @@ package uk.ac.ebi.intact.plugin.uniprotexport;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.util.Utilities;
 import uk.ac.ebi.intact.util.uniprotExport.CCLineExport;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.Set;
 
 /**
@@ -30,16 +29,24 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
+     * Name of the uniprot comments file
      * @parameter default-value="uniprotcomments.dat"
      * @required
      */
     protected String uniprotCommentsFilename;
 
     /**
+     * Name of the goa file
      * @parameter default-value="gene_association.goa_intact"
      * @required
      */
     protected String goaFilename;
+
+    /**
+     * If true, the GOA File will be Gzipped
+     * @parameter default-value="false"
+     */
+    protected boolean gzipGoa;
 
     public void execute() throws MojoExecutionException, MojoFailureException
     {
@@ -80,7 +87,7 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
             getLog().info( uniprotIDs.size() + " DR protein IDs loaded.");
 
             BufferedWriter ccWriter = new BufferedWriter(new FileWriter(ccExportFile));
-            BufferedWriter goaWriter = new BufferedWriter(new FileWriter(ccExportFile));
+            BufferedWriter goaWriter = new BufferedWriter(new FileWriter(goaExportFile));
 
             CCLineExport exporter = new CCLineExport( ccWriter, goaWriter );
             //exporter.setDebugEnabled( debugEnabled );
@@ -89,11 +96,29 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
 
             // launch the CC export
             exporter.generateCCLines( uniprotIDs );
+
+            ccWriter.close();
+            goaWriter.close();
+
+            writeLineToSummary("CC Lines: "+exporter.getCcLineCount());
+            writeLineToSummary("GOA Lines: "+exporter.getGoaLineCount());
         }
         catch (Exception e)
         {
             throw new MojoExecutionException("Problem exporting CC and GOA", e);
         }
 
+        try
+        {
+            if (gzipGoa)
+            {
+                getLog().debug("Gzipping GOA File");
+                Utilities.gzip(goaExportFile, new File(goaExportFile.getParent(), goaExportFile.getName()+".gz"), true);
+            }
+        }
+        catch (IOException e)
+        {
+            throw new MojoExecutionException("Failed gzipping the GOA file", e);
+        }
     }
 }

@@ -31,8 +31,6 @@ import java.util.Iterator;
  */
 public class DrExportMojo extends UniprotExportAbstractMojo
 {
-    private static final String NEW_LINE = System.getProperty("line.separator");
-
     /**
     * Max proteins to export. Only export this amount of proteins (only useful for testing)
     * @parameter
@@ -107,6 +105,8 @@ public class DrExportMojo extends UniprotExportAbstractMojo
             } while (proteinEligible != null && !proteinEligible.isEmpty());
 
             getLog().info("Eligible proteins found: "+eligibleProteinsCount);
+
+            writeLineToSummary("DR Lines: "+eligibleProteinsCount);
         }
         catch (Exception e)
         {
@@ -124,7 +124,7 @@ public class DrExportMojo extends UniprotExportAbstractMojo
     private  void writeToFile( Set<String> proteins, Writer out) throws IOException {
         for (String uniprotID : proteins)
         {
-            if (exportedCount % 200 == 0)
+            if (exportedCount % 200 == 0 && exportedCount != 0)
             {
                getLog().debug("Exported: "+exportedCount);
             }
