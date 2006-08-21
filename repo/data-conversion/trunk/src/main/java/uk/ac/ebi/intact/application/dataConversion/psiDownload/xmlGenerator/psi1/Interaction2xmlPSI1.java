@@ -181,11 +181,13 @@ public class Interaction2xmlPSI1 extends AnnotatedObject2xmlPSI1 implements Inte
                 {
                    Component2xmlFactory.getInstance( session ).create( session, participantListElement, component ); 
                 }
-                else if (stoichiometry == 2)
+                else if (stoichiometry >= 2)
                 {
-                   Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
-                   Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
-                }  
+                    for (int i=0; i<stoichiometry; i++)
+                    {
+                        Component2xmlFactory.getInstance( session ).create( session, participantListElement, component );
+                    }
+                }
             }
 
             element.appendChild( participantListElement );
