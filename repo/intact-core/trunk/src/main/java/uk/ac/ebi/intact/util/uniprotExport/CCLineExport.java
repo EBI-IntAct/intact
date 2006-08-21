@@ -76,6 +76,9 @@ public class CCLineExport extends LineExport {
      */
     private Writer goWriter;
 
+    private int ccLineCount;
+    private int goaLineCount;
+
 
     ///////////////////////////////
     // Constructor
@@ -162,6 +165,7 @@ public class CCLineExport extends LineExport {
         List cc4protein = (List) ccLines.remove( id );
 
         if ( null != cc4protein && !cc4protein.isEmpty() ) {
+            ccLineCount++;
 
             // the the CC lines
             Collections.sort( cc4protein );
@@ -440,6 +444,8 @@ public class CCLineExport extends LineExport {
         line.append( "IntAct" );   // Assigned By
         line.append( NEW_LINE );
 
+        goaLineCount++;
+
         if ( !self ) {
             // write the reverse
 
@@ -461,6 +467,8 @@ public class CCLineExport extends LineExport {
             line.append( "IntAct" );   // Assigned By
 
             line.append( NEW_LINE );
+
+            goaLineCount++;
         }
 
         // write into the GO file
@@ -903,7 +911,7 @@ public class CCLineExport extends LineExport {
                             if (!uniprotIDs.contains(uniprotID_2_check))
                             {
 
-                                log.debug("\n\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account.");
+                                log.debug("\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account.");
                                 iterator.remove();
 
                             }
@@ -1013,7 +1021,6 @@ public class CCLineExport extends LineExport {
                                             uniprotID_2, protein2,
                                             eligibleExperiments,
                                             eligibleInteractions);
-
                                 }
 
                             } // else (uniprotID_2 is eligible for DR export)
@@ -1035,6 +1042,16 @@ public class CCLineExport extends LineExport {
                 log.error( "Could not close the output file." );
             }
         }
+    }
+
+    public int getCcLineCount()
+    {
+        return ccLineCount;
+    }
+
+    public int getGoaLineCount()
+    {
+        return goaLineCount;
     }
 
     /**
