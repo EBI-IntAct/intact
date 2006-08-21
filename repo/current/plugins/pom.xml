@@ -30,6 +30,7 @@
         <module>maven-sanitychecker-plugin</module>
         <module>maven-editortopics-plugin</module>
         <module>maven-psixml-generator-plugin</module>
+        <module>maven-uniprotexport-plugin</module>
     </modules>
 
     <distributionManagement>
