@@ -1,0 +1,17 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-uniprotexport-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/uniprotexport-test</targetPath>
+                    <uniprotLinksFilename>uniprotlinks.dat</uniprotLinksFilename>
+                    <summaryFile>target/uniprotexport-test/line_exported_summary.log</summaryFile>
+                    <maxProteinsToExport>2</maxProteinsToExport>
+                    <overwrite>true</overwrite>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
