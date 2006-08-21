@@ -12,10 +12,12 @@ import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Interaction;
 
 import java.io.File;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -151,6 +153,31 @@ public class NewFileGeneratorTest extends TestCase
 
             assertTrue(xmlFile.exists());
             assertTrue(xmlFile.length() > 0);
+        }
+    }
+
+    public void testGenerateXmlFileWithSmallMolecule_FromInteractions() throws Exception
+    {
+        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("tang-1997a-2");
+
+        List<ExperimentListItem> allItems = gen.generateAllClassifications();
+
+        for (ExperimentListItem item : allItems)
+        {
+            Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
+
+            File xml1 = new File("target/psi1", item.getFilename());
+            if (xml1.exists()) xml1.delete(); // delete if it exists already
+            NewFileGenerator.writePsiData(interactions, PsiVersion.VERSION_1, mapping, xml1, true);
+            assertFalse(xml1.exists());
+
+            PsiValidatorReport report25 = NewFileGenerator.writePsiData(interactions, PsiVersion.VERSION_25, mapping, new File("target/psi25/test-file.xml", item.getFilename()), true);
+            assertTrue(report25.isValid());
         }
     }
      

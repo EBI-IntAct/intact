@@ -20,8 +20,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 
 /**
  * Generates PSI XML files from the intact objects stored in the database
@@ -55,6 +56,11 @@ public abstract class NewFileGenerator
 
         Document doc = generatePsiData(eli,psiVersion,cvMapping);
 
+        if (doc == null)
+        {
+            return new PsiValidatorReport();
+        }
+
         return writeFile(doc, xmlFile, validate);
     }
 
@@ -82,6 +88,11 @@ public abstract class NewFileGenerator
         }
 
         Document doc =  generatePsiData(interactions, session);
+
+        if (doc == null)
+        {
+            return new PsiValidatorReport();
+        }
 
         return writeFile(doc, xmlTargetFile, validate);
     }
@@ -138,13 +149,17 @@ public abstract class NewFileGenerator
          // Psi 1 do not tolerate Nucleic Acid as Participant of an Interaction. So if psi verstion is psi1 we
          // filter out all the Interactions having a Nucleic Acid as a participant. Then we check, if there is no
          // any more interactions linked to the experiment, we do not process it.
+         List<String> interactionsToFilter = null;
 
          if (PsiVersion.getVersion1().getVersion().equals(session.getPsiVersion().getVersion()))
          {
-             filterInteractions(interactions);
+             interactionsToFilter = filterInteractions(interactions);
          }
 
-         if (interactions.size() != 0)
+         // if all the interaction should be filtered, don't create the doc
+         boolean generateFile = (interactionsToFilter == null || interactionsToFilter.size() != interactions.size());
+
+         if (generateFile)
          {
              // in order to have them in that order, experimentList, then interactorList, at last interactionList.
              session.getExperimentListElement();
@@ -153,17 +168,23 @@ public abstract class NewFileGenerator
              int count = 0;
              for (Interaction interaction : interactions)
              {
-
-                 interaction2xml.create(session, session.getInteractionListElement(), interaction);
-
-                 count++;
-
-                 if ((count % 50) == 0)
+                 if (interactionsToFilter == null || !interactionsToFilter.contains(interaction.getAc()))
                  {
-                     log.debug("Interaction: " + count);
+                     interaction2xml.create(session, session.getInteractionListElement(), interaction);
+
+                     count++;
+
+                     if ((count % 50) == 0)
+                     {
+                         log.debug("Interaction: " + count);
+                     }
                  }
              } // interactions
 
+         }
+         else
+         {
+             return null;
          }
 
          return session.getPsiDocument();
@@ -192,27 +213,30 @@ public abstract class NewFileGenerator
     }
 
     /**
-     * It take an interactions Collection and remove from it all the interactions having a NucleicAcid as component.
+     * It take an interactions Collection and retrieves the ACs for the interactions that have a NucleicAcid or SmallMolecule as component.
      * This is used in case psi version is psi1 as psi1 do not allow Nucleic Acid as Interaction's participant.
      * @param interactions Collection of interactions
+     * @return a list with the ACs which should be filtered
      */
-    public static void filterInteractions(Collection<Interaction> interactions){
+    public static List<String> filterInteractions(Collection<Interaction> interactions){
 
-        for (Iterator<Interaction> iterator = interactions.iterator(); iterator.hasNext();) {
-            Interaction interaction = iterator.next();
-            for (Component component : interaction.getComponents()) {
+        List<String> filteredAcs = new ArrayList<String>();
+
+        for (Interaction interaction : interactions)
+        {
+            for (Component component : interaction.getComponents())
+            {
                 Interactor interactor = component.getInteractor();
-                if ( interactor instanceof NucleicAcid){
-                    iterator.remove();
-                    break;
-                }
-                else if (interactor instanceof SmallMoleculeImpl)
+                if (interactor instanceof NucleicAcid ||
+                        interactor instanceof SmallMoleculeImpl)
                 {
-                    iterator.remove();
-                     break;
+                    filteredAcs.add(interaction.getAc());
+                    break;
                 }
             }
         }
+
+        return filteredAcs;
     }
 
     public static Collection<Interaction> getInteractionsForExperimentListItem(ExperimentListItem eli)
