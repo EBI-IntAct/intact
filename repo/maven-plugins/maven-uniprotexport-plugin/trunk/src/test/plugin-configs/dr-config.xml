@@ -6,7 +6,8 @@
                 <configuration>
                     <targetPath>target/uniprotexport-test</targetPath>
                     <uniprotLinksFilename>uniprotlinks.dat</uniprotLinksFilename>
-                    <maxProteinsToExport>20</maxProteinsToExport>
+                    <summaryFile>target/uniprotexport-test/line_exported_summary.log</summaryFile>
+                    <maxProteinsToExport>2</maxProteinsToExport>
                     <overwrite>true</overwrite>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>
