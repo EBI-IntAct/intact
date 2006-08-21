@@ -15,7 +15,7 @@ import java.io.*;
 import java.util.Set;
 
 /**
- * TODO comment this!
+ * Creates a file with the uniprot comments for the interactions and a file with the GOA Lines
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -26,7 +26,6 @@ import java.util.Set;
  */
 public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
 {
-    private static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
      * Name of the uniprot comments file

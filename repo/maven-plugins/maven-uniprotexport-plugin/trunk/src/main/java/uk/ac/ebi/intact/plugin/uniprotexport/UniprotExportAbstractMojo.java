@@ -21,7 +21,7 @@ import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
 /**
- * TODO comment this!
+ * Base class with the common attributes for the Uniprot export mojos
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
