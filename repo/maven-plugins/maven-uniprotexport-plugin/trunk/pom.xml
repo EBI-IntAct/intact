@@ -53,6 +53,12 @@
                 <maven.test.skip>false</maven.test.skip>
             </properties>
         </profile>
+        <profile>
+            <id>dev92</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencies>

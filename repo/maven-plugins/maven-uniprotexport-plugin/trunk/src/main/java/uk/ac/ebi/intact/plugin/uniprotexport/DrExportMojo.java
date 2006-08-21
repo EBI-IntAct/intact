@@ -58,6 +58,8 @@ public class DrExportMojo extends UniprotExportAbstractMojo
 
         new MemoryMonitor();
 
+        int eligibleProteinsCount = 0;
+
         try
         {
             FileWriter fw = new FileWriter(drExportFile);
@@ -75,8 +77,6 @@ public class DrExportMojo extends UniprotExportAbstractMojo
                 getLog().info("Limited export. Only "+maxProteinsToExport+" will be checked for eligibility");
             }
 
-            int eligibleProteinsCount = 0;
-
             do
             {
 
@@ -93,7 +93,6 @@ public class DrExportMojo extends UniprotExportAbstractMojo
 
                     // save it to a file.
                     writeToFile(proteinEligible, out);
-
                 }
 
                 IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -112,6 +111,12 @@ public class DrExportMojo extends UniprotExportAbstractMojo
         catch (Exception e)
         {
             throw new MojoExecutionException("Problem writing eligible proteins", e);
+        }
+
+        // if no eligible proteins are found fail
+        if (eligibleProteinsCount == 0)
+        {
+            throw new MojoFailureException("No eligible proteins to export found");   
         }
 
     }
