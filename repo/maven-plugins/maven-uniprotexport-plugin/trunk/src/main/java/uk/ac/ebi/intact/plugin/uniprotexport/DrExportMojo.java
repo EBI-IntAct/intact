@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.plugin.uniprotexport;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.util.uniprotExport.DRLineExport;
 import uk.ac.ebi.intact.util.uniprotExport.LineExport;
@@ -37,6 +38,8 @@ public class DrExportMojo extends UniprotExportAbstractMojo
     * @parameter
     */
     protected Integer maxProteinsToExport;
+
+    private int exportedCount;
 
     public void execute() throws MojoExecutionException, MojoFailureException
     {
@@ -113,12 +116,19 @@ public class DrExportMojo extends UniprotExportAbstractMojo
 
     }
 
-    private static void writeToFile( Set<String> proteins, Writer out ) throws IOException {
+    private  void writeToFile( Set<String> proteins, Writer out) throws IOException {
         for (String uniprotID : proteins)
         {
+            if (exportedCount % 200 == 0)
+            {
+               getLog().debug("Exported: "+exportedCount);
+            }
+            
             out.write(DRLineExport.formatProtein(uniprotID));
             out.write(NEW_LINE);
             out.flush();
+
+            exportedCount++;
         }
     }
 

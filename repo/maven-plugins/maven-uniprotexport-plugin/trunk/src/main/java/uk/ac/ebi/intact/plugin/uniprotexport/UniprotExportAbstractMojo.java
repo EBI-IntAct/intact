@@ -14,6 +14,8 @@ import java.sql.SQLException;
 
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
 /**
  * TODO comment this!
@@ -85,9 +87,10 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
         }
 
         // configure the context
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig);
+        IntactSession session = new StandaloneSession();
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig, session);
         testConfig.initialize();
-        IntactContext.initStandaloneContext(testConfig);
+        IntactContext.initContext(testConfig, session);
 
         try
         {
