@@ -90,7 +90,7 @@ public class GeneratorHelper {
      */
     public static Institution getOwner() throws IntactException {
         if(owner == null){
-            owner = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+            owner = IntactContext.getCurrentInstance().getInstitution();
         }
         return owner;
     }

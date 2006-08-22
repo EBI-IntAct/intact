@@ -141,7 +141,7 @@ public abstract class UpdateProteinsI {
 
         try
         {
-            myInstitution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+            myInstitution = IntactContext.getCurrentInstance().getInstitution();
         }
         catch (IntactException e)
         {

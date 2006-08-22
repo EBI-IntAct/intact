@@ -707,7 +707,7 @@ public class GoUtils {
      */
     private CvObject insertDefinition( GoRecord goRec, boolean deleteold ) throws IntactException {
         // Cache the institution.
-        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution inst = IntactContext.getCurrentInstance().getInstitution();
 
         // Update shortLabel. Label has to be unique!
         String goTerm = goRec.getGoTerm();
@@ -768,7 +768,7 @@ public class GoUtils {
     private void updateAnnotations( CvObject current, GoRecord goRec ) throws IntactException {
 
         // Cache the institution.
-        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution inst = IntactContext.getCurrentInstance().getInstitution();
 
         // Update all comments
         for ( Iterator comments = goRec.getKeys(); comments.hasNext(); ) {
@@ -1050,7 +1050,7 @@ public class GoUtils {
 
     private void handleDefinition( GoRecord goRec, CvObject current ) throws IntactException {
         // Cache the institution and definition topic
-        Institution inst = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution inst = IntactContext.getCurrentInstance().getInstitution();
         CvTopic definition = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( "definition" );
 
         // Collect any existing definition definition annotations (can be

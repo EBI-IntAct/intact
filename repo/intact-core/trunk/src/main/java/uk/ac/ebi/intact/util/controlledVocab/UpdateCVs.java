@@ -404,7 +404,7 @@ public class UpdateCVs {
                                              final CvTopic topic,
                                              final String text ) throws IntactException {
 
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         if ( topic == null ) {
             log.error( "You must give a non null topic when updating term " + cvObject.getShortLabel() );
@@ -558,7 +558,7 @@ public class UpdateCVs {
         CvObject cv = null;
 
         CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // if an MI is available, search using it
         if ( mi != null ) {
@@ -818,7 +818,7 @@ public class UpdateCVs {
 
         // TODO if we convert the id into a Xref before starting the update, the two if below would be handled in the loop for Xrefs.
 
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Xref psi-mi/identity
         if ( ! hasIntactTermGotPsiIdentifier && hasPsiIdentifier ) {
@@ -917,7 +917,7 @@ public class UpdateCVs {
 
         Set uniqueCvTopics = loadUniqueCvTopics( );
 
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Start updating ...
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
@@ -1010,7 +1010,7 @@ public class UpdateCVs {
         dbMapping.put( "GO", CvDatabase.GO );
 
         XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // xrefs -- we don't delete any Xrefs, just adding missing ones
         // TODO should we affect a default qualifier if none is supplied ?
@@ -1139,7 +1139,7 @@ public class UpdateCVs {
             throw new IllegalStateException( "Could not find " + CvAliasType.GO_SYNONYM + " in the IntAct node. Abort." );
         }
 
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         for ( Iterator iterator = cvTerm.getSynonyms().iterator(); iterator.hasNext(); ) {
             CvTermSynonym synonym = (CvTermSynonym) iterator.next();
@@ -1416,7 +1416,7 @@ public class UpdateCVs {
                             // now update that single term
                             Annotation annot = getUniqueAnnotation(aTermToUpdate, cvTopic );
 
-                            Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+                            Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
                             Annotation newAnnotation = new Annotation( institution, cvTopic, reason );
                             if ( annot == null ) {

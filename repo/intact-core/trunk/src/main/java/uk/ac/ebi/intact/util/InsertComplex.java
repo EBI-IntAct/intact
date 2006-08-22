@@ -401,7 +401,7 @@ public final class InsertComplex {
 
         //makes sense to get the Institution here - avoids a call
         //to the DB for every line processed...
-        owner = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        owner = IntactContext.getCurrentInstance().getInstitution();
 
         // TODO: this block below could be replaced by the BioSourceFactory !!!!!!!
 
