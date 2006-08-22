@@ -44,7 +44,7 @@ public class AnnotatedObjectDaoTest extends TestCase {
         tx.commit();
     }
 
-    public void testgetByAnnotationTopicAnDescription()
+    public void testGetByAnnotationTopicAndDescription()
     {
 
         IntactTransaction tx = DaoFactory.beginTransaction();
