@@ -1,4 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.search.ws.SearchService" %>
 <html>
 <head>
     <title>IntAct Search Web Service</title>
@@ -8,6 +7,8 @@
 </p>
 <p><a href="services">View services</a></p>
 <hr>
-<p>v. <%=SearchService.version()%></p>
+<%--
+<p>v. <%=uk.ac.ebi.intact.search.ws.SearchService.version()%></p>
+--%>
 </body>
 </html>
