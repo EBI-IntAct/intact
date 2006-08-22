@@ -1,0 +1,35 @@
+<deployment xmlns="http://xml.apache.org/axis/wsdd/"
+            xmlns:java="http://xml.apache.org/axis/wsdd/providers/java">
+
+    <service name="SearchService" provider="java:RPC">
+      <parameter name="wsdlTargetNamespace" value="urn:searchws"/>
+      <parameter name="wsdlServiceElement" value="SearchAccessService"/>
+      <parameter name="schemaUnqualified" value="urn:searchws"/>
+      <parameter name="wsdlServicePort" value="SearchService"/>
+      <parameter name="wsdlPortType" value="Search"/>
+      <parameter name="className" value="uk.ac.ebi.intact.search.ws.SearchService"/>
+      <parameter name="typeMappingVersion" value="1.2"/>
+
+      <parameter name="scope" value="application"/>
+      <parameter name="allowedMethods" value="getVersion findPartnersUsingUniprotIds"/>
+
+    </service>
+
+    <typeMapping
+        xmlns:ns="urn:searchws"
+        qname="ns:PartnerResult"
+        type="java:uk.ac.ebi.intact.search.ws.PartnerResult"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:searchws"
+        qname="ns:ArrayOfPartnerResult"
+        type="java:uk.ac.ebi.intact.search.ws.PartnerResult[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
+</deployment>
