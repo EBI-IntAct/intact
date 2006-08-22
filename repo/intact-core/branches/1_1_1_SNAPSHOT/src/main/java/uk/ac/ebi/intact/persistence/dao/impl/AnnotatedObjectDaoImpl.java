@@ -15,6 +15,7 @@ import java.util.List;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 /**
@@ -83,6 +84,33 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .add(Restrictions.eq("xref.cvDatabase", database))
                 .add(Restrictions.eq("xref.cvXrefQualifier", qualifier)).list();
 
+    }
+
+    /**
+     * Return a collection of annotated object of type <T> being annotated with an annotation having
+     * its ac equal to the ac given in parameter of the method.
+     * @param ac
+     * @return  a list of annotated objects.
+     */
+    public List<T> getByAnnotationAc(String ac)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createAlias("annotations", "annot")
+                .add(Restrictions.eq("annot.ac", ac)).list();
+    }
+
+    /**
+     * Return a collection of annotated object of type <T> being annotated with an annotation having
+     * a topic equal to the topic given in parameter and the description equal to the description given
+     * in parameter.
+     * @param topic
+     * @param description
+     * @return  a list of annotated objects.
+     */
+    public List<T> getByAnnotationTopicAndDescription(CvTopic topic, String description){
+        return getSession().createCriteria(getEntityClass()).createAlias("annotations","annot")
+                .add(Restrictions.eq("annot.cvTopic",topic))
+                .add(Restrictions.eq("annot.annotationText",description )).list();
     }
 
 
