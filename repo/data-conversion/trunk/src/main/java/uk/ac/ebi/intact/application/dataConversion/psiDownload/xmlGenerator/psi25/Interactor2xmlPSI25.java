@@ -11,10 +11,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Abst
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Xref2xmlFactory;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Polymer;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -292,7 +289,12 @@ public class Interactor2xmlPSI25 extends AnnotatedObject2xmlPSI25 {
 //        xrefElement.appendChild( primaryRefElement );
 
         // 6. Generating Organism...
-        BioSource2xmlFactory.getInstance( session ).createOrganism( session, element, interactor.getBioSource() );
+        BioSource organism = interactor.getBioSource();
+
+        if (organism != null) // organism can be null for small molecules
+        {
+            BioSource2xmlFactory.getInstance( session ).createOrganism( session, element, interactor.getBioSource() );
+        }
 
         // 7. Generating sequence... (for Polymers only, ie. Protein and NucleicAcid)
         if ( interactor instanceof Polymer ) {
