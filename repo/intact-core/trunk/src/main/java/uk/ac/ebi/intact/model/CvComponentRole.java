@@ -7,10 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * The role of the specific substrate in the interaction.
@@ -71,13 +69,6 @@ public class CvComponentRole extends CvObject implements Editable {
     public static final String FLUROPHORE_ACCEPTOR_MI_REF = "MI:0584";
 
 
-    /**
-     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
-     * object mapping purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
-     */
-    @Deprecated
     public CvComponentRole() {
         //super call sets creation time data
         super();

@@ -7,8 +7,7 @@ package uk.ac.ebi.intact.model.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -25,6 +24,11 @@ public class InteractionUtils
 
     private static final Log log = LogFactory.getLog(InteractionUtils.class);
 
+    /**
+     * Checks if the interaction is a binary interaction
+     * @param interaction
+     * @return
+     */
     public static boolean isBinaryInteraction(Interaction interaction) {
         boolean isBinaryInteraction = false;
 
@@ -61,6 +65,49 @@ public class InteractionUtils
         }
 
         return isBinaryInteraction;
+    }
+
+    /**
+     * Checks if the interaction is a self interaction
+     * @param interaction
+     * @return
+     */
+    public static boolean isSelfInteraction(Interaction interaction)
+    {
+        Collection<Component> components = interaction.getComponents();
+        int componentCount = components.size();
+
+        if (componentCount == 1)
+        {
+            Component comp = components.iterator().next();
+
+            if (comp.getStoichiometry() == 0 &&
+                    comp.getCvComponentRole().getShortLabel().equals(CvComponentRole.SELF))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if a interaction contain other interactor types than Protein
+     * @param interaction
+     * @return
+     */
+    public static boolean containsNonProteinInteractors(Interaction interaction)
+    {
+        for (Component component : interaction.getComponents())
+        {
+            Interactor interactor = component.getInteractor();
+            if (!(interactor instanceof ProteinImpl))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }
