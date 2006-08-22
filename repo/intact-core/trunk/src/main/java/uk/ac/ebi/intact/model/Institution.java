@@ -48,14 +48,6 @@ public class Institution extends IntactObjectImpl implements Serializable {
 
     ///////////////////////////////////////
     // Constructors
-
-    /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
-     */
     public Institution() {
         super();
     }
@@ -73,7 +65,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
     public Institution( String shortLabel ) {
         this();
 
-        setShortLabel( shortLabel );
+        this.shortLabel = prepareLabel(shortLabel);
     }
 
 
@@ -85,22 +77,30 @@ public class Institution extends IntactObjectImpl implements Serializable {
     }
 
     public void setShortLabel( String shortLabel ) {
-        if( shortLabel == null ) {
-            throw new NullPointerException( "Must define a short label to create an Institution!" );
+        this.shortLabel = shortLabel;
+    }
+
+    private String prepareLabel(String shortLabel)
+    {
+        if( shortLabel == null)
+        {
+            throw new NullPointerException("Must define a short label to create an Institution!");
         }
 
         // delete leading and trailing spaces.
         shortLabel = shortLabel.trim();
 
-        if( "".equals( shortLabel ) ) {
-            throw new IllegalArgumentException( "Must define a short label to create an Institution!" );
+        if ("".equals(shortLabel))
+        {
+            throw new IllegalArgumentException("Must define a short label to create an Institution!");
         }
 
-        if( shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN ) {
-            shortLabel = shortLabel.substring( 0, AnnotatedObject.MAX_SHORT_LABEL_LEN );
+        if (shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN)
+        {
+            shortLabel = shortLabel.substring(0, AnnotatedObject.MAX_SHORT_LABEL_LEN);
         }
 
-        this.shortLabel = shortLabel;
+        return shortLabel;
     }
 
     public String getPostalAddress() {
@@ -116,12 +116,6 @@ public class Institution extends IntactObjectImpl implements Serializable {
     }
 
     public void setFullName( String fullName ) {
-
-        if( fullName != null ) {
-            // delete leading and trailing spaces.
-            fullName = fullName.trim();
-        }
-
         this.fullName = fullName;
     }
 

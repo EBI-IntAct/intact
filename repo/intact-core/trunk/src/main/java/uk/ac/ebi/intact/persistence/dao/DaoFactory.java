@@ -11,7 +11,6 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
@@ -34,11 +33,8 @@ public class DaoFactory implements Serializable
     private static final String DAO_FACTORY_ATT_NAME = DaoFactory.class.getName();
 
     private AbstractHibernateDataConfig dataConfig;
-    private DataContext dataContext;
 
     private IntactTransaction currentTransaction;
-
-    private static DaoFactory instance;
 
     private DaoFactory(DataConfig dataConfig)
     {
@@ -207,8 +203,6 @@ public class DaoFactory implements Serializable
 
     public Session getCurrentSession()
     {
-        //checkStatus();
-
         return dataConfig.getSessionFactory().getCurrentSession();
     }
 

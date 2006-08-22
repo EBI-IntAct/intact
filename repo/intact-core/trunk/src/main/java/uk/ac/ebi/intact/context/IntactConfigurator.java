@@ -83,7 +83,6 @@ public class IntactConfigurator
                 dataConfigClass = dataConfigClass.trim();
                 log.info("Registering data-config: " + dataConfigClass);
 
-
                 try
                 {
                     DataConfig dataConfig = (DataConfig) (Class.forName(dataConfigClass).newInstance());
@@ -96,17 +95,6 @@ public class IntactConfigurator
                 }
             }
         }
-
-        // load the default institution
-        DaoFactory daoFactory = DaoFactory.getCurrentInstance(config.getDefaultDataConfig());
-
-        IntactTransaction tx = daoFactory.beginTransaction();
-        Institution institution = loadInstitution(daoFactory, session);
-        tx.commit();
-        
-        config.setInstitution(institution);
-
-        log.info("Institution: "+institution.getFullName());
 
         // load the default prefix for generated ACs
         String prefix = getInitParamValue(session, AC_PREFIX_PARAM_NAME, DEFAULT_AC_PREFIX);
@@ -157,7 +145,7 @@ public class IntactConfigurator
             }
             log.debug("Using default value for param "+initParamName+": "+defaultValue);
 
-            initParamValue = (String) defaultValue;
+            initParamValue = defaultValue;
         }
 
         return initParamValue;
@@ -173,7 +161,7 @@ public class IntactConfigurator
         }
 
         DaoFactory daoFactory = DaoFactory.getCurrentInstance(session,
-                RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
+        RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
 
         try
         {
@@ -194,7 +182,12 @@ public class IntactConfigurator
 
         // start a context
         log.info("Creating IntactContext...");
-        return new IntactContextWrapper(userContext, dataContext, session);
+        IntactContext context = new IntactContextWrapper(userContext, dataContext, session);
+
+        loadInstitution(context);
+        log.debug("Institution: "+context.getInstitution().getShortLabel());
+
+        return context;
     }
 
     /**
@@ -204,10 +197,16 @@ public class IntactConfigurator
      *
      * @return the Institution to which all created object will be linked.
      */
-    private static Institution loadInstitution(DaoFactory daoFactory, IntactSession session) 
+    private static void loadInstitution(IntactContext context)
     {
+        if (context.getInstitution() != null)
+        {
+            return;
+        }
 
-        String institutionLabel = getInitParamValue(session, INSTITUTION_LABEL, null, "institution");
+        IntactSession session = context.getSession();
+
+        String institutionLabel = getInitParamValue(context.getSession(), INSTITUTION_LABEL, null, "institution");
 
         if (institutionLabel == null)
         {
@@ -226,26 +225,39 @@ public class IntactConfigurator
             }
         }
 
-        Institution institution = daoFactory.getInstitutionDao().getByShortLabel( institutionLabel );
+        Institution institution = context.getDataContext().getDaoFactory()
+                .getInstitutionDao().getByShortLabel( institutionLabel );
 
         if ( institution == null ) {
             // doesn't exist, create it
             institution = new Institution( institutionLabel );
 
-            String fullName = getInitParamValue(session, INSTITUTION_FULL_NAME, DEFAULT_INSTITUTION_FULL_NAME);
-            String postalAddress = getInitParamValue(session, INSTITUTION_POSTAL_ADDRESS, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
-            String url = getInitParamValue(session, INSTITUTION_URL, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
+            String fullName;
+            String postalAddress;
+            String url;
+
+            if (institutionLabel.equalsIgnoreCase(DEFAULT_INSTITUTION_LABEL))
+            {
+                fullName = getInitParamValue(session, INSTITUTION_FULL_NAME, DEFAULT_INSTITUTION_FULL_NAME);
+                postalAddress = getInitParamValue(session, INSTITUTION_POSTAL_ADDRESS, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
+                url = getInitParamValue(session, INSTITUTION_URL, DEFAULT_INSTITUTION_URL);
+            }
+            else
+            {
+                fullName = getInitParamValue(session, INSTITUTION_FULL_NAME, "");
+                postalAddress = getInitParamValue(session, INSTITUTION_POSTAL_ADDRESS, "");
+                url = getInitParamValue(session, INSTITUTION_URL, "");
+            }
 
             institution.setFullName(fullName);
             institution.setPostalAddress(postalAddress);
             institution.setUrl(url);
 
             log.info("Inserting institution information in the database");
-            daoFactory.getInstitutionDao().persist( institution );
-
+            context.getDataContext().getDaoFactory().getInstitutionDao().persist( institution );
         }
 
-        return institution;
+        context.getConfig().setInstitution(institution);
     }
 
 }
