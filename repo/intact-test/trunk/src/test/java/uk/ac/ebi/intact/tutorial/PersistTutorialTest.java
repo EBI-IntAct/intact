@@ -55,7 +55,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         CvDatabase cvDatabase = new CvDatabase(getInstitution(), "MyTestDatabase");
         cvDatabase.setFullName("Mock CvDatabase Object");
 
-        DaoFactory.getCvObjectDao(CvDatabase.class).persist(cvDatabase);
+        getDaoFactory().getCvObjectDao(CvDatabase.class).persist(cvDatabase);
 
         assertNotNull(cvDatabase.getAc());
         cvDatabaseAc = cvDatabase.getAc();
@@ -64,7 +64,7 @@ public class PersistTutorialTest extends AbstractIntactTest
     public void testCreateCvXrefQualifier()
     {
        CvXrefQualifier cvXrefQualifier = new CvXrefQualifier(getInstitution(), CvXrefQualifier.IDENTITY);
-       DaoFactory.getCvObjectDao(CvXrefQualifier.class).persist(cvXrefQualifier);
+       getDaoFactory().getCvObjectDao(CvXrefQualifier.class).persist(cvXrefQualifier);
 
        assertNotNull(cvXrefQualifier.getAc());
        cvXrefQualifierAc = cvXrefQualifier.getAc();
@@ -77,12 +77,12 @@ public class PersistTutorialTest extends AbstractIntactTest
         BioSourceXref xref = new BioSourceXref(getInstitution(), getCvDatabase(),  "testPrimaryId", getCvXrefQualifier());
         organism.addXref(xref);
 
-        DaoFactory.getBioSourceDao().persist(organism);
+        getDaoFactory().getBioSourceDao().persist(organism);
 
         organismAc = organism.getAc();
         assertNotNull(organismAc);
 
-        BioSource loadedOrganism = DaoFactory.getBioSourceDao().getByAc(organismAc);
+        BioSource loadedOrganism = getDaoFactory().getBioSourceDao().getByAc(organismAc);
         assertNotNull(organism);
 
         Collection<BioSourceXref> xrefs = loadedOrganism.getXrefs();
@@ -93,14 +93,14 @@ public class PersistTutorialTest extends AbstractIntactTest
 
         assertEquals(organism, loadedOrganism);
 
-        assertEquals(1, DaoFactory.getBioSourceDao().getByTaxonId(ORGANISM_TAXID).size());
-        assertNotNull(DaoFactory.getBioSourceDao().getByTaxonIdUnique(ORGANISM_TAXID));
+        assertEquals(1, getDaoFactory().getBioSourceDao().getByTaxonId(ORGANISM_TAXID).size());
+        assertNotNull(getDaoFactory().getBioSourceDao().getByTaxonIdUnique(ORGANISM_TAXID));
 
     }
 
     public void testSearchXref()
     {
-        Collection<Xref> xrefs = DaoFactory.getXrefDao().getByPrimaryId("testPrimaryId");
+        Collection<Xref> xrefs = getDaoFactory().getXrefDao().getByPrimaryId("testPrimaryId");
         assertEquals(1, xrefs.size());
 
         Xref xref = xrefs.iterator().next();
@@ -147,7 +147,7 @@ public class PersistTutorialTest extends AbstractIntactTest
     private CvDatabase getCvDatabase()
     {
         assertNotNull(cvDatabaseAc);
-        CvDatabase cvDatabase = DaoFactory.getCvObjectDao(CvDatabase.class).getByAc(cvDatabaseAc);
+        CvDatabase cvDatabase = getDaoFactory().getCvObjectDao(CvDatabase.class).getByAc(cvDatabaseAc);
         assertNotNull(cvDatabase);
         return cvDatabase;
     }
@@ -155,7 +155,7 @@ public class PersistTutorialTest extends AbstractIntactTest
     private CvXrefQualifier getCvXrefQualifier()
     {
         assertNotNull(cvXrefQualifierAc);
-        CvXrefQualifier cvXrefQual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByAc(cvXrefQualifierAc);
+        CvXrefQualifier cvXrefQual = getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByAc(cvXrefQualifierAc);
         assertNotNull(cvXrefQual);
         return cvXrefQual;
     }

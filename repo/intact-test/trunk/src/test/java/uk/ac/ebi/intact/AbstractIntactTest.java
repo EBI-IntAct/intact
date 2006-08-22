@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * TODO comment this!
@@ -23,21 +24,21 @@ public abstract class AbstractIntactTest extends TestCase
 
     private static final Log log = LogFactory.getLog(AbstractIntactTest.class);
 
-     private IntactTransaction tx;
-
     protected void setUp() throws Exception
     {
         super.setUp();
-
-        tx = DaoFactory.beginTransaction();
     }
 
     protected void tearDown() throws Exception
     {
         super.tearDown();
 
-        tx.commit();
-        tx = null;
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+    }
+
+    protected DaoFactory getDaoFactory()
+    {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
 }
