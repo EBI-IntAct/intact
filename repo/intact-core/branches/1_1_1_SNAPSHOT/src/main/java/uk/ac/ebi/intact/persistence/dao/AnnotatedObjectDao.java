@@ -40,5 +40,5 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
 
     List<T> getByAnnotationAc(String ac);
 
-    List<T> getByAnnotationTopicAnDescription(CvTopic topic, String description);
+    List<T> getByAnnotationTopicAndDescription(CvTopic topic, String description);
 }
