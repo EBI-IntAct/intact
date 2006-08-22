@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.config;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
 /**
@@ -16,6 +18,7 @@ import uk.ac.ebi.intact.context.IntactSession;
  */
 public abstract class DataConfig<T,C>
 {
+    private static final Log log = LogFactory.getLog(DataConfig.class);
 
     private IntactSession session;
 

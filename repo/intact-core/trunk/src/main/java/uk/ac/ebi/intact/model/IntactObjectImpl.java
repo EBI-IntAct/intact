@@ -30,8 +30,6 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     ///////////////////////////////////////
     //attributes
 
-    private String ojbConcreteClass;
-
     /**
      * The curator who has last edited the object.
      */
@@ -59,11 +57,8 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      */
     private Date updated;
 
-    /**
-     * Protected constructor for use by subclasses - used to set the creation data for instances
-     */
+
     public IntactObjectImpl() {
-        ojbConcreteClass = this.getClass().getName();
     }
 
 
@@ -85,10 +80,7 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
      * an application server it may then be needed.
      *
      * @param ac
-     *
-     * @deprecated No replacement - should not be used by applications
      */
-    @Deprecated
     public void setAc( String ac ) {
         this.ac = ac;
     }

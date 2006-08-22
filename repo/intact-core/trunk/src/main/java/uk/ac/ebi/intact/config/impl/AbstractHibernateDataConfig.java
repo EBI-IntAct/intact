@@ -16,16 +16,14 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
 import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
-import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
 import java.util.List;
-import java.util.Hashtable;
-import java.util.Properties;
 
 /**
  * TODO comment this!
@@ -56,6 +54,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     @Override
     public void initialize()
     {
+        log.debug("Initializing Hibernate");
+
         File cfgFile = getConfigFile();
 
         // Create the initial SessionFactory from the default configuration files

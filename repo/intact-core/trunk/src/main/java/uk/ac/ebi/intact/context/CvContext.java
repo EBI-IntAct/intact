@@ -33,8 +33,12 @@ public final class CvContext implements Serializable
     private Map<String,CvObject> cachedByLabel;
     private Map<String,CvObject> cachedByMiRef;
 
-    private CvContext()
+    private IntactSession session;
+
+    private CvContext(IntactSession session)
     {
+        this.session = session;
+
         this.cachedByAc = new HashMap<String, CvObject>();
         this.cachedByLabel = new HashMap<String, CvObject>();
         this.cachedByMiRef = new HashMap<String, CvObject>();
@@ -47,7 +51,7 @@ public final class CvContext implements Serializable
         if (cvContext == null)
         {
             log.debug("Creating new CvContext");
-            cvContext = new CvContext();
+            cvContext = new CvContext(session);
             session.setApplicationAttribute(APPLICATION_PARAM_NAME, cvContext);
         }
         return cvContext;
@@ -207,7 +211,7 @@ public final class CvContext implements Serializable
 
     private DaoFactory getDaoFactory()
     {
-        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        return DaoFactory.getCurrentInstance(RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
     }
 
 }

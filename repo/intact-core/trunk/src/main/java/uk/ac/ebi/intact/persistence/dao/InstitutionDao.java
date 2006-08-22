@@ -9,11 +9,5 @@ import uk.ac.ebi.intact.model.Institution;
  */
 public interface InstitutionDao extends IntactObjectDao<Institution>
 {
-    /**
-     * Returns the Institution configured in the properties file
-     * @return the Institution configured in the properties file
-     */
-    Institution getInstitution();
-
     Institution getByShortLabel(String shortLabel);
 }
