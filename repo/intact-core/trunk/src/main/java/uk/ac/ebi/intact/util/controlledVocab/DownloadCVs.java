@@ -683,7 +683,7 @@ public class DownloadCVs {
                             Constructor constructor = aCvClass.getDeclaredConstructor( new Class[]{ Institution.class, String.class } );
                             if ( constructor != null ) {
                                 String name = (String) mi2name.get( miRef );
-                                root = (CvObject) constructor.newInstance( new Object[]{ IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), name } );
+                                root = (CvObject) constructor.newInstance( new Object[]{ IntactContext.getCurrentInstance().getInstitution(), name } );
 
                                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().persist( root );
 
@@ -700,7 +700,7 @@ public class DownloadCVs {
                                 CvDatabase db = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( database );
                                 CvXrefQualifier q = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
 
-                                CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), db, miRef, null, null, q );
+                                CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), db, miRef, null, null, q );
                                 root.addXref( xref );
                                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
 
@@ -837,7 +837,7 @@ public class DownloadCVs {
                 try {
                     String localId = SequenceManager.getNextId( );
 
-                    CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), intact, localId, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), intact, localId, null, null, identity );
                     cvObject.addXref( xref );
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
 

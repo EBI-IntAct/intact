@@ -248,7 +248,7 @@ public class UpdateTargetSpecies {
                     BioSource bioSource = (BioSource) iterator1.next();
 
                     // create the Xref
-                    ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), newt,
+                    ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getInstitution(), newt,
                                           bioSource.getTaxId(), bioSource.getShortLabel(),
                                           null,
                                           targetSpeciesQualifier );

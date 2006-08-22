@@ -336,7 +336,7 @@ public class GoTools {
 
         if ( !psiRefFound ) {
             // then create the PSI ref
-            CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), psi, mi, null, null, identity );
+            CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), psi, mi, null, null, identity );
             psi.addXref( xref );
 
             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );

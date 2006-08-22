@@ -121,7 +121,7 @@ public class InsertGo {
         }
 
         // Now we have a valid protein object, complete it.
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         addNewXref(protein,
                    new InteractorXref(institution,

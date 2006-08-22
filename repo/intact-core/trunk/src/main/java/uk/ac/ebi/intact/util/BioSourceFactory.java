@@ -51,7 +51,7 @@ public class BioSourceFactory {
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
 
     public BioSourceFactory( ) throws IntactException {
-        this( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), DEFAULT_CACHE_SIZE );
+        this( IntactContext.getCurrentInstance().getInstitution(), DEFAULT_CACHE_SIZE );
     }
 
     public BioSourceFactory( Institution institution ) {

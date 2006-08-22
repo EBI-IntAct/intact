@@ -152,7 +152,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // email - if not there yet, add it.
             if ( eaf.getAuthorEmail() != null && eaf.getAuthorEmail().length() != 0 ) {
-                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), email );
+                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getInstitution(), email );
                 annotation.setAnnotationText( eaf.getAuthorEmail() );
                 if ( ! experiment.getAnnotations().contains( annotation ) ) {
                     // add it
@@ -224,7 +224,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
             // select all annotation of that object filtered by topic
             Collection annotationByTopic = select( experiment.getAnnotations(), topic );
 
-            Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+            Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
             // update annotations
             if ( annotationByTopic.isEmpty() ) {
