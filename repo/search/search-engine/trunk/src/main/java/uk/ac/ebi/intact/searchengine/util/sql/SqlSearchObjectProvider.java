@@ -1,10 +1,10 @@
 package uk.ac.ebi.intact.searchengine.util.sql;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 import uk.ac.ebi.intact.searchengine.SearchEngineConstants;
 import uk.ac.ebi.intact.searchengine.lucene.model.*;
 import uk.ac.ebi.intact.searchengine.util.SearchObjectProvider;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -667,6 +667,6 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
 
     private Connection getConnection()
     {
-        return HibernateUtil.getSessionFactory().getCurrentSession().connection();
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 }
