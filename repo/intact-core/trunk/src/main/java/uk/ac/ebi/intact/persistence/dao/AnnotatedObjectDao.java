@@ -5,14 +5,12 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.hibernate.criterion.MatchMode;
-
-import java.util.Collection;
-import java.util.List;
-
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -44,4 +42,6 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     List<T> getByXrefLike(CvDatabase database, CvXrefQualifier qualifier, String primaryId);
 
     String getPrimaryIdByAc(String ac, String cvDatabaseShortLabel);
+
+    List<T> getByAnnotationAc(String ac);
 }

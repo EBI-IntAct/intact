@@ -6,17 +6,15 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Property;
-
-import java.util.Collection;
-import java.util.List;
-
+import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -110,6 +108,13 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                .add(Restrictions.like("cvDatabase.shortLabel", cvDatabaseShortLabel))
                .setProjection(Property.forName("xref.primaryId")).uniqueResult();
 
+    }
+
+    public List<T> getByAnnotationAc(String ac)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .createAlias("annotations", "annot")
+                .add(Restrictions.eq("annot.ac", ac)).list();
     }
 
 
