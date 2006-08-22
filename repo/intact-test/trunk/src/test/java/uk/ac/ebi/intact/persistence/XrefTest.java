@@ -57,7 +57,7 @@ public class XrefTest extends AbstractIntactTest
         cvDatabase = new CvDatabase(institution, "MyTestDatabase_XrefTest");
         cvDatabase.setFullName("Mock CvDatabase Object");
 
-        DaoFactory.getCvObjectDao(CvDatabase.class).persist(cvDatabase);
+        getDaoFactory().getCvObjectDao(CvDatabase.class).persist(cvDatabase);
 
         assertNotNull(cvDatabase);
     }
@@ -65,7 +65,7 @@ public class XrefTest extends AbstractIntactTest
     public void testCreateCvXrefQualifier()
     {
        cvXrefQualifier = new CvXrefQualifier(institution, CvXrefQualifier.IDENTITY);
-       DaoFactory.getCvObjectDao(CvXrefQualifier.class).saveOrUpdate(cvXrefQualifier);
+       getDaoFactory().getCvObjectDao(CvXrefQualifier.class).saveOrUpdate(cvXrefQualifier);
 
        assertNotNull(cvXrefQualifier);
     }
@@ -73,7 +73,7 @@ public class XrefTest extends AbstractIntactTest
     public void testCreateCvInteractionType()
     {
        cvInteractionType = new CvInteractorType(institution, "myCvInteractionType-Xref");
-       DaoFactory.getCvObjectDao(CvInteractorType.class).saveOrUpdate(cvInteractionType);
+       getDaoFactory().getCvObjectDao(CvInteractorType.class).saveOrUpdate(cvInteractionType);
 
        assertNotNull(cvInteractionType);
     }
@@ -81,7 +81,7 @@ public class XrefTest extends AbstractIntactTest
     public void testPersistBioSource()
     {
         BioSource organism = new BioSource(institution, "human", "9610");
-        DaoFactory.getBioSourceDao().persist(organism);
+        getDaoFactory().getBioSourceDao().persist(organism);
 
         assertNotNull(cvInteractionType);
 
@@ -95,13 +95,13 @@ public class XrefTest extends AbstractIntactTest
         InteractorXref xref = new InteractorXref(institution, cvDatabase,  "testPrimaryId-Xref", cvXrefQualifier);
         prot.addXref(xref);
 
-        DaoFactory.getProteinDao().saveOrUpdate(prot);
+        getDaoFactory().getProteinDao().saveOrUpdate(prot);
 
         String protAc = prot.getAc();
 
         assertNotNull(protAc);
 
-        ProteinImpl loadedProt = DaoFactory.getProteinDao().getByAc(protAc);
+        ProteinImpl loadedProt = getDaoFactory().getProteinDao().getByAc(protAc);
         assertNotNull(organism);
 
         Collection<InteractorXref> xrefs = loadedProt.getXrefs();

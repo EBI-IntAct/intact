@@ -29,15 +29,15 @@ public class ProteinTest extends AbstractIntactTest
 
     public void testCreateInstitution()
     {
-        Institution institution = new Institution("EBI");
+        Institution institution = new Institution("ebi");
         institution.setFullName("Test Institution");
 
-        DaoFactory.getInstitutionDao().persist(institution);
+        getDaoFactory().getInstitutionDao().persist(institution);
     }
 
     public void testGetProtein()
     {
-        Protein protein = DaoFactory.getProteinDao().getByAc("NOTHING-2");
+        Protein protein = getDaoFactory().getProteinDao().getByAc("NOTHING-2");
         Assert.assertNull(protein);
     }
 
