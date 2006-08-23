@@ -6,8 +6,10 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.SimpleExpression;
 
 import java.util.Collection;
 import java.util.List;
@@ -113,5 +115,51 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .add(Restrictions.eq("annot.annotationText",description )).list();
     }
 
+    /**
+     * Gets all the CVs for the current entity
+     * @param excludeObsolete if true exclude the obsolete CVs
+     * @param excludeHidden if true exclude the hidden CVs
+     * @return the list of CVs
+     */
+    public List<T> getAll(boolean excludeObsolete, boolean excludeHidden)
+    {
+        Criteria crit = getSession().createCriteria(getEntityClass());
+
+        if (excludeObsolete || excludeHidden)
+        {
+            crit.createAlias("annotations", "annot")
+                .createAlias("annot.cvTopic", "annotTopic");
+        }
+
+        if (excludeObsolete && excludeHidden)
+        {
+            crit.add(Restrictions.disjunction()
+                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE))
+                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN)));
+        }
+        else if (excludeObsolete && !excludeHidden)
+        {
+            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
+        }
+        else if (!excludeObsolete && excludeHidden)
+        {
+            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
+        }
+
+        return crit.list();
+    }
+    /**
+     * This method will search in the database an AnnotatedObject of type T having it's shortlabel or it's
+     * ac like the searchString given in argument.
+     * @param searchString (ex : "butkevitch-2006-%", "butkevitch-%-%", "EBI-12345%"
+     * @return a List of AnnotatedObject having their ac or shortlabel like the searchString
+     */
+    public List<T> getByShortlabelOrAcLike(String searchString)
+    {
+        return getSession().createCriteria(getEntityClass())
+                .add(Restrictions.or(
+                        Restrictions.like("ac",searchString).ignoreCase(),
+                        Restrictions.like("shortLabel",searchString).ignoreCase())).list();
+    }
 
 }
