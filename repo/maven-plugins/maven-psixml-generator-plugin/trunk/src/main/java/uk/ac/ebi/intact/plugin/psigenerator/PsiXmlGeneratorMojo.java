@@ -9,10 +9,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.application.dataConversion.*;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.MemoryMonitor;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.*;
 import java.util.Collection;
@@ -135,7 +135,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
     private void writePsiDataFile(ExperimentListItem item, CvMapping mapping) throws IOException
     {
         getLog().debug("\tLoading interactions");
-        Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
+        Collection<Interaction> interactions = PsiFileGenerator.getInteractionsForExperimentListItem(item);
         
         for (Version version : psiVersions)
         {
@@ -143,7 +143,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
             long start = System.currentTimeMillis();
 
-            PsiValidatorReport validationReport = NewFileGenerator.writePsiData(interactions, PsiVersion.valueOf(version.getNumber()), mapping,
+            PsiValidatorReport validationReport = PsiFileGenerator.writePsiData(interactions, PsiVersion.valueOf(version.getNumber()), mapping,
                     targetFile, version.isValidate());
 
             if (!validationReport.isValid())

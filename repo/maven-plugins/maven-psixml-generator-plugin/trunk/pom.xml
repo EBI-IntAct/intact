@@ -11,8 +11,8 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>maven-psixml-generator-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.2-SNAPSHOT</version>
-    <!-- last released 1.1.3 -->
+    <version>1.1.4</version>
+    <!-- last released 1.1.4 -->
     <name>Plugin - PSI XML Generator</name>
     <description>
         Generates PSI XML files from the stored data
@@ -67,7 +67,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>data-conversion</artifactId>
-            <version>1.3.6</version>
+            <version>1.3.7</version>
         </dependency>
         
         <dependency>
