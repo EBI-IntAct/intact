@@ -27,10 +27,10 @@ import java.util.List;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class NewFileGeneratorTest extends TestCase
+public class PsiFileGeneratorTest extends TestCase
 {
 
-    private static final Log log = LogFactory.getLog(NewFileGeneratorTest.class);
+    private static final Log log = LogFactory.getLog(PsiFileGeneratorTest.class);
 
     protected void setUp() throws Exception
     {
@@ -45,7 +45,7 @@ public class NewFileGeneratorTest extends TestCase
     
     public void testGenerateListGavin() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -59,7 +59,7 @@ public class NewFileGeneratorTest extends TestCase
         ExperimentListItem eli = eliSpecies.get(0);
         log.info("Experiment List Item: "+eli);
 
-        Document doc = NewFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion1(), mapping);
+        Document doc = PsiFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion1(), mapping);
 
         Writer writer = new StringWriter();
         DisplayXML.write(doc, writer, "   ");
@@ -68,7 +68,7 @@ public class NewFileGeneratorTest extends TestCase
         assertEquals(58964, xmlDoc.length());
 
         // 2.5
-        doc = NewFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion25(), mapping);
+        doc = PsiFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion25(), mapping);
 
         writer = new StringWriter();
         DisplayXML.write(doc, writer, "   ");
@@ -80,7 +80,7 @@ public class NewFileGeneratorTest extends TestCase
 
     public void testGenerateXmlFiles_Psi25() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -91,7 +91,7 @@ public class NewFileGeneratorTest extends TestCase
 
         for (ExperimentListItem item : allItems)
         {
-            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_25, mapping, new File("target/psi25"), true);
+            PsiFileGenerator.writePsiData(item, PsiVersion.VERSION_25, mapping, new File("target/psi25"), true);
         }
 
         // check if the files exist and are not empty
@@ -106,7 +106,7 @@ public class NewFileGeneratorTest extends TestCase
 
     public void testGenerateXmlFiles_Psi1() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -117,7 +117,7 @@ public class NewFileGeneratorTest extends TestCase
 
         for (ExperimentListItem item : allItems)
         {
-            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
+            PsiFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
         }
 
         // check if the files exist and are not empty
@@ -132,7 +132,7 @@ public class NewFileGeneratorTest extends TestCase
 
     public void testGenerateXmlFilesWithSmallMolecule_Psi1() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -143,7 +143,10 @@ public class NewFileGeneratorTest extends TestCase
 
         for (ExperimentListItem item : allItems)
         {
-            NewFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
+            File xmlFile = new File("target/psi1", item.getFilename());
+            if (xmlFile.exists()) xmlFile.delete();
+
+            PsiFileGenerator.writePsiData(item, PsiVersion.VERSION_1, mapping, new File("target/psi1"), false);
         }
 
         // check if the files exist and are not empty
@@ -151,14 +154,13 @@ public class NewFileGeneratorTest extends TestCase
         {
             File xmlFile = new File("target/psi1", item.getFilename());
 
-            assertTrue(xmlFile.exists());
-            assertTrue(xmlFile.length() > 0);
+            assertFalse(xmlFile.exists());
         }
     }
 
     public void testGenerateXmlFileWithSmallMolecule_FromInteractions() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -169,14 +171,39 @@ public class NewFileGeneratorTest extends TestCase
 
         for (ExperimentListItem item : allItems)
         {
-            Collection<Interaction> interactions = NewFileGenerator.getInteractionsForExperimentListItem(item);
+            Collection<Interaction> interactions = PsiFileGenerator.getInteractionsForExperimentListItem(item);
 
             File xml1 = new File("target/psi1", item.getFilename());
             if (xml1.exists()) xml1.delete(); // delete if it exists already
-            NewFileGenerator.writePsiData(interactions, PsiVersion.VERSION_1, mapping, xml1, true);
+            PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_1, mapping, xml1, true);
             assertFalse(xml1.exists());
 
-            PsiValidatorReport report25 = NewFileGenerator.writePsiData(interactions, PsiVersion.VERSION_25, mapping, new File("target/psi25/test-file.xml", item.getFilename()), true);
+            PsiValidatorReport report25 = PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_25, mapping, new File("target/psi25/test-file.xml", item.getFilename()), true);
+            assertTrue(report25.isValid());
+        }
+    }
+
+    public void testGenerateXmlFile_WithSelfInteractions() throws Exception
+    {
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+
+        CvMapping mapping = new CvMapping();
+        mapping.loadFile(reverseMappingFile);
+
+        ExperimentListGenerator gen = new ExperimentListGenerator("tian-2006-1");
+
+        List<ExperimentListItem> allItems = gen.generateAllClassifications();
+
+        for (ExperimentListItem item : allItems)
+        {
+            Collection<Interaction> interactions = PsiFileGenerator.getInteractionsForExperimentListItem(item);
+
+            File xml1 = new File("target/psi1", item.getFilename());
+            if (xml1.exists()) xml1.delete(); // delete if it exists already
+            PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_1, mapping, xml1, true);
+            assertFalse(xml1.exists());
+
+            PsiValidatorReport report25 = PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_25, mapping, new File("target/psi25/test-file2.xml", item.getFilename()), true);
             assertTrue(report25.isValid());
         }
     }

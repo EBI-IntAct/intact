@@ -25,7 +25,7 @@ import java.util.*;
  * persistence layer as usual.
  *
  * @author Samuel Kerrien, Chris Lewington
- * @deprecated use NewFileGenerator instead
+ * @deprecated use PsiFileGenerator instead
  * @version $Id$
  */
 @Deprecated

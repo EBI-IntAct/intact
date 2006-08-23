@@ -14,7 +14,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.util.InteractionUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -31,10 +32,10 @@ import java.util.List;
  * @version $Id$
  * @since <pre>10-Aug-2006</pre>
  */
-public abstract class NewFileGenerator
+public abstract class PsiFileGenerator
 {
 
-    private static final Log log = LogFactory.getLog(NewFileGenerator.class);
+    private static final Log log = LogFactory.getLog(PsiFileGenerator.class);
 
     /**
      * Writes a file containing the PSI XML, for the information contained in the ExperimentListItem
@@ -151,7 +152,7 @@ public abstract class NewFileGenerator
          // any more interactions linked to the experiment, we do not process it.
          List<String> interactionsToFilter = null;
 
-         if (PsiVersion.getVersion1().getVersion().equals(session.getPsiVersion().getVersion()))
+         if (PsiVersion.getVersion1().equals(session.getPsiVersion()))
          {
              interactionsToFilter = filterInteractions(interactions);
          }
@@ -180,7 +181,6 @@ public abstract class NewFileGenerator
                      }
                  }
              } // interactions
-
          }
          else
          {
@@ -224,15 +224,10 @@ public abstract class NewFileGenerator
 
         for (Interaction interaction : interactions)
         {
-            for (Component component : interaction.getComponents())
+            if (InteractionUtils.containsNonProteinInteractors(interaction)
+                    || InteractionUtils.isSelfInteraction(interaction))
             {
-                Interactor interactor = component.getInteractor();
-                if (interactor instanceof NucleicAcid ||
-                        interactor instanceof SmallMoleculeImpl)
-                {
-                    filteredAcs.add(interaction.getAc());
-                    break;
-                }
+                filteredAcs.add(interaction.getAc());
             }
         }
 
