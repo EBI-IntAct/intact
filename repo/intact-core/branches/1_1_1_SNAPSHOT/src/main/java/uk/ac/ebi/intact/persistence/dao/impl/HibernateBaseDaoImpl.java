@@ -119,7 +119,6 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase)
     {
         Criteria criteria = getSession().createCriteria(entityClass);
-        
         SimpleExpression rest = Restrictions.like(propertyName, value);
 
         if (ignoreCase)

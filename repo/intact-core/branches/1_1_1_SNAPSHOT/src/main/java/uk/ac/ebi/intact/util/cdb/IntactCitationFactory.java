@@ -26,12 +26,12 @@ import java.util.regex.Pattern;
  * @since <pre>11-Aug-2005</pre>
  */
 public class IntactCitationFactory {
-
+                                                    private static IntactCitationFactory ourInstance;
     ///////////////////////////
     // Singleton's methods
-
-    private static IntactCitationFactory ourInstance = new IntactCitationFactory();
-
+    static{
+   /* private static IntactCitationFactory*/ ourInstance = new IntactCitationFactory();
+    }
     public static IntactCitationFactory getInstance() {
         return ourInstance;
     }

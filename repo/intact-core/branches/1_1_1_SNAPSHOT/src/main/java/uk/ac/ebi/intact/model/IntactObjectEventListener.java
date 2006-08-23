@@ -52,6 +52,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
 
             if (names[i].equals("creator") || names[i].equals("updator"))
             {
+                log.debug("Current user " + currentUser);
                 values[i] = currentUser;
             }
         }
@@ -82,6 +83,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
 
             if (names[i].equals("updator"))
             {
+                log.debug("Current user is " + currentUser);
                 values[i] = currentUser;
             }
         }

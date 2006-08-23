@@ -108,7 +108,8 @@ public class ExperimentAutoFill {
      */
     private IntactCitation loadCitation( String pubmedID ) throws UnexpectedException,
                                                                   PublicationNotFoundException {
-        return IntactCitationFactory.getInstance().buildCitation( pubmedID );
+        IntactCitationFactory intactCitationFactory = IntactCitationFactory.getInstance();
+        return intactCitationFactory.buildCitation( pubmedID );
     }
 
     /**
