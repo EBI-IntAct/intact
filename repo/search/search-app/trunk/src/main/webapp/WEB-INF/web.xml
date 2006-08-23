@@ -19,6 +19,15 @@
     </context-param>
 
     <context-param>
+        <param-name>uk.ac.ebi.intact.INSTITUTION_LABEL</param-name>
+        <param-value>ebi</param-value>
+        <description>
+            The label of the institution, used to retrieve the Institution object
+            if it already exists, or to create a new institution
+        </description>
+    </context-param>
+
+    <context-param>
         <param-name>uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS</param-name>
         <param-value>false</param-value>
         <description>
@@ -57,12 +66,12 @@
 
     <!-- Filter to open the session at the beginning of the request and close on end -->
     <filter>
-        <filter-name>hibernateFilter</filter-name>
-        <filter-class>uk.ac.ebi.intact.webapp.HibernateSessionRequestFilter</filter-class>
+        <filter-name>intactFilter</filter-name>
+        <filter-class>uk.ac.ebi.intact.webapp.IntactSessionRequestFilter</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>hibernateFilter</filter-name>
+        <filter-name>intactFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
