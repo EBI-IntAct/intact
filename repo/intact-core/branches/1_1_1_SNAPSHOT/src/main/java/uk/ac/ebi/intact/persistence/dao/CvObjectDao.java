@@ -6,8 +6,10 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.List;
+import java.util.Collection;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -16,6 +18,6 @@ import java.util.List;
  */
 public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
 {
-
-    List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
+     List<T> getByPsiMiRefCollection(Collection<String> psiMis);
+//    List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
 }
