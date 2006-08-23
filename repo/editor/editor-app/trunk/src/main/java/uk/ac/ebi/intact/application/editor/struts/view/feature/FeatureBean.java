@@ -11,6 +11,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
+import uk.ac.ebi.intact.persistence.dao.FeatureDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -213,14 +215,18 @@ public class FeatureBean extends AbstractEditKeyBean {
      * Updates the internal Feature with the new values from the form.
      * @throws IntactException for errors in searching the database.
      */
-    public Feature getUpdatedFeature(IntactHelper helper) throws IntactException {
+    public Feature getUpdatedFeature() throws IntactException {
+//        if(myFeature != null && myFeature.getAc()!= null){
+//            FeatureDao featureDao = DaoFactory.getFeatureDao();
+//            myFeature = featureDao.getByAc(myFeature.getAc());
+//        }
         // Need to update the short label because cloning an interaction also
         // clones a Feature (changes it shortlabel).
         myFeature.setShortLabel(getShortLabel());
         // Set the bound domain if it isn't empty.
         if (hasBoundDomain()) {
-            Feature boumdDomain = (Feature) helper.getObjectByAc(Feature.class,
-                    myBoundDomainAc);
+            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            Feature boumdDomain = featureDao.getByAc(myBoundDomainAc);
             myFeature.setBoundDomain(boumdDomain);
         }
         return myFeature;

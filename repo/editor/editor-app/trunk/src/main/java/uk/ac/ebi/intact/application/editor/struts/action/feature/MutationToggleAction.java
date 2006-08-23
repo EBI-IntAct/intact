@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFeatureType;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,11 +64,9 @@ public class MutationToggleAction extends AbstractEditorAction {
             view.setShortLabel("xyz");
 
             // The helper to access the feature type.
-            IntactHelper helper = user.getIntactHelper();
-
+            CvObjectDao<CvFeatureType> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureType.class);
             // Preset the CvFeature type.
-            CvFeatureType featureType = (CvFeatureType) helper.getObjectByLabel(
-                    CvFeatureType.class, "hotspot");
+            CvFeatureType featureType = cvObjectDao.getByShortLabel("hotspot");
 
             // We shouldn't be getting a null object. But.... just in case.
             if (featureType != null) {

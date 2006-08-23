@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionVi
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.dao.FeatureDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -78,10 +80,10 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         // The feature we are about to edit.
         FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
-        IntactHelper helper = user.getIntactHelper();
 
+        FeatureDao featureDao = DaoFactory.getFeatureDao();
         Feature feature = fb.getFeature();
-        feature = helper.getObjectByAc(Feature.class, feature.getAc());
+        feature = featureDao.getByAc(feature.getAc());
 
         // Set the new object as the current edit object, don't release the pre view
         user.setView(feature, false);

@@ -19,6 +19,9 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -132,8 +135,8 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
     public void sanityCheck() throws ValidationException, IntactException {
         // There should be one unique bisosurce.
         if ((getCellType() == null) && (getTissue() == null)) {
-            IntactHelper helper = IntactHelperUtil.getIntactHelper();
-            BioSource bs = helper.getBioSourceByTaxId(myTaxId);
+            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSource bs = bioSourceDao.getByTaxonIdUnique(myTaxId);
             if (bs != null) {
                 // A BioSource found.
                 if (!bs.getAc().equals(getAc())) {
@@ -183,7 +186,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject() throws IntactException {
         // The current biosource.
         BioSource bs = getAnnotatedObject();
 
@@ -197,8 +200,8 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
             bs.setTaxId(getTaxId());
         }
         // Set tissue and cell objects.
-        bs.setCvTissue(getCvTissue(helper));
-        bs.setCvCellType(getCvCellType(helper));
+        bs.setCvTissue(getCvTissue());
+        bs.setCvCellType(getCvCellType());
         //bs.setBioSourceXref();
     }
 
@@ -227,27 +230,29 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
 
     /**
      * Returns the CvTissue object using the current tissue.
-     * @param helper the helper to search the database.
      * @return CvTissue object or null if the current tissue is null.
      * @throws IntactException for errors in retrieving the CvTisue object.
      */
-    private CvTissue getCvTissue(IntactHelper helper) throws IntactException {
+    private CvTissue getCvTissue() throws IntactException {
         if (myTissue == null) {
             return null;
         }
-        return helper.getObjectByLabel(CvTissue.class, myTissue);
+        CvObjectDao<CvTissue> cvObjectDao = DaoFactory.getCvObjectDao(CvTissue.class);
+        CvTissue cvTissue = cvObjectDao.getByShortLabel(myTissue);
+        return cvTissue;
     }
 
     /**
      * Returns the CvCellType object using the current cell type.
-     * @param helper the helper to search the database.
      * @return CvCellType object or null if the current cell type is null.
      * @throws IntactException for errors in retrieving the CvCellType object.
      */
-    private CvCellType getCvCellType(IntactHelper helper) throws IntactException {
+    private CvCellType getCvCellType() throws IntactException {
         if (myCellType == null) {
             return null;
         }
-        return helper.getObjectByLabel(CvCellType.class, myCellType);
+        CvObjectDao<CvCellType> cvObjectDao = DaoFactory.getCvObjectDao(CvCellType.class);
+        CvCellType cvCellType = cvObjectDao.getByShortLabel(myCellType);
+        return cvCellType;
     }
 }

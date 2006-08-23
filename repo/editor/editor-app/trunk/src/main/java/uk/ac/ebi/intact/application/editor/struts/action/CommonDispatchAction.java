@@ -346,7 +346,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
     public Xref createXref(XreferenceBean xb, AbstractEditViewBean view) throws IntactException {
         Institution institution = DaoFactory.getInstitutionDao().getInstitution();//new Institution("ebi");
         CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
-        //IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
         CvDatabase cvDatabase = (CvDatabase) cvObjectDao.getByShortLabel(xb.getDatabase());//CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase()));
         CvXrefQualifier cvXrefQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel(xb.getQualifier());//new CvXrefQualifier(institution, xb.getQualifier());
         Xref xref;
@@ -533,17 +532,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             CvTopic cvTopic;
             String description = new String();
             String date = year + "-" + DateToolbox.getMonth(month) + "-" + day;
-            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
                 description = description + "Accepted " + date + " by " + userName.toUpperCase() + ".";
                 // The topic for new annotation.
-                cvTopic = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.ACCEPTED);
+                cvTopic = cvObjectDao.getByShortLabel(CvTopic.ACCEPTED);
             }else{ // if the button press is "Review"
                 description = description + "Rejected " + date + " by " + userName.toUpperCase() + ".";
 
                 // The topic for new annotation.
-                cvTopic = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.TO_BE_REVIEWED);
+                cvTopic = cvObjectDao.getByShortLabel(CvTopic.TO_BE_REVIEWED);
             }
             if (cb1 != null){
                 description = description + " " + cb1.getDescription();

@@ -16,6 +16,10 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.PolymerFactory;
 import uk.ac.ebi.intact.util.Crc64;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 
 import java.util.HashMap;
 import java.util.List;
@@ -118,9 +122,15 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
             Polymer polymer = getAnnotatedObject();
             // Only set the sequence for when we have a seq.
             List emptyChunks = polymer.setSequence(getSequence());
-            if (!emptyChunks.isEmpty()) {
-                user.getIntactHelper().deleteAllElements(emptyChunks);
-            }
+
+            // This is to replace the following commented lines.
+            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            interactorDao.update(polymer);
+
+
+//            if (!emptyChunks.isEmpty()) {
+//                user.getIntactHelper().deleteAllElements(emptyChunks);
+//            }
         }
     }
 
@@ -147,12 +157,13 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject() throws IntactException {
         // Get the objects using their short label.
-        BioSource biosrc = helper.getObjectByLabel(BioSource.class,
-                myOrganism);
-        CvInteractorType intType = helper.getObjectByLabel(
-                CvInteractorType.class, myInteractorType);
+        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+        BioSource biosrc = bioSourceDao.getByShortLabel(myOrganism);
+
+        CvObjectDao<CvInteractorType> cvObjectDao = DaoFactory.getCvObjectDao(CvInteractorType.class);
+        CvInteractorType intType = cvObjectDao.getByShortLabel(myInteractorType);
         // The current polymer
         Polymer polymer = getAnnotatedObject();
 

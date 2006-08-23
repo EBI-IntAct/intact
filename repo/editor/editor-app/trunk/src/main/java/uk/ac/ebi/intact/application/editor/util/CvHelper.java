@@ -48,7 +48,7 @@ public class CvHelper {
     private static CvInteractorType protein;
 
     /**
-     * This class is used in the Editor where the IntactHelper is strictly managed.
+     * This class is used in the Editor.
      * The needed helper are managed and given by the IntactHelperUtil class.
      * Therefore, as we know we will need some helper in this class, we give it as an
      * argument of the constructor and we make the no argument constructor private.
@@ -110,8 +110,8 @@ public class CvHelper {
 
     public static CvDatabase getPsiMi() throws IntactException {
         if (psiMi == null){
-            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
-            psiMi = (CvDatabase) cvObjectDao.getByXref(CvDatabase.PSI_MI_MI_REF);
+            CvObjectDao<CvDatabase> cvObjectDao = DaoFactory.getCvObjectDao(CvDatabase.class);
+            psiMi = cvObjectDao.getByXref(CvDatabase.PSI_MI_MI_REF);
         }
         return psiMi;
     }
@@ -132,7 +132,7 @@ public class CvHelper {
     public  static CvXrefQualifier getIdentity() throws IntactException {
 
         if (identity == null){
-            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            CvObjectDao<CvXrefQualifier> cvObjectDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
             identity = (CvXrefQualifier) cvObjectDao.getByXref(CvXrefQualifier.IDENTITY_MI_REF);
         }
         return identity;
@@ -145,7 +145,7 @@ public class CvHelper {
      * @throws IntactException
      */
     private static CvObject getCvUsingItsMiRef(String psiMiId) throws IntactException {
-        CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
         List<CvObject> cvObjects = cvObjectDao.getByXrefLike(getPsiMi(), getIdentity(), psiMiId);
 
         if (! (cvObjects.size()== 1) ){

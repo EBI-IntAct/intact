@@ -21,6 +21,8 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -136,32 +138,31 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
         // The helper to make experiment rows.
-        IntactHelper helper = user.getIntactHelper();
 
         // Add the search result to the holder.
-        view.addExperimentToHold(makeExperimentRows(results, helper));
+        view.addExperimentToHold(makeExperimentRows(results));
 
         return mapping.getInputForward();
     }
 
-    private List makeExperimentRows(List rows, IntactHelper helper) throws IntactException {
+    private List makeExperimentRows(List rows) throws IntactException {
         // The collection to return; it consists of exp row data.
         List expRows = new ArrayList();
 
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
 
+        CvObjectDao<CvXrefQualifier> cvObjectDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
         // The primary reference AC.
-        String ac = ((AnnotatedObject) helper.getObjectByLabel(
-                CvXrefQualifier.class, "primary-reference")).getAc();
+        String ac = (cvObjectDao.getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF)).getAc();
 
         for (Iterator iter = rows.iterator(); iter.hasNext(); ) {
             ResultRowData rrd = (ResultRowData) iter.next();
             ExperimentRowData expRow = new ExperimentRowData(rrd.getAc(),
                     rrd.getShortLabel(), rrd.getFullName(), rrd.getCreator(),
                     rrd.getUpdator(), rrd.getCreated(), rrd.getUpdated());
-            Query query = qf.getQualifierXrefQuery(ac, expRow.getAc());
-            Xref xref = (Xref) helper.getObjectByQuery(query);
+//            Query query = qf.getQualifierXrefQuery(ac, expRow.getAc());
+            Xref xref =  qf.getQualifierXrefQuery(ac, expRow.getAc());//(Xref) helper.getObjectByQuery(query);
             // Xref is null if no primary reference found for the experiment.
             if (xref != null) {
                 expRow.setPubMedLink(xref);

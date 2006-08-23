@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -29,6 +31,7 @@ import java.util.Date;
  */
 public class EditorActionForm extends DispatchActionForm implements EditorFormI {
 
+    private static final Log log = LogFactory.getLog(EditorActionForm.class);
     /**
      * The short label.
      */
@@ -126,6 +129,7 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
     }
 
     public String getCreated() {
+//        log.debug("The created date is " + myCreated.toString());
         return DateToolbox.formatDate(this.myCreated);
     }
 

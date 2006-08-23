@@ -17,6 +17,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
 
@@ -312,13 +314,12 @@ public class EditorMenuFactory {
 
     private String getMiRef(String ac, Class<CvObject> clazz) throws IntactException {
 
-        IntactHelper helper = IntactHelperUtil.getIntactHelper();
-
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
 
         CvObject cvObject;
 
         try {
-            cvObject = helper.getObjectByAc(clazz, ac);
+            cvObject = cvObjectDao.getByAc(ac);
         } catch (IntactException e) {
             throw new IntactException ( "Could not find CvObject for ac : " + ac, e);
         }

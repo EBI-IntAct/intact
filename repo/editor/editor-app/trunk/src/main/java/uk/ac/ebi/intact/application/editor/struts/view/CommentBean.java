@@ -11,6 +11,9 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
 
 /**
  * Bean to store data for comments (annotations).
@@ -84,19 +87,23 @@ public class CommentBean extends AbstractEditKeyBean {
 
     /**
      * Updates the internal annotation with the new values from the form.
-     * @param helper the IntactHelper to search the database
      * @return an Annotation created or updated using values in the bean.
      * @throws IntactException for errors in searching for a CvTopic.
      */
-    public Annotation getAnnotation(IntactHelper helper) throws IntactException {
+    public Annotation getAnnotation() throws IntactException {
         // The topic for the annotation.
-        CvTopic cvtopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
-                getTopic());
+        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvTopic cvtopic = (CvTopic) cvObjectDao.getByShortLabel(getTopic());
+
         // Create a new annotation (true if this object was cloned).
         if (myAnnotation == null) {
             myAnnotation = new Annotation(getService().getOwner(), cvtopic);
         }
         else {
+            if(myAnnotation.getAc() != null){
+                AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+                myAnnotation = annotationDao.getByAc(myAnnotation.getAc());
+            }
             // Update the existing annotation object.
             myAnnotation.setCvTopic(cvtopic);
         }

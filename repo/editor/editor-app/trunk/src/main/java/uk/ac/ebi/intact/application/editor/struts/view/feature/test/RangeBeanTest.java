@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * The test class for RangeBean class.
@@ -59,24 +61,23 @@ public class RangeBeanTest extends TestCase {
      * Tests the constructor.
      */
     public void testConstructor1() {
-        IntactHelper helper = null;
         try {
-            helper = new IntactHelper();
-            doTestConstructor1(helper);
+//            helper = new IntactHelper();
+            doTestConstructor1();
         }
         catch (Exception ex) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }
-        finally {
-            if (helper != null) {
-                try {
-                    helper.closeStore();
-                }
-                catch (IntactException e) {}
-            }
-        }
+//        finally {
+//            if (helper != null) {
+//                try {
+//                    helper.closeStore();
+//                }
+//                catch (IntactException e) {}
+//            }
+//        }
     }
 
     /**
@@ -453,19 +454,14 @@ public class RangeBeanTest extends TestCase {
 
     // Helper methods
 
-    private void doTestConstructor1(IntactHelper helper) throws IntactException {
-        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.UNDETERMINED);
-        CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.RANGE);
-        CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.C_TERMINAL);
-        CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.N_TERMINAL);
+    private void doTestConstructor1() throws IntactException {
+        CvObjectDao<CvFuzzyType> cvObjectDao = DaoFactory.getCvObjectDao(CvFuzzyType.class);
+        CvFuzzyType lessThan = cvObjectDao.getByShortLabel(CvFuzzyType.LESS_THAN);
+        CvFuzzyType greaterThan = cvObjectDao.getByShortLabel(CvFuzzyType.GREATER_THAN);
+        CvFuzzyType undetermined = cvObjectDao.getByShortLabel(CvFuzzyType.UNDETERMINED);
+        CvFuzzyType range = cvObjectDao.getByShortLabel(CvFuzzyType.RANGE);
+        CvFuzzyType ct = cvObjectDao.getByShortLabel(CvFuzzyType.C_TERMINAL);
+        CvFuzzyType nt = cvObjectDao.getByShortLabel(CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 
@@ -589,17 +585,17 @@ public class RangeBeanTest extends TestCase {
 
     private void doTestGetRange(IntactHelper helper) throws IntactException {
         CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.LESS_THAN);
+                                                                     CvFuzzyType.LESS_THAN);
         CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.GREATER_THAN);
+                                                                        CvFuzzyType.GREATER_THAN);
         CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.UNDETERMINED);
+                                                                         CvFuzzyType.UNDETERMINED);
         CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.RANGE);
+                                                                  CvFuzzyType.RANGE);
         CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.C_TERMINAL);
+                                                               CvFuzzyType.C_TERMINAL);
         CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                CvFuzzyType.N_TERMINAL);
+                                                               CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 

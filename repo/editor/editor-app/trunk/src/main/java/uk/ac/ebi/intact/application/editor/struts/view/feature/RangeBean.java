@@ -16,6 +16,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -524,8 +526,8 @@ public class RangeBean extends AbstractEditKeyBean {
         // Set the from and to fuzzy types.
         CvFuzzyType fuzzyType = null;
         if (type.length() != 0) {
-            IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
-            fuzzyType = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class, type);
+            CvObjectDao<CvFuzzyType> cvObjectDao = DaoFactory.getCvObjectDao(CvFuzzyType.class);
+            fuzzyType = cvObjectDao.getByShortLabel(type);
         }
         return fuzzyType;
     }

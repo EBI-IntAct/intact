@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.business.IntactException;
@@ -38,6 +40,9 @@ import javax.servlet.http.HttpServletResponse;
  *      path="/do/choose"
  */
 public class ResultAction extends AbstractEditorAction {
+
+    private static final Log log = LogFactory.getLog(ResultAction.class);
+
 
     /**
      * Process the specified HTTP request, and create the corresponding
@@ -89,19 +94,20 @@ public class ResultAction extends AbstractEditorAction {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
-        IntactHelper helper = user.getIntactHelper();
         // The class for the search.
         Class clazz = getModelClass(type);
         // We need to do this because interactions can be added or removed from
         // an experiment via the interaction editor. Those interactions that
         // have been added or removed this way will not be visible until it
         // is removed and reloaded again.
-        if (Experiment.class.isAssignableFrom(clazz) && helper.isInCache(clazz, ac)) {
-            helper.removeFromCache(clazz, ac);
-        }
+
+        //We should need to do that as everything should be reloaded everytime
+//        if (Experiment.class.isAssignableFrom(clazz) && helper.isInCache(clazz, ac)) {
+//            helper.removeFromCache(clazz, ac);
+//        }
+
         // The selected Annotated object.
-        AnnotatedObjectDao annotatedObjectDao = DaoFactory.getAnnotatedObjectDao();
-        AnnotatedObject annobj = getAnnotatedObject(ac,type);//AnnotatedObject) helper.getObjectByAc(clazz, ac));
+        AnnotatedObject annobj = getAnnotatedObject(ac,type);//type);//AnnotatedObject) helper.getObjectByAc(clazz, ac));
         // Set the object and the type we are about to edit.
         user.setSelectedTopic(type);
         user.setView(annobj);
@@ -123,6 +129,8 @@ public class ResultAction extends AbstractEditorAction {
      */
     public AnnotatedObject getAnnotatedObject(String ac, String type){
         AnnotatedObject annobj;
+        log.debug("Type is : " + type + " and ac is : " + ac);
+        log.debug("SearchClass.CV_TOPIC.getShortName() is " + SearchClass.CV_XREF_QUALIFIER.getShortName() + ".");
         AnnotatedObjectDao annotatedObjectDao;
         if(SearchClass.EXPERIMENT.getShortName().equals(type)){
             annotatedObjectDao = DaoFactory.getExperimentDao();
@@ -150,6 +158,11 @@ public class ResultAction extends AbstractEditorAction {
             throw new IntactException("Unknown search type : " + type + ".");
         }
         annobj = (AnnotatedObject) annotatedObjectDao.getByAc(ac);
+        if(annobj == null){
+            log.debug("annobj found is null");
+        }else{
+            log.debug("annobj found is not null and it's ac is " + annobj.getAc() );
+        }
         return annobj;
     }
 

@@ -52,7 +52,7 @@ public class CvViewBean extends AbstractEditViewBean<CvObject> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException{
+    protected void updateAnnotatedObject() throws IntactException{
         // The current CV object.
         CvObject cvobj = getAnnotatedObject();
 

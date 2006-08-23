@@ -21,11 +21,8 @@ import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
@@ -480,40 +477,80 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditState = true;
     }
 
-    public void startTransaction() throws IntactException {
-        getIntactHelper().startTransaction(BusinessConstants.OBJECT_TX);
-    }
+//    public void startTransaction() throws IntactException {
+//        getIntactHelper().startTransaction(BusinessConstants.OBJECT_TX);
+//    }
 
-    public void commit() throws IntactException {
-        IntactHelper helper = getIntactHelper();
-        helper.finishTransaction();
-        endEditing();
-        // Clear the cache; this will force the OJB to read from the database.
-        helper.removeFromCache(myEditView.getAnnotatedObject());
-    }
+//    public void commit() throws IntactException {
+//        IntactHelper helper = getIntactHelper();
+//        helper.finishTransaction();
+//        endEditing();
+//        // Clear the cache; this will force the OJB to read from the database.
+//        helper.removeFromCache(myEditView.getAnnotatedObject());
+//    }
 
     public void rollback() throws IntactException {
-        getIntactHelper().undoTransaction();
+//        getIntactHelper().undoTransaction();
         endEditing();
     }
 
     public void delete() throws IntactException {
-        IntactHelper helper = getIntactHelper();
+//        IntactHelper helper = getIntactHelper();
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
-        if (!helper.isPersistent(annobj)) {
+        if (annobj.getAc() == null) {
             return;
         }
-        helper.delete(annobj);
 
-        // Clear annotation and xref collections
-        helper.deleteAllElements(annobj.getAnnotations());
-        annobj.getAnnotations().clear();
-        // Don't want xrefs; tied to an annotated object. Delete them explicitly
-        helper.deleteAllElements(annobj.getXrefs());
-        annobj.getXrefs().clear();
+        delete(annobj);
+//        helper.delete(annobj);
+//
+//        // Clear annotation and xref collections
+//        helper.deleteAllElements(annobj.getAnnotations());
+//        annobj.getAnnotations().clear();
+//        // Don't want xrefs; tied to an annotated object. Delete them explicitly
+//        helper.deleteAllElements(annobj.getXrefs());
+//        annobj.getXrefs().clear();
 
         // Not returning the view back to the pool as it may be required for other
         // information such as releasing the lock etc.
+    }
+
+    private void delete(AnnotatedObject annobj){
+        if(annobj.getAc() == null){
+            return;
+        }
+
+        Collection annotations = annobj.getAnnotations();
+        AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+        annotationDao.deleteAll(annotations);
+        annobj.getAnnotations().clear();
+
+        Collection xrefs = annobj.getXrefs();
+        XrefDao xrefDao = DaoFactory.getXrefDao();
+        xrefDao.deleteAll(xrefs);
+        annobj.getXrefs().clear();
+
+        if(annobj instanceof Experiment){
+            log.debug("myAnnotObject is instanceof Experiment");
+            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            experimentDao.delete((Experiment) annobj);
+        }else if(annobj instanceof Interactor){
+            log.debug("myAnnotObject is instanceof Interactor");
+            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            interactorDao.delete((Interactor)annobj);
+        }else if(annobj instanceof Feature){
+            log.debug("myAnnotObject is instanceof Feature");
+            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            featureDao.delete((Feature) annobj);
+        }else if(annobj instanceof CvObject){
+            log.debug("myAnnotObject is instanceof CvObject");
+            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            cvObjectDao.delete((CvObject) annobj);
+        }else if(annobj instanceof BioSource){
+            log.debug("myAnnotObject is instanceof BioSource");
+            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            bioSourceDao.delete((BioSource) annobj);
+        }
     }
 
     public void cancelEdit() {

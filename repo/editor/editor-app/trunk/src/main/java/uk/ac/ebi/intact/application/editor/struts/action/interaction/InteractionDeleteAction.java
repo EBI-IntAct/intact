@@ -75,14 +75,13 @@ public class InteractionDeleteAction extends DeleteFormAction {
         ExperimentViewBean expView = (ExperimentViewBean) user.popPreviousView();
 
         // Update the experiment-Interaction table.
-        if (expView.deleteInteractionRow(ac)) {
-            // Need to remove from the cache as it contains the deleted interaction.
-
-            // The intact helper to access the persistent layer.
-            IntactHelper helper = user.getIntactHelper();
-            // Remove it from the cache first.
-            helper.removeFromCache(expView.getAnnotatedObject());
-        }
+//        if (expView.deleteInteractionRow(ac)) {
+//            // Need to remove from the cache as it contains the deleted interaction.
+//
+//            // The intact helper to access the persistent layer.
+//            // Remove it from the cache first.
+//            helper.removeFromCache(expView.getAnnotatedObject());
+//        }
         user.setView(expView);
         // Back to the experiment editor.
         return mapping.findForward(EXP);
