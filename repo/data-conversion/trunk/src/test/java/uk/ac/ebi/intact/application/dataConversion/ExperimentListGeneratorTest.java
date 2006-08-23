@@ -127,7 +127,7 @@ public class ExperimentListGeneratorTest extends TestCase
 
     public void testSearchPatternWithCommas() throws Exception
     {
-        File reverseMappingFile = new File(NewFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
