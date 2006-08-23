@@ -13,14 +13,14 @@
    - @version $Id$
 -->
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.Constants,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork,
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
+                 uk.ac.ebi.intact.application.hierarchview.business.graph.InteractionNetwork,
+                 uk.ac.ebi.intact.context.IntactContext,
+                 uk.ac.ebi.intact.searchengine.CriteriaBean,
                  java.util.ArrayList,
-                 java.util.Iterator,
-                 java.util.StringTokenizer,
-                 uk.ac.ebi.intact.searchengine.CriteriaBean" %>
-<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+                 java.util.Iterator" %>
+<%@ page import="java.util.StringTokenizer" %>
 
 <%
     /**

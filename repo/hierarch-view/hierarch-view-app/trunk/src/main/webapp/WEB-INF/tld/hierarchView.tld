@@ -18,7 +18,7 @@
 
     <tag>
         <name>displayInteractionNetwork</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayInteractionNetworkTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.DisplayInteractionNetworkTag</tag-class>
         <body-content>empty</body-content>
         <description>
             Displays the interaction network if the picture has been generated
@@ -29,7 +29,7 @@
 
     <tag>
         <name>displayHighlightOptions</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHighlightOptions</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.DisplayHighlightOptions</tag-class>
         <body-content>empty</body-content>
         <description>
             Include HTML code to Displays current highlight source options.
@@ -39,7 +39,7 @@
 
     <tag>
         <name>displaySource</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplaySourceTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.DisplaySourceTag</tag-class>
         <body-content>empty</body-content>
         <description>
             Displays available source for the selected protein.
@@ -49,7 +49,7 @@
 
     <tag>
         <name>displayHttpContent</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.DisplayHttpContentTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.DisplayHttpContentTag</tag-class>
         <body-content>empty</body-content>
         <description>
             Displays the content of the URL stored in the session.
@@ -59,7 +59,7 @@
 
     <tag>
         <name>saveContextInCookie</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.SaveContextInCookieTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.SaveContextInCookieTag</tag-class>
         <body-content>empty</body-content>
         <description>
             Allows to save in a cookie (stored in the client side)
@@ -70,7 +70,7 @@
 
     <tag>
         <name>restoreContextFromCookie</name>
-        <tag-class>uk.ac.ebi.intact.application.hierarchView.struts.taglibs.RestoreContextFromCookieTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.application.hierarchview.struts.taglibs.RestoreContextFromCookieTag</tag-class>
         <body-content>empty</body-content>
         <description>
             allows to restore the eventual user context of the user from a cookie

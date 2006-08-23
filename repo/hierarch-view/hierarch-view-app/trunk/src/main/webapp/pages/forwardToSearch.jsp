@@ -1,8 +1,8 @@
 <%@ page language="java"%>
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants,
-                 uk.ac.ebi.intact.application.hierarchView.business.graph.InteractionNetwork"%>
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
+                 uk.ac.ebi.intact.application.hierarchview.business.graph.InteractionNetwork"%>
 <%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>

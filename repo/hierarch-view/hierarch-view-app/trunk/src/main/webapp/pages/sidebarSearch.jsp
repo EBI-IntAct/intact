@@ -11,12 +11,13 @@
    - @version $Id$
 -->
 
-<%@ page import="java.util.ArrayList,
-                 uk.ac.ebi.intact.application.hierarchView.struts.view.utils.OptionGenerator,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants,
-                 uk.ac.ebi.intact.application.hierarchView.struts.view.utils.LabelValueBean"%>
-<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
+                 uk.ac.ebi.intact.application.hierarchview.struts.view.utils.LabelValueBean,
+                 uk.ac.ebi.intact.application.hierarchview.struts.view.utils.OptionGenerator,
+                 uk.ac.ebi.intact.context.IntactContext"%>
+<%@ page import="javax.servlet.jsp.PageContext" %>
+<%@ page import="java.util.ArrayList" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>

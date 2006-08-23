@@ -1,5 +1,4 @@
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.struts.view.utils.SourceBean,
                  java.util.ArrayList"%>
 <%@ page language="java" %>
 
@@ -31,7 +30,7 @@
                 <!-- GO terms -->
                 <display:table
                     name="sessionScope.tmpListSources" width="100%" class="tsources"
-                    decorator="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceDecorator">
+                    decorator="uk.ac.ebi.intact.application.hierarchview.struts.view.utils.SourceDecorator">
                     <display:column property="description"        title="Description" width="55%" align="left" />
                     <display:column property="directHighlightUrl" title="Show"        width="8%"  align="center" />
                     <display:column property="graph"              title="Browse"      width="8%"  align="center" />
