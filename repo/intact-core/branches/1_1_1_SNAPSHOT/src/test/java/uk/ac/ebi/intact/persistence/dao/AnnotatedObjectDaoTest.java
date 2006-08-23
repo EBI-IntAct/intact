@@ -51,8 +51,17 @@ public class AnnotatedObjectDaoTest extends TestCase {
         CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
         CvTopic cvTopic = cvObjectDao.getByAc("EBI-821310");
         AnnotatedObjectDao<Experiment> annotatedObjectDao = DaoFactory.getAnnotatedObjectDao(Experiment.class);
-        List annotatedObjects = annotatedObjectDao.getByAnnotationTopicAnDescription(cvTopic, "Mouse cardiac cell library used for yeast two-hybrid screening.");
+        List annotatedObjects = annotatedObjectDao.getByAnnotationTopicAndDescription(cvTopic, "Mouse cardiac cell library used for yeast two-hybrid screening.");
         assertEquals(annotatedObjects.size(),37);
+        tx.commit();
+
+    }
+
+    public void testGetByShortlabelOrAcLike(){
+        IntactTransaction tx = DaoFactory.beginTransaction();
+        AnnotatedObjectDao<Experiment> annotatedObjectDao = DaoFactory.getAnnotatedObjectDao(Experiment.class);
+        List annotatedObjects = annotatedObjectDao.getByShortlabelOrAcLike("butkevich-2004-%");
+        assertEquals(annotatedObjects.size(),4);
         tx.commit();
 
     }
