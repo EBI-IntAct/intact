@@ -73,7 +73,16 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                     packageName = "/"+packageName.replaceAll("\\.", "/");
                 }
 
-                for (Class clazz : IntactAnnotator.getAnnotatedClasses(packageName))
+                List<Class> annotatedClasses = IntactAnnotator.getAnnotatedClasses(packageName);
+
+                if (annotatedClasses.size() == 0)
+                {
+                    log.error("No annotated classes found in: "+packageName +
+                            ". Be aware that if the package also exists in the src/test/java folder your " +
+                            "entities won't be loaded.");
+                }
+
+                for (Class clazz : annotatedClasses)
                 {
                     log.debug("Adding annotated class to hibernate: " + clazz.getName());
                     ((AnnotationConfiguration) configuration).addAnnotatedClass(clazz);
@@ -102,6 +111,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             if (getSession().isWebapp() && configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
             {
                 // Let Hibernate bind the factory to JNDI
+                log.debug("Building webapp sessionFactory: "+configuration.getProperty(Environment.SESSION_FACTORY_NAME));
                 configuration.buildSessionFactory();
             }
             else
@@ -109,6 +119,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 // or use static variable handling
                 configuration.getProperties().remove(Environment.SESSION_FACTORY_NAME);
 
+                log.debug("Building standalone sessionFactory");
                 sessionFactory = configuration.buildSessionFactory();
             }
 

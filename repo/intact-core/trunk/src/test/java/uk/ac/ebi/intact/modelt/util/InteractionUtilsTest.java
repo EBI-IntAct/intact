@@ -4,12 +4,13 @@
  * in the root directory of this distribution.
  */
 
-package uk.ac.ebi.intact.model.util;
+package uk.ac.ebi.intact.modelt.util;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.InteractionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

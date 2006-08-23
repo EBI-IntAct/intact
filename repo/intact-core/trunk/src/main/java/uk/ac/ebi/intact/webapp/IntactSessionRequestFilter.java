@@ -41,21 +41,21 @@ public class IntactSessionRequestFilter implements Filter {
         IntactSession intactSession = new WebappSession(session.getServletContext(), session, (HttpServletRequest) request);
         IntactContext context = IntactConfigurator.createIntactContext(intactSession);
 
-        //try
-        //{
+        try
+        {
             // Call the next filter (continue request processing)
             chain.doFilter(request, response);
-        //}
-        //catch (IOException e)
-        //{
-         //   e.printStackTrace();
-        //}
-        //catch (ServletException e)
-        //{
-         //   e.printStackTrace();
-        //}
-        //finally
-        //{
+        }
+        catch (IOException e)
+        {
+           e.printStackTrace();
+        }
+        catch (ServletException e)
+        {
+           e.printStackTrace();
+        }
+        finally
+        {
             log.debug("Committing active transactions");
             try
             {
@@ -65,7 +65,7 @@ public class IntactSessionRequestFilter implements Filter {
             {
                 e.printStackTrace();
             }
-        //}
+        }
 
     }
 

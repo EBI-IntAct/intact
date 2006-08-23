@@ -153,9 +153,16 @@ public class IntactConfigurator
 
     public static IntactContext createIntactContext(IntactSession session)
     {
+        /*
+        if (RuntimeConfig.getCurrentInstance(session).getDataConfigs().isEmpty())
+        {
+            initIntact(session);
+        }
+        */
+
         String defaultUser = null;
 
-        if (log.isInfoEnabled())
+        if (log.isDebugEnabled())
         {
             log.debug("Data Configs registered: "+RuntimeConfig.getCurrentInstance(session).getDataConfigs());
         }
