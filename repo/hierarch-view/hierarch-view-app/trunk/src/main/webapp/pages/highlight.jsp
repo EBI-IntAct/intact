@@ -1,8 +1,8 @@
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.struts.view.utils.SourceBean,
-                 uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 java.util.ArrayList,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
-<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
+                 uk.ac.ebi.intact.application.hierarchview.struts.view.utils.SourceBean,
+                 uk.ac.ebi.intact.context.IntactContext"%>
+<%@ page import="java.util.ArrayList" %>
 <%@ page language="java" %>
 
 <!--

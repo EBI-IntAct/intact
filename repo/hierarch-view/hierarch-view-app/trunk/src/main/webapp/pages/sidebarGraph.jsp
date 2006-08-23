@@ -15,8 +15,8 @@
    - @version $Id$
 -->
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
+<%@ page import="uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI"%>
 <%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>

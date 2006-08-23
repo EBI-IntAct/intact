@@ -14,15 +14,54 @@
         interaction network.
     </description>
 
-    <!-- Filter to open the session at the beginning of the request and close on end -->
+    <distributable/>
+
+    <!-- IntAct Init parameters -->
+    <context-param>
+        <param-name>uk.ac.ebi.intact.AC_PREFIX</param-name>
+        <param-value>EBI</param-value>
+        <description>
+            The Accession Number Prefix for the objects created
+            by the application and stored in the database.
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.INSTITUTION_LABEL</param-name>
+        <param-value>ebi</param-value>
+        <description>
+            The label of the institution, used to retrieve the Institution object
+            if it already exists, or to create a new institution
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS</param-name>
+        <param-value>false</param-value>
+        <description>
+            Preload the most common CvObjects on application start, so it is
+            faster to retrieve them later
+        </description>
+    </context-param>
+
+    <!-- Filter to init the IntactContext at the beginning of the request and close the
+        transaction at the end -->
     <filter>
-        <filter-name>hibernateFilter</filter-name>
-        <filter-class>uk.ac.ebi.intact.webapp.HibernateSessionRequestFilter</filter-class>
+        <filter-name>intactFilter</filter-name>
+        <filter-class>uk.ac.ebi.intact.webapp.IntactSessionRequestFilter</filter-class>
     </filter>
 
     <filter-mapping>
-        <filter-name>hibernateFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <filter-name>intactFilter</filter-name>
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>intactFilter</filter-name>
+        <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>intactFilter</filter-name>
+        <url-pattern>/GenerateImage</url-pattern>
     </filter-mapping>
 
     <!-- =================================================================== -->
@@ -56,7 +95,7 @@
     <!-- Declaration of the Image generator servlet -->
     <servlet>
         <servlet-name>GenerateImage</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.application.hierarchView.business.servlet.GenerateImage</servlet-class>
+        <servlet-class>uk.ac.ebi.intact.application.hierarchview.business.servlet.GenerateImage</servlet-class>
     </servlet>
 
     <servlet-mapping>

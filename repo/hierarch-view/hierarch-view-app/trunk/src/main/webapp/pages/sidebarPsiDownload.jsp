@@ -13,14 +13,12 @@
    - @version $Id$
 -->
 
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants,
+<%@ page import="org.apache.taglibs.standard.lang.jpath.encoding.HtmlEncoder,
+                 uk.ac.ebi.intact.application.hierarchview.business.Constants,
+                 uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
+                 uk.ac.ebi.intact.context.IntactContext,
                  uk.ac.ebi.intact.simpleGraph.BasicGraphI,
-                 java.util.Collection,
-                 java.util.Iterator,
-                 java.util.ArrayList"%>
-<%@ page import="org.apache.taglibs.standard.lang.jpath.encoding.HtmlEncoder"%>
-<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+                 java.util.Iterator"%>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>

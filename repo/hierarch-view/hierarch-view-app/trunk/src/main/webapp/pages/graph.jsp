@@ -1,5 +1,3 @@
-<%@ page import="uk.ac.ebi.intact.application.hierarchView.business.IntactUserI,
-                 uk.ac.ebi.intact.application.hierarchView.business.Constants"%>
 <%@ page language="java" %>
 
 <!--
