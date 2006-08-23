@@ -9,8 +9,8 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>1.0.3</version>
-    <!-- last released 1.0.2 -->
+    <version>1.1-SNAPSHOT</version>
+    <!-- last released 1.0.3 -->
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
