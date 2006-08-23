@@ -41,4 +41,15 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     List<T> getByAnnotationAc(String ac);
 
     List<T> getByAnnotationTopicAndDescription(CvTopic topic, String description);
+
+    List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
+
+    /**
+     * This method will search in the database an AnnotatedObject of type T having it's shortlabel or it's 
+     * ac like the searchString given in argument.
+     * @param searchString (ex : "butkevitch-2006-%", "butkevitch-%-%", "EBI-12345%"
+     * @return a List of AnnotatedObject having their ac or shortlabel like the searchString
+     */
+    List<T> getByShortlabelOrAcLike(String searchString);
+
 }
