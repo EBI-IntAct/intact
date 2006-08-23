@@ -32,7 +32,7 @@
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk/</url>
     </scm>
-                         a
+                         
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <maven.pmd.skip>true</maven.pmd.skip>
