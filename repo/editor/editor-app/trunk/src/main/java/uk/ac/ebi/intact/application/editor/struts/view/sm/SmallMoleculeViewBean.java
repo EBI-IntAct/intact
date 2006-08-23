@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 
@@ -51,7 +53,7 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject() throws IntactException {
         // The current small molecule object.
         SmallMolecule sm = getAnnotatedObject();
 
@@ -115,9 +117,8 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
      * @return the small molecule cvInteractorType.
      */
     private static CvInteractorType getSmallMoleculeInteractorType(){
-        IntactHelper helper = IntactHelperUtil.getIntactHelper();
-        CvInteractorType smallMolecule = helper.getObjectByPrimaryId(CvInteractorType.class,
-                                                                     CvInteractorType.SMALL_MOLECULE_MI_REF);
+        CvObjectDao<CvInteractorType> cvObjectDao = DaoFactory.getCvObjectDao(CvInteractorType.class);
+        CvInteractorType smallMolecule = cvObjectDao.getByXref(CvInteractorType.SMALL_MOLECULE_MI_REF);
         return smallMolecule;
     }
 

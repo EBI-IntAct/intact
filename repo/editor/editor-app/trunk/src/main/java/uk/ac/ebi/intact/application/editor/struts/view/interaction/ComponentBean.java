@@ -19,6 +19,10 @@ import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.ComponentDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -185,17 +189,24 @@ public class ComponentBean extends AbstractEditKeyBean {
     /**
      * This methods returns the component this bean is based on. This is a convenient
      * method to call after updating the bean. Ideally this method should be called
-     * after calling to {@link #getComponent(uk.ac.ebi.intact.business.IntactHelper)}
+     * after calling to {@link #getComponent(true)}
      * method
      * @return could be null if this method was called after constructing with a
      * Protein but without calling getComponent(IntactHelper) method first.
      */
     public Component getComponent() {
+        if(myComponent != null && myComponent.getAc() != null){
+            ComponentDao componentDao = DaoFactory.getComponentDao();
+            myComponent = componentDao.getByAc(myComponent.getAc());
+
+        }
         return myComponent;
     }
 
-    public Component getComponent(IntactHelper helper) throws IntactException {
-        CvComponentRole newrole = getCvRole(helper);
+    public Component getComponent(boolean create) throws IntactException {
+        CvComponentRole newrole = getCvRole();
+
+
         // Must have a non null role and interaction for a valid component
         if ((newrole == null) || (myInteraction == null)) {
             return null;
@@ -204,7 +215,11 @@ public class ComponentBean extends AbstractEditKeyBean {
         if (myComponent == null) {
             myComponent = new Component(getService().getOwner(), myInteraction,
                     myInteractor, newrole);
+        }else if (myComponent.getAc() != null){
+            ComponentDao componentDao = DaoFactory.getComponentDao();
+            myComponent = componentDao.getByAc(myComponent.getAc());
         }
+
         else {
             myComponent.setCvComponentRole(newrole);
         }
@@ -213,8 +228,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The expressed in to set in the component.
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
-            expressedIn = helper.getObjectByLabel(BioSource.class,
-                    myExpressedIn);
+            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            expressedIn = bioSourceDao.getByShortLabel(myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
 
@@ -445,7 +460,6 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     private void setGeneName() throws IntactException {
         // The helper to run the query.
-        IntactHelper helper = IntactHelperUtil.getDefaultIntactHelper();
 
         // The query factory to get a query.
         OJBQueryFactory qf = OJBQueryFactory.getInstance();
@@ -454,18 +468,22 @@ public class ComponentBean extends AbstractEditKeyBean {
         StringBuffer sb = new StringBuffer();
 
         // The alias AC.
-        String ac = helper.getObjectByLabel(
-                CvAliasType.class, "gene name").getAc();
-        Query query = qf.getGeneNameQuery(ac, myInteractor.getAc());
+        CvObjectDao<CvAliasType> cvObjectDao = DaoFactory.getCvObjectDao(CvAliasType.class);
+        String ac = cvObjectDao.getByXref(CvAliasType.GENE_NAME_MI_REF).getAc();
+        /*Query query*/Collection<Alias> aliases = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
         // The flag to say that we are processing the first gene name.
         boolean first = true;
 
         // Run through the query result set.
-        for (Iterator iter = helper.getIteratorByReportQuery(query);
-             iter.hasNext(); ) {
+//        for (Iterator iter = aliases.iterator()/*helper.getIteratorByReportQuery(query)*/;
+//             iter.hasNext(); ) {
+         for( Alias alias : aliases ){
+
+            String name = alias.getName();
+
             // Though this returns an array we are interested only in the first item.
-            Object name = ((Object[])iter.next())[0];
+//            Object name = ((Object[])iter.next())[0];
             if (first) {
                 sb.append(name);
                 first = false;
@@ -503,10 +521,10 @@ public class ComponentBean extends AbstractEditKeyBean {
         return "";
     }
 
-    private CvComponentRole getCvRole(IntactHelper helper) throws IntactException  {
+    private CvComponentRole getCvRole() throws IntactException  {
+        CvObjectDao<CvComponentRole> cvObjectDao = DaoFactory.getCvObjectDao(CvComponentRole.class);
         if (myRole != null) {
-            return helper.getObjectByLabel(
-                    CvComponentRole.class, myRole);
+            return cvObjectDao.getByShortLabel(myRole);
         }
         return null;
     }

@@ -61,7 +61,6 @@ public class InteractionLinkAction extends CommonDispatchAction {
         String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
         // The Intact helper to access the Interaction.
-        IntactHelper helper = user.getIntactHelper();
         InteractionDao interactionDao = DaoFactory.getInteractionDao();
 
         // The interaction we are about to edit.

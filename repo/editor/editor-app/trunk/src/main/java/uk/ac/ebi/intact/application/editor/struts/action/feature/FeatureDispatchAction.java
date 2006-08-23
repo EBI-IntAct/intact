@@ -16,6 +16,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionVi
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.FeatureDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.RangeDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -142,7 +146,9 @@ public class FeatureDispatchAction extends CommonDispatchAction {
     }
 
     private List persistMutations(EditUserI user) throws IntactException {
-        IntactHelper helper = user.getIntactHelper();
+        FeatureDao featureDao = DaoFactory.getFeatureDao();
+        RangeDao rangeDao = DaoFactory.getRangeDao();
+
         // The list of features to return.
         List features = new ArrayList();
 
@@ -155,14 +161,14 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Cache CV objects.
 
         // CvFeature types.
-        CvFeatureType featureType = (CvFeatureType) helper.getObjectByLabel(
-                CvFeatureType.class, view.getCvFeatureType());
+        CvObjectDao<CvFeatureType> cvFeatureDao = DaoFactory.getCvObjectDao(CvFeatureType.class) ;
+        CvFeatureType featureType = cvFeatureDao.getByShortLabel(view.getCvFeatureType());
 
         // CvFeatureIdent is optional.
+        CvObjectDao<CvFeatureIdentification> cvFeatureIdentificationDao = DaoFactory.getCvObjectDao(CvFeatureIdentification.class);
         CvFeatureIdentification featureIdent = null;
         if (view.getCvFeatureIdentification() != null) {
-            featureIdent = (CvFeatureIdentification) helper.getObjectByLabel(
-                    CvFeatureIdentification.class, view.getCvFeatureIdentification());
+            featureIdent = cvFeatureIdentificationDao.getByShortLabel(view.getCvFeatureIdentification());
         }
         StringTokenizer stk = new StringTokenizer(view.getFullName(),
                 getService().getResource("mutation.feature.sep"));
@@ -185,46 +191,51 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             }
             // Create a Feature in a separate transaction.
             try {
-                user.startTransaction();
-                helper.create(feature);
-                helper.finishTransaction();
+
+//                user.startTransaction();
+                featureDao.persist(feature);
+//                helper.create(feature);
+//                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 // Log the stack trace.
                 LOGGER.error("", ie);
-                try {
-                    helper.undoTransaction();
-                }
-                catch (IntactException ie1) {
-                    LOGGER.error("Problem trying to do the rollback", ie);
+//                try {
+//                    DaoFactory..
+//                    helper.undoTransaction();
+//                }
+//                catch (IntactException ie1) {
+//                    LOGGER.error("Problem trying to do the rollback", ie);
                     // Oops! Problems with rollback.
-                }
+//                }
                 throw ie;
             }
             // Feature is persisted, add it to the list.
             features.add(feature);
 
             try {
-                user.startTransaction();
+//                user.startTransaction();
                 for (Iterator iter = rangesToCreate(token, owner, sequence); iter.hasNext(); ) {
                     Range range = (Range) iter.next();
-                    helper.create(range);
+                    rangeDao.persist(range);
+//                    helper.create(range);
                     feature.addRange(range);
                 }
-                helper.update(feature);
-                helper.finishTransaction();
+                featureDao.saveOrUpdate(feature);
+//                helper.update(feature);
+//                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 // Log the stack trace.
                 LOGGER.error("", ie);
-                try {
-                    helper.undoTransaction();
-                }
-                catch (IntactException ie1) {
-                    LOGGER.error("Problem trying to do the rollback", ie);
-                    // Oops! Problems with rollback.
-                }
-                // Rethrow it again for logging the exception.
+//                try {
+//                    helper.undoTransaction();
+//                }
+//                catch (IntactException ie1) {
+//                    LOGGER.error("Problem trying to do the rollback", ie);
+//                    // Oops! Problems with rollback.
+//                }
+//                // Rethrow it again for logging the exception.
                 throw ie;
             }
         }

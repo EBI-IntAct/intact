@@ -12,6 +12,14 @@ import org.apache.ojb.broker.query.QueryFactory;
 import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.ExperimentXref;
+import uk.ac.ebi.intact.persistence.dao.XrefDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.AliasDao;
+import uk.ac.ebi.intact.business.IntactException;
+
+import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * This factory class builds queries for the editor.
@@ -85,8 +93,20 @@ public class OJBQueryFactory {
      * @param parent the AC of the parent (AC of the Protein)
      * @return the query to extract the gene name for given protein AC
      */
-    public Query getGeneNameQuery(String alias, String parent) {
-        Criteria crit1 = new Criteria();
+    public /*Query*/Collection<Alias> getGeneNameQuery(String aliasAc, String parent) {
+
+        Collection<Alias> aliasesToReturn = new ArrayList();
+        AliasDao aliasDao = DaoFactory.getAliasDao();
+        Collection<Alias> geneNames = aliasDao.getColByPropertyName("parentAc", parent);
+        for(Alias alias : geneNames ){
+            if(alias.getCvAliasType() != null && alias.getCvAliasType().getAc().equals(aliasAc)){
+                aliasesToReturn.add(alias);
+            }
+        }
+        return aliasesToReturn;
+
+
+        /*Criteria crit1 = new Criteria();
         // Need all records for given alias AC.
         crit1.addEqualTo("aliastype_ac", alias);
 
@@ -100,7 +120,7 @@ public class OJBQueryFactory {
 
         // Limit to name
         query.setAttributes(new String[] {"name"});
-        return query;
+        return query;*/
     }
 
     /**
@@ -109,17 +129,39 @@ public class OJBQueryFactory {
      * @param parent the AC of the parent
      * @return the query to extract the primary Xref with given parent AC
      */
-    public Query getQualifierXrefQuery(String qualifier, String parent) {
-        Criteria crit1 = new Criteria();
-        // Need all records for qualifier AC.
-        crit1.addEqualTo("qualifier_ac", qualifier);
+    public /*Query*/ExperimentXref getQualifierXrefQuery(String qualifier, String parent) {
 
-        Criteria crit2 = new Criteria();
-        crit2.addEqualTo("parent_ac", parent);
 
-        // Looking for both qualfier and parent
-        crit1.addAndCriteria(crit2);
+        Collection<ExperimentXref> experimentXrefToReturn = new ArrayList();
 
-        return QueryFactory.newQuery(Xref.class, crit1);
+        XrefDao<ExperimentXref> xrefDao = DaoFactory.getXrefDao(ExperimentXref.class);
+
+        Collection<ExperimentXref> experimentXrefs = xrefDao.getByParentAc(parent);
+        for(ExperimentXref experimentXref : experimentXrefs){
+            if(experimentXref.getCvXrefQualifier() != null && experimentXref.getCvXrefQualifier().getAc().equals(qualifier)){
+                experimentXrefToReturn.add(experimentXref);
+            }
+        }
+
+        if (experimentXrefToReturn.size() > 1){
+            throw new IntactException("Find more then one experiment xref with parent_ac = " + parent +
+                    " and qualifier " + qualifier );
+        }else{
+             for (ExperimentXref experimentXref : experimentXrefToReturn){
+                 return experimentXref;
+             }
+            return null;
+        }
+//        Criteria crit1 = new Criteria();
+//        // Need all records for qualifier AC.
+//        crit1.addEqualTo("qualifier_ac", qualifier);
+//
+//        Criteria crit2 = new Criteria();
+//        crit2.addEqualTo("parent_ac", parent);
+//
+//        // Looking for both qualfier and parent
+//        crit1.addAndCriteria(crit2);
+//
+//        return QueryFactory.newQuery(Xref.class, crit1);
     }
 }

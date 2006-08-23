@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.experiment;
 
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -17,6 +19,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.*;
 
 import java.util.*;
 
@@ -27,6 +30,9 @@ import java.util.*;
  * @version $Id$
  */
 public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
+
+    private static final Log log = LogFactory.getLog(ExperimentViewBean.class);
+
 
     private String myPubmedId;
 
@@ -464,18 +470,25 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject() throws IntactException {
         // Get the objects using their short label.
-        BioSource biosource = helper.getObjectByLabel(
-                BioSource.class, myOrganism);
-        CvInteraction interaction =  helper.getObjectByLabel(
-                CvInteraction.class, myInter);
-        CvIdentification ident = helper.getObjectByLabel(
-                CvIdentification.class, myIdent);
+        BioSourceDao bsDao = DaoFactory.getBioSourceDao();
+        BioSource biosource = bsDao.getByShortLabel(myOrganism);
+
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+        CvInteraction interaction =  (CvInteraction) cvObjectDao.getByShortLabel(myInter);
+
+        CvIdentification ident = (CvIdentification) cvObjectDao.getByShortLabel(myIdent);
 
         // The current experiment.
         Experiment exp = (Experiment) getAnnotatedObject();
+        ExperimentDao expDao = DaoFactory.getExperimentDao();
 
+//        if(exp !=  null && null != exp.getAc()){
+//            log.debug("Exp was not null and ac not null");
+//            exp = expDao.getByAc(exp.getAc());
+//            log.debug("Exp owner " + exp.getOwner().getAc());
+//        }
         // Have we set the annotated object for the view?
         if (exp == null) {
             // Can't read from the persistent system. Create a new Experiment.
@@ -495,9 +508,10 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
             // Delete interactions from the experiment. Do this block of code before
             // clearing interactions or else 'this' experiment wouldn't be removed
             // from interactions.
+            InteractionDao interactionDao = DaoFactory.getInteractionDao();
             for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
                 String ac = (String) iter.next();
-                Interaction intact = helper.getObjectByAc(Interaction.class, ac);
+                Interaction intact = interactionDao.getByAc(ac);
                 exp.removeInteraction(IntactHelper.getRealIntactObject(intact));
             }
 
@@ -513,15 +527,19 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
                 // could be null for an interaction added from the 'hold' area.
                 if (inter == null)
                 {
-                    inter = helper.getObjectByAc(Interaction.class,
-                                                               row.getAc());
+                    inter = interactionDao.getByAc(row.getAc());
+                }else{
+                    inter = interactionDao.getByAc(inter.getAc());
                 }
-                exp.addInteraction(IntactHelper.getRealIntactObject(
-                        inter));
+                exp.addInteraction(inter);
+//                exp.addInteraction(IntactHelper.getRealIntactObject(
+//                        inter));
             }
             // --------------------------------------------------------------------
         }
     }
+
+
 
     /**
      * Override to load the menus for this view.

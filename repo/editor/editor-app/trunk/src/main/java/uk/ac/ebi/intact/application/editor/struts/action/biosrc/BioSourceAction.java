@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionFor
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.NewtServerProxy;
@@ -142,13 +141,10 @@ public class BioSourceAction extends AbstractEditorAction {
         // Update the form.
         bioview.copyPropertiesTo(bsform);
 
-        // The helper to access the DB
-        IntactHelper helper = user.getIntactHelper();
 
         // Collection of biosources for the current taxid.
         BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
         Collection results = bioSourceDao.getByTaxonId(taxid);
-//        Collection results = helper.search(BioSource.class.getName(), "taxId", taxid);
         // AC of the current biosource.
         String ac = user.getView().getAc();
 

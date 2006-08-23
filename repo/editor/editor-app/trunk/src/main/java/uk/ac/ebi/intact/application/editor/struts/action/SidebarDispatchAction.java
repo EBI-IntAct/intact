@@ -13,7 +13,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispat
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -168,11 +169,9 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         
         // Add a no-uniprot-update annotation when a protein is created
         if(clazz.equals(ProteinImpl.class)){
-            IntactHelper helper=user.getIntactHelper();
-
+            CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
             // The topic for new annotation.
-            CvTopic cvTopic = (CvTopic) helper.getObjectByLabel(CvTopic.class,
-                    "no-uniprot-update");
+            CvTopic cvTopic = cvObjectDao.getByShortLabel("no-uniprot-update");
 
             Annotation annotation = new Annotation(getService().getOwner(),
                     cvTopic,cvTopic.getFullName());

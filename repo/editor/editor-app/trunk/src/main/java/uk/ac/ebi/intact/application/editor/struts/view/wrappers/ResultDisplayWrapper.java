@@ -102,14 +102,11 @@ public class ResultDisplayWrapper extends TableDecorator {
     }
 
     public String getCreated(){
-        log.debug("getCreated" + ((ResultRowData) getObject()).getCreated().toString());
-        return ((ResultRowData) getObject()).getCreated().toString();
+        return DateToolbox.formatDate(((ResultRowData) getObject()).getCreated());
     }
 
     public String getUpdated(){
-        log.debug("getUpdated" + ((ResultRowData) getObject()).getUpdated().toString());
-
-        return ((ResultRowData) getObject()).getUpdated().toString();
+        return DateToolbox.formatDate(((ResultRowData) getObject()).getUpdated());
     }
 
     public String getCreationInfo(){
@@ -122,11 +119,12 @@ public class ResultDisplayWrapper extends TableDecorator {
     }
 
     public String getUpdateInfo(){
-         //Created 2005-JAN-26 by LUISA.
+        if((ResultRowData) getObject() != null){
+        //Created 2005-JAN-26 by LUISA.
         log.debug("getShortlabel" + ((ResultRowData) getObject()).getShortLabel());
         log.debug("getUpdaed" + ((ResultRowData) getObject()).getUpdated());
         log.debug("getUpdator" + ((ResultRowData) getObject()).getUpdator());
-
+        }
          return this.getUpdated() + " by " + this.getUpdator() + ".";
     }
 

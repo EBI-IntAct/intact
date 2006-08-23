@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,32 +53,28 @@ public class DeleteFormAction extends AbstractEditorAction {
         // Remove this current bean from the recent lists.
         view.removeFromRecentList(user);
 
-        // The intact helper to access the persistent layer.
-        IntactHelper helper = user.getIntactHelper();
+
         try {
             // No need to delete if the object is not yet persisted.
-            if (!helper.isPersistent(view.getAnnotatedObject())) {
+            if ( view.getAnnotatedObject() == null ||
+                 (view.getAnnotatedObject() != null && view.getAnnotatedObject().getAc() == null)) {
                 // Back to the search page.
                 return mapping.findForward(SEARCH);
             }
-            // Start the transaction.
-            user.startTransaction();
             // Delete the object we are editing at the moment.
             user.delete();
-            // Commit all the changes.
-            user.commit();
         }
         catch (IntactException ie1) {
             // Log the stack trace.
             LOGGER.error("", ie1);
-            try {
+//            try {
                 user.rollback();
-            }
-            catch (IntactException ie2) {
-                LOGGER.error("Error trying to do a rollback", ie2);
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
+//            }
+//            catch (IntactException ie2) {
+//                LOGGER.error("Error trying to do a rollback", ie2);
+//                // Oops! Problems with rollback; ignore this as this
+//                // error is reported via the main exception (ie1).
+//            }
             // Error with deleting the object.
             ActionErrors errors = new ActionErrors();
             errors.add(EDITOR_ERROR, new ActionError("error.delete",

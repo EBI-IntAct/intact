@@ -18,6 +18,10 @@ import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ComponentDao;
+import uk.ac.ebi.intact.persistence.dao.RangeDao;
 
 import java.util.*;
 
@@ -28,7 +32,6 @@ import java.util.*;
  * @version $Id$
  */
 public class FeatureViewBean extends AbstractEditViewBean<Feature> {
-
     // Class Data
 
     /**
@@ -170,6 +173,10 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     }
 
     public Component getComponent() {
+        if( myComponent != null && myComponent.getAc() != null){
+            ComponentDao  componentDao = DaoFactory.getComponentDao();
+            myComponent = componentDao.getByAc(myComponent.getAc());
+        }
         return myComponent;
     }
 
@@ -334,25 +341,27 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     public void persistOthers(EditUserI user) throws IntactException {
         try {
             // Begin the transaction.
-            user.startTransaction();
+//            user.startTransaction();
 
             // persist the view.
             persistCurrentView();
 
             // Commit the transaction.
-            user.commit();
+//            user.commit();
+            user.rollback(); //to end editing
+
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             ie1.printStackTrace();
-            try {
+//            try {
                 user.rollback();
-            }
-            catch (IntactException ie2) {
-                Logger.getLogger(EditorConstants.LOGGER).error("", ie2);
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
+//            }
+//            catch (IntactException ie2) {
+//                Logger.getLogger(EditorConstants.LOGGER).error("", ie2);
+//                // Oops! Problems with rollback; ignore this as this
+//                // error is reported via the main exception (ie1).
+//            }
             // Rethrow the exception to be logged.
             throw ie1;
         }
@@ -424,10 +433,10 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
     // Implements abstract methods
     @Override
-    protected void updateAnnotatedObject(IntactHelper helper) throws IntactException {
+    protected void updateAnnotatedObject() throws IntactException {
         // The feature type for the current feature.
-        CvFeatureType featureType = helper.getObjectByLabel(
-                CvFeatureType.class, getCvFeatureType());
+        CvObjectDao<CvFeatureType> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureType.class);
+        CvFeatureType featureType = cvObjectDao.getByShortLabel(getCvFeatureType());
 
         // The current feature.
         Feature feature = getAnnotatedObject();
@@ -436,14 +445,14 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         if (feature == null) {
             // Not persisted; create a new feature object.
             feature = new Feature(getService().getOwner(), getShortLabel(),
-                    myComponent, featureType);
+                    getComponent(), featureType);
             setAnnotatedObject(feature);
         }
         else {
             // Update the existing feature.
             feature.setCvFeatureType(featureType);
         }
-        feature.setCvFeatureIdentification(getCvFeatureIndent(helper));
+        feature.setCvFeatureIdentification(getCvFeatureIndent());
     }
 
     @Override
@@ -468,15 +477,15 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     // Helper methods.
 
     private String getParentAc() {
-        return myComponent.getInteractor().getAc();
+        return getComponent().getInteractor().getAc();
     }
 
     private String getParentShortLabel() {
-        return myComponent.getInteractor().getShortLabel();
+        return getComponent().getInteractor().getShortLabel();
     }
 
     private String getParentFullName() {
-        return myComponent.getInteractor().getFullName();
+        return getComponent().getInteractor().getFullName();
     }
 
     private void setRanges(Collection<Range> ranges) {
@@ -488,13 +497,14 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         }
     }
 
-    private CvFeatureIdentification getCvFeatureIndent(IntactHelper helper)
+    private CvFeatureIdentification getCvFeatureIndent()
             throws IntactException {
         if (myCvFeatureIdent == null) {
             return null;
         }
-        return helper.getObjectByLabel(
-                CvFeatureIdentification.class, myCvFeatureIdent);
+        CvObjectDao<CvFeatureIdentification> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureIdentification.class);
+        CvFeatureIdentification identification = cvObjectDao.getByShortLabel(myCvFeatureIdent);
+        return identification;
     }
 
     /**
@@ -531,13 +541,12 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     
     private void persistCurrentView() throws IntactException {
         // The helper to access persistence API.
-        IntactHelper helper = IntactHelperUtil.getIntactHelper();
-
+        RangeDao rangeDao = DaoFactory.getRangeDao();
         // The current feature.
         Feature feature =  getAnnotatedObject();
 
         // The sequence to set in Ranges.
-        String sequence = ((Polymer) myComponent.getInteractor()).getSequence();
+        String sequence = ((Polymer) getComponent().getInteractor()).getSequence();
 
         // Add new ranges.
         for (RangeBean rangeBean : getRangesToAdd())
@@ -551,7 +560,8 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             {
                 continue;
             }
-            helper.create(range);
+            rangeDao.persist(range);
+//            helper.create(range);
             feature.addRange(range);
         }
         
@@ -559,7 +569,8 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         for (RangeBean rangeBean : getRangesToDel())
         {
             Range range = rangeBean.getRange();
-            helper.delete(range);
+            rangeDao.delete(range);
+//            helper.delete(range);
             feature.removeRange(range);
         }
 
@@ -569,7 +580,8 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             // Update the 'updated' range.
             Range range = myRangeToUpdate.getUpdatedRange();
             range.setSequence(sequence);
-            helper.update(range);
+            rangeDao.update(range);
+//            helper.update(range);
         }
         // No need to test whether this 'feature' persistent or not because we
         // know it has been already persisted by persist() call.

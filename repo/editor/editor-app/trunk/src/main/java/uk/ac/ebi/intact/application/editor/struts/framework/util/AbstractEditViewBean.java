@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
@@ -22,6 +24,7 @@ import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
+import uk.ac.ebi.intact.persistence.dao.*;
 
 import java.io.Serializable;
 import java.util.*;
@@ -34,6 +37,7 @@ import java.util.*;
  * @version $Id$
  */
 public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implements Serializable {
+    private static final Log log = LogFactory.getLog(AbstractEditViewBean.class);
 
     private static final Logger logger = Logger.getLogger(EditorConstants.LOGGER);
 
@@ -330,6 +334,36 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public final T getAnnotatedObject() {
+        if(myAnnotObject != null && myAnnotObject.getAc() != null){
+            log.debug("myAnnotObject not null and got an ac");
+            String ac = myAnnotObject.getAc();
+//                AnnotatedObjectDao annotatedObjectDao = DaoFactory.getAnnotatedObjectDao();
+//                myAnnotObject = (T) annotatedObjectDao.getByAc(ac);
+                if(myAnnotObject instanceof Experiment){
+                    log.debug("myAnnotObject is instanceof Experiment");
+                    ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+                    myAnnotObject = (T) experimentDao.getByAc(ac);
+                }else if(myAnnotObject instanceof Interactor){
+                    log.debug("myAnnotObject is instanceof Interactor");
+                    InteractorDao interactorDao = DaoFactory.getInteractorDao();
+                    myAnnotObject = (T)interactorDao.getByAc(ac);
+                }else if(myAnnotObject instanceof Feature){
+                    log.debug("myAnnotObject is instanceof Feature");
+                    FeatureDao featureDao = DaoFactory.getFeatureDao();
+                    myAnnotObject = (T)featureDao.getByAc(ac);
+                }else if(myAnnotObject instanceof CvObject){
+                    log.debug("myAnnotObject is instanceof CvObject");
+                    CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+                    myAnnotObject = (T)cvObjectDao.getByAc(ac);
+                }else if(  myAnnotObject instanceof BioSource){
+                    log.debug("myAnnotObject is instanceof BioSource");
+                    BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+                    myAnnotObject = (T)bioSourceDao.getByAc(ac);
+                }//myAnnotObject = annotatedObjectDao.getByAc(myAnnotObject.getAc());
+            log.debug("myAnnotObject is instanceof " + myAnnotObject.getClass().getName());
+
+        }
+        log.debug("my annot object is null or has no ac");
         return myAnnotObject;
     }
 
@@ -417,7 +451,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 
     /**
      * Returns the created timestamp.
-     * @return the created as a <code>Timestamp<code> instance
+     * @return the created as a <code>Date<code> instance
      */
     public Date getCreated() {
         return myCreated;
@@ -674,24 +708,25 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     public void persist(EditUserI user) throws IntactException {
         try {
             // Begin the transaction.
-            user.startTransaction();
+//            user.startTransaction();
 
             // Persiste the current view.
             persistCurrentView();
 
             // Commit the transaction.
-            user.commit();
+//            user.commit();
+            user.rollback(); //to end editing
         }
         catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-            try {
+//            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+//            try {
                 user.rollback();
-            }
-            catch (IntactException ie2) {
-                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
-                // Oops! Problems with rollback; ignore this as this
-                // error is reported via the main exception (ie1).
-            }
+//            }
+//            catch (IntactException ie2) {
+//                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
+//                // Oops! Problems with rollback; ignore this as this
+//                // error is reported via the main exception (ie1).
+//            }
             // Rethrow the exception to be logged.
             throw ie1;
         }
@@ -979,14 +1014,13 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * Gathers values in the view bean and updates the existing AnnotatedObject
      * if it exists or create a new annotated object for the view and sets the
      * annotated object.
-     * @param helper the IntactHelper to search the database.
      * @throws IntactException for errors in searching the persistent system.
      *
      * <pre>
      * post: getAnnotatedObject() != null
      * </pre>
      */
-    protected abstract void updateAnnotatedObject(IntactHelper helper) throws
+    protected abstract void updateAnnotatedObject() throws
                                                                        IntactException, IntactException;
 
     // Helper Methods
@@ -1147,9 +1181,9 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     // Persist the current annotated object.
 
     private void persistCurrentView() throws IntactException {
-        IntactHelper helper = IntactHelperUtil.getIntactHelper();
+        AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
         // First create/update the annotated object by the view.
-        updateAnnotatedObject(helper);
+        updateAnnotatedObject();
 
         // Update the short label and full name as they are common to all.
         myAnnotObject.setShortLabel(getShortLabel());
@@ -1167,8 +1201,8 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // The update of annotated object ensures the sub objects are updated as well.
         for (CommentBean commentBean : getAnnotationsToUpdate())
         {
-            Annotation annot = commentBean.getAnnotation(helper);
-            if(annotateOtherObject(annot, helper)){
+            Annotation annot = commentBean.getAnnotation();
+            if(annotateOtherObject(annot)){
                LOGGER.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
                 //delAnnotation(commentBean);
                 myAnnotObject.removeAnnotation(annot);
@@ -1176,7 +1210,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
                 CommentBean newCb = new CommentBean(newAnnot);
                 addAnnotation(newCb);
             }else{
-                helper.update(annot);
+                annotationDao.saveOrUpdate(annot);
             }
             changed = true;
         }
@@ -1184,13 +1218,13 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // Delete annotations and remove them from CV object.
         for (CommentBean commentBean : getAnnotationsToDel())
         {
-            Annotation annot = commentBean.getAnnotation(helper);
-            if(annotateOtherObject(annot, helper)){
+            Annotation annot = commentBean.getAnnotation();
+            if(annotateOtherObject(annot)){
                 LOGGER.info("We are going to unlink, the shared annotation "+ annot.getAc() + " from this annotated object.");
                 myAnnotObject.removeAnnotation(annot);
             }else{
                 LOGGER.error("Not shared annotation, we delete it.");
-                helper.delete(annot);
+                annotationDao.delete(annot);
                 myAnnotObject.removeAnnotation(annot);
             }
             changed = true;
@@ -1199,72 +1233,86 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // Create annotations and add them to CV object.
         for (CommentBean commentBean : getAnnotationsToAdd())
         {
-            Annotation annot = commentBean.getAnnotation(helper);
+            Annotation annot = commentBean.getAnnotation();
             LOGGER.error("Add annot " +  annot.getAnnotationText());
             // Need this to generate the PK for the indirection table.
-            helper.create(annot);
+            annotationDao.persist(annot);
             myAnnotObject.addAnnotation(annot);
             changed = true;
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
         // to be persistent before we can create the Xrefs.
-        if (!helper.isPersistent(myAnnotObject)) {
-            helper.create(myAnnotObject);
-        }
-
+        persistAnnotatedObject();
+//        if (!helper.isPersistent(myAnnotObject)) {
+//            helper.create(myAnnotObject);
+//        }
         // Create xrefs and add them to CV object.
+        XrefDao xrefDao = DaoFactory.getXrefDao();
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
         {
-            Xref xref = xreferenceBean.getXref(helper, myAnnotObject);
-            helper.create(xref);
+            Xref xref = xreferenceBean.getXref(myAnnotObject);
+            xrefDao.saveOrUpdate(xref);
             myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (XreferenceBean xreferenceBean : getXrefsToDel())
         {
-            Xref xref = xreferenceBean.getXref(helper,myAnnotObject);
-            helper.delete(xref);
+            Xref xref = xreferenceBean.getXref(myAnnotObject);
+            xrefDao.delete(xref);
             myAnnotObject.removeXref(xref);
         }
         // Update xrefs; see the comments for annotation update above.
         for (XreferenceBean xreferenceBean : getXrefsToUpdate())
         {
-            Xref xref = xreferenceBean.getXref(helper,myAnnotObject);
-            helper.update(xref);
+            Xref xref = xreferenceBean.getXref(myAnnotObject);
+            xrefDao.saveOrUpdate(xref);
         }
         // Update the cv object only for an object already persisted.
-        if (helper.isPersistent(myAnnotObject)) {
+
+//        if (helper.isPersistent(myAnnotObject)) {
             // If collection sizes are same but modified; force update. Need
             // this OJB update strategy doesn't mark the object as dirty.
-//            if ((myAnnotations.size() == initSize) && changed) {
-//                LOGGER.error("Force update");
-                helper.forceUpdate(myAnnotObject);
-//            }
-//            else {
-                // Ordinary update
-//                helper.update(myAnnotObject);
-//            }
+//            helper.forceUpdate(myAnnotObject);
 
+            persistAnnotatedObject();
             // update the cvObject in the cvContext (application scope)
             if (myAnnotObject instanceof CvObject)
             {
-                 boolean cvObjectUpdated = CvContext.getCurrentInstance().updateCvObject((CvObject)myAnnotObject);
+                 boolean cvObjectUpdated = CvContext.getCurrentInstance().updateCvObject((CvObject)getAnnotatedObject());
 
                 if (cvObjectUpdated)
                     logger.info("CvObject updated: "+myAnnotObject);
             }
+//        }
+    }
+
+    public void persistAnnotatedObject(){
+        if(myAnnotObject instanceof Experiment){
+            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            experimentDao.saveOrUpdate((Experiment) myAnnotObject);
+        }else if (myAnnotObject instanceof Feature){
+            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            featureDao.saveOrUpdate((Feature) myAnnotObject);
+        }else if (myAnnotObject instanceof Interactor){
+            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            interactorDao.saveOrUpdate(myAnnotObject);
+        }else if (myAnnotObject instanceof CvObject){
+            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            cvObjectDao.saveOrUpdate(myAnnotObject);
+        }   else if (myAnnotObject instanceof BioSource){
+            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            bioSourceDao.saveOrUpdate((BioSource) myAnnotObject);
         }
     }
 
     private void resetAnnotatedObject(T annobj) {
         // Need to get the real object for a proxy type.
         if (Polymer.class.isAssignableFrom(annobj.getClass())) {
-            IntactHelper helper = IntactHelperUtil.getIntactHelper();
-            setAnnotatedObject( helper.materializeIntactObject(annobj));
+            setAnnotatedObject( /*helper.materializeIntactObject(*/annobj/*)*/);
             myEditClass = (Class<T>)getAnnotatedObject().getClass();
         }
         else {
-            setAnnotatedObject(IntactHelper.getRealIntactObject(annobj));
+            setAnnotatedObject(/*IntactHelper.getRealIntactObject(*/annobj/*)*/);
             myEditClass = CgLibUtil.getRealClassName(annobj);
         }
         setFullName(annobj.getFullName());
@@ -1283,21 +1331,29 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     /**
      * It returns true if the annotation given as a paremeter annotated other object false otherwise.
      * @param annot
-     * @param helper
      * @return
      * @throws IntactException
      */
-    public boolean annotateOtherObject(Annotation annot, IntactHelper helper) throws IntactException {
+    public boolean annotateOtherObject(Annotation annot) throws IntactException {
 
-        if(helper.isPersistent(annot)){
+        if(annot!=null && annot.getAc()!=null){
             String annotationAc = annot.getAc();
             int num = 0;
-            num = num + helper.getExperimentsByAnnotation(annotationAc).size();
 
-            num = num + helper.getBioSourceByAnnotation(annotationAc).size();
-            num = num + helper.getInteractorByAnnotation(annotationAc).size();
-            num = num + helper.getFeatureByAnnotation(annotationAc).size();
-            num = num + helper.getCvByAnnotation(annotationAc).size();
+            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            num = num + experimentDao.getByAnnotationAc(annotationAc).size();
+
+            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            num = num + bioSourceDao.getByAnnotationAc(annotationAc).size();
+
+            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            num = num + interactorDao.getByAnnotationAc(annotationAc).size();
+
+            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            num = num + featureDao.getByAnnotationAc(annotationAc).size();
+
+            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            num = num + cvObjectDao.getByAnnotationAc(annotationAc).size();
 
             if(num > 1){
                 LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +

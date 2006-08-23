@@ -119,7 +119,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * Updates the internal xref with the new values from the form
      * @throws IntactException for errors in searching the database.
      */
-    public Xref getXref(IntactHelper helper, AnnotatedObject annotatedObject) throws IntactException {
+    public Xref getXref(AnnotatedObject annotatedObject) throws IntactException {
         // The CV objects to set.
         CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(myDatabaseName);
         CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(myReferenceQualifer);

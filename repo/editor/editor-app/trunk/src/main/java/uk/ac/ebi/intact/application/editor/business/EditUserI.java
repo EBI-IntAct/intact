@@ -49,8 +49,8 @@ public interface EditUserI extends IntactUserI, Serializable {
 
     // Transaction Methods
 
-    public void startTransaction() throws IntactException;
-    public void commit() throws IntactException;
+//    public void startTransaction() throws IntactException;
+//    public void commit() throws IntactException;
     public void rollback() throws IntactException;
 
     // Persistent Methods

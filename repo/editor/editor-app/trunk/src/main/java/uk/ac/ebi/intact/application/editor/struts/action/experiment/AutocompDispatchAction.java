@@ -39,6 +39,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
 import uk.ac.ebi.intact.util.cdb.PublicationNotFoundException;
 import uk.ac.ebi.intact.util.cdb.UnexpectedException;
+import uk.ac.ebi.intact.persistence.dao.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -127,7 +128,9 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             ExperimentAutoFill eaf = new ExperimentAutoFill(pubmedId);
 
-            IntactHelper helper = user.getIntactHelper();
+            AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+            XrefDao xrefDao = DaoFactory.getXrefDao();
+            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
 
             // The ac of the experiment
             String expAc=view.getAc();
@@ -151,13 +154,10 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             if(!("".equals(authorList) || null==authorList)){
 
                 //Create an object Annotation with author-list cvTopic containing the list of authors
-                Annotation authorListAnnotation = authorListAnnotation(authorList,helper);
+                Annotation authorListAnnotation = authorListAnnotation(authorList);
 
                 //Create a CommentBean from this Annotation
                 CommentBean authorListCb = new CommentBean(authorListAnnotation);
-
-                //Create the authorList CvTopic
-                //CvTopic authorListTopic = (CvTopic) helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
 
                 /*
                 Work to do on the view :
@@ -177,23 +177,24 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                         annotationUpdated=true;
                     }
                 }
-
                 /*
                 Work to do on the database :
                 If this experiment is already attached to an author-list annotation which is in the database, we
                 update the annotationText of the annotation with the new list of author.
                 */
                 if(false=="".equals(expAc) && null != expAc){
-                    Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
+                    Experiment exp = experimentDao.getByAc(expAc);
                     //get all the annotations contained in the database linked to this experiment
                     Collection annotations = exp.getAnnotations();
                     for (Iterator iterator = annotations.iterator(); iterator.hasNext();) {
                         Annotation annot =  (Annotation) iterator.next();
                         if(CvTopic.AUTHOR_LIST.equals(annot.getCvTopic().getShortLabel()) && false==authorListCb.getDescription().equals(annot.getAnnotationText())){
-                            if(helper.isPersistent(annot)){
-                                annot.setAnnotationText(authorListCb.getDescription());
-                                helper.update(annot);
-                            }
+                            annot.setAnnotationText(authorListCb.getDescription());
+                            annotationDao.saveOrUpdate(annot);
+//                            if(helper.isPersistent(annot)){
+//                                annot.setAnnotationText(authorListCb.getDescription());
+//                                helper.update(annot);
+//                            }
                         }
                     }
                 }
@@ -217,7 +218,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             */
             String authorEmail = eaf.getAuthorEmail();
             if(!("".equals(authorEmail) || null==authorEmail)){
-                Annotation authorEmailAnnotation = authorEmailAnnotation(authorEmail, helper);
+                Annotation authorEmailAnnotation = authorEmailAnnotation(authorEmail);
                 CommentBean authorEmailCb = new CommentBean(authorEmailAnnotation);
                 if(!view.annotationExists(authorEmailCb)) {
                     view.addAnnotation(authorEmailCb);
@@ -229,7 +230,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             **********************************************************************************************/
             String journal = eaf.getJournal();
             if(!("".equals(journal) || null==journal)){
-                Annotation journalAnnotation = createJournalAnnotation(journal, helper);
+                Annotation journalAnnotation = createJournalAnnotation(journal);
                 CommentBean journalCb = new CommentBean(journalAnnotation);
 
 
@@ -262,7 +263,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             String pubYear = Integer.toString(eaf.getYear());
             if(!("".equals(pubYear) || null==pubYear)){
-                Annotation pubYearAnnotation = createPubYearAnnotation(pubYear, helper);
+                Annotation pubYearAnnotation = createPubYearAnnotation(pubYear);
                 CommentBean pubYearCb = new CommentBean(pubYearAnnotation);
 
 
@@ -292,15 +293,18 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
                 update the annotationText of the annotation with the new list of author.
                 */
                 if(false=="".equals(expAc) && null != expAc){
-                    Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
+                    Experiment exp = experimentDao.getByAc(expAc);
                     //get all the annotations contained in the database linked to this experiment
                     Collection<Annotation> annotations = exp.getAnnotations();
                     for (Annotation annot : annotations){
                         if(CvTopic.PUBLICATION_YEAR.equals(annot.getCvTopic().getShortLabel()) && false==pubYearCb.getDescription().equals(annot.getAnnotationText())){
-                            if(helper.isPersistent(annot)){
-                                annot.setAnnotationText(pubYearCb.getDescription());
-                                helper.update(annot);
-                            }
+                            annot.setAnnotationText(pubYearCb.getDescription());
+                            annotationDao.saveOrUpdate(annot);
+
+//                            if(helper.isPersistent(annot)){
+//                                annot.setAnnotationText(pubYearCb.getDescription());
+//                                helper.update(annot);
+//                            }
                         }
                     }
                 }
@@ -317,7 +321,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             boolean xrefUpdated=false;
             //An xref object with primaryId = pubmedId and qualifier=primary-reference
-            Xref pubmedXref = pubmedXref(pubmedId, helper);
+            Xref pubmedXref = pubmedXref(pubmedId);
 
             //The XreferenceBean corresponding to to the pubmedXref
             XreferenceBean pubmedXb = new XreferenceBean(pubmedXref);
@@ -342,15 +346,17 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
             in the database, we update the primaryId with the new one.
             */
             if(false=="".equals(expAc) && null != expAc){
-                Experiment exp = helper.getObjectByAc(Experiment.class, expAc);
+                Experiment exp = experimentDao.getByAc(expAc);
                 Collection<ExperimentXref> xrefs = exp.getXrefs();
 
                 for (ExperimentXref xref : xrefs) {
                     if(CvDatabase.PUBMED.equals(xref.getCvDatabase().getShortLabel()) && CvXrefQualifier.PRIMARY_REFERENCE.equals(xref.getCvXrefQualifier().getShortLabel()) && false==pubmedId.equals(xref.getPrimaryId())){
-                        if(helper.isPersistent(xref)){
-                            xref.setPrimaryId(pubmedId);
-                            helper.update(xref);
-                        }
+                        xref.setPrimaryId(pubmedId);
+                        xrefDao.saveOrUpdate(xref);
+//                        if(helper.isPersistent(xref)){
+//                            xref.setPrimaryId(pubmedId);
+//                            helper.update(xref);
+//                        }
                     }
                 }
             }
@@ -398,19 +404,18 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     }
 
     /**
-     * Given an authorList and an intact helper, it creates an "author-list" Annotation
+     * Given an authorList it creates an "author-list" Annotation
      *
      * @param authorList a String containing the name of the author separated by a coma
      * ex : Ho Y., Gruhler A., Heilbut A., Bader GD., Moore L., Adams SL., Millar A., Taylor P., Bennett K.
-     * @param helper an IntactHelper object
      * @return The author-list Annotation
      * @throws IntactException
      */
-    public Annotation authorListAnnotation(String authorList, IntactHelper helper) throws IntactException {
+    public Annotation authorListAnnotation(String authorList) throws IntactException {
 
         Annotation authorListAnnot;
-
-        CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.AUTHOR_LIST );
+        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvTopic authorListTopic = cvObjectDao.getByXref(CvTopic.AUTHOR_LIST_MI_REF );
         if ( authorListTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
                                 ")... no author list will be attached/updated to the experiment." );
@@ -422,64 +427,65 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     }
 
     /**
-     * Given an publication year String and an intact helper, it creates an "author-list" Annotation
+     * Given an publication year String it creates an "author-list" Annotation
      *
      * @param pubYear a String containing the year of publication of the article
-     * @param helper an IntactHelper object
      * @return The publication-year Annotation
      * @throws IntactException
      */
-    public Annotation createPubYearAnnotation (String pubYear, IntactHelper helper) throws IntactException {
+    public Annotation createPubYearAnnotation (String pubYear) throws IntactException {
         Annotation pubYearAnnot;
 
-        CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.PUBLICATION_YEAR );
-        if ( authorListTopic == null ) {
+        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvTopic publicationYear = cvObjectDao.getByShortLabel(CvTopic.PUBLICATION_YEAR );
+        if ( publicationYear == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
                                 ")... no author list will be attached/updated to the experiment." );
         }
 
-        pubYearAnnot = new Annotation(getService().getOwner(), authorListTopic ,pubYear);
+        pubYearAnnot = new Annotation(getService().getOwner(), publicationYear ,pubYear);
 
         return pubYearAnnot;
 
     }
 
     /**
-         * Given an authorList and an intact helper, it creates an "author-list" Annotation
+         * Given an authorList it creates an "author-list" Annotation
          *
-         * @param journal a String containing the name of the journ
-         * @param helper an IntactHelper object
+         * @param journal a String containing the name of the journal
          * @return The journal Annotation
          * @throws IntactException
          */
-        public Annotation createJournalAnnotation(String journal, IntactHelper helper) throws IntactException {
+        public Annotation createJournalAnnotation(String journal) throws IntactException {
 
             Annotation journalAnnot;
 
-            CvTopic authorListTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.JOURNAL );
-            if ( authorListTopic == null ) {
+            CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            CvTopic journalTopic = cvObjectDao.getByShortLabel(CvTopic.JOURNAL );
+            if ( journalTopic == null ) {
                 System.err.println( "Could not find CvTopic(" + CvTopic.JOURNAL +
                                     ")... no author list will be attached/updated to the experiment." );
             }
 
-            journalAnnot = new Annotation(getService().getOwner(), authorListTopic ,journal);
+            journalAnnot = new Annotation(getService().getOwner(), journalTopic ,journal);
 
             return journalAnnot;
         }
 
     /**
-     * Given an authorEmail and an intact helper, it creates an "contact-email" Annotation
+     * Given an authorEmail it creates an "contact-email" Annotation
      * @param authorEmail a String containing the email of the author
      * ex : bcrosby@uwindsor.ca
-     * @param helper an IntactHelper object
      * @return The contact-email annotation
      * @throws IntactException
      */
-    public Annotation authorEmailAnnotation(String authorEmail, IntactHelper helper) throws IntactException {
+    public Annotation authorEmailAnnotation(String authorEmail) throws IntactException {
 
         Annotation authorEmailAnnot;
 
-        CvTopic authorEmailTopic = helper.getObjectByLabel( CvTopic.class, CvTopic.CONTACT_EMAIL );
+        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvTopic authorEmailTopic = cvObjectDao.getByShortLabel(CvTopic.CONTACT_EMAIL );
+
         if ( authorEmailTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL +
                                 ")... no email will be attached/updated to the experiments." );
@@ -490,17 +496,17 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     }
 
     /**
-     *  Given and Intact Helper and a pubmedId it create a Xref (pubmed, primary-reference)
+     *  Given a pubmedId it create a Xref (pubmed, primary-reference)
      * @param pubmedId a pubmed Id
-     * @param helper
      * @return the pubmed Xref
      * @throws IntactException
      */
 
-    public Xref pubmedXref (String pubmedId, IntactHelper helper) throws IntactException {
+    public Xref pubmedXref (String pubmedId) throws IntactException {
         Xref pubmedXref;
-        CvXrefQualifier primaryRefQualifier = helper.getObjectByLabel( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE );
-        CvDatabase pubmedDatabase= helper.getObjectByLabel(CvDatabase.class, CvDatabase.PUBMED);
+        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+        CvXrefQualifier primaryRefQualifier = (CvXrefQualifier) cvObjectDao.getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+        CvDatabase pubmedDatabase= (CvDatabase) cvObjectDao.getByXref(CvDatabase.PUBMED_MI_REF);
         pubmedXref=new ExperimentXref(getService().getOwner(),pubmedDatabase,pubmedId,"","",primaryRefQualifier);
         return pubmedXref;
     }
