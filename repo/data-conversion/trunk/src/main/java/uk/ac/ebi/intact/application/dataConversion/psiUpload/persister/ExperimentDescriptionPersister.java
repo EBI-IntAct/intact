@@ -50,7 +50,7 @@ public class ExperimentDescriptionPersister {
             throws IntactException {
 
         ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         Experiment experiment;
         final String shortlabel = experimentDescription.getShortlabel();
@@ -148,7 +148,7 @@ public class ExperimentDescriptionPersister {
         for ( Iterator iterator = xrefs.iterator(); iterator.hasNext(); ) {
             XrefTag xrefTag = (XrefTag) iterator.next();
 
-            ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
+            ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getInstitution(),
                                   XrefChecker.getCvDatabase( xrefTag.getDb() ),
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),

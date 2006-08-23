@@ -186,7 +186,7 @@ public abstract class AbstractOrganismChecker {
                         CvCellType bsCellType = null;
                         CvTissue bsTissue = null;
 
-                        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentInstance(IntactContext.getCurrentInstance()).getInstitutionDao().getInstitution();
+                        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
                         if ( tissue != null ) {
                             label += "-" + tissue.getShortlabel();

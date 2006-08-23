@@ -671,7 +671,7 @@ public final class ProteinInteractorChecker {
 
         } else {
 
-            InteractorXref xref = new InteractorXref( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
+            InteractorXref xref = new InteractorXref( IntactContext.getCurrentInstance().getInstitution(),
                                   database,
                                   xrefTag.getId(),
                                   xrefTag.getSecondary(),
@@ -816,7 +816,7 @@ public final class ProteinInteractorChecker {
                 }
 
 
-                protein = new ProteinImpl( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(), bioSource, shortlabel, proteinType );
+                protein = new ProteinImpl( IntactContext.getCurrentInstance().getInstitution(), bioSource, shortlabel, proteinType );
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().persist( (ProteinImpl)protein );
 
                 // add Xrefs
@@ -838,7 +838,7 @@ public final class ProteinInteractorChecker {
                 }
 
                 // add no-uniprot-update annotation
-                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
+                Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getInstitution(),
                                                         ControlledVocabularyRepository.getNoUniprotUpdateTopic() );
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                 proteinType.addAnnotation( annotation );

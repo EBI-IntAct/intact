@@ -55,7 +55,7 @@ public class ProteinParticipantPersister {
         }
 
 
-        final Component component = new Component(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution(),
+        final Component component = new Component(IntactContext.getCurrentInstance().getInstitution(),
                 interaction, protein, role );
         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().persist( component );
 

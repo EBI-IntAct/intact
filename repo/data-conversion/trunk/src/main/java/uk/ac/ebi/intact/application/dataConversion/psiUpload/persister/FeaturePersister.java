@@ -32,7 +32,7 @@ public class FeaturePersister {
         String typeId = featureTag.getFeatureType().getPsiDefinition().getId();
         CvFeatureType featureType = FeatureChecker.getCvFeatureType( typeId );
 
-        Institution institution = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         Feature feature = new Feature( institution,
                                        featureTag.getShortlabel(),
