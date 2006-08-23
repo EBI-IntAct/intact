@@ -14,15 +14,15 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>1.3.1</version>
+        <version>1.3.2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released 1.3.3 -->
+    <version>1.3.4</version>
+    <!-- last released 1.3.4 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
