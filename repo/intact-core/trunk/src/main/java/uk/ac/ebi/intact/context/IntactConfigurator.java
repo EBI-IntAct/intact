@@ -153,12 +153,10 @@ public class IntactConfigurator
 
     public static IntactContext createIntactContext(IntactSession session)
     {
-        /*
         if (RuntimeConfig.getCurrentInstance(session).getDataConfigs().isEmpty())
         {
             initIntact(session);
         }
-        */
 
         String defaultUser = null;
 

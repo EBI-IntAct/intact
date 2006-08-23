@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.3.4</version>
     <!-- last released 1.3.4 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/intact</url>
