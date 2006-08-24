@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>maven-uniprotexport-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.1.0</version>
+    <version>1.2-SNAPSHOT</version>
     <!-- last released 1.1.0 -->
     <name>Plugin - Export lines for uniprot</name>
     <description>
