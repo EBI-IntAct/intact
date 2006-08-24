@@ -63,7 +63,7 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
             throw new MojoExecutionException("CC Export file already exist and overwrite is set to false: "+ccExportFile);
         }
 
-        getLog().info( "GOA exportwill be saved in: " + goaExportFile );
+        getLog().info( "GOA export will be saved in: " + goaExportFile );
 
         if (goaExportFile.exists() && !overwrite)
         {

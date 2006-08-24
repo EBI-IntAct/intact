@@ -75,6 +75,12 @@ public class DrExportMojo extends UniprotExportAbstractMojo
                 getLog().info("Limited export. Only "+maxProteinsToExport+" will be checked for eligibility");
             }
 
+            int totalUniprotProteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getProteinDao().countUniprotProteinsInvolvedInInteractions();
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+            getLog().debug("Uniprot proteins involved in interactions: "+totalUniprotProteins);
+
             do
             {
 
@@ -102,7 +108,7 @@ public class DrExportMojo extends UniprotExportAbstractMojo
                     break;
                 }
 
-            } while (proteinEligible != null && !proteinEligible.isEmpty());
+            } while (firstResult <= totalUniprotProteins);
 
             getLog().info("Eligible proteins found: "+eligibleProteinsCount);
 
