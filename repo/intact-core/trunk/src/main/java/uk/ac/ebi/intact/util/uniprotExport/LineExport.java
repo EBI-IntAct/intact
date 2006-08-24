@@ -39,6 +39,8 @@ public class LineExport {
 
     private boolean alreadyInitialized;
 
+    private Map<String,Boolean> binaryInteractions = new HashMap<String,Boolean>( 4096 );
+
     //////////////////////////
     // Constants
 
@@ -441,7 +443,7 @@ public class LineExport {
      *
      * @return the uniprot ID as a String or null if none is found (should not occur)
      */
-    public final String getUniprotID( final Protein protein ) {
+    public String getUniprotID( final Protein protein ) {
 
         String uniprot = null;
 
@@ -533,7 +535,7 @@ public class LineExport {
      * @return a Collection if Interaction.
      */
     protected final List<Interaction> getInteractions( final Protein protein ) {
-        Collection<Component> components = protein.getActiveInstances();
+       /* Collection<Component> components = protein.getActiveInstances();
         List<Interaction> interactions = new ArrayList<Interaction>( components.size() );
 
         for (Component component : components)
@@ -546,7 +548,10 @@ public class LineExport {
             }
         }
 
-        return interactions;
+        return interactions; */
+
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getInteractionsByInteractorAc(protein.getAc());
+
     }
 
     /**
@@ -562,7 +567,17 @@ public class LineExport {
      * @return true if the interaction is binary, otherwise false.
      */
     public boolean isBinary( Interaction interaction ) {
-        boolean isBinaryInteraction = InteractionUtils.isBinaryInteraction(interaction);
+
+        Boolean isBinaryInteraction = binaryInteractions.get(interaction.getAc());
+
+        if (isBinaryInteraction != null)
+        {
+            return isBinaryInteraction;
+        }
+
+        Collection<Component> components = interaction.getComponents();
+
+        isBinaryInteraction = InteractionUtils.isBinaryInteraction(interaction);
 
         if (log.isDebugEnabled())
         {
@@ -574,7 +589,7 @@ public class LineExport {
 
         if (isBinaryInteraction) {
             // then test if all interactors are UniProt Proteins
-            for ( Component component : interaction.getComponents() ) {
+            for ( Component component : components ) {
 
                 Interactor interactor = component.getInteractor();
                 if ( interactor instanceof Protein ) {
@@ -607,6 +622,8 @@ public class LineExport {
                 }
             } // components
         }
+
+        binaryInteractions.put(interaction.getAc(), isBinaryInteraction);
 
         return isBinaryInteraction;
     }

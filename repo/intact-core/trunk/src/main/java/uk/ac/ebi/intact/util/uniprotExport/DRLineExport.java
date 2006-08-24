@@ -558,11 +558,24 @@ public class DRLineExport extends LineExport {
      * returned.
      *
      * @param firstResult First result of the page
-     * @param maxResults Maximum number of results. The number of rows returned will be the
-     * maxResults less the number of repetition of each AC.
+     * @param maxResults Maximum number of results. 
+     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
+     */
+     public final Set<String> getEligibleProteins( int firstResult, int maxResults )
+            throws SQLException,
+                   IntactException,
+                   DatabaseContentException {
+
+         List<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                                    .getProteinDao().getUniprotProteinsInvolvedInInteractions(firstResult, maxResults);
+
+         return getEligibleProteins(proteins);
+     }
+
+    /**
+     * Get a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
-     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot. It will return
-     * null if no elligible proteins are found in the range used
+     * @return a distinct set of Uniprot ID of the protein eligible to export in Swiss-Prot.
      *
      * @throws java.sql.SQLException error when handling the JDBC connection or query.
      * @throws uk.ac.ebi.intact.business.IntactException
@@ -570,30 +583,32 @@ public class DRLineExport extends LineExport {
      * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
      *                               if the initialisation process failed (CV not found)
      */
-    public final Set<String> getEligibleProteins( int firstResult, int maxResults )
+    public final Set<String> getEligibleProteins( Collection<ProteinImpl> proteins )
             throws SQLException,
                    IntactException,
                    DatabaseContentException {
 
-        List<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                                    .getProteinDao().getUniprotProteins(firstResult, maxResults);
-
         if (proteins.isEmpty())
         {
-            return null;
+            return new HashSet<String>();
         }
 
         // fetch necessary vocabulary
         init( );
 
-        Set proteinEligible = new HashSet( maxResults );
-        
-        int proteinCount = firstResult;
+        Set<String> proteinEligible = new HashSet<String>();
+
+        int proteinCount = 0;
 
         // Process the proteins one by one.
-        for (Protein protein : proteins) {
+        for (ProteinImpl protein : proteins) {
 
             proteinCount++;
+
+            if (isProteinEligible(protein))
+            {
+
+            }
 
             if ( ( proteinCount % 100 ) == 0 ) {
                 System.out.print( "..." + proteinCount );
@@ -605,64 +620,83 @@ public class DRLineExport extends LineExport {
                 }
             }
 
-            // only used in case the current protein is a splice variant
-            Protein master = null;
+            if (isProteinEligible(protein))
+            {
 
-            // Skip proteins annotated no-uniprot-update
-            if ( false == needsUniprotUpdate( protein ) ) {
-                log.debug( protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it." );
-                continue; // process next AC
-            }
+                // only used in case the current protein is a splice variant
+                Protein master = null;
 
-            String uniprotId = null;
+                // Skip proteins annotated no-uniprot-update
+                if (false == needsUniprotUpdate(protein))
+                {
+                    log.debug(protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it.");
+                    continue; // process next AC
+                }
 
-            if ( isHighConfidence( protein ) ) {
-
-                log.debug( "Wasn't low confidence ... export it ;o)" );
+                String uniprotId = null;
 
                 // means a protein is low-confidence if it has at least one low-confidence interaction.
 
                 // if this is a splice variant, we try to get its master protein
-                if ( protein.getShortLabel().indexOf( '-' ) != -1 ) {
+                if (protein.getShortLabel().indexOf('-') != -1)
+                {
 
-                    String masterAc = getMasterAc( protein );
+                    String masterAc = getMasterAc(protein);
 
-                    if ( masterAc == null ) {
-
-                        log.error( "The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC." );
-
-                    } else {
-
+                    if (masterAc == null)
+                    {
+                        log.error("The splice variant having the AC(" + protein.getAc() + ") doesn't have it's master AC.");
+                    }
+                    else
+                    {
                         master = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc(masterAc);
 
-                        if ( master == null ) {
-                            log.error( "Could not find the master protein of splice variant (" +
-                                                protein.getAc() + ") having the AC(" + masterAc + ")" );
-                        } else {
+                        if (master == null)
+                        {
+                            log.error("Could not find the master protein of splice variant (" +
+                                    protein.getAc() + ") having the AC(" + masterAc + ")");
+                        }
+                        else
+                        {
                             // check that the master hasn't been processed already
-                            uniprotId = getUniprotID( master );
+                            uniprotId = getUniprotID(master);
                         }
                     }
-                } else {
-
-                    uniprotId = getUniprotID( protein );
                 }
+                else
+                {
+                    uniprotId = getUniprotID(protein);
+                }
+
+                if (uniprotId != null && !proteinEligible.contains(uniprotId))
+                {
+                    log.debug("Exporting UniProt( " + uniprotId + " )");
+                    proteinEligible.add(uniprotId);
+                }
+
+                int count = proteinEligible.size();
+                float percentage = ((float) count / (float) proteinCount) * 100;
+                log.debug(count + " protein" + (count > 1 ? "s" : "") +
+                        " eligible for export out of " + proteinCount +
+                        " processed (" + percentage + "%).");
+
             }
-
-            if ( uniprotId != null && !proteinEligible.contains( uniprotId ) ) {
-                log.debug( "Exporting UniProt( " + uniprotId + " )" );
-                proteinEligible.add( uniprotId );
-            }
-
-            int count = proteinEligible.size();
-            float percentage = ( (float) count / (float) proteinCount ) * 100;
-            log.debug( count + " protein" + ( count > 1 ? "s" : "" ) +
-                 " eligible for export out of " + proteinCount +
-                 " processed (" + percentage + "%)." );
-
-        } // all proteins
+        }// all proteins
 
         return proteinEligible;
+    }
+
+    public boolean isProteinEligible(ProteinImpl protein)
+    {
+        // Skip proteins annotated no-uniprot-update
+        if (false == needsUniprotUpdate(protein))
+        {
+            log.debug(protein.getAc() + " " + protein.getShortLabel() + " is not from UniProt, skip it.");
+            return false;
+        }
+
+        return isHighConfidence(protein);
+
     }
 
     public static String formatProtein( String uniprotID ) {

@@ -749,12 +749,12 @@ public class CCLineExport extends LineExport {
      * Note: an interaction that as been already processed won't be a second time.
      * </pre>
      *
-     * @param uniprotIDs a set of protein ID (uniprot AC)
+     * @param uniprotIDs a collection of protein ID (uniprot AC)
      *
      * @throws IntactException
      * @throws SQLException
      */
-    public void generateCCLines( Set<String> uniprotIDs ) throws IntactException,
+    public void generateCCLines( Collection<String> uniprotIDs ) throws IntactException,
                                                          SQLException, IOException {
 
         int count = uniprotIDs.size();
@@ -808,7 +808,7 @@ public class CCLineExport extends LineExport {
                 //     get from the interaction set all interaction that have both interactor (remove them)
                 //     run algo
 
-                log.debug("\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s).");
+                //log.debug("\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s).");
 
 
                 while (!interactionP1.isEmpty())

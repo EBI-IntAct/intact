@@ -134,18 +134,7 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
 
     public List<ProteinImpl> getUniprotProteins(Integer firstResult, Integer maxResults)
     {
-        Criteria crit =  getSession().createCriteria(ProteinImpl.class)
-                .createAlias("xrefs", "xref")
-                .createAlias("xref.cvDatabase", "cvDatabase")
-                .createAlias("xref.cvXrefQualifier", "cvXrefQualifier")
-                .add(Restrictions.eq("cvDatabase.shortLabel",
-                        CvDatabase.UNIPROT))
-                .add(Restrictions.eq("cvXrefQualifier.shortLabel",
-                        CvXrefQualifier.IDENTITY))
-
-                .add(Restrictions.not(Restrictions.like("xref.primaryId", "A%")))
-                .add(Restrictions.not(Restrictions.like("xref.primaryId", "B%")))
-                .add(Restrictions.not(Restrictions.like("xref.primaryId", "C%")))
+        Criteria crit =  criteriaForUniprotProteins()
                 .addOrder(Order.asc("xref.primaryId"));
 
          if (firstResult != null && firstResult >= 0)
@@ -159,6 +148,54 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
          }
            
         return crit.list();
+    }
+
+    public List<ProteinImpl> getUniprotProteinsInvolvedInInteractions(Integer firstResult, Integer maxResults)
+    {
+        Criteria crit =  criteriaForUniprotProteins()
+                .add(Restrictions.isNotEmpty("activeInstances"))
+                .addOrder(Order.asc("xref.primaryId"));
+
+         if (firstResult != null && firstResult >= 0)
+         {
+             crit.setFirstResult(firstResult);
+         }
+
+        if (maxResults != null && maxResults > 0)
+         {
+             crit.setMaxResults(maxResults);
+         }
+
+        return crit.list();
+    }
+
+    public Integer countUniprotProteins()
+    {
+        return (Integer) criteriaForUniprotProteins()
+                .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+    public Integer countUniprotProteinsInvolvedInInteractions()
+    {
+        return (Integer) criteriaForUniprotProteins()
+                .add(Restrictions.isNotEmpty("activeInstances"))
+                .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+    private Criteria criteriaForUniprotProteins()
+    {
+        return  getSession().createCriteria(ProteinImpl.class)
+                .createAlias("xrefs", "xref")
+                .createAlias("xref.cvDatabase", "cvDatabase")
+                .createAlias("xref.cvXrefQualifier", "cvXrefQualifier")
+                .add(Restrictions.eq("cvDatabase.shortLabel",
+                        CvDatabase.UNIPROT))
+                .add(Restrictions.eq("cvXrefQualifier.shortLabel",
+                        CvXrefQualifier.IDENTITY))
+
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "A%")))
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "B%")))
+                .add(Restrictions.not(Restrictions.like("xref.primaryId", "C%")));
     }
 
     public List<ProteinImpl> getByUniprotId(String uniprotId)
