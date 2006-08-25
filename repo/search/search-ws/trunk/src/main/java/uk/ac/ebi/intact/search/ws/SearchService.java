@@ -30,6 +30,11 @@ public class SearchService
 
     private static final Log log = LogFactory.getLog(SearchService.class);
 
+    public SearchService()
+    {
+        System.setProperty("institution", "ebi");
+    }
+
     /**
      * Finds all interaction partners for given list of protein IDs (only UniProt IDs are supported at present)
      *
