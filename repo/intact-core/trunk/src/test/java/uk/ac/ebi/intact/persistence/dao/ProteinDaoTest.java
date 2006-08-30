@@ -55,6 +55,16 @@ public class ProteinDaoTest extends TestCase
         assertEquals("Max results is 50, so we expect 50 results", 50, uniprots.size());
     }
 
+    public void testGetUniprotAcByProteinAc(){
+        //Assert that it find the uniprot identity crossref with value Q9UK45 for interactor EBI-348372
+        String uniprotAc1 = proteinDao.getUniprotAcByProteinAc("EBI-348372");
+        assert("Q9UK45".equals(uniprotAc1));
+        //Assert that it does not find any uniprot identity crossref for interactor EBI-348372 has it does not have one
+        String uniprotAc = proteinDao.getUniprotAcByProteinAc("EBI-941456");
+        assertNull(uniprotAc);
+
+    }
+
     public void testGetByUniprotId()
     {
         List<ProteinImpl> prots = proteinDao.getByUniprotId("Q9VE54");
