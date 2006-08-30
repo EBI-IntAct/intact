@@ -334,8 +334,9 @@ public class DRLineExportTest extends TestCase {
      */
     private DRLineExport getDrLineExporter( final boolean debug ) {
 
-        DRLineExport drLineExporter = new DRLineExport() {
-
+        DRLineExport drLineExporter = new DRLineExport();
+        /*{
+             
             // Override that method and give some mock object for init !
             public void init( ) {
                 // provide the content of what should have been picked up from a Database.
@@ -358,7 +359,7 @@ public class DRLineExportTest extends TestCase {
             // should never happen !!
             e.printStackTrace();
         }
-
+         */
         return drLineExporter;
     }
 

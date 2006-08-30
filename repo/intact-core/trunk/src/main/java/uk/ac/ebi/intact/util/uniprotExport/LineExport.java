@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.uniprotExport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
@@ -36,8 +37,6 @@ public class LineExport {
         TIME = formatter.format( new Date() );
         formatter = null;
     }
-
-    private boolean alreadyInitialized;
 
     private Map<String,Boolean> binaryInteractions = new HashMap<String,Boolean>( 4096 );
 
@@ -255,26 +254,6 @@ public class LineExport {
     //////////////////////////////
     // Attributes
 
-    // Vocabulary that we need for processing
-    protected CvXrefQualifier identityXrefQualifier = null;
-    protected CvXrefQualifier isoformParentQualifier = null;
-    protected CvXrefQualifier primaryReferenceQualifier = null;
-
-    protected CvDatabase uniprotDatabase = null;
-    protected CvDatabase intactDatabase = null;
-    protected CvDatabase pubmedDatabase = null;
-
-    protected CvTopic uniprotDR_Export = null;
-    protected CvTopic uniprotCC_Export = null;
-    protected CvTopic authorConfidenceTopic = null;
-    protected CvTopic negativeTopic = null;
-    protected CvTopic ccNoteTopic = null;
-    protected CvTopic noUniprotUpdate = null;
-
-    protected CvAliasType geneNameAliasType;
-    protected CvAliasType locusNameAliasType; // locus-name
-    protected CvAliasType orfNameAliasType; // orf-name
-
     /**
      * Cache the CvInteraction property for the export. CvInteraction.ac -> Boolean.TRUE or Boolean.FALSE
      */
@@ -294,45 +273,6 @@ public class LineExport {
 
     /////////////////////////////
     // Methods
-
-    /**
-     * Load the minimal Controlled vocabulary needed during the processing. It at least one term is missing, an
-     * Exception is thrown.
-     *
-     * @throws uk.ac.ebi.intact.business.IntactException
-     *          search error
-     * @throws uk.ac.ebi.intact.util.uniprotExport.CCLineExport.DatabaseContentException
-     *          if at least one term is missing
-     */
-    public void init( ) throws IntactException, DatabaseContentException {
-
-        if (alreadyInitialized)
-        {
-            return;
-        }
-
-        uniprotDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT );
-        intactDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
-        pubmedDatabase = (CvDatabase) getCvObject(  CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED );
-
-        identityXrefQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, CvXrefQualifier.IDENTITY );
-        isoformParentQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF, CvXrefQualifier.ISOFORM_PARENT );
-        primaryReferenceQualifier = (CvXrefQualifier) getCvObject(  CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, CvXrefQualifier.PRIMARY_REFERENCE );
-
-        // note: CvTopic do not have MI references.
-        uniprotDR_Export = (CvTopic) getCvObject(  CvTopic.class, CvTopic.UNIPROT_DR_EXPORT );
-        uniprotCC_Export = (CvTopic) getCvObject(  CvTopic.class, CvTopic.UNIPROT_CC_EXPORT );
-        authorConfidenceTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.AUTHOR_CONFIDENCE );
-        negativeTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.NEGATIVE );
-        ccNoteTopic = (CvTopic) getCvObject(  CvTopic.class, CvTopic.CC_NOTE );
-        noUniprotUpdate = (CvTopic) getCvObject(  CvTopic.class, CvTopic.NON_UNIPROT );
-
-        geneNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.GENE_NAME_MI_REF, CvAliasType.GENE_NAME );
-        locusNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF, CvAliasType.LOCUS_NAME );
-        orfNameAliasType = (CvAliasType) getCvObject(  CvAliasType.class, CvAliasType.ORF_NAME_MI_REF, CvAliasType.ORF_NAME );
-
-        alreadyInitialized = true;
-    }
 
     /**
      * Get a CvObject based on its class name and its shortlabel.
@@ -375,14 +315,14 @@ public class LineExport {
         CvObject cv = null;
 
         if( mi != null ) {
-            cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(mi);
+            cv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(mi);
             if( cv == null ) {
                 log.error( "The MI reference you gave doesn't exists. Using the shortlabel instead." );
             }
         }
 
         if( cv == null ) {
-            cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByShortLabel( shortlabel );
+            cv = IntactContext.getCurrentInstance().getCvContext().getByLabel( shortlabel );
         }
 
         if ( cv == null ) {
@@ -450,8 +390,8 @@ public class LineExport {
         Collection<InteractorXref> xrefs = protein.getXrefs();
 
         for ( InteractorXref xref : xrefs ) {
-            if ( uniprotDatabase.equals( xref.getCvDatabase() ) &&
-                 identityXrefQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if ( getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF).equals( xref.getCvDatabase() ) &&
+                 getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
                 uniprot = xref.getPrimaryId();
                 break;
             }
@@ -476,8 +416,8 @@ public class LineExport {
         for ( Iterator<InteractorXref> iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = iterator.next();
 
-            if ( intactDatabase.equals( xref.getCvDatabase() ) &&
-                 isoformParentQualifier.equals( xref.getCvXrefQualifier() ) ) {
+            if ( getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF).equals( xref.getCvDatabase() ) &&
+                 getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
                 ac = xref.getPrimaryId();
                 found = true;
             }
@@ -674,7 +614,7 @@ public class LineExport {
                     if (log.isDebugEnabled())
                         log.debug("\t\t\t\tAnnotation CvTopic: "+_annotation.getCvTopic());
 
-                    if ( uniprotDR_Export.equals( _annotation.getCvTopic() ) ) {
+                    if ( getCvContext().getByLabel(CvTopic.UNIPROT_DR_EXPORT).equals( _annotation.getCvTopic() ) ) {
 
                         log.debug( logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
 
@@ -811,7 +751,7 @@ public class LineExport {
 
             for (Annotation _annotation : annotations)
             {
-                if (uniprotCC_Export.equals(_annotation.getCvTopic()))
+                if (getCvContext().getByLabel(CvTopic.UNIPROT_CC_EXPORT).equals(_annotation.getCvTopic()))
                 {
 
                     log.debug(logPrefix + _annotation);
@@ -904,7 +844,7 @@ public class LineExport {
 
             for (Annotation annotation : annotations)
             {
-                if (uniprotDR_Export.equals(annotation.getCvTopic()))
+                if (getCvContext().getByLabel(CvTopic.UNIPROT_DR_EXPORT).equals(annotation.getCvTopic()))
                 {
 
                     log.debug(logPrefix + annotation);
@@ -979,7 +919,7 @@ public class LineExport {
         for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
             Annotation annotation = iterator.next();
 
-            if ( negativeTopic.equals( annotation.getCvTopic() ) ) {
+            if ( getCvContext().getByLabel(CvTopic.NEGATIVE).equals( annotation.getCvTopic() ) ) {
                 isNegative = true;
             }
         }
@@ -997,7 +937,7 @@ public class LineExport {
 
         for (Annotation annotation : interaction.getAnnotations())
         {
-            if (ccNoteTopic.equals(annotation.getCvTopic()))
+            if (getCvContext().getByLabel(CvTopic.CC_NOTE).equals(annotation.getCvTopic()))
             {
                 if (notes == null)
                 {
@@ -1065,17 +1005,17 @@ public class LineExport {
         }
 
         // look first for gene-name
-        List<Alias> geneNames = selectAliasByCvTopic( queryProtein.getAliases(), geneNameAliasType );
+        List<Alias> geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.GENE_NAME_MI_REF));
 
         if ( geneNames.isEmpty() ) {
 
             // then look for locus
-            geneNames = selectAliasByCvTopic( queryProtein.getAliases(), locusNameAliasType );
+            geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.LOCUS_NAME_MI_REF) );
 
             if ( geneNames.isEmpty() ) {
 
                 // then look for orf
-                geneNames = selectAliasByCvTopic( queryProtein.getAliases(), orfNameAliasType );
+                geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.ORF_NAME_MI_REF) );
 
                 if ( geneNames.isEmpty() ) {
 
@@ -1156,6 +1096,8 @@ public class LineExport {
 
         boolean needsUpdate = true;
 
+        CvTopic noUniprotUpdate = (CvTopic) getCvContext().getByLabel(CvTopic.NON_UNIPROT);
+
         if ( null == noUniprotUpdate ) {
             // in case the term hasn't been created, assume there are no proteins created via editor.
             return true;
@@ -1170,5 +1112,11 @@ public class LineExport {
         }
 
         return needsUpdate;
+    }
+
+
+    public CvContext getCvContext()
+    {
+        return IntactContext.getCurrentInstance().getCvContext();
     }
 }

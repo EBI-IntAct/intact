@@ -92,7 +92,7 @@ public final class CvContext implements Serializable
     {
         if (!forceReload && cachedByLabel.containsKey(label))
         {
-            return cachedByAc.get(label);
+            return cachedByLabel.get(label);
         }
 
         CvObject cvObject = getDaoFactory().getCvObjectDao().getByShortLabel(label);
