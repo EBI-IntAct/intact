@@ -46,6 +46,7 @@ public class LineExport {
 
     private Map<String,String> protAcToUniprotIdCache = new LRUMap(4096);
 
+    private CvObject uniprotCcExport = getCvContext().getByLabel(CvTopic.UNIPROT_CC_EXPORT);
     //////////////////////////
     // Constants
 
@@ -769,7 +770,7 @@ public class LineExport {
 
             for (Annotation _annotation : annotations)
             {
-                if (getCvContext().getByLabel(CvTopic.UNIPROT_CC_EXPORT).equals(_annotation.getCvTopic()))
+                if (uniprotCcExport.equals(_annotation.getCvTopic()))
                 {
 
                     log.debug(logPrefix + _annotation);
