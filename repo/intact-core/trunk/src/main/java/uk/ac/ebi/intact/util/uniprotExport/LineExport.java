@@ -38,6 +38,9 @@ public class LineExport {
         formatter = null;
     }
 
+    private static CvObject uniprotCv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF);
+    private static CvObject identityCv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF);
+
     private Map<String,Boolean> binaryInteractions = new HashMap<String,Boolean>( 4096 );
 
     //////////////////////////
@@ -390,8 +393,8 @@ public class LineExport {
         Collection<InteractorXref> xrefs = protein.getXrefs();
 
         for ( InteractorXref xref : xrefs ) {
-            if ( getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF).equals( xref.getCvDatabase() ) &&
-                 getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
+            if ( uniprotCv.equals( xref.getCvDatabase() ) &&
+                 identityCv.equals( xref.getCvXrefQualifier() ) ) {
                 uniprot = xref.getPrimaryId();
                 break;
             }
