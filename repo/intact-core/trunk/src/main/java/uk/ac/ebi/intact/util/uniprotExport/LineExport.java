@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.util.uniprotExport;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
@@ -12,7 +13,6 @@ import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
-import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,6 +43,8 @@ public class LineExport {
     private static CvObject identityCv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF);
 
     private Map<String,Boolean> binaryInteractions = new HashMap<String,Boolean>( 4096 );
+
+    private Map<String,String> protAcToUniprotIdCache = new LRUMap(4096);
 
     //////////////////////////
     // Constants
@@ -389,20 +391,29 @@ public class LineExport {
      */
     public String getUniprotID( final Protein protein ) {
 
-//        String uniprot = null;
+        if (protAcToUniprotIdCache.containsKey(protein.getAc()))
+        {
+            return protAcToUniprotIdCache.get(protein.getAc());
+        }
 
-//        Collection<InteractorXref> xrefs = protein.getXrefs();
-        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao() ;
-        return proteinDao.getUniprotAcByProteinAc(protein.getAc());
-//        for ( InteractorXref xref : xrefs ) {
-//            if ( uniprotCv.equals( xref.getCvDatabase() ) &&
-//                 identityCv.equals( xref.getCvXrefQualifier() ) ) {
-//                uniprot = xref.getPrimaryId();
-//                break;
-//            }
-//        }
+        String uniprotId = null;
 
-//        return uniprot;
+        Collection<InteractorXref> xrefs = protein.getXrefs();
+
+        for ( InteractorXref xref : xrefs ) {
+            if ( uniprotCv.equals( xref.getCvDatabase() ) &&
+                 identityCv.equals( xref.getCvXrefQualifier() ) ) {
+                uniprotId = xref.getPrimaryId();
+                break;
+            }
+        }
+
+        //ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao() ;
+        //String uniprotId = proteinDao.getUniprotAcByProteinAc(protein.getAc());
+
+        protAcToUniprotIdCache.put(protein.getAc(), uniprotId);
+
+        return uniprotId;
     }
 
     /**
