@@ -49,6 +49,9 @@ public class CcLineExportLiveTest extends TestCase
         Writer goaWriter = new StringWriter();
 
         CCLineExport ccLineExport = new CCLineExport(ccWriter, goaWriter);
+
+        new CcLineExportProgressThread(ccLineExport, uniprotIds.size()).start();
+
         ccLineExport.generateCCLines(uniprotIds);
 
         //assertEquals(3, ccLineExport.getCcLineCount());
@@ -56,23 +59,5 @@ public class CcLineExportLiveTest extends TestCase
 
         System.out.println(ccWriter.toString());
     }
-    /*
-    public void testNewGenerateCCLines() throws Exception
-    {
-        Collection<String> uniprotIds =
-                CCLineExport.getEligibleProteinsFromFile(CcLineExportLiveTest.class.getResource("uniprotlinks.dat").getFile());
-
-        Writer ccWriter = new StringWriter();
-        Writer goaWriter = new StringWriter();
-
-        CcLineExportWriter ccLineExport = new CcLineExportWriter(ccWriter, goaWriter);
-        ccLineExport.generateCCLines(uniprotIds);
-
-        //assertEquals(3, ccLineExport.getCcLineCount());
-        //assertEquals(4, ccLineExport.getGoaLineCount());
-
-        System.out.println(ccWriter.toString());
-    }
-       */
 
 }

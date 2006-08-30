@@ -11,9 +11,14 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
+import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.util.uniprotExport.event.CcLineCreatedEvent;
+import uk.ac.ebi.intact.util.uniprotExport.event.CcLineEventListener;
+import uk.ac.ebi.intact.util.uniprotExport.event.DrLineProcessedEvent;
+import uk.ac.ebi.intact.util.uniprotExport.event.NonBinaryInteractionFoundEvent;
 
+import javax.swing.event.EventListenerList;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
@@ -221,6 +226,9 @@ public class CCLineExport extends LineExport {
             // write the content in the output file.
             ccWriter.write( ccs );
             ccWriter.flush();
+
+            // fire the event
+            fireCcLineCreatedEvent(new CcLineCreatedEvent(this, id, cc4protein));
         }
     }
 
@@ -867,6 +875,9 @@ public class CCLineExport extends LineExport {
 
                             iterator.remove();
 
+                            // fire non-binary interaction event
+                            fireNonBinaryInteractionFoundEvent(new NonBinaryInteractionFoundEvent(this, interaction));
+
                         }
                         else
                         {
@@ -1022,7 +1033,7 @@ public class CCLineExport extends LineExport {
                                 log.debug("\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common");
 
                                 // run the algo
-                                // we need to output 
+                                // we need to output
                                 //     the collection of eligible interactions to get the feature information (GO specific)
                                 //     the collection of eligible experimentss to get the pubmed ids (GO specific)
                                 Set eligibleInteractions = new HashSet();
@@ -1060,6 +1071,9 @@ public class CCLineExport extends LineExport {
 
             // write the CC content of protein still designated by index 'i' as its processing is finished.
             flushCCLine(uniprot_ID);
+
+            fireDrLineProcessedEvent(new DrLineProcessedEvent(this, uniprot_ID));
+
         } // i (all eligible uniprot IDs)
 
         // flush and close output file
@@ -1130,6 +1144,62 @@ public class CCLineExport extends LineExport {
         // the given parameter is just needed to type the returned collection.
         // @see java.util.Collection.toArray(Object a[])
         return proteins;
+    }
+
+    protected EventListenerList listenerList =
+            new EventListenerList();
+
+    public void addCcLineExportListener(CcLineEventListener eventListener)
+    {
+        listenerList.add(CcLineEventListener.class, eventListener);
+    }
+
+    // This methods allows classes to unregister for MyEvents
+    public void removeCcLineExportListener(CcLineEventListener eventListener)
+    {
+        listenerList.remove(CcLineEventListener.class, eventListener);
+    }
+
+    void fireCcLineCreatedEvent(CcLineCreatedEvent evt)
+    {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+        for (int i = 0; i < listeners.length; i += 2)
+        {
+            if (listeners[i] == CcLineEventListener.class)
+            {
+                ((CcLineEventListener) listeners[i + 1]).ccLineCreated(evt);
+            }
+        }
+    }
+
+    void fireDrLineProcessedEvent(DrLineProcessedEvent evt)
+    {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+        for (int i = 0; i < listeners.length; i += 2)
+        {
+            if (listeners[i] == CcLineEventListener.class)
+            {
+                ((CcLineEventListener) listeners[i + 1]).drLineProcessed(evt);
+            }
+        }
+    }
+
+    void fireNonBinaryInteractionFoundEvent(NonBinaryInteractionFoundEvent evt)
+    {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+        for (int i = 0; i < listeners.length; i += 2)
+        {
+            if (listeners[i] == CcLineEventListener.class)
+            {
+                ((CcLineEventListener) listeners[i + 1]).processNonBinaryInteraction(evt);
+            }
+        }
     }
 
     /**
