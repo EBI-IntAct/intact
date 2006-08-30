@@ -142,10 +142,10 @@ public class CCLineExport extends LineExport {
      */
     private Collection<ProteinImpl> getProteinFromIntact(  String uniprotID ) throws IntactException {
 
-        Collection<ProteinImpl> proteins = getProteinByUniprotId(uniprotID,
+        Collection<ProteinImpl> proteins = getProteinByXref(uniprotID,
                                                                  (CvDatabase)getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF),
                                                                  (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF));
-        //IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByUniprotId(uniprotID);
+        //Collection<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByUniprotId(uniprotID);
 
         if ( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
@@ -158,9 +158,12 @@ public class CCLineExport extends LineExport {
         for (Protein protein : proteins)
         {
             String ac = protein.getAc();
-            Collection<ProteinImpl> sv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao()
-                    .getByXrefLike((CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
-                            (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF), ac);
+            Collection<ProteinImpl> sv = getProteinByXref(ac,
+                                                          (CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
+                    (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF));
+//      Collection<ProteinImpl> sv =              IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao()
+//                    .getByXrefLike((CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
+//                            (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF), ac);
 
             spliceVariants.addAll(sv);
         }
@@ -170,11 +173,13 @@ public class CCLineExport extends LineExport {
         return proteins;
     }
 
-    private Collection<ProteinImpl> getProteinByUniprotId(String uniprotId, CvDatabase database, CvXrefQualifier qualifier){
-        XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
-        Collection<Xref> xrefs = xrefDao.getByPrimaryId(uniprotId);
+    private Collection<ProteinImpl> getProteinByXref(String primaryId, CvDatabase database, CvXrefQualifier qualifier){
+        XrefDao<InteractorXref> xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(InteractorXref.class);
+        Collection<InteractorXref> xrefs = xrefDao.getByPrimaryId(primaryId, false);
+
+
         Collection<ProteinImpl> proteins = new ArrayList();
-        for(Xref xref : xrefs){
+        for(InteractorXref xref : xrefs){
             if ((null != database && database.equals(xref.getCvDatabase()))
                     ||
                     (null == database && null == xref.getCvDatabase()))
@@ -184,8 +189,8 @@ public class CCLineExport extends LineExport {
                         ||
                         (null == qualifier && null == xref.getCvXrefQualifier()))
                 {
-                    proteins.add(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().
-                            getProteinDao().getByAc(xref.getParentAc()));
+
+                    proteins.add((ProteinImpl) xref.getParent());
                 }
             }
         }
