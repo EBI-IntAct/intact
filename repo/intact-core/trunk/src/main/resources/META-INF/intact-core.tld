@@ -12,7 +12,7 @@
     <uri>http://ebi.ac.uk/intact/core</uri>
     <display-name>Intact taglib</display-name>
     <description>
-        Only used to setup the listener, so you don't need to put it in the applications
+        Only used to setup the eventListener, so you don't need to put it in the applications
         that use intact-core.
     </description>
 
@@ -22,9 +22,9 @@
 ======================================================
 -->
 
-    <listener>
-        <listener-class>uk.ac.ebi.intact.webapp.StartupIntactListener</listener-class>
-    </listener>
+    <eventListenertener>
+        <eventListenertener>uk.ac.ebi.intact.webapp.StartupIntactListener</eventListenertener>
+    </eventListenertener>
 
 
 </taglib>
