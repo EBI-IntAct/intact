@@ -491,7 +491,7 @@ public class LineExport {
      * @return a Collection if Interaction.
      */
     protected final List<Interaction> getInteractions( final Protein protein ) {
-       /* Collection<Component> components = protein.getActiveInstances();
+        Collection<Component> components = protein.getActiveInstances();
         List<Interaction> interactions = new ArrayList<Interaction>( components.size() );
 
         for (Component component : components)
@@ -504,9 +504,9 @@ public class LineExport {
             }
         }
 
-        return interactions; */
+        return interactions;
 
-        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getInteractionsByInteractorAc(protein.getAc());
+//        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao().getInteractionsByInteractorAc(protein.getAc());
 
     }
 
