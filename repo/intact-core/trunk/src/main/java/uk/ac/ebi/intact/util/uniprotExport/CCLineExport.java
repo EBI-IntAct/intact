@@ -95,7 +95,6 @@ public class CCLineExport extends LineExport {
             throw new NullPointerException( "You must give a GO Line writer." );
         }
 
-        init( );
         this.ccWriter = ccWriter;
         this.goWriter = goWriter;
     }
@@ -150,7 +149,9 @@ public class CCLineExport extends LineExport {
         for (Protein protein : proteins)
         {
             String ac = protein.getAc();
-            Collection<ProteinImpl> sv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByXrefLike(intactDatabase, isoformParentQualifier, ac);
+            Collection<ProteinImpl> sv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao()
+                    .getByXrefLike((CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
+                            (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF), ac);
 
             spliceVariants.addAll(sv);
         }
@@ -342,16 +343,16 @@ public class CCLineExport extends LineExport {
             for ( Iterator iterator1 = experiment.getXrefs().iterator(); iterator1.hasNext() && !found; ) {
                 Xref xref = (Xref) iterator1.next();
 
-                if ( pubmedDatabase.equals( xref.getCvDatabase() ) &&
-                     primaryReferenceQualifier.equals( xref.getCvXrefQualifier() ) ) {
+                if ( getCvContext().getByMiRef(CvDatabase.PUBMED_MI_REF).equals( xref.getCvDatabase() ) &&
+                     getCvContext().getByMiRef(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
                     found = true;
                     pubmeds.add( xref.getPrimaryId() );
                 }
             } // xref
 
             if ( found == false ) {
-                log.error( experiment.getShortLabel() + " " + pubmedDatabase.getShortLabel() +
-                                    " has no (" + primaryReferenceQualifier.getShortLabel() + ") assigned." );
+                log.error( experiment.getShortLabel() + " " + CvDatabase.PUBMED +
+                                    " has no (" + CvXrefQualifier.PRIMARY_REFERENCE + ") assigned." );
             }
         } // experiments
 
@@ -562,6 +563,8 @@ public class CCLineExport extends LineExport {
                     Collection keywords = experimentStatus.getKeywords();
                     Collection annotations = interaction.getAnnotations();
                     boolean annotationFound = false;
+
+                    CvTopic authorConfidenceTopic = (CvTopic) getCvContext().getByMiRef(CvTopic.AUTHOR_CONFIDENCE_MI_REF);
 
                     // We assume here that an interaction has only one Annotation( uniprot-dr-export ).
                     for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !annotationFound; ) {

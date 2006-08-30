@@ -43,7 +43,6 @@ public class DrLineExportLiveTest extends TestCase
                 .getProteinDao().getByUniprotId("Q9Z2Q6").iterator().next();
 
         DRLineExport export = new DRLineExport();
-        export.init();
         boolean protEligible = export.isProteinEligible(prot);
         assertTrue(protEligible);
     }
@@ -54,7 +53,6 @@ public class DrLineExportLiveTest extends TestCase
                 .getProteinDao().getByUniprotId("Q8R332-1").iterator().next();
 
         DRLineExport export = new DRLineExport();
-        export.init();
         boolean protEligible = export.isProteinEligible(prot);
         assertTrue("A protein with isoforms, and one of the isoforms have interactions but not the" +
                 " master protein, should be exported", protEligible);

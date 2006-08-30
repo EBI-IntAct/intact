@@ -100,6 +100,43 @@ public class CcLine implements Comparable {
     }
 
 
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass())
+        {
+            return false;
+        }
+
+        CcLine ccLine1 = (CcLine) o;
+
+        if (ccLine != null ? !ccLine.equals(ccLine1.ccLine) : ccLine1.ccLine != null)
+        {
+            return false;
+        }
+        if (geneName != null ? !geneName.equals(ccLine1.geneName) : ccLine1.geneName != null)
+        {
+            return false;
+        }
+        if (uniprotID != null ? !uniprotID.equals(ccLine1.uniprotID) : ccLine1.uniprotID != null)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode()
+    {
+        int result;
+        result = (ccLine != null ? ccLine.hashCode() : 0);
+        result = 31 * result + (geneName != null ? geneName.hashCode() : 0);
+        return result;
+    }
+
     public String toString() {
         return "CcLine{" +
                "ccLine='" + ccLine + "'" +
