@@ -10,6 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.util.ElapsedTime;
 import uk.ac.ebi.intact.util.uniprotExport.event.StatisticsCcLineEventListener;
 
+import java.io.File;
+import java.io.PrintStream;
+
 /**
  * TODO comment this!
  *
@@ -23,6 +26,7 @@ public class CcLineExportProgressThread extends Thread
     private static final Log log = LogFactory.getLog(CcLineExportProgressThread.class);
 
     private final StatisticsCcLineEventListener listener;
+    private PrintStream printStream;
 
     private final static int DEFAULT_SECONDS_WITHIN_CHECKS = 5;
 
@@ -32,6 +36,12 @@ public class CcLineExportProgressThread extends Thread
     {
         this.listener = new StatisticsCcLineEventListener(totalDrLinesCount);
         ccLineExport.addCcLineExportListener(listener);
+    }
+
+    public CcLineExportProgressThread(CCLineExport ccLineExport, int totalDrLinesCount, PrintStream printStream)
+    {
+        this(ccLineExport, totalDrLinesCount);
+
     }
 
     @Override
@@ -45,7 +55,7 @@ public class CcLineExportProgressThread extends Thread
 
             try
             {
-                Thread.sleep(secondsWithinChecks);
+                Thread.sleep(secondsWithinChecks*1000);
 
                 seconds = seconds + secondsWithinChecks;
             }
@@ -65,6 +75,12 @@ public class CcLineExportProgressThread extends Thread
 
             log.debug(listener.toString() );
             log.info("Speed (DR Line / sec): "+speed+" ;  ETA: "+elapsedTime.toString());
+
+            if (printStream != null)
+            {
+                printStream.append("Speed (DR Line / sec): "+speed+" ;  ETA: "+elapsedTime.toString()+" ; "+listener.toString()+ File.separator);
+                printStream.flush();
+            }
 
         }
     }
