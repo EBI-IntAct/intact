@@ -79,11 +79,8 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
      */
     @Override
     public boolean equals( Object obj ) {
-        if ( this == obj ) {
-            return true;
-        }
-
-        if ( obj == null ) {
+        if (!super.equals(obj))
+        {
             return false;
         }
 
@@ -93,6 +90,14 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
         }
 
         final CvObject other = (CvObject) obj;
+
+        if (ac != null && other.getAc() != null)
+        {
+            if (ac.equals(other.getAc()))
+            {
+                return true;
+            }
+        }
 
         // Check this object has an identity xref first.
         Xref idXref = getIdentityXref();
