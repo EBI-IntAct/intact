@@ -24,6 +24,10 @@ public class CcLineExportProgressThread extends Thread
 
     private final StatisticsCcLineEventListener listener;
 
+    private final static int DEFAULT_SECONDS_WITHIN_CHECKS = 5;
+
+    private int secondsWithinChecks = DEFAULT_SECONDS_WITHIN_CHECKS;
+
     public CcLineExportProgressThread(CCLineExport ccLineExport, int totalDrLinesCount)
     {
         this.listener = new StatisticsCcLineEventListener(totalDrLinesCount);
@@ -41,10 +45,9 @@ public class CcLineExportProgressThread extends Thread
 
             try
             {
-                int millisecondsLapse = 1000;
-                Thread.sleep(millisecondsLapse);
+                Thread.sleep(secondsWithinChecks);
 
-                seconds = seconds + (millisecondsLapse/1000);
+                seconds = seconds + secondsWithinChecks;
             }
             catch (InterruptedException e)
             {
@@ -64,7 +67,16 @@ public class CcLineExportProgressThread extends Thread
             log.info("Speed (DR Line / sec): "+speed+" ;  ETA: "+elapsedTime.toString());
 
         }
+    }
 
 
+    public int getSecondsWithinChecks()
+    {
+        return secondsWithinChecks;
+    }
+
+    public void setSecondsWithinChecks(int secondsWithinChecks)
+    {
+        this.secondsWithinChecks = secondsWithinChecks;
     }
 }
