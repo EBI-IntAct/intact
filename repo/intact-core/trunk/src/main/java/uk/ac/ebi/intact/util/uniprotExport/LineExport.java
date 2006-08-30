@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -388,19 +389,20 @@ public class LineExport {
      */
     public String getUniprotID( final Protein protein ) {
 
-        String uniprot = null;
+//        String uniprot = null;
 
-        Collection<InteractorXref> xrefs = protein.getXrefs();
+//        Collection<InteractorXref> xrefs = protein.getXrefs();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao() ;
+        return proteinDao.getUniprotAcByProteinAc(protein.getAc());
+//        for ( InteractorXref xref : xrefs ) {
+//            if ( uniprotCv.equals( xref.getCvDatabase() ) &&
+//                 identityCv.equals( xref.getCvXrefQualifier() ) ) {
+//                uniprot = xref.getPrimaryId();
+//                break;
+//            }
+//        }
 
-        for ( InteractorXref xref : xrefs ) {
-            if ( uniprotCv.equals( xref.getCvDatabase() ) &&
-                 identityCv.equals( xref.getCvXrefQualifier() ) ) {
-                uniprot = xref.getPrimaryId();
-                break;
-            }
-        }
-
-        return uniprot;
+//        return uniprot;
     }
 
     /**
