@@ -30,6 +30,11 @@ public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implemen
         return getColByPropertyName("primaryId", primaryId);
     }
 
+    public Collection<T> getByPrimaryId(String primaryId, boolean ignoreCase)
+    {
+        return getColByPropertyName("primaryId", primaryId, ignoreCase);
+    }
+
     public Collection<T> getByPrimaryIdLike(String primaryId)
     {
         return getByPropertyNameLike("primaryId", primaryId);
@@ -38,5 +43,10 @@ public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implemen
     public Collection<T> getByParentAc(String parentAc)
     {
         return getColByPropertyName("parentAc", parentAc);
+    }
+
+    public Collection<T> getByParentAc(String parentAc, boolean ignoreCase)
+    {
+        return getColByPropertyName("parentAc", parentAc, ignoreCase);
     }
 }
