@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.MemoryMonitor;
+import uk.ac.ebi.intact.persistence.dao.XrefDao;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -51,7 +52,7 @@ public class CCLineExport extends LineExport {
         }
     }
 
-    
+
     ///////////////////////////////
     // Instance variables
 
@@ -136,7 +137,10 @@ public class CCLineExport extends LineExport {
      */
     private Collection<ProteinImpl> getProteinFromIntact(  String uniprotID ) throws IntactException {
 
-        Collection<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByUniprotId(uniprotID);
+        Collection<ProteinImpl> proteins = getProteinByUniprotId(uniprotID,
+                                                                 (CvDatabase)getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF),
+                                                                 (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF));
+        //IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByUniprotId(uniprotID);
 
         if ( proteins.size() == 0 ) {
             throw new IntactException( "the ID " + uniprotID + " didn't return the expected number of protein: " +
@@ -158,6 +162,28 @@ public class CCLineExport extends LineExport {
 
         proteins.addAll( spliceVariants );
 
+        return proteins;
+    }
+
+    private Collection<ProteinImpl> getProteinByUniprotId(String uniprotId, CvDatabase database, CvXrefQualifier qualifier){
+        XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
+        Collection<Xref> xrefs = xrefDao.getByPrimaryId(uniprotId);
+        Collection<ProteinImpl> proteins = new ArrayList();
+        for(Xref xref : xrefs){
+            if ((null != database && database.equals(xref.getCvDatabase()))
+                    ||
+                    (null == database && null == xref.getCvDatabase()))
+            {
+
+                if ((null != qualifier && qualifier.equals(xref.getCvXrefQualifier()))
+                        ||
+                        (null == qualifier && null == xref.getCvXrefQualifier()))
+                {
+                    proteins.add(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().
+                            getProteinDao().getByAc(xref.getParentAc()));
+                }
+            }
+        }
         return proteins;
     }
 
