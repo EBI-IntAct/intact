@@ -529,7 +529,9 @@ public class LineExport {
 
         if (isBinaryInteraction) {
             // then test if all interactors are UniProt Proteins
-            for ( Component component : components ) {
+            for ( Iterator iterator = interaction.getComponents().iterator(); iterator.hasNext()
+                                                                              && isBinaryInteraction; ) {
+                Component component = (Component) iterator.next();
 
                 Interactor interactor = component.getInteractor();
                 if ( interactor instanceof Protein ) {
