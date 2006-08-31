@@ -22,6 +22,8 @@ public interface IntactObjectDao<T extends IntactObject>
 
     Collection<T> getByAcLike(String ac);
 
+    Collection<T> getByAcLike(String ac, boolean ignoreCase);  
+
     List<T> getByAc(String[] acs);
 
     List<T> getByAc(Collection<String> acs);
