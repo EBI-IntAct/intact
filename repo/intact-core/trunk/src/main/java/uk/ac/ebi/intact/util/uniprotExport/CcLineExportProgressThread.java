@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.util.ElapsedTime;
 import uk.ac.ebi.intact.util.uniprotExport.event.StatisticsCcLineEventListener;
 
-import java.io.File;
 import java.io.PrintStream;
+import java.util.Calendar;
 
 /**
  * TODO comment this!
@@ -24,6 +24,8 @@ public class CcLineExportProgressThread extends Thread
 {
 
     private static final Log log = LogFactory.getLog(CcLineExportProgressThread.class);
+
+    private static final String NEW_LINE = System.getProperty( "line.separator");
 
     private final StatisticsCcLineEventListener listener;
     private PrintStream printStream;
@@ -41,7 +43,7 @@ public class CcLineExportProgressThread extends Thread
     public CcLineExportProgressThread(CCLineExport ccLineExport, int totalDrLinesCount, PrintStream printStream)
     {
         this(ccLineExport, totalDrLinesCount);
-
+        this.printStream = printStream;
     }
 
     @Override
@@ -69,16 +71,23 @@ public class CcLineExportProgressThread extends Thread
             double speed = (double)drProcessed / seconds;
 
             int drRemaining = listener.getDrLinesRemaining();
-            int secsRemaining = Double.valueOf((double)drRemaining * speed).intValue();
+            int secsRemaining = Double.valueOf((double)drRemaining / speed).intValue();
 
-            ElapsedTime elapsedTime = new ElapsedTime(secsRemaining);
+            ElapsedTime elapsedTime = new ElapsedTime(Double.valueOf(seconds).intValue());
+            ElapsedTime remainingTime = new ElapsedTime(secsRemaining);
+
+            Calendar finishDate = Calendar.getInstance();
+            finishDate.set(Calendar.SECOND, secsRemaining);
 
             log.debug(listener.toString() );
-            log.info("Speed (DR Line / sec): "+speed+" ;  ETA: "+elapsedTime.toString());
+            log.info("ETA: "+remainingTime.toString()+" ; Speed (DR Line / sec): "+speed);
 
             if (printStream != null)
             {
-                printStream.append("Speed (DR Line / sec): "+speed+" ;  ETA: "+elapsedTime.toString()+" ; "+listener.toString()+ File.separator);
+                printStream.append("------------------------------------------"+NEW_LINE);
+                printStream.append("Elapsed time: "+elapsedTime.toString()+" ; ETA: "+remainingTime.toString()+" - "+finishDate.getTime()+NEW_LINE);
+                printStream.append("Speed (DR Line / sec): "+speed+NEW_LINE);
+                printStream.append(listener.toString()+NEW_LINE);
                 printStream.flush();
             }
 
