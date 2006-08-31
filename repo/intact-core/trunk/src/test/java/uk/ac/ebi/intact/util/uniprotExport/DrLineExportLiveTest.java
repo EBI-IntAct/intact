@@ -57,48 +57,27 @@ public class DrLineExportLiveTest extends TestCase
         assertTrue("A protein with isoforms, and one of the isoforms have interactions but not the" +
                 " master protein, should be exported", protEligible);
     }
-         /*
 
-         Q8IN81 NOT eligible !!!!
-Q8INK9 NOT eligible !!!!
-Q8R332 NOT eligible !!!!
-
-    public void testRemovedFile() throws Exception
+    public void testIsProteinEligible_OneWithSecondaryId() throws Exception
     {
-        File idsToCheckFile = new File("/scratch/projects/intact-current/plugins/maven-uniprotexport-plugin/temp/target/uniprotexport/drFileComparator_removed.log");
+        ProteinImpl prot = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getProteinDao().getByUniprotId("P03020").iterator().next();
 
-        BufferedReader reader = new BufferedReader(new FileReader(idsToCheckFile));
-        String line;
+        DRLineExport export = new DRLineExport();
+        boolean protEligible = export.isProteinEligible(prot);
+        assertTrue(protEligible);
+    }
 
-        int i=0;
-
-        while ((line = reader.readLine()) != null)
+    public void testIsProteinEligible_() throws Exception
         {
-            String id = line.trim();
-
             ProteinImpl prot = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                    .getProteinDao().getByUniprotId(id).iterator().next();
+                    .getProteinDao().getByUniprotId("P0ACJ8").iterator().next();
 
             DRLineExport export = new DRLineExport();
-            export.init();
             boolean protEligible = export.isProteinEligible(prot);
-            if (protEligible)
-            {
-                //System.out.println(id + " eligible");
-            }
-            else
-            {
-                System.out.println(id + " NOT eligible !!!!");
-            }
-
-            i++;
-
-            if (i%50 == 0)
-            {
-               IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-            }
+            assertTrue(protEligible);
         }
 
-    }  */
+
 
 }
