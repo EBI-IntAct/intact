@@ -117,6 +117,11 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
         return getByPropertyNameLike(propertyName, value, true, -1, -1);
     }
 
+     protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase)
+    {
+        return getByPropertyNameLike(propertyName, value, ignoreCase, -1, -1);
+    }
+
     protected Collection<T> getByPropertyNameLike(String propertyName, String value, boolean ignoreCase, int firstResult, int maxResults)
     {
         return getByPropertyNameLike(propertyName, value, ignoreCase, firstResult, maxResults, false);

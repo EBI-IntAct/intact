@@ -461,7 +461,7 @@ public class LineExport {
             // search for that Protein
             Collection<ProteinImpl> proteins = null;
             try {
-                proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAcLike(ac);
+                proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAcLike(ac, false);
             } catch ( IntactException e ) {
                 e.printStackTrace();
             }

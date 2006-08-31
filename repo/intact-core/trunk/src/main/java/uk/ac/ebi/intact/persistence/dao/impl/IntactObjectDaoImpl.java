@@ -47,6 +47,11 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getByPropertyNameLike( "ac", ac );
     }
 
+    public Collection<T> getByAcLike(String ac, boolean ignoreCase){
+        return getByPropertyNameLike("ac", ac, ignoreCase);
+    }
+
+
 
     /**
      * Performs a unique query for an array of ACs. Beware that depending on the database used this query has limitation
