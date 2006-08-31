@@ -10,8 +10,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.util.Utilities;
 import uk.ac.ebi.intact.util.uniprotExport.CCLineExport;
+import uk.ac.ebi.intact.util.uniprotExport.CcLineExportProgressThread;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Set;
 
 /**
@@ -26,7 +30,6 @@ import java.util.Set;
  */
 public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
 {
-
     /**
      * Name of the uniprot comments file
      * @parameter default-value="uniprotcomments.dat"
@@ -89,9 +92,11 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
             BufferedWriter goaWriter = new BufferedWriter(new FileWriter(goaExportFile));
 
             CCLineExport exporter = new CCLineExport( ccWriter, goaWriter );
-            //exporter.setDebugEnabled( debugEnabled );
-            //exporter.setDebugFileEnabled( debugFileEnabled );
-             
+
+            // thread to check progress
+            CcLineExportProgressThread progressThread = new CcLineExportProgressThread(exporter, uniprotIDs.size(), System.out);
+            progressThread.setSecondsWithinChecks(60);
+            progressThread.start();
 
             // launch the CC export
             exporter.generateCCLines( uniprotIDs );
