@@ -19,44 +19,13 @@ import java.util.Date;
  * @version $Id$
  */
 @MappedSuperclass
-public abstract class IntactObjectImpl implements IntactObject, Serializable,
-                                                  Cloneable {
-
-    /**
-     * This is used in toString() in order to be platform compatible.
-     */
-    protected final String NEW_LINE = System.getProperty( "line.separator" );
-
-    ///////////////////////////////////////
-    //attributes
-
-    /**
-     * The curator who has last edited the object.
-     */
-    public String updator;
-
-    /**
-     * The curator who has created the edited object
-     */
-    public String creator;
-
+public abstract class IntactObjectImpl extends AbstractAuditable implements IntactObject, Cloneable {
 
     /**
      * The unique accession number of an object. This is defined as protected to allow concrete subclasses to generate
      * copies if required.
      */
     protected String ac;
-
-    /**
-     * Creation date of an object. The type is java.sql.Date, not java.util.Data, for database compatibility.
-     */
-    private Date created;
-
-    /**
-     * The last update of the object. The type is java.sql.Date, not java.util.Data, for database compatibility.
-     */
-    private Date updated;
-
 
     public IntactObjectImpl() {
     }
@@ -85,51 +54,6 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
         this.ac = ac;
     }
 
-    @Temporal
-    public Date getCreated() {
-        return created;
-    }
-
-    /**
-     * <b>Avoid calling this method as this field is set by the DB and it can't be modifiable via OJB because 'created'
-     * field is declared as read-only</b>
-     */
-    public void setCreated( Date created ) {
-        this.created = created;
-    }
-
-    @Temporal
-    public Date getUpdated() {
-        return updated;
-    }
-
-    /**
-     * <b>Avoid calling this method as this field is set by the DB and it can't
-     * be modifiable via OJB because 'updated' field is declared as read-only</b>
-     */
-    public void setUpdated(Date updated) {
-        this.updated = updated;
-    }
-
-    @Column(name="created_user")
-    public String getCreator() {
-        return creator;
-    }
-
-    public void setCreator(String creator)
-    {
-        this.creator = creator;
-    }
-
-    @Column(name="userstamp")
-    public String getUpdator() {
-        return updator;
-    }
-
-    public void setUpdator(String updator)
-    {
-        this.updator = updator;
-    }
 
     /**
      * Makes a clone of this intact object.
@@ -140,11 +64,11 @@ public abstract class IntactObjectImpl implements IntactObject, Serializable,
     public Object clone() throws CloneNotSupportedException {
         IntactObjectImpl copy = (IntactObjectImpl) super.clone();
         // Reset the AC.
-        copy.ac = null;
+        copy.setAc(null);
 
         // Sets the dates to the current date.
-        copy.created = null;
-        copy.updated = null;
+        copy.setCreated(null);
+        copy.setUpdated(null);
 
         return copy;
     }

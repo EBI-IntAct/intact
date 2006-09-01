@@ -14,25 +14,9 @@ import java.util.Date;
  *
  * @see uk.ac.ebi.intact.model.IntactObjectImpl
  */
-public interface IntactObject {
+public interface IntactObject extends Auditable {
 
     String getAc();
 
     void setAc(String ac);
-
-    Date getCreated();
-
-    void setCreated(java.util.Date created);
-
-    Date getUpdated();
-
-    void setUpdated(java.util.Date updated);
-
-    String getCreator();
-
-    void setCreator(String createdUser);
-
-    String getUpdator();
-
-    void setUpdator(String userStamp);
 }
