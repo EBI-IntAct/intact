@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.model.meta;
 
-import uk.ac.ebi.intact.model.AbstractAuditable;
+import uk.ac.ebi.intact.model.Auditable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +33,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name = "ia_db_info")
-public class DbInfo extends AbstractAuditable
+public class DbInfo implements Auditable
 {
 
     public static final String SCHEMA_VERSION = "schema_version"; 
@@ -43,6 +43,32 @@ public class DbInfo extends AbstractAuditable
     private String key;
 
     private String value;
+
+    /**
+     * The curator who has last edited the object.
+     */
+    @Column(name = "updated_user")
+    private String updator;
+
+    /**
+     * The curator who has created the edited object
+     */
+    @Column(name = "created_user")
+    private String creator;
+
+    /**
+     * Creation date of an object. The type is java.sql.Date, not java.util.Data, for database compatibility.
+     */
+    @Temporal
+    @Column(name = "created_date")
+    private Date created;
+
+    /**
+     * The last update of the object. The type is java.sql.Date, not java.util.Data, for database compatibility.
+     */
+    @Temporal
+    @Column(name = "created_date")
+    private Date updated;
 
     public String getKey()
     {
@@ -64,35 +90,44 @@ public class DbInfo extends AbstractAuditable
         this.value = value;
     }
 
-
-    @Override
-    @Temporal
-    @Column(name = "created_date")
-    public Date getCreated()
-    {
-        return super.getCreated();
-    }
-
-    @Override
-    @Temporal
-    @Column(name = "created_date")
-    public Date getUpdated()
-    {
-        return super.getUpdated();
-    }
-
-    @Override
-    @Column(name = "created_user")
-    public String getCreator()
-    {
-        return super.getCreator();
-    }
-
-    @Override
-    @Column(name = "updated_user")
     public String getUpdator()
     {
-        return super.getUpdator();
+        return updator;
+    }
+
+    public void setUpdator(String updator)
+    {
+        this.updator = updator;
+    }
+
+    public String getCreator()
+    {
+        return creator;
+    }
+
+    public void setCreator(String creator)
+    {
+        this.creator = creator;
+    }
+
+    public Date getCreated()
+    {
+        return created;
+    }
+
+    public void setCreated(Date created)
+    {
+        this.created = created;
+    }
+
+    public Date getUpdated()
+    {
+        return updated;
+    }
+
+    public void setUpdated(Date updated)
+    {
+        this.updated = updated;
     }
 
     @Override
