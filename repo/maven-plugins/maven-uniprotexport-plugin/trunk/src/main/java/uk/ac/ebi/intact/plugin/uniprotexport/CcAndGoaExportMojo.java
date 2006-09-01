@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.util.MemoryMonitor;
 import uk.ac.ebi.intact.util.Utilities;
 import uk.ac.ebi.intact.util.uniprotExport.CCLineExport;
 import uk.ac.ebi.intact.util.uniprotExport.CcLineExportProgressThread;
+import uk.ac.ebi.intact.plugin.uniprotexport.ccexport.NonBinaryInteractionListener;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -43,6 +44,12 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
      * @required
      */
     protected String goaFilename;
+
+     /**
+     * File where the non-binary interactions will be listed
+     * @parameter default-value="target/uniprot-export/non-binary-interactions.log"
+     */
+    protected File nonBinaryInteractionsFile;
 
     /**
      * If true, the GOA File will be Gzipped
@@ -97,6 +104,14 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
             CcLineExportProgressThread progressThread = new CcLineExportProgressThread(exporter, uniprotIDs.size(), System.out);
             progressThread.setSecondsWithinChecks(60);
             progressThread.start();
+
+            // non-binary interactions writer
+            if (nonBinaryInteractionsFile != null)
+            {
+                mkParentDirs(nonBinaryInteractionsFile);
+                NonBinaryInteractionListener nonBinIntListener = new NonBinaryInteractionListener(new FileWriter(nonBinaryInteractionsFile));
+                exporter.addCcLineExportListener(nonBinIntListener);
+            }
 
             // launch the CC export
             exporter.generateCCLines( uniprotIDs );

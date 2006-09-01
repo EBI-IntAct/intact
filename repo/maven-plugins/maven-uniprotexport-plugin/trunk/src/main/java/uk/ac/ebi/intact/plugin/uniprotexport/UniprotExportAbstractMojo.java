@@ -148,4 +148,12 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
         writer.write(line+NEW_LINE);
         writer.close();
     }
+
+    protected void mkParentDirs(File file)
+    {
+        if (!file.getParentFile().exists())
+        {
+            file.getParentFile().mkdirs();
+        }
+    }
 }
