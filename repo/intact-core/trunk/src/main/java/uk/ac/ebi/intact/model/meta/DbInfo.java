@@ -41,6 +41,7 @@ public class DbInfo implements Auditable
     @Id
     @Column(name="dbi_key")
     private String key;
+    
 
     private String value;
 
@@ -67,7 +68,7 @@ public class DbInfo implements Auditable
      * The last update of the object. The type is java.sql.Date, not java.util.Data, for database compatibility.
      */
     @Temporal
-    @Column(name = "created_date")
+    @Column(name = "updated_date")
     private Date updated;
 
     public String getKey()
