@@ -6,18 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.QueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
-import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
@@ -118,14 +115,12 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
             setAnchor(request, intform);
             return mapping.getInputForward();
         }
-        // The array to store queries.
-        Query[] queries = getSearchQueries(Experiment.class, searchValue);
 
         // The maximum interactions allowed.
         int max = getService().getInteger("exp.search.limit");
 
         // The results to display.
-        List results = super.search(queries, max, request, "err.search");
+        List results = super.getResults(Experiment.class, searchValue, max, request, "err.search");
 
         if (results.isEmpty()) {
             // Errors or empty or too large
@@ -150,7 +145,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         List expRows = new ArrayList();
 
         // The query factory to get a query.
-        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+        QueryFactory qf = QueryFactory.getInstance();
 
         CvObjectDao<CvXrefQualifier> cvObjectDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
         // The primary reference AC.

@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
@@ -15,6 +14,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -98,11 +101,11 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         Class searchClass = Class.forName(getService().getClassName(topic));
 
         // The array to store queries.
-        Query[] queries = getSearchQueries(searchClass, searchString);
+//        Query[] queries = getSearchQueries(searchClass, searchString);
 
         // The results to display.
 
-        List results = super.search(queries, max, request);
+        List<ResultRowData> results = getResults(searchClass, searchString, max, request, ActionErrors.GLOBAL_ERROR);
 
         if (results.isEmpty()) {
             // Errors or empty or too large
@@ -112,7 +115,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         // Only one instance found?
         if (results.size() == 1) {
             // The search returned only one instance.
-            ResultRowData row = (ResultRowData) results.get(0);
+            ResultRowData row = results.get(0);
 
             // Try to acquire the lock.
             ActionErrors errors = acquire(row.getAc(), user.getUserName());

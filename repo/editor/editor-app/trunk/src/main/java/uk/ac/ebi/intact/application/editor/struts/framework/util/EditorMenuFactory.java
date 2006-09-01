@@ -6,19 +6,13 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
-import org.apache.ojb.broker.query.Query;
-import org.apache.ojb.broker.query.Criteria;
-import org.apache.ojb.broker.query.QueryFactory;
-import org.apache.ojb.broker.query.ReportQueryByCriteria;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.ObjectBridgeQueryFactory;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import java.util.*;
 
@@ -118,7 +112,7 @@ public class EditorMenuFactory {
     /**
      * The name for the Protein list (used for exemple by the function getMenu(String type) to filter the CvTopic menu
      */
-     public static final String PROTEIN= "Protein";
+    public static final String PROTEIN= "Protein";
 
     /**
      * The only instance of this class.
@@ -133,12 +127,14 @@ public class EditorMenuFactory {
     /**
      * The criteria to retrieve nucleic acid types
      */
-    private static final Criteria ourNucleicAcidCriteria = new Criteria();
-
+//    private static final Criteria ourNucleicAcidCriteria = new Criteria();
+    private static Collection<String> ourNucleicAcidMiRefs = new ArrayList<String>();
     /**
      * The criteria to retrieve protein types
      */
-    private static final Criteria ourProteinCriteria = new Criteria();
+//    private static final Criteria ourProteinCriteria = new Criteria();
+    private static Collection<String> ourProteinMiRefs = new ArrayList<String>();
+
 
     // Static initializer.
 
@@ -170,24 +166,24 @@ public class EditorMenuFactory {
             cvHelper = new CvHelper();
 
             CvInteractorType nucleicAcid = cvHelper.getNucleicAcid();
-            nucleicAcidMIs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
-            nucleicAcidMIs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
+            ourNucleicAcidMiRefs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
+            ourNucleicAcidMiRefs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
 
             CvInteractorType protein = CvHelper.getProtein();
-            proteinMIs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
-            proteinMIs.add(CvInteractorType.PROTEIN_MI_REF);
+            ourProteinMiRefs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
+            ourProteinMiRefs.add(CvInteractorType.PROTEIN_MI_REF);
 
         } catch (IntactException e) {
             LOGGER.error("Problem trying to load the MI numbers for the CvInteractorType and children of protein " +
                     "and nucleic acid : ", e);
             e.printStackTrace();
         }
-        for (String miRef : nucleicAcidMIs ){//Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
-            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria(miRef));
-        }
-        for (String miRef : proteinMIs ){//Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
-            ourProteinCriteria.addOrCriteria(buildMICriteria(miRef));
-        }
+//        for (String miRef : nucleicAcidMIs ){//Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
+//            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria(miRef));
+//        }
+//        for (String miRef : proteinMIs ){//Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
+//            ourProteinCriteria.addOrCriteria(buildMICriteria(miRef));
+//        }
 
     }
 
@@ -263,7 +259,7 @@ public class EditorMenuFactory {
      * create an Intact helper to access persistent system.
      */
     public List<String> getNucleicAcidMenu(int mode) throws IntactException {
-        return getPolymerMenu(mode, ourNucleicAcidCriteria);
+        return getPolymerMenu(mode, ourNucleicAcidMiRefs);
     }
 
     /**
@@ -275,7 +271,7 @@ public class EditorMenuFactory {
      * create an Intact helper to access persistent system.
      */
     public List<String> getProteinMenu(int mode) throws IntactException {
-        return getPolymerMenu(mode, ourProteinCriteria);
+        return getPolymerMenu(mode, ourProteinMiRefs);
     }
 
     /**
@@ -299,37 +295,12 @@ public class EditorMenuFactory {
         List<String> menu = new ArrayList<String>();
 
         // The query factory to get a query.
-        ObjectBridgeQueryFactory qf = ObjectBridgeQueryFactory.getInstance();
-
-        Query query = qf.getMenuBuildQuery(targetClass);
-
-        Iterator<Object[]> iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
-
-        while (iter.hasNext()) {
-            Object[] row = iter.next();
-             menu.add(row[1].toString());
+        AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(targetClass);
+        Collection<AnnotatedObject> annotatedObjects = annotatedObjectDao.getAll(true, true);
+        for(AnnotatedObject annobj : annotatedObjects){
+            menu.add(annobj.getShortLabel());
         }
         return menu;
-    }
-
-    private String getMiRef(String ac, Class<CvObject> clazz) throws IntactException {
-
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
-
-        CvObject cvObject;
-
-        try {
-            cvObject = cvObjectDao.getByAc(ac);
-        } catch (IntactException e) {
-            throw new IntactException ( "Could not find CvObject for ac : " + ac, e);
-        }
-        Xref identityRef = cvObject.getIdentityXref();
-        if (identityRef != null
-                && identityRef.getCvDatabase().getIdentityXref().getPrimaryId().equals(CvDatabase.PSI_MI_MI_REF)) {
-            return identityRef.getPrimaryId();
-        }
-
-        return null;
     }
 
     /**
@@ -340,21 +311,14 @@ public class EditorMenuFactory {
      * @throws IntactException for errors in contructing the menu or unable to
      * create an Intact helper to access persistent system.
      */
-    private List<String> getPolymerMenu(int mode, Criteria criteria) throws IntactException {
+    private List<String> getPolymerMenu(int mode, Collection<String> ourPolymerMiRefs/*Criteria criteria*/) throws IntactException {
         // The menu to return.
         List<String> menu = new ArrayList<String>();
 
-        ReportQueryByCriteria query = QueryFactory.newReportQuery(
-                CvInteractorType.class, criteria);
-        // Limit to shortlabel
-        query.setAttributes(new String[] { "shortlabel" });
-        query.addOrderByAscending("shortLabel");
+        Collection<CvInteractorType> cvInteractorTypes = DaoFactory.getCvObjectDao(CvInteractorType.class).getByPsiMiRefCollection(ourPolymerMiRefs);
 
-        Iterator<Object[]> iter = IntactHelperUtil.getDefaultIntactHelper().getIteratorByReportQuery(query);
-
-        while (iter.hasNext()) {
-            Object[] row = iter.next();
-            menu.add(row[0].toString());
+        for(CvInteractorType cvInteractorType : cvInteractorTypes){
+            menu.add(cvInteractorType.getShortLabel());
         }
         if (menu.isEmpty()) {
             // Special list when we don't have any menu items.
@@ -367,16 +331,4 @@ public class EditorMenuFactory {
         return menu;
     }
 
-    /**
-     * @param mi
-     * @return returns a criteria for matching primaryid with given mi (without
-     * obsolete terms)
-     */
-    private static Criteria buildMICriteria(String mi) {
-        Criteria crit = new Criteria();
-        crit.addEqualTo("xrefs.primaryid", mi);
-        crit.addNotIn("ac", ObjectBridgeQueryFactory.getInstance().getObsoleteQuery(
-                CvInteractorType.class));
-        return crit;
-    }
 }

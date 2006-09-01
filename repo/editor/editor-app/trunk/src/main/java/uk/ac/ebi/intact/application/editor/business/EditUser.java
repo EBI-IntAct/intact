@@ -16,17 +16,19 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
+//import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.business.BusinessConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
+//import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+//import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteins;
@@ -262,7 +264,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myUserName = user;
         myPassword = password;
         // Initialize the object.
-        initialize();
+//        initialize();
     }
 
     // Methods to handle special serialization issues.
@@ -271,7 +273,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                                                          ClassNotFoundException {
         in.defaultReadObject();
         try {
-            initialize();
+//            initialize();
             myViewStack = new Stack();
         }
         catch (IntactException ie) {
@@ -468,10 +470,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
-    public IntactHelper getIntactHelper() throws IntactException {
-        // Construct the the helper.
-        return IntactHelperUtil.getIntactHelper(myUserName, myPassword);
-    }
+//    public IntactHelper getIntactHelper() throws IntactException {
+//        // Construct the the helper.
+//        return IntactHelperUtil.getIntactHelper(myUserName, myPassword);
+//    }
 
     public void startEditing() {
         myEditState = true;
@@ -594,7 +596,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return null;
     }
 
-    public void addToSearchCache(Collection<AnnotatedObject> results) {
+    public void addToSearchCache(Collection<ResultRowData> results) {
         // Clear previous results.
         mySearchCache.clear();
         mySearchCache.addAll(results);
@@ -632,24 +634,85 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public boolean shortLabelExists(String label) throws IntactException {
         // Holds the result from the search.
-        Collection results = getIntactHelper().search(
-                myEditView.getEditClass().getName(), "shortLabel", label);
-        if (results.isEmpty()) {
+        log.debug("Searching for an annotated object having shortlabel " + label + "and class " + myEditView.getEditClass());
+        AnnotatedObject annotObj = getAnnotatedObjectWithIdenticalShortlabel(label, myEditView.getEditClass());
+//        Collection results = getIntactHelper().search(
+//                myEditView.getEditClass().getName(), "shortLabel", label);
+//        if (results.isEmpty()) {
+        if(annotObj == null){
+            log.debug("No annotated object found with shortlabel " + label);
             // Don't have this short label on the database.
             return false;
-        }
-        // If we found a single record then it could be the current record.
-        if (results.size() == 1) {
-            // Found an object with similar short label; is it as same as the
-            // current record?
-            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+        } else {
+            log.debug("One annotated object found with shortlabel " + label + "it's ac is " + annotObj.getAc());
+            String resultAc = annotObj.getAc();
             if (resultAc.equals(myEditView.getAc())) {
+                log.debug("Acs  are equal : " + annotObj.getAc());
                 // We have retrieved the same record from the DB.
                 return false;
             }
         }
+        // If we found a single record then it could be the current record.
+//        if (results.size() == 1) {
+//            // Found an object with similar short label; is it as same as the
+//            // current record?
+//            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
+//            if (resultAc.equals(myEditView.getAc())) {
+//                // We have retrieved the same record from the DB.
+//                return false;
+//            }
+//        }
         // There is another record exists with the same short label.
         return true;
+    }
+
+    public AnnotatedObjectDao getAnnotatedObjectDao(Class clazz){
+        if(Experiment.class.equals(clazz)){
+            return DaoFactory.getExperimentDao();
+        }else if (BioSource.class.equals(clazz)){
+            return DaoFactory.getBioSourceDao();
+        }else if (CvAliasType.class.equals(clazz) ){
+            return DaoFactory.getCvObjectDao(CvAliasType.class);
+        }else if (CvCellType.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvCellType.class);
+        }else if(CvComponentRole.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvComponentRole.class);
+        }else if(CvDatabase.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvDatabase.class);
+        }else if(CvFuzzyType.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvFuzzyType.class);
+        }else if(CvTissue.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvTissue.class);
+        }else if(CvTopic.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvTopic.class);
+        }else if(CvXrefQualifier.class.equals(clazz)){
+            return DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+        }else if (Interaction.class.equals(clazz)){
+            return DaoFactory.getInteractionDao();
+        }else if (NucleicAcid.class.equals(clazz)){
+            return DaoFactory.getInteractorDao();
+        }else if (Protein.class.equals(clazz)){
+            return DaoFactory.getInteractorDao();
+        }else if(SmallMolecule.class.equals(clazz)){
+            return DaoFactory.getInteractorDao();
+        }
+
+        log.error(new IntactException("Unknown edit class : " + clazz + "."));
+        throw new IntactException("Unknown edit class : " + clazz + ".");
+
+
+    }
+
+    public AnnotatedObject getAnnotatedObjectWithIdenticalShortlabel (String shortlabel, Class editClass){
+        AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(editClass);
+
+        return annotatedObjectDao.getByShortLabel(shortlabel);
+    }
+
+    public Collection<AnnotatedObject> getAnnotatedObjectsByShortlabelLike (String shortlabel, Class editClass){
+        AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(editClass);
+
+        return annotatedObjectDao.getByShortLabelLike(shortlabel);
     }
 
     /**
@@ -739,28 +802,28 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * Called by the constructors to initialize the object.
      * @throws IntactException for errors in accessing the persistent system.
      */
-    private void initialize() throws IntactException {
-        IntactHelper helper = getIntactHelper();
+//    private void initialize() throws IntactException {
+//        IntactHelper helper = getIntactHelper();
 //        myDatabaseName = helper.getDbName();
 //         try {
 //            helper.getJDBCConnection();//.getDbUserName();
 //        } catch (IntactException e) {
 //            throw new IntactException("Invalid helper get with for username : " + myUserName );
 //         }
-        try {
-            helper.getJDBCConnection().getMetaData();
-        } catch (SQLException e) {
-            throw new IntactException("Invalid helper get with for username : " + myUserName );
-        }
-        // Initialize the Protein factory. Needs a valid to initialize factory values.
-        try {
-            myProteinFactory = new UpdateProteins();
-        }
-        catch (UpdateProteinsI.UpdateException e) {
-            log.error("", e);
-            throw new IntactException("Unable to create the Protein factory");
-        }
-    }
+//        try {
+//            helper.getJDBCConnection().getMetaData();
+//        } catch (SQLException e) {
+//            throw new IntactException("Invalid helper get with for username : " + myUserName );
+//        }
+//        // Initialize the Protein factory. Needs a valid to initialize factory values.
+//        try {
+//            myProteinFactory = new UpdateProteins();
+//        }
+//        catch (UpdateProteinsI.UpdateException e) {
+//            log.error("", e);
+//            throw new IntactException("Unable to create the Protein factory");
+//        }
+//    }
 
     /**
      * @return returns an instance of search helper. A new object is created
@@ -795,14 +858,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         String nextLabel;
 
         // The helper to search the persistent system.
-        IntactHelper helper = getIntactHelper();
+//        IntactHelper helper = getIntactHelper();
 
         if (formatter.isRootOnly()) {
             // case: abc
-            if (helper.getObjectByLabel(clazz, label) == null) {
-                // Label is not found in the DB.
+            AnnotatedObject annobj = getAnnotatedObjectWithIdenticalShortlabel(label,clazz);
+            if(annobj == null){
+                log.debug("No object found in db with shortlabel : " + label + " and class " + clazz.getName());
                 return label;
             }
+//            if (helper.getObjectByLabel(clazz, label) == null) {
+//                // Label is not found in the DB.
+//                return label;
+//            }
             // Label already exists.
             prefix = label;
             nextLabel = prefix + "-1";
@@ -816,13 +884,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                     ? prefix + "-" + (formatter.getBranchNumber() + 1)
                     : prefix + "-1";
         }
-        if (helper.getObjectByLabel(clazz, nextLabel) == null) {
+
+        AnnotatedObject annobj = getAnnotatedObjectWithIdenticalShortlabel(nextLabel,clazz);
+
+        if (annobj == null) {
+            log.debug("No object found in db with shortlabel corresponding to next label : " + nextLabel + " and class " + clazz.getName());
+
             return nextLabel;
         }
         // AT this point: no success with incrementing the branch number.
 
         // Get all the short labels with the prefix.
-        results = helper.search(clazz, "shortLabel", prefix + "-*");
+
+        results = getAnnotatedObjectsByShortlabelLike(prefix + "-"+"%",clazz);
         if (results.isEmpty()) {
             // No matches found for the longest match. The first clone entry.
             return prefix + "-1";

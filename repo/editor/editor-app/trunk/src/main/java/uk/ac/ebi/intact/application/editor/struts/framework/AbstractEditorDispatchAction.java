@@ -7,8 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
-import org.apache.ojb.broker.query.LikeCriteria;
-import org.apache.ojb.broker.query.Query;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
@@ -18,13 +16,12 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.ForwardConstants;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.searchengine.ResultWrapper;
-import uk.ac.ebi.intact.searchengine.SearchHelper;
-import uk.ac.ebi.intact.searchengine.SearchHelperI;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -174,106 +171,57 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         return null;
     }
 
-    /**
-     * Performs the search using given query array.
-     * @param queries an array of queries. The first query is to get a count and
-     * the secodn query for the actual search.
-     * @param max the max allowed records
-     * @param request the request to store the ActionError
-     * @return a list of search results or an empty list for any errors, too large
-     * result set or search produces no output.
-     */
-    protected List search(Query[] queries, int max, HttpServletRequest request) {
-        return search(queries, max, request, ActionErrors.GLOBAL_ERROR);
-    }
+       public List<ResultRowData> getResults(Class searchClass, String searchString,
+                                            int max, HttpServletRequest request,
+                                            String errorType){
 
-    /**
-     * Performs the search using given query array.
-     * @param queries an array of queries. The first query is to get a count and
-     * the secodn query for the actual search.
-     * @param max the max allowed records
-     * @param request the request to store the ActionError
-     * @param errGroup the error group for action errors (JSPs can display errors
-     * under this name)
-     * @return a list of search results or an empty list for any errors, too large
-     * result set or search produces no output.
-     */
-    protected List search(Query[] queries, int max, HttpServletRequest request,
-                          String errGroup) {
-        // The search helper to do the searching.
-        SearchHelperI searchHelper = new SearchHelper(request);
+        AnnotatedObjectDao annotatedObjectDao = null;
+        try{
+            annotatedObjectDao = DaoProvider.getDaoFactory(searchClass);
+        }catch(IntactException ie){
+            ActionErrors errors = new ActionErrors();
+            errors.add(errorType, new ActionError("error.intact"));
+            saveErrors(request, errors);
+            log.error("Problem getting the dao" + ie.getCause());
+        }
 
-        // The result wrapper returned from the search.
-        ResultWrapper rw = null;
+        if(annotatedObjectDao == null){
+            ActionErrors errors = new ActionErrors();
+            errors.add(errorType, new ActionError("error.intact"));
+            saveErrors(request, errors);
+            return Collections.EMPTY_LIST;
+        }
+        List<AnnotatedObject> results = new ArrayList();//  annotatedObjectDao.getByShortlabelOrAcLike(searchString);
         try {
-            rw = searchHelper.searchByQuery(queries, max);
+            results = annotatedObjectDao.getByShortlabelOrAcLike(searchString);
         }
         catch (IntactException ie) {
             // This can only happen when problems with creating an internal helper
             // This error is already logged from the User class.
             ActionErrors errors = new ActionErrors();
-            errors.add(errGroup, new ActionError("error.intact"));
+            errors.add(errorType, new ActionError("error.intact"));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
 
-        // Too large result set?
-        if (rw.isTooLarge()) {
+        if (results.size() > max) {
             ActionErrors errors = new ActionErrors();
-            errors.add(errGroup, new ActionError("error.search.large",
-                            Integer.toString(rw.getPossibleResultSize())));
+            errors.add(errorType, new ActionError("error.search.large",
+                            Integer.toString(results.size())));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
 
-        // Nothing found?
-        if (rw.isEmpty()) {
-            // The topic for errors.
-            String topic = EditorService.getTopic(queries[1].getSearchClass());
-
-            // Extract the search parameter.
-            String searchParam = null;
-
-            for (Enumeration e = queries[1].getCriteria().getElements();
-                 e.hasMoreElements();) {
-                Object nextCritera = e.nextElement();
-                if (LikeCriteria.class.isAssignableFrom(nextCritera.getClass())) {
-                    LikeCriteria crit = (LikeCriteria) nextCritera;
-                    searchParam = (String) crit.getValue();
-                    break;
-                }
-            }
+        if (results.isEmpty()) {
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
-            errors.add(errGroup, new ActionError("error.search.nomatch",
-                    searchParam, topic));
+            errors.add(errorType, new ActionError("error.search.nomatch",
+                    searchString, searchString));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
-        return makeRowData(rw.getResult().iterator(), queries[1].getSearchClass());
-    }
 
-    /**
-     * Return an array of general search queries.
-     * @param searchClass the search class
-     * @param searchString the search value
-     * @return an array of queries. The first element of the array contains
-     * the query to get the count and the second part contains the search query.
-     */
-    protected Query[] getSearchQueries(Class searchClass, String searchString) {
-        // The query factory to get a query.
-        OJBQueryFactory qf = OJBQueryFactory.getInstance();
-
-        // The array to store queries.
-        Query[] queries = new Query[2];
-
-        // The query to get a search result size.
-        queries[0] = qf.getSearchCountQuery(searchClass, searchString);
-
-        // The search query
-        queries[1] = qf.getSearchQuery(searchClass, searchString);
-
-        return queries;
+        return makeRowData(results);
     }
 
     /**
@@ -289,6 +237,22 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         // Convert to result row data.
         while (iter.hasNext()) {
             results.add(new ResultRowData((Object[]) iter.next(), searchClass));
+        }
+        return results;
+    }
+
+    /**
+     * Returns an array of row data
+     * @return a list consists of RowData objects.
+     */
+    protected List<ResultRowData> makeRowData(List<AnnotatedObject> annotatedObjects) {
+        // The results to return.
+        List<ResultRowData>  results = new ArrayList<ResultRowData>();
+
+        Iterator<AnnotatedObject> iter = annotatedObjects.iterator();
+        // Convert to result row data.
+        while (iter.hasNext()) {
+            results.add(new ResultRowData(iter.next()));
         }
         return results;
     }
