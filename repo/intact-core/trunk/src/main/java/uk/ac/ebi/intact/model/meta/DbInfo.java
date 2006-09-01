@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.intact.model.meta;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.Column;
-
 import uk.ac.ebi.intact.model.AbstractAuditable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import java.util.Date;
 
 /**
  * Contains metadata about the schema
@@ -63,6 +62,37 @@ public class DbInfo extends AbstractAuditable
     public void setValue(String value)
     {
         this.value = value;
+    }
+
+
+    @Override
+    @Temporal
+    @Column(name = "created_date")
+    public Date getCreated()
+    {
+        return super.getCreated();
+    }
+
+    @Override
+    @Temporal
+    @Column(name = "created_date")
+    public Date getUpdated()
+    {
+        return super.getUpdated();
+    }
+
+    @Override
+    @Column(name = "created_user")
+    public String getCreator()
+    {
+        return super.getCreator();
+    }
+
+    @Override
+    @Column(name = "updated_user")
+    public String getUpdator()
+    {
+        return super.getUpdator();
     }
 
     @Override
