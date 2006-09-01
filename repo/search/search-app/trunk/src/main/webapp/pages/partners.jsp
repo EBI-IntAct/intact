@@ -129,7 +129,7 @@
                    <span title="Click to see interaction details">Number of <br>interactions<sup>?</sup></span><br>
                 </td>
 
-                <td nowrap="nowrap" class="headerlight" colspan="1">UniProtKB Ac<br></td>
+                <td nowrap="nowrap" class="headerlight" colspan="1">Identifier<br></td>
 
                 <td nowrap="nowrap" class="headerlight"colspan="1">Gene name<br></td>
 
