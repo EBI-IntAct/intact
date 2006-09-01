@@ -64,7 +64,8 @@
         <param-value>site/displayDoc.jsp?section=</param-value>
     </context-param>
 
-    <!-- Filter to open the session at the beginning of the request and close on end -->
+    <!-- Filter to init the IntactContext at the beginning of the request and close the
+    transaction at the end -->
     <filter>
         <filter-name>intactFilter</filter-name>
         <filter-class>uk.ac.ebi.intact.webapp.IntactSessionRequestFilter</filter-class>
