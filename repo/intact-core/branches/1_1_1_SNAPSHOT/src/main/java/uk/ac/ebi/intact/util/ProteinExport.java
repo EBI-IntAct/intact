@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -55,7 +56,7 @@ public class ProteinExport {
 
         BioSource bioSource = null;
         if ( bioSourceShortLabel != null ) {
-            bioSource = DaoFactory.getBioSourceDao().getByShortLabel(bioSourceShortLabel);
+            bioSource = (BioSource) DaoFactory.getBioSourceDao().getByShortLabel(bioSourceShortLabel);
 
             if ( bioSource == null ) {
                 throw new SearchException( "The requested bioSource ("+ bioSourceShortLabel +") could not be found." );

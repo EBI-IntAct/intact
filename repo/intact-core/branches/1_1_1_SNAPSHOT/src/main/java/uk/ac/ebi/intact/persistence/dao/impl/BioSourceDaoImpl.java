@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 
 import java.util.Collection;
@@ -19,15 +20,14 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>09-Jun-2006</pre>
  */
-public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implements BioSourceDao 
+public class BioSourceDaoImpl<T extends BioSource> extends AnnotatedObjectDaoImpl<BioSource> implements BioSourceDao
 {
 
     private static final Log log = LogFactory.getLog(BioSourceDaoImpl.class);
 
     public BioSourceDaoImpl(Session session) {
-        super(BioSource.class, session);
+        super(BioSource.class,session);
     }
-
 
     public BioSource getByTaxonIdUnique(String taxonId)
     {
