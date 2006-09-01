@@ -11,6 +11,7 @@
                     <goaFilename>gene_association.goa_intact</goaFilename>
                     <gzipGoa>true</gzipGoa>
                     <summaryFile>target/uniprotexport-test/line_exported_summary.log</summaryFile>
+                    <nonBinaryInteractionsFile>target/uniprotexport-test/non-binary-interactions.log    </nonBinaryInteractionsFile>
                     <overwrite>true</overwrite>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>
