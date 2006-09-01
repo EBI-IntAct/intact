@@ -35,12 +35,11 @@ public class CvContextFactory
     /**
      * This method creates a new instance of a <code>CvContext</code> and stores it in the ServletContext
      * so it is only created once
-     * @param helper The IntactHelper to use
      * @return the new CvContext
      * @throws UpdateException thrown if something goes wrong during the retrieval of the CvObjects
      * from the database
      */
-    public static CvContext createCvContext(IntactHelper helper) throws UpdateException
+    public static CvContext createCvContext() throws UpdateException
     {
         CvContext cvContext = new CvContext(){};
 
@@ -49,10 +48,12 @@ public class CvContextFactory
          */
         try
         {
-            CvObject sgdDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.SGD_MI_REF); // sgd
+            
+            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            CvObject sgdDatabase = cvObjectDao.getByXref(CvDatabase.SGD_MI_REF); // sgd
             cvContext.putCvObject(CvName.SGD_DB, sgdDatabase);
 
-            CvObject uniprotDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.UNIPROT_MI_REF); // uniprot
+            CvObject uniprotDatabase = cvObjectDao.getByXref(CvDatabase.UNIPROT_MI_REF); // uniprot
             cvContext.putCvObject(CvName.UNIPROT_DB, uniprotDatabase);
 
             // search for the SRS link.
@@ -100,45 +101,45 @@ public class CvContextFactory
                 throw new UpdateException(msg);
             }
 
-            CvObject intactDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.INTACT_MI_REF);
+            CvObject intactDatabase = cvObjectDao.getByXref(CvDatabase.INTACT_MI_REF);
             cvContext.putCvObject(CvName.INTACT_DB, intactDatabase);
-            CvObject goDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.GO_MI_REF);
+            CvObject goDatabase = cvObjectDao.getByXref(CvDatabase.GO_MI_REF);
             cvContext.putCvObject(CvName.GO_DB, goDatabase);
-            CvObject interproDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.INTERPRO_MI_REF);
+            CvObject interproDatabase = cvObjectDao.getByXref(CvDatabase.INTERPRO_MI_REF);
             cvContext.putCvObject(CvName.INTERPRO_DB, interproDatabase);
-            CvObject flybaseDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.FLYBASE_MI_REF);
+            CvObject flybaseDatabase = cvObjectDao.getByXref(CvDatabase.FLYBASE_MI_REF);
             cvContext.putCvObject(CvName.FLYBASE_DB, flybaseDatabase);
-            CvObject reactomeDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF);
+            CvObject reactomeDatabase = cvObjectDao.getByXref(CvDatabase.REACTOME_PROTEIN_PSI_REF);
             cvContext.putCvObject(CvName.REACTOME_DB, reactomeDatabase);
-            CvObject hugeDatabase = getCvObjectViaMI(helper, CvDatabase.class, CvDatabase.HUGE_MI_REF);
+            CvObject hugeDatabase = cvObjectDao.getByXref(CvDatabase.HUGE_MI_REF);
             cvContext.putCvObject(CvName.HUGE_DB, hugeDatabase);
 
-            CvObject identityXrefQualifier = getCvObjectViaMI(helper, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+            CvObject identityXrefQualifier = cvObjectDao.getByXref(CvXrefQualifier.IDENTITY_MI_REF);
             cvContext.putCvObject(CvName.IDENTITY_XREF_QUALIFIER, identityXrefQualifier);
-            CvObject secondaryXrefQualifier = getCvObjectViaMI(helper, CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF);
+            CvObject secondaryXrefQualifier = cvObjectDao.getByXref(CvXrefQualifier.SECONDARY_AC_MI_REF);
             cvContext.putCvObject(CvName.SECONDARY_XREF_QUALIFIER, secondaryXrefQualifier);
-            CvObject isoFormParentXrefQualifier = getCvObjectViaMI(helper, CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF);
+            CvObject isoFormParentXrefQualifier = cvObjectDao.getByXref(CvXrefQualifier.ISOFORM_PARENT_MI_REF);
             cvContext.putCvObject(CvName.ISOFORM_PARENT_XREF_QUALIFIER, isoFormParentXrefQualifier);
 
             // only one search by shortlabel as it still doesn't have MI number.
-            CvObject isoformComment = getCvObject(helper, CvTopic.class, CvTopic.ISOFORM_COMMENT);
+            CvObject isoformComment = cvObjectDao.getByXref(CvTopic.ISOFORM_COMMENT);
             cvContext.putCvObject(CvName.ISOFORM_COMMENT, isoformComment);
-            CvObject noUniprotUpdate = getCvObject(helper, CvTopic.class, CvTopic.NON_UNIPROT);
+            CvObject noUniprotUpdate = cvObjectDao.getByXref(CvTopic.NON_UNIPROT);
             cvContext.putCvObject(CvName.NO_UNIPROT_UPDATE, noUniprotUpdate);
 
 
-            CvObject geneNameAliasType = getCvObjectViaMI(helper, CvAliasType.class, CvAliasType.GENE_NAME_MI_REF);
+            CvObject geneNameAliasType = cvObjectDao.getByXref(CvAliasType.GENE_NAME_MI_REF);
             cvContext.putCvObject(CvName.GENE_NAME_ALIAS_TYPE, geneNameAliasType);
-            CvObject geneNameSynonymAliasType = getCvObjectViaMI(helper, CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF);
+            CvObject geneNameSynonymAliasType = cvObjectDao.getByXref(CvAliasType.GENE_NAME_SYNONYM_MI_REF);
             cvContext.putCvObject(CvName.GENE_NAME_SYNONYM_ALIAS_TYPE, geneNameSynonymAliasType);
-            CvObject isoformSynonym = getCvObjectViaMI(helper, CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF);
+            CvObject isoformSynonym = cvObjectDao.getByXref(CvAliasType.ISOFORM_SYNONYM_MI_REF);
             cvContext.putCvObject(CvName.ISOFORM_SYNONYM, isoformSynonym);
-            CvObject locusNameAliasType = getCvObjectViaMI(helper, CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF);
+            CvObject locusNameAliasType = cvObjectDao.getByXref(CvAliasType.LOCUS_NAME_MI_REF);
             cvContext.putCvObject(CvName.LOCUS_NAME_ALIAS_TYPE, locusNameAliasType);
-            CvObject orfNameAliasType = getCvObjectViaMI(helper, CvAliasType.class, CvAliasType.ORF_NAME_MI_REF);
+            CvObject orfNameAliasType = cvObjectDao.getByXref(CvAliasType.ORF_NAME_MI_REF);
             cvContext.putCvObject(CvName.ORF_NAME_ALIAS_TYPE, orfNameAliasType);
 
-            CvObject proteinType = getCvObjectViaMI(helper, CvInteractorType.class, CvInteractorType.getProteinMI());
+            CvObject proteinType = cvObjectDao.getByXref(CvInteractorType.getProteinMI());
             cvContext.putCvObject(CvName.PROTEIN_TYPE, proteinType);
 
         }
@@ -152,78 +153,6 @@ public class CvContextFactory
         }
 
        return cvContext;
-    }
-
-    /**
-     * Get a CvObject based on its class name and its shortlabel.
-     *
-     * @param clazz      the Class we are looking for
-     * @param shortlabel the shortlabel of the object we are looking for
-     * @return the CvObject of type <code>clazz</code> and having the shortlabel <code>shorltabel<code>.
-     * @throws UpdateException if the object is not found.
-     */
-    private static CvObject getCvObject
-            (IntactHelper helper, Class
-                    clazz, String
-                    shortlabel) throws IntactException, UpdateException
-    {
-
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
-        CvObject cv =  cvObjectDao.getByShortLabel(shortlabel);
-        if (cv == null)
-        {
-            StringBuffer sb = new StringBuffer(128);
-            sb.append("Could not find ");
-            sb.append(shortlabel);
-            sb.append(' ');
-            sb.append(clazz.getName());
-            sb.append(" in your IntAct node");
-
-            if (logger != null)
-            {
-                logger.error(sb.toString());
-            }
-            throw new UpdateException(sb.toString());
-        }
-
-        return cv;
-    }
-
-    /**
-     * Get a CvObject based on its class name and its shortlabel.
-     *
-     * @param clazz the Class we are looking for
-     * @param miRef the PSI-MI reference of the object we are looking for
-     * @return the CvObject of type <code>clazz</code> and having the PSI-MI reference.
-     * @throws IntactException if the search failed
-     * @throws UpdateException if the object is not found.
-     */
-    private static CvObject getCvObjectViaMI
-            (IntactHelper helper, Class
-                    clazz, String
-                    miRef) throws IntactException,
-                                  UpdateException
-    {
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao();
-        CvObject cv = cvObjectDao.getByXref(miRef);
-
-        if (cv == null)
-        {
-            StringBuffer sb = new StringBuffer(128);
-            sb.append("Could not find ");
-            sb.append(miRef);
-            sb.append(' ');
-            sb.append(clazz.getName());
-            sb.append(" in your IntAct node");
-
-            if (logger != null)
-            {
-                logger.error(sb.toString());
-            }
-            throw new UpdateException(sb.toString());
-        }
-
-        return cv;
     }
 
     public static class UpdateException extends RuntimeException

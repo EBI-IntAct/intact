@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
@@ -51,6 +52,10 @@ public class ProteinTest extends TestCase
     {
         Xref xref = DaoFactory.getXrefDao(InteractorXref.class).getByAc("EBI-595609");
         assertNotNull(xref);
+    }
+
+    public void testIsAssignableFrom(){
+        assert(Protein.class.isAssignableFrom(ProteinImpl.class));
     }
 
 }

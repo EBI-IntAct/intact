@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
 
 import java.util.Collection;
 

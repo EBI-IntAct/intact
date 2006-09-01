@@ -94,7 +94,7 @@ public abstract class CvContext {
 
         if ( cvContext == null ) {
             try {
-                cvContext = CvContextFactory.createCvContext( new IntactHelper() );
+                cvContext = CvContextFactory.createCvContext();
 
                 if ( log.isInfoEnabled() ) {
                     log.info( "New CvContext instance created" );
