@@ -54,8 +54,8 @@ public class CcLineExportLiveTest extends TestCase
 
         ccLineExport.generateCCLines(uniprotIds);
 
-        //assertEquals(3, ccLineExport.getCcLineCount());
-        //assertEquals(4, ccLineExport.getGoaLineCount());
+        assertEquals(3, ccLineExport.getCcLineCount());
+        assertEquals(4, ccLineExport.getGoaLineCount());
 
         System.out.println(ccWriter.toString());
     }

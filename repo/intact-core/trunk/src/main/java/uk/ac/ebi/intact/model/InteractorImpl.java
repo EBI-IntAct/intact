@@ -225,9 +225,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
 
     @Override
     public boolean equals( Object o ) {
-        if (super.equals(o))
+        if (!super.equals(o))
         {
-            return true;
+            return false;
         }
         if ( this == o ) {
             return true;
