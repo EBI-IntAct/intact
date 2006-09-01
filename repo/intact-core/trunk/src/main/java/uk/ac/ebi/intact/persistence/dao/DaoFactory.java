@@ -119,6 +119,11 @@ public class DaoFactory implements Serializable
         return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
     }
 
+    public DbInfoDao getDbInfoDao()
+    {
+        return new DbInfoDaoImpl(getCurrentSession());
+    }
+
     public ExperimentDao getExperimentDao()
     {
         return new ExperimentDaoImpl(getCurrentSession());

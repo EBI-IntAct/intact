@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.io.File;
 
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.context.IntactSession;
 
 /**
@@ -45,6 +46,7 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
 
         // /uk/ac/ebi/intact/model
         packages.add(Interactor.class.getPackage().getName());
+        packages.add(DbInfo.class.getPackage().getName());
 
         return packages;
     }
