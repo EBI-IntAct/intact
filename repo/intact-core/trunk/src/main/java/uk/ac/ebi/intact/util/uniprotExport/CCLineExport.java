@@ -82,6 +82,7 @@ public class CCLineExport extends LineExport {
      */
     private Writer goWriter;
 
+    private int drProcessedCount;
     private int ccLineCount;
     private int goaLineCount;
 
@@ -1078,6 +1079,13 @@ public class CCLineExport extends LineExport {
             flushCCLine(uniprot_ID);
 
             fireDrLineProcessedEvent(new DrLineProcessedEvent(this, uniprot_ID));
+            drProcessedCount++;
+
+            if (drProcessedCount % 20 == 0)
+            {
+                log.debug("Committing transaction");
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            }
 
         } // i (all eligible uniprot IDs)
 
