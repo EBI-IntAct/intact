@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.business;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -200,7 +201,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * pre: results->forall(obj: Object | obj.oclIsTypeOf(AnnotatedObjects))
      * </pre>
      */
-    public void addToSearchCache(Collection<AnnotatedObject> results);
+    public void addToSearchCache(Collection<ResultRowData> results);
 
     /**
      * Clears existing search cache and replace it with given bean.
@@ -319,5 +320,5 @@ public interface EditUserI extends IntactUserI, Serializable {
      * Allows access to Intact helper.
      * @return IntactHelper instance assigned to the current user.
      */
-    public IntactHelper getIntactHelper() throws IntactException;
+//    public IntactHelper getIntactHelper() throws IntactException;
 }

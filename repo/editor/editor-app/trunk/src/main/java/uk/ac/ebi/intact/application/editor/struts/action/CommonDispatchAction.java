@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
-import org.apache.ojb.broker.query.Criteria;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -31,9 +30,6 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
-import org.apache.ojb.broker.query.Query;
-import org.apache.ojb.broker.query.QueryFactory;
-import org.apache.ojb.broker.query.ReportQueryByCriteria;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -469,22 +465,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         return user.getNextAvailableShortLabel(editClass, formlabel);
     }
 
-    /**
-     * Returns the query to get gene names for a Protein
-     * @param shortlabel the Shortlabel of the Experiment.
-     * @return the query to extract the gene name for given protein AC
-     */
-    public Query getCuratorNameQuery(String shortlabel) {
-        Criteria crit = new Criteria();
-        // Need all records for given alias AC.
-        crit.addEqualTo("shortlabel", shortlabel);
-
-        ReportQueryByCriteria query = QueryFactory.newReportQuery(Experiment.class, crit);
-
-        // Limit to userstamp
-        query.setAttributes(new String[] {"userstamp"});
-        return query;
-    }
+//    /**
+//     * Returns the query to get gene names for a Protein
+//     * @param shortlabel the Shortlabel of the Experiment.
+//     * @return the query to extract the gene name for given protein AC
+//     */
+//    public Query getCuratorNameQuery(String shortlabel) {
+//        Criteria crit = new Criteria();
+//        // Need all records for given alias AC.
+//        crit.addEqualTo("shortlabel", shortlabel);
+//
+//        ReportQueryByCriteria query = QueryFactory.newReportQuery(Experiment.class, crit);
+//
+//        // Limit to userstamp
+//        query.setAttributes(new String[] {"userstamp"});
+//        return query;
+//    }
 
     public ActionForward acceptOrReview(ActionMapping mapping,
                                         ActionForm form,

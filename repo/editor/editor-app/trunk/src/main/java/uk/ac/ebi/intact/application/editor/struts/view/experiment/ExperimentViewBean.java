@@ -475,14 +475,27 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
         BioSourceDao bsDao = DaoFactory.getBioSourceDao();
         BioSource biosource = bsDao.getByShortLabel(myOrganism);
 
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
-        CvInteraction interaction =  (CvInteraction) cvObjectDao.getByShortLabel(myInter);
-
-        CvIdentification ident = (CvIdentification) cvObjectDao.getByShortLabel(myIdent);
-
+        CvObjectDao<CvInteraction> cvInteractionDao = DaoFactory.getCvObjectDao(CvInteraction.class);
+        CvInteraction interaction =  (CvInteraction) cvInteractionDao.getByShortLabel(myInter);
+        log.debug("MyInter : " + myInter);
+        if(interaction != null){
+            log.debug("Searching for myInter " + myInter + " I found " + interaction.getShortLabel() );
+        }
+        if(interaction != null){
+            log.debug("CvInteraction type is : " + interaction.getShortLabel());
+        }else{
+            log.debug("No CvInteraction found with shorlabel : " + myInter);
+        }
+        CvObjectDao<CvIdentification> cvIdentificationDao = DaoFactory.getCvObjectDao(CvIdentification.class);
+        CvIdentification ident = (CvIdentification) cvIdentificationDao.getByShortLabel(myIdent);
+        if(ident != null){
+            log.debug("CvInteraction type is : " + ident.getShortLabel());
+        }else{
+            log.debug("No CvInteraction found with shorlabel : " + myIdent);
+        }
         // The current experiment.
         Experiment exp = (Experiment) getAnnotatedObject();
-        ExperimentDao expDao = DaoFactory.getExperimentDao();
+//        ExperimentDao expDao = DaoFactory.getExperimentDao();
 
 //        if(exp !=  null && null != exp.getAc()){
 //            log.debug("Exp was not null and ac not null");
@@ -584,9 +597,11 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
         setOrganism(biosrc != null ? biosrc.getShortLabel() : null);
 
         CvInteraction inter = exp.getCvInteraction();
+        log.debug("The cvInteraction of the experiment[" + exp.getAc() + "," + exp.getShortLabel() + "] is : "  + inter + "." );
         setInter(inter != null ? inter.getShortLabel() : null);
 
         CvIdentification ident = exp.getCvIdentification();
+        log.debug("The CvIdentification of the experiment[" + exp.getAc() + "," + exp.getShortLabel() + "] is : "  + ident + "." );
         setIdent(ident != null ? ident.getShortLabel() : null);
 
         // No interactions at this stage.

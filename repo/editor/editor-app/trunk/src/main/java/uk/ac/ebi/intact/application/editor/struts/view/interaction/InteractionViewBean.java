@@ -20,9 +20,8 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 
@@ -955,6 +954,9 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             {
                 ExperimentDao experimentDao = DaoFactory.getExperimentDao();
                 exp = experimentDao.getByAc(row.getAc());
+            }
+            if(exp.getAc() != null){
+                exp = (Experiment) DaoProvider.getDaoFactory(Experiment.class).getByAc(exp.getAc());
             }
             intact.removeExperiment(exp);
         }

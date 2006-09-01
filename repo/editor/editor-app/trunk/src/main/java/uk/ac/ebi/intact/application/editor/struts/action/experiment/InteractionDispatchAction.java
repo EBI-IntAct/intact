@@ -6,7 +6,6 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import org.apache.ojb.broker.query.Query;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
@@ -98,14 +97,11 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         // The form.
         ExperimentActionForm expform = (ExperimentActionForm) form;
 
-        // The array to store queries.
-        Query[] queries = getSearchQueries(Interaction.class, expform.getSearchValue());
-
         // The maximum interactions allowed.
         int max = getService().getInteger("int.search.limit");
 
         // The results to display.
-        List results = super.search(queries, max, request, "err.search");
+        List results = getResults(Interaction.class,expform.getSearchValue(), max, request, "err.search");
 
         if (results.isEmpty()) {
             // Errors or empty or too large

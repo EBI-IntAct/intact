@@ -7,15 +7,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.ojb.broker.query.Query;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.OJBQueryFactory;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.QueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
-import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
@@ -26,7 +24,6 @@ import uk.ac.ebi.intact.persistence.dao.ComponentDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -229,7 +226,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
             BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
-            expressedIn = bioSourceDao.getByShortLabel(myExpressedIn);
+            expressedIn = (BioSource) bioSourceDao.getByShortLabel(myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
 
@@ -462,7 +459,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The helper to run the query.
 
         // The query factory to get a query.
-        OJBQueryFactory qf = OJBQueryFactory.getInstance();
+        QueryFactory qf = QueryFactory.getInstance();
 
         // The string buffer to construct the gene name.
         StringBuffer sb = new StringBuffer();
