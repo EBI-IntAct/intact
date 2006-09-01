@@ -43,7 +43,7 @@ public class StatisticsCcLineEventListener implements CcLineEventListener
 
     public void ccLineCreated(CcLineCreatedEvent evt)
     {
-        ccLinesCreatedCount = ccLinesCreatedCount + evt.getCcLines().size();
+        ccLinesCreatedCount++;
     }
 
     public int getTotalDrLinesCount()
