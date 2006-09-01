@@ -806,10 +806,8 @@ public class CCLineExport extends LineExport {
         List<Interaction> potentiallyEligibleInteraction = new ArrayList<Interaction>( 16 );
 
         // iterate over the Uniprot ID of the protein that have been selected for DR export.
-
         for (String uniprot_ID : uniprotIDs)
         {
-
             idProcessed++;
 
             if ((idProcessed % 50) == 0)
@@ -1081,11 +1079,8 @@ public class CCLineExport extends LineExport {
             fireDrLineProcessedEvent(new DrLineProcessedEvent(this, uniprot_ID));
             drProcessedCount++;
 
-            if (drProcessedCount % 20 == 0)
-            {
-                log.debug("Committing transaction");
-                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-            }
+            log.debug("Committing transaction");
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         } // i (all eligible uniprot IDs)
 

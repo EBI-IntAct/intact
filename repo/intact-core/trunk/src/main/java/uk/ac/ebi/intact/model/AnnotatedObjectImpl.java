@@ -91,7 +91,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
         //super call sets creation time data
         super();
 
-        setShortLabel( shortLabel );
+        this.shortLabel = prepareShortLabel( shortLabel );
         setOwner( owner );
     }
     // Class methods
@@ -106,7 +106,11 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     }
 
     public void setShortLabel( String shortLabel ) {
+        this.shortLabel = shortLabel;
+    }
 
+    private String prepareShortLabel( String shortLabel )
+    {
         if( shortLabel == null ) {
 
             throw new NullPointerException( "Must define a non null short label for a " + getClass().getName() );
@@ -126,7 +130,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
             }
         }
 
-        this.shortLabel = shortLabel;
+        return shortLabel;
     }
 
     public String getFullName() {
@@ -134,12 +138,6 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     }
 
     public void setFullName( String fullName ) {
-
-        if( fullName != null ) {
-            // delete leading and trailing spaces.
-            fullName = fullName.trim();
-        }
-
         this.fullName = fullName;
     }
 
