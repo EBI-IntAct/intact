@@ -15,8 +15,8 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released 1.3.2 -->
+    <version>1.3.3</version>
+    <!-- last released 1.3.3 -->
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
@@ -80,9 +80,6 @@
     <profiles>
         <profile>
             <id>ebi-test</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <db>oracle</db>
                 <db.host>bourbon.ebi.ac.uk</db.host>
@@ -174,11 +171,33 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.2.0.cr2-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+            <version>3.2.0.cr3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>cglib</groupId>
+                    <artifactId>cglib</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
             <version>0.9.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>2.1_3</version>
         </dependency>
     </dependencies>
 
