@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import java.util.Date;
-
 /**
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
@@ -15,6 +13,8 @@ import java.util.Date;
  * @see uk.ac.ebi.intact.model.IntactObjectImpl
  */
 public interface IntactObject extends Auditable {
+
+    static final String NEW_LINE = System.getProperty("line.separator");
 
     String getAc();
 
