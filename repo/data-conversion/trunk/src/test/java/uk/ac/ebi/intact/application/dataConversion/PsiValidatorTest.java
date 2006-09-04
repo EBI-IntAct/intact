@@ -43,4 +43,14 @@ public class PsiValidatorTest extends TestCase
         assertTrue(report.isValid());
         assertEquals(0, report.getMessages().size());
     }
+
+    public void testValidate253_Ok() throws Exception
+    {
+        File xmlOk = new File(PsiValidatorTest.class.getResource("/validator/psi253_ok.xml").getFile());
+
+        PsiValidatorReport report = PsiValidator.validate(xmlOk);
+
+        assertTrue(report.isValid());
+        assertEquals(0, report.getMessages().size());
+    }
 }

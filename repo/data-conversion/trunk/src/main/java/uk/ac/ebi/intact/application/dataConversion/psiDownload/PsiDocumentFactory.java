@@ -12,14 +12,14 @@ import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractXref2Xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Annotation2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25.Xref2xmlPSI2;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * TODO document this ;o)
@@ -31,7 +31,7 @@ public class PsiDocumentFactory {
 
     public static final String URL_SCHEMA_VERSION_1 = "http://psidev.sourceforge.net/mi/xml/src/MIF.xsd";
     public static final String URL_SCHEMA_VERSION_2 = "http://psidev.sourceforge.net/mi/rel2/src/MIF2.xsd";
-    public static final String URL_SCHEMA_VERSION_25 = "http://psidev.sourceforge.net/mi/rel25/src/MIF25.xsd";
+    public static final String URL_SCHEMA_VERSION_25 = "http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd";
 
     /////////////////////////
     // Constants

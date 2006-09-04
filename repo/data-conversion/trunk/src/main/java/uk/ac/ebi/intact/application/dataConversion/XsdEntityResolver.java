@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.xml.sax.InputSource;
 import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
 
 /**
  * Entity resolver for XSD files to avoid connecting to the internet
@@ -33,7 +33,31 @@ public class XsdEntityResolver implements EntityResolver
             if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF25.xsd"))
             {
 
-                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5");
+                log.debug("Entity without minor build version, resolved using XsdEntityResolver - MIF 2.5.3");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF253.xsd"));
+            }
+            else if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF250.xsd"))
+            {
+                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5.0");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF250.xsd"));
+            }
+            else if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF251.xsd"))
+            {
+                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5.1");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF251.xsd"));
+            }
+            else if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF252.xsd"))
+            {
+                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5.2");
+
+                inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF252.xsd"));
+            }
+            else if (systemId.equals("http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd"))
+            {
+                log.debug("Entity resolved using XsdEntityResolver - MIF 2.5.3");
 
                 inputSource = new InputSource(XsdEntityResolver.class.getResourceAsStream("/META-INF/MIF253.xsd"));
             }
