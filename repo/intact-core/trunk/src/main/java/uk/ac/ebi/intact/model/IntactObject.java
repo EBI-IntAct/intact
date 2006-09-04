@@ -14,8 +14,6 @@ package uk.ac.ebi.intact.model;
  */
 public interface IntactObject extends Auditable {
 
-    static final String NEW_LINE = System.getProperty("line.separator");
-
     String getAc();
 
     void setAc(String ac);
