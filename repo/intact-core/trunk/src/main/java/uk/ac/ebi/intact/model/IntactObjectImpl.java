@@ -8,9 +8,10 @@ package uk.ac.ebi.intact.model;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.lucene.Keyword;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.Date;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 
 /**
  * This is the top level class for all intact model object.
@@ -21,6 +22,8 @@ import java.util.Date;
 @MappedSuperclass
 public abstract class IntactObjectImpl extends AbstractAuditable implements IntactObject, Cloneable {
 
+    protected static final String NEW_LINE = System.getProperty("line.separator");   
+
     /**
      * The unique accession number of an object. This is defined as protected to allow concrete subclasses to generate
      * copies if required.
@@ -29,8 +32,6 @@ public abstract class IntactObjectImpl extends AbstractAuditable implements Inta
 
     public IntactObjectImpl() {
     }
-
-
 
     ///////////////////////////////////////
     //access methods for attributes
