@@ -74,7 +74,7 @@ public class PsiFileGeneratorTest extends TestCase
         DisplayXML.write(doc, writer, "   ");
 
         xmlDoc = writer.toString();
-        assertEquals(128792, xmlDoc.length());
+        assertEquals(128793, xmlDoc.length());
 
     }
 
