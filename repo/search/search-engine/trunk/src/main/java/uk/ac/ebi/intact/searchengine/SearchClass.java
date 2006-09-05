@@ -26,7 +26,7 @@ public enum SearchClass
     NUCLEIC_ACID("NucleicAcid", NucleicAcidImpl.class),
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
-    SMALL_MOLECULE("SmallMolecule", SmallMoleculeImpl.class),
+    SMALL_MOLECULE("SmallMollecule", SmallMoleculeImpl.class),
 
     CV_OBJECT("CvObject", CvObject.class),
     CV_ALIAS_TYPE("CvAliasType", CvAliasType.class),
