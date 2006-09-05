@@ -30,7 +30,7 @@ Prerequisites
  have Windows then everything can still be used provided you have cygwin installed.
 
 
- For postgres 7.x:
+ For postgres 8.x:
     To allow all computer in the local network to connect to the database you have to configure the file 'pg_hba.conf'
     in your postgres directory.
     e.g:
@@ -41,8 +41,8 @@ Prerequisites
 host    all         all         127.0.0.0         255.0.0.0         trust
 +----------+
 
-    See also http://www.postgresql.org/docs/7.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
-    (replace the '7.x' in the URL with your postgres version)
+    See also http://www.postgresql.org/docs/8.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
+    (replace the '8.x' in the URL with your postgres version)
 
 
 Setup
@@ -59,17 +59,17 @@ svn co https://svn.sourceforge.net/svnroot/intact/repo/current intact-current
  [[b]] IntAct build is based on maven, and the database configuration is done using profiles. By default, IntAct comes
  with profiles for the EBI internal databases. The default profiles are:
 
-     * ebi-test: for tests. This profile is activated by default if no profiles are provided
+     * ebi-test: for the EBI IntAct test database
 
-     * ebi-prod: for the internal production database used by the curators
+     * ebi-prod: for the EBI internal production database used by the curators
 
-     * ebi-pub: for the public production database
+     * ebi-pub: for the EBI public production database
 
-     * ebi-pub2: for the public alternative production database
+     * ebi-pub2: for the EBI public alternative production database
 
      []
 
- If you need another database configuration, you can create your profile in your ~/.m2/settings.xml file:
+ If you need another database configuration, you can create own your profile in your ~/.m2/settings.xml file:
 
 +-----+
 <settings>
@@ -84,7 +84,7 @@ svn co https://svn.sourceforge.net/svnroot/intact/repo/current intact-current
             <db.password>[DATABASE PASSWORD]</db.password>
 
             <!-- Name of the hibernate session factory (arbitrary name), to reuse connections -->
-            <sessionFactoryName>[SF_NAME]</sessionFactoryName>
+            <sessionFactoryName>MY_SF_NAME</sessionFactoryName>
 
             <!-- Path to the lucene index -->
             <lucene.index.directory>/path/to/index</lucene.index.directory>

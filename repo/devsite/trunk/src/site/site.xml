@@ -4,10 +4,9 @@
 
         <menu name="IntAct">
             <item name="Overview" href="overview.html"/>
-            <item name="Installation and Configuration" href="install.html"/>
-            <!--
-            <item name="Downloads" href="intact-core/index.html"/>
-            -->
+            <item name="General Installation" href="general_install.html"/>
+            <item name="Module Installation" href="webapp_install.html"/>
+            <item name="Downloads" href="http://sourceforge.net/project/showfiles.php?group_id=62732"/>
         </menu>
 
         <menu name="Libraries">
