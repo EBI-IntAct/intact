@@ -29,17 +29,22 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
 
     public boolean onPreInsert(PreInsertEvent preInsertEvent)
     {
+        if (!(preInsertEvent.getEntity() instanceof Auditable))
+        {
+            log.debug("No auditable object: "+preInsertEvent.getId());
+        }
+
         log.debug("Inserting audit info for: "+preInsertEvent.getId());
 
         Date now = new Date();
 
-        IntactObject intactObject = (IntactObject) preInsertEvent.getEntity();
-        intactObject.setCreated(now);
-        intactObject.setUpdated(now);
+        Auditable auditable = (Auditable) preInsertEvent.getEntity();
+        auditable.setCreated(now);
+        auditable.setUpdated(now);
 
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
-        intactObject.setCreator(currentUser);
-        intactObject.setUpdator(currentUser);
+        auditable.setCreator(currentUser);
+        auditable.setUpdator(currentUser);
 
         String[] names = preInsertEvent.getPersister().getPropertyNames();
         Object[] values = preInsertEvent.getState();

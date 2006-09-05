@@ -13,6 +13,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
@@ -34,9 +35,9 @@ public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements Pr
 
     private static Log log = LogFactory.getLog(ProteinDaoImpl.class);
 
-    public ProteinDaoImpl(Session session)
+    public ProteinDaoImpl(Session session, IntactSession intactSession)
     {
-        super(ProteinImpl.class, session);
+        super(ProteinImpl.class, session, intactSession);
     }
 
     /**

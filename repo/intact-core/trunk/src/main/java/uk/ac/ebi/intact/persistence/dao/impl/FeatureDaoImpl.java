@@ -1,13 +1,9 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
-import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-
-import java.util.List;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 
 /**
  * DAO for features
@@ -20,8 +16,8 @@ import java.util.List;
 public class FeatureDaoImpl extends IntactObjectDaoImpl<Feature> implements FeatureDao
 {
 
-    public FeatureDaoImpl(Session session)
+    public FeatureDaoImpl(Session session, IntactSession intactSession)
     {
-        super(Feature.class, session);
+        super(Feature.class, session, intactSession);
     }
 }

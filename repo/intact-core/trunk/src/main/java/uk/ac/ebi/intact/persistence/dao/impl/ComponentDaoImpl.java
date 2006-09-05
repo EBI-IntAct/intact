@@ -2,8 +2,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.SearchItem;
 import uk.ac.ebi.intact.persistence.dao.ComponentDao;
 
 import java.util.List;
@@ -19,9 +19,9 @@ import java.util.List;
 public class ComponentDaoImpl extends IntactObjectDaoImpl<Component> implements ComponentDao
 {
 
-    public ComponentDaoImpl(Session session)
+    public ComponentDaoImpl(Session session, IntactSession intactSession)
     {
-        super(Component.class, session);
+        super(Component.class, session, intactSession);
     }
 
 

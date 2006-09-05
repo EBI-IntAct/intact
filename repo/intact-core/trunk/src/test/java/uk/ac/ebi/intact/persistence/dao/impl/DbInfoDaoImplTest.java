@@ -7,13 +7,13 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.meta.DbInfo;
+import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.meta.DbInfo;
+import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
 
 import java.util.List;
 
@@ -41,14 +41,13 @@ public class DbInfoDaoImplTest extends TestCase {
 
     public void tearDown() throws Exception {
         super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         dao = null;
     }
 
     public void testGet() throws Exception {
         DbInfo version = dao.get(DbInfo.SCHEMA_VERSION);
         assertNotNull(version.getValue());
-
-        System.out.println("Schema Version: "+version.getValue());
     }
 
     public void testGetAll() throws Exception {

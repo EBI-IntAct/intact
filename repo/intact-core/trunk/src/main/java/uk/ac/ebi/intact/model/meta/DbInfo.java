@@ -21,7 +21,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 import java.util.Date;
 
 /**
@@ -39,37 +38,45 @@ public class DbInfo implements Auditable
     public static final String SCHEMA_VERSION = "schema_version"; 
 
     @Id
-    @Column(name="dbi_key")
+    @Column(name="dbi_key", length = 20)
     private String key;
     
-
+    @Column(name="value", length = 20)
     private String value;
 
     /**
      * The curator who has last edited the object.
      */
-    @Column(name = "updated_user")
+    @Column(name = "updated_user", length = 30)
     private String updator;
 
     /**
      * The curator who has created the edited object
      */
-    @Column(name = "created_user")
+    @Column(name = "created_user", length = 30)
     private String creator;
 
     /**
      * Creation date of an object. The type is java.sql.Date, not java.util.Data, for database compatibility.
      */
-    @Temporal
     @Column(name = "created_date")
     private Date created;
 
     /**
      * The last update of the object. The type is java.sql.Date, not java.util.Data, for database compatibility.
      */
-    @Temporal
     @Column(name = "updated_date")
     private Date updated;
+
+    public DbInfo()
+    {
+    }
+
+    public DbInfo(String key, String value)
+    {
+        this.key = key;
+        this.value = value;
+    }
 
     public String getKey()
     {

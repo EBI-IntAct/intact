@@ -211,7 +211,7 @@ public final class CvContext implements Serializable
 
     private DaoFactory getDaoFactory()
     {
-        return DaoFactory.getCurrentInstance(RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
+        return DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
     }
 
 }

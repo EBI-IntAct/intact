@@ -18,8 +18,9 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
-import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.meta.DbInfo;
+import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
 
 import java.util.List;
 
@@ -36,9 +37,9 @@ public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInf
 
     private static final Log log = LogFactory.getLog(DbInfoDaoImpl.class);
 
-    public DbInfoDaoImpl(Session session)
+    public DbInfoDaoImpl(Session session, IntactSession intactSession)
     {
-        super(DbInfo.class, session);
+        super(DbInfo.class, session, intactSession);
     }
 
     public DbInfo get(String key)
@@ -49,5 +50,10 @@ public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInf
     public List<DbInfo> getAll()
     {
         return getSession().createCriteria(DbInfo.class).list();
+    }
+
+    public void persist(DbInfo dbInfo)
+    {
+        getSession().persist(dbInfo);
     }
 }

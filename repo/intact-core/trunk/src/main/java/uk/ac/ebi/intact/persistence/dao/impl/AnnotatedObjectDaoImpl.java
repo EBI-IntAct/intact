@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Session;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
@@ -27,9 +28,9 @@ import java.util.List;
 public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObjectDaoImpl<T> implements AnnotatedObjectDao<T>
 {
 
-    public AnnotatedObjectDaoImpl(Class<T> entityClass, Session session)
+    public AnnotatedObjectDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
-        super(entityClass, session);
+        super(entityClass, session, intactSession);
     }
 
     public T getByShortLabel(String value)

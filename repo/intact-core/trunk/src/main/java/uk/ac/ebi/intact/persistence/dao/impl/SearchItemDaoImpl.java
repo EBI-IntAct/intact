@@ -5,16 +5,16 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.SearchItem;
-import uk.ac.ebi.intact.persistence.dao.impl.IntactObjectDaoImpl;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * DAO for search items
@@ -27,9 +27,9 @@ import java.util.List;
 public class SearchItemDaoImpl extends IntactObjectDaoImpl<SearchItem> implements uk.ac.ebi.intact.persistence.dao.SearchItemDao
 {
 
-    public SearchItemDaoImpl(Session session)
+    public SearchItemDaoImpl(Session session, IntactSession intactSession)
     {
-        super(SearchItem.class, session);
+        super(SearchItem.class, session, intactSession);
     }
 
     public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type)

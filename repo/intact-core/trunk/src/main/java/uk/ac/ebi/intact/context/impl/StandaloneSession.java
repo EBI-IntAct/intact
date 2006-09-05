@@ -5,14 +5,17 @@
  */
 package uk.ac.ebi.intact.context.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 /**
- * TODO: comment this!
+ * Standalone session, to be used outside web applications
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -20,6 +23,7 @@ import java.util.HashMap;
  */
 public class StandaloneSession extends IntactSession
 {
+    private static final Log log = LogFactory.getLog(StandaloneSession.class);
 
     private Map<String,Serializable> sessionMap;
     private Map<String,Object> applicationMap;
@@ -32,6 +36,15 @@ public class StandaloneSession extends IntactSession
         this.applicationMap =  new HashMap<String,Object>();
         this.requestMap =  new HashMap<String,Object>();
         this.initParamMap =  new HashMap<String,String>();
+
+        readDefaultProperties();
+    }
+
+    public StandaloneSession(Properties properties)
+    {
+        this();
+
+        initParametersWithProperties(properties);
     }
 
     public Object getApplicationAttribute(String name)

@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 
@@ -24,8 +25,8 @@ public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implemen
 
     private static final Log log = LogFactory.getLog(BioSourceDaoImpl.class);
 
-    public BioSourceDaoImpl(Session session) {
-        super(BioSource.class, session);
+    public BioSourceDaoImpl(Session session, IntactSession intactSession) {
+        super(BioSource.class, session, intactSession);
     }
 
 

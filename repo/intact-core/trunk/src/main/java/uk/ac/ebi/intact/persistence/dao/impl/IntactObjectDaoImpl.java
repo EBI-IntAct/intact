@@ -10,6 +10,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectIterator;
@@ -28,8 +29,8 @@ import java.util.List;
 @SuppressWarnings({ "unchecked" })
 public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDaoImpl<T> implements IntactObjectDao<T> {
 
-    public IntactObjectDaoImpl( Class<T> entityClass, Session session ) {
-        super( entityClass, session );
+    public IntactObjectDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
+        super( entityClass, session, intactSession );
     }
 
     /**
@@ -101,30 +102,42 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     }
 
     public void update( T objToUpdate ) {
+        checkReadOnly();
+        
         getSession().update( objToUpdate );
     }
 
     public void persist( T objToPersist ) {
+        checkReadOnly();
+
         getSession().persist( objToPersist );
     }
 
     public void persistAll( Collection<T> objsToPersist ) {
+        checkReadOnly();
+
         for ( T objToPersist : objsToPersist ) {
             persist( objToPersist );
         }
     }
 
     public void delete( T objToDelete ) {
+        checkReadOnly();
+
         getSession().delete( objToDelete );
     }
 
     public void deleteAll( Collection<T> objsToDelete ) {
+        checkReadOnly();
+
         for ( T objToDelete : objsToDelete ) {
             delete( objToDelete );
         }
     }
 
     public void saveOrUpdate( T objToPersist ) {
+        checkReadOnly();
+
         getSession().saveOrUpdate( objToPersist );
     }
 

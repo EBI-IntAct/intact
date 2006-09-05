@@ -14,12 +14,10 @@ import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.SequenceGenerator;
 import org.hibernate.type.Type;
 import org.hibernate.util.PropertiesHelper;
+import uk.ac.ebi.intact.context.IntactContext;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Properties;
-
-import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * Generates identifiers for IntAct objects
@@ -34,26 +32,24 @@ public class IntactIdGenerator extends SequenceGenerator
     private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
 
     /**
-	 * The sequence parameter
-	 */
-	public static final String SEQUENCE = "sequence";
+     * The sequence parameter
+     */
+    public static final String SEQUENCE = "sequence";
 
-    private String sequenceName;
-
+    public static final String INTACT_AC_SEQUENCE_NAME = "intact_ac";
 
     @Override
     public void configure(Type type, Properties properties, Dialect dialect) throws MappingException
     {
         String defaultSeqValue = "hibernate_sequence";
-        sequenceName = PropertiesHelper.getString(SEQUENCE, properties, defaultSeqValue);
+        String sequenceName = PropertiesHelper.getString(SEQUENCE, properties, defaultSeqValue);
 
         // use "intact_ac" only if the default sequence name is provided
         if (sequenceName.equals(defaultSeqValue))
         {
-            sequenceName = "intact_ac";
+            sequenceName = INTACT_AC_SEQUENCE_NAME;
             properties.put(SEQUENCE, sequenceName);
         }
-
         super.configure(type, properties, dialect);
     }
 
