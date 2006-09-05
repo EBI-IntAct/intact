@@ -26,12 +26,6 @@
       <filter-class>uk.ac.ebi.intact.application.editor.security.LoginCheckFilter</filter-class>
     </filter>
 
-    <!-- This filter is to ensure that IntactHelper is closed -->
-    <!--<filter>-->
-      <!--<filter-name>IntactHelper Filter</filter-name>-->
-      <!--<filter-class>uk.ac.ebi.intact.application.editor.util.IntactHelperFilter</filter-class>-->
-    <!--</filter>-->
-
     <!-- This filter is to ensure that ExternalContext is correctly loaded -->
     <filter>
       <filter-name>ExternalContextFilter</filter-name>
@@ -54,12 +48,6 @@
       <filter-name>Security Filter</filter-name>
       <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-    <!-- map all requests to the IntactHelper filter to ensure helper is closed before response is sent -->
-    <!--<filter-mapping>-->
-      <!--<filter-name>IntactHelper Filter</filter-name>-->
-        <!--<url-pattern>/do/*</url-pattern>-->
-    <!--</filter-mapping>-->
 
     <filter-mapping>
       <filter-name>ExternalContextFilter</filter-name>

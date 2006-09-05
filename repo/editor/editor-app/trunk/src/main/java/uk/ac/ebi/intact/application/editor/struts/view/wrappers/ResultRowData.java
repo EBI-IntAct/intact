@@ -6,8 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.wrappers;
 
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.util.Date;
 
@@ -39,7 +39,7 @@ public class ResultRowData {
     public ResultRowData(Object[] data, Class clazz) {
        this((String) data[0], (String) data[1], (String) data[2], (String) data[3], (String) data[4],
             (Date) data[5], (Date) data[6]);
-        myType = IntactHelper.getDisplayableClassName(clazz);
+        myType = CgLibUtil.getDisplayableClassName(clazz);
     }
 //     public ResultRowData(Object[] data, Class clazz) {
 //        this((String) data[0], (String) data[1], (String) data[2], (String) data[3], (String) data[4]);
@@ -53,7 +53,7 @@ public class ResultRowData {
     public ResultRowData(AnnotatedObject annobj) {
 
         this(annobj.getAc(), annobj.getShortLabel(), annobj.getFullName(), annobj.getCreator(), annobj.getUpdator(), annobj.getCreated(), annobj.getUpdated());
-        myType = IntactHelper.getDisplayableClassName(annobj);
+        myType = CgLibUtil.getDisplayableClassName(annobj.getClass());
     }
 
 //    public ResultRowData(String ac, String shortlabel, String fullname, String creator, String updator) {

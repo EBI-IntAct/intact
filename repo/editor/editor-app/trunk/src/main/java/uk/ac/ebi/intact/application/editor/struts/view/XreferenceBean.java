@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.GoServerProxy;
@@ -127,15 +126,21 @@ public class XreferenceBean extends AbstractEditKeyBean {
         // Create a new xref (true if this object was cloned).
         if (myXref == null) {
             if(annotatedObject instanceof BioSource ){
+
                myXref = new BioSourceXref(getService().getOwner(), db, myPrimaryId, mySecondaryId, myReleaseNumber, xqual);
+               myXref.setParent(annotatedObject);
             }else if (annotatedObject instanceof CvObject ){
                 myXref = new CvObjectXref(getService().getOwner(), db, myPrimaryId, mySecondaryId, myReleaseNumber, xqual);
+                myXref.setParent(annotatedObject);
             }else if (annotatedObject instanceof Experiment ){
                 myXref = new ExperimentXref(getService().getOwner(), db, myPrimaryId, mySecondaryId, myReleaseNumber, xqual);
+                myXref.setParent(annotatedObject);
             }else if (annotatedObject instanceof Feature ){
                 myXref = new FeatureXref(getService().getOwner(), db, myPrimaryId, mySecondaryId, myReleaseNumber, xqual);
+                myXref.setParent(annotatedObject);
             }else if (annotatedObject instanceof Interactor ){
                 myXref = new InteractorXref(getService().getOwner(), db, myPrimaryId, mySecondaryId, myReleaseNumber, xqual);
+                myXref.setParent(annotatedObject);
             }
             else{
                 throw new IntactException("Unknown type of AnnotatedObject " + annotatedObject.getClass().getName() +

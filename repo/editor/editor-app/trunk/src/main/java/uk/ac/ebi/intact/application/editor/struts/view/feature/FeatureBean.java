@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;

@@ -34,7 +34,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
 import uk.ac.ebi.intact.util.cdb.PublicationNotFoundException;
@@ -103,8 +102,6 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         EditorFormI editorForm = (EditorFormI) form;
 
         EditUserI user = getIntactUser(request);
-        //user.getUserName();
-        //user.getIntactHelper();
 
         // The current view of the edit session.
         ExperimentViewBean view = (ExperimentViewBean) user.getView();

@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRow
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.business.IntactUserI;
@@ -315,10 +314,4 @@ public interface EditUserI extends IntactUserI, Serializable {
      * </pre>
      */
     public Set<InteractionRowData> getCurrentInteractions();
-
-    /**
-     * Allows access to Intact helper.
-     * @return IntactHelper instance assigned to the current user.
-     */
-//    public IntactHelper getIntactHelper() throws IntactException;
 }

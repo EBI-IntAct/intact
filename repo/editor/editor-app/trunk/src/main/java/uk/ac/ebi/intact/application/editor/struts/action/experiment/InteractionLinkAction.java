@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;

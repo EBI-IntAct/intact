@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;

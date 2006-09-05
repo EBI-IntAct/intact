@@ -49,10 +49,6 @@ public class CvHelper {
 
     /**
      * This class is used in the Editor.
-     * The needed helper are managed and given by the IntactHelperUtil class.
-     * Therefore, as we know we will need some helper in this class, we give it as an
-     * argument of the constructor and we make the no argument constructor private.
-     *
      */
     public CvHelper(){
     }

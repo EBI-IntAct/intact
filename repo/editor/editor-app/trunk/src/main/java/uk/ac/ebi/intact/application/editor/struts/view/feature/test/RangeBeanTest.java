@@ -62,7 +62,6 @@ public class RangeBeanTest extends TestCase {
      */
     public void testConstructor1() {
         try {
-//            helper = new IntactHelper();
             doTestConstructor1();
         }
         catch (Exception ex) {
@@ -430,26 +429,26 @@ public class RangeBeanTest extends TestCase {
      * Tests the getRange(user).
      */
     public void testGetRange() {
-        IntactHelper helper = null;
-        try {
-            helper = new IntactHelper();
-            doTestGetRange(helper);
-        }
-        catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
-            ex.printStackTrace();
-            fail(ex.getMessage());
-        }
-        finally {
-            if (helper != null) {
-                try {
-                    helper.closeStore();
-                }
-                catch (IntactException e) {
-                    Logger.getLogger(EditorConstants.LOGGER).error("", e);
-                }
-            }
-        }
+//        IntactHelper helper = null;
+//        try {
+//            helper = new IntactHelper();
+//            doTestGetRange(helper);
+//        }
+//        catch (Exception ex) {
+//            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+//            ex.printStackTrace();
+//            fail(ex.getMessage());
+//        }
+//        finally {
+//            if (helper != null) {
+//                try {
+//                    helper.closeStore();
+//                }
+//                catch (IntactException e) {
+//                    Logger.getLogger(EditorConstants.LOGGER).error("", e);
+//                }
+//            }
+//        }
     }
 
     // Helper methods

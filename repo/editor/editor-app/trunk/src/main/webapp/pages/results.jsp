@@ -50,8 +50,8 @@
         <display:column property="fullName" title="Full Name" />
         <%--<display:column property="creator" title="creator" />--%>
         <%--<display:column property="created" title="created" />--%>
-        <display:column property="updateInfo" title="Created" />
-        <display:column property="creationInfo" title="Last updated" />
+        <display:column property="creationInfo" title="Created" />
+        <display:column property="updateInfo" title="Last updated" />
         <display:column property="lock" title="Lock" />
     </display:table>
 </html:form>
