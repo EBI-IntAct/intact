@@ -44,4 +44,62 @@ public class CgLibUtil {
         return clazz;
     }
 
+    /**
+     * Gives the Object classname, give the real object class name if this is a VirtualProxy class
+     *
+     * @param obj the object for which we request the real class name.
+     *
+     * @return the real class name.
+     *
+
+     */
+    public static <T> Class<T> getRealClassName( T obj ) {
+        return removeCglibEnhanced(obj.getClass());
+    }
+
+    /**
+     * From the real className of an object, gets a displayable name.
+     *
+     * @param obj the object for which we want the class name to display - the object must not be null
+     *
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( Object obj ) {
+
+        return getDisplayableClassName( getRealClassName( obj ) );
+    }
+
+    /**
+     * From the real className of className, gets a displayable name.
+     *
+     * @param clazz the class for which we want the class name to display - the class must not be null
+     *
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( Class clazz ) {
+
+        return getDisplayableClassName( clazz.getName() );
+    }
+
+    /**
+     * From the real className of className, gets a displayable name. <br> 1. get the real class name. 2. Removes the
+     * package name 3. try to remove an eventual Impl suffix
+     *
+     * @param name the class name for which we want the class name to display - the class must not be null
+     *
+     * @return the classname to display in the view.
+     */
+    public static String getDisplayableClassName( String name ) {
+
+        int indexDot = name.lastIndexOf( "." );
+        int indexImpl = name.lastIndexOf( "Impl" );
+        if ( indexImpl != -1 ) {
+            name = name.substring( indexDot + 1, indexImpl );
+        } else {
+            name = name.substring( indexDot + 1 );
+        }
+
+        return name;
+    }
+
 }
