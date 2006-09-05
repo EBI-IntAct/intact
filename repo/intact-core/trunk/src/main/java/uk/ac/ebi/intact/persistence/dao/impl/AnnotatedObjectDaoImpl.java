@@ -5,21 +5,21 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
+import org.hibernate.Criteria;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.criterion.Order;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * TODO comment this
@@ -121,7 +121,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .createAlias("annotations", "annot")
                 .add(Restrictions.eq("annot.ac", ac)).list();
     }
-    
+
     /**
      * Return a collection of annotated object of type <T> being annotated with an annotation having
      * a topic equal to the topic given in parameter and the description equal to the description given
