@@ -38,6 +38,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
         intactObject.setUpdated(now);
 
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+        log.debug("The user id is : " + currentUser);
         intactObject.setCreator(currentUser);
         intactObject.setUpdator(currentUser);
 

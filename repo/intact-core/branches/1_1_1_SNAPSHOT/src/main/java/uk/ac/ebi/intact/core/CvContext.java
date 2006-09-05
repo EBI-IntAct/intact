@@ -146,9 +146,11 @@ public abstract class CvContext {
         for ( Map.Entry<CvName, CvObject> entry : cvMap.entrySet() ) {
             CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
             CvObject value = entry.getValue();
-            value = cvObjectDao.getByAc(value.getAc());
-            if ( value.equals( cvObject ) ) {
-                return entry.getKey();
+            if(value != null){
+                value = cvObjectDao.getByAc(value.getAc());
+                if ( value != null && value.equals( cvObject ) ) {
+                    return entry.getKey();
+                }
             }
         }
 

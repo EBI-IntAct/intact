@@ -7,12 +7,11 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
 import org.hibernate.Criteria;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
+import org.hibernate.criterion.*;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Collections;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -123,8 +122,10 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
      */
     public List<T> getAll(boolean excludeObsolete, boolean excludeHidden)
     {
-        Criteria crit = getSession().createCriteria(getEntityClass());
 
+        Criteria crit = getSession().createCriteria(getEntityClass()).addOrder(Order.asc("shortLabel"));
+        List<T> listTotal = crit.list();
+        Collection<T> subList = Collections.EMPTY_LIST;
         if (excludeObsolete || excludeHidden)
         {
             crit.createAlias("annotations", "annot")
@@ -133,20 +134,25 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
 
         if (excludeObsolete && excludeHidden)
         {
-            crit.add(Restrictions.disjunction()
-                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE))
-                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN)));
+            crit.add(Restrictions.or(
+                    Restrictions.eq("annotTopic.shortLabel", CvTopic.OBSOLETE),
+                    Restrictions.eq("annotTopic.shortLabel",CvTopic.HIDDEN))
+                    );
+            subList = crit.list();
         }
         else if (excludeObsolete && !excludeHidden)
         {
             crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
+            subList = crit.list();
         }
         else if (!excludeObsolete && excludeHidden)
         {
             crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
+            subList = crit.list();
         }
 
-        return crit.list();
+        listTotal.removeAll(subList);
+        return listTotal;
     }
     /**
      * This method will search in the database an AnnotatedObject of type T having it's shortlabel or it's
@@ -156,7 +162,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
      */
     public List<T> getByShortlabelOrAcLike(String searchString)
     {
-        return getSession().createCriteria(getEntityClass())
+        return getSession().createCriteria(getEntityClass()).addOrder(Order.asc("shortLabel"))
                 .add(Restrictions.or(
                         Restrictions.like("ac",searchString).ignoreCase(),
                         Restrictions.like("shortLabel",searchString).ignoreCase())).list();
