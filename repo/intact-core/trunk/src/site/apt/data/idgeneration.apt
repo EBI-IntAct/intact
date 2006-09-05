@@ -4,13 +4,8 @@
 
 AC Prefix
 
- By default, the prefix for the ACs is 'EBI'. It is possible to change this prefix by building the
- intact-core and providing the variable 'ac.prefix':
-
-+--------------+
-cd intact-core
-mvn clean install -Dac.prefix=NEW_PREFIX
-+--------------+
+ By default, the prefix for the ACs is 'EBI'. It is possible to change this prefix by setting the parameter
+ 'uk.ac.ebi.intact.AC_PREFIX' as explained in the configuration page.
 
 ID Generation in IntAct
 

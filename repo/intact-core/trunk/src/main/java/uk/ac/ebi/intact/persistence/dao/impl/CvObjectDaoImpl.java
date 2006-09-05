@@ -5,14 +5,14 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,6 +22,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>02-May-2006</pre>
  */
+@SuppressWarnings("unchecked")
 public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T>
 {
     public CvObjectDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
@@ -29,38 +30,12 @@ public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<
         super(entityClass, session, intactSession);
     }
 
-
-    /**
-     * Gets all the CVs for the current entity
-     * @param excludeObsolete if true exclude the obsolete CVs
-     * @param excludeHidden if true exclude the hidden CVs
-     * @return the list of CVs
-     */
-    public List<T> getAll(boolean excludeObsolete, boolean excludeHidden)
+     public List<T> getByPsiMiRefCollection(Collection<String> psiMis)
     {
-        Criteria crit = getSession().createCriteria(getEntityClass());
-
-        if (excludeObsolete || excludeHidden)
-        {
-            crit.createAlias("annotations", "annot")
-                .createAlias("annot.cvTopic", "annotTopic");
-        }
-
-        if (excludeObsolete && excludeHidden)
-        {
-            crit.add(Restrictions.disjunction()
-                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE))
-                    .add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN)));
-        }
-        else if (excludeObsolete && !excludeHidden)
-        {
-            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
-        }
-        else if (!excludeObsolete && excludeHidden)
-        {
-            crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
-        }
-
-        return crit.list();
+       return getSession().createCriteria(getEntityClass()).createAlias("xrefs","xref")
+               .createAlias("xref.cvDatabase", "cvDb")
+               .createAlias("cvDb.xrefs", "cvDbXref")
+                .add(Restrictions.eq("cvDbXref.primaryId", CvDatabase.PSI_MI_MI_REF))
+                .add(Restrictions.in("xref.primaryId", psiMis)).list();
     }
 }

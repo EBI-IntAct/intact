@@ -208,7 +208,6 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     private Criteria getCriteriaByPropertyName(String propertyName, String value, boolean ignoreCase)
     {
         Criteria criteria = getSession().createCriteria(entityClass);
-
         SimpleExpression restriction = Restrictions.eq(propertyName, value);
 
         if (ignoreCase)

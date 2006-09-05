@@ -8,13 +8,11 @@ package uk.ac.ebi.intact.util.cdb;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -109,7 +107,8 @@ public class ExperimentAutoFill {
      */
     private IntactCitation loadCitation( String pubmedID ) throws UnexpectedException,
                                                                   PublicationNotFoundException {
-        return IntactCitationFactory.getInstance().buildCitation( pubmedID );
+        IntactCitationFactory intactCitationFactory = IntactCitationFactory.getInstance();
+        return intactCitationFactory.buildCitation( pubmedID );
     }
 
     /**

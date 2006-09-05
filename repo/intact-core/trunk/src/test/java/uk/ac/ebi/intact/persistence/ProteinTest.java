@@ -64,4 +64,8 @@ public class ProteinTest extends TestCase
         assertEquals(20, interactions.size());
     }
 
+    public void testIsAssignableFrom(){
+        assert(Protein.class.isAssignableFrom(ProteinImpl.class));
+    }
+
 }

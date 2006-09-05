@@ -24,15 +24,47 @@ package uk.ac.ebi.intact.context;
  */
 public interface IntactEnvironment
 {
+    /**
+     * A comma-separated list with the name of the classes that extends 'uk.ac.ebi.intact.config.DataConfig',
+     * used to register data entities
+     */
     public static final String DATA_CONFIG_PARAM_NAME = "uk.ac.ebi.intact.DATA_CONFIG";
 
+    /**
+     * The label of the institution, used to retrieve the Institution object
+     * if it already exists, or to create a new institution
+     */
     public static final String INSTITUTION_LABEL = "uk.ac.ebi.intact.INSTITUTION_LABEL";
+
+    /**
+     * The full name of the institution
+     */
     public static final String INSTITUTION_FULL_NAME = "uk.ac.ebi.intact.INSTITUTION_FULL_NAME";
+
+    /**
+     * The postal address of the institution
+     */
     public static final String INSTITUTION_POSTAL_ADDRESS = "uk.ac.ebi.intact.INSTITUTION_POSTAL_ADDRESS";
+
+    /**
+     * The URL (web page) of the institution
+     */
     public static final String INSTITUTION_URL = "uk.ac.ebi.intact.INSTITUTION_URL";
 
+    /**
+     * The Accession Number Prefix for the objects created
+     * by the application and stored in the database. Default: ebi
+     */
     public static final String AC_PREFIX_PARAM_NAME = "uk.ac.ebi.intact.AC_PREFIX";
+
+    /**
+     * Preload the most common CvObjects on application start, so it is faster to retrieve them later. Default: false
+     */
     public static final String PRELOAD_COMMON_CVS_PARAM_NAME = "uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS";
+
+    /**
+     * If read-only, an application cannot persist data in the database. Default: true
+     */
     public static final String READ_ONLY_APP = "uk.ac.ebi.intact.READ_ONLY_APP";
 
 }
