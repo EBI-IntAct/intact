@@ -50,9 +50,9 @@ public class PolymerProxy extends InteractorProxy implements Polymer {
         return realSubject().setSequence( aSequence );
     }
 
-    public void setSequence( IntactHelper helper, String aSequence ) throws IntactException {
-        realSubject().setSequence( helper, aSequence );
-    }
+//    public void setSequence( String aSequence ) throws IntactException {
+//        realSubject().setSequence( aSequence );
+//    }
 
     public String getCrc64() {
         return realSubject().getCrc64();
