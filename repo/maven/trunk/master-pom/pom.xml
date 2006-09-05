@@ -9,8 +9,8 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>1.1-SNAPSHOT</version>
-    <!-- last released 1.0.4 -->
+    <version>1.0.5</version>
+    <!-- last released 1.0.5 -->
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
@@ -178,6 +178,27 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>attach-javadocs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadoc</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <repositories>
        <repository>
             <id>ebi-repo</id>
@@ -276,16 +297,10 @@
     </pluginRepositories>
 
     <dependencies>
-	<dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.0</version>
+            <version>3.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
