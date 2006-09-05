@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.core.CvContext;
 import uk.ac.ebi.intact.model.*;
@@ -1187,6 +1188,9 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         myAnnotObject.setShortLabel(getShortLabel());
         myAnnotObject.setFullName(getFullName());
 
+        persistAnnotatedObject();
+        log.debug("As I have persisted myAnnotObject ac is " + myAnnotObject.getAc());
+
         // Save the annotation size for comparision.
         int initSize = myAnnotObject.getAnnotations().size();
         // Flag to track whether the annotations are changed or not.
@@ -1246,9 +1250,14 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 //        }
         // Create xrefs and add them to CV object.
         XrefDao xrefDao = DaoFactory.getXrefDao();
+        Collection<XreferenceBean> xrefBeans = getXrefsToAdd();
+        log.debug("The size of the xrefBeans to add is " + xrefBeans.size());
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
         {
             Xref xref = xreferenceBean.getXref(myAnnotObject);
+            if(xref == null){
+                log.debug ( "xref is null");
+            }
             xrefDao.saveOrUpdate(xref);
             myAnnotObject.addXref(xref);
         }
@@ -1293,7 +1302,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             featureDao.saveOrUpdate((Feature) myAnnotObject);
         }else if (myAnnotObject instanceof Interactor){
             InteractorDao interactorDao = DaoFactory.getInteractorDao();
-            interactorDao.saveOrUpdate(myAnnotObject);
+            interactorDao.saveOrUpdate((InteractorImpl) myAnnotObject);
         }else if (myAnnotObject instanceof CvObject){
             CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
             cvObjectDao.saveOrUpdate(myAnnotObject);
@@ -1310,7 +1319,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             myEditClass = (Class<T>)getAnnotatedObject().getClass();
         }
         else {
-            setAnnotatedObject(/*IntactHelper.getRealIntactObject(*/annobj/*)*/);
+            setAnnotatedObject(annobj);
             myEditClass = CgLibUtil.getRealClassName(annobj);
         }
         setFullName(annobj.getFullName());

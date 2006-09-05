@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;

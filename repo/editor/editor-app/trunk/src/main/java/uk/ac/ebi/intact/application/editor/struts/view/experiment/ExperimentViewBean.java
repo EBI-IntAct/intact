@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFacto
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 
@@ -525,7 +524,7 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
             for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
                 String ac = (String) iter.next();
                 Interaction intact = interactionDao.getByAc(ac);
-                exp.removeInteraction(IntactHelper.getRealIntactObject(intact));
+                exp.removeInteraction(intact);
             }
 
             // --------------------------------------------------------------------
@@ -545,8 +544,6 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
                     inter = interactionDao.getByAc(inter.getAc());
                 }
                 exp.addInteraction(inter);
-//                exp.addInteraction(IntactHelper.getRealIntactObject(
-//                        inter));
             }
             // --------------------------------------------------------------------
         }

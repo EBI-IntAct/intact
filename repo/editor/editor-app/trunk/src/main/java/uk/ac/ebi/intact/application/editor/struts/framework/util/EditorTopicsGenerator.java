@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Editable;
 import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.io.*;
 import java.lang.reflect.Modifier;
@@ -118,7 +118,7 @@ public class EditorTopicsGenerator {
                 continue;
             }
 
-            classname = IntactHelper.getDisplayableClassName( classname );
+            classname = CgLibUtil.getDisplayableClassName( classname );
 
             props.put(classname, fullname);
         }

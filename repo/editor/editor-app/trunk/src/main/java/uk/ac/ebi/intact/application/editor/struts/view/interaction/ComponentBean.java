@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -121,7 +120,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      * @param protein the <code>Protein</code> object.
      */
     public ComponentBean(Protein protein) {
-        myInteractor = IntactHelper.getRealIntactObject(protein);
+        myInteractor = protein;
         mySPAc = getSPAc();
         setOrganism();
         setEditState(SAVE_NEW);
@@ -136,7 +135,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public ComponentBean(NucleicAcid nucleicAcid){
-        myInteractor = IntactHelper.getRealIntactObject(nucleicAcid);
+        myInteractor = nucleicAcid;
         setOrganism();
         setEditState(SAVE_NEW);
         setType(NUCLEIC_ACID);
@@ -151,7 +150,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public ComponentBean(SmallMolecule smallMolecule){
-        myInteractor = IntactHelper.getRealIntactObject(smallMolecule);
+        myInteractor = smallMolecule;
 //        setOrganism();
         setEditState(SAVE_NEW);
         setType(SMALL_MOLECULE);
@@ -189,7 +188,6 @@ public class ComponentBean extends AbstractEditKeyBean {
      * after calling to {@link #getComponent(true)}
      * method
      * @return could be null if this method was called after constructing with a
-     * Protein but without calling getComponent(IntactHelper) method first.
      */
     public Component getComponent() {
         if(myComponent != null && myComponent.getAc() != null){
@@ -437,10 +435,8 @@ public class ComponentBean extends AbstractEditKeyBean {
      */
     private void initialize(Component component) {
         myComponent = component;
-        myInteraction = IntactHelper.getRealIntactObject(
-                component.getInteraction());
-        myInteractor = IntactHelper.getRealIntactObject(
-                component.getInteractor());
+        myInteraction = component.getInteraction();
+        myInteractor = component.getInteractor();
         mySPAc = getSPAc();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();

@@ -16,22 +16,17 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
-//import uk.ac.ebi.intact.application.editor.util.IntactHelperUtil;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
-//import uk.ac.ebi.intact.business.BusinessConstants;
 import uk.ac.ebi.intact.business.IntactException;
-//import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
-import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 
 import javax.servlet.ServletContext;
@@ -40,7 +35,6 @@ import javax.servlet.http.HttpSessionBindingListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -199,8 +193,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     private String myPassword;
 
     /**
-     * The name of the current database. Transient as it can be retrieved via
-     * IntactHelper
+     * The name of the current database.
      */
     private transient String myDatabaseName;
 
@@ -257,7 +250,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      *
      * @param user the user
      * @param password the password of <code>user</code>.
-     * @exception IntactException for errors in creating IntactHelper; possibly
+     * @exception IntactException
      * due to an invalid user.
      */
     public EditUser(String user, String password) throws IntactException {
@@ -273,7 +266,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                                                          ClassNotFoundException {
         in.defaultReadObject();
         try {
-//            initialize();
             myViewStack = new Stack();
         }
         catch (IntactException ie) {
@@ -470,51 +462,22 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myEditState;
     }
 
-//    public IntactHelper getIntactHelper() throws IntactException {
-//        // Construct the the helper.
-//        return IntactHelperUtil.getIntactHelper(myUserName, myPassword);
-//    }
-
     public void startEditing() {
         myEditState = true;
     }
 
-//    public void startTransaction() throws IntactException {
-//        getIntactHelper().startTransaction(BusinessConstants.OBJECT_TX);
-//    }
-
-//    public void commit() throws IntactException {
-//        IntactHelper helper = getIntactHelper();
-//        helper.finishTransaction();
-//        endEditing();
-//        // Clear the cache; this will force the OJB to read from the database.
-//        helper.removeFromCache(myEditView.getAnnotatedObject());
-//    }
 
     public void rollback() throws IntactException {
-//        getIntactHelper().undoTransaction();
         endEditing();
     }
 
     public void delete() throws IntactException {
-//        IntactHelper helper = getIntactHelper();
         AnnotatedObject annobj = myEditView.getAnnotatedObject();
         if (annobj.getAc() == null) {
             return;
         }
 
         delete(annobj);
-//        helper.delete(annobj);
-//
-//        // Clear annotation and xref collections
-//        helper.deleteAllElements(annobj.getAnnotations());
-//        annobj.getAnnotations().clear();
-//        // Don't want xrefs; tied to an annotated object. Delete them explicitly
-//        helper.deleteAllElements(annobj.getXrefs());
-//        annobj.getXrefs().clear();
-
-        // Not returning the view back to the pool as it may be required for other
-        // information such as releasing the lock etc.
     }
 
     private void delete(AnnotatedObject annobj){
@@ -610,8 +573,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public ResultWrapper lookup(Class clazz, String param, String value, int max)
             throws IntactException {
-        // The search helper.
-        SearchHelperI helper = getSearchHelper();
 
         // The result to return.
         try {
@@ -636,9 +597,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Holds the result from the search.
         log.debug("Searching for an annotated object having shortlabel " + label + "and class " + myEditView.getEditClass());
         AnnotatedObject annotObj = getAnnotatedObjectWithIdenticalShortlabel(label, myEditView.getEditClass());
-//        Collection results = getIntactHelper().search(
-//                myEditView.getEditClass().getName(), "shortLabel", label);
-//        if (results.isEmpty()) {
         if(annotObj == null){
             log.debug("No annotated object found with shortlabel " + label);
             // Don't have this short label on the database.
@@ -652,16 +610,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                 return false;
             }
         }
-        // If we found a single record then it could be the current record.
-//        if (results.size() == 1) {
-//            // Found an object with similar short label; is it as same as the
-//            // current record?
-//            String resultAc = ((AnnotatedObject) results.iterator().next()).getAc();
-//            if (resultAc.equals(myEditView.getAc())) {
-//                // We have retrieved the same record from the DB.
-//                return false;
-//            }
-//        }
         // There is another record exists with the same short label.
         return true;
     }
@@ -796,35 +744,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return myCurrentInteractions;
     }
 
-    // Helper methods.
-
-    /**
-     * Called by the constructors to initialize the object.
-     * @throws IntactException for errors in accessing the persistent system.
-     */
-//    private void initialize() throws IntactException {
-//        IntactHelper helper = getIntactHelper();
-//        myDatabaseName = helper.getDbName();
-//         try {
-//            helper.getJDBCConnection();//.getDbUserName();
-//        } catch (IntactException e) {
-//            throw new IntactException("Invalid helper get with for username : " + myUserName );
-//         }
-//        try {
-//            helper.getJDBCConnection().getMetaData();
-//        } catch (SQLException e) {
-//            throw new IntactException("Invalid helper get with for username : " + myUserName );
-//        }
-//        // Initialize the Protein factory. Needs a valid to initialize factory values.
-//        try {
-//            myProteinFactory = new UpdateProteins();
-//        }
-//        catch (UpdateProteinsI.UpdateException e) {
-//            log.error("", e);
-//            throw new IntactException("Unable to create the Protein factory");
-//        }
-//    }
-
     /**
      * @return returns an instance of search helper. A new object is created
      * if the current search helper is null.
@@ -857,9 +776,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Try to guess the next new label.
         String nextLabel;
 
-        // The helper to search the persistent system.
-//        IntactHelper helper = getIntactHelper();
-
         if (formatter.isRootOnly()) {
             // case: abc
             AnnotatedObject annobj = getAnnotatedObjectWithIdenticalShortlabel(label,clazz);
@@ -867,10 +783,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
                 log.debug("No object found in db with shortlabel : " + label + " and class " + clazz.getName());
                 return label;
             }
-//            if (helper.getObjectByLabel(clazz, label) == null) {
-//                // Label is not found in the DB.
-//                return label;
-//            }
             // Label already exists.
             prefix = label;
             nextLabel = prefix + "-1";

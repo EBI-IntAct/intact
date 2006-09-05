@@ -17,9 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
