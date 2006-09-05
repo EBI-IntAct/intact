@@ -1,0 +1,8 @@
+VERSION 1.2.3
+
+REQUEST
+* IA_DB_INFO table needs public synonyms in order to be accessible which any user
+
+
+TECHNICAL CHANGES
+    * Created public synonym for IA_DB_INFO table
