@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
 /**
  * TODO comment this!

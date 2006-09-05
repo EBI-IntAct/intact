@@ -42,7 +42,7 @@ public class PersistTutorialTest extends AbstractIntactTest
     private static String cvXrefQualifierAc;
     private static String organismAc;
 
-    public void testVerifyInstitution()
+    public void testVerifyInstitution() throws Exception
     {
         Institution institution = getInstitution();
         assertNotNull(institution);
@@ -50,7 +50,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         log.debug("Institution: " + institution.getFullName());
     }
 
-    public void testCreateCvDatabase()
+    public void testCreateCvDatabase() throws Exception
     {
         CvDatabase cvDatabase = new CvDatabase(getInstitution(), "MyTestDatabase");
         cvDatabase.setFullName("Mock CvDatabase Object");
@@ -61,7 +61,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         cvDatabaseAc = cvDatabase.getAc();
     }
 
-    public void testCreateCvXrefQualifier()
+    public void testCreateCvXrefQualifier() throws Exception
     {
        CvXrefQualifier cvXrefQualifier = new CvXrefQualifier(getInstitution(), CvXrefQualifier.IDENTITY);
        getDaoFactory().getCvObjectDao(CvXrefQualifier.class).persist(cvXrefQualifier);
@@ -70,7 +70,7 @@ public class PersistTutorialTest extends AbstractIntactTest
        cvXrefQualifierAc = cvXrefQualifier.getAc();
     }
 
-    public void testPersistBioSource()
+    public void testPersistBioSource() throws Exception
     {
         BioSource organism = new BioSource(getInstitution(), ORGANISM_LABEL, ORGANISM_TAXID);
 
@@ -98,7 +98,7 @@ public class PersistTutorialTest extends AbstractIntactTest
 
     }
 
-    public void testSearchXref()
+    public void testSearchXref() throws Exception
     {
         Collection<Xref> xrefs = getDaoFactory().getXrefDao().getByPrimaryId("testPrimaryId");
         assertEquals(1, xrefs.size());
@@ -108,7 +108,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         log.debug("Xref: "+xref.getAc()+" ParentAc: "+xref.getParent().getAc());
     }
 
-    public void testSearchIndex()
+    public void testSearchIndex() throws Exception
     {
         try
         {

@@ -29,7 +29,7 @@ public class ProteinTest extends AbstractIntactTest
 
     public void testCreateInstitution()
     {
-        Institution institution = new Institution("ebi");
+        Institution institution = new Institution("ebi-test");
         institution.setFullName("Test Institution");
 
         getDaoFactory().getInstitutionDao().persist(institution);
