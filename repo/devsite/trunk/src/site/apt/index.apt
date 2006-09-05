@@ -1,6 +1,46 @@
+ -----
+ Index
+ -----
+ Bruno Aranda
+ -----
+ 5 Sep 2006
+ -----
+
 Introduction
-~~~~~~~~~~~~~~
 
  This is the IntAct Development Site. Here you will find all the information related
  to the IntAct development. If you are interested in the IntAct Database,
  please go to the {{{http://www.ebi.ac.uk/intact}IntAct Data Site}}.
+
+ IntAct is not only one application, but several modules and web applications with separated
+ development but dependency relationships. Then, you can only get the sources of one of the modules
+ (e.g. Search Webapp) and build only that application. You don't need to get everything to use only
+ one part.
+ We classify the IntAct modules in different categories:
+
+ * <<Libraries>>: modules that generate jar files containing common classes or different functionalities.
+
+ * <<Web Applications>>: the visible part of IntAct, the different applications to be deployed in a web container.
+
+ * <<Web Services Clients>>: libraries to access the IntAct web services. Use these libraries to access to some of
+  the IntAct Services remotely.
+
+ * <<Maven Plugins>>: maven plugins with specific functionalities related to IntAct, such as the export of the IntAct
+  data to PSI XML files, etc.
+
+ []
+
+ You can take a look at the {{{overview.html}Overview}} to see the list of modules with simple descriptions
+ and a simple graph of the dependency relations. To see the exact dependencies of each module, click on that
+ module in the list of the left and check the project dependencies on the Project Information tab.
+
+Installation and Configuration
+
+ Refer to {{{general_install.html}General Install}} to create (or update) a database schema
+ suitable for IntAct. If you are interested in building only one or a few of the web applications,
+ install the schema first and then refer to the {{{webapp_install.html}general module installation}} and
+ to the specific build information of the modules, by clicking the links on the left.
+
+ You can download the released {{{http://sourceforge.net/project/showfiles.php?group_id=62732}source bundles}} at <SourceForge>
+ or checkout the bleeding edge code with subversion from the repository. See the <Source Repository> section in the
+ Project Information tab of any of the modules.

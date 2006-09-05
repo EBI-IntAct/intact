@@ -1,0 +1,106 @@
+Prerequisites
+~~~~~~~~~~~~~~
+
+ To install and run the intact software you must have the following installed in your
+ environment (or, for the DBs, at least have access to them over the network):
+
+ * {{{http://java.sun.com/j2se/downloads.html}Java JDK 5.0}}
+
+ * {{{http://maven.apache.org}Maven 2.0.4}} or above (all the intact build process relies on Maven)
+
+ * Tomcat 5.5.x
+
+ * Either {{{http://www.postgresql.org/mirrors-ftp.html}Postgres 7.2}} or Oracle 8.1.6 (or higher)
+
+ * {{{http://subversion.togris.org}Subversion}}: the source management tool
+
+ * {{{http://maven.apache.org}Maven}}: the build tool
+
+ []
+
+ The following environment variables should be set:
+
+ * $CATALINA_HOME - the home directory of your tomcat installation
+
+ * $CATALINA_OPTS - should be set with your proxy setting (needed by protein loading, and so by search)
+                in the EBI, it would be set to '-DproxySet=true -DproxyHost=www-proxy.ebi.ac.uk -DproxyPort=8080'
+
+ * $JAVA_HOME - the home directory of your JDK
+
+ []
+
+ Intact has been tested on both Redhat Linux 7.1, CentOS 3.2 and Windows 2000/XP running inside cygwin, and with both local and
+ remote postgres databases as well as a remote oracle DB. Thus intact is based around a linux/unix environment, but if you
+ have Windows then everything can still be used provided you have cygwin installed.
+
+
+ For postgres 8.x:
+    To allow all computer in the local network to connect to the database you have to configure the file <<<pg_hba.conf>>>
+    in your postgres directory.
+    e.g:
+
++----------+
+# Allow any user from any host with IP address 127.x.x.x to connect to database
+# TYPE  DATABASE    USER        IP-ADDRESS        IP-MASK           METHOD
+host    all         all         127.0.0.0         255.0.0.0         trust
++----------+
+
+    See also http://www.postgresql.org/docs/8.x/interactive/client-authentication.html#AUTH-PG-HBA-CONF
+    (replace the '8.x' in the URL with your postgres version)
+
+
+Database Schema
+
+ Before installing any of the IntAct modules you need to create the database schema. To create the intact tables from
+ scratch or to update an existing schema you have to use the corresponding SQL files.
+
+ First: download the scripts and SQL files needed:
+
++----------+
+svn co https://svn.sourceforge.net/svnroot/intact/repo/utils
++----------+
+
+      [Note:] A maven plugin is planned to do all this work, in an easier way
+
+* Creating a new schema
+
+ There are sample data files in the data directory, and to populate your database with this data simply type
+
++------+
+cd utils
+./scripts/postgres/testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV  (postgres - quotes can be omitted if no password)
++------+
+
+ or
+
++-------+
+cd utils
+./scripts/oracle/testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV (oracle)
++-------+
+
+ "small" is for minimal tests, will need \< 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
+ will run ca. 30 minutes.
+
+ You should then check your database using an appropriate tool (eg pgaccess for postgres/linux) to make sure you have the
+ intact tables and that they are populated.
+
+* Updating an existing schema
+
+ To update an existing schema you need to execute the SQL files for your database that you can find in the folders:
+
++-------+
+utils/sql/$DB_NAME/version_X_X_X
++-------+
+
+ You need to check what current schema version in your database, by executing the SQL command:
+
++-------+
+SELECT value from IA_DB_INFO where dbi_key = 'schema_version';
++-------+
+
+ And then all you have to do is to execute sequentially the SQL 'install_XXX.sql' for each of the version_X_X_X folders
+ that are higher than your version, until you reach the newest one.
+
+               [Note:] It is not possible to upgrade to the last version of postgres yet
+
+ 

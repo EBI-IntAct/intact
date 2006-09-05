@@ -1,0 +1,80 @@
+ -----
+ Webapp Installation
+ -----
+ Bruno Aranda
+ -----
+ 5 Sep 2006
+ -----
+
+Installing IntAct Web Applications
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ All IntAct Web Applications are build using {{{http://maven.apache.org}Maven}} and you can use the same command to build them all.
+
+* Configuring the database access
+
+ You need to configure the database access to define where your web application will look for the data. As there are several
+ properties to be modified, and there can be different configurations, the easiest way to do this is to create a {{{http://maven.apache.org/guides/introduction/introduction-to-profiles.html}Maven profile}}
+ in your <<<$\{USER_HOME\}/.m2/settings.xml>>> file. Put this code, replacing the variables between braces <<<[...]>>> (removing the braces too) with your information:
+
++-----+
+<settings>
+   ...
+   <profile>
+        <id>my-profile</id>
+        <properties>
+            <db.host>[DATABASE HOST]</db.host>
+            <db.port>[DATABASE PORT]</db.port>
+            <db.alias>[DATABASE SID or NAME]</db.alias>
+            <db.user>[DATABASE USER]</db.user>
+            <db.password>[DATABASE PASSWORD]</db.password>
+
+            <!-- Name of the hibernate session factory (arbitrary name), to reuse connections -->
+            <sessionFactoryName>MY_SF_NAME</sessionFactoryName>
+
+            <!-- Path to the lucene index, only needed by the Search Web Application -->
+            <lucene.index.directory>/path/to/index</lucene.index.directory>
+        </properties>
+    </profile>
+    ...
+<settings>
++------+
+
+ You can have as many profiles as you want, which you can use to build web applications with different data configurations.
+
+* Other Properties
+
+ Other properties can be defined during build, some of the mandatory. You can define them
+
+ [[a]] in the <<<web.xml>>> file (found in <<<src/main/webapp/WEB-INF>>> in any web application module), or
+
+ [[b]] in an <<<intact.properties>>> file put in the classpath (<<<src/main/resources>>>).
+
+ []
+
+ Option <b> is available also for non-webapp modules. Option <a> is the recommended for web applications.
+
+ This is the list of properties that can be used, alphabetically ordered:
+
+*-----+------------------------------+-------------+--------+--------+
+| <<Parameter Name>> | <<Configuration>> | <<Default>> | <<From intact-core>> | <<Description>>  
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.AC_PREFIX | optional | ebi |  1.3.0 | The Accession Number Prefix for the objects created by the application and stored in the database. |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.DATA_CONFIG | optional | <null> |  1.3.0 | A comma-separated list with the name of the classes that extends 'uk.ac.ebi.intact.config.DataConfig', used to register data entities |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.INSTITUTION_LABEL | <<mandatory>> | <null> |  1.3.0 | The short label (one-word) for the institution |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.INSTITUTION_FULL_NAME | optional | <null>* |  1.3.0 | The complete name of the institution |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.INSTITUTION_POSTAL_ADDRESS | optional | <null>* |  1.3.0 | The address of the institution |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.INSTITUTION_URL | optional | <null>* |  1.3.0 | The url of the institution |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS | optional | false |  1.3.0 | Pre-load the most common CvObjects on application start, so it is faster to retrieve them later |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.READ_ONLY_APP | optional | true |  1.4.0 | If read-only, an application cannot persist data in the database |
+*-----+------------------------------+-------------+--------+--------+
+
+ (*) if uk.ac.ebi.intact.INSTITUTION_LABEL is 'ebi', the full name, postal address and url will be set to the EBI default values.
+
