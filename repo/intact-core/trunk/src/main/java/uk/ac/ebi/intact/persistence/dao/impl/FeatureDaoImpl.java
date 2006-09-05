@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.persistence.dao.FeatureDao;
  * @since <pre>08-jul-2006</pre>
  */
 @SuppressWarnings({"unchecked"})
-public class FeatureDaoImpl extends IntactObjectDaoImpl<Feature> implements FeatureDao
+public class FeatureDaoImpl extends AnnotatedObjectDaoImpl<Feature> implements FeatureDao
 {
 
     public FeatureDaoImpl(Session session, IntactSession intactSession)

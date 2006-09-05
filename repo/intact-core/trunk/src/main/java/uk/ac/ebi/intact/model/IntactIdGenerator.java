@@ -77,6 +77,6 @@ public class IntactIdGenerator extends SequenceGenerator
     @Override
     public String getSequenceName()
     {
-        return "intact_ac";
+        return INTACT_AC_SEQUENCE_NAME;
     }
 }
