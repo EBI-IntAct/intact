@@ -54,6 +54,9 @@ public class XrefTest extends AbstractIntactTest
 
     public void testCreateCvDatabase()
     {
+        assertNotNull(institution);
+        assertNotNull(institution.getAc());
+
         cvDatabase = new CvDatabase(institution, "MyTestDatabase_XrefTest");
         cvDatabase.setFullName("Mock CvDatabase Object");
 
