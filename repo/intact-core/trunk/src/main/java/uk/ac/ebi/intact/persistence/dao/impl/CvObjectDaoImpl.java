@@ -5,12 +5,12 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.List;
@@ -24,9 +24,9 @@ import java.util.List;
  */
 public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T>
 {
-    public CvObjectDaoImpl(Class<T> entityClass, Session session)
+    public CvObjectDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
-        super(entityClass, session);
+        super(entityClass, session, intactSession);
     }
 
 

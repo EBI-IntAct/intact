@@ -8,12 +8,8 @@ package uk.ac.ebi.intact.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Collection;
 
 /**
@@ -105,6 +101,11 @@ public class DataContext
     {
         DataConfig dataConfig = RuntimeConfig.getCurrentInstance(session).getDataConfig(dataConfigName);
         return getDaoFactory(dataConfig);
+    }
+
+    public boolean isReadOnly()
+    {
+        return RuntimeConfig.getCurrentInstance(session).isReadOnlyApp();
     }
 
     private DaoFactory getDaoFactory(DataConfig dataConfig)

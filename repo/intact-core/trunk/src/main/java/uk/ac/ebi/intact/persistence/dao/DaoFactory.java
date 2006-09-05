@@ -33,28 +33,24 @@ public class DaoFactory implements Serializable
     private static final String DAO_FACTORY_ATT_NAME = DaoFactory.class.getName();
 
     private AbstractHibernateDataConfig dataConfig;
+    private IntactSession intactSession;
 
     private IntactTransaction currentTransaction;
 
-    private DaoFactory(DataConfig dataConfig)
+    private DaoFactory(DataConfig dataConfig, IntactSession intactSession)
     {
         this.dataConfig = (AbstractHibernateDataConfig) dataConfig;
+        this.intactSession = intactSession;
     }
 
     public static DaoFactory getCurrentInstance(IntactContext context)
     {
-        return getCurrentInstance(context.getConfig().getDefaultDataConfig());
+        return getCurrentInstance(context.getSession(), context.getConfig().getDefaultDataConfig());
     }
 
     public static DaoFactory getCurrentInstance(IntactContext context, String dataConfigName)
     {
         return getCurrentInstance(context.getSession(), context.getConfig().getDataConfig(dataConfigName));
-    }
-
-    public static DaoFactory getCurrentInstance(DataConfig dataConfig)
-    {
-        DaoFactory daoFactory = new DaoFactory(dataConfig);
-        return daoFactory;
     }
 
     public static DaoFactory getCurrentInstance(IntactSession session, DataConfig dataConfig)
@@ -66,7 +62,7 @@ public class DaoFactory implements Serializable
             return (DaoFactory) session.getRequestAttribute(attName);
         }
 
-        DaoFactory daoFactory = new DaoFactory(dataConfig);
+        DaoFactory daoFactory = new DaoFactory(dataConfig, session);
         session.setRequestAttribute(attName, daoFactory);
 
         return daoFactory;
@@ -74,121 +70,121 @@ public class DaoFactory implements Serializable
 
     public AliasDao getAliasDao()
     {
-        return new AliasDaoImpl(getCurrentSession());
+        return new AliasDaoImpl(getCurrentSession(), intactSession);
     }
 
     public AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao()
     {
-        return new AnnotatedObjectDaoImpl<AnnotatedObject>(AnnotatedObject.class, getCurrentSession());
+        return new AnnotatedObjectDaoImpl<AnnotatedObject>(AnnotatedObject.class, getCurrentSession(), intactSession);
     }
 
     public <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
 
-        return new AnnotatedObjectDaoImpl<T>(entityType, getCurrentSession());
+        return new AnnotatedObjectDaoImpl<T>(entityType, getCurrentSession(), intactSession);
     }
 
     public AnnotationDao getAnnotationDao()
     {
-        return new AnnotationDaoImpl(getCurrentSession());
+        return new AnnotationDaoImpl(getCurrentSession(), intactSession);
     }
 
     public BaseDao getBaseDao()
     {
-        return new ExperimentDaoImpl(getCurrentSession());
+        return new ExperimentDaoImpl(getCurrentSession(), intactSession);
     }
 
     public BioSourceDao getBioSourceDao()
     {
-        return new BioSourceDaoImpl(getCurrentSession());
+        return new BioSourceDaoImpl(getCurrentSession(), intactSession);
     }
 
     public ComponentDao getComponentDao()
     {
-        return new ComponentDaoImpl(getCurrentSession());
+        return new ComponentDaoImpl(getCurrentSession(), intactSession);
     }
 
     public CvObjectDao<CvObject> getCvObjectDao()
     {
-        return new CvObjectDaoImpl<CvObject>(CvObject.class, getCurrentSession());
+        return new CvObjectDaoImpl<CvObject>(CvObject.class, getCurrentSession(), intactSession);
     }
 
     public <T extends CvObject> CvObjectDao<T> getCvObjectDao(Class<T> entityType)
     {
-        return new CvObjectDaoImpl<T>(entityType, getCurrentSession());
+        return new CvObjectDaoImpl<T>(entityType, getCurrentSession(), intactSession);
     }
 
     public DbInfoDao getDbInfoDao()
     {
-        return new DbInfoDaoImpl(getCurrentSession());
+        return new DbInfoDaoImpl(getCurrentSession(), intactSession);
     }
 
     public ExperimentDao getExperimentDao()
     {
-        return new ExperimentDaoImpl(getCurrentSession());
+        return new ExperimentDaoImpl(getCurrentSession(), intactSession);
     }
 
     public FeatureDao getFeatureDao()
     {
-        return new FeatureDaoImpl(getCurrentSession());
+        return new FeatureDaoImpl(getCurrentSession(), intactSession);
     }
 
     public InstitutionDao getInstitutionDao()
     {
-        return new InstitutionDaoImpl(getCurrentSession());
+        return new InstitutionDaoImpl(getCurrentSession(), intactSession);
     }
 
     public IntactObjectDao<IntactObject> getIntactObjectDao()
     {
-        return new IntactObjectDaoImpl<IntactObject>(IntactObject.class, getCurrentSession());
+        return new IntactObjectDaoImpl<IntactObject>(IntactObject.class, getCurrentSession(), intactSession);
     }
 
     public <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType)
     {
         HibernateBaseDaoImpl.validateEntity(entityType);
 
-        return new IntactObjectDaoImpl<T>(entityType, getCurrentSession());
+        return new IntactObjectDaoImpl<T>(entityType, getCurrentSession(), intactSession);
     }
 
     public InteractionDao getInteractionDao()
     {
-        return new InteractionDaoImpl(getCurrentSession());
+        return new InteractionDaoImpl(getCurrentSession(), intactSession);
     }
 
     public InteractorDao<InteractorImpl> getInteractorDao()
     {
-        return new InteractorDaoImpl<InteractorImpl>(InteractorImpl.class, getCurrentSession());
+        return new InteractorDaoImpl<InteractorImpl>(InteractorImpl.class, getCurrentSession(), intactSession);
     }
 
     public ProteinDao getProteinDao()
     {
-        return new ProteinDaoImpl(getCurrentSession());
+        return new ProteinDaoImpl(getCurrentSession(), intactSession);
     }
 
     public PublicationDao getPublicationDao()
     {
-        return new PublicationDaoImpl(getCurrentSession());
+        return new PublicationDaoImpl(getCurrentSession(), intactSession);
     }
 
     public RangeDao getRangeDao()
     {
-        return new RangeDaoImpl(getCurrentSession());
+        return new RangeDaoImpl(getCurrentSession(), intactSession);
     }
 
     public SearchItemDao getSearchItemDao()
     {
-        return new SearchItemDaoImpl(getCurrentSession());
+        return new SearchItemDaoImpl(getCurrentSession(), intactSession);
     }
 
     public XrefDao<Xref> getXrefDao()
     {
-        return new XrefDaoImpl<Xref>(Xref.class, getCurrentSession());
+        return new XrefDaoImpl<Xref>(Xref.class, getCurrentSession(), intactSession);
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao(Class<T> xrefClass)
     {
-        return new XrefDaoImpl<T>(xrefClass, getCurrentSession());
+        return new XrefDaoImpl<T>(xrefClass, getCurrentSession(), intactSession);
     }
 
     public Connection connection()

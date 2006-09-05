@@ -1,8 +1,9 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import uk.ac.ebi.intact.persistence.dao.RangeDao;
-import uk.ac.ebi.intact.model.Range;
 import org.hibernate.Session;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Range;
+import uk.ac.ebi.intact.persistence.dao.RangeDao;
 
 /**
  * DAO for ranges
@@ -13,8 +14,8 @@ import org.hibernate.Session;
  */
 public class RangeDaoImpl extends IntactObjectDaoImpl<Range> implements RangeDao
 {
-    public RangeDaoImpl(Session session)
+    public RangeDaoImpl(Session session, IntactSession intactSession)
     {
-        super(Range.class, session);
+        super(Range.class, session, intactSession);
     }
 }

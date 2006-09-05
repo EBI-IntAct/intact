@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.persistence.dao.AliasDao;
 
@@ -20,9 +21,9 @@ import java.util.Collection;
  */
 public class AliasDaoImpl extends IntactObjectDaoImpl<Alias> implements AliasDao
 {
-    public AliasDaoImpl(Session session)
+    public AliasDaoImpl(Session session, IntactSession intactSession)
     {
-        super(Alias.class, session);
+        super(Alias.class, session, intactSession);
     }
 
     public Collection<Alias> getByNameLike(String name)

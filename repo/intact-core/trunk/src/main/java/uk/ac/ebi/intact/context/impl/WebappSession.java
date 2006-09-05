@@ -7,13 +7,15 @@ package uk.ac.ebi.intact.context.impl;
 
 import uk.ac.ebi.intact.context.IntactSession;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Properties;
 
 /**
- * TODO: comment this!
+ * Webapp session, that uses the session and the request to store attributes
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -31,8 +33,22 @@ public class WebappSession extends IntactSession
         this.session = session;
         this.servletContext = servletContext;
         this.request = request;
+
+        readDefaultProperties();
     }
 
+    public WebappSession(ServletContext servletContext, HttpSession session, HttpServletRequest request, Properties properties)
+    {
+        this(servletContext, session, request);
+
+        Enumeration<String> propNames = (Enumeration<String>) properties.propertyNames();
+
+        while (propNames.hasMoreElements())
+        {
+           String propName = propNames.nextElement();
+           setInitParam(propName, properties.getProperty(propName));
+        }
+    }
 
     public Object getApplicationAttribute(String name)
     {

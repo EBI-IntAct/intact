@@ -5,20 +5,18 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
 import org.hibernate.Criteria;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.Property;
+import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.InteractorImpl;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.persistence.dao.impl.AnnotatedObjectDaoImpl;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -44,9 +42,9 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
         geneNameFilter.add( "locus name" );
     }
 
-    public InteractorDaoImpl(Class<T> entityClass, Session session)
+    public InteractorDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
-        super(entityClass, session);
+        super(entityClass, session, intactSession);
     }
 
     public Integer countInteractionsForInteractorWithAc(String ac)

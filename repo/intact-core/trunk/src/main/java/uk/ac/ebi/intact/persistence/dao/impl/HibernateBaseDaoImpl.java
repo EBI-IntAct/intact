@@ -8,9 +8,13 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
-import org.hibernate.criterion.Order;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactEnvironment;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -30,11 +34,13 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
 {
     private Class<T> entityClass;
     private Session session;
+    private IntactSession intactSession;
 
-    public HibernateBaseDaoImpl(Class<T> entityClass, Session session)
+    public HibernateBaseDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
         this.entityClass = entityClass;
-       this.session = session;
+        this.session = session;
+        this.intactSession = intactSession;
     }
 
     public Session getSession()
@@ -45,6 +51,11 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     public void flushCurrentSession()
     {
         session.flush();
+    }
+
+    protected IntactSession getIntactSession()
+    {
+        return intactSession;
     }
 
     /**
@@ -181,6 +192,18 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     {
         return entityClass;
     }
+
+    protected void checkReadOnly()
+    {
+        boolean readOnly = RuntimeConfig.getCurrentInstance(intactSession).isReadOnlyApp();
+
+        if (readOnly)
+        {
+            throw new IntactException("This application is running on mode READ-ONLY, so it cannot persist or update " +
+                    "objects in the database. Set the init-param "+IntactEnvironment.READ_ONLY_APP+" to true if you want to " +
+                    "do that.");
+        }
+   }
 
     private Criteria getCriteriaByPropertyName(String propertyName, String value, boolean ignoreCase)
     {

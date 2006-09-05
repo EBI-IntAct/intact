@@ -34,6 +34,7 @@ public final class RuntimeConfig implements Serializable
     private String acPrefix;
     private final Map<String, DataConfig> dataConfigs;
     private DataConfig defaultDataConfig;
+    private boolean readOnlyApp;
 
     private RuntimeConfig()
     {
@@ -122,5 +123,16 @@ public final class RuntimeConfig implements Serializable
         }
 
         return defaultDataConfig;
+    }
+
+
+    public boolean isReadOnlyApp()
+    {
+        return readOnlyApp;
+    }
+
+    public void setReadOnlyApp(boolean readOnlyApp)
+    {
+        this.readOnlyApp = readOnlyApp;
     }
 }

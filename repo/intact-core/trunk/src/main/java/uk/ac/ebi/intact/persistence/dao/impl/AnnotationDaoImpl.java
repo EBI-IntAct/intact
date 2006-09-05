@@ -1,11 +1,10 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.persistence.dao.ComponentDao;
-import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
 
 import java.util.List;
 
@@ -20,9 +19,9 @@ import java.util.List;
 public class AnnotationDaoImpl extends IntactObjectDaoImpl<Annotation> implements AnnotationDao
 {
 
-    public AnnotationDaoImpl(Session session)
+    public AnnotationDaoImpl(Session session, IntactSession intactSession)
     {
-        super(Annotation.class, session);
+        super(Annotation.class, session, intactSession);
     }
 
 

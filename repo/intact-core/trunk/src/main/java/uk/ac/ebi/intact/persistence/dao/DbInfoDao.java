@@ -15,9 +15,6 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 
 import java.util.List;
@@ -29,11 +26,13 @@ import java.util.List;
  * @version $Id$
  * @since <pre>01-Sep-2006</pre>
  */
-public interface DbInfoDao<T extends DbInfo>
+public interface DbInfoDao
 {
 
-    T get(String key);
+    DbInfo get(String key);
 
-    List<T> getAll();
+    List<DbInfo> getAll();
+
+    void persist(DbInfo dbInfo);
 
 }
