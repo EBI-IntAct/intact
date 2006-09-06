@@ -8,14 +8,13 @@ package uk.ac.ebi.intact.annotation;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.persistence.Entity;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.jar.JarFile;
-import java.util.jar.JarEntry;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * Utilities to deal with annotations
@@ -38,7 +37,6 @@ public class AnnotationUtil
      */
     public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath) throws IOException
     {
-
         List<Class> annotatedClasses = new ArrayList<Class>();
 
         JarFile jarFile = new JarFile(jarPath);
@@ -51,7 +49,39 @@ public class AnnotationUtil
 
             Class clazz = getAnnotatedClass(annotationClass,entry.getName());
 
-            if (clazz != null)
+             if (clazz != null)
+            {
+                annotatedClasses.add(clazz);
+            }
+        }
+
+        jarFile.close();
+
+        return annotatedClasses;
+    }
+
+    /**
+     * Gathers a list of classes with a defined Annotation in a package
+     * @param annotationClass The annotation to look for
+     * @param jarPath The path to the jar
+     * @return  The list of classes with the annotation
+     * @throws IOException thrown if something goes wrong when reading the jar
+     */
+    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName) throws IOException
+    {
+        List<Class> annotatedClasses = new ArrayList<Class>();
+
+        JarFile jarFile = new JarFile(jarPath);
+
+        Enumeration<JarEntry> e = jarFile.entries();
+
+        while (e.hasMoreElements())
+        {
+            JarEntry entry = e.nextElement();
+
+            Class clazz = getAnnotatedClass(annotationClass,entry.getName());
+
+             if (clazz != null && clazz.getPackage().getName().equals(packageName))
             {
                 annotatedClasses.add(clazz);
             }

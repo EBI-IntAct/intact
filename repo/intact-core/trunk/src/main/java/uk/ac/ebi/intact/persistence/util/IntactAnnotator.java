@@ -38,6 +38,13 @@ public class IntactAnnotator
      * @return  The list of hibernate annotated classes
      */
     public static List<Class> getAnnotatedClasses(String packageName) {
+        String pkg = packageName;
+
+        if (!packageName.startsWith("/") && packageName.contains("."))
+        {
+            packageName = "/" + packageName.replaceAll("\\.", "/");
+        }
+
         List<Class> annotatedClasses = new ArrayList<Class>();
 
         // Get a File object for the package
