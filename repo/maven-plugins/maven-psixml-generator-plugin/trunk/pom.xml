@@ -113,7 +113,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>scp://localhost/homes/baranda/public_html/intact/maven-plugins/${artifactId}</url>
+            <url>${site.remote.basedir}/maven-plugins/${artifactId}</url>
         </site>
     </distributionManagement>
 

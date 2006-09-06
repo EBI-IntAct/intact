@@ -52,12 +52,12 @@ Installing IntAct Web Applications
 
  []
 
- Option <b> is available also for non-webapp modules. Option <a> is the recommended for web applications.
+ Option <b> is also available for non-webapp modules. Option <a> is the recommended for web applications.
 
  This is the list of properties that can be used, alphabetically ordered:
 
 *-----+------------------------------+-------------+--------+--------+
-| <<Parameter Name>> | <<Configuration>> | <<Default>> | <<From intact-core>> | <<Description>>  
+| <<Parameter Name>> | <<Configuration>> | <<Default>> | <<Since Core>> | <<Description>>  
 *-----+------------------------------+-------------+--------+--------+
 | uk.ac.ebi.intact.AC_PREFIX | optional | ebi |  1.3.0 | The Accession Number Prefix for the objects created by the application and stored in the database. |
 *-----+------------------------------+-------------+--------+--------+
