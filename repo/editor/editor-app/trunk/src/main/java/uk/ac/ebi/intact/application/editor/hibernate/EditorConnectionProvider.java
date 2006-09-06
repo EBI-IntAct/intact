@@ -4,9 +4,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.cfg.Environment;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.connection.ConnectionProvider;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -31,17 +31,20 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public Connection getConnection() throws SQLException
     {
+        Configuration configuration = (Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
+                
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
         String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
-        String url = HibernateUtil.getConfiguration().getProperty(Environment.URL);
+        String url = configuration.getProperty(Environment.URL);
 
         log.debug("Getting connection for user: " + currentUser);
         log.debug("CurrentUser: " + currentUser);
         log.debug("CurrentUserPassword: " + currentUserPassword);
 
+
         if (!driverLoaded)
         {
-            String driverClass = HibernateUtil.getConfiguration().getProperty(Environment.DRIVER);
+            String driverClass = configuration.getProperty(Environment.DRIVER);
             try
             {
                 Class.forName(driverClass);
@@ -58,8 +61,8 @@ public class EditorConnectionProvider implements ConnectionProvider
         }
         else{
             log.debug("Using default connection");
-            String name = HibernateUtil.getConfiguration().getProperty(Environment.USER);
-            String password = HibernateUtil.getConfiguration().getProperty(Environment.PASS);
+            String name = configuration.getProperty(Environment.USER);
+            String password = configuration.getProperty(Environment.PASS);
 
             connection = DriverManager.getConnection(url,name,password);
         }
