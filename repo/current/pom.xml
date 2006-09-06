@@ -32,7 +32,9 @@
         <module>app-commons</module>
         <module>search-engine</module>
         <module>search-app</module>
+<!--
         <module>editor-app</module>
+-->
         <module>data-conversion</module>
         <module>devsite</module>
         <module>intact-test</module>
@@ -65,7 +67,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>scp://localhost/homes/baranda/public_html/intact/current</url>
+            <url>${site.remote.basedir}/current</url>
         </site>
     </distributionManagement>
 
