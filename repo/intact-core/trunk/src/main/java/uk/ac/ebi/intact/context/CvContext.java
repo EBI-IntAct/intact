@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 /**
  * Application-wide context to cache the loaded CVs, so it is faster to
@@ -213,5 +214,38 @@ public final class CvContext implements Serializable
     {
         return DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
     }
+
+    /**
+        * Updates a CvObject already present in the context
+        *
+        * @param cvObject The new value for the cvObject. Note that it must be equal to the existing one in order to be
+        *                 updated
+        */
+       public void updateCvObject( CvObject cvObject ) {
+            if(cvObject == null){
+                throw new IllegalArgumentException("The cvObject is null.");
+            }
+            else if(cvObject.getAc() == null){
+                throw new IllegalArgumentException("The cvObject does not have an ac.");
+            }else if (cvObject.getShortLabel() == null){
+                throw new IllegalArgumentException("The cvObject does not have a shortlabel.");
+            }
+
+            //Remove the old cv from the cachedByLabel map
+            Iterator it = cachedByLabel.entrySet().iterator();
+            while (it.hasNext()) {
+            Map.Entry<String,CvObject> pairs = (Map.Entry)it.next();
+                if(pairs.getValue().getAc().equals(cvObject.getAc())){
+                    it.remove();
+                }
+            }
+            //Add the new one.
+            cachedByLabel.put(cvObject.getShortLabel(), cvObject);
+
+            // Update the cvObject in cachedByAc (we don't need to remove it first as it's quite unlikely that the
+            // ac changed whereas the shortlabel could change.
+            cachedByAc.put(cvObject.getAc(), cvObject);
+            
+       }
 
 }
