@@ -5,24 +5,24 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.struts.view.sm;
 
-import uk.ac.ebi.intact.model.SmallMolecule;
-import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.SmallMoleculeImpl;
+import org.apache.log4j.Logger;
+import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.SmallMolecule;
+import uk.ac.ebi.intact.model.SmallMoleculeImpl;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import org.apache.log4j.Logger;
-import org.apache.struts.tiles.ComponentContext;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Small molecule edit view bean.
@@ -73,7 +73,7 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
                 Constructor ctr = getEditClass().getDeclaredConstructor(
                         String.class, Institution.class, CvInteractorType.class);
                 sm = (SmallMoleculeImpl) ctr.newInstance(
-                        getShortLabel(),getService().getOwner(), smInteractorType );
+                        getShortLabel(), IntactContext.getCurrentInstance().getConfig().getInstitution(), smInteractorType );
             }
             catch (NoSuchMethodException ne) {
                 // Shouldn't happen.

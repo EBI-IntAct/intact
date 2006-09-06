@@ -15,11 +15,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -219,7 +218,7 @@ public class BioSourceAction extends AbstractEditorAction {
         CvDatabase db = CvHelper.getNewt();
         // The qualifier is identity
         CvXrefQualifier xqual = DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
-        return new BioSourceXref(getService().getOwner(), db, taxid, label, null, xqual);
+        return new BioSourceXref(IntactContext.getCurrentInstance().getConfig().getInstitution(), db, taxid, label, null, xqual);
     }
 
 

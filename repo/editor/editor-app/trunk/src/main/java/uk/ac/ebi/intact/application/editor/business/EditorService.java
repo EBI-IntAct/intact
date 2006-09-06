@@ -7,24 +7,21 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactInitializationError;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
@@ -36,12 +33,9 @@ import java.util.*;
  */
 public class EditorService {
 
-    // Class Data
+    private static final Log log = LogFactory.getLog(EditorService.class);
 
-    /**
-     * Only instance of this class.
-     */
-    private static EditorService ourInstance;
+    private static final String APP_ATT_NAME = EditorService.class.getName();
 
     // Instance Data
 
@@ -71,32 +65,70 @@ public class EditorService {
      */
     private String myHelpUrl;
 
-    /**
-     * The institution; only one instance among many users.
-     */
-    private static Institution myInstitution;
-
-    // Static initializer
-
-    static {
-        try {
-            ourInstance = new EditorService(
+    // Class Methods
+    public static void initService(ServletContext ctx)
+    {
+        try
+        {
+            EditorService editorService = new EditorService(
                     "uk.ac.ebi.intact.application.editor.EditorResources");
+            ctx.setAttribute(APP_ATT_NAME, editorService);
+
         }
-        catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
-            throw new ExceptionInInitializerError(ex);
+        catch (EmptyTopicsException e)
+        {
+            throw new IntactInitializationError("Error loading topics", e);
         }
     }
-
-    // Class Methods
 
     /**
      * Returns the only instance of this class.
      * @return the only instance of this class. The instance can never be null.
      */
-    public static EditorService getInstance() {
-        return ourInstance;
+    public static EditorService getInstance()
+    {
+        IntactSession session = IntactContext.getCurrentInstance().getSession();
+
+        EditorService editorService = (EditorService) session.getApplicationAttribute(APP_ATT_NAME);
+        if (editorService == null)
+        {
+            try
+            {
+                editorService = new EditorService(
+                        "uk.ac.ebi.intact.application.editor.EditorResources");
+            }
+            catch (EmptyTopicsException e)
+            {
+                throw new IntactInitializationError("Error loading topics", e);
+            }
+
+            session.setApplicationAttribute(APP_ATT_NAME, editorService);
+        }
+
+
+        return editorService;
+    }
+
+    public static EditorService getInstance(ServletContext ctx)
+    {
+
+        EditorService editorService = (EditorService) ctx.getAttribute(APP_ATT_NAME);
+        if (editorService == null)
+        {
+            try
+            {
+                editorService = new EditorService(
+                        "uk.ac.ebi.intact.application.editor.EditorResources");
+            }
+            catch (EmptyTopicsException e)
+            {
+                throw new IntactInitializationError("Error loading topics", e);
+            }
+
+            ctx.setAttribute(APP_ATT_NAME, editorService);
+        }
+
+        return editorService;
     }
 
     /**
@@ -143,17 +175,6 @@ public class EditorService {
         // we want the Experiment to be at the top.
         moveToFront(getTopic(Interaction.class));
         moveToFront(getTopic(Experiment.class));
-                    
-        // Initialize the institution.
-
-        IntactTransaction tx = DaoProvider.getDaoFactory().beginTransaction();
-
-        InstitutionDao institutionDao = DaoProvider.getDaoFactory().getInstitutionDao();
-                myInstitution = IntactContext.getCurrentInstance().getInstitution();
-
-        tx.commit();
-
-        assert myInstitution != null: "Institution not set";
     }
 
     /**
@@ -267,17 +288,6 @@ public class EditorService {
      */
     public String getDefaultXrefQualifier() {
         return getResource("default.xref.qualifier");
-    }
-
-    /**
-     * @return the institution or the owner for new objects.
-     *
-     * <pre>
-     * post: return != null
-     * </pre>
-     */
-    public Institution getOwner() {
-        return myInstitution;
     }
 
     /**

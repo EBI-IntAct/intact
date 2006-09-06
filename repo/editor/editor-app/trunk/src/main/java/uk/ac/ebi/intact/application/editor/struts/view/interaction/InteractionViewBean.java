@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRow
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 
@@ -930,7 +931,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
             // Not persisted. Create a new Interaction.
             intact = new InteractionImpl(exps, new ArrayList(),
-                    type, intType, getShortLabel(), getService().getOwner());
+                    type, intType, getShortLabel(), IntactContext.getCurrentInstance().getConfig().getInstitution());
             // Set this interaction as the annotated object.
             setAnnotatedObject(intact);
         }

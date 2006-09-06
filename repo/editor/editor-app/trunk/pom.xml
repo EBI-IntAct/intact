@@ -81,7 +81,7 @@
             <version>1.5-SNAPSHOT</version>
         </dependency>
 
-	<dependency>
+        <dependency>
             <groupId>uk.ac.ebi.intact.app.search</groupId>
             <artifactId>search-engine</artifactId>
             <version>1.4-SNAPSHOT</version>

@@ -14,16 +14,16 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BioSource edit view bean.
@@ -191,7 +191,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
         // Have we set the annotated object for the view?
         if (bs == null) {
             // Not persisted; create a new biosource object.
-            bs = new BioSource(getService().getOwner(), getShortLabel(), getTaxId());
+            bs = new BioSource(IntactContext.getCurrentInstance().getConfig().getInstitution(), getShortLabel(), getTaxId());
             setAnnotatedObject(bs);
         }
         else {

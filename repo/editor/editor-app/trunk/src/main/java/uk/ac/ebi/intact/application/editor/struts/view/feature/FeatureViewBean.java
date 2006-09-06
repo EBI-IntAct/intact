@@ -7,19 +7,19 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.struts.tiles.ComponentContext;
 import org.apache.log4j.Logger;
+import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ComponentDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.RangeDao;
 
 import java.util.*;
@@ -443,7 +443,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         // null if creating a new Feature.
         if (feature == null) {
             // Not persisted; create a new feature object.
-            feature = new Feature(getService().getOwner(), getShortLabel(),
+            feature = new Feature(IntactContext.getCurrentInstance().getConfig().getInstitution(), getShortLabel(),
                     getComponent(), featureType);
             setAnnotatedObject(feature);
         }
