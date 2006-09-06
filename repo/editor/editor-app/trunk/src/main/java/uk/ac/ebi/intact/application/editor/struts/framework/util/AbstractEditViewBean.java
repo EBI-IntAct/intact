@@ -20,10 +20,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.core.CvContext;
+
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.persistence.dao.*;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.Serializable;
 import java.util.*;
@@ -336,27 +337,27 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         if(myAnnotObject != null && myAnnotObject.getAc() != null){
             log.debug("myAnnotObject not null and got an ac");
             String ac = myAnnotObject.getAc();
-//                AnnotatedObjectDao annotatedObjectDao = DaoFactory.getAnnotatedObjectDao();
+//                AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory().getAnnotatedObjectDao();
 //                myAnnotObject = (T) annotatedObjectDao.getByAc(ac);
                 if(myAnnotObject instanceof Experiment){
                     log.debug("myAnnotObject is instanceof Experiment");
-                    ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+                    ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                     myAnnotObject = (T) experimentDao.getByAc(ac);
                 }else if(myAnnotObject instanceof Interactor){
                     log.debug("myAnnotObject is instanceof Interactor");
-                    InteractorDao interactorDao = DaoFactory.getInteractorDao();
+                    InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
                     myAnnotObject = (T)interactorDao.getByAc(ac);
                 }else if(myAnnotObject instanceof Feature){
                     log.debug("myAnnotObject is instanceof Feature");
-                    FeatureDao featureDao = DaoFactory.getFeatureDao();
+                    FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
                     myAnnotObject = (T)featureDao.getByAc(ac);
                 }else if(myAnnotObject instanceof CvObject){
                     log.debug("myAnnotObject is instanceof CvObject");
-                    CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+                    CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
                     myAnnotObject = (T)cvObjectDao.getByAc(ac);
                 }else if(  myAnnotObject instanceof BioSource){
                     log.debug("myAnnotObject is instanceof BioSource");
-                    BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+                    BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
                     myAnnotObject = (T)bioSourceDao.getByAc(ac);
                 }//myAnnotObject = annotatedObjectDao.getByAc(myAnnotObject.getAc());
             log.debug("myAnnotObject is instanceof " + myAnnotObject.getClass().getName());
@@ -1180,7 +1181,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     // Persist the current annotated object.
 
     private void persistCurrentView() throws IntactException {
-        AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+        AnnotationDao annotationDao = DaoProvider.getDaoFactory().getAnnotationDao();
         // First create/update the annotated object by the view.
         updateAnnotatedObject();
 
@@ -1249,7 +1250,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 //            helper.create(myAnnotObject);
 //        }
         // Create xrefs and add them to CV object.
-        XrefDao xrefDao = DaoFactory.getXrefDao();
+        XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
         Collection<XreferenceBean> xrefBeans = getXrefsToAdd();
         log.debug("The size of the xrefBeans to add is " + xrefBeans.size());
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
@@ -1285,29 +1286,28 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             // update the cvObject in the cvContext (application scope)
             if (myAnnotObject instanceof CvObject)
             {
-                 boolean cvObjectUpdated = CvContext.getCurrentInstance().updateCvObject((CvObject)getAnnotatedObject());
+                 /*boolean cvObjectUpdated = */IntactContext.getCurrentInstance().getCvContext().updateCvObject((CvObject)getAnnotatedObject());
 
-                if (cvObjectUpdated)
-                    logger.info("CvObject updated: "+myAnnotObject);
+                logger.info("CvObject updated: "+myAnnotObject);
             }
 //        }
     }
 
     public void persistAnnotatedObject(){
         if(myAnnotObject instanceof Experiment){
-            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
             experimentDao.saveOrUpdate((Experiment) myAnnotObject);
         }else if (myAnnotObject instanceof Feature){
-            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
             featureDao.saveOrUpdate((Feature) myAnnotObject);
         }else if (myAnnotObject instanceof Interactor){
-            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
             interactorDao.saveOrUpdate((InteractorImpl) myAnnotObject);
         }else if (myAnnotObject instanceof CvObject){
-            CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+            CvObjectDao cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao();
             cvObjectDao.saveOrUpdate(myAnnotObject);
         }   else if (myAnnotObject instanceof BioSource){
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             bioSourceDao.saveOrUpdate((BioSource) myAnnotObject);
         }
     }
@@ -1347,19 +1347,19 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             String annotationAc = annot.getAc();
             int num = 0;
 
-            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
             num = num + experimentDao.getByAnnotationAc(annotationAc).size();
 
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             num = num + bioSourceDao.getByAnnotationAc(annotationAc).size();
 
-            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
             num = num + interactorDao.getByAnnotationAc(annotationAc).size();
 
-            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
             num = num + featureDao.getByAnnotationAc(annotationAc).size();
 
-            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
             num = num + cvObjectDao.getByAnnotationAc(annotationAc).size();
 
             if(num > 1){

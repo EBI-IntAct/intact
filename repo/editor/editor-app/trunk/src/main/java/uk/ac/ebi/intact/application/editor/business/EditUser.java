@@ -486,34 +486,34 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         }
 
         Collection annotations = annobj.getAnnotations();
-        AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+        AnnotationDao annotationDao = DaoProvider.getDaoFactory().getAnnotationDao();
         annotationDao.deleteAll(annotations);
         annobj.getAnnotations().clear();
 
         Collection xrefs = annobj.getXrefs();
-        XrefDao xrefDao = DaoFactory.getXrefDao();
+        XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
         xrefDao.deleteAll(xrefs);
         annobj.getXrefs().clear();
 
         if(annobj instanceof Experiment){
             log.debug("myAnnotObject is instanceof Experiment");
-            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
             experimentDao.delete((Experiment) annobj);
         }else if(annobj instanceof Interactor){
             log.debug("myAnnotObject is instanceof Interactor");
-            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
             interactorDao.delete((Interactor)annobj);
         }else if(annobj instanceof Feature){
             log.debug("myAnnotObject is instanceof Feature");
-            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
             featureDao.delete((Feature) annobj);
         }else if(annobj instanceof CvObject){
             log.debug("myAnnotObject is instanceof CvObject");
-            CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+            CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
             cvObjectDao.delete((CvObject) annobj);
         }else if(annobj instanceof BioSource){
             log.debug("myAnnotObject is instanceof BioSource");
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             bioSourceDao.delete((BioSource) annobj);
         }
     }
@@ -576,7 +576,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
         // The result to return.
         try {
-            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
             Collection<Interactor> interactors= interactorDao.getColByPropertyName(param, value);
             if (interactors.isEmpty()) {
                 return new ResultWrapper(0, max);
@@ -616,33 +616,33 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public AnnotatedObjectDao getAnnotatedObjectDao(Class clazz){
         if(Experiment.class.equals(clazz)){
-            return DaoFactory.getExperimentDao();
+            return DaoProvider.getDaoFactory().getExperimentDao();
         }else if (BioSource.class.equals(clazz)){
-            return DaoFactory.getBioSourceDao();
+            return DaoProvider.getDaoFactory().getBioSourceDao();
         }else if (CvAliasType.class.equals(clazz) ){
-            return DaoFactory.getCvObjectDao(CvAliasType.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvAliasType.class);
         }else if (CvCellType.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvCellType.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvCellType.class);
         }else if(CvComponentRole.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvComponentRole.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
         }else if(CvDatabase.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvDatabase.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvDatabase.class);
         }else if(CvFuzzyType.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvFuzzyType.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
         }else if(CvTissue.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvTissue.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvTissue.class);
         }else if(CvTopic.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvTopic.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
         }else if(CvXrefQualifier.class.equals(clazz)){
-            return DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+            return DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
         }else if (Interaction.class.equals(clazz)){
-            return DaoFactory.getInteractionDao();
+            return DaoProvider.getDaoFactory().getInteractionDao();
         }else if (NucleicAcid.class.equals(clazz)){
-            return DaoFactory.getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }else if (Protein.class.equals(clazz)){
-            return DaoFactory.getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }else if(SmallMolecule.class.equals(clazz)){
-            return DaoFactory.getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }
 
         log.error(new IntactException("Unknown edit class : " + clazz + "."));

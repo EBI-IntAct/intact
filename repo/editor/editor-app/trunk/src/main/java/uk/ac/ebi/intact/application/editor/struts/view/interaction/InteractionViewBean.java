@@ -905,7 +905,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
     @Override
     protected void updateAnnotatedObject() throws IntactException {
         // The cv interaction type for the interaction.
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+        CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
         CvInteractionType type =(CvInteractionType) cvObjectDao.getByShortLabel(myInteractionType);
 
         // The current Interaction.
@@ -920,7 +920,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
                 Experiment exp = row.getExperiment();
                 if (exp == null)
                 {
-                    ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+                    ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                     exp = experimentDao.getByAc(row.getAc());
                 }
                 exps.add(exp);
@@ -940,7 +940,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         }
         // Get the objects using their short label.
         if (myOrganism != null) {
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             BioSource biosource = bioSourceDao.getByShortLabel(myOrganism);
             intact.setBioSource(biosource);
         }
@@ -952,7 +952,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             Experiment exp = row.getExperiment();
             if (exp == null)
             {
-                ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+                ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                 exp = experimentDao.getByAc(row.getAc());
             }
             if(exp.getAc() != null){
@@ -1065,7 +1065,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             ExperimentRowData row = (ExperimentRowData) iter.next();
             Experiment exp = row.getExperiment();
             if (exp == null) {
-                ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+                ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                 exp = (Experiment) experimentDao.getByAc(row.getAc());
             }
             intact.addExperiment(exp);
@@ -1079,12 +1079,12 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
-        InteractionDao interactionDao = DaoFactory.getInteractionDao();
+        InteractionDao interactionDao = DaoProvider.getDaoFactory().getInteractionDao();
         interactionDao.update((InteractionImpl) intact);
     }
 
     private void persistCurrentView2() throws IntactException {
-        FeatureDao featureDao = DaoFactory.getFeatureDao();
+        FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
         // Keeps a track of Features to update. This avoids multiple updates to the
         // same feature.
         Set<Feature> featuresToUpdate = new HashSet<Feature>();
@@ -1107,7 +1107,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         for (ComponentBean cb : myComponentsToUpdate)
         {
-            ComponentDao componentDao = DaoFactory.getComponentDao();
+            ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             Component comp = cb.getComponent();
 
             // Process features deleted from the current component.
@@ -1200,7 +1200,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         {
             for (FeatureBean featureBean : cb.getFeaturesAdded())
             {
-                FeatureDao featureDao = DaoFactory.getFeatureDao();
+                FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
                 featureDao.delete(featureBean.getFeature());
             }
         }
@@ -1223,7 +1223,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             }
             // Disconnect any links between features in the component.
             disconnectLinkedFeatures(cb);
-            ComponentDao componentDao = DaoFactory.getComponentDao();
+            ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             componentDao.delete(comp);
             intact.removeComponent(comp);
         }
@@ -1236,9 +1236,9 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
      */
     private void updateComponents(Interaction intact) throws IntactException {
 
-        FeatureDao featureDao = DaoFactory.getFeatureDao();
-        RangeDao rangeDao = DaoFactory.getRangeDao();
-        ComponentDao componentDao = DaoFactory.getComponentDao();
+        FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
+        RangeDao rangeDao = DaoProvider.getDaoFactory().getRangeDao();
+        ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
         // Update components.
         for (ComponentBean cb : myComponentsToUpdate)
         {
@@ -1358,7 +1358,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
                 }
                 // Disconnect the links between two features.
                 toFeature.setBoundDomain(null);
-                FeatureDao featureDao = DaoFactory.getFeatureDao();
+                FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
                 featureDao.update(toFeature);
             }
         }

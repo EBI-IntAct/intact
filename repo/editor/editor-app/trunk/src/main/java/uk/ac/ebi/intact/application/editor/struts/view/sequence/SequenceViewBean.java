@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.PolymerFactory;
@@ -123,7 +124,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
             List emptyChunks = polymer.setSequence(getSequence());
 
             // This is to replace the following commented lines.
-            InteractorDao interactorDao = DaoFactory.getInteractorDao();
+            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
             interactorDao.update(polymer);
 
 
@@ -158,10 +159,10 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
     @Override
     protected void updateAnnotatedObject() throws IntactException {
         // Get the objects using their short label.
-        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+        BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
         BioSource biosrc = bioSourceDao.getByShortLabel(myOrganism);
 
-        CvObjectDao<CvInteractorType> cvObjectDao = DaoFactory.getCvObjectDao(CvInteractorType.class);
+        CvObjectDao<CvInteractorType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvInteractorType.class);
         CvInteractorType intType = cvObjectDao.getByShortLabel(myInteractorType);
         // The current polymer
         Polymer polymer = getAnnotatedObject();

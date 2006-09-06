@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.AliasDao;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 
 import java.util.Collection;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class QueryFactory {
     public Collection<Alias> getGeneNameQuery(String aliasAc, String parent) {
 
         Collection<Alias> aliasesToReturn = new ArrayList<Alias>();
-        AliasDao aliasDao = DaoFactory.getAliasDao();
+        AliasDao aliasDao = DaoProvider.getDaoFactory().getAliasDao();
         Collection<Alias> geneNames = aliasDao.getColByPropertyName("parentAc", parent);
         for(Alias alias : geneNames ){
             if(alias.getCvAliasType() != null && alias.getCvAliasType().getAc().equals(aliasAc)){
@@ -64,7 +65,7 @@ public class QueryFactory {
 
         Collection<ExperimentXref> experimentXrefToReturn = new ArrayList<ExperimentXref>();
 
-        XrefDao<ExperimentXref> xrefDao = DaoFactory.getXrefDao(ExperimentXref.class);
+        XrefDao<ExperimentXref> xrefDao = DaoProvider.getDaoFactory().getXrefDao(ExperimentXref.class);
 
         Collection<ExperimentXref> experimentXrefs = xrefDao.getByParentAc(parent);
         for(ExperimentXref experimentXref : experimentXrefs){

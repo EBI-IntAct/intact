@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.QueryFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
@@ -191,7 +192,7 @@ public class ComponentBean extends AbstractEditKeyBean {
      */
     public Component getComponent() {
         if(myComponent != null && myComponent.getAc() != null){
-            ComponentDao componentDao = DaoFactory.getComponentDao();
+            ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
 
         }
@@ -211,7 +212,7 @@ public class ComponentBean extends AbstractEditKeyBean {
             myComponent = new Component(getService().getOwner(), myInteraction,
                     myInteractor, newrole);
         }else if (myComponent.getAc() != null){
-            ComponentDao componentDao = DaoFactory.getComponentDao();
+            ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
         }
 
@@ -223,7 +224,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The expressed in to set in the component.
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             expressedIn = (BioSource) bioSourceDao.getByShortLabel(myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
@@ -461,7 +462,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         StringBuffer sb = new StringBuffer();
 
         // The alias AC.
-        CvObjectDao<CvAliasType> cvObjectDao = DaoFactory.getCvObjectDao(CvAliasType.class);
+        CvObjectDao<CvAliasType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvAliasType.class);
         String ac = cvObjectDao.getByXref(CvAliasType.GENE_NAME_MI_REF).getAc();
         /*Query query*/Collection<Alias> aliases = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
@@ -515,7 +516,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     private CvComponentRole getCvRole() throws IntactException  {
-        CvObjectDao<CvComponentRole> cvObjectDao = DaoFactory.getCvObjectDao(CvComponentRole.class);
+        CvObjectDao<CvComponentRole> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
         if (myRole != null) {
             return cvObjectDao.getByShortLabel(myRole);
         }

@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRow
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
@@ -147,7 +148,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // The query factory to get a query.
         QueryFactory qf = QueryFactory.getInstance();
 
-        CvObjectDao<CvXrefQualifier> cvObjectDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+        CvObjectDao<CvXrefQualifier> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
         // The primary reference AC.
         String ac = (cvObjectDao.getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF)).getAc();
 

@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
@@ -132,7 +133,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
     public void sanityCheck() throws ValidationException, IntactException {
         // There should be one unique bisosurce.
         if ((getCellType() == null) && (getTissue() == null)) {
-            BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
             BioSource bs = bioSourceDao.getByTaxonIdUnique(myTaxId);
             if (bs != null) {
                 // A BioSource found.
@@ -234,7 +235,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
         if (myTissue == null) {
             return null;
         }
-        CvObjectDao<CvTissue> cvObjectDao = DaoFactory.getCvObjectDao(CvTissue.class);
+        CvObjectDao<CvTissue> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTissue.class);
         CvTissue cvTissue = cvObjectDao.getByShortLabel(myTissue);
         return cvTissue;
     }
@@ -248,7 +249,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
         if (myCellType == null) {
             return null;
         }
-        CvObjectDao<CvCellType> cvObjectDao = DaoFactory.getCvObjectDao(CvCellType.class);
+        CvObjectDao<CvCellType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvCellType.class);
         CvCellType cvCellType = cvObjectDao.getByShortLabel(myCellType);
         return cvCellType;
     }

@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -60,7 +61,7 @@ public class InteractionLinkAction extends CommonDispatchAction {
         String intAc = (String) ((ExperimentActionForm) form).getIntac();
 
         // The Intact helper to access the Interaction.
-        InteractionDao interactionDao = DaoFactory.getInteractionDao();
+        InteractionDao interactionDao = DaoProvider.getDaoFactory().getInteractionDao();
 
         // The interaction we are about to edit.
         Interaction inter = interactionDao.getByAc(intAc);//(Interaction) helper.getObjectByAc(Interaction.class, intAc);

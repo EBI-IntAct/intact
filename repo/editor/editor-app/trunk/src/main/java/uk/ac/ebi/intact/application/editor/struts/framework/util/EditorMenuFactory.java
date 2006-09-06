@@ -315,7 +315,7 @@ public class EditorMenuFactory {
         // The menu to return.
         List<String> menu = new ArrayList<String>();
 
-        Collection<CvInteractorType> cvInteractorTypes = DaoFactory.getCvObjectDao(CvInteractorType.class).getByPsiMiRefCollection(ourPolymerMiRefs);
+        Collection<CvInteractorType> cvInteractorTypes = DaoProvider.getDaoFactory().getCvObjectDao(CvInteractorType.class).getByPsiMiRefCollection(ourPolymerMiRefs);
 
         for(CvInteractorType cvInteractorType : cvInteractorTypes){
             menu.add(cvInteractorType.getShortLabel());

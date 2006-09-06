@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.CvFeatureType;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -63,7 +64,7 @@ public class MutationToggleAction extends AbstractEditorAction {
             view.setShortLabel("xyz");
 
             // The helper to access the feature type.
-            CvObjectDao<CvFeatureType> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureType.class);
+            CvObjectDao<CvFeatureType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureType.class);
             // Preset the CvFeature type.
             CvFeatureType featureType = cvObjectDao.getByShortLabel("hotspot");
 

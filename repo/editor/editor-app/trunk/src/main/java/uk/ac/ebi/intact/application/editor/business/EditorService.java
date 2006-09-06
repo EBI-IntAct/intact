@@ -14,6 +14,7 @@ import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
@@ -21,6 +22,8 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.context.CvContext;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -143,10 +146,10 @@ public class EditorService {
                     
         // Initialize the institution.
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
+        IntactTransaction tx = DaoProvider.getDaoFactory().beginTransaction();
 
-        InstitutionDao institutionDao = DaoFactory.getInstitutionDao();
-                myInstitution = institutionDao.getInstitution();
+        InstitutionDao institutionDao = DaoProvider.getDaoFactory().getInstitutionDao();
+                myInstitution = IntactContext.getCurrentInstance().getInstitution();
 
         tx.commit();
 

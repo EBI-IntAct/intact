@@ -12,6 +12,7 @@ import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -120,8 +121,8 @@ public class XreferenceBean extends AbstractEditKeyBean {
      */
     public Xref getXref(AnnotatedObject annotatedObject) throws IntactException {
         // The CV objects to set.
-        CvDatabase db = DaoFactory.getCvObjectDao(CvDatabase.class).getByShortLabel(myDatabaseName);
-        CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel(myReferenceQualifer);
+        CvDatabase db = DaoProvider.getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel(myDatabaseName);
+        CvXrefQualifier xqual = DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel(myReferenceQualifer);
 
         // Create a new xref (true if this object was cloned).
         if (myXref == null) {
