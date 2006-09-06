@@ -9,20 +9,20 @@ package uk.ac.ebi.intact.application.editor.struts.action;
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
-import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
+import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
-import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
-import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Action class for sidebar events. Actions are dispatched
@@ -177,7 +177,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             // The topic for new annotation.
             CvTopic cvTopic = cvObjectDao.getByShortLabel("no-uniprot-update");
 
-            Annotation annotation = new Annotation(getService().getOwner(),
+            Annotation annotation = new Annotation(IntactContext.getCurrentInstance().getConfig().getInstitution(),
                     cvTopic,cvTopic.getFullName());
 
             // Add the new annotation as a bean.

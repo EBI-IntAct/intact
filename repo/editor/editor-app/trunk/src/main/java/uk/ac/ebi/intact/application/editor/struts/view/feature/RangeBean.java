@@ -6,17 +6,17 @@
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
+import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -132,7 +132,7 @@ public class RangeBean extends AbstractEditKeyBean {
         int[] toRanges = getRangeValues(toFuzzyType, toMatcher);
 
         // Construct a range and set fuzzy types.
-        Range range = new Range(getService().getOwner(),fromRanges[0],
+        Range range = new Range(IntactContext.getCurrentInstance().getConfig().getInstitution(),fromRanges[0],
                 fromRanges[1], toRanges[0], toRanges[1], null);
         range.setLinked(linked);
 

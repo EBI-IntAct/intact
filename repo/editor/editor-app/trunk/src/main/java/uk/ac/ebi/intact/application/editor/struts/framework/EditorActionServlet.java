@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionServlet;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
@@ -27,17 +29,21 @@ import java.util.ResourceBundle;
  */
 public class EditorActionServlet extends ActionServlet {
 
+    private static final Log log = LogFactory.getLog(EditorActionServlet.class);
+
     public void init() throws ServletException {
         // Make sure to call super's init().
         super.init();
+
+        log.debug("Initializing EditorActionServlet");
 
         // Save the context to avoid repeat calls.
         ServletContext ctx = super.getServletContext();
 
         // Create an instance of EditorService. This will throw an exception
         // if the service can't initialize properly (basically the application
-        // wouldn't start) 
-        EditorService service = EditorService.getInstance();
+        // wouldn't start)
+        EditorService service = EditorService.getInstance(ctx);
 
         // Make them accessible for any servlets within the server.
         ctx.setAttribute(EditorConstants.EDITOR_SERVICE, service);

@@ -9,18 +9,18 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.QueryFactory;
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.ComponentDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -209,7 +209,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
-            myComponent = new Component(getService().getOwner(), myInteraction,
+            myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(), myInteraction,
                     myInteractor, newrole);
         }else if (myComponent.getAc() != null){
             ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();

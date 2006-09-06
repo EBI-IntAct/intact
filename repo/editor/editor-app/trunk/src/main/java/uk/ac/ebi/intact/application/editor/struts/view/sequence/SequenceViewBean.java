@@ -13,13 +13,15 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.Polymer;
 import uk.ac.ebi.intact.model.util.PolymerFactory;
-import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.util.Crc64;
 
 import java.util.HashMap;
 import java.util.List;
@@ -170,7 +172,7 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
         // Have we set the annotated object for the view?
         if (polymer == null) {
             // Not persisted; create a new Polymer using the factory
-            polymer = PolymerFactory.factory(getService().getOwner(), biosrc,
+            polymer = PolymerFactory.factory(IntactContext.getCurrentInstance().getConfig().getInstitution(), biosrc,
                     getShortLabel(), intType);
             setAnnotatedObject(polymer);
         }

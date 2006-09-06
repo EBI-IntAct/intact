@@ -7,31 +7,30 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.editor.struts.view.sm.SmallMoleculeViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
+import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.NucleicAcidViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.ProteinViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.sequence.SequenceViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
-import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.commons.util.DateToolbox;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.editor.struts.view.sm.SmallMoleculeViewBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -545,7 +544,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             if (cb1 != null){
                 description = description + " " + cb1.getDescription();
             }
-            Annotation annotation=new Annotation(getService().getOwner(), cvTopic, description);
+            Annotation annotation=new Annotation(IntactContext.getCurrentInstance().getConfig().getInstitution(), cvTopic, description);
 
             CommentBean cb = new CommentBean(annotation);
             AbstractEditViewBean view = getIntactUser(request).getView();

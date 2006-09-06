@@ -15,11 +15,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.FeatureDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.RangeDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.FeatureDao;
+import uk.ac.ebi.intact.persistence.dao.RangeDao;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -156,7 +156,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         FeatureViewBean view = ((FeatureViewBean) user.getView());
 
         // The owner for new Features.
-        Institution owner = getService().getOwner();
+        Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
 
         // Cache CV objects.
 
