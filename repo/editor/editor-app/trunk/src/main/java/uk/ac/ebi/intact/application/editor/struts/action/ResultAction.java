@@ -140,9 +140,9 @@ public class ResultAction extends AbstractEditorAction {
             throw new IntactException("Unknown search type : " + clazz.getName() + ".");
         }
 //        if(SearchClass.EXPERIMENT.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getExperimentDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getExperimentDao();
 //        }else if (SearchClass.BIOSOURCE.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getBioSourceDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getBioSourceDao();
 //        }else if (SearchClass.CV_ALIAS_TYPE.getShortName().equals(type) ||
 //                  SearchClass.CV_CELL_TYPE.getShortName().equals(type) ||
 //                  SearchClass.CV_COMPONENT_ROLE.getShortName().equals(type) ||
@@ -151,15 +151,15 @@ public class ResultAction extends AbstractEditorAction {
 //                  SearchClass.CV_TISSUE.getShortName().equals(type) ||
 //                  SearchClass.CV_TOPIC.getShortName().equals(type) ||
 //                  SearchClass.CV_XREF_QUALIFIER.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getCvObjectDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getCvObjectDao();
 //        }else if (SearchClass.INTERACTION.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getInteractionDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getInteractionDao();
 //        }else if (SearchClass.NUCLEIC_ACID.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getInteractorDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getInteractorDao();
 //        }else if (SearchClass.PROTEIN.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getInteractorDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getInteractorDao();
 //        }else if(SearchClass.SMALL_MOLECULE.getShortName().equals(type)){
-//            annotatedObjectDao = DaoFactory.getInteractorDao();
+//            annotatedObjectDao = DaoProvider.getDaoFactory().getInteractorDao();
 //        }else {
 //            LOGGER.error(new IntactException("Unknown search type : " + type + "."));
 //            throw new IntactException("Unknown search type : " + type + ".");

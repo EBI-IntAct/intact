@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
@@ -172,7 +173,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
     public Component getComponent() {
         if( myComponent != null && myComponent.getAc() != null){
-            ComponentDao  componentDao = DaoFactory.getComponentDao();
+            ComponentDao  componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
         }
         return myComponent;
@@ -433,7 +434,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     @Override
     protected void updateAnnotatedObject() throws IntactException {
         // The feature type for the current feature.
-        CvObjectDao<CvFeatureType> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureType.class);
+        CvObjectDao<CvFeatureType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureType.class);
         CvFeatureType featureType = cvObjectDao.getByShortLabel(getCvFeatureType());
 
         // The current feature.
@@ -500,7 +501,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         if (myCvFeatureIdent == null) {
             return null;
         }
-        CvObjectDao<CvFeatureIdentification> cvObjectDao = DaoFactory.getCvObjectDao(CvFeatureIdentification.class);
+        CvObjectDao<CvFeatureIdentification> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureIdentification.class);
         CvFeatureIdentification identification = cvObjectDao.getByShortLabel(myCvFeatureIdent);
         return identification;
     }
@@ -539,7 +540,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     
     private void persistCurrentView() throws IntactException {
         // The helper to access persistence API.
-        RangeDao rangeDao = DaoFactory.getRangeDao();
+        RangeDao rangeDao = DaoProvider.getDaoFactory().getRangeDao();
         // The current feature.
         Feature feature =  getAnnotatedObject();
 

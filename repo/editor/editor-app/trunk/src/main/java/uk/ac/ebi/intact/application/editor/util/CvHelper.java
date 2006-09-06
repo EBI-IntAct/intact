@@ -106,7 +106,7 @@ public class CvHelper {
 
     public static CvDatabase getPsiMi() throws IntactException {
         if (psiMi == null){
-            CvObjectDao<CvDatabase> cvObjectDao = DaoFactory.getCvObjectDao(CvDatabase.class);
+            CvObjectDao<CvDatabase> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvDatabase.class);
             psiMi = cvObjectDao.getByXref(CvDatabase.PSI_MI_MI_REF);
         }
         return psiMi;
@@ -128,7 +128,7 @@ public class CvHelper {
     public  static CvXrefQualifier getIdentity() throws IntactException {
 
         if (identity == null){
-            CvObjectDao<CvXrefQualifier> cvObjectDao = DaoFactory.getCvObjectDao(CvXrefQualifier.class);
+            CvObjectDao<CvXrefQualifier> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
             identity = (CvXrefQualifier) cvObjectDao.getByXref(CvXrefQualifier.IDENTITY_MI_REF);
         }
         return identity;
@@ -141,7 +141,7 @@ public class CvHelper {
      * @throws IntactException
      */
     private static CvObject getCvUsingItsMiRef(String psiMiId) throws IntactException {
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+        CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
         List<CvObject> cvObjects = cvObjectDao.getByXrefLike(getPsiMi(), getIdentity(), psiMiId);
 
         if (! (cvObjects.size()== 1) ){
@@ -229,7 +229,7 @@ public class CvHelper {
 //            System.out.println("miRef = " + miRef);
 //        }
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
+        IntactTransaction tx = DaoProvider.getDaoFactory().beginTransaction();
 
         CvInteractorType newt = CvHelper.getNucleicAcid();//.getNewt();
                 System.out.println("newt.getShortLabel() = " + newt.getShortLabel());

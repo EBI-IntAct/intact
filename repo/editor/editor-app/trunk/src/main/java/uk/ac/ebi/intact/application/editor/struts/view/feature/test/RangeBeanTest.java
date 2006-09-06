@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactHelper;
 import uk.ac.ebi.intact.model.CvFuzzyType;
@@ -454,7 +455,7 @@ public class RangeBeanTest extends TestCase {
     // Helper methods
 
     private void doTestConstructor1() throws IntactException {
-        CvObjectDao<CvFuzzyType> cvObjectDao = DaoFactory.getCvObjectDao(CvFuzzyType.class);
+        CvObjectDao<CvFuzzyType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
         CvFuzzyType lessThan = cvObjectDao.getByShortLabel(CvFuzzyType.LESS_THAN);
         CvFuzzyType greaterThan = cvObjectDao.getByShortLabel(CvFuzzyType.GREATER_THAN);
         CvFuzzyType undetermined = cvObjectDao.getByShortLabel(CvFuzzyType.UNDETERMINED);

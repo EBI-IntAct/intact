@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
@@ -216,7 +217,7 @@ public class FeatureBean extends AbstractEditKeyBean {
      */
     public Feature getUpdatedFeature() throws IntactException {
 //        if(myFeature != null && myFeature.getAc()!= null){
-//            FeatureDao featureDao = DaoFactory.getFeatureDao();
+//            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
 //            myFeature = featureDao.getByAc(myFeature.getAc());
 //        }
         // Need to update the short label because cloning an interaction also
@@ -224,7 +225,7 @@ public class FeatureBean extends AbstractEditKeyBean {
         myFeature.setShortLabel(getShortLabel());
         // Set the bound domain if it isn't empty.
         if (hasBoundDomain()) {
-            FeatureDao featureDao = DaoFactory.getFeatureDao();
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
             Feature boumdDomain = featureDao.getByAc(myBoundDomainAc);
             myFeature.setBoundDomain(boumdDomain);
         }

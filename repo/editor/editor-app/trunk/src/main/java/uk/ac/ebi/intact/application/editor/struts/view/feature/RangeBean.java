@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionErrors;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.model.Range;
@@ -524,7 +525,7 @@ public class RangeBean extends AbstractEditKeyBean {
         // Set the from and to fuzzy types.
         CvFuzzyType fuzzyType = null;
         if (type.length() != 0) {
-            CvObjectDao<CvFuzzyType> cvObjectDao = DaoFactory.getCvObjectDao(CvFuzzyType.class);
+            CvObjectDao<CvFuzzyType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
             fuzzyType = cvObjectDao.getByShortLabel(type);
         }
         return fuzzyType;

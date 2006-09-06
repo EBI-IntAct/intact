@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
@@ -471,10 +472,10 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
     @Override
     protected void updateAnnotatedObject() throws IntactException {
         // Get the objects using their short label.
-        BioSourceDao bsDao = DaoFactory.getBioSourceDao();
+        BioSourceDao bsDao = DaoProvider.getDaoFactory().getBioSourceDao();
         BioSource biosource = bsDao.getByShortLabel(myOrganism);
 
-        CvObjectDao<CvInteraction> cvInteractionDao = DaoFactory.getCvObjectDao(CvInteraction.class);
+        CvObjectDao<CvInteraction> cvInteractionDao = DaoProvider.getDaoFactory().getCvObjectDao(CvInteraction.class);
         CvInteraction interaction =  (CvInteraction) cvInteractionDao.getByShortLabel(myInter);
         log.debug("MyInter : " + myInter);
         if(interaction != null){
@@ -485,7 +486,7 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
         }else{
             log.debug("No CvInteraction found with shorlabel : " + myInter);
         }
-        CvObjectDao<CvIdentification> cvIdentificationDao = DaoFactory.getCvObjectDao(CvIdentification.class);
+        CvObjectDao<CvIdentification> cvIdentificationDao = DaoProvider.getDaoFactory().getCvObjectDao(CvIdentification.class);
         CvIdentification ident = (CvIdentification) cvIdentificationDao.getByShortLabel(myIdent);
         if(ident != null){
             log.debug("CvInteraction type is : " + ident.getShortLabel());
@@ -494,7 +495,7 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
         }
         // The current experiment.
         Experiment exp = (Experiment) getAnnotatedObject();
-//        ExperimentDao expDao = DaoFactory.getExperimentDao();
+//        ExperimentDao expDao = DaoProvider.getDaoFactory().getExperimentDao();
 
 //        if(exp !=  null && null != exp.getAc()){
 //            log.debug("Exp was not null and ac not null");
@@ -520,7 +521,7 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
             // Delete interactions from the experiment. Do this block of code before
             // clearing interactions or else 'this' experiment wouldn't be removed
             // from interactions.
-            InteractionDao interactionDao = DaoFactory.getInteractionDao();
+            InteractionDao interactionDao = DaoProvider.getDaoFactory().getInteractionDao();
             for (Iterator iter = myInteractionsToDel.iterator(); iter.hasNext();) {
                 String ac = (String) iter.next();
                 Interaction intact = interactionDao.getByAc(ac);

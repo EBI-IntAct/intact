@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -143,7 +144,7 @@ public class BioSourceAction extends AbstractEditorAction {
 
 
         // Collection of biosources for the current taxid.
-        BioSourceDao bioSourceDao = DaoFactory.getBioSourceDao();
+        BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
         Collection results = bioSourceDao.getByTaxonId(taxid);
         // AC of the current biosource.
         String ac = user.getView().getAc();
@@ -217,7 +218,7 @@ public class BioSourceAction extends AbstractEditorAction {
 //                    getService().getResource("taxid.db"));
         CvDatabase db = CvHelper.getNewt();
         // The qualifier is identity
-        CvXrefQualifier xqual = DaoFactory.getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
+        CvXrefQualifier xqual = DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel( "identity");
         return new BioSourceXref(getService().getOwner(), db, taxid, label, null, xqual);
     }
 

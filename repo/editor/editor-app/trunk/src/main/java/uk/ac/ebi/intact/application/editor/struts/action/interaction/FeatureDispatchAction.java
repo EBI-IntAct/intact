@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -79,7 +80,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // The feature we are about to edit.
         FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
 
-        FeatureDao featureDao = DaoFactory.getFeatureDao();
+        FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
         Feature feature = fb.getFeature();
         feature = featureDao.getByAc(feature.getAc());
 

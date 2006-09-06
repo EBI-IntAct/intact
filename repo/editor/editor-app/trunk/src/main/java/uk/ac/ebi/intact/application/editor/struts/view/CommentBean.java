@@ -7,6 +7,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view;
 
 import uk.ac.ebi.intact.application.editor.business.EditorService;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
@@ -91,7 +92,7 @@ public class CommentBean extends AbstractEditKeyBean {
      */
     public Annotation getAnnotation() throws IntactException {
         // The topic for the annotation.
-        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
         CvTopic cvtopic = (CvTopic) cvObjectDao.getByShortLabel(getTopic());
 
         // Create a new annotation (true if this object was cloned).
@@ -100,7 +101,7 @@ public class CommentBean extends AbstractEditKeyBean {
         }
         else {
             if(myAnnotation.getAc() != null){
-                AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
+                AnnotationDao annotationDao = DaoProvider.getDaoFactory().getAnnotationDao();
                 myAnnotation = annotationDao.getByAc(myAnnotation.getAc());
             }
             // Update the existing annotation object.

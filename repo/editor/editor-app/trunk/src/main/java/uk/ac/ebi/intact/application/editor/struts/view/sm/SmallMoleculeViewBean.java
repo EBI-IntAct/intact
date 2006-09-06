@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.SmallMoleculeImpl;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -115,7 +116,7 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
      * @return the small molecule cvInteractorType.
      */
     private static CvInteractorType getSmallMoleculeInteractorType(){
-        CvObjectDao<CvInteractorType> cvObjectDao = DaoFactory.getCvObjectDao(CvInteractorType.class);
+        CvObjectDao<CvInteractorType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvInteractorType.class);
         CvInteractorType smallMolecule = cvObjectDao.getByXref(CvInteractorType.SMALL_MOLECULE_MI_REF);
         return smallMolecule;
     }

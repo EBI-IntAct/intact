@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
@@ -145,8 +146,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
     }
 
     private List persistMutations(EditUserI user) throws IntactException {
-        FeatureDao featureDao = DaoFactory.getFeatureDao();
-        RangeDao rangeDao = DaoFactory.getRangeDao();
+        FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
+        RangeDao rangeDao = DaoProvider.getDaoFactory().getRangeDao();
 
         // The list of features to return.
         List features = new ArrayList();
@@ -160,11 +161,11 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Cache CV objects.
 
         // CvFeature types.
-        CvObjectDao<CvFeatureType> cvFeatureDao = DaoFactory.getCvObjectDao(CvFeatureType.class) ;
+        CvObjectDao<CvFeatureType> cvFeatureDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureType.class) ;
         CvFeatureType featureType = cvFeatureDao.getByShortLabel(view.getCvFeatureType());
 
         // CvFeatureIdent is optional.
-        CvObjectDao<CvFeatureIdentification> cvFeatureIdentificationDao = DaoFactory.getCvObjectDao(CvFeatureIdentification.class);
+        CvObjectDao<CvFeatureIdentification> cvFeatureIdentificationDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureIdentification.class);
         CvFeatureIdentification featureIdent = null;
         if (view.getCvFeatureIdentification() != null) {
             featureIdent = cvFeatureIdentificationDao.getByShortLabel(view.getCvFeatureIdentification());
@@ -200,7 +201,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                 // Log the stack trace.
                 LOGGER.error("", ie);
 //                try {
-//                    DaoFactory..
+//                    DaoProvider.getDaoFactory()..
 //                    helper.undoTransaction();
 //                }
 //                catch (IntactException ie1) {

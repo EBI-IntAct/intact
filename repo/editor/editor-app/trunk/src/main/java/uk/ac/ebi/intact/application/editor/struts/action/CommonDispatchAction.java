@@ -25,11 +25,13 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActi
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -340,8 +342,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
      */
 
     public Xref createXref(XreferenceBean xb, AbstractEditViewBean view) throws IntactException {
-        Institution institution = DaoFactory.getInstitutionDao().getInstitution();//new Institution("ebi");
-        CvObjectDao cvObjectDao = DaoFactory.getCvObjectDao();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();//new Institution("ebi");
+        CvObjectDao cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao();
         CvDatabase cvDatabase = (CvDatabase) cvObjectDao.getByShortLabel(xb.getDatabase());//CvDatabase) helper.getObjectByLabel(CvDatabase.class , xb.getDatabase()));
         CvXrefQualifier cvXrefQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel(xb.getQualifier());//new CvXrefQualifier(institution, xb.getQualifier());
         Xref xref;
@@ -501,7 +503,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         CommentBean cb1 = expForm.getNewAnnotation();
 
 
-        ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+        ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
         Experiment experiment = experimentDao.getByShortLabel(shortLabel);
         if (experiment == null){
             LOGGER.error("Experiment is null,  we won't be abble to get the creator.");
@@ -528,7 +530,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             CvTopic cvTopic;
             String description = new String();
             String date = year + "-" + DateToolbox.getMonth(month) + "-" + day;
-            CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
 
             if(dispatch.equals(acceptButtonLabel)){ // if the button press is "Accept"
                 description = description + "Accepted " + date + " by " + userName.toUpperCase() + ".";

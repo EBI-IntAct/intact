@@ -33,6 +33,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
+import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.cdb.ExperimentAutoFill;
@@ -125,9 +126,9 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             ExperimentAutoFill eaf = new ExperimentAutoFill(pubmedId);
 
-            AnnotationDao annotationDao = DaoFactory.getAnnotationDao();
-            XrefDao xrefDao = DaoFactory.getXrefDao();
-            ExperimentDao experimentDao = DaoFactory.getExperimentDao();
+            AnnotationDao annotationDao = DaoProvider.getDaoFactory().getAnnotationDao();
+            XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
+            ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
 
             // The ac of the experiment
             String expAc=view.getAc();
@@ -411,7 +412,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     public Annotation authorListAnnotation(String authorList) throws IntactException {
 
         Annotation authorListAnnot;
-        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
         CvTopic authorListTopic = cvObjectDao.getByXref(CvTopic.AUTHOR_LIST_MI_REF );
         if ( authorListTopic == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST +
@@ -433,7 +434,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
     public Annotation createPubYearAnnotation (String pubYear) throws IntactException {
         Annotation pubYearAnnot;
 
-        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
         CvTopic publicationYear = cvObjectDao.getByShortLabel(CvTopic.PUBLICATION_YEAR );
         if ( publicationYear == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
@@ -457,7 +458,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
             Annotation journalAnnot;
 
-            CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+            CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
             CvTopic journalTopic = cvObjectDao.getByShortLabel(CvTopic.JOURNAL );
             if ( journalTopic == null ) {
                 System.err.println( "Could not find CvTopic(" + CvTopic.JOURNAL +
@@ -480,7 +481,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         Annotation authorEmailAnnot;
 
-        CvObjectDao<CvTopic> cvObjectDao = DaoFactory.getCvObjectDao(CvTopic.class);
+        CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
         CvTopic authorEmailTopic = cvObjectDao.getByShortLabel(CvTopic.CONTACT_EMAIL );
 
         if ( authorEmailTopic == null ) {
@@ -501,7 +502,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
     public Xref pubmedXref (String pubmedId) throws IntactException {
         Xref pubmedXref;
-        CvObjectDao<CvObject> cvObjectDao = DaoFactory.getCvObjectDao(CvObject.class);
+        CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
         CvXrefQualifier primaryRefQualifier = (CvXrefQualifier) cvObjectDao.getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
         CvDatabase pubmedDatabase= (CvDatabase) cvObjectDao.getByXref(CvDatabase.PUBMED_MI_REF);
         pubmedXref=new ExperimentXref(getService().getOwner(),pubmedDatabase,pubmedId,"","",primaryRefQualifier);
