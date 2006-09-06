@@ -84,4 +84,6 @@ public abstract class IntactSession
     public abstract void setInitParam(String name, String value);
 
     public abstract boolean isWebapp();
+
+    public abstract boolean isRequestAvailable();
 }

@@ -96,4 +96,9 @@ public class StandaloneSession extends IntactSession
     {
         return false;
     }
+
+    public boolean isRequestAvailable()
+    {
+        return true;
+    }
 }

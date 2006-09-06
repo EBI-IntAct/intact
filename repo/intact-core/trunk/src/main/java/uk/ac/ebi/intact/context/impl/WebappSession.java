@@ -99,4 +99,9 @@ public class WebappSession extends IntactSession
     {
         return true;
     }
+
+    public boolean isRequestAvailable()
+    {
+        return request != null;
+    }
 }

@@ -22,9 +22,9 @@
 ======================================================
 -->
 
-    <eventListenertener>
-        <eventListenertener>uk.ac.ebi.intact.webapp.StartupIntactListener</eventListenertener>
-    </eventListenertener>
+    <listener>
+        <listener-class>uk.ac.ebi.intact.webapp.StartupIntactListener</listener-class>
+    </listener>
 
 
 </taglib>

@@ -121,7 +121,9 @@ public class IntactConfigurator
         if (preloadCommonCvs)
         {
             log.info("Preloading common CvObjects");
+            IntactTransaction tx = DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig()).beginTransaction();
             CvContext.getCurrentInstance(session).loadCommonCvObjects();
+            tx.commit();
         }
     }
 

@@ -57,6 +57,42 @@ public class DaoFactory implements Serializable
     {
         String attName = DAO_FACTORY_ATT_NAME+"-"+dataConfig.getName();
 
+        // when an application starts (with IntactConfigurator) the request is not yet available
+        // the we store the daoFactory in application scope
+        if (!session.isRequestAvailable())
+        {
+            log.debug("Getting DaoFactory from application, because request is not available");
+            if (session.getApplicationAttribute(attName) != null)
+            {
+                return (DaoFactory) session.getApplicationAttribute(attName);
+            }
+
+            DaoFactory daoFactory = new DaoFactory(dataConfig, session);
+            session.setApplicationAttribute(attName, daoFactory);
+
+            return daoFactory; 
+        }
+
+        if (session.getRequestAttribute(attName) != null)
+        {
+            return (DaoFactory) session.getRequestAttribute(attName);
+        }
+
+        DaoFactory daoFactory = new DaoFactory(dataConfig, session);
+        session.setRequestAttribute(attName, daoFactory);
+
+        return daoFactory;
+    }
+
+    public static DaoFactory getCurrentInstance(IntactSession session, DataConfig dataConfig, boolean forceCreationOfFactory)
+    {
+        if (forceCreationOfFactory)
+        {
+            return new DaoFactory(dataConfig, session);
+        }
+
+        String attName = DAO_FACTORY_ATT_NAME+"-"+dataConfig.getName();
+
         if (session.getRequestAttribute(attName) != null)
         {
             return (DaoFactory) session.getRequestAttribute(attName);

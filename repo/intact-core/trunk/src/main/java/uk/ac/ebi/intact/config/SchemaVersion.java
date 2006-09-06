@@ -33,10 +33,11 @@ import java.util.regex.Pattern;
 public class SchemaVersion
 {
 
-    // required version is 1.2.3
+    // required version is 1.2.3 (build version should always be 0, as a change in the build
+    // version should no break compatibility)
     private static final Integer REQUIRED_VERSION_MAJOR = 1;
     private static final Integer REQUIRED_VERSION_MINOR = 2;
-    private static final Integer REQUIERD_VERSION_BUILD = 3;
+    private static final Integer REQUIERD_VERSION_BUILD = 0;
 
     private static final Log log = LogFactory.getLog(SchemaVersion.class);
 

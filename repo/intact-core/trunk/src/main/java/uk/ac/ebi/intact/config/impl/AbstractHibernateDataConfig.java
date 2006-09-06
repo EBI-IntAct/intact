@@ -68,11 +68,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             {
                 log.debug("Processing package: " + packageName);
 
-                if (!packageName.startsWith("/") && packageName.contains("."))
-                {
-                    packageName = "/"+packageName.replaceAll("\\.", "/");
-                }
-
                 List<Class> annotatedClasses = IntactAnnotator.getAnnotatedClasses(packageName);
 
                 if (annotatedClasses.size() == 0)
