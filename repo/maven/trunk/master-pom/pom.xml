@@ -263,7 +263,7 @@
 
         <pluginRepository>
             <id>codehaus-plugins</id>
-            <url>http://dist.codehaus.org/</url>
+            <url>http://repository.codehaus.org/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -286,7 +286,7 @@
         <pluginRepository>
             <id>codehaus-snapshot-plugins</id>
             <name>codehaus-shapshot-plugins</name>
-            <url>http://snapshots.maven.codehaus.org/maven2</url>
+            <url>http://snapshots.repository.codehaus.org/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -369,11 +369,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
             </plugin>
-             <!--
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.0-beta-1</version>
                 <configuration>
                     <threshold>Normal</threshold>
                 </configuration>
@@ -392,7 +392,6 @@
                     <targetJdk>1.5</targetJdk>
                 </configuration>
             </plugin>
-            -->
 
         </plugins>
 
