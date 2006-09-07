@@ -15,6 +15,8 @@ import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.CvContext;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvFuzzyType;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
@@ -581,19 +583,15 @@ public class RangeBeanTest extends TestCase {
         assertEquals(bean.getRange().getToCvFuzzyType(), nt);
     }
 
-    private void doTestGetRange(IntactHelper helper) throws IntactException {
-        CvFuzzyType lessThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                                     CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                                        CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                                         CvFuzzyType.UNDETERMINED);
-        CvFuzzyType range = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                                  CvFuzzyType.RANGE);
-        CvFuzzyType ct = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                               CvFuzzyType.C_TERMINAL);
-        CvFuzzyType nt = (CvFuzzyType) helper.getObjectByLabel(CvFuzzyType.class,
-                                                               CvFuzzyType.N_TERMINAL);
+    private void doTestGetRange() throws IntactException {
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
+
+        CvFuzzyType lessThan = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.LESS_THAN);
+        CvFuzzyType greaterThan = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.GREATER_THAN);
+        CvFuzzyType undetermined = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.UNDETERMINED);
+        CvFuzzyType range = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.RANGE);
+        CvFuzzyType ct = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.C_TERMINAL);
+        CvFuzzyType nt = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 
