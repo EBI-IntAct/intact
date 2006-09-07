@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="Intact Core">
+    <bannerLeft>
+        <name>Intact Core</name>
+    </bannerLeft>
+    <!--
+    <bannerRight>
+        <name>IntAct</name>
+        <src>images/logo_intact.gif</src>
+        <href>http://www.ebi.ac.uk/intact</href>
+    </bannerRight>
+    -->
+
+    <!--
+  <skin>
+      <groupId>uk.ac.ebi.maven.skins</groupId>
+      <artifactId>seqdbg-skin</artifactId>
+      <version>1.0-SNAPSHOT</version>
+  </skin>
+  -->
+
+    <body>
+        <links>
+            <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
+        </links>
+
+        <menu name="Data">
+            <item name="Data Access (DAOs)" href="data/daos.html"/>
+            <item name="IDs Generation" href="data/idgeneration.html"/>
+        </menu>
+
+        <menu name="Maven 2.0">
+            <item name="APT Format" href="format.html"/>
+            <item name="FAQ" href="faq.html"/>
+            <item name="Xdoc Example" href="xdoc.html"/>
+        </menu>
+
+        ${reports}
+
+    </body>
+</project>
