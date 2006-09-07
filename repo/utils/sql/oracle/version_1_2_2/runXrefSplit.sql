@@ -1,4 +1,1 @@
-execute  PROC_SPLIT_XREF();
-/
-
-exit
+SELECT  PROC_SPLIT_XREF();

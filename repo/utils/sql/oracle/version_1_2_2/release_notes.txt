@@ -1,4 +1,6 @@
 VERSION 1.2.2
+Adaptation of Oracle scripts for PostgreSQL
+
 
 REQUEST
 * We need different Xref tables, one for each parent type, so hibernate handles well the database mapping
