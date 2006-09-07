@@ -60,6 +60,14 @@ drop table ia_intactnode cascade ;
 drop table ia_xref cascade ;
 --  drop table ia_xref_audit ;
 
+drop table ia_biosource_xref cascade ;
+drop table ia_experiment_xref cascade ;
+drop table ia_feature_xref cascade ;
+drop table ia_interactor_xref cascade ;
+drop table ia_publication_xref cascade ;
+drop table ia_controlledvocab_xref cascade ;
+
+
 drop table ia_alias cascade ;
 --  drop table ia_alias_audit ;
 
