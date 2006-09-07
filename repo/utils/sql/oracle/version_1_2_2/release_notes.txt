@@ -9,3 +9,4 @@ TECHNICAL CHANGES
     * Added 6 new tables, with the same structure than IA_Xref: IA_BioSourceXref, IA_ExperimentXref, IA_ControlledVocabXref, IA_FeatureXref, IA_InteractorXref, IA_PublicationXref
     * Created synonims for those tables
     * Granted the correct permissions
+    * PL*SQL procedure allowing to split IA_XREF into type-specific tables (e.g. IA_INTERACTOR_XREF...)
