@@ -6,6 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.commons.util;
 
 import java.util.Date;
+import java.util.Calendar;
 
 /**
  * TODO comment it.
@@ -15,51 +16,42 @@ import java.util.Date;
  */
 public class DateToolbox {
 
-    public static String getMonth(int monthNumber){
-        String monthName = new String();
-        switch (monthNumber) {
-            case 1:  monthName = "JAN"; break;
-            case 2:  monthName = "FEB"; break;
-            case 3:  monthName = "MAR"; break;
-            case 4:  monthName = "APR"; break;
-            case 5:  monthName = "MAY"; break;
-            case 6:  monthName = "JUN"; break;
-            case 7:  monthName = "JUL"; break;
-            case 8:  monthName = "AUG"; break;
-            case 9:  monthName = "SEP"; break;
-            case 10: monthName = "OCT"; break;
-            case 11: monthName = "NOV"; break;
-            case 12: monthName = "DEC"; break;
-            default: monthName = "Not a month!";break;
+
+        public static String getMonth(int monthNumber){
+            String monthName = new String();
+            switch (monthNumber) {
+                case 0:  monthName = "JAN"; break;
+                case 1:  monthName = "FEB"; break;
+                case 2:  monthName = "MAR"; break;
+                case 3:  monthName = "APR"; break;
+                case 4:  monthName = "MAY"; break;
+                case 5:  monthName = "JUN"; break;
+                case 6:  monthName = "JUL"; break;
+                case 7:  monthName = "AUG"; break;
+                case 8:  monthName = "SEP"; break;
+                case 9: monthName = "OCT"; break;
+                case 10: monthName = "NOV"; break;
+                case 11: monthName = "DEC"; break;
+                default: monthName = "Not a month!";break;
+            }
+
+            return monthName;
         }
 
-        return monthName;
-    }
-
-    public static String formatDate(Date date){
-        if(date == null){
-            return null;
+        public static String formatDate(Date date){
+            if(date != null){
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(date);
+                String day = Integer.toString(calendar.get(Calendar.DAY_OF_MONTH));
+                String monthName = getMonth(calendar.get(Calendar.MONTH));
+                String year = Integer.toString(calendar.get(Calendar.YEAR));
+                String newDate = year + "-" + monthName + "-" + day;
+                newDate = newDate.trim();
+                return newDate;
+            }else{
+                return null;
+            }
         }
-        String newDate = date.toString();
-//        int monthNumber =  Integer.parseInt(newDate.substring(5, 7) );
-        String[] dateData = newDate.split(" ");
-        String monthName = dateData[1].toUpperCase();
-        String year = dateData[5];//newDate.substring(newDate.length(),newDate.length()-4);
-        String day = dateData[2];//newDate.substring(8,10);
-        newDate = year + "-" + monthName + "-" + day;
-        newDate = newDate.trim();
-        return newDate;
-    }
-
-    public static String formatDateResultWrapper(Date date){
-        String dateString = date.toString();
-        String dateData[] = dateString.split("-");
-        String month = getMonth(Integer.parseInt(dateData[1]));
-        String year =  dateData[1];
-        String day = dateData[3];
-        return year + "-" + month + "-" + day;
-
-    }
 
 
 }
