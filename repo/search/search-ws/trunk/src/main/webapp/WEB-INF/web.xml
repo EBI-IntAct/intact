@@ -9,33 +9,12 @@
 
     <display-name>IntAct Search WS</display-name>
 
-    <!-- IntAct Init parameters -->
-    <context-param>
-        <param-name>uk.ac.ebi.intact.AC_PREFIX</param-name>
-        <param-value>EBI</param-value>
-        <description>
-            The Accession Number Prefix for the objects created
-            by the application and stored in the database.
-        </description>
-    </context-param>
-
-    <context-param>
-        <param-name>uk.ac.ebi.intact.INSTITUTION_LABEL</param-name>
-        <param-value>ebi</param-value>
-        <description>
-            The label of the institution, used to retrieve the Institution object
-            if it already exists, or to create a new institution
-        </description>
-    </context-param>
-
-    <context-param>
-        <param-name>uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS</param-name>
-        <param-value>false</param-value>
-        <description>
-            Preload the most common CvObjects on application start, so it is
-            faster to retrieve them later
-        </description>
-    </context-param>
+    <!-- This listener controls the initialization of the application (e.g. reading init params, etc)
+    The listener should be started automatically from intact-core, but if you don't declare it here again
+    if fails on redeploy  -->
+    <listener>
+        <listener-class>uk.ac.ebi.intact.webapp.StartupIntactListener</listener-class>
+    </listener>
 
     <listener>
         <listener-class>org.apache.axis.transport.http.AxisHTTPSessionListener</listener-class>
@@ -90,11 +69,6 @@
         <servlet-name>SOAPMonitorService</servlet-name>
         <url-pattern>/SOAPMonitor</url-pattern>
     </servlet-mapping>
-
-    <taglib>
-        <taglib-uri>http://ebi.ac.uk/intact/commons</taglib-uri>
-        <taglib-location>/WEB-INF/tld/intact.tld</taglib-location>
-    </taglib>
 
 
 </web-app>
