@@ -1,4 +1,4 @@
-<table border="0" cellpadding="0" cellspacing="0" width="434">
+i<table border="0" cellpadding="0" cellspacing="0" width="434">
 <tbody>
 <tr>
 <td>
@@ -74,14 +74,7 @@
     <li class="greenboldsmalllist"><span class="text"> <a target="_blank"
                                                           href="doc/misc/curation/IntActAnnotationRules.pdf">Curation
         manual</a></span></li>
-    <li class="greenboldsmalllist"><span class="text"> <a href="doc/misc/tutorial/index.html">IntAct API
-        tutorial</a></span></li>
-    <li class="greenboldsmalllist"><span class="text">Data model (<a
-            href="http://intact.sourceforge.net/uml/intactCore.gif">UML class diagram</a>, <a
-            href="http://intact.sourceforge.net/doc/api/index.html">Javadoc</a>)</span></li>
-    <li class="greenboldsmalllist"><span class="text"><a href="http://intact.sourceforge.net/doc/">Implementation
-        overview</a></span><br>
-    </li>
+    <li class="greenboldsmalllist"><span class="text"> <a href="http://www.ebi.ac.uk/~intact/devsite">IntAct Development Site</a></span></li>
 </ul>
 
 <div align="right"><a href="#a0"><img src="http://www.ebi.ac.uk/Information/images/arrow_up2.gif" border="0" height="21"
@@ -249,7 +242,7 @@ The following mailing lists have been set up:
 <table cellspacing="5" border="0">
     <tr><td align="right" valign="top">
         <a href="http://www.cordis.lu/life/">
-            <img src="http://iims.ebi.ac.uk/euroflag.gif" width=75 height=50 alt="Fundings"
+            <img src="http://www.ebi.ac.uk/Information/images/logo_eu_small.gif" width=75 height=50 alt="Fundings"
                  border="0"></a>
     </td>
         <td align="left">

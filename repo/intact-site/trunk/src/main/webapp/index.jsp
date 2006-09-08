@@ -156,5 +156,15 @@
     <area shape="rect" coords="1,1,69,25" href="http://www.ebi.ac.uk/Information/sitemap.html" alt="EBI Site Map"
           title="EBI Site Map">
 </map>
+
+<!-- Google analytics -->
+    <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+        _uacct = "UA-672146-1";
+        urchinTracker();
+    </script>
+
+
 </body>
 </html>
