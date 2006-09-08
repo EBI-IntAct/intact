@@ -49,21 +49,27 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     {
         super(session);
         this.packagesWithEntities = getPackagesWithEntities();
+
+        configuration = new AnnotationConfiguration();
     }
 
+    
     @Override
     public void initialize()
     {
         log.debug("Initializing Hibernate");
+
+        if (isInitialized())
+        {
+            log.debug("Hibernate already initialized");
+            return;
+        }
 
         File cfgFile = getConfigFile();
 
         // Create the initial SessionFactory from the default configuration files
         try
         {
-            // Replace with Configuration() if you don't use annotations or JDK 5.0
-            configuration = new AnnotationConfiguration();
-
             for (String packageName : getPackagesWithEntities())
             {
                 log.debug("Processing package: " + packageName);
@@ -103,6 +109,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             // Set global interceptor from configuration
             setInterceptor(configuration, null);
 
+            log.debug("Session is webapp: "+getSession().isWebapp()+" / SessionFactory name: "+configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+            
             if (getSession().isWebapp() && configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
             {
                 // Let Hibernate bind the factory to JNDI
@@ -131,20 +139,55 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     @Override
     public SessionFactory getSessionFactory()
     {
-        checkInitialization();
-
         if (sessionFactory != null)
         {
             return sessionFactory;
         }
 
-        try
+        if (getSession().isWebapp())
         {
-            sessionFactory = (SessionFactory) new InitialContext().lookup(configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+            try
+            {
+                configuration.configure();
+                String sessionFactoryName = configuration.getProperty(Environment.SESSION_FACTORY_NAME);
+                log.debug("Looking up sessionFactory from JNDI: " + sessionFactoryName);
+
+                if (sessionFactoryName != null)
+                {
+                    sessionFactory = (SessionFactory) new InitialContext().lookup(configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+
+                    setInitialized(true);
+                }
+            }
+            catch (ClassCastException cce)
+            {
+                log.debug("Classcast exception thrown when getting the sessionFactory from JNDI. " +
+                        "Probably initializing application and trying to get an instance created " +
+                        "with a different classloader");
+            }
+            catch (NamingException ne)
+            {
+                log.debug("SessionFactory not found in JNDI: " + configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+            }
         }
-        catch (NamingException e)
+
+        if (sessionFactory == null)
         {
-            throw new IntactException("SessionFactory could not be retrieved from JNDI: "+Environment.SESSION_FACTORY_NAME);
+            checkInitialization();
+
+            if (sessionFactory != null)
+            {
+                return sessionFactory;
+            }
+
+            try
+            {
+                sessionFactory = (SessionFactory) new InitialContext().lookup(configuration.getProperty(Environment.SESSION_FACTORY_NAME));
+            }
+            catch (NamingException e)
+            {
+                throw new IntactException("SessionFactory could not be retrieved from JNDI: " + Environment.SESSION_FACTORY_NAME);
+            }
         }
 
         return sessionFactory;
