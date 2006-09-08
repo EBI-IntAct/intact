@@ -12,8 +12,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.app.search</groupId>
-    <artifactId>search-app</artifactId>
+    <groupId>uk.ac.ebi.intact.site</groupId>
+    <artifactId>intact-site</artifactId>
     <packaging>war</packaging>
     <version>1.1</version>
     <name>IntAct Site</name>
