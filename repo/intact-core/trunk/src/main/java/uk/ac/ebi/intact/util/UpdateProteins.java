@@ -11,11 +11,12 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.core.DummyServletContext;
-import uk.ac.ebi.intact.core.ExternalContext;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.AliasDao;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.FeatureException;
 import uk.ac.ebi.interfaces.sptr.*;
@@ -3002,8 +3003,6 @@ public class UpdateProteins extends UpdateProteinsI {
                 e.printStackTrace();
                 System.exit( 1 );
             }
-
-            ExternalContext.newInstance( new DummyServletContext() );
 
             UpdateProteinsI update = new UpdateProteins( );
             Chrono chrono = new Chrono();

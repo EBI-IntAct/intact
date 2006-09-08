@@ -118,7 +118,7 @@ public class WebappSession extends IntactSession
 
     public Collection<String> getInitParamNames()
     {
-        List<String> initParams = new ArrayList<String>(overrideInitParamMap.keySet());
+        List<String> initParams = new ArrayList<Strib_ng>(overrideInitParamMap.keySet());
         initParams.addAll(enumerationToList(servletContext.getInitParameterNames()));
 
         return initParams;
