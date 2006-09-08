@@ -7,16 +7,23 @@ package uk.ac.ebi.intact.search.ws;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Environment;
+import org.hibernate.SessionFactory;
 
 import java.util.*;
 import java.io.IOException;
 
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.IntactConfigurator;
+import uk.ac.ebi.intact.context.impl.WebServiceSession;
+
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.naming.NamingEnumeration;
+import javax.naming.NameClassPair;
 
 /**
  * TODO comment this!
@@ -30,9 +37,15 @@ public class SearchService
 
     private static final Log log = LogFactory.getLog(SearchService.class);
 
+    private DaoFactory daoFactory;
+
     public SearchService()
     {
-        System.setProperty("institution", "ebi");
+        log.debug("Initializing SearchService...");
+
+        IntactSession intactSession = new WebServiceSession();
+        IntactConfigurator.initIntact(intactSession);
+        daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
     /**
@@ -42,10 +55,22 @@ public class SearchService
      * @return
      */
     public PartnerResult[] findPartnersUsingUniprotIds(String[] proteinIds)  {
+        if (log.isDebugEnabled())
+        {
+            if (proteinIds.length == 1)
+            {
+                log.debug("Finding partners for: "+proteinIds[0]);
+            }
+            else
+            {
+                log.debug("Finding partners for an array of "+proteinIds.length+" protein IDs");
+            }
+
+        }
 
         List<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
 
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        int totalFound = 0;
 
         for (String uniprotId : proteinIds)
         {
@@ -53,10 +78,17 @@ public class SearchService
 
             List<String> protIds = daoFactory.getProteinDao().getPartnersUniprotIdsByProteinAc(prot.getAc());
 
+            totalFound = totalFound+protIds.size();
+
             results.add(new PartnerResult(uniprotId, protIds.toArray(new String[protIds.size()])));
         }
 
         IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+
+        if (log.isDebugEnabled())
+        {
+            log.debug("Total partners found: "+totalFound);
+        }
 
         return results.toArray(new PartnerResult[results.size()]);
     }
