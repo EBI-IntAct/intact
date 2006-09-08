@@ -39,12 +39,10 @@
                <artifactId>axistools-maven-plugin</artifactId>
                <version>1.0</version>
                <configuration>
-                   <!--
                   <urls>
                       <url>file://${project.basedir}/src/main/wsdl/SearchService.wsdl</url>
                   </urls>
                    <packageSpace>uk.ac.ebi.intact.search.wsclient.generated</packageSpace>
-                   -->
                   <testCases>false</testCases>
                   <serverSide>true</serverSide>
                </configuration>
