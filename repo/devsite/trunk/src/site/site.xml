@@ -7,6 +7,7 @@
             <item name="General Installation" href="general_install.html"/>
             <item name="Module Installation" href="webapp_install.html"/>
             <item name="Downloads" href="http://sourceforge.net/project/showfiles.php?group_id=62732"/>
+            <item name="FAQ" href="faq_intact.html"/>
         </menu>
 
         <menu name="Libraries">
@@ -43,14 +44,16 @@
             <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
             <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
             <item name="Uniprot Line Export" href="maven-plugins/maven-uniprotexport-plugin/index.html"/>
+            <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
 
              <item name="Internal">
-                <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
                 <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
              </item>
         </menu>
 
         <menu name="Developers">
+            <item name="Where to start" href="where_to_start.html"/>
+            <item name="Versioning policy" href="version_policy.html"/>
             <item name="Documentation needed" href="howtodoc.html"/>
         </menu>
 
