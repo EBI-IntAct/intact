@@ -65,7 +65,6 @@ public class SearchService
             {
                 log.debug("Finding partners for an array of "+proteinIds.length+" protein IDs");
             }
-
         }
 
         List<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
