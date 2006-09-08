@@ -1,0 +1,33 @@
+ -----
+ Version policies
+ -----
+ Bruno Aranda
+ -----
+ 8 Sep 2006
+ -----
+
+Database schema version
+
+ The schema in the database is versioned using the normal MAJOR.MINOR.BUILD version.
+ When changes are done, this version is increased. This is the policy:
+
+ * <<Major>>: updated if many changes are done at the same time. Breaks compatibility with previous versions.
+
+ * <<Minor>>: updated when tables or files are created/dropped. Breaks compatibility with previous versions.
+
+ * <<Build>>: updated every time. This change is compatible with the previous version and will not break
+ any existing application.
+
+ []
+
+Modules versions
+
+ The modules also follow the MAJOR.MINOR.BUILD version pattern.
+
+ * <<Major>>: major rewrite of the module, that would provoke that the applications that depend on it have to
+ be rewriten too.
+
+ * <<Minor>>: changes in the module that makes it not backward compatible, such as the removal of classes. It should
+ be easy to update applications from the previous Minor version.
+
+ * <<Build>>: bugfix version, this value is updated if a fix is committed. Backwards compatibility is not lost

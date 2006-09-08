@@ -1,0 +1,13 @@
+ -----
+ Webapp Installation
+ -----
+ Bruno Aranda
+ -----
+ 8 Sep 2006
+ -----
+
+ To develop with IntAct you have to know how to access the underlying data, access to configuration parameters, etc.
+ This is provided by the most important library in IntAct, called {{{intact-core}/index.html}intact-core}}. The best place
+ to start then, is by reading the intact-core documentation.
+
+ If using a database outside the EBI, you will have to setup the database first, following the {{{general_install.html}instructions}} provided.

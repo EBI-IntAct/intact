@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<faqs id="General FAQ">
+  <part id="General">
+    <faq id="where">
+      <question> Can I make a local version of IntAct?</question>
+      <answer>
+        <p>
+            Yes, of course! You will need to setup your database first and
+            then build the modules you wish, following the instructions in this site.
+        </p>
+      </answer>
+    </faq>
+    <faq id="why">
+      <question>Can I add more questions?</question>
+      <answer>
+        <p>
+          Please, feel free to suggest more questions!
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
