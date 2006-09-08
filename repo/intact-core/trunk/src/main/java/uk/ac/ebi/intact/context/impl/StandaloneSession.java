@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -90,6 +91,26 @@ public class StandaloneSession extends IntactSession
     public void setInitParam(String name, String value)
     {
         initParamMap.put(name, value);
+    }
+
+    public Collection<String> getInitParamNames()
+    {
+        return initParamMap.keySet();
+    }
+
+    public Collection<String> getAttributeNames()
+    {
+        return sessionMap.keySet();
+    }
+
+    public Collection<String> getApplicationAttributeNames()
+    {
+        return applicationMap.keySet();
+    }
+
+    public Collection<String> getRequestAttributeNames()
+    {
+        return requestMap.keySet();
     }
 
     public boolean isWebapp()

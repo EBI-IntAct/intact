@@ -61,7 +61,8 @@ public class DaoFactory implements Serializable
         // the we store the daoFactory in application scope
         if (!session.isRequestAvailable())
         {
-            log.debug("Getting DaoFactory from application, because request is not available");
+            log.debug("Getting DaoFactory from application, because request is not available at this point" +
+                    " (probably the application is initializing)");
             if (session.getApplicationAttribute(attName) != null)
             {
                 return (DaoFactory) session.getApplicationAttribute(attName);

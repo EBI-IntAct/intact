@@ -5,14 +5,15 @@
  */
 package uk.ac.ebi.intact.context.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Webapp session, that uses the session and the request to store attributes
@@ -24,15 +25,19 @@ import java.util.Properties;
 public class WebappSession extends IntactSession
 {
 
+    private static final Log log = LogFactory.getLog(WebappSession.class);
+
     private HttpSession session;
     private ServletContext servletContext;
     private HttpServletRequest request;
+    private Map<String,String> overrideInitParamMap;
 
     public WebappSession(ServletContext servletContext, HttpSession session, HttpServletRequest request)
     {
         this.session = session;
         this.servletContext = servletContext;
         this.request = request;
+        overrideInitParamMap = new HashMap<String,String>();
 
         readDefaultProperties();
     }
@@ -82,17 +87,61 @@ public class WebappSession extends IntactSession
 
     public boolean containsInitParam(String name)
     {
-        return (servletContext.getInitParameter(name) != null);
+        boolean containsParam = overrideInitParamMap.containsKey(name);
+
+        return containsParam || (servletContext.getInitParameter(name) != null);
+
     }
 
     public String getInitParam(String name)
     {
+        if (overrideInitParamMap.containsKey(name))
+        {
+            return overrideInitParamMap.get(name);
+        }
+
         return servletContext.getInitParameter(name);
     }
 
     public void setInitParam(String name, String value)
     {
-        throw new UnsupportedOperationException("It is not possible to add init-params to a webapp session.");
+        if (log.isDebugEnabled())
+        {
+            String webParam = servletContext.getInitParameter(name);
+            if (webParam != null)
+            {
+               log.debug("Param in web.xml is being overriden by the same param in intact.properties: "+webParam);
+            }
+        }
+        overrideInitParamMap.put(name,value);
+    }
+
+    public Collection<String> getInitParamNames()
+    {
+        List<String> initParams = new ArrayList<String>(overrideInitParamMap.keySet());
+        initParams.addAll(enumerationToList(servletContext.getInitParameterNames()));
+
+        return initParams;
+    }
+
+    public Collection<String> getAttributeNames()
+    {
+        return enumerationToList(session.getAttributeNames());
+    }
+
+    public Collection<String> getApplicationAttributeNames()
+    {
+        return enumerationToList(servletContext.getAttributeNames());
+    }
+
+    public Collection<String> getRequestAttributeNames()
+    {
+        if (!isRequestAvailable())
+        {
+            return Collections.EMPTY_SET;
+        }
+
+        return enumerationToList(request.getAttributeNames());
     }
 
     public boolean isWebapp()
@@ -103,5 +152,18 @@ public class WebappSession extends IntactSession
     public boolean isRequestAvailable()
     {
         return request != null;
+    }
+
+    private static List<String> enumerationToList(Enumeration<String> enumeration)
+    {
+        List<String> list = new ArrayList<String>();
+
+        while (enumeration.hasMoreElements())
+        {
+            list.add(enumeration.nextElement());
+
+        }
+
+        return list;
     }
 }

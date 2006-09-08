@@ -18,6 +18,8 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Class to initialize IntAct, and to initialize IntactContexts
@@ -56,7 +58,20 @@ public class IntactConfigurator
      */
     public static void initIntact(IntactSession session) throws IntactInitializationError
     {
-        log.info("Initializing intact-core...");
+        log.info("Initializing intact-core with session of class: "+session.getClass());
+
+        // when logging info, print init params
+        if (log.isInfoEnabled())
+        {
+            List<String> initParams = new ArrayList<String>();
+
+            for (String initParam : session.getInitParamNames())
+            {
+                 initParams.add(initParam+"="+session.getInitParam(initParam));
+            }
+
+            log.info("Init Params: "+initParams);
+        }
 
         RuntimeConfig config = RuntimeConfig.getCurrentInstance(session);
 
@@ -65,7 +80,7 @@ public class IntactConfigurator
             // add the core model data config
             log.info("Registering standard data-config");
             StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig(session);
-            stdDataConfig.initialize();
+            stdDataConfig.getSessionFactory();
             config.addDataConfig(stdDataConfig, true);
         }
 
@@ -84,7 +99,7 @@ public class IntactConfigurator
                 try
                 {
                     DataConfig dataConfig = (DataConfig) (Class.forName(dataConfigClass).newInstance());
-                    dataConfig.initialize();
+                    dataConfig.getSessionFactory();
                     config.addDataConfig(dataConfig);
                 }
                 catch (Exception e)

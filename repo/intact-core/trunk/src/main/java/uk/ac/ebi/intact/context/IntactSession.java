@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -82,6 +83,14 @@ public abstract class IntactSession
     public abstract String getInitParam(String name);
 
     public abstract void setInitParam(String name, String value);
+
+    public abstract Collection<String> getInitParamNames();
+
+    public abstract Collection<String> getAttributeNames();
+
+    public abstract Collection<String> getApplicationAttributeNames();
+
+    public abstract Collection<String> getRequestAttributeNames();
 
     public abstract boolean isWebapp();
 
