@@ -27,15 +27,27 @@
             <item name="StatisticView" href="statistic-view/index.html"/>
         </menu>
 
-        <menu name="Web Services Clients">
+        <menu name="Web Services">
+            <item name="Search Web Service">
+                <item name="Service" href="search-ws/index.html"/>
+                <item name="Client" href="search-wsclient/index.html"/>
+            </item>
             <item name="Graph2MIF Client" href="graph2mif-client/index.html"/>
-            <item name="Tulip Client" href="tulip-client/index.html"/>
+            <item name="Tulip Web Service">
+                <item name="Service" href="tulip-ws/index.html"/>
+                <item name="Client" href="tulip-client/index.html"/>
+            </item>
         </menu>
 
          <menu name="Maven Plugins">
             <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
-            <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
-            <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
+            <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
+            <item name="Uniprot Line Export" href="maven-plugins/maven-uniprotexport-plugin/index.html"/>
+
+             <item name="Internal">
+                <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
+                <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
+             </item>
         </menu>
 
         <menu name="Developers">

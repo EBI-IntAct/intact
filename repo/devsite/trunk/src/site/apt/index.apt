@@ -22,7 +22,7 @@ Introduction
 
  * <<Web Applications>>: the visible part of IntAct, the different applications to be deployed in a web container.
 
- * <<Web Services Clients>>: libraries to access the IntAct web services. Use these libraries to access to some of
+ * <<Web Services>>: server and client libraries to access the IntAct Web Services. Use the client libraries to access to some of
   the IntAct Services remotely.
 
  * <<Maven Plugins>>: maven plugins with specific functionalities related to IntAct, such as the export of the IntAct
