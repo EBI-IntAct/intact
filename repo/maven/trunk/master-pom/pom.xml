@@ -9,7 +9,7 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.0.5</version>
     <!-- last released 1.0.5 -->
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
@@ -22,6 +22,7 @@
 
     <properties>
         <institution>ebi</institution>
+        <assembly.outputDirectory>target/assembly/out</assembly.outputDirectory>
     </properties>
 
     <ciManagement>
@@ -126,7 +127,7 @@
                         <descriptorRefs>
                             <param>src</param>
                         </descriptorRefs>
-                        <outputDirectory>target/assembly/out</outputDirectory>
+                        <outputDirectory>${assembly.outputDirectory}</outputDirectory>
                     </configuration>
                 </plugin>
             </plugins>
