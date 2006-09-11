@@ -48,8 +48,12 @@
            ac.append( interactor.getAc() ).append( "%2C" ); // %2C <=> ,
        }
        int l = ac.length();
+
        if (l > 0)
            ac.delete( l-3, l ); // the 3 last caracters (%2C)
+       if (l == 0)
+           ac.append(user.getQueryString());
+
        String url = graph2mif  + "?ac=" +  ac.toString()
                                + "&depth=" + user.getCurrentDepth()
                                + "&strict=false";

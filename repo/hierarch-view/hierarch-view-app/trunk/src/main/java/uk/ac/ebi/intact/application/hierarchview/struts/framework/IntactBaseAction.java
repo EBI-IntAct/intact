@@ -83,8 +83,7 @@ public abstract class IntactBaseAction extends Action {
      */
     protected IntactUserI getIntactUser(HttpSession session)
             throws SessionExpiredException {
-        IntactUserI user = (IntactUserI) IntactContext.getCurrentInstance().getSession()
-                .getAttribute( Constants.USER_KEY );
+        IntactUserI user = (IntactUserI) session.getAttribute( Constants.USER_KEY );
 
         if ( null == user ) {
             logger.warn( "Session expired ... forward to error page." );
