@@ -32,9 +32,7 @@
         <module>app-commons</module>
         <module>search-engine</module>
         <module>search-app</module>
-<!--
         <module>editor-app</module>
--->
         <module>data-conversion</module>
         <module>devsite</module>
         <module>intact-test</module>
