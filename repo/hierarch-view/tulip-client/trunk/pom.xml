@@ -39,10 +39,7 @@
                <artifactId>axistools-maven-plugin</artifactId>
                <version>1.0</version>
                <configuration>
-                  <urls>
-                      <url>http://www.ebi.ac.uk/intact/tulip-ws/services/Tulip?wsdl</url>
-                  </urls>
-                   <packageSpace>uk.ac.ebi.intact.tulip.client.generated</packageSpace>
+                  <packageSpace>uk.ac.ebi.intact.tulip.client.generated</packageSpace>
                   <testCases>false</testCases>
                   <serverSide>true</serverSide>
                </configuration>
