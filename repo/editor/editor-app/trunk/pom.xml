@@ -36,6 +36,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.editor</groupId>
                 <artifactId>maven-editortopics-plugin</artifactId>
+                <version>1.0</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
