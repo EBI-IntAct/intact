@@ -24,16 +24,19 @@
             <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
         </links>
 
-        <menu name="Data">
-            <item name="Data Access (DAOs)" href="data/daos.html"/>
-            <item name="IDs Generation" href="data/idgeneration.html"/>
+        <menu name="Development">
+            <item name="Data Access">
+                <item name="DAOs" href="data/daos.html"/>
+                <item name="IDs Generation" href="data/idgeneration.html"/>
+            </item>
         </menu>
-
+        <!--
         <menu name="Maven 2.0">
             <item name="APT Format" href="format.html"/>
             <item name="FAQ" href="faq.html"/>
             <item name="Xdoc Example" href="xdoc.html"/>
         </menu>
+        -->
 
         ${reports}
 
