@@ -371,6 +371,7 @@
                 <artifactId>maven-clover-plugin</artifactId>
             </plugin>
 
+            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
@@ -379,6 +380,7 @@
                     <threshold>Normal</threshold>
                 </configuration>
             </plugin>
+            -->
 
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
