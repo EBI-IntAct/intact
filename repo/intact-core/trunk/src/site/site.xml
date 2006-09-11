@@ -29,6 +29,7 @@
                 <item name="DAOs" href="data/daos.html"/>
                 <item name="IDs Generation" href="data/idgeneration.html"/>
             </item>
+            <item name="Migration from OJB to Hibernate" href="data/migrationOJB2Hibernate.html"/>
         </menu>
         <!--
         <menu name="Maven 2.0">
