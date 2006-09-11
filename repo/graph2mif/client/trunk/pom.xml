@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0</version>
+        <version>1.0.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,11 +35,11 @@
          <plugins>
             <plugin>
                <groupId>org.codehaus.mojo</groupId>
-               <artifactId>wsdl2java-maven-plugin</artifactId>
-               <version>0.4-SNAPSHOT</version>
+               <artifactId>axistools-maven-plugin</artifactId>
+               <version>1.0</version>
                <configuration>
                   <urls>
-                      <url>${project.basedir}/src/main/wsdl/graph2mif.wsdl</url>
+                      <url>file://${project.basedir}/src/main/wsdl/graph2mif.wsdl</url>
                   </urls>
                   <packageSpace>uk.ac.ebi.intact.application.graph2mif.client</packageSpace>
                   <testCases>false</testCases>
@@ -49,7 +49,7 @@
                  <execution>
                    <phase>generate-sources</phase>
                    <goals>
-                     <goal>generate</goal>
+                     <goal>wsdl2java</goal>
                    </goals>
                  </execution>
                </executions>
