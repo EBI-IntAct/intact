@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.3.6</version>
+        <version>1.3.9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -70,7 +70,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>scp://localhost/homes/baranda/public_html/intact/${artifactId}</url>
+            <url>${site.remote.basedir}/${artifactId}</url>
         </site>
     </distributionManagement>
 
