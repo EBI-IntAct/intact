@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <faqs id="General FAQ">
   <part id="General">
-    <faq id="where">
+    <faq id="local">
       <question> Can I make a local version of IntAct?</question>
       <answer>
         <p>
@@ -10,7 +10,7 @@
         </p>
       </answer>
     </faq>
-    <faq id="why">
+    <faq id="moreinfo">
       <question>Can I add more questions?</question>
       <answer>
         <p>
