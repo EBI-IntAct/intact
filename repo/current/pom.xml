@@ -40,6 +40,22 @@
 
     <build>
         <defaultGoal>clean install</defaultGoal>
+           <pluginManagement>
+            <plugins>
+               <plugin>
+                    <artifactId>maven-idea-plugin</artifactId>
+                    <version>2.0-beta-2-SNAPSHOT</version>
+                    <configuration>
+                        <jdkLevel>1.5</jdkLevel>
+                        <downloadSources>true</downloadSources>
+                        <downloadJavadocs>true</downloadJavadocs>
+                        <useClassifiers>true</useClassifiers>
+                        <linkModules>true</linkModules>
+                        <exclude>target</exclude>
+                    </configuration>
+                </plugin>
+           </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>

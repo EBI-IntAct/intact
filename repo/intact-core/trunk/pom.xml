@@ -24,7 +24,7 @@
     <version>1.5-SNAPSHOT</version>
     <!-- last released 1.4.1 -->
     <name>Intact Core</name>
-    <url>http://www.ebi.ac.uk/intact</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
 
     <scm>

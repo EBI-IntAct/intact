@@ -109,6 +109,7 @@
                         <downloadJavadocs>true</downloadJavadocs>
                         <useClassifiers>true</useClassifiers>
                         <linkModules>true</linkModules>
+                        <exclude>target</exclude>
                     </configuration>
                 </plugin>
                 <plugin>
