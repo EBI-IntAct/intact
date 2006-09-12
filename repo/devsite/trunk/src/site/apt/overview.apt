@@ -3,6 +3,8 @@ Module Overview
 
  This is the list of modules, by type:
 
+ <<Libraries>> (each module is a *.jar file):
+
 *-----+------------------------------------------------------------------+
 | {{{intact-core/index.html}intact-core}} | core java sources and data model |
 *-----+------------------------------------------------------------------+
@@ -16,7 +18,8 @@ Module Overview
 *-----+------------------------------------------------------------------+
 | {{{confidence-score/index.html}confidence-score}} | package to generate a confidence score for IntAct |
 *-----+------------------------------------------------------------------+
-Libraries (each is a jar file)
+
+ <<Web Applications>> (packaged in *.war files):
 
 *-----+------------------------------------------------------------------+
 | {{{search-app/index.html}search-app}} | web application that enables a user to search the IntAct database using Gene name, IntAct Ac, UniProtKB Ac, UniProtKB Id, InterPro Ac, GO Id or PubMed Id. |
@@ -35,7 +38,8 @@ Libraries (each is a jar file)
 *-----+------------------------------------------------------------------+
 | {{{graph2mif-server/index.html}graph2mif-server}} | web application and web service to retrieve IntAct data in PSI XML format |
 *-----+------------------------------------------------------------------+
-Web Applications
+
+ <<Web Services & Clients>> (if you want to use a service, you only need the client):
 
 *-----+------------------------------------------------------------------+
 | {{{search-ws/index.html}search-ws}} | the search web service, in early stage of development |
@@ -50,7 +54,8 @@ Web Applications
 *-----+------------------------------------------------------------------+
 | {{{tulip-client}tulip-client/index.html}} | client for the tulip web service |
 *-----+------------------------------------------------------------------+
-Web Services & Clients
+
+ <<Maven plugins>>:
 
 *-----+------------------------------------------------------------------+
 | {{{maven-plugins/maven-editortopics-plugin/index.html}maven-editortopics-plugin}} | generates a list of editor topics by parsing the intact core java sources |
@@ -63,14 +68,14 @@ Web Services & Clients
 *-----+------------------------------------------------------------------+
 | {{{maven-plugins/maven-sanitychecker-plugin/index.html}maven-sanitychecker-plugin}} | executes a sanity check (not working yet) |
 *-----+------------------------------------------------------------------+
-Maven plugins
+
+ <<Web information Sites>>:
 
 *-----+------------------------------------------------------------------+
 | {{{devsite/index.html}devsite}} | root site containing development information |
 *-----+------------------------------------------------------------------+
 | {{{intact-site/index.html}intact-site}} | the public IntAct web site |
 *-----+------+
-Web information Sites
 
  The dependency relation of some of the modules:
 
