@@ -97,25 +97,6 @@ public class ExperimentListGeneratorTest extends TestCase
         assertEquals("pmid/2004/14605208_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliPublications.get(9).toString());
     }
 
-    public void testOnlyPmid()
-    {
-
-        ExperimentListGenerator gen = new ExperimentListGenerator("human");
-        gen.setOnlyWithPmid(true);
-
-        List<ExperimentListItem> eliPublications = gen.generateClassificationByPublications();
-        assertEquals(0, eliPublications.size());
-        //log.debug("By publications (onlyPmid=true): "+eliPublications.size());
-
-        gen = new ExperimentListGenerator("human");
-        gen.setOnlyWithPmid(false);
-
-        eliPublications = gen.generateClassificationByPublications();
-        assertEquals(1, eliPublications.size());
-        //log.debug("By publications (onlyPmid=false): "+eliPublications.size());
-
-    }
-
     public void test_Haynes()
     {
 
