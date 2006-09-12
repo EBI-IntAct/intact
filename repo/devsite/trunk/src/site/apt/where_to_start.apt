@@ -6,8 +6,50 @@
  8 Sep 2006
  -----
 
+Developing new modules based on IntAct
+
  To develop with IntAct you have to know how to access the underlying data, access to configuration parameters, etc.
  This is provided by the most important library in IntAct, called {{{intact-core/index.html}intact-core}}. The best place
  to start then, is by reading the intact-core documentation.
 
  If using a database outside the EBI, you will have to setup the database first, following the {{{general_install.html}instructions}} provided.
+
+Using existing modules in your project
+
+* Maven-based project
+
+ Using maven is the easiest way to start working with the intact libraries in your own project.
+
+ To be able to use any of the libraries (e.g. intact-core) as a dependency for your maven-based project, you need
+ to add the EBI repository in the repositories section of your pom.xml file:
+
++---------------+
+<!-- EBI repositories -->
+<repositories>
+    <repository>
+        <id>ebi-repo</id>
+        <name>The EBI internal repository</name>
+        <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+    </repository>
+</repositories>
++--------------------+
+
+ See the documentation of the module you want to use in the module page to know the exact <groupId>, <artifactId> and latest
+ <version>. For instance, for the search-wsclient (the client  for the Search Web Service),
+ you have to include this dependency in your pom.xml
+
++---------------+
+<!-- EBI repositories -->
+<dependencies>
+    <dependency>
+        <groupId>uk.ac.ebi.intact.app.search</groupId>
+        <artifactId>search-wsclient</artifactId>
+        <version>1.0.1</version>
+    </dependency>
+</dependencies>
++--------------------+
+
+* Non-maven project
+
+ We are not creating bundles with the binary files for the projects, so you will have to build the binaries from the SVN repository
+ and include them as its dependencies in your project.
