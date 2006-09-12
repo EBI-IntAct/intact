@@ -7,13 +7,10 @@ package uk.ac.ebi.intact.util;
 
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
-import org.hibernate.Transaction;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -81,7 +78,7 @@ public final class InsertComplex {
             String msg = "unable to create intact helper class";
             System.err.println( msg );
             ie.printStackTrace();
-        } catch ( UpdateProteinsI.UpdateException e ) {
+        } catch ( Exception e ) {
             //something failed with type map or datasource...
             String msg = "unable to create protein factory";
             logger.error( msg );
