@@ -34,7 +34,7 @@ Module Overview
 *-----+------------------------------------------------------------------+
 | {{{mine-app/index.html}mine-app}} | undertakes the task of computing the minimal connecting networks for a given set of proteins. The results are viewed using HierarchView |
 *-----+------------------------------------------------------------------+
-| {{{predict-app/index.html}predict-app}} | web application designed to determine using only the data which is currently available in the IntAct database and exploiting the scale-free distribution of protein interaction networks which proteins are likely to be central in Interaction Networks and thus will be good candidates as “baits” in Interaction detection experiments. |
+| {{{predict-app/index.html}predict-app}} | web application designed to determine using only the data which is currently available in the IntAct database and exploiting the scale-free distribution of protein interaction networks which proteins are likely to be central in Interaction Networks and thus will be good candidates as <baits> in Interaction detection experiments. |
 *-----+------------------------------------------------------------------+
 | {{{graph2mif-server/index.html}graph2mif-server}} | web application and web service to retrieve IntAct data in PSI XML format |
 *-----+------------------------------------------------------------------+
