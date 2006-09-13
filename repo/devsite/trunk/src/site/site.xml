@@ -10,45 +10,47 @@
             <item name="FAQ" href="faq_intact.html"/>
         </menu>
 
-        <menu name="Libraries">
-            <item name="Intact Core" href="intact-core/index.html"/>
-            <item name="App Commons" href="app-commons/index.html"/>
-            <item name="Search Engine" href="search-engine/index.html"/>
-            <item name="Data Conversion" href="data-conversion/index.html"/>
-            <item name="Sanity Checker" href="sanity-checker/index.html"/>
-        </menu>
-
-        <menu name="Web Applications">
-            <item name="Search" href="search-app/index.html"/>
-            <item name="Editor" href="editor-app/index.html"/>
-            <item name="Graph2MIF" href="graph2mif-server/index.html"/>
-            <item name="HierarchView" href="hierarch-view-app/index.html"/>
-            <item name="Mine" href="mine-app/index.html"/>
-            <item name="Predict" href="predict-app/index.html"/>
-            <item name="StatisticView" href="statistic-view/index.html"/>
-        </menu>
-
-        <menu name="Web Services">
-            <item name="Search Web Service">
-                <item name="Service" href="search-ws/index.html"/>
-                <item name="Client" href="search-wsclient/index.html"/>
+        <menu name="Modules">
+            <item name="Libraries">
+                <item name="Intact Core" href="intact-core/index.html"/>
+                <item name="App Commons" href="app-commons/index.html"/>
+                <item name="Search Engine" href="search-engine/index.html"/>
+                <item name="Data Conversion" href="data-conversion/index.html"/>
+                <item name="Sanity Checker" href="sanity-checker/index.html"/>
             </item>
-            <item name="Graph2MIF Client" href="graph2mif-client/index.html"/>
-            <item name="Tulip Web Service">
-                <item name="Service" href="tulip-ws/index.html"/>
-                <item name="Client" href="tulip-client/index.html"/>
+
+            <item name="Web Applications">
+                <item name="Search" href="search-app/index.html"/>
+                <item name="Editor" href="editor-app/index.html"/>
+                <item name="Graph2MIF" href="graph2mif-server/index.html"/>
+                <item name="HierarchView" href="hierarch-view-app/index.html"/>
+                <item name="Mine" href="mine-app/index.html"/>
+                <item name="Predict" href="predict-app/index.html"/>
+                <item name="StatisticView" href="statistic-view/index.html"/>
             </item>
-        </menu>
 
-         <menu name="Maven Plugins">
-            <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
-            <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
-            <item name="Uniprot Line Export" href="maven-plugins/maven-uniprotexport-plugin/index.html"/>
-            <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
+            <item name="Web Services">
+                <item name="Search Web Service">
+                    <item name="Service" href="search-ws/index.html"/>
+                    <item name="Client" href="search-wsclient/index.html"/>
+                </item>
+                <item name="Graph2MIF Client" href="graph2mif-client/index.html"/>
+                <item name="Tulip Web Service">
+                    <item name="Service" href="tulip-ws/index.html"/>
+                    <item name="Client" href="tulip-client/index.html"/>
+                </item>
+            </item>
 
-             <item name="Internal">
-                <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
-             </item>
+            <item name="Maven Plugins">
+                <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
+                <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
+                <item name="Uniprot Line Export" href="maven-plugins/maven-uniprotexport-plugin/index.html"/>
+                <item name="Editor Topics" href="maven-plugins/maven-editortopics-plugin/index.html"/>
+
+                <item name="Internal">
+                    <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
+                </item>
+            </item>
         </menu>
 
         <menu name="Developers">
