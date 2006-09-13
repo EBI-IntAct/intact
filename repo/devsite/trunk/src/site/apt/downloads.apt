@@ -1,0 +1,16 @@
+ -----
+ Downloads
+ -----
+ Bruno Aranda
+ -----
+ 13 Sep 2006
+ -----
+
+Downloads
+
+ Currently, no binary files are available, so you will have to generate your binaries using Maven. You can download
+ the stable module versions from {{{http://sourceforge.net/project/showfiles.php?group_id=62732}SourceForge}}.
+
+ If you prefer bleeding-edge code, you can either check the code from
+ the Subversion repository (see the <Project Information> \> <Source Repository> section of the module site
+ you want to build), or just download the {{{http://www.ebi.ac.uk/~intact/nightly}nightly generated bundles}}.
