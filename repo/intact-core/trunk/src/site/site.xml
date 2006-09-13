@@ -22,14 +22,19 @@
     <body>
         <links>
             <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
+            <item name="Development Site" href="http://www.ebi.ac.uk/~intact/devsite"/>
         </links>
+
+        <menu name="Site">
+            <item name="Go Back Home" href="http://www.ebi.ac.uk/~intact/devsite" />
+        </menu>
 
         <menu name="Development">
             <item name="Data Access">
                 <item name="DAOs" href="data/daos.html"/>
                 <item name="IDs Generation" href="data/idgeneration.html"/>
+                <item name="Migration from OJB to Hibernate" href="data/migrationOJB2Hibernate.html"/>
             </item>
-            <item name="Migration from OJB to Hibernate" href="data/migrationOJB2Hibernate.html"/>
         </menu>
         <!--
         <menu name="Maven 2.0">
