@@ -39,13 +39,14 @@ Using existing modules in your project
  you have to include this dependency in your pom.xml
 
 +---------------+
-<!-- EBI repositories -->
 <dependencies>
+    ...
     <dependency>
         <groupId>uk.ac.ebi.intact.app.search</groupId>
         <artifactId>search-wsclient</artifactId>
         <version>1.0.1</version>
     </dependency>
+    ...
 </dependencies>
 +--------------------+
 
