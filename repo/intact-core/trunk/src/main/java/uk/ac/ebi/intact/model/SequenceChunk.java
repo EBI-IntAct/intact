@@ -5,11 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Id;
-import javax.persistence.Column;
-import java.io.Serializable;
+import org.hibernate.annotations.GenericGenerator;
+
+import javax.persistence.*;
 
 /**
  * Represents a crossreference to another database.
@@ -19,7 +17,7 @@ import java.io.Serializable;
  */
 @Entity
 @Table(name = "ia_sequence_chunk")
-public class SequenceChunk implements Serializable {
+public class SequenceChunk extends AbstractAuditable  {
 
     ///////////////////////////////////////
     //attributes
@@ -32,7 +30,8 @@ public class SequenceChunk implements Serializable {
     /**
      * To who belongs that chunk.
      */
-    private String parentAc;
+    private Polymer parent;
+    //private String parentAc;
 
     /**
      * The content of the sequence chunk.
@@ -57,6 +56,8 @@ public class SequenceChunk implements Serializable {
     ///////////////////////////////////////
     // associations
     @Id
+    @GeneratedValue(generator="intact-id")
+    @GenericGenerator(name="intact-id", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
     public String getAc() {
         return ac;
     }
@@ -67,16 +68,28 @@ public class SequenceChunk implements Serializable {
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Column(name = "parent_ac")
+    /*
+    @Column(name = "parent_ac", insertable = false, updatable = false)
     public String getParentAc() {
         return parentAc;
     }
 
     public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
+    }  */
+
+    @ManyToOne (targetEntity = PolymerImpl.class)
+    @JoinColumn(name = "parent_ac")
+    public Polymer getParent() {
+        return parent;
     }
 
-    @Column(name = "sequence_chunk")
+    public void setParent(Polymer parent)
+    {
+        this.parent = parent;
+    }
+
+    @Column(name = "sequence_chunk", length = PolymerImpl.MAX_SEQ_LENGTH_PER_CHUNK)
     public String getSequenceChunk() {
         return sequenceChunk;
     }
