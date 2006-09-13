@@ -72,7 +72,7 @@ Module Overview
  <<Web information Sites>>:
 
 *-----+------------------------------------------------------------------+
-| {{{devsite/index.html}devsite}} | root site containing development information |
+| {{{index.html}devsite}} | root site containing development information |
 *-----+------------------------------------------------------------------+
 | {{{intact-site/index.html}intact-site}} | the public IntAct web site |
 *-----+------+
