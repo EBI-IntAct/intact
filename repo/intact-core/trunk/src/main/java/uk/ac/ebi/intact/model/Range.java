@@ -102,12 +102,10 @@ public class Range extends BasicObjectImpl {
      * TODO Comments
      */
     private CvFuzzyType fromCvFuzzyType;
-    private String fromCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
     /**
      * TODO Comments
      */
     private CvFuzzyType toCvFuzzyType;
-    private String toCvFuzzyTypeAc;  //get rid of this later with OJB 'anonymous'
 
     private Feature feature;
 
