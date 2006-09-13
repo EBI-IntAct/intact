@@ -21,13 +21,6 @@ public class Annotation extends BasicObjectImpl {
     ///////////////////////////////////////
     //attributes
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    private String cvTopicAc;
-
-    // replaced by cvTopicAc conform to synchron specifications
-    private String topicAc;
-
     /**
      * Text describing one aspect of the annotation of
      * an object.
@@ -93,7 +86,7 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Column(name = "description")
+    @Column(name = "description", length = 4000)
     public String getAnnotationText() {
         return annotationText;
     }

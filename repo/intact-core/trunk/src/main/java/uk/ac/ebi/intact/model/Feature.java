@@ -26,7 +26,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_feature")
 @EditorTopic
-public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editable{
+public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editable {
 
 
     //------------------- attributes -------------------------------
@@ -35,7 +35,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
      * The Substrate a domain belongs to.
      */
     private Component component;
-    private String componentAc;     //can get rid of this later using OJB 'anonymous'
+
 
     /**
  * <p>
@@ -54,7 +54,6 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
  *
  */
     private Feature binds;
-    private String bindsAc;     //can get rid of this later using OJB 'anonymous'
 
     /**
      *  The List of ranges applicable to a Feature. The elements are
@@ -67,13 +66,11 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
      *  TODO comments
      */
     private CvFeatureIdentification cvFeatureIdentification;
-    private String featureIdentAc;     //can get rid of this later using OJB 'anonymous'
 
     /**
      * TODO comments
      */
     private CvFeatureType cvFeatureType;
-    private String featureTypeAc;     //can get rid of this later using OJB 'anonymous'
 
 
     //---------------------------- constructors -----------------------------------
@@ -176,7 +173,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
      * Provides the List of Range objects related to  a Feature instance.
      * @return A List of Ranges (expected to be non-empty)
      */
-    @OneToMany (mappedBy = "feature")
+    @OneToMany (mappedBy = "feature", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     public Collection<Range> getRanges() {
         return ranges;
     }
@@ -218,7 +215,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
     public Collection<FeatureXref> getXrefs() {
         return super.getXrefs();
     }
-    
+
     /**
      * Equality for Features is currently based on owner, shortLabel, Component
      * and any non-null Ranges. NOTE: we cannot check equality for a related

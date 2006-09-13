@@ -10,11 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.lucene.Text;
 import org.hibernate.validator.Length;
+import org.hibernate.validator.NotNull;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.OneToMany;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -98,8 +96,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
 
     ///////////////////////////////////////
     //access methods for attributes
-
     @Length(min = 1, max = MAX_SHORT_LABEL_LEN)
+    @NotNull
     @Text
     public String getShortLabel() {
         return shortLabel;
@@ -133,6 +131,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
         return shortLabel;
     }
 
+    @Column(length = 250)
     public String getFullName() {
         return fullName;
     }
