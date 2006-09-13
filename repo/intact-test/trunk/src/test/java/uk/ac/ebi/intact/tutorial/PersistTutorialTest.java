@@ -19,6 +19,9 @@ import uk.ac.ebi.intact.AbstractIntactTest;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.util.Collection;
 import java.io.IOException;
@@ -70,6 +73,14 @@ public class PersistTutorialTest extends AbstractIntactTest
        cvXrefQualifierAc = cvXrefQualifier.getAc();
     }
 
+    public void testCreateCvInteractorType() throws Exception
+    {
+       CvInteractionType cvInteractionType = new CvInteractionType(getInstitution(), CvInteractorType.PROTEIN);
+       getDaoFactory().getCvObjectDao(CvInteractionType.class).persist(cvInteractionType);
+
+       assertNotNull(cvInteractionType.getAc());
+    }
+
     public void testPersistBioSource() throws Exception
     {
         BioSource organism = new BioSource(getInstitution(), ORGANISM_LABEL, ORGANISM_TAXID);
@@ -98,6 +109,41 @@ public class PersistTutorialTest extends AbstractIntactTest
 
     }
 
+     public void testSaveProtein()
+     {
+         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+
+         ProteinDao proteinDao = daoFactory.getProteinDao();
+         BioSourceDao biosourceDao = daoFactory.getBioSourceDao();
+         CvObjectDao<CvInteractorType> cvObjectDao = daoFactory.getCvObjectDao(CvInteractorType.class);
+         ProteinImpl protein = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
+                 biosourceDao.getByShortLabel(ORGANISM_LABEL),
+                 "test-protein-"+System.currentTimeMillis(),
+                 cvObjectDao.getByShortLabel(CvInteractorType.PROTEIN));
+
+         StringBuilder sb = new StringBuilder(1500);
+         for (int i=0; i<1000; i++)
+         {
+             sb.append("A");
+         }
+
+         for (int i=0; i<500; i++)
+         {
+             sb.append("B");
+         }
+
+         protein.setSequence(sb.toString());
+         try
+         {
+             proteinDao.saveOrUpdate(protein);
+         }
+         catch (Exception e)
+         {
+             e.printStackTrace();
+             fail();
+         }
+     }
+
     public void testSearchXref() throws Exception
     {
         Collection<Xref> xrefs = getDaoFactory().getXrefDao().getByPrimaryId("testPrimaryId");
@@ -107,7 +153,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         assertNotNull(xref);
         log.debug("Xref: "+xref.getAc()+" ParentAc: "+xref.getParent().getAc());
     }
-
+    /*
     public void testSearchIndex() throws Exception
     {
         try
@@ -138,7 +184,7 @@ public class PersistTutorialTest extends AbstractIntactTest
         }
 
     }
-
+    */
     private Institution getInstitution()
     {
         return IntactContext.getCurrentInstance().getInstitution();
