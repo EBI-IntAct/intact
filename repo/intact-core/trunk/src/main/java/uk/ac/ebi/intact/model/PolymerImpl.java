@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactException;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +26,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * As the maximum size of database objects is limited, the sequence is represented as
      * an array of strings of maximum length.
      */
-    protected static int ourMaxSeqLength = 1000;
+    public static final int MAX_SEQ_LENGTH_PER_CHUNK = 1000;
 
     //attributes
 
@@ -45,25 +43,6 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
      * the sequence should not be repeated.
      */
     private List<SequenceChunk> sequenceChunks = new ArrayList<SequenceChunk>();
-
-    // Static methods
-
-    /**
-     * @return returns the maximum sequence size.
-     */
-    public static int getMaxSequenceLength() {
-        return ourMaxSeqLength;
-    }
-
-    /**
-     * Sets the maximum sequence size. <b>This method is only used by the unit
-     * tester for this class</b>.
-     *
-     * @param max the new sequence value.
-     */
-    public static void setMaxSequenceLength(int max) {
-        ourMaxSeqLength = max;
-    }
 
     // Constructors
 
@@ -134,14 +113,14 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         }
 
         // Note the use of integer operations
-        int chunkCount = aSequence.length() / ourMaxSeqLength;
-        if (aSequence.length() % ourMaxSeqLength > 0) {
+        int chunkCount = aSequence.length() / MAX_SEQ_LENGTH_PER_CHUNK;
+        if (aSequence.length() % MAX_SEQ_LENGTH_PER_CHUNK > 0) {
             chunkCount++;
         }
 
         for (int i = 0; i < chunkCount; i++) {
-            String chunk = aSequence.substring(i * ourMaxSeqLength,
-                                               Math.min((i + 1) * ourMaxSeqLength, aSequence.length()));
+            String chunk = aSequence.substring(i * MAX_SEQ_LENGTH_PER_CHUNK,
+                                               Math.min((i + 1) * MAX_SEQ_LENGTH_PER_CHUNK, aSequence.length()));
 
             if (chunkPool != null && chunkPool.size() > 0) {
                 // recycle chunk
@@ -167,12 +146,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         this.crc64 = crc64;
     }
 
-    @OneToMany
-    @JoinTable(
-            name="ia_sequence_chunk",
-            joinColumns = { @JoinColumn( name="parent_ac") },
-            inverseJoinColumns = @JoinColumn( name="ac")
-    )
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     @OrderBy (value = "sequenceIndex")
     public List<SequenceChunk> getSequenceChunks() {
         return sequenceChunks;
@@ -186,7 +160,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     protected void addSequenceChunk(SequenceChunk sequenceChunk) {
         if (!this.sequenceChunks.contains(sequenceChunk)) {
             this.sequenceChunks.add(sequenceChunk);
-            sequenceChunk.setParentAc(this.getAc());
+            sequenceChunk.setParent(this);
         }
     }
 
@@ -194,7 +168,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         boolean removed = this.sequenceChunks.remove(sequenceChunk);
         if (removed)
         {
-            sequenceChunk.setParentAc(null);
+            sequenceChunk.setParent(this);
         }
     }
 
