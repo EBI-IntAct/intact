@@ -5,6 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.IndexColumn;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,7 +149,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     }
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @OrderBy (value = "sequenceIndex")
+    @IndexColumn(name = "sequenceIndex")
     public List<SequenceChunk> getSequenceChunks() {
         return sequenceChunks;
     }

@@ -28,8 +28,6 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements E
     ///////////////////////////////////////
     // associations
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
     private String detectionMethodAc;
     private String identMethodAc;
     private String relatedExperimentAc;

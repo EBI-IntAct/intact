@@ -5,12 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.FetchType;
+import javax.persistence.*;
 
 /**
  * An alternative name for the object.
@@ -25,7 +20,7 @@ import javax.persistence.FetchType;
  */
 @Entity
 @Table(name = "ia_alias")
-public class Alias extends BasicObjectImpl {
+public class Alias extends BasicObjectImpl  {
 
     private static final int MAX_ALIAS_NAME_LEN = 30;
 
@@ -44,7 +39,6 @@ public class Alias extends BasicObjectImpl {
      * the type of that alias.
      */
     private CvAliasType cvAliasType;
-    public String cvAliasTypeAc; // only needed for the OJB mapping.
 
     /**
      * Accession id to the Object to which refers that alias.
@@ -82,7 +76,7 @@ public class Alias extends BasicObjectImpl {
 
     ///////////////////////////////////////
     //access methods for attributes
-
+    @Column(length = 30)
     public String getName() {
         return name;
     }
@@ -102,7 +96,7 @@ public class Alias extends BasicObjectImpl {
         this.name = name;
     }
 
-    @Column(name = "parent_ac")
+    @Column(name = "parent_ac", length = 30)
     public String getParentAc() {
         return parentAc;
     }

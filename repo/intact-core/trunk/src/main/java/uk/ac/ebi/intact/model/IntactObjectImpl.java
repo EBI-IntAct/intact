@@ -30,6 +30,8 @@ public abstract class IntactObjectImpl extends AbstractAuditable implements Inta
      */
     protected String ac;
 
+    private boolean deprecated;
+
     public IntactObjectImpl() {
     }
 
@@ -53,6 +55,16 @@ public abstract class IntactObjectImpl extends AbstractAuditable implements Inta
      */
     public void setAc( String ac ) {
         this.ac = ac;
+    }
+
+    public boolean isDeprecated()
+    {
+        return deprecated;
+    }
+
+    public void setDeprecated(boolean deprecated)
+    {
+        this.deprecated = deprecated;
     }
 
 

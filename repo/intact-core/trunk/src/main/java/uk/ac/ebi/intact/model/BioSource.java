@@ -5,14 +5,13 @@
  */
 package uk.ac.ebi.intact.model;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.lucene.Indexed;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import org.hibernate.annotations.Cascade;
-import org.hibernate.lucene.Indexed;
 
 /**
  * Represents a biological source. TODO write a proper comment
@@ -75,13 +74,6 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
      */
     private CvCompartment cvCompartment;
 
-    /**
-     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
-     * object mapping purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
-     */
-    @Deprecated
     public BioSource() {
         //super call sets creation time data
         super();
@@ -130,7 +122,7 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
         return super.getXrefs();
     }
     
-
+    @Column(length = 30)
     public String getTaxId() {
         return taxId;
 
@@ -154,24 +146,6 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
 
     ///////////////////////////////////////
     // access methods for associations
-    @Transient
-    public CvCellCycle getCvCellCycle() {
-        return cvCellCycle;
-    }
-
-    public void setCvCellCycle( CvCellCycle cvCellCycle ) {
-        this.cvCellCycle = cvCellCycle;
-    }
-
-    @Transient
-    public CvDevelopmentalStage getCvDevelopmentalStage() {
-        return cvDevelopmentalStage;
-    }
-
-    public void setCvDevelopmentalStage( CvDevelopmentalStage cvDevelopmentalStage ) {
-        this.cvDevelopmentalStage = cvDevelopmentalStage;
-    }
-
     @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "tissue_ac")
     public CvTissue getCvTissue() {
@@ -190,15 +164,6 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
 
     public void setCvCellType( CvCellType cvCellType ) {
         this.cvCellType = cvCellType;
-    }
-
-    @Transient
-    public CvCompartment getCvCompartment() {
-        return cvCompartment;
-    }
-
-    public void setCvCompartment( CvCompartment cvCompartment ) {
-        this.cvCompartment = cvCompartment;
     }
 
     @Column(name = "celltype_ac", insertable = false, updatable = false)

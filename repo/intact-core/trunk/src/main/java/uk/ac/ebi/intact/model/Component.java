@@ -32,8 +32,6 @@ public class Component extends BasicObjectImpl {
     ///////////////////////////////////////
     //attributes
 
-    // Synchron
-    // TODO: should be move out of the model.
     private String interactorAc;
     private String interactionAc;
     private String cvComponentRoleAc;
