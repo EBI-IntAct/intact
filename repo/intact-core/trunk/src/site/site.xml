@@ -30,6 +30,7 @@
         </menu>
 
         <menu name="Development">
+            <item name="IntactContext" href="intact_context.html"/>
             <item name="Data Access">
                 <item name="DAOs" href="data/daos.html"/>
                 <item name="IDs Generation" href="data/idgeneration.html"/>
