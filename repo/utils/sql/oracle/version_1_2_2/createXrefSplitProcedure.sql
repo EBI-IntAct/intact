@@ -1,5 +1,7 @@
-create or replace FUNCTION  proc_split_xref() RETURNS VOID AS $$ -- cursor over all Xrefs
-DECLARE xref_cur CURSOR  FOR SELECT * FROM ia_xref;
+create or replace PROCEDURE proc_split_xref AS -- cursor over all Xrefs
+CURSOR xref_cur IS
+SELECT *
+FROM ia_xref;
 
 v_xref_rec ia_xref%ROWTYPE;
 
@@ -28,7 +30,7 @@ BEGIN
   OPEN xref_cur;
   LOOP
       FETCH xref_cur INTO v_xref_rec;
-      EXIT WHEN   NOT FOUND;
+      EXIT WHEN xref_cur % NOTFOUND;
 
       -- and now process a single Xref...
 
@@ -300,10 +302,9 @@ BEGIN
                   -- Nothing found, delete this orphan xref
                   --
 
-                  -- DBMS_OUTPUT.PUT_LINE('Deleting orphan Xref...');
-                  raise debug 'Deleting orphan Xref...';
-                  -- DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_xref WHERE ac = ''v_xref_ac''');
-				  raise debug 'DELETE FROM ia_xref WHERE ac = \'%\'', v_xref_rec.AC;
+                  DBMS_OUTPUT.PUT_LINE('Deleting orphan Xref...');
+                  DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_xref WHERE ac = ''v_xref_ac''');
+
                 END IF;  -- publications
               END IF;  -- feature
             END IF;  -- biosource
@@ -316,6 +317,6 @@ BEGIN
 CLOSE xref_cur;
 
 END;
-$$ LANGUAGE plpgsql;
+/
 
-select   proc_split_xref() ;
+exit

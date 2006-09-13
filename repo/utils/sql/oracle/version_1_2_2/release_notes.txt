@@ -1,6 +1,4 @@
 VERSION 1.2.2
-Adaptation of Oracle scripts for PostgreSQL
-
 
 REQUEST
 * We need different Xref tables, one for each parent type, so hibernate handles well the database mapping
@@ -8,8 +6,6 @@ and constraints are enabled for the parent_ac field.
 
 
 TECHNICAL CHANGES
-    * Added 6 new tables, with the same structure than IA_Xref: IA_BioSource_Xref, IA_Experiment_Xref,
-      IA_ControlledVocab_Xref, IA_Feature_Xref, IA_Interactor_Xref, IA_Publication_Xref
+    * Added 6 new tables, with the same structure than IA_Xref: IA_BioSourceXref, IA_ExperimentXref, IA_ControlledVocabXref, IA_FeatureXref, IA_InteractorXref, IA_PublicationXref
     * Created synonims for those tables
     * Granted the correct permissions
-    * PL*SQL procedure allowing to split IA_XREF into type-specific tables (e.g. IA_INTERACTOR_XREF...)
