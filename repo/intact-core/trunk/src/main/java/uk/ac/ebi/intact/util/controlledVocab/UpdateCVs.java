@@ -8,13 +8,11 @@ package uk.ac.ebi.intact.util.controlledVocab;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import uk.ac.ebi.intact.util.controlledVocab.model.*;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -1498,22 +1496,28 @@ public class UpdateCVs {
             annotFilename = args[ 1 ];
         }
 
-        /////////////////
-        // 1. Parsing
-
-        PSILoader psi = new PSILoader();
-        IntactOntology ontology = psi.parseOboFile( new File( oboFilename ) );
-        ontology.print();
-
-        System.out.println( "====================================================================" );
-
-        ////////////////////
-        // 2. Updating
-
         // 2.1 Connect to the database.
         String instanceName = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName();
         System.out.println( "Database: " + instanceName );
         System.out.println( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
+
+        loadFile(new File(oboFilename), new File(annotFilename));
+
+    }
+
+    public static void loadFile(File oboFile) throws PsiLoaderException
+    {
+        loadFile(oboFile, null);
+    }
+
+    public static void loadFile(File oboFile, File annotFile) throws PsiLoaderException
+    {
+        /////////////////
+        // 1. Parsing
+
+        PSILoader psi = new PSILoader();
+        IntactOntology ontology = psi.parseOboFile( oboFile );
+        ontology.print();
 
         /////////////////////////////
         // 2.2 Checking on sequence
@@ -1537,11 +1541,11 @@ public class UpdateCVs {
         // 2.6 Update obsolete terms
         listOrphanObsoleteTerms( ontology );
 
-        if ( annotFilename != null ) {
+        if ( annotFile != null ) {
             try {
-                updateAnnotationsFromFile( new File( annotFilename ) );
+                updateAnnotationsFromFile( annotFile );
             } catch ( IOException e ) {
-                System.err.println( "Could not Update CVs' annotations." );
+                log.error( "Could not Update CVs' annotations." );
                 e.printStackTrace();
             }
         }

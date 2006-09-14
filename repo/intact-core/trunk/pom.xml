@@ -186,6 +186,14 @@
             <artifactId>ols</artifactId>
             <version>1.6</version>
         </dependency>
+
+        <!-- Used by the OBO import -->
+        <dependency>
+            <groupId>org.geneontology</groupId>
+            <artifactId>oboedit</artifactId>
+            <version>beta8</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <!-- EBI repositories -->
