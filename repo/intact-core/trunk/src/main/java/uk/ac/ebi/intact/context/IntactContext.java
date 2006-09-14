@@ -38,8 +38,13 @@ public class IntactContext implements Serializable
     {
         if (currentInstance.get() == null)
         {
+            // stack trace element to know from where this method was called
+            StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
+
             log.warn("Current instance of IntactContext is null. Initializing with StandaloneSession," +
-                    "because probably this application is not a web application");
+                    "because probably this application is not a web application.\nCalled at:\n\t" +
+                    ste.toString());
+
             initStandaloneContext();
         }
 

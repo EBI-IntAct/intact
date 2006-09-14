@@ -77,12 +77,12 @@ public class IntactOntology {
     /**
      * Pool of all term contained in that ontology (contains CvTerm)
      */
-    private Collection cvTerms = new ArrayList( 1024 );
+    private Collection<CvTerm> cvTerms = new ArrayList<CvTerm>( 1024 );
 
     /**
      * Collection of term having no parent or children.
      */
-    private Collection orphanTerms = new ArrayList( 64 );
+    private Collection<CvTerm> orphanTerms = new ArrayList<CvTerm>( 64 );
 
     /**
      * Mapping of all CvTerm by their ID (String -> CvTerm).

@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.util.controlledVocab;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
@@ -34,6 +36,8 @@ import java.util.regex.Pattern;
  * @since <pre>30-Sep-2005</pre>
  */
 public class PSILoader extends AbstractLoader {
+
+    private static final Log log = LogFactory.getLog(PSILoader.class);
 
     /////////////////////////////
     // AbstractLoader's methods
@@ -198,6 +202,10 @@ public class PSILoader extends AbstractLoader {
                 cvTerm.setDefinition( definition );
             }
 
+            if (log.isDebugEnabled()) {
+                log.debug("Term: "+id+" ("+shortlabel+")");
+            }
+
             // check for Xrefs: pubmed, resid...
             if ( term.getXrefs() != null ) {
 
@@ -214,6 +222,10 @@ public class PSILoader extends AbstractLoader {
                     String type = escapeXMLTags( dbXref.getDbName() );
                     String accession = escapeXMLTags( dbXref.getAccession() );
                     String desc = escapeXMLTags( dbXref.getDescription() );
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("\tType: "+type+"; Accession: "+accession+"; Desc: "+desc+"; Xref type: "+dbXref.getXrefType());
+                    }
 
                     switch ( dbXref.getXrefType() ) {
 
