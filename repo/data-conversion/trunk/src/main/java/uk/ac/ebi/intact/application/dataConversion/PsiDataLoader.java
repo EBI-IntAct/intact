@@ -374,6 +374,8 @@ public class PsiDataLoader {
                     try {
                         EntrySetPersister.persist( entrySet );
 
+                        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+
                         if ( messages.checkerMessageExists() ) {
 
                             // display persister messages.
