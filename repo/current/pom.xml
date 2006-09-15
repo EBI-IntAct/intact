@@ -75,7 +75,6 @@
                 <module>predict-app</module>
                 <module>statistic-view</module>
                 <module>confidence-score</module>
-                <module>cdb-wsclient</module>
             </modules>
         </profile>
     </profiles>
