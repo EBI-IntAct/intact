@@ -44,6 +44,11 @@ public class AnnotatedObjectDaoTest extends TestCase {
         AnnotatedObjectDao<Experiment> annotatedObjectDao = daoFactory.getAnnotatedObjectDao(Experiment.class);
         List annotatedObjects = annotatedObjectDao.getByAnnotationAc("EBI-648094");
         assertEquals(annotatedObjects.size(),37);
+
+        ExperimentDao experimentDao = daoFactory.getExperimentDao();
+        annotatedObjects = experimentDao.getByAnnotationAc("EBI-648094");
+        assertEquals(annotatedObjects.size(),37);
+        
     }
 
     public void testGetByAnnotationTopicAndDescription()
