@@ -216,6 +216,19 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
         return super.getXrefs();
     }
 
+    @ManyToMany
+    @JoinTable(
+            name = "ia_feature2annot",
+            joinColumns = {@JoinColumn(name = "feature_ac")},
+            inverseJoinColumns = {@JoinColumn(name = "annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
+
     /**
      * Equality for Features is currently based on owner, shortLabel, Component
      * and any non-null Ranges. NOTE: we cannot check equality for a related
