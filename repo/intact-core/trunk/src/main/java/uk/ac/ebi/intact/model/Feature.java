@@ -324,6 +324,17 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
     void setComponentForClone(Component component) {
         this.component = component;
     }
+
+     @ManyToMany
+    @JoinTable(
+            name = "ia_exp2annot",
+            joinColumns = { @JoinColumn(name = "experiment_ac") },
+            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
+    )
+    @Override
+    public Collection<Annotation> getAnnotations() {
+        return super.getAnnotations();
+    }
 }
 
 
