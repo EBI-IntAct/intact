@@ -23,7 +23,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_experiment")
 @EditorTopic
-public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements Editable {
+public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAlias> implements Editable {
 
     ///////////////////////////////////////
     // associations
@@ -276,11 +276,17 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref> implements E
     }
 
 
-    @OneToMany (mappedBy = "parent")
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
     @Override
     public Collection<ExperimentXref> getXrefs() {
         return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<ExperimentAlias> getAliases() {
+        return super.getAliases();
     }
 
     /**

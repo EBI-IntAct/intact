@@ -14,7 +14,7 @@ import java.util.Collection;
  *
  * @see uk.ac.ebi.intact.model.Interactor
  */
-public interface Interactor extends AnnotatedObject<InteractorXref> {
+public interface Interactor extends AnnotatedObject<InteractorXref,InteractorAlias> {
 
     public BioSource getBioSource();
 

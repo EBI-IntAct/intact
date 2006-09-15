@@ -10,9 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.DuplicateLabelException;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -743,7 +742,7 @@ public class GoUtils {
                 current.getXrefs().clear();
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().deleteAll( current.getAnnotations() );
                 current.getAnnotations().clear();
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().deleteAll( current.getAliases() );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).deleteAll( current.getAliases() );
                 current.getAliases().clear();
             }
         }

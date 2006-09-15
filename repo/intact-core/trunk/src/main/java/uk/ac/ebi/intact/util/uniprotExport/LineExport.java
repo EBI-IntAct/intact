@@ -1064,7 +1064,7 @@ public class LineExport {
         return geneName;
     }
 
-    public List<Alias> selectAliasByCvTopic( Collection<Alias> aliases, CvAliasType aliasType ) {
+    public List<Alias> selectAliasByCvTopic( Collection<? extends Alias> aliases, CvAliasType aliasType ) {
 
         List<Alias> result = null;
 

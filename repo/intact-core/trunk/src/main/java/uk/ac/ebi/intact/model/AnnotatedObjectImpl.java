@@ -12,7 +12,9 @@ import org.hibernate.lucene.Text;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,7 +24,7 @@ import java.util.Collection;
  * @author hhe
  */
 @MappedSuperclass
-public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImpl implements AnnotatedObject<T> {
+public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> extends BasicObjectImpl implements AnnotatedObject<T,A> {
 
     private static final Log log = LogFactory.getLog(AnnotatedObjectImpl.class);
 
@@ -60,7 +62,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
      * Hold aliases of an Annotated object.
      * ie. alternative name for the current object.
      */
-    private Collection<Alias> aliases = new ArrayList<Alias>();
+    private Collection<A> aliases = new ArrayList<A>();
 
     /**
      *
@@ -198,13 +200,12 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
     ///////////////////
     // Alias related
     ///////////////////
-    public void setAliases( Collection<Alias> someAliases ) {
+    public void setAliases( Collection<A> someAliases ) {
         this.aliases = someAliases;
     }
 
-    @OneToMany
-    @JoinColumn (name = "parent_ac", referencedColumnName = "ac", insertable = false, updatable = false)
-    public Collection<Alias> getAliases() {
+    @Transient
+    public Collection<A> getAliases() {
         return aliases;
     }
 
@@ -212,13 +213,13 @@ public abstract class AnnotatedObjectImpl<T extends Xref> extends BasicObjectImp
      * Adds an alias to the object. The alis will only be added
      * if an equivalent alias is not yet part of the object.
      */
-    public void addAlias( Alias alias ) {
+    public void addAlias( A alias ) {
         if( !this.aliases.contains( alias ) ) {
             this.aliases.add( alias );
         }
     }
 
-    public void removeAlias( Alias alias ) {
+    public void removeAlias( A alias ) {
         this.aliases.remove( alias );
     }
 

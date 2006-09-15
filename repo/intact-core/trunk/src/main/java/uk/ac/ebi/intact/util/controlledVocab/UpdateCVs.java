@@ -83,6 +83,9 @@ public class UpdateCVs {
 
             // single class update
             update( ontology, aClass );
+
+            // commit tx after updating each class
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
     }
 
@@ -269,7 +272,6 @@ public class UpdateCVs {
                         log.debug( "\t\t Adding Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
                                             " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]" );
 
-                        // TODO may need to do at at SQL level
                         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( dagObject );
                         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( intactChild );
                     }
@@ -580,7 +582,7 @@ public class UpdateCVs {
 
                 // persist it
                 cvObjectDao.persist( cv );
-                System.out.println( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + shortlabel + " )." );
+                log.debug( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + shortlabel + " )." );
 
                 // create MI Xref if necessary
                 if ( mi != null && mi.startsWith( "MI:" ) ) {
@@ -826,7 +828,7 @@ public class UpdateCVs {
 
             CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+            //IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             log.debug( "\t\t Added PSI Xref (" + id + ")" );
         }
 
@@ -1154,7 +1156,7 @@ public class UpdateCVs {
                 }
             }
 
-            Alias alias = new Alias( institution, cvObject, specificType, synonym.getName() );
+            CvObjectAlias alias = new CvObjectAlias( institution, cvObject, specificType, synonym.getName() );
 
             if ( ! alias.getName().equals( synonym.getName() ) ) {
                 // the synonym was truncated, we don't import these.
@@ -1165,7 +1167,7 @@ public class UpdateCVs {
 
             if ( ! cvObject.getAliases().contains( alias ) ) {
                 cvObject.addAlias( alias );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist( alias );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist( alias );
                 log.debug("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )" );
             }
         }
@@ -1342,7 +1344,6 @@ public class UpdateCVs {
                 final String applyToChildrenValue = stringTokenizer.nextToken(); // 7. apply to children
 
                 try {
-                    final Class clazz = Class.forName( type );
 
                     boolean applyToChildren = false;
                     if ( "true".equalsIgnoreCase( applyToChildrenValue.trim() ) ) {

@@ -7,13 +7,12 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.go;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.CvDagObject;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvObjectAlias;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -246,11 +245,11 @@ public class DagNode {
             }
 
             for (Iterator iter = myAliases.iterator(); iter.hasNext(); ) {
-                Alias alias = new Alias(owner, targetNode, aliasType, (String) iter.next());
+                CvObjectAlias alias = new CvObjectAlias(owner, targetNode, aliasType, (String) iter.next());
                 // Do the check to avoid creating duplicate aliases.
                 if (!targetNode.getAliases().contains(alias)) {
                     targetNode.addAlias(alias);
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist(alias);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist(alias);
                 }
             }
         }

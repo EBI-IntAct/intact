@@ -6,7 +6,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.Cascade;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
@@ -26,7 +25,7 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_feature")
 @EditorTopic
-public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editable {
+public class Feature extends AnnotatedObjectImpl<FeatureXref,FeatureAlias> implements Editable {
 
 
     //------------------- attributes -------------------------------
@@ -209,11 +208,27 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
         this.cvFeatureIdentification = cvFeatureIdentification;
     }
 
-    @OneToMany (mappedBy = "parent")
-    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Override
     public Collection<FeatureXref> getXrefs() {
         return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<FeatureAlias> getAliases() {
+        return super.getAliases();
+    }
+
+    @ManyToMany
+    @JoinTable(
+            name = "ia_feature2annot",
+            joinColumns = { @JoinColumn(name = "feature_ac") },
+            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
+    )
+    @Override
+    public Collection<Annotation> getAnnotations() {
+        return super.getAnnotations();
     }
 
     /**
@@ -323,17 +338,6 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref> implements Editabl
      */
     void setComponentForClone(Component component) {
         this.component = component;
-    }
-
-     @ManyToMany
-    @JoinTable(
-            name = "ia_exp2annot",
-            joinColumns = { @JoinColumn(name = "experiment_ac") },
-            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
-    )
-    @Override
-    public Collection<Annotation> getAnnotations() {
-        return super.getAnnotations();
     }
 }
 

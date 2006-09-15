@@ -5,8 +5,6 @@
  */
 package uk.ac.ebi.intact.model;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +18,7 @@ import java.util.Iterator;
  * @since <pre>11-May-2006</pre>
  */
 @Entity(name = "ia_publication")
-public class Publication extends AnnotatedObjectImpl<PublicationXref> implements Editable {
+public class Publication extends AnnotatedObjectImpl<PublicationXref,PublicationAlias> implements Editable {
 
     /**
      * PubMed Id of the publication.
@@ -101,11 +99,16 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref> implements
         return super.getAnnotations();
     }
 
-    @OneToMany (mappedBy = "parent")
-    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Override
     public Collection<PublicationXref> getXrefs() {
         return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<PublicationAlias> getAliases() {
+        return super.getAliases();
     }
     
     ////////////////////////////
