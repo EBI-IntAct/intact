@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -94,5 +95,17 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
                 .createAlias("components", "comp")
                 .createAlias("comp.interactor", "interactor")
                 .add(Restrictions.eq("interactor.ac", interactorAc)).list();
+    }
+
+    public List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2)
+    {
+        Query query = getSession().createQuery("SELECT i FROM InteractionImpl AS i, Component AS c1, Component AS c2 " +
+                "WHERE i.ac = c1.interactionAc AND i.ac = c2.interactionAc AND " +
+                "c1.interactorAc = :protAc1 AND c2.interactorAc = :protAc2");
+
+        query.setParameter("protAc1", protAc1);
+        query.setParameter("protAc2", protAc2);
+
+        return query.list();
     }
 }

@@ -39,14 +39,22 @@ public class InteractionDaoTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         interactionDao = null;
     }
 
-    public void testGetInteractionsByInteractorAc()
+    public void testGetInteractionsByInteractorAc() throws Exception
     {
         List<Interaction> interactions = interactionDao.getInteractionsByInteractorAc("EBI-12331");
         assertNotNull(interactions);
         assertEquals("Expected 20 interactions for interactor: EBI-12231 ", 20, interactions.size());
+    }
+
+    public void testGetInteractionsForProtPair() throws Exception
+    {
+        List<Interaction> interactions = interactionDao.getInteractionsForProtPair("EBI-1004115", "EBI-710997");
+        assertNotNull(interactions);
+        assertEquals("Expected 2 interactions for protein pair: EBI-1004115,EBI-710997", 2, interactions.size());
     }
 
 }
