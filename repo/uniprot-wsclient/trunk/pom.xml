@@ -14,21 +14,21 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.4</version>
+        <version>1.0.5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.citexplore</groupId>
-    <artifactId>cdb-wsclient</artifactId>
+    <groupId>uk.ac.ebi.uniprot</groupId>
+    <artifactId>uniprot-wsclient</artifactId>
     <packaging>war</packaging>
-    <version>7.0</version>
-    <!-- last released 1.0.4 -->
-    <name>CitExplore Web Service Client</name>
-    <description>A client for the citexplore web service</description>
+    <version>1.0-SNAPSHOT</version>
+    <!-- last released x -->
+    <name>Uniprot Web Service Client</name>
+    <description>A client for the uniprot web service</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/cdb-wsclient/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/cdb-wsclient/trunk</developerConnection>        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/cdb-wsclient/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-wsclient/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-wsclient/trunk</developerConnection>        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/uniprot-wsclient/trunk/</url>
     </scm>
 
 
@@ -39,7 +39,7 @@
                <artifactId>axistools-maven-plugin</artifactId>
                <version>1.0</version>
                <configuration>
-                  <packageSpace>uk.ac.ebi.cdb.wsclient</packageSpace>
+                  <packageSpace>uk.ac.ebi.uniprot.wsclient.generated</packageSpace>
                   <testCases>false</testCases>
                   <serverSide>true</serverSide>
                </configuration>

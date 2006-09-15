@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions
+		xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+		xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+		xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+		xmlns:tns="http://www.ebi.ac.uk/kraken"
+		targetNamespace="http://www.ebi.ac.uk/kraken">
+
+
+	<wsdl:types>
+		<xsd:schema targetNamespace="http://www.ebi.ac.uk/kraken"
+					xmlns:tns="http://www.ebi.ac.uk/kraken"
+					xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+			<xsd:complexType name="UniProtEntry">
+				<xsd:sequence>
+					<xsd:element name="primaryAccession" type="xsd:string"/>
+					<xsd:element name="secondaryAccession" maxOccurs="unbounded" type="xsd:string" minOccurs="0"/>
+					<xsd:element name="entryId" type="xsd:string"/>
+					<xsd:element name="geneName" maxOccurs="unbounded" type="xsd:string" minOccurs="0"/>
+					<xsd:element name="taxonomy" type="xsd:string"/>
+					<xsd:element name="description" type="xsd:string"/>
+					<xsd:element name="CRC64" type="xsd:string"/>
+					<xsd:element name="sequence" type="xsd:string"/>
+					<xsd:element name="sequenceLength" type="xsd:int"/>
+					<xsd:element name="crossReferences" maxOccurs="unbounded" type="tns:CrossReference" minOccurs="0"/>
+					<xsd:element name="spliceVariants" maxOccurs="unbounded" type="tns:SpliceVariant" minOccurs="0"/>
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="CrossReference">
+				<xsd:sequence>
+					<xsd:element name="name" type="xsd:string"/>
+					<xsd:element name="description" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:complexType name="SpliceVariant">
+				<xsd:sequence>
+					<xsd:element name="start" type="xsd:int"/>
+					<xsd:element name="end" type="xsd:int"/>
+					<xsd:element name="sequence" type="xsd:string"/>
+				</xsd:sequence>
+			</xsd:complexType>
+
+			<xsd:element name="primaryUniProtAccession" type="xsd:string"/>
+			<xsd:element name="uniProtEntry" type="tns:UniProtEntry"/>
+
+		</xsd:schema>
+
+	</wsdl:types>
+
+	<wsdl:message name="getEntry">
+		<wsdl:part name="accession" element="tns:primaryUniProtAccession"/>
+	</wsdl:message>
+
+	<wsdl:message name="getEntryResponse">
+		<wsdl:part name="entry" element="tns:uniProtEntry"/>
+	</wsdl:message>
+
+
+	<wsdl:portType name="IntactPort">
+
+		<wsdl:operation name="getEntry">
+			<wsdl:input message="tns:getEntry"/>
+			<wsdl:output message="tns:getEntryResponse"/>
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+	<wsdl:binding name="IntactBinding" type="tns:IntactPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+		<wsdl:operation name="getEntry">
+			<soap:operation soapAction=""/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+	<wsdl:service name="IntactService">
+		<wsdl:port name="Intact" binding="tns:IntactBinding">
+			<soap:address location="http://localhost:8080/service/intact"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>
+
