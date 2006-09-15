@@ -4,27 +4,43 @@ import junit.framework.TestCase;
 
 import java.rmi.RemoteException;
 
+import uk.ac.ebi.intact.search.wsclient.generated.InteractionInfo;
+
 public class SearchClientTest extends TestCase
 {
 
-    public void testClient()
+    public void testFindPartnersUsingUniprotIds() throws Exception
     {
-       SearchServiceClient client = new SearchServiceClient();
+        SearchServiceClient client = new SearchServiceClient();
+        String[] uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
 
-        try
+        for (String id : uniprotIds)
         {
-            String[] uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
-
-            for (String id : uniprotIds)
-            {
-                System.out.println(id);
-            }
+            System.out.println(id);
         }
-        catch (RemoteException e)
+    }
+
+    public void testGetInteractionInfoUsingIntactIds() throws Exception
+    {
+        SearchServiceClient client = new SearchServiceClient("http://localhost:8080/search-ws/services/SearchService");
+        InteractionInfo[] interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
+
+        for (InteractionInfo interInfo : interInfos)
         {
-            e.printStackTrace();
+            System.out.println(interInfo.getIntactAc());
         }
 
+    }
+
+    public void testGetInteractionInfoUsingUniprotIds() throws Exception
+    {
+        SearchServiceClient client = new SearchServiceClient("http://localhost:8080/search-ws/services/SearchService");
+        InteractionInfo[] interInfos = client.getInteractionInfoUsingUniprotIds("Q15691","P54274");
+
+        for (InteractionInfo interInfo : interInfos)
+        {
+            System.out.println(interInfo.getIntactAc());
+        }
 
     }
 
