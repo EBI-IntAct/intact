@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_xref")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class Xref extends BasicObjectImpl {
 

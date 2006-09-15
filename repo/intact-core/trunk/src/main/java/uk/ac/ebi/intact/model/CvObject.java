@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -20,12 +18,8 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_controlledvocab")
 @DiscriminatorColumn(name="objclass", discriminatorType = DiscriminatorType.STRING, length = 255)
+public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObjectAlias> {
 
-public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
-
-    /**
-     * no-arg constructor provided for compatibility with subclasses that have no-arg constructors.
-     */
     public CvObject() {
         //super call sets creation time data
         super();
@@ -58,11 +52,16 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref> {
         return super.getAnnotations();
     }
 
-    @OneToMany (mappedBy = "parent")
-    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Override
     public Collection<CvObjectXref> getXrefs() {
         return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<CvObjectAlias> getAliases() {
+        return super.getAliases();
     }
 
     /**

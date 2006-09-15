@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import javax.persistence.*;
 
 
@@ -17,6 +20,8 @@ import javax.persistence.*;
 @Entity()
 @Table(name="ia_annotation")
 public class Annotation extends BasicObjectImpl {
+
+    private static final Log log = LogFactory.getLog(Annotation.class);
 
     ///////////////////////////////////////
     //attributes
@@ -81,7 +86,15 @@ public class Annotation extends BasicObjectImpl {
     public Annotation( Institution owner, CvTopic topic, String annotationText ) {
 
         this( owner, topic );
-        this.annotationText = annotationText.trim();
+
+        if (annotationText != null)
+        {
+            this.annotationText = annotationText.trim();
+        }
+        else
+        {
+            log.warn("AnnotationText is null when instantiating Annotation using full constructor");
+        }
     }
 
     ///////////////////////////////////////

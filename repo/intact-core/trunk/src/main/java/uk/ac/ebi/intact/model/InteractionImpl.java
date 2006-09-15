@@ -317,21 +317,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public void setCvInteractionTypeAc( String ac ) {
         this.cvInteractionTypeAc = ac;
     }
-    /*
-    @Transient
-    @Override
-    public BioSource getBioSource()
-    {
-        // Override method to not throw an exception when setting the biosource...
-        return null;
-    }
 
-    @Override
-    public void setBioSource(BioSource bioSource)
-    {
-        // nothing
-    }
-    */
     ///////////////////////////////////////
     // instance methods
 

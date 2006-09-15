@@ -5,12 +5,10 @@
  */
 package uk.ac.ebi.intact.model;
 
-import org.hibernate.annotations.Cascade;
 import org.hibernate.lucene.Indexed;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -25,7 +23,7 @@ import java.util.Collection;
                      joinColumns = {@JoinColumn(name="annotation_ac")} )
 @Indexed(index = "lucene-indexes/intact-objects")
 @EditorTopic
-public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Editable {
+public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias> implements Editable {
 
     ///////////////////////////////////////
     //attributes
@@ -37,8 +35,6 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
     public String cvTissueAc;
     public String cvCellTypeAc;
     public String cvCompartmentAc;
-
-    private Collection<BioSourceXref> xrefs = new ArrayList<BioSourceXref>();
 
 
     /**
@@ -115,11 +111,16 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref> implements Edi
     }
 
 
-    @OneToMany (mappedBy = "parent")
-    @Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @Override
     public Collection<BioSourceXref> getXrefs() {
         return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<BioSourceAlias> getAliases() {
+        return super.getAliases();
     }
     
     @Column(length = 30)

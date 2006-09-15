@@ -19,10 +19,10 @@ import javax.persistence.*;
  * @see uk.ac.ebi.intact.model.CvAliasType
  */
 @Entity
-@Table(name = "ia_alias")
-public class Alias extends BasicObjectImpl  {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Alias extends BasicObjectImpl  {
 
-    private static final int MAX_ALIAS_NAME_LEN = 30;
+    protected static final int MAX_ALIAS_NAME_LEN = 30;
 
     ///////////////////////////////////////
     //attributes
@@ -45,14 +45,10 @@ public class Alias extends BasicObjectImpl  {
      */
     private String parentAc;
 
+    private AnnotatedObject parent;
+
     /**
-     * This constructor should <b>not</b> be used as it could
-     * result in objects with invalid state. It is here for object mapping
-     * purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
      */
-    @Deprecated
     public Alias() {
         super();
     }
@@ -96,18 +92,28 @@ public class Alias extends BasicObjectImpl  {
         this.name = name;
     }
 
-    @Column(name = "parent_ac", length = 30)
+    @Transient
     public String getParentAc() {
+        if (parent != null)
+        {
+            parentAc = parent.getAc();
+        }
         return parentAc;
     }
 
     public void setParentAc( String parentAc ) {
-
-        if( null == parentAc ) {
-            throw new IllegalArgumentException( "The given Annotated object doesn't have an AC." );
-        }
-
         this.parentAc = parentAc;
+    }
+
+    @Transient
+    public AnnotatedObject getParent()
+    {
+        return parent;
+    }
+
+    public void setParent(AnnotatedObject parent)
+    {
+        this.parent = parent;
     }
 
     ///////////////////////////////////////

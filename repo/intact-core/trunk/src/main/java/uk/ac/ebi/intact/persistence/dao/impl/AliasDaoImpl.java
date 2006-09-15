@@ -19,14 +19,14 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public class AliasDaoImpl extends IntactObjectDaoImpl<Alias> implements AliasDao
+public class AliasDaoImpl<T extends Alias> extends IntactObjectDaoImpl<T> implements AliasDao<T>
 {
-    public AliasDaoImpl(Session session, IntactSession intactSession)
+    public AliasDaoImpl(Class<T> aliasClass, Session session, IntactSession intactSession)
     {
-        super(Alias.class, session, intactSession);
+        super(aliasClass, session, intactSession);
     }
 
-    public Collection<Alias> getByNameLike(String name)
+    public Collection<T> getByNameLike(String name)
     {
         return getByPropertyNameLike("name", name);
     }

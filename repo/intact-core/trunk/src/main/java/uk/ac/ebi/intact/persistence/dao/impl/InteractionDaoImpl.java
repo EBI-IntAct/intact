@@ -95,4 +95,9 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
                 .createAlias("comp.interactor", "interactor")
                 .add(Restrictions.eq("interactor.ac", interactorAc)).list();
     }
+
+    public List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2)
+    {
+        return null;
+    }
 }

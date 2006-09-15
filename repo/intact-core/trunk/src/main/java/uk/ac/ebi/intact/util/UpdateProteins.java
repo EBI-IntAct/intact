@@ -1123,7 +1123,7 @@ public class UpdateProteins extends UpdateProteinsI {
         // which is already linked to that AnnotatedObject.
         if ( alias.getParentAc() == current.getAc() ) {
             try {
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao().persist( alias );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(InteractorAlias.class).persist( alias );
                 log.debug( "CREATED: [" + alias + "]" );
             } catch ( Exception e_alias ) {
                 if ( log != null ) {
@@ -1460,7 +1460,7 @@ public class UpdateProteins extends UpdateProteinsI {
      */
     private boolean updateAliasCollection( Protein protein, Collection<Alias> newAliases ) throws IntactException {
 
-        AliasDao aliasDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao();
+        AliasDao aliasDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(InteractorAlias.class);
 
         if ( protein == null ) {
             throw new IllegalArgumentException( "You must give a non null protein." );
@@ -1527,7 +1527,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
             if ( geneName != null && ( false == "".equals( geneName.trim() ) ) ) {
 
-                alias = new Alias( myInstitution, protein, geneNameAliasType, geneName );
+                alias = new InteractorAlias( myInstitution, protein, geneNameAliasType, geneName );
 
                 if ( aliases == null ) {
                     aliases = new ArrayList( 8 );
@@ -1543,7 +1543,7 @@ public class UpdateProteins extends UpdateProteinsI {
 
                 if ( syn != null && ( false == "".equals( syn.trim() ) ) ) {
 
-                    alias = new Alias( myInstitution, protein, geneNameSynonymAliasType, syn );
+                    alias = new InteractorAlias( myInstitution, protein, geneNameSynonymAliasType, syn );
 
                     if ( aliases == null ) {
                         aliases = new ArrayList<Alias>( 8 );
@@ -1557,7 +1557,7 @@ public class UpdateProteins extends UpdateProteinsI {
             for ( String locusName : locus ) {
                 if ( locusName != null && ( false == "".equals( locusName.trim() ) ) ) {
 
-                    alias = new Alias( myInstitution, protein, locusNameAliasType, locusName );
+                    alias = new InteractorAlias( myInstitution, protein, locusNameAliasType, locusName );
 
                     if ( aliases == null ) {
                         aliases = new ArrayList<Alias>( 8 );
@@ -1571,7 +1571,7 @@ public class UpdateProteins extends UpdateProteinsI {
             for ( String orfName : ORFs ) {
                 if ( orfName != null && ( false == "".equals( orfName.trim() ) ) ) {
 
-                    alias = new Alias( myInstitution, protein, orfNameAliasType, orfName );
+                    alias = new InteractorAlias( myInstitution, protein, orfNameAliasType, orfName );
 
                     if ( aliases == null ) {
                         aliases = new ArrayList<Alias>( 8 );
@@ -1600,7 +1600,7 @@ public class UpdateProteins extends UpdateProteinsI {
             for ( String isoSynonym : isoSynonyms ) {
 
                 // create a new alias
-                Alias alias = new Alias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
+                Alias alias = new InteractorAlias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
                 aliases.add( alias );
             }
 
@@ -2050,7 +2050,7 @@ public class UpdateProteins extends UpdateProteinsI {
         String[] isoSynonyms = isoform.getSynonyms();
         for ( int i = 0; i < isoSynonyms.length; i++ ) {
             String isoSynonym = isoSynonyms[ i ];
-            Alias alias = new Alias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
+            Alias alias = new InteractorAlias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
             addNewAlias( spliceVariant, alias );
         }
 
