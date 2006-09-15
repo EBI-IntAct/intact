@@ -11,7 +11,7 @@
       <parameter name="typeMappingVersion" value="1.2"/>
 
       <parameter name="scope" value="application"/>
-      <parameter name="allowedMethods" value="getVersion findPartnersUsingUniprotIds"/>
+      <parameter name="allowedMethods" value="getVersion findPartnersUsingUniprotIds getInteractionInfoUsingUniprotIds getInteractionInfoUsingIntactIds"/>
 
     </service>
 
@@ -31,5 +31,22 @@
         deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
         encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
       />
+    <typeMapping
+        xmlns:ns="urn:searchws"
+        qname="ns:InteractionInfo"
+        type="java:uk.ac.ebi.intact.search.ws.InteractionInfo"
+        serializer="org.apache.axis.encoding.ser.BeanSerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.BeanDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+      <typeMapping
+        xmlns:ns="urn:searchws"
+        qname="ns:ArrayOfInteractionInfo"
+        type="java:uk.ac.ebi.intact.search.ws.InteractionInfo[]"
+        serializer="org.apache.axis.encoding.ser.ArraySerializerFactory"
+        deserializer="org.apache.axis.encoding.ser.ArrayDeserializerFactory"
+        encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+      />
+
 
 </deployment>
