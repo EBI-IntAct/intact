@@ -118,4 +118,14 @@ public class SearchServiceClient
         return search.getInteractionInfoUsingIntactIds(id1, id2);
     }
 
+    public String getServiceVersion() throws RemoteException
+    {
+        return search.getVersion();
+    }
+
+    public static void main(String[] args) throws Exception
+    {
+        System.out.println("IntAct Search Web Service Client\nWS Version: "+new SearchServiceClient().getServiceVersion());
+    }
+
 }
