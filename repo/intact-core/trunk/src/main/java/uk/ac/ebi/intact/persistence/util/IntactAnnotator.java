@@ -12,7 +12,9 @@ import uk.ac.ebi.intact.annotation.AnnotationUtil;
 import javax.persistence.Entity;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +51,17 @@ public class IntactAnnotator
 
         // Get a File object for the package
         URL url = IntactAnnotator.class.getResource(packageName);
-        File directory = new File(url.getFile());
+
+        // convert funny chars (%20 into spaces...)
+        String strDir = null;
+        try {
+            strDir = URLDecoder.decode( url.getPath(), "UTF-8" ) ;
+        } catch ( UnsupportedEncodingException e ) {
+            // this error should never occur, let's not add a throws in the method signature.
+            throw new RuntimeException("An error occured while decoding the URL.", e);
+        }
+
+        File directory = new File(strDir);
 
         if (directory.exists()) {
             log.debug("Reading annotated classes from directory: "+directory);
@@ -60,7 +72,6 @@ public class IntactAnnotator
 
                 if (clazz != null)
                 {
-
                     annotatedClasses.add(clazz);
                 }
             }
