@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-ws</artifactId>
     <packaging>war</packaging>
-    <version>1.1-SNAPSHOT</version>
-    <!-- last released 1.0.4 -->
+    <version>1.4.0</version>
+    <!-- last released 1.4.0 -->
     <name>Intact Search Web Service</name>
     <description>A web service interface to retrieve data from intact</description>
 
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.4.3-SNAPSHOT</version>
+            <version>1.4.3</version>
         </dependency>
         
         <dependency>
