@@ -345,6 +345,7 @@ public class IntactConfigurator
 
             log.debug("Persisting institution");
             context.getDataContext().getDaoFactory().getInstitutionDao().persist( institution );
+            context.getDataContext().commitTransaction();
 
             session.setApplicationAttribute(INSTITUTION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }
@@ -369,6 +370,7 @@ public class IntactConfigurator
 
             log.debug("Persisting schema version");
             context.getDataContext().getDaoFactory().getDbInfoDao().persist( dbInfo );
+            context.getDataContext().commitTransaction();
 
             session.setApplicationAttribute(SCHEMA_VERSION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }
