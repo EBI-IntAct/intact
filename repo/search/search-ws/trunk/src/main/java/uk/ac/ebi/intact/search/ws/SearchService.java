@@ -7,12 +7,15 @@ package uk.ac.ebi.intact.search.ws;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Transaction;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.impl.WebServiceSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,7 +34,7 @@ public class SearchService
 
     private static final Log log = LogFactory.getLog(SearchService.class);
 
-    private DaoFactory daoFactory;
+    //private DaoFactory daoFactory;
 
     public SearchService()
     {
@@ -39,12 +42,12 @@ public class SearchService
 
         IntactSession intactSession = new WebServiceSession();
         IntactConfigurator.initIntact(intactSession);
-        daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        //daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
     public InteractionInfo[] getInteractionInfoUsingUniprotIds(String uniprotId1, String uniprotId2)
     {
-        daoFactory.beginTransaction();
+        DaoFactory daoFactory = getDataContext().getDaoFactory();
 
         List<ProteinImpl> protsForId1 = daoFactory.getProteinDao().getByUniprotId(uniprotId1);
         List<ProteinImpl> protsForId2 = daoFactory.getProteinDao().getByUniprotId(uniprotId2);
@@ -63,11 +66,15 @@ public class SearchService
              }
         }
 
+        getDataContext().commitTransaction();
+
         return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
 
     public InteractionInfo[] getInteractionInfoUsingIntactIds(String id1, String id2)
     {
+        DaoFactory daoFactory = getDataContext().getDaoFactory();
+
         List<Interaction> interactions = daoFactory.getInteractionDao().getInteractionsForProtPair(id1,id2);
 
         List<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
@@ -98,6 +105,8 @@ public class SearchService
             interInfos.add(interInfo);
         }
 
+        getDataContext().commitTransaction();
+
         return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
 
@@ -124,6 +133,8 @@ public class SearchService
 
         int totalFound = 0;
 
+        DaoFactory daoFactory = getDataContext().getDaoFactory();
+
         for (String uniprotId : proteinIds)
         {
             ProteinImpl prot = daoFactory.getProteinDao().getByXref(uniprotId);
@@ -135,7 +146,7 @@ public class SearchService
             results.add(new PartnerResult(uniprotId, protIds.toArray(new String[protIds.size()])));
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        getDataContext().commitTransaction();
 
         if (log.isDebugEnabled())
         {
@@ -166,6 +177,11 @@ public class SearchService
         String version = properties.getProperty("build.version");
 
         return version;
+    }
+
+    private static DataContext getDataContext()
+    {
+        return IntactContext.getCurrentInstance().getDataContext();
     }
 
 }
