@@ -42,14 +42,7 @@ public class SequenceManager {
 
     public static final String SEQUENCE_NAME = "CVOBJECT_ID";
 
-    public static Dialect dialect;
-
-    static {
-        Configuration conf = (Configuration)
-                IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
-
-        dialect = Dialect.getDialect(conf.getProperties());
-    }
+    private static Dialect dialect;
 
     /**
      * Checks if the given sequence name exists.
@@ -69,7 +62,7 @@ public class SequenceManager {
 
         boolean exists = false;
 
-        String sequencesListSql = dialect.getQuerySequencesString();
+        String sequencesListSql = getDialect().getQuerySequencesString();
         PreparedStatement stat = connection.prepareStatement(sequencesListSql);
 
         ResultSet rs = null;
@@ -100,7 +93,7 @@ public class SequenceManager {
 
     private static void createSequenceInDb(Connection connection, String sequenceName) throws SQLException
     {
-        String[] createSquenceSqls = dialect.getCreateSequenceStrings(sequenceName);
+        String[] createSquenceSqls = getDialect().getCreateSequenceStrings(sequenceName);
 
         for (String sql : createSquenceSqls)
         {
@@ -162,7 +155,7 @@ public class SequenceManager {
         int nextVal = 0;
         try
         {
-            String selectNextValueSql = dialect.getSequenceNextValString(SEQUENCE_NAME);
+            String selectNextValueSql = getDialect().getSequenceNextValString(SEQUENCE_NAME);
             PreparedStatement statement = connection.prepareStatement(selectNextValueSql);
 
             nextVal = 0;
@@ -272,6 +265,20 @@ public class SequenceManager {
         } while ( ! cvObjects.isEmpty() );
 
         return nextId;
+    }
+
+    private static Dialect getDialect()
+    {
+        if (dialect != null)
+        {
+            return dialect;
+        }
+
+        Configuration conf = (Configuration)
+                IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
+
+        dialect = Dialect.getDialect(conf.getProperties());
+        return dialect;
     }
 
     // Documentation:
