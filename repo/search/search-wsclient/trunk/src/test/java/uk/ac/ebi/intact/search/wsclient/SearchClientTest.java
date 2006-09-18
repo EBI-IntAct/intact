@@ -22,7 +22,7 @@ public class SearchClientTest extends TestCase
 
     public void testGetInteractionInfoUsingIntactIds() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient("http://localhost:8080/search-ws/services/SearchService");
+        SearchServiceClient client = new SearchServiceClient();
         InteractionInfo[] interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
 
         for (InteractionInfo interInfo : interInfos)
@@ -34,7 +34,7 @@ public class SearchClientTest extends TestCase
 
     public void testGetInteractionInfoUsingUniprotIds() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient("http://localhost:8080/search-ws/services/SearchService");
+        SearchServiceClient client = new SearchServiceClient();
         InteractionInfo[] interInfos = client.getInteractionInfoUsingUniprotIds("Q15691","P54274");
 
         for (InteractionInfo interInfo : interInfos)
