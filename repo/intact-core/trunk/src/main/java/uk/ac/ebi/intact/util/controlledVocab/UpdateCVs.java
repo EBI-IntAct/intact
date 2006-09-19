@@ -127,15 +127,14 @@ public class UpdateCVs {
          *     check children and apply hierarchy to IntAct
          */
 
-            Collection intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
+            Collection<CvObject> intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
 
             log.debug( "\t " + intactTerms.size() + " term(s) found in IntAct." );
 
             ///////////////////////////////////////////////////////
             // 1. Indexing of the IntAct terms by MI number
             Map intactIndex = new HashMap( intactTerms.size() );
-            for ( Iterator iterator = intactTerms.iterator(); iterator.hasNext(); ) {
-                CvObject cvObject = (CvObject) iterator.next();
+            for ( CvObject cvObject : intactTerms ) {
                 String psi = getPsiId( cvObject );
 
                 // Bear in mind that only CV that already exists are indexed here, newly created ones will be indexed later.
@@ -332,6 +331,7 @@ public class UpdateCVs {
                 }
             }
 
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     /**
@@ -782,6 +782,7 @@ public class UpdateCVs {
         // Note: in IntAct we keep both IA:xxxx and MI:xxxx to they remain searchable.
         String mi = getPsiId( cvObject );
         String ia = getIntactId( cvObject );
+
         boolean hasIntactTermGotPsiIdentifier = ( mi != null );
         boolean hasIntactTermGotIntactIdentifier = ( ia != null );
 
@@ -828,7 +829,7 @@ public class UpdateCVs {
 
             CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
-            //IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
             log.debug( "\t\t Added PSI Xref (" + id + ")" );
         }
 
@@ -1267,6 +1268,8 @@ public class UpdateCVs {
 
         // CvTopic( obsolete )
         getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF );
+      
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     /**
