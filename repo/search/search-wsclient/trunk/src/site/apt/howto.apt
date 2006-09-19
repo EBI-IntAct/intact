@@ -43,6 +43,6 @@ What do I need?
 
 * Without maven
 
- If you are not a happy Maven user, then you can download the binaries from {{{SourceForge}http://sourceforge.net/project/showfiles.php?group_id=62732&package_id=204087}}.
+ If you are not a happy Maven user, then you can download the binaries from {{{http://sourceforge.net/project/showfiles.php?group_id=62732&package_id=204087}SourceForge}}.
  You can choose whether to download a jar which includes all the dependencies inside, the client jar separated from the dependencies
  or the sources.
