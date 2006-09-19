@@ -16,7 +16,7 @@ import java.util.List;
  * @since <pre>07-jul-2006</pre>
  */
 @SuppressWarnings({"unchecked"})
-public class ComponentDaoImpl extends IntactObjectDaoImpl<Component> implements ComponentDao
+public class ComponentDaoImpl extends AnnotatedObjectDaoImpl<Component> implements ComponentDao
 {
 
     public ComponentDaoImpl(Session session, IntactSession intactSession)

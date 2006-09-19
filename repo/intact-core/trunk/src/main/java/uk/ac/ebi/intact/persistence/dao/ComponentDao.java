@@ -9,7 +9,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>07-Jul-2006</pre>
  */
-public interface ComponentDao extends IntactObjectDao<Component>
+public interface ComponentDao extends AnnotatedObjectDao<Component>
 {
     List<Component> getByInteractorAc(String interactorAc);
 }
