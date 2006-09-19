@@ -1,0 +1,19 @@
+VERSION 1.3.0
+
+REQUEST
+* We need different Alias tables, one for each parent type, so hibernate handles well the database mapping
+and constraints are enabled for the parent_ac field.
+* We should be able to annotate components
+
+
+TECHNICAL CHANGES
+    * Added 7 new tables, with the same structure than IA_Alias: IA_BioSourceAlias, IA_ExperimentAlias, IA_ControlledVocabAlias, IA_FeatureAlias, IA_InteractorAlias, IA_PublicationAlias
+    * Now a component is an annotated object:
+        * Added 2 new tables, xref and alias for component: IA_Component_Xref, IA_Component_Alias
+        * Added new table: IA_Component2Annot
+        * 2 new fields for IA_Component: shortlabel and fullname
+    * Created synonims for those tables
+    * Granted the correct permissions
+    * Creates a procedure to copy existing data from IA_Alias table to the splitted tables
+    * Script to run the procedure
+    * Triggers to maintain the coexistence with the old IA_Xref table while everything is migrated
