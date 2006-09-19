@@ -214,9 +214,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
      * if an equivalent alias is not yet part of the object.
      */
     public void addAlias( A alias ) {
-        if( !this.aliases.contains( alias ) ) {
-            this.aliases.add( alias );
-        }
+       this.aliases.add( alias );
+       alias.setParent(this);     
     }
 
     public void removeAlias( A alias ) {
