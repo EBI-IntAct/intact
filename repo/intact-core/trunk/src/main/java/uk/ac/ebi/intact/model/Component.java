@@ -23,11 +23,13 @@ import java.util.Collection;
  */
 @Entity
 @Table(name = "ia_component")
-public class Component extends BasicObjectImpl {
+public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias> {
 
     private static final Log log = LogFactory.getLog(Component.class);
 
     public static final float STOICHIOMETRY_NOT_DEFINED = 0;
+
+    private static final String DEFAULT_SHORT_LABEL = "";
 
     ///////////////////////////////////////
     //attributes
@@ -73,10 +75,6 @@ public class Component extends BasicObjectImpl {
      */
     private CvComponentRole cvComponentRole;
 
-    /**
-     * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
-     * object mapping purposes only. <p/>Made the constructor protected to allow access for subclasses.
-     */
     public Component() {
         //super call sets creation time data
         super();
@@ -104,8 +102,34 @@ public class Component extends BasicObjectImpl {
     public Component( Institution owner, Interaction interaction,
                       Interactor interactor, CvComponentRole role ) {
 
+        this( owner, DEFAULT_SHORT_LABEL, interaction, interactor, role );
+    }
+
+    /**
+     * Creates a valid Component instance. To be valid, a Component must have at least: <ul> <li>An onwer
+     * (Institution)</li> <li>a biological source that the interaaction was expressed in</li> <li>an Interaction that
+     * this instance is a Component of</li> <li>an Interactor which defines the entity (eg Protein) which takes part in
+     * the Interaction and is therefore the 'core' of this Component</li> <li>the biological role that this Component
+     * plays in the Interaction (eg bait/prey etc)</li> </ul>
+     * <p/>
+     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
+     * instance to the current time.
+     *
+     * @param owner       The Institution owner of this Component (non-null)
+     * @param shortLabel  Label for this component
+     * @param interaction The Interaction this Component is a part of (non-null)
+     * @param interactor  The 'wrapped active entity' (eg a Protein) that this Component represents in the Interaction
+     *                    (non-null)
+     * @param role        The biological/experimental role played by this Component in the Interaction experiment (eg
+     *                    bait/prey). This is a controlled vocabulary term (non-null)
+     *
+     * @throws NullPointerException thrown if any of the parameters are not specified.
+     */
+    public Component( Institution owner, String shortLabel, Interaction interaction,
+                      Interactor interactor, CvComponentRole role ) {
+
         //super call sets creation time data
-        super( owner );
+        super( shortLabel, owner );
         if ( interaction == null ) {
             throw new NullPointerException( "valid Component must have an Interaction set!" );
         }
@@ -161,8 +185,6 @@ public class Component extends BasicObjectImpl {
     }
 
     /**
-     * TODO document that non obvious method
-     *
      * @param interactor
      */
     public void setInteractor( Interactor interactor ) {
@@ -213,6 +235,31 @@ public class Component extends BasicObjectImpl {
 
     public void setCvComponentRole( CvComponentRole cvComponentRole ) {
         this.cvComponentRole = cvComponentRole;
+    }
+
+    @ManyToMany
+    @JoinTable(
+        name="ia_component2annot",
+        joinColumns={@JoinColumn(name="component_ac")},
+        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+    )
+    @Override
+    public Collection<Annotation> getAnnotations()
+    {
+        return super.getAnnotations();
+    }
+
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<ComponentXref> getXrefs() {
+        return super.getXrefs();
+    }
+
+    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @Override
+    public Collection<ComponentAlias> getAliases() {
+        return super.getAliases();
     }
 
     // instance methods
@@ -300,8 +347,7 @@ public class Component extends BasicObjectImpl {
         return copy;
     }
 
-    //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
+    //attributes used for mapping BasicObjects
     @Column(name = "interactor_ac", insertable = false, updatable = false)
     public String getInteractorAc() {
         return this.interactorAc;
