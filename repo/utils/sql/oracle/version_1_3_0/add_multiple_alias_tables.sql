@@ -55,9 +55,9 @@ CREATE TABLE IA_controlledvocab_alias
     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$controlledvocab  REFERENCES IA_controlledvocab(ac)
-    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$owner REFERENCES IA_Institution(ac)
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_cv_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_cv_alias$cv  REFERENCES IA_controlledvocab(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_cv_alias$owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR2(30)
     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
@@ -276,7 +276,7 @@ CREATE TABLE IA_publication_alias
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
     ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_publication_alias$qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_publication_alias$publication  REFERENCES IA_publication(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_publication_alias$pub  REFERENCES IA_publication(ac)
     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_publication_alias$owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR2(30)
     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL

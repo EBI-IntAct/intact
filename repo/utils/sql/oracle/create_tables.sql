@@ -1016,7 +1016,7 @@ set term on
 
 
 PROMPT Creating table "IA_Component2Annot"
-CREATE TABLE IA_Feature2Annot
+CREATE TABLE IA_Component2Annot
 (       component_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$feature REFERENCES IA_Component(ac) ON DELETE CASCADE
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
 )
@@ -1034,11 +1034,11 @@ ALTER TABLE IA_Component2Annot
 
 set term off
     COMMENT ON TABLE IA_Component2Annot IS
-    'Feature2Annot. Link table from Annotation to Feature.';
-    COMMENT ON COLUMN IA_Component2Annot.feature_ac IS
+    'Component2Annot. Link table from Annotation to Component.';
+    COMMENT ON COLUMN IA_Component2Annot.component_ac IS
     'Refers to a Feature to which the Annotation is linked.';
     COMMENT ON COLUMN IA_Component2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Feature.';
+    'Refers to the annotation object linked to the component.';
 set term on
 
 
@@ -1256,8 +1256,8 @@ BEGIN
 END;
 /
 
-PROMPT Creating trigger "TRG_IA_PUBLICATION_ALIAS_DELETE"
-create or replace TRIGGER TRG_IA_PUBLICATION_ALIAS_DELETE BEFORE DELETE ON IA_PUBLICATION
+PROMPT Creating trigger "TRG_IA_PUB_DELETE"
+create or replace TRIGGER TRG_IA_PUB_DELETE BEFORE DELETE ON IA_PUBLICATION
 FOR EACH ROW
 BEGIN
   DELETE FROM ia_publication_alias
@@ -1475,9 +1475,9 @@ CREATE TABLE IA_controlledvocab_alias
     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$controlledvocab  REFERENCES IA_controlledvocab(ac)
-    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$owner REFERENCES IA_Institution(ac)
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_cv_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_cv_alias$cv  REFERENCES IA_controlledvocab(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_cv_alias$owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR2(30)
     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
@@ -1696,7 +1696,7 @@ CREATE TABLE IA_publication_alias
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
     ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_publication_alias$qualifier REFERENCES IA_ControlledVocab(ac)
-    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_publication_alias$publication  REFERENCES IA_publication(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_publication_alias$pub  REFERENCES IA_publication(ac)
     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_publication_alias$owner REFERENCES IA_Institution(ac)
     ,  name                    VARCHAR2(30)
     , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL

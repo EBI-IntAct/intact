@@ -4,10 +4,12 @@ PROMPT Altering table "IA_Component"
 ALTER TABLE IA_Component ADD(shortLabel VARCHAR2(20) NULL);
 ALTER TABLE IA_Component ADD(fullName VARCHAR2(250) NULL);
 
-COMMENT ON COLUMN IA_Institution.shortLabel IS
-    'A short string identifying the object not necessarily unique. Could be e.g. a gene name. ';
-COMMENT ON COLUMN IA_Institution.fullName IS
-    'The full name of the object.';
+set term off
+    COMMENT ON COLUMN IA_Institution.shortLabel IS
+        'A short string identifying the object not necessarily unique. Could be e.g. a gene name. ';
+    COMMENT ON COLUMN IA_Institution.fullName IS
+        'The full name of the object.';
+set term on
 
 
 -- new component-related tables
@@ -69,7 +71,7 @@ set term off
 
 
 PROMPT Creating table "IA_Component2Annot"
-CREATE TABLE IA_Feature2Annot
+CREATE TABLE IA_Component2Annot
 (       component_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$feature REFERENCES IA_Component(ac) ON DELETE CASCADE
      ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
 )
@@ -87,9 +89,9 @@ ALTER TABLE IA_Component2Annot
 
 set term off
     COMMENT ON TABLE IA_Component2Annot IS
-    'Feature2Annot. Link table from Annotation to Feature.';
-    COMMENT ON COLUMN IA_Component2Annot.feature_ac IS
+    'Component2Annot. Link table from Annotation to Component.';
+    COMMENT ON COLUMN IA_Component2Annot.component_ac IS
     'Refers to a Feature to which the Annotation is linked.';
     COMMENT ON COLUMN IA_Component2Annot.annotation_ac IS
-    'Refers to the annotation object linked to the Feature.';
+    'Refers to the annotation object linked to the component.';
 set term on
