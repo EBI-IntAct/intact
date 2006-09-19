@@ -209,9 +209,9 @@ public class BioSource2xmlPSI25 extends AnnotatedObject2xmlPSI25 implements BioS
         }
 
         // 5. Generating OPTIONAL compartment...
-        if ( bioSource.getCvCompartment() != null ) {
-            CvObject2xmlFactory.getInstance( session ).create( session, element, bioSource.getCvCompartment() );
-        }
+//        if ( bioSource.getCvCompartment() != null ) {
+//            CvObject2xmlFactory.getInstance( session ).create( session, element, bioSource.getCvCompartment() );
+//        }
 
         // 6. Generating OPTIONAL tissue...
         if ( bioSource.getCvTissue() != null ) {
