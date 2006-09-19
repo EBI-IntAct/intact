@@ -28,6 +28,7 @@ public abstract class AbstractIntactTest extends TestCase
 
     protected void setUp() throws Exception
     {
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         super.setUp();
     }
 

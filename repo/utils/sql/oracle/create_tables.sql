@@ -7,9 +7,10 @@ set doc off
   Purpose:    Create Oracle components for IntAct
 
   Usage:      sqlplus username/password @create_tables.sql
+  
+  Version:    1.3.0
 
-
-  $Date$
+  $Id$
 
   $Locker$
 
@@ -286,6 +287,8 @@ CREATE TABLE IA_Component
         , expressedIn_ac          VARCHAR2(30)    CONSTRAINT fk_Component$expressedIn REFERENCES IA_BioSource(ac)
         , owner_ac                VARCHAR2(30)    CONSTRAINT fk_Component$owner REFERENCES IA_Institution(ac)
         , stoichiometry           NUMBER(4,1)     DEFAULT  0
+        , shortLabel              VARCHAR2(20)
+        , fullName                VARCHAR2(250)
      , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactMainTablespace
@@ -297,6 +300,10 @@ CREATE index i_Component$interactor_ac on IA_Component(interactor_ac) TABLESPACE
 set term off
     COMMENT ON TABLE IA_Component IS
     'Component. Link table from Interaction to Interactor. A Component is a particular instance of an Interactor which participates in an Interaction.';
+    COMMENT ON COLUMN IA_Institution.shortLabel IS
+    'A short string identifying the object not necessarily unique. Could be e.g. a gene name. ';
+    COMMENT ON COLUMN IA_Institution.fullName IS
+    'The full name of the object.';
     COMMENT ON COLUMN IA_Component.stoichiometry IS
     'Relative quantity of the Component participating in the Interaction.';
     COMMENT ON COLUMN IA_Component.interactor_ac IS
@@ -1008,6 +1015,32 @@ set term off
 set term on
 
 
+PROMPT Creating table "IA_Component2Annot"
+CREATE TABLE IA_Feature2Annot
+(       component_ac            VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$feature REFERENCES IA_Component(ac) ON DELETE CASCADE
+     ,  annotation_ac           VARCHAR2(30)    NOT NULL CONSTRAINT fk_Component2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+)
+TABLESPACE &&intactMainTablespace
+;
+
+PROMPT Creating composite primary Key on 'IA_Component2Annot'
+ALTER TABLE IA_Component2Annot
+ ADD (CONSTRAINT     pk_Component2Annot
+        PRIMARY KEY  (component_ac, annotation_ac)
+        USING INDEX
+        TABLESPACE   &&intactIndexTablespace
+     )
+;
+
+set term off
+    COMMENT ON TABLE IA_Component2Annot IS
+    'Feature2Annot. Link table from Annotation to Feature.';
+    COMMENT ON COLUMN IA_Component2Annot.feature_ac IS
+    'Refers to a Feature to which the Annotation is linked.';
+    COMMENT ON COLUMN IA_Component2Annot.annotation_ac IS
+    'Refers to the annotation object linked to the Feature.';
+set term on
+
 
 /* The relation table which establishes a graph structure between CV objects */
 PROMPT Creating table "IA_Cv2Cv"
@@ -1173,6 +1206,82 @@ BEGIN
   WHERE parent_ac = :OLD.ac;
 END;
 /
+
+PROMPT Creating trigger "TRG_IA_COMPONENT_XREF_DELETE"
+create or replace TRIGGER TRG_IA_COMPONENT_XREF_DELETE BEFORE DELETE ON IA_COMPONENT
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_component_xref
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+-- Those triggers are to allow to delete aliases.  Before deleting an
+-- annotated object you need first to delete the aliases that are attached to it. That
+-- what those triggers do.
+
+PROMPT Creating trigger "TRG_IA_BIOSOURCE_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_BIOSOURCE_ALIAS_DELETE BEFORE DELETE ON IA_BIOSOURCE
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_biosource_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_CVOBJECT_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_CVOBJECT_ALIAS_DELETE BEFORE DELETE ON IA_CONTROLLEDVOCAB
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_controlledvocab_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_EXPERIMENT_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_EXPERIMENT_ALIAS_DELETE BEFORE DELETE ON IA_EXPERIMENT
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_experiment_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_FEATURE_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_FEATURE_ALIAS_DELETE BEFORE DELETE ON IA_FEATURE
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_feature_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_PUBLICATION_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_PUBLICATION_ALIAS_DELETE BEFORE DELETE ON IA_PUBLICATION
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_publication_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_INTERACTOR_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_INTERACTOR_ALIAS_DELETE BEFORE DELETE ON IA_INTERACTOR
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_interactor_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
+
+PROMPT Creating trigger "TRG_IA_COMPONENT_ALIAS_DELETE"
+create or replace TRIGGER TRG_IA_COMPONENT_ALIAS_DELETE BEFORE DELETE ON IA_COMPONENT
+FOR EACH ROW
+BEGIN
+  DELETE FROM ia_component_alias
+  WHERE parent_ac = :OLD.ac;
+END;
+/
 ----------------------------------
 -- Create tables for GO Density --
 ----------------------------------
@@ -1312,6 +1421,312 @@ set term off
     'Database user who has performed the last update of the column.';
 set term on
 
+
+PROMPT Creating table "IA_biosource_alias"
+CREATE TABLE IA_biosource_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_biosource_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_biosource_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_biosource_alias$biosource  REFERENCES IA_biosource(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_biosource_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_biosource_alias$parent_ac on IA_biosource_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_biosource_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_biosource_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_biosource_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_biosource_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_biosource_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_biosource_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_biosource_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_biosource_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_biosource_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_controlledvocab_alias"
+CREATE TABLE IA_controlledvocab_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_controlledvocab_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$controlledvocab  REFERENCES IA_controlledvocab(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_controlledvocab_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_controlledvocab_alias$parent_ac on IA_controlledvocab_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_controlledvocab_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_controlledvocab_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_component_alias"
+CREATE TABLE IA_component_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_component_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_component_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_component_alias$component  REFERENCES IA_component(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_component_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_component_alias$parent_ac on IA_component_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_component_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_component_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_component_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_component_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_component_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_component_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_component_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_component_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_component_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_feature_alias"
+CREATE TABLE IA_feature_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_feature_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_feature_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_feature_alias$feature  REFERENCES IA_feature(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_feature_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_feature_alias$parent_ac on IA_feature_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_feature_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_feature_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_feature_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_feature_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_feature_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_feature_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_feature_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_feature_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_feature_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_interactor_alias"
+CREATE TABLE IA_interactor_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_interactor_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_interactor_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_interactor_alias$interactor  REFERENCES IA_interactor(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_interactor_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_interactor_alias$parent_ac on IA_interactor_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_interactor_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_interactor_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_interactor_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_interactor_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_interactor_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_interactor_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_interactor_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_interactor_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_interactor_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_experiment_alias"
+CREATE TABLE IA_experiment_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_experiment_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_experiment_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_experiment_alias$experiment  REFERENCES IA_experiment(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_experiment_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_experiment_alias$parent_ac on IA_experiment_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_experiment_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_experiment_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_experiment_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_experiment_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_experiment_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_experiment_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_experiment_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_experiment_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_experiment_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
+
+
+
+PROMPT Creating table "IA_publication_alias"
+CREATE TABLE IA_publication_alias
+(       ac                      VARCHAR2(30)   NOT NULL
+                                               CONSTRAINT pk_publication_alias
+                                               PRIMARY KEY USING INDEX TABLESPACE &&intactIndexTablespace
+    ,  deprecated              NUMBER(1)       DEFAULT  0       NOT NULL
+    ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
+    ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
+    ,  aliastype_ac            VARCHAR2(30)    CONSTRAINT fk_publication_alias$qualifier REFERENCES IA_ControlledVocab(ac)
+    ,  parent_ac               VARCHAR2(30)    CONSTRAINT fk_publication_alias$publication  REFERENCES IA_publication(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_publication_alias$owner REFERENCES IA_Institution(ac)
+    ,  name                    VARCHAR2(30)
+    , created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
+)
+TABLESPACE &&intactIndexTablespace
+;
+
+CREATE index i_publication_alias$parent_ac on IA_publication_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+;
+
+set term off
+    COMMENT ON TABLE IA_publication_alias IS
+    'Represents an alias. Therefore the column parent_ac can unfortunately not have a foreign key constraint.';
+    COMMENT ON COLUMN IA_publication_alias.aliastype_ac IS
+    'Type of the alias. ac found in the IA_ControlledVocab table.';
+    COMMENT ON COLUMN IA_publication_alias.name IS
+    'Name of the alias.';
+    COMMENT ON COLUMN IA_publication_alias.parent_ac IS
+    'Refers to the parent object this alias describes.';
+    COMMENT ON COLUMN IA_publication_alias.owner_ac IS
+    'Refers to the owner of this object.';
+    COMMENT ON COLUMN IA_publication_alias.ac IS
+    'Unique auto-generated accession number.';
+    COMMENT ON COLUMN IA_publication_alias.created IS
+    'Date of the creation of the row.';
+    COMMENT ON COLUMN IA_publication_alias.updated IS
+    'Date of the last update of the row.';
+    COMMENT ON COLUMN IA_publication_alias.userstamp IS
+    'Database user who has performed the last update of the column.';
+set term on
 
 
 -------------
@@ -1682,5 +2097,5 @@ INSERT INTO IA_DB_INFO (
 )
 VALUES
 (	 'schema_version'
-	,'1.1.0'
+	,'1.3.0'
 );

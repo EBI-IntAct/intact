@@ -9,3 +9,6 @@ TECHNICAL CHANGES
     * Added 6 new tables, with the same structure than IA_Xref: IA_BioSourceXref, IA_ExperimentXref, IA_ControlledVocabXref, IA_FeatureXref, IA_InteractorXref, IA_PublicationXref
     * Created synonims for those tables
     * Granted the correct permissions
+    * Creates a procedure to copy existing data from IA_Xref table to the splitted tables
+    * Script to run the procedure
+    * Triggers to maintain the coexistence with the old IA_Xref table while everything is migrated

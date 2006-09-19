@@ -1,36 +1,31 @@
 set serveroutput on size 1000000
 
-spool install_122.log
+spool install_130.log
 
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  start_date from dual;
 
 PROMPT *********************************************************************************/
-PROMPT Adding multiple Xref tables
+PROMPT Component related changes
 PROMPT
-@add_multiple_xref_tables.sql
+@component_modifications.sql
 
 PROMPT *********************************************************************************/
-PROMPT Creating synonims and Grants
+PROMPT Adding multiple Alias tables
 PROMPT
-@create_synonyms_and_grants.sql
+@add_multiple_alias_tables.sql
 
 PROMPT *********************************************************************************/
-PROMPT Triggers
+PROMPT Granting permissions
 PROMPT
-@triggers.sql
+@grant_permissions.sql
 
 PROMPT *********************************************************************************/
-PROMPT Creating xref split procedure
+PROMPT Creating synonyms
 PROMPT
-@createXrefSplitProcedure.sql
-
-PROMPT *********************************************************************************/
-PROMPT Executing procedure
-PROMPT
-@runXrefSplit.sql
+@create_synonyms.sql
 
 UPDATE ia_db_info
-set value = '1.2.2'
+set value = '1.3.0'
 where UPPER(dbi_key) ='SCHEMA_VERSION';
 commit;
 
