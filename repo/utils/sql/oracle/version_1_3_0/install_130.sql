@@ -24,6 +24,22 @@ PROMPT Creating synonyms
 PROMPT
 @create_synonyms.sql
 
+PROMPT *********************************************************************************/
+PROMPT Triggers
+PROMPT
+@triggers.sql
+
+PROMPT *********************************************************************************/
+PROMPT Creating alias split procedure
+PROMPT
+@createAliasSplitProcedure.sql
+
+PROMPT *********************************************************************************/
+PROMPT Executing procedure
+PROMPT
+@runAliasSplit.sql
+
+
 UPDATE ia_db_info
 set value = '1.3.0'
 where UPPER(dbi_key) ='SCHEMA_VERSION';

@@ -51,13 +51,10 @@ BEGIN
             CREATED,
             UPDATED,
             USERSTAMP,
-            QUALIFIER_AC,
-            DATABASE_AC,
+            ALIASTYPE_AC,
             PARENT_AC,
             OWNER_AC,
-            PRIMARYID,
-            SECONDARYID,
-            DBRELEASE,
+            NAME,
             CREATED_USER
         )
         VALUES (
@@ -66,13 +63,10 @@ BEGIN
             v_alias_rec.CREATED,
             v_alias_rec.UPDATED,
             v_alias_rec.USERSTAMP,
-            v_alias_rec.QUALIFIER_AC,
-            v_alias_rec.DATABASE_AC,
+            v_alias_rec.ALIASTYPE_AC,
             v_alias_rec.PARENT_AC,
             v_alias_rec.OWNER_AC,
-            v_alias_rec.PRIMARYID,
-            v_alias_rec.SECONDARYID,
-            v_alias_rec.DBRELEASE,
+            v_alias_rec.NAME,
             v_alias_rec.CREATED_USER
         );
 
@@ -95,13 +89,10 @@ BEGIN
                 CREATED,
                 UPDATED,
                 USERSTAMP,
-                QUALIFIER_AC,
-                DATABASE_AC,
+                ALIASTYPE_AC,
                 PARENT_AC,
                 OWNER_AC,
-                PRIMARYID,
-                SECONDARYID,
-                DBRELEASE,
+                NAME,
                 CREATED_USER
             )
             VALUES (
@@ -110,16 +101,12 @@ BEGIN
                 v_alias_rec.CREATED,
                 v_alias_rec.UPDATED,
                 v_alias_rec.USERSTAMP,
-                v_alias_rec.QUALIFIER_AC,
-                v_alias_rec.DATABASE_AC,
+                v_alias_rec.ALIASTYPE_AC,
                 v_alias_rec.PARENT_AC,
                 v_alias_rec.OWNER_AC,
-                v_alias_rec.PRIMARYID,
-                v_alias_rec.SECONDARYID,
-                v_alias_rec.DBRELEASE,
+                v_alias_rec.NAME,
                 v_alias_rec.CREATED_USER
             );
-
         ELSE
 
           --
@@ -134,35 +121,29 @@ BEGIN
 
               -- copy Alias into the right table
               INSERT INTO ia_controlledvocab_alias (
-                  AC,
-                  DEPRECATED,
-                  CREATED,
-                  UPDATED,
-                  USERSTAMP,
-                  QUALIFIER_AC,
-                  DATABASE_AC,
-                  PARENT_AC,
-                  OWNER_AC,
-                  PRIMARYID,
-                  SECONDARYID,
-                  DBRELEASE,
-                  CREATED_USER
-              )
-              VALUES (
-                  v_alias_rec.AC,
-                  v_alias_rec.DEPRECATED,
-                  v_alias_rec.CREATED,
-                  v_alias_rec.UPDATED,
-                  v_alias_rec.USERSTAMP,
-                  v_alias_rec.QUALIFIER_AC,
-                  v_alias_rec.DATABASE_AC,
-                  v_alias_rec.PARENT_AC,
-                  v_alias_rec.OWNER_AC,
-                  v_alias_rec.PRIMARYID,
-                  v_alias_rec.SECONDARYID,
-                  v_alias_rec.DBRELEASE,
-                  v_alias_rec.CREATED_USER
-              );
+                    AC,
+                    DEPRECATED,
+                    CREATED,
+                    UPDATED,
+                    USERSTAMP,
+                    ALIASTYPE_AC,
+                    PARENT_AC,
+                    OWNER_AC,
+                    NAME,
+                    CREATED_USER
+                )
+                VALUES (
+                    v_alias_rec.AC,
+                    v_alias_rec.DEPRECATED,
+                    v_alias_rec.CREATED,
+                    v_alias_rec.UPDATED,
+                    v_alias_rec.USERSTAMP,
+                    v_alias_rec.ALIASTYPE_AC,
+                    v_alias_rec.PARENT_AC,
+                    v_alias_rec.OWNER_AC,
+                    v_alias_rec.NAME,
+                    v_alias_rec.CREATED_USER
+                );
 
           ELSE
 
@@ -183,13 +164,10 @@ BEGIN
                     CREATED,
                     UPDATED,
                     USERSTAMP,
-                    QUALIFIER_AC,
-                    DATABASE_AC,
+                    ALIASTYPE_AC,
                     PARENT_AC,
                     OWNER_AC,
-                    PRIMARYID,
-                    SECONDARYID,
-                    DBRELEASE,
+                    NAME,
                     CREATED_USER
                 )
                 VALUES (
@@ -198,13 +176,10 @@ BEGIN
                     v_alias_rec.CREATED,
                     v_alias_rec.UPDATED,
                     v_alias_rec.USERSTAMP,
-                    v_alias_rec.QUALIFIER_AC,
-                    v_alias_rec.DATABASE_AC,
+                    v_alias_rec.ALIASTYPE_AC,
                     v_alias_rec.PARENT_AC,
                     v_alias_rec.OWNER_AC,
-                    v_alias_rec.PRIMARYID,
-                    v_alias_rec.SECONDARYID,
-                    v_alias_rec.DBRELEASE,
+                    v_alias_rec.NAME,
                     v_alias_rec.CREATED_USER
                 );
 
@@ -222,36 +197,29 @@ BEGIN
 
                   -- copy Alias into the right table
                   INSERT INTO ia_feature_alias (
-                      AC,
-                      DEPRECATED,
-                      CREATED,
-                      UPDATED,
-                      USERSTAMP,
-                      QUALIFIER_AC,
-                      DATABASE_AC,
-                      PARENT_AC,
-                      OWNER_AC,
-                      PRIMARYID,
-                      SECONDARYID,
-                      DBRELEASE,
-                      CREATED_USER
-                  )
-                  VALUES (
-                      v_alias_rec.AC,
-                      v_alias_rec.DEPRECATED,
-                      v_alias_rec.CREATED,
-                      v_alias_rec.UPDATED,
-                      v_alias_rec.USERSTAMP,
-                      v_alias_rec.QUALIFIER_AC,
-                      v_alias_rec.DATABASE_AC,
-                      v_alias_rec.PARENT_AC,
-                      v_alias_rec.OWNER_AC,
-                      v_alias_rec.PRIMARYID,
-                      v_alias_rec.SECONDARYID,
-                      v_alias_rec.DBRELEASE,
-                      v_alias_rec.CREATED_USER
-                  );
-
+                        AC,
+                        DEPRECATED,
+                        CREATED,
+                        UPDATED,
+                        USERSTAMP,
+                        ALIASTYPE_AC,
+                        PARENT_AC,
+                        OWNER_AC,
+                        NAME,
+                        CREATED_USER
+                    )
+                    VALUES (
+                        v_alias_rec.AC,
+                        v_alias_rec.DEPRECATED,
+                        v_alias_rec.CREATED,
+                        v_alias_rec.UPDATED,
+                        v_alias_rec.USERSTAMP,
+                        v_alias_rec.ALIASTYPE_AC,
+                        v_alias_rec.PARENT_AC,
+                        v_alias_rec.OWNER_AC,
+                        v_alias_rec.NAME,
+                        v_alias_rec.CREATED_USER
+                    );
               ELSE
 
                 --
@@ -271,13 +239,10 @@ BEGIN
                         CREATED,
                         UPDATED,
                         USERSTAMP,
-                        QUALIFIER_AC,
-                        DATABASE_AC,
+                        ALIASTYPE_AC,
                         PARENT_AC,
                         OWNER_AC,
-                        PRIMARYID,
-                        SECONDARYID,
-                        DBRELEASE,
+                        NAME,
                         CREATED_USER
                     )
                     VALUES (
@@ -286,13 +251,10 @@ BEGIN
                         v_alias_rec.CREATED,
                         v_alias_rec.UPDATED,
                         v_alias_rec.USERSTAMP,
-                        v_alias_rec.QUALIFIER_AC,
-                        v_alias_rec.DATABASE_AC,
+                        v_alias_rec.ALIASTYPE_AC,
                         v_alias_rec.PARENT_AC,
                         v_alias_rec.OWNER_AC,
-                        v_alias_rec.PRIMARYID,
-                        v_alias_rec.SECONDARYID,
-                        v_alias_rec.DBRELEASE,
+                        v_alias_rec.NAME,
                         v_alias_rec.CREATED_USER
                     );
 
@@ -318,5 +280,3 @@ CLOSE alias_cur;
 
 END;
 /
-
-exit
