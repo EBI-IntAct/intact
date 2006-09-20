@@ -5,11 +5,14 @@
             <plugin>
                 <artifactId>maven-psixml-generator-plugin</artifactId>
                 <configuration>
+
                     <targetPath>target/psixml-test</targetPath>
+
                     <speciesFilename>classification_by_species.txt</speciesFilename>
                     <publicationsFilename>classification_by_publications.txt</publicationsFilename>
-                    
-                    <searchPattern>ab%</searchPattern>
+                    <datasetsFilename>classification_by_datasets.txt</datasetsFilename>
+
+                    <searchPattern>ya%</searchPattern>
 
                     <overwrite>true</overwrite>
                     <experimentErrorFile>target/psixml-test/experiment-error.log</experimentErrorFile>
@@ -18,6 +21,21 @@
                     <reverseMappingFile>reverseMapping.txt</reverseMappingFile>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <zipXml>true</zipXml>
+
+                    <classifications>
+                        <classification>
+                            <name>publications</name>
+                            <enabled>true</enabled>
+                        </classification>
+                        <classification>
+                            <name>species</name>
+                            <enabled>true</enabled>
+                        </classification>
+                        <classification>
+                            <name>datasets</name>
+                            <enabled>true</enabled>
+                        </classification>
+                    </classifications>
 
                     <psiVersions>
                         <version>

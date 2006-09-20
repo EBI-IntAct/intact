@@ -31,5 +31,6 @@ public class ExperimentListGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
         writeClassificationBySpeciesToFile();
         writeClassificationByPublicationsToFile();
+        writeClassificationByDatasetToFile();
     }
 }
