@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.4-SNAPSHOT</version>
-    <!-- last released 1.4.3 -->
+    <version>1.4.4</version>
+    <!-- last released 1.4.4 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
@@ -174,12 +174,12 @@
         <dependency>
             <groupId>uk.ac.ebi</groupId>
             <artifactId>sptr</artifactId>
-            <version>8.6</version>
+            <version>[8.6,)</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi</groupId>
             <artifactId>cdbWebservices</artifactId>
-            <version>6</version>
+            <version>[6,)</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi</groupId>
