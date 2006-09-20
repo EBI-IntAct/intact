@@ -27,12 +27,17 @@ public class ExperimentListItem
     private static final Log log = LogFactory.getLog(ExperimentListItem.class);
 
     /**
-     * Unreadable but working pattern to parse an experimentListItem from a String
+     * Unreadable but working pattern to parse an experimentListItem from a String.
+     * Note: file path can contain / or \ indifferently
      */
     private static final Pattern PATTERN =
-            Pattern.compile("((?:\\w+/)*)(\\w+(?:-1)?(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
+            Pattern.compile("((?:\\w+(?:/|\\\\))*)(\\w+(?:-1)?(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
 
     private Collection<String> experimentLabels;
+
+    /**
+     * Name of the file.
+     */
     private String name;
     private boolean negative;
     private Integer chunkNumber;
@@ -77,10 +82,8 @@ public class ExperimentListItem
             fileNumber = "";
         }
 
-
-
         return parentFolders + FileHelper.SLASH + name +
-                strLargeScale +fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
+               strLargeScale + fileNumber + strNegative + FileHelper.XML_FILE_EXTENSION;
     }
 
     public String getPattern()
@@ -155,8 +158,6 @@ public class ExperimentListItem
      */
     public static ExperimentListItem parseString(String strItem)
     {
-        strItem = strItem.trim();
-
         Matcher matcher = PATTERN.matcher(strItem);
 
         if (matcher.find())
