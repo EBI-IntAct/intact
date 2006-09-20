@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>data-conversion</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released: 1.3.8 -->
+    <version>1.4.0</version>
+    <!-- last released: 1.4.0 -->
     <name>Data conversions</name>
     <description>Import/Exports from/to PSI files</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
@@ -92,12 +92,12 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.3.6</version>
+            <version>1.4.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>app-commons</artifactId>
-            <version>1.3.0</version>
+            <version>1.4.0</version>
         </dependency>
     </dependencies>
 
