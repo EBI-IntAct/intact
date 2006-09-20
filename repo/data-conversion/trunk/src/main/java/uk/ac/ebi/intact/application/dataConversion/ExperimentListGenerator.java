@@ -77,6 +77,8 @@ public class ExperimentListGenerator {
     private String speciesFolderName = SPECIES_FOLDER_NAME_DEFAULT;
     private String publicationsFolderName = PUBLICATIONS_FOLDER_NAME_DEFAULT;
     private String datasetFolderName = DATASETS_FOLDER_NAME_DEFAULT;
+    private String currentDataset;
+
     private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
     private int smallScaleLimit = SMALL_SCALE_LIMIT_DEFAULT;
     private int largeScaleChunkSize = LARGE_SCALE_CHUNK_SIZE_DEFAULT;
@@ -597,7 +599,8 @@ public class ExperimentListGenerator {
             Collection<SimplifiedAnnotatedObject<Experiment>> experiments = dataset2experimentSet.get( dataset );
 
             // the name of the directory changes according to the dataset name.
-            datasetFolderName = dataset.getName();
+            // note: the prefix is always datasets/
+            currentDataset = dataset.getName();
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
             createExpListItems( experiments,
@@ -727,7 +730,10 @@ public class ExperimentListGenerator {
                 parentFolders = publicationsFolderName + FileHelper.SLASH + year;
                 break;
             case DATASETS:
-                parentFolders = datasetFolderName;
+                if( currentDataset == null ) {
+                    throw new IllegalStateException( "currentDataset should have been set prior to calling that method." );
+                }
+                parentFolders = datasetFolderName + FileHelper.SLASH + currentDataset;
                 break;
         }
 
