@@ -106,6 +106,23 @@ public class ExperimentListItemTest extends TestCase {
         assertEquals(mockWithOneLabel, ExperimentListItem.parseString(mockWithOneLabel.toString()));
         assertEquals(mockWithOneLabelLarge, ExperimentListItem.parseString(mockWithOneLabelLarge.toString()));
         assertEquals(mockWithManyLabels, ExperimentListItem.parseString(mockWithManyLabels.toString()));
+
+
+        ExperimentListItem e = ExperimentListItem.parseString( "BioCreative\\16682412.xml li-2006b-1,li-2006b-2,li-2006b-3,li-2006b-4" );
+        assertEquals( "BioCreative", e.getParentFolders() );
+        assertEquals( "BioCreative\\16682412.xml", e.getFilename() );
+        assertNull( e.getChunkNumber() );
+
+        assertTrue( e.getExperimentLabels().contains( "li-2006b-1" ) );
+        assertTrue( e.getExperimentLabels().contains( "li-2006b-2" ) );
+        assertTrue( e.getExperimentLabels().contains( "li-2006b-3" ) );
+        assertTrue( e.getExperimentLabels().contains( "li-2006b-4" ) );
+
+        assertEquals( "", e.getInteractionRange() );
+        assertEquals( null, e.getLargeScaleChunkSize() );
+        assertEquals( "li-2006b-1,li-2006b-2,li-2006b-3,li-2006b-4", e.getPattern() );
+
+
     }
 
     public static Test suite() {
