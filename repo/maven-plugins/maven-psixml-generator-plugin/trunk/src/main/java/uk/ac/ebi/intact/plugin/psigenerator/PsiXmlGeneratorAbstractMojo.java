@@ -31,53 +31,66 @@ import java.util.Map;
  * @version $Id:PsiXmlGeneratorAbstractMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>04/08/2006</pre>
  */
-public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
-{
+public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
 
-    protected static final String NEW_LINE = System.getProperty("line.separator");
+    protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /**
-    * Project instance
-    * @parameter default-value="${project}"
-    * @readonly
-    */
+     * Project instance
+     *
+     * @parameter default-value="${project}"
+     * @readonly
+     */
     protected MavenProject project;
 
     /**
-    * File containing the species
-    * @parameter default-value="target/psixml"
-    * @required
-    */
+     * File containing the species
+     *
+     * @parameter default-value="target/psixml"
+     * @required
+     */
     protected File targetPath;
 
     /**
-    * File containing the species
-    * @parameter default-value="classification_by_species.txt"
-    */
+     * File containing the species
+     *
+     * @parameter default-value="classification_by_species.txt"
+     */
     protected String speciesFilename;
 
     /**
-    * File containing the publications
-    * @parameter default-value="classification_by_publications.txt"
-    */
+     * File containing the publications
+     *
+     * @parameter default-value="classification_by_publications.txt"
+     */
     protected String publicationsFilename;
 
     /**
-    * File containing the errors
-    * @parameter default-value="target/psixml/experiment-error.log"
-    */
+     * File containing the datasets
+     *
+     * @parameter default-value="classification_by_datasets.txt"
+     */
+    protected String datasetsFilename;
+
+    /**
+     * File containing the errors
+     *
+     * @parameter default-value="target/psixml/experiment-error.log"
+     */
     protected File experimentErrorFile;
 
     /**
-    * File containing the negative experiments
-    * @parameter default-value="target/psixml/negative-experiments.log"
-    */
+     * File containing the negative experiments
+     *
+     * @parameter default-value="target/psixml/negative-experiments.log"
+     */
     protected File negativeExperimentsFile;
 
     /**
-    * File containing the publications
-    * @parameter default-value="%"
-    */
+     * File containing the publications
+     *
+     * @parameter default-value="%"
+     */
     protected String searchPattern;
 
     /**
@@ -111,118 +124,125 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
     private boolean reportsWritten;
     protected ExperimentListGenerator experimentListGenerator;
 
-    public PsiXmlGeneratorAbstractMojo()
-    {
+    public PsiXmlGeneratorAbstractMojo() {
     }
 
-    protected File getSpeciesFile()
-    {
-        return new File(targetPath, speciesFilename);
+    protected File getSpeciesFile() {
+        return new File( targetPath, speciesFilename );
     }
 
-    protected File getPublicationsFile()
-    {
-        return new File(targetPath, publicationsFilename);
+    protected File getPublicationsFile() {
+        return new File( targetPath, publicationsFilename );
     }
 
-    protected void initialize() throws MojoExecutionException
-    {
-        if (initialized)
-        {
+    protected File getDatasetsFile() {
+        return new File( targetPath, datasetsFilename );
+    }
+
+    protected void initialize() throws MojoExecutionException {
+        if ( initialized ) {
             return;
         }
 
-        getLog().debug("Using hibernate cfg file: "+hibernateConfig);
+        getLog().debug( "Using hibernate cfg file: " + hibernateConfig );
 
-        if (!hibernateConfig.exists())
-        {
-            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig);
+        if ( !hibernateConfig.exists() ) {
+            throw new MojoExecutionException( "No hibernate config file found: " + hibernateConfig );
         }
 
-        if (!targetPath.exists())
-        {
+        if ( !targetPath.exists() ) {
             targetPath.mkdirs();
         }
 
         File speciesFile = getSpeciesFile();
         File publicationsFile = getPublicationsFile();
+        File datasetsFile = getDatasetsFile();
 
-        if (speciesFile.exists() && !overwrite)
-        {
-            throw new MojoExecutionException("Target species file already exist and overwrite is set to false: "+speciesFile);
+        if ( speciesFile.exists() && !overwrite ) {
+            throw new MojoExecutionException( "Target species file already exist and overwrite is set to false: " + speciesFile );
         }
 
-        if (publicationsFile.exists() && !overwrite)
-        {
-            throw new MojoExecutionException("Target publications file already exist and overwrite is set to false: "+speciesFile);
+        if ( publicationsFile.exists() && !overwrite ) {
+            throw new MojoExecutionException( "Target publications file already exist and overwrite is set to false: " + publicationsFile );
+        }
+
+        if ( datasetsFile.exists() && !overwrite ) {
+            throw new MojoExecutionException( "Target datasets file already exist and overwrite is set to false: " + datasetsFile );
         }
 
         // configure the context
         IntactSession session = new StandaloneSession();
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorMojoTest", hibernateConfig, session);
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig( "PsiXmlGeneratorMojoTest", hibernateConfig, session );
         testConfig.initialize();
-        IntactContext.initContext(testConfig, session);
+        IntactContext.initContext( testConfig, session );
 
-        experimentListGenerator = new ExperimentListGenerator(searchPattern);
-        experimentListGenerator.setOnlyWithPmid(onlyWithPmid);
+        experimentListGenerator = new ExperimentListGenerator( searchPattern );
+        experimentListGenerator.setOnlyWithPmid( onlyWithPmid );
 
         initialized = true;
     }
 
-    protected Collection<ExperimentListItem> generateSpeciesListItems() throws MojoExecutionException
-    {
+    protected Collection<ExperimentListItem> generateSpeciesListItems() throws MojoExecutionException {
         initialize();
         return experimentListGenerator.generateClassificationBySpecies();
     }
 
-    protected Collection<ExperimentListItem> generatePublicationsListItems() throws MojoExecutionException
-    {
+    protected Collection<ExperimentListItem> generatePublicationsListItems() throws MojoExecutionException {
         initialize();
         return experimentListGenerator.generateClassificationByPublications();
     }
 
-    protected Collection<ExperimentListItem> generateAllClassifications() throws MojoExecutionException
-    {
+    protected Collection<ExperimentListItem> generateDatasetsListItems() throws MojoExecutionException {
+        initialize();
+        return experimentListGenerator.generateClassificationByDatasets();
+    }
+
+    protected Collection<ExperimentListItem> generateAllClassifications() throws MojoExecutionException {
         initialize();
         return experimentListGenerator.generateAllClassifications();
     }
 
-    protected void writeClassificationBySpeciesToFile() throws MojoExecutionException
-    {
-        getLog().debug("Species filename: "+getSpeciesFile());
+    protected void writeClassificationBySpeciesToFile() throws MojoExecutionException {
+        getLog().debug( "Species filename: " + getSpeciesFile() );
 
-        try
-        {
-            writeItems(getSpeciesFile(), generateSpeciesListItems());
+        try {
+            writeItems( getSpeciesFile(), generateSpeciesListItems() );
         }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problem creating the species file", e);
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem creating the species file", e );
         }
 
         writeReports();
     }
 
-    protected void writeClassificationByPublicationsToFile() throws MojoExecutionException
-    {
-        getLog().debug("Publications filename: " + getPublicationsFile());
+    protected void writeClassificationByPublicationsToFile() throws MojoExecutionException {
+        getLog().debug( "Publications filename: " + getPublicationsFile() );
 
-        try
-        {
-            writeItems(getPublicationsFile(), generatePublicationsListItems());
+        try {
+            writeItems( getPublicationsFile(), generatePublicationsListItems() );
         }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problem creating the species file", e);
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem creating the publications file", e );
         }
 
         writeReports();
     }
 
-    private void writeReports() throws MojoExecutionException
-    {
-        if (reportsWritten)
-        {
+    protected void writeClassificationByDatasetToFile() throws MojoExecutionException {
+        getLog().debug( "Datasets filename: " + getDatasetsFile() );
+
+        try {
+            writeItems( getDatasetsFile(), generateDatasetsListItems() );
+        }
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem creating the datasets file", e );
+        }
+
+        writeReports();
+    }
+
+    private void writeReports() throws MojoExecutionException {
+        if ( reportsWritten ) {
             return;
         }
         initialize();
@@ -232,78 +252,64 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo
         reportsWritten = true;
     }
 
-    private static void writeItems(File itemsFile, Collection<ExperimentListItem> items) throws IOException
-    {
-        Writer writer = new FileWriter(itemsFile);
+    private static void writeItems( File itemsFile, Collection<ExperimentListItem> items ) throws IOException {
+        Writer writer = new FileWriter( itemsFile );
 
-        for (ExperimentListItem item : items)
-        {
-            writer.write(item.toString() + NEW_LINE);
+        for ( ExperimentListItem item : items ) {
+            writer.write( item.toString() + NEW_LINE );
         }
 
         writer.close();
     }
 
-    private void writeNegativeExperiments() throws MojoExecutionException
-    {
+    private void writeNegativeExperiments() throws MojoExecutionException {
         Collection<Experiment> negativeExperiments = experimentListGenerator.getNegativeExperiments();
-        getLog().info("Negative experiments: "+negativeExperiments.size());
+        getLog().info( "Negative experiments: " + negativeExperiments.size() );
 
-        try
-        {
-            Writer writer = new FileWriter(negativeExperimentsFile);
+        try {
+            Writer writer = new FileWriter( negativeExperimentsFile );
 
-            writer.write("# Negative experiments "+new Date()+NEW_LINE);
-            writer.write("############################################# "+NEW_LINE+NEW_LINE);
+            writer.write( "# Negative experiments " + new Date() + NEW_LINE );
+            writer.write( "############################################# " + NEW_LINE + NEW_LINE );
 
-            if (negativeExperiments.isEmpty())
-            {
-               writer.write("# No negative experiments found! "+NEW_LINE); 
+            if ( negativeExperiments.isEmpty() ) {
+                writer.write( "# No negative experiments found! " + NEW_LINE );
             }
 
-            for (Experiment negExp : negativeExperiments)
-            {
-                writer.write(negExp.getAc() + "\t" + negExp.getShortLabel() + NEW_LINE);
+            for ( Experiment negExp : negativeExperiments ) {
+                writer.write( negExp.getAc() + "\t" + negExp.getShortLabel() + NEW_LINE );
             }
 
             writer.close();
         }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problem writing negative experiments file", e);
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem writing negative experiments file", e );
         }
     }
 
-    private void writeErrorFile() throws MojoExecutionException
-    {
-        Map<String,String> experimentsWithErrors = experimentListGenerator.getExperimentWithErrors();
-        getLog().info("Experiments with errors: "+experimentsWithErrors.size());
+    private void writeErrorFile() throws MojoExecutionException {
+        Map<String, String> experimentsWithErrors = experimentListGenerator.getExperimentWithErrors();
+        getLog().info( "Experiments with errors: " + experimentsWithErrors.size() );
 
 
-        try
-        {
-            Writer writer = new FileWriter(experimentErrorFile);
+        try {
+            Writer writer = new FileWriter( experimentErrorFile );
 
-            writer.write("# Experiments with errors "+new Date()+NEW_LINE);
-            writer.write("###################################################### "+NEW_LINE+NEW_LINE);
+            writer.write( "# Experiments with errors " + new Date() + NEW_LINE );
+            writer.write( "###################################################### " + NEW_LINE + NEW_LINE );
 
-            if (experimentsWithErrors.isEmpty())
-            {
-               writer.write("# No errors found! "+NEW_LINE);
+            if ( experimentsWithErrors.isEmpty() ) {
+                writer.write( "# No errors found! " + NEW_LINE );
             }
 
-            for (Map.Entry<String, String> error : experimentsWithErrors.entrySet())
-            {
-                writer.write(error.getKey() + " " + error.getValue() + NEW_LINE);
+            for ( Map.Entry<String, String> error : experimentsWithErrors.entrySet() ) {
+                writer.write( error.getKey() + " " + error.getValue() + NEW_LINE );
             }
 
             writer.close();
         }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problem writing error file", e);
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem writing error file", e );
         }
     }
-
-
 }

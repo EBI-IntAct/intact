@@ -7,6 +7,7 @@
               <targetPath>target/psixml-test/clean</targetPath>
               <speciesFilename>classification_by_species.txt</speciesFilename>
               <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+              <datasetsFilename>classification_by_datasets.txt</datasetsFilename>
           </configuration>
       </plugin>
     </plugins>
