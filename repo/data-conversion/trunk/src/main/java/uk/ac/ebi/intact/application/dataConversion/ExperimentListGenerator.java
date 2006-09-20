@@ -16,7 +16,6 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -33,9 +32,9 @@ import java.util.*;
  */
 public class ExperimentListGenerator {
 
-    private static final Log log = LogFactory.getLog(ExperimentListGenerator.class);
+    private static final Log log = LogFactory.getLog( ExperimentListGenerator.class );
 
-   /**
+    /**
      * Maximum count of interaction for a small scale experiment.
      */
     public static final int SMALL_SCALE_LIMIT_DEFAULT = 500;
@@ -48,14 +47,22 @@ public class ExperimentListGenerator {
     public static final String SMALL = "small";
     public static final String LARGE = "large";
 
-    public static final String NEW_LINE = System.getProperty("line.separator");
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     private static final int MAX_EXPERIMENTS_PER_CHUNK_DEFAULT = 100;
 
-    private enum Classification { SPECIES, PUBLICATIONS }
+    /**
+     * Classification type supported.
+     */
+    private enum Classification {
+        SPECIES,
+        PUBLICATIONS,
+        DATASETS
+    }
 
     private static final String SPECIES_FOLDER_NAME_DEFAULT = "species";
     private static final String PUBLICATIONS_FOLDER_NAME_DEFAULT = "pmid";
+    private static final String DATASETS_FOLDER_NAME_DEFAULT = "datasets";
 
     /**
      * Pattern used to select experiment by its label
@@ -69,12 +76,14 @@ public class ExperimentListGenerator {
 
     private String speciesFolderName = SPECIES_FOLDER_NAME_DEFAULT;
     private String publicationsFolderName = PUBLICATIONS_FOLDER_NAME_DEFAULT;
+    private String datasetFolderName = DATASETS_FOLDER_NAME_DEFAULT;
     private int experimentsPerChunk = MAX_EXPERIMENTS_PER_CHUNK_DEFAULT;
     private int smallScaleLimit = SMALL_SCALE_LIMIT_DEFAULT;
     private int largeScaleChunkSize = LARGE_SCALE_CHUNK_SIZE_DEFAULT;
 
-        private List<ExperimentListItem> speciesListItems = new ArrayList<ExperimentListItem>();
+    private List<ExperimentListItem> speciesListItems = new ArrayList<ExperimentListItem>();
     private List<ExperimentListItem> publicationsListItems = new ArrayList<ExperimentListItem>();
+    private List<ExperimentListItem> datasetsListItems = new ArrayList<ExperimentListItem>();
 
     private boolean experimentsClassified;
     private Set<String> filteredExperimentAcs;
@@ -82,51 +91,60 @@ public class ExperimentListGenerator {
     /**
      * The key being the experiment AC and the value the number of interactions for that experiment
      */
-    private Map<String,Integer> interactionCount;
+    private Map<String, Integer> interactionCount;
 
-    private Map<String,String> expAcToPmid;
+    /**
+     * Mapping experiment to their datasets
+     */
+    private Map<String, Collection<SimpleDataset>> experiment2dataset;
 
-    private Map<String,List<String>> expAcToTaxid;
+    private Map<String, String> expAcToPmid;
 
-    private Map<String,BioSource> targetSpeciesCache = new HashMap<String,BioSource>();
+    private Map<String, List<String>> expAcToTaxid;
+
+    private Map<String, BioSource> targetSpeciesCache = new HashMap<String, BioSource>();
 
     /**
      * Classification of experiments by pubmedId
      */
-    private Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> pubmed2experimentSet = new HashMap<String, Collection<SimplifiedAnnotatedObject<Experiment>>>();
+    private Map<String, Collection<SimplifiedAnnotatedObject<Experiment>>> pubmed2experimentSet =
+            new HashMap<String, Collection<SimplifiedAnnotatedObject<Experiment>>>();
 
     /**
      * Classification of experiments by species
      */
-    private Map<SimplifiedAnnotatedObject<BioSource>, Collection<SimplifiedAnnotatedObject<Experiment>>> species2experimentSet = new HashMap<SimplifiedAnnotatedObject<BioSource>, Collection<SimplifiedAnnotatedObject<Experiment>>>();
+    private Map<SimplifiedAnnotatedObject<BioSource>, Collection<SimplifiedAnnotatedObject<Experiment>>> species2experimentSet =
+            new HashMap<SimplifiedAnnotatedObject<BioSource>, Collection<SimplifiedAnnotatedObject<Experiment>>>();
 
     /**
-     * Holds the shortLabels of any Experiments found to contain Interactions with 'negative' information. It has to
-     * be a static because the method used for writing the classifications is a static...
+     * Classification of experiments by dataset
+     * (dataset/pmid -> experiment list)
+     */
+    private Map<SimpleDataset, Collection<SimplifiedAnnotatedObject<Experiment>>> dataset2experimentSet =
+            new HashMap<SimpleDataset, Collection<SimplifiedAnnotatedObject<Experiment>>>( );
+
+    /**
+     * Holds the shortLabels of any Experiments found to contain Interactions with 'negative' information. It has to be
+     * a static because the method used for writing the classifications is a static...
      */
     private Set<Experiment> negativeExperiments;
 
-    private Map<String,String> experimentsWithErrors = new HashMap<String,String>();
+    private Map<String, String> experimentsWithErrors = new HashMap<String, String>();
 
-    public ExperimentListGenerator()
-    {
-        this("%");
+    public ExperimentListGenerator() {
+        this( "%" );
     }
 
-    public ExperimentListGenerator(String searchPattern)
-    {
+    public ExperimentListGenerator( String searchPattern ) {
         this.searchPattern = searchPattern;
     }
 
-    public List<ExperimentListItem> generateClassificationBySpecies()
-    {
-        if (!experimentsClassified)
-        {
+    public List<ExperimentListItem> generateClassificationBySpecies() {
+        if ( !experimentsClassified ) {
             classifyExperiments();
         }
 
-        if (speciesListItems != null && !speciesListItems.isEmpty())
-        {
+        if ( speciesListItems != null && !speciesListItems.isEmpty() ) {
             return speciesListItems;
         }
 
@@ -135,15 +153,12 @@ public class ExperimentListGenerator {
         return speciesListItems;
     }
 
-    public List<ExperimentListItem> generateClassificationByPublications()
-    {
-        if (!experimentsClassified)
-        {
+    public List<ExperimentListItem> generateClassificationByPublications() {
+        if ( !experimentsClassified ) {
             classifyExperiments();
         }
 
-        if (publicationsListItems != null && !publicationsListItems.isEmpty())
-        {
+        if ( publicationsListItems != null && !publicationsListItems.isEmpty() ) {
             return publicationsListItems;
         }
 
@@ -152,58 +167,68 @@ public class ExperimentListGenerator {
         return publicationsListItems;
     }
 
-    public List<ExperimentListItem> generateAllClassifications()
-    {
-        if (!experimentsClassified)
-        {
+    public List<ExperimentListItem> generateClassificationByDatasets() {
+        if ( !experimentsClassified ) {
+            classifyExperiments();
+        }
+
+        if ( datasetsListItems != null && !datasetsListItems.isEmpty() ) {
+            return datasetsListItems;
+        }
+
+        createItemClassificationByDataset();
+
+        return datasetsListItems;
+    }
+
+    public List<ExperimentListItem> generateAllClassifications() {
+        if ( !experimentsClassified ) {
             classifyExperiments();
         }
 
         List<ExperimentListItem> allItems = new ArrayList<ExperimentListItem>();
-        allItems.addAll(generateClassificationBySpecies());
-        allItems.addAll(generateClassificationByPublications());
+        allItems.addAll( generateClassificationBySpecies() );
+        allItems.addAll( generateClassificationByPublications() );
 
         return allItems;
     }
 
-    public Set<Experiment> getNegativeExperiments()
-    {
-        if (negativeExperiments == null)
-        {
+    public Set<Experiment> getNegativeExperiments() {
+        if ( negativeExperiments == null ) {
             classifyNegatives();
         }
 
         return negativeExperiments;
     }
 
-    public Map<String,String> getExperimentWithErrors()
-    {
-        if (!experimentsClassified)
-        {
+    public Map<String, String> getExperimentWithErrors() {
+        if ( !experimentsClassified ) {
             classifyExperiments();
         }
 
         return experimentsWithErrors;
     }
 
+
+    boolean experimentsClassifiedByDataset = false;
+
     /**
      * Classify experiments matching searchPattern into a data structure according to species and experiment size.
      *
      * @return HashMap of HashMap of ArrayLists of Experiments: {species}{scale}[n]
+     *
      * @throws uk.ac.ebi.intact.business.IntactException
      *
      */
-    private void classifyExperiments()
-    {
+    private void classifyExperiments() {
 
-        if (log.isDebugEnabled())
-        {
-            try
-            {
-                log.debug("Database: " + getDaoFactory().getBaseDao().getDbName());
+        // TODO separate classification - one method per type of classification !
+
+        if ( log.isDebugEnabled() ) {
+            try {
+                log.debug( "Database: " + getDaoFactory().getBaseDao().getDbName() );
             }
-            catch (SQLException e)
-            {
+            catch ( SQLException e ) {
                 e.printStackTrace();
             }
         }
@@ -215,118 +240,135 @@ public class ExperimentListGenerator {
 
         Set<String> experimentFilter = getFilteredExperimentAcs();
 
-        do
-        {
-            searchResults = getExperiments(firstResult, experimentsPerChunk);
+        do {
+            searchResults = getExperiments( firstResult, experimentsPerChunk );
 
             // Split the list of experiments into species- and size-specific files
-            for (Experiment experiment : searchResults)
-            {
-                if (experimentFilter.contains(experiment.getAc()))
-                {
-                    log.debug("Skipping " + experiment.getShortLabel());
+            for ( Experiment experiment : searchResults ) {
+                if ( experimentFilter.contains( experiment.getAc() ) ) {
+                    log.debug( "Skipping " + experiment.getShortLabel() );
                     continue;
                 }
 
-                int interactionCount = interactionsForExperiment(experiment.getAc());
+                int interactionCount = interactionsForExperiment( experiment.getAc() );
                 // Skip empty experiments and give a warning about'em
-                if (interactionCount == 0)
-                {
-                    log.debug("ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction.");
-                    experimentsWithErrors.put(experiment.getShortLabel(), "Experiment without interactions");
+                if ( interactionCount == 0 ) {
+                    log.debug( "ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction." );
+                    experimentsWithErrors.put( experiment.getShortLabel(), "Experiment without interactions" );
                     continue;
                 }
 
                 // 1. Get the species of one of the interactors of the experiment.
                 //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
-                Collection<BioSource> sources = getTargetSpecies(experiment.getAc());
+                Collection<BioSource> sources = getTargetSpecies( experiment.getAc() );
 
-                if (log.isDebugEnabled())
-                    log.debug("Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + (interactionCount > 1 ? "s" : "") + ")");
-
-                // 2. get the pubmedId (primary-ref)
-                String pubmedId = String.valueOf(getPubmedId(experiment.getAc()));
-
-                if (log.isDebugEnabled())
-                {
-                    log.debug("\tPubmedId: "+pubmedId+"; Sources: "+sources.size());
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + ( interactionCount > 1 ? "s" : "" ) + ")" );
                 }
 
-                if (log.isWarnEnabled())
-                {
-                    if (sources.isEmpty())
-                    {
-                        experimentsWithErrors.put(experiment.getShortLabel(), "Experiment without biosources");
-                        log.error("Experiment without target-species: "+experiment.getAc()+" ("+experiment.getShortLabel()+")");
+                // 2. get the pubmedId (primary-ref)
+                String pubmedId = String.valueOf( getPubmedId( experiment.getAc() ) );
+
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "\tPubmedId: " + pubmedId + "; Sources: " + sources.size() );
+                }
+
+                if ( log.isWarnEnabled() ) {
+                    if ( sources.isEmpty() ) {
+                        experimentsWithErrors.put( experiment.getShortLabel(), "Experiment without biosources" );
+                        log.error( "Experiment without target-species: " + experiment.getAc() + " (" + experiment.getShortLabel() + ")" );
                     }
                 }
 
                 // 3. create the classification by publication
-                if (pubmedId != null)
-                {
+                if ( pubmedId != null ) {
 
                     Collection<SimplifiedAnnotatedObject<Experiment>> experimentSet = null;
 
-                    if (!pubmed2experimentSet.containsKey(pubmedId))
-                    {
+                    if ( !pubmed2experimentSet.containsKey( pubmedId ) ) {
                         // create an empty set
                         experimentSet = new HashSet<SimplifiedAnnotatedObject<Experiment>>();
-                        pubmed2experimentSet.put(pubmedId, experimentSet);
-                    }
-                    else
-                    {
+                        pubmed2experimentSet.put( pubmedId, experimentSet );
+                    } else {
                         // retreive the existing set
-                        experimentSet = pubmed2experimentSet.get(pubmedId);
+                        experimentSet = pubmed2experimentSet.get( pubmedId );
                     }
 
                     // add the experiment to the set of experiments.
-                    experimentSet.add(new SimplifiedAnnotatedObject<Experiment>(experiment));
-                }
-                else
-                {
-                    log.debug("ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")");
+                    experimentSet.add( new SimplifiedAnnotatedObject<Experiment>( experiment ) );
+                } else {
+                    log.debug( "ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")" );
                 }
 
                 // if multiple target-species have been found, that experiment will be associated redundantly
                 // to each BioSource. only the publication classification is non redundant.
-                for (BioSource bioSource : sources)
-                {
-                    SimplifiedAnnotatedObject<BioSource> source = new SimplifiedAnnotatedObject<BioSource>(bioSource);
+                for ( BioSource bioSource : sources ) {
+                    SimplifiedAnnotatedObject<BioSource> source = new SimplifiedAnnotatedObject<BioSource>( bioSource );
 
-                    if (!species2experimentSet.containsKey(source))
-                    {
+                    if ( !species2experimentSet.containsKey( source ) ) {
                         // not yet in the structure, create an entry
                         Collection<SimplifiedAnnotatedObject<Experiment>> experiments = new HashSet<SimplifiedAnnotatedObject<Experiment>>();
-                        species2experimentSet.put(source, experiments);
+                        species2experimentSet.put( source, experiments );
                     }
 
                     // associate experiment to the source
-                    Collection<SimplifiedAnnotatedObject<Experiment>> experiments = species2experimentSet.get(source);
-                    experiments.add(new SimplifiedAnnotatedObject<Experiment>(experiment));
+                    Collection<SimplifiedAnnotatedObject<Experiment>> experiments = species2experimentSet.get( source );
+                    experiments.add( new SimplifiedAnnotatedObject<Experiment>( experiment ) );
                 }
-            }
+
+                // 4. Classify by datasets
+                //    The classification is as follow: datasets/pmid.xml contains the list of corresponding experiments.
+                Collection<SimpleDataset> datasets = getDatasets( experiment.getAc() );
+
+                if( datasets != null ) {
+
+                    for ( SimpleDataset dataset : datasets ) {
+
+                        Collection<SimplifiedAnnotatedObject<Experiment>> experimentList = null;
+
+                        if( pubmedId == null ) {
+
+                            log.error( "PubMed id was null when classifying experiment '"+ experiment.getShortLabel() +
+                                       "' by datasets '"+ dataset.getName() +"', skipping." );
+
+                        } else {
+
+                            dataset.setPmid( pubmedId );
+
+                            if( ! dataset2experimentSet.containsKey( datasets ) ) {
+                                // initialize association
+                                experimentList = new ArrayList<SimplifiedAnnotatedObject<Experiment>>( 4 );
+                                dataset2experimentSet.put( dataset, experimentList );
+                            } else {
+                                experimentList = dataset2experimentSet.get( datasets );
+                            }
+
+                            experimentList.add( new SimplifiedAnnotatedObject<Experiment>( experiment ) );
+                        }
+                    }
+                } // datasets
+
+            } // experiments
 
             firstResult = firstResult + experimentsPerChunk;
 
-        } while (!searchResults.isEmpty());
+        } while ( !searchResults.isEmpty() );
 
         experimentsClassified = true;
 
     }
 
-    private Collection<Experiment> getExperiments(int firstResult, int maxResults)
-    {
-        log.debug("Retrieving data from DB store, from "+firstResult);
+    private Collection<Experiment> getExperiments( int firstResult, int maxResults ) {
+        log.debug( "Retrieving data from DB store, from " + firstResult );
 
-        if (searchPattern.contains(","))
-        {
-            throw new IntactException("Lists with comma-separated experiments are not accepted anymore");
+        if ( searchPattern.contains( "," ) ) {
+            // throw new IntactException( "Lists with comma-separated experiments are not accepted anymore" );
         }
 
-        Collection<Experiment> searchResults = getDaoFactory().getExperimentDao().getByShortLabelLike(searchPattern, true, firstResult, maxResults, true);
+        Collection<Experiment> searchResults = getDaoFactory().getExperimentDao().getByShortLabelLike( searchPattern, true, firstResult, maxResults, true );
 
         int resultSize = searchResults.size();
-        log.debug("done (retrieved " + resultSize + " experiment" + (resultSize > 1 ? "s" : "") + ")");
+        log.debug( "done (retrieved " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
 
         return searchResults;
     }
@@ -334,64 +376,54 @@ public class ExperimentListGenerator {
     /**
      * Retreive BioSources corresponding ot the target-species assigned to the given experiment.
      *
-     * @param experimentAc  The experiment AC for which we want to get all target-species.
+     * @param experimentAc The experiment AC for which we want to get all target-species.
+     *
      * @return A collection of BioSource, or empty if non is found.
+     *
      * @throws IntactException if an error occurs.
      */
-    private Collection<BioSource> getTargetSpecies(String experimentAc) throws IntactException
-    {
-        List<String> taxIds = taxIdsForExperiment(experimentAc);
+    private Collection<BioSource> getTargetSpecies( String experimentAc ) throws IntactException {
+        List<String> taxIds = taxIdsForExperiment( experimentAc );
 
-        if (taxIds == null)
-        {
-            experimentsWithErrors.put(experimentAc, "[INFO] No target-species found for experiment");
+        if ( taxIds == null ) {
+            experimentsWithErrors.put( experimentAc, "[INFO] No target-species found for experiment" );
             return new ArrayList<BioSource>();
         }
 
         List<BioSource> targetSpeciesList = new ArrayList<BioSource>();
 
-        for (String taxId : taxIds)
-        {
-            if (targetSpeciesCache.containsKey(taxId))
-            {
-                targetSpeciesList.add(targetSpeciesCache.get(taxId));
+        for ( String taxId : taxIds ) {
+            if ( targetSpeciesCache.containsKey( taxId ) ) {
+                targetSpeciesList.add( targetSpeciesCache.get( taxId ) );
             }
 
-            Collection<BioSource> bioSources = getDaoFactory().getBioSourceDao().getByTaxonId(taxId);
+            Collection<BioSource> bioSources = getDaoFactory().getBioSourceDao().getByTaxonId( taxId );
 
-            if (bioSources.isEmpty())
-            {
-                throw new IntactException("Experiment(" + experimentAc + ") has a target-species:" + taxId +
-                        " but we cannot find the corresponding BioSource.");
+            if ( bioSources.isEmpty() ) {
+                throw new IntactException( "Experiment(" + experimentAc + ") has a target-species:" + taxId +
+                                           " but we cannot find the corresponding BioSource." );
             }
 
             BioSource targetSpecies;
 
             // if choice given, get the less specific one (without tissue, cell type...)
             BioSource selectedBioSource = null;
-            for (Iterator iterator1 = bioSources.iterator(); iterator1.hasNext() && selectedBioSource == null;)
-            {
+            for ( Iterator iterator1 = bioSources.iterator(); iterator1.hasNext() && selectedBioSource == null; ) {
                 BioSource bioSource = (BioSource) iterator1.next();
-                if (bioSource.getCvCellType() == null && bioSource.getCvTissue() == null
-                        &&
-                        bioSource.getCvCellCycle() == null && bioSource.getCvCompartment() == null)
-                {
+                if ( bioSource.getCvCellType() == null && bioSource.getCvTissue() == null ) {
                     selectedBioSource = bioSource;
                 }
             }
 
-            if (selectedBioSource != null)
-            {
+            if ( selectedBioSource != null ) {
                 targetSpecies = selectedBioSource;
-            }
-            else
-            {
+            } else {
                 // add the first one we find
                 targetSpecies = bioSources.iterator().next();
             }
 
-            targetSpeciesCache.put(experimentAc, targetSpecies);
-            targetSpeciesList.add(targetSpecies);
+            targetSpeciesCache.put( experimentAc, targetSpecies );
+            targetSpeciesList.add( targetSpecies );
         }
 
         return targetSpeciesList;
@@ -401,33 +433,48 @@ public class ExperimentListGenerator {
      * Fetch publication primaryId from experiment.
      *
      * @param experimentAc the experiment AC for which we want the primary pubmed ID.
+     *
      * @return a pubmed Id or null if none found.
      */
-    private String getPubmedId(String experimentAc)
-    {
-        if (expAcToPmid == null)
-        {
+    private String getPubmedId( String experimentAc ) {
+        if ( expAcToPmid == null ) {
             // map all exps to pmid
-            expAcToPmid = ExperimentListGeneratorDao.getExperimentAcAndPmid(searchPattern);
+            expAcToPmid = ExperimentListGeneratorDao.getExperimentAcAndPmid( searchPattern );
         }
 
-        String pubmedId = expAcToPmid.get(experimentAc);
+        String pubmedId = expAcToPmid.get( experimentAc );
 
-        if (pubmedId == null)
-        {
-            experimentsWithErrors.put(experimentAc, "Null pubmed Id");
+        if ( pubmedId == null ) {
+            experimentsWithErrors.put( experimentAc, "Null pubmed Id" );
         }
 
-        try
-        {
-            Integer.parseInt(pubmedId);
+        try {
+            Integer.parseInt( pubmedId );
         }
-        catch (NumberFormatException e)
-        {
-            experimentsWithErrors.put(experimentAc, "Not a number pubmedId");
+        catch ( NumberFormatException e ) {
+            experimentsWithErrors.put( experimentAc, "Not a number pubmedId" );
         }
 
         return pubmedId;
+    }
+
+    /**
+     * Fetch dataset information (if any) from experiment.
+     *
+     * @param experimentAc the experiment AC for which we want the primary pubmed ID.
+     *
+     * @return a dataset or null.
+     */
+    private Collection<SimpleDataset> getDatasets( String experimentAc ) {
+        if ( experiment2dataset == null ) {
+            // map all exps to pmid
+            experiment2dataset = ExperimentListGeneratorDao.datasetForExperiments( searchPattern );
+            log.info( "Loaded " + experiment2dataset.size() + " experiments having datasets information." );
+        }
+
+        Collection<SimpleDataset> datasets = experiment2dataset.get( experimentAc );
+
+        return datasets;
     }
 
     /**
@@ -442,98 +489,130 @@ public class ExperimentListGenerator {
      * 'negative' (not the Experiment), and so these should be checked also, with duplicate matches being ignored. </p>
      * This method has to be static because it is called by the static 'classifyExperiments'.
      */
-    private void classifyNegatives()
-    {
+    private void classifyNegatives() {
         negativeExperiments = new HashSet<Experiment>();
 
-        negativeExperiments.addAll(ExperimentListGeneratorDao.getExpWithInteractionsContainingAnnotation(CvTopic.NEGATIVE, searchPattern));
-        negativeExperiments.addAll(ExperimentListGeneratorDao.getContainingAnnotation(Experiment.class, CvTopic.NEGATIVE, searchPattern));
+        negativeExperiments.addAll( ExperimentListGeneratorDao.getExpWithInteractionsContainingAnnotation( CvTopic.NEGATIVE, searchPattern ) );
+        negativeExperiments.addAll( ExperimentListGeneratorDao.getContainingAnnotation( Experiment.class, CvTopic.NEGATIVE, searchPattern ) );
 
-        log.debug(negativeExperiments.size() + " negative experiment found.");
+        log.debug( negativeExperiments.size() + " negative experiment found." );
     }
 
-    public Set<String> getFilteredExperimentAcs()
-    {
-        if (filteredExperimentAcs != null)
-        {
+    public Set<String> getFilteredExperimentAcs() {
+        if ( filteredExperimentAcs != null ) {
             return filteredExperimentAcs;
         }
 
-        if (!onlyWithPmid)
-        {
+        if ( !onlyWithPmid ) {
             filteredExperimentAcs = Collections.EMPTY_SET;
-        }
-        else
-        {
+        } else {
 
             filteredExperimentAcs = new HashSet<String>();
 
-            Map<String, String> expAcAndLabels = ExperimentListGeneratorDao.getExperimentAcAndLabelWithoutPubmedId(searchPattern);
+            Map<String, String> expAcAndLabels = ExperimentListGeneratorDao.getExperimentAcAndLabelWithoutPubmedId( searchPattern );
 
-            for (Map.Entry<String, String> expAcAndLabel : expAcAndLabels.entrySet())
-            {
+            for ( Map.Entry<String, String> expAcAndLabel : expAcAndLabels.entrySet() ) {
                 String ac = expAcAndLabel.getKey();
                 String shortlabel = expAcAndLabel.getValue();
 
-                log.debug("Filter out: " + shortlabel + " (" + ac + ")");
-                filteredExperimentAcs.add(ac);
+                log.debug( "Filter out: " + shortlabel + " (" + ac + ")" );
+                filteredExperimentAcs.add( ac );
             }
 
-            log.debug(filteredExperimentAcs.size() + " experiment filtered out.");
+            log.debug( filteredExperimentAcs.size() + " experiment filtered out." );
 
         }
 
         return filteredExperimentAcs;
     }
 
-    public void createItemClassificationBySpecies()
-    {
+    public void createItemClassificationBySpecies() {
 
-        for (SimplifiedAnnotatedObject<BioSource> bioSource : species2experimentSet.keySet())
-        {
+        for ( SimplifiedAnnotatedObject<BioSource> bioSource : species2experimentSet.keySet() ) {
 
-            Collection<SimplifiedAnnotatedObject<Experiment>> smallScaleExp = species2experimentSet.get(bioSource);
+            Collection<SimplifiedAnnotatedObject<Experiment>> smallScaleExp = species2experimentSet.get( bioSource );
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
-            String filePrefixGlobal = bioSource.getShortLabel().replace(' ', '-');
+            String filePrefixGlobal = bioSource.getShortLabel().replace( ' ', '-' );
 
-            createExpListItems(smallScaleExp,
-                            filePrefixGlobal + "_" + SMALL, // small scale
-                            filePrefixGlobal,              // large scale
-                            Classification.SPECIES);
+            createExpListItems( smallScaleExp,
+                                filePrefixGlobal + "_" + SMALL, // small scale
+                                filePrefixGlobal,              // large scale
+                                Classification.SPECIES );
         }
     }
 
     /**
-     * Build the classification by pubmed id.<br/> we keep the negative experiment separated from the non negative.
-     *
-     * @throws IOException
+     * Build the classification by pubmed id.
+     * <br/>
+     * We keep the negative experiment separated from the non negative.
      */
-    private void createItemClassificationByPubmed()
-    {
+    private void createItemClassificationByPubmed() {
 
-        List<String> pubmedOrderedList = new ArrayList<String>(pubmed2experimentSet.keySet());
-        Collections.sort(pubmedOrderedList);
+        List<String> pubmedOrderedList = new ArrayList<String>( pubmed2experimentSet.keySet() );
+        Collections.sort( pubmedOrderedList );
 
         // Go through all clusters and split if needs be.
-        for (String pubmedid : pubmedOrderedList)
-        {
+        for ( String pubmedid : pubmedOrderedList ) {
             // get experiments associated to that pubmed ID.
-            Set<SimplifiedAnnotatedObject<Experiment>> experiments = (Set<SimplifiedAnnotatedObject<Experiment>>) pubmed2experimentSet.get(pubmedid);
+            Set<SimplifiedAnnotatedObject<Experiment>> experiments = (Set<SimplifiedAnnotatedObject<Experiment>>) pubmed2experimentSet.get( pubmedid );
 
             // split the set into subset of size under SMALL_SCALE_LIMIT
-            createExpListItems(experiments,
-                    pubmedid,   // small scale
-                    pubmedid, // large scale
-                    Classification.PUBLICATIONS);
+            createExpListItems( experiments,
+                                pubmedid,   // small scale
+                                pubmedid,   // large scale
+                                Classification.PUBLICATIONS );
 
         } // pubmeds
     }
 
+    /**
+     * Build the classification by dataset.
+     * <br/>
+     * We keep the negative experiment separated from the non negative.
+     */
+    private void createItemClassificationByDataset() {
 
-    private void createExpListItems(Collection<SimplifiedAnnotatedObject<Experiment>> experiments, String smallScalePrefix, String largeScalePrefix, Classification classification)
-    {
-         final Collection<Collection<SimplifiedAnnotatedObject<Experiment>>> smallScaleChunks = new ArrayList<Collection<SimplifiedAnnotatedObject<Experiment>>>();
+        List<SimpleDataset> datasetOrderedList = new ArrayList<SimpleDataset>( dataset2experimentSet.keySet() );
+        Collections.sort( datasetOrderedList, new Comparator<SimpleDataset>() {
+            public int compare( SimpleDataset o1, SimpleDataset o2 ) {
+
+                // sort on dataset name then pmid
+                SimpleDataset d1 = (SimpleDataset) o1;
+                SimpleDataset d2 = (SimpleDataset) o2;
+
+                int nameComparison = d1.getName().compareTo( d2.getName() );
+                if( nameComparison != 0 ) {
+                    return nameComparison;
+                }
+
+                return d1.getPmid().compareTo( d2.getPmid() );
+            }
+        } );
+
+        // Go through all clusters and split if needs be.
+
+        for ( SimpleDataset dataset : datasetOrderedList ) {
+            // get experiments associated to that dataset.
+            Collection<SimplifiedAnnotatedObject<Experiment>> experiments = dataset2experimentSet.get( dataset );
+
+            // the name of the directory changes according to the dataset name.
+            datasetFolderName = dataset.getName();
+
+            // split the set into subset of size under SMALL_SCALE_LIMIT
+            createExpListItems( experiments,
+                                dataset.getPmid(),         // small scale
+                                dataset.getPmid(),         // large scale
+                                Classification.DATASETS );
+        } // datasets
+    }
+
+    private void createExpListItems( Collection<SimplifiedAnnotatedObject<Experiment>> experiments,
+                                     String smallScalePrefix,
+                                     String largeScalePrefix,
+                                     Classification classification ) {
+
+        final Collection<Collection<SimplifiedAnnotatedObject<Experiment>>> smallScaleChunks = new ArrayList<Collection<SimplifiedAnnotatedObject<Experiment>>>();
 
         Collection<SimplifiedAnnotatedObject<Experiment>> subset = null;
 
@@ -542,163 +621,144 @@ public class ExperimentListGenerator {
         // 1. Go through the list of experiments and separate the small scale from the large scale.
         //    The filename prefix of the large scale get generated here, though the small scales' get
         //    generated later.
-        for (SimplifiedAnnotatedObject<Experiment> experiment : experiments)
-        {
+        for ( SimplifiedAnnotatedObject<Experiment> experiment : experiments ) {
 
-            final int size = interactionsForExperiment(experiment.getAc());
+            final int size = interactionsForExperiment( experiment.getAc() );
 
-            if (size >= largeScaleChunkSize)
-            {
+            if ( size >= largeScaleChunkSize ) {
                 // Process large scale dataset appart from the small ones.
 
                 // generate the large scale format: filePrefix[chunkSize]
-                Collection<SimplifiedAnnotatedObject<Experiment>> largeScale = new ArrayList<SimplifiedAnnotatedObject<Experiment>>(1);
-                largeScale.add(experiment);
+                Collection<SimplifiedAnnotatedObject<Experiment>> largeScale = new ArrayList<SimplifiedAnnotatedObject<Experiment>>( 1 );
+                largeScale.add( experiment );
 
                 // put it in the map
                 int chunk = 1;
-                for (int i=0; i<size; i=i+largeScaleChunkSize)
-                {
-                    createExperimentListItems(largeScalePrefix, largeScale, chunk, classification, largeScaleChunkSize);
+                for ( int i = 0; i < size; i = i + largeScaleChunkSize ) {
+                    createExperimentListItems( largeScalePrefix, largeScale, chunk, classification, largeScaleChunkSize );
                     chunk++;
                 }
 
-            }
-            else
-            {
+            } else {
                 // that experiment is not large scale.
 
-                if (size > smallScaleLimit)
-                {
+                if ( size > smallScaleLimit ) {
 
                     // that experiment by itself is a chunk.
                     // we do not alter the current subset being processed, whether there is one or not.
-                    Collection<SimplifiedAnnotatedObject<Experiment>> subset2 = new ArrayList<SimplifiedAnnotatedObject<Experiment>>(1);
-                    subset2.add(experiment);
+                    Collection<SimplifiedAnnotatedObject<Experiment>> subset2 = new ArrayList<SimplifiedAnnotatedObject<Experiment>>( 1 );
+                    subset2.add( experiment );
 
-                    smallScaleChunks.add(subset2);
+                    smallScaleChunks.add( subset2 );
 
 
-                }
-                else if ((sum + size) >= smallScaleLimit)
-                {
+                } else if ( ( sum + size ) >= smallScaleLimit ) {
 
                     // that experiment would overload that chunk ... then store the subset.
 
-                    if (subset == null)
-                    {
+                    if ( subset == null ) {
 
                         // that experiment will be a small chunk by itself
                         subset = new ArrayList<SimplifiedAnnotatedObject<Experiment>>();
                     }
 
                     // add the current experiment
-                    subset.add(experiment);
+                    subset.add( experiment );
 
                     // put it in the list
-                    smallScaleChunks.add(subset);
+                    smallScaleChunks.add( subset );
 
                     // re-init
                     subset = null;
                     sum = 0;
 
-                }
-                else
-                {
+                } else {
 
                     // ( sum + size ) < SMALL_SCALE_LIMIT
                     sum += size;
 
-                    if (subset == null)
-                    {
+                    if ( subset == null ) {
                         subset = new ArrayList<SimplifiedAnnotatedObject<Experiment>>();
                     }
 
-                    subset.add(experiment);
+                    subset.add( experiment );
                 }
 
             } // else
         } // experiments
 
-        if (subset != null && (!subset.isEmpty()))
-        {
+        if ( subset != null && ( !subset.isEmpty() ) ) {
 
             // put it in the list
-            smallScaleChunks.add(subset);
+            smallScaleChunks.add( subset );
         }
 
         // 2. Look at the list of small scale chunks and generate their filename prefixes
         //    Note: no index if only one chunk
-        boolean hasMoreThanOneChunk = (smallScaleChunks.size() > 1);
+        boolean hasMoreThanOneChunk = ( smallScaleChunks.size() > 1 );
         Integer index = 0;
 
-        for (Collection<SimplifiedAnnotatedObject<Experiment>> chunk : smallScaleChunks)
-        {
+        for ( Collection<SimplifiedAnnotatedObject<Experiment>> chunk : smallScaleChunks ) {
             // generate a prefix
-            if (hasMoreThanOneChunk)
-            {
+            if ( hasMoreThanOneChunk ) {
                 index++;
-            }
-            else
-            {
+            } else {
                 index = null;
             }
 
             // add to the map
-            createExperimentListItems(smallScalePrefix, chunk, index, classification, null);
+            createExperimentListItems( smallScalePrefix, chunk, index, classification, null );
         }
-
     }
 
     /**
      * Gets the parent folders for the element
      */
-    private String parentFolders(Collection<SimplifiedAnnotatedObject<Experiment>> experiments,
-                         Classification classification)
-    {
+    private String parentFolders( Collection<SimplifiedAnnotatedObject<Experiment>> experiments,
+                                  Classification classification ) {
         String parentFolders = null;
 
-        switch(classification)
-        {
+        switch ( classification ) {
             case SPECIES:
                 parentFolders = speciesFolderName;
                 break;
             case PUBLICATIONS:
-                String year = getCreatedYear(experiments);
-                parentFolders = publicationsFolderName+ FileHelper.SLASH + year;
+                String year = getCreatedYear( experiments );
+                parentFolders = publicationsFolderName + FileHelper.SLASH + year;
+                break;
+            case DATASETS:
+                parentFolders = datasetFolderName;
                 break;
         }
 
         return parentFolders;
     }
 
-    private void createExperimentListItems(String name, Collection<SimplifiedAnnotatedObject<Experiment>> exps, Integer chunkNumber, Classification classification, Integer largeScaleChunkSize)
-    {
+    private void createExperimentListItems( String name,
+                                            Collection<SimplifiedAnnotatedObject<Experiment>> exps,
+                                            Integer chunkNumber,
+                                            Classification classification,
+                                            Integer largeScaleChunkSize ) {
+
         List<String> labels = new ArrayList<String>();
         List<String> labelsNegative = new ArrayList<String>();
 
-        for (SimplifiedAnnotatedObject exp : exps)
-        {
-            if (isNegative(exp.getShortLabel()))
-            {
-                labelsNegative.add(exp.getShortLabel());
-            }
-            else
-            {
-                labels.add(exp.getShortLabel());
+        for ( SimplifiedAnnotatedObject exp : exps ) {
+            if ( isNegative( exp.getShortLabel() ) ) {
+                labelsNegative.add( exp.getShortLabel() );
+            } else {
+                labels.add( exp.getShortLabel() );
             }
         }
 
-        String parentFolders = parentFolders(exps, classification);
+        String parentFolders = parentFolders( exps, classification );
 
-        if (!labels.isEmpty())
-        {
-            addToList(new ExperimentListItem(labels, name, parentFolders, false, chunkNumber, largeScaleChunkSize), classification);
+        if ( !labels.isEmpty() ) {
+            addToList( new ExperimentListItem( labels, name, parentFolders, false, chunkNumber, largeScaleChunkSize ), classification );
         }
 
-        if (!labelsNegative.isEmpty())
-        {
-            addToList(new ExperimentListItem(labelsNegative, name, parentFolders, true, chunkNumber, largeScaleChunkSize), classification);
+        if ( !labelsNegative.isEmpty() ) {
+            addToList( new ExperimentListItem( labelsNegative, name, parentFolders, true, chunkNumber, largeScaleChunkSize ), classification );
         }
     }
 
@@ -707,45 +767,45 @@ public class ExperimentListGenerator {
      * Given a set of Experiments, it returns the year of the date of creation of the oldest experiment.
      *
      * @param experiments experiments
+     *
      * @return an int corresponding to the year.
      */
+    private static String getCreatedYear( Collection<SimplifiedAnnotatedObject<Experiment>> experiments ) {
 
-    private static String getCreatedYear(Collection<SimplifiedAnnotatedObject<Experiment>> experiments)
-    {
-
-        if (experiments.isEmpty())
-        {
-            throw new IllegalArgumentException("The given Set of Experiments is empty");
+        if ( experiments.isEmpty() ) {
+            throw new IllegalArgumentException( "The given Set of Experiments is empty" );
         }
 
         int year = Integer.MAX_VALUE;
 
-        for (SimplifiedAnnotatedObject<Experiment> exp : experiments)
-        {
+        for ( SimplifiedAnnotatedObject<Experiment> exp : experiments ) {
             Date created = exp.getCreated();
 
-            java.sql.Date d = new java.sql.Date(created.getTime());
+            java.sql.Date d = new java.sql.Date( created.getTime() );
             Calendar c = new GregorianCalendar();
-            c.setTime(d);
+            c.setTime( d );
 
-            if (year > c.get(Calendar.YEAR))
-            {
-                year = c.get(Calendar.YEAR);
+            if ( year > c.get( Calendar.YEAR ) ) {
+                year = c.get( Calendar.YEAR );
             }
         }
 
-        return String.valueOf(year);
+        return String.valueOf( year );
     }
 
-    private void addToList(ExperimentListItem eli, Classification classification)
-    {
-        switch(classification) {
+    private void addToList( ExperimentListItem eli, Classification classification ) {
+        switch ( classification ) {
             case SPECIES:
-                speciesListItems.add(eli);
+                speciesListItems.add( eli );
                 break;
             case PUBLICATIONS:
-                publicationsListItems.add(eli);
+                publicationsListItems.add( eli );
                 break;
+            case DATASETS:
+                datasetsListItems.add( eli );
+                break;
+            default:
+                throw new IllegalStateException( "Unsupported Classification( "+classification+" )" );
         }
     }
 
@@ -753,19 +813,18 @@ public class ExperimentListGenerator {
      * Sort a collection of String (shorltabel). The given collection is not modified, a new one is returned.
      *
      * @param experiments collection to sort.
+     *
      * @return the sorted collection.
      */
-    private static List<String> getSortedShortlabel(Collection<SimplifiedAnnotatedObject<Experiment>> experiments)
-    {
+    private static List<String> getSortedShortlabel( Collection<SimplifiedAnnotatedObject<Experiment>> experiments ) {
 
-        List<String> sorted = new ArrayList<String>(experiments.size());
+        List<String> sorted = new ArrayList<String>( experiments.size() );
 
-        for (SimplifiedAnnotatedObject<Experiment> experiment : experiments)
-        {
-            sorted.add(experiment.getShortLabel());
+        for ( SimplifiedAnnotatedObject<Experiment> experiment : experiments ) {
+            sorted.add( experiment.getShortLabel() );
         }
 
-        Collections.sort(sorted);
+        Collections.sort( sorted );
         return sorted;
     }
 
@@ -773,171 +832,162 @@ public class ExperimentListGenerator {
      * Answers the following question: "Is the given shortlabel refering to a negative experiment ?".
      *
      * @param experimentLabel the experiment shortlabel.
+     *
      * @return true if the label refers to a negative experiment, false otherwise.
      */
-    private boolean isNegative(String experimentLabel)
-    {
+    private boolean isNegative( String experimentLabel ) {
 
-        for (Experiment experiment : getNegativeExperiments())
-        {
-            if (experiment.getShortLabel().equals(experimentLabel))
-            {
+        for ( Experiment experiment : getNegativeExperiments() ) {
+            if ( experiment.getShortLabel().equals( experimentLabel ) ) {
                 return true;
             }
         }
         return false;
     }
 
-    private int interactionsForExperiment(String experimentAc)
-    {
-        if (interactionCount == null)
-        {
-            interactionCount = ExperimentListGeneratorDao.countInteractionCountsForExperiments(searchPattern);
+    private int interactionsForExperiment( String experimentAc ) {
+        if ( interactionCount == null ) {
+            interactionCount = ExperimentListGeneratorDao.countInteractionCountsForExperiments( searchPattern );
         }
 
-        if (experimentAc == null)
-        {
-            throw new NullPointerException("Experiment AC is null");
+        if ( experimentAc == null ) {
+            throw new NullPointerException( "Experiment AC is null" );
         }
 
-        if (interactionCount.containsKey(experimentAc))
-        {
-            return interactionCount.get(experimentAc);
+        if ( interactionCount.containsKey( experimentAc ) ) {
+            return interactionCount.get( experimentAc );
         }
 
         return 0;
     }
 
-    private List<String> taxIdsForExperiment(String experimentAc)
-    {
-        if (expAcToTaxid == null)
-        {
-            expAcToTaxid = ExperimentListGeneratorDao.getExperimentAcAndTaxids(searchPattern);
+    private Collection<SimpleDataset> datasetForExperiment( String experimentAc ) {
+        if ( experiment2dataset == null ) {
+            experiment2dataset = ExperimentListGeneratorDao.datasetForExperiments( searchPattern );
         }
 
-        return expAcToTaxid.get(experimentAc);
+        if ( experimentAc == null ) {
+            throw new NullPointerException( "Experiment AC is null" );
+        }
+
+        if ( experiment2dataset.containsKey( experimentAc ) ) {
+            return experiment2dataset.get( experimentAc );
+        }
+
+        return null;
     }
 
-    public String getSearchPattern()
-    {
+    private List<String> taxIdsForExperiment( String experimentAc ) {
+        if ( expAcToTaxid == null ) {
+            expAcToTaxid = ExperimentListGeneratorDao.getExperimentAcAndTaxids( searchPattern );
+        }
+
+        return expAcToTaxid.get( experimentAc );
+    }
+
+    public String getSearchPattern() {
         return searchPattern;
     }
 
-    public boolean isOnlyWithPmid()
-    {
+    public boolean isOnlyWithPmid() {
         return onlyWithPmid;
     }
 
-    public void setOnlyWithPmid(boolean onlyWithPmid)
-    {
+    public void setOnlyWithPmid( boolean onlyWithPmid ) {
         this.onlyWithPmid = onlyWithPmid;
     }
 
-    public int getExperimentsPerChunk()
-    {
+    public int getExperimentsPerChunk() {
         return experimentsPerChunk;
     }
 
-    public void setExperimentsPerChunk(int experimentsPerChunk)
-    {
+    public void setExperimentsPerChunk( int experimentsPerChunk ) {
         this.experimentsPerChunk = experimentsPerChunk;
     }
 
-
-    public int getLargeScaleChunkSize()
-    {
+    public int getLargeScaleChunkSize() {
         return largeScaleChunkSize;
     }
 
-    public void setLargeScaleChunkSize(int largeScaleChunkSize)
-    {
+    public void setLargeScaleChunkSize( int largeScaleChunkSize ) {
         this.largeScaleChunkSize = largeScaleChunkSize;
     }
 
-    public int getSmallScaleLimit()
-    {
+    public int getSmallScaleLimit() {
         return smallScaleLimit;
     }
 
-    public void setSmallScaleLimit(int smallScaleLimit)
-    {
+    public void setSmallScaleLimit( int smallScaleLimit ) {
         this.smallScaleLimit = smallScaleLimit;
     }
 
-
-    public String getSpeciesFolderName()
-    {
+    public String getSpeciesFolderName() {
         return speciesFolderName;
     }
 
-    public void setSpeciesFolderName(String speciesFolderName)
-    {
+    public void setSpeciesFolderName( String speciesFolderName ) {
         this.speciesFolderName = speciesFolderName;
     }
 
-    public String getPublicationsFolderName()
-    {
+    public String getPublicationsFolderName() {
         return publicationsFolderName;
     }
 
-    public void setPublicationsFolderName(String publicationsFolderName)
-    {
+    public void setPublicationsFolderName( String publicationsFolderName ) {
         this.publicationsFolderName = publicationsFolderName;
     }
 
-    private static DaoFactory getDaoFactory()
-    {
+    public String getDatasetsFolderName() {
+        return datasetFolderName;
+    }
+
+    public void setDatasetsFolderName( String datasetFolderName ) {
+        this.datasetFolderName = datasetFolderName;
+    }
+
+    private static DaoFactory getDaoFactory() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
-    private class SimplifiedAnnotatedObject<T extends AnnotatedObject>
-    {
+    private class SimplifiedAnnotatedObject<T extends AnnotatedObject> {
 
         private String ac;
         private String shortLabel;
         private Date created;
 
-        public SimplifiedAnnotatedObject(AnnotatedObject annotatedObject)
-        {
+        public SimplifiedAnnotatedObject( AnnotatedObject annotatedObject ) {
             this.ac = annotatedObject.getAc();
             this.shortLabel = annotatedObject.getShortLabel();
             this.created = annotatedObject.getCreated();
         }
 
-        public String getAc()
-        {
+        public String getAc() {
             return ac;
         }
 
-        public String getShortLabel()
-        {
+        public String getShortLabel() {
             return shortLabel;
         }
 
 
-        public Date getCreated()
-        {
+        public Date getCreated() {
             return created;
         }
 
         @Override
-        public boolean equals(Object obj)
-        {
+        public boolean equals( Object obj ) {
             SimplifiedAnnotatedObject o = (SimplifiedAnnotatedObject) obj;
-            return ac.equals(o.getAc()) && shortLabel.equals(o.getShortLabel());
+            return ac.equals( o.getAc() ) && shortLabel.equals( o.getShortLabel() );
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
             return getAc() + " " + getShortLabel();
         }
 
         @Override
-        public int hashCode()
-        {
+        public int hashCode() {
             return 37 * ac.hashCode() * shortLabel.hashCode();
         }
     }
-
-    }
+}
