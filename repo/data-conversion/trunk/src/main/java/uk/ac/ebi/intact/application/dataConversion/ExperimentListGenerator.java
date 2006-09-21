@@ -364,7 +364,7 @@ public class ExperimentListGenerator {
         log.debug( "Retrieving data from DB store, from " + firstResult );
 
         if ( searchPattern.contains( "," ) ) {
-            // throw new IntactException( "Lists with comma-separated experiments are not accepted anymore" );
+             throw new IntactException( "Lists with comma-separated experiments are not accepted anymore" );
         }
 
         Collection<Experiment> searchResults = getDaoFactory().getExperimentDao().getByShortLabelLike( searchPattern, true, firstResult, maxResults, true );
