@@ -1,8 +1,6 @@
 package uk.ac.ebi.intact.search.wsclient;
 
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.search.wsclient.generated.Search;
-import uk.ac.ebi.intact.search.wsclient.generated.SearchService;
 import uk.ac.ebi.intact.search.wsclient.generated.InteractionInfo;
 
 import java.util.List;
