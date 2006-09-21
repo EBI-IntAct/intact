@@ -1,18 +1,22 @@
 package uk.ac.ebi.intact.search.wsclient;
 
 import junit.framework.TestCase;
-
-import java.rmi.RemoteException;
-
+import uk.ac.ebi.intact.search.wsclient.generated.Search;
+import uk.ac.ebi.intact.search.wsclient.generated.SearchService;
 import uk.ac.ebi.intact.search.wsclient.generated.InteractionInfo;
+
+import java.util.List;
+
 
 public class SearchClientTest extends TestCase
 {
 
+    private static final String LOCALHOST_URL = "http://localhost:8080/search-ws/search?wsdl";
+
     public void testFindPartnersUsingUniprotIds() throws Exception
     {
         SearchServiceClient client = new SearchServiceClient();
-        String[] uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
+        List<String> uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
 
         for (String id : uniprotIds)
         {
@@ -23,7 +27,7 @@ public class SearchClientTest extends TestCase
     public void testGetInteractionInfoUsingIntactIds() throws Exception
     {
         SearchServiceClient client = new SearchServiceClient();
-        InteractionInfo[] interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
+        List<InteractionInfo> interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
 
         for (InteractionInfo interInfo : interInfos)
         {
@@ -35,7 +39,7 @@ public class SearchClientTest extends TestCase
     public void testGetInteractionInfoUsingUniprotIds() throws Exception
     {
         SearchServiceClient client = new SearchServiceClient();
-        InteractionInfo[] interInfos = client.getInteractionInfoUsingUniprotIds("Q15691","P54274");
+        List<InteractionInfo> interInfos = client.getInteractionInfoUsingUniprotIds("Q15691","P54274");
 
         for (InteractionInfo interInfo : interInfos)
         {
@@ -43,5 +47,11 @@ public class SearchClientTest extends TestCase
         }
 
     }
+     
 
+    public void testServiceVersion() throws Exception
+    {
+        SearchServiceClient client = new SearchServiceClient();
+        System.out.println(client.getServiceVersion());
+    }
 }
