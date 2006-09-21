@@ -11,7 +11,7 @@ Examples
 +---------+
 SearchServiceClient client = new SearchServiceClient();
 
-InteractionInfo[] interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
+List<InteractionInfo> interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
 
 for (InteractionInfo interInfo : interInfos)
 {
@@ -23,7 +23,7 @@ for (InteractionInfo interInfo : interInfos)
 
 +----------+
 SearchServiceClient client = new SearchServiceClient();
-String[] uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
+List<String> uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
 
 for (String id : uniprotIds)
 {
@@ -34,6 +34,6 @@ for (String id : uniprotIds)
  To specify an alternative location of the web service:
 
 +----------+
-SearchServiceClient client = new SearchServiceClient("http://www.myorganization.org/search-ws/services/SearchService");
+SearchServiceClient client = new SearchServiceClient("http://www.myorganization.org/search-ws/search?wsdl");
 +----------+
 

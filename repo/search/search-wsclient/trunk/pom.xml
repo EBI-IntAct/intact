@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-wsclient</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
-    <!-- last released 1.1.0 -->
+    <version>1.2.0</version>
+    <!-- last released 1.2.0 -->
     <name>Search WS Client</name>
     <description>Client for the Search Web Services</description>
 
@@ -33,65 +33,74 @@
     </scm>
 
     <build>
-         <plugins>
-            <plugin>
-               <groupId>org.codehaus.mojo</groupId>
-               <artifactId>axistools-maven-plugin</artifactId>
-               <version>1.0</version>
-               <configuration>
-                   <packageSpace>uk.ac.ebi.intact.search.wsclient.generated</packageSpace>
-                  <testCases>false</testCases>
-                  <serverSide>true</serverSide>
-               </configuration>
-               <executions>
-                 <execution>
-                   <phase>generate-sources</phase>
-                   <goals>
-                     <goal>wsdl2java</goal>
-                   </goals>
-                 </execution>
-               </executions>
-            </plugin>
-         </plugins>
-      </build>
+            <finalName>${artifactId}-${db.alias}-${version}</finalName>
+           <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>1.0-alpha-ebi</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>wsimport</goal>
+                            </goals>
+                        </execution>
+                   </executions>
+                   <configuration>
+                        <packageName>uk.ac.ebi.intact.search.wsclient.generated</packageName> <!-- The name of your generated source package -->
+                   </configuration>
+               </plugin>
+             </plugins>
+        </build>
 
-      <dependencies>
-          <dependency>
-              <groupId>org.apache.axis</groupId>
-              <artifactId>axis</artifactId>
-              <version>1.4</version>
-          </dependency>
-          <dependency>
-              <groupId>org.apache.axis</groupId>
-              <artifactId>axis-jaxrpc</artifactId>
-              <version>1.4</version>
-          </dependency>
-        <dependency>
-            <groupId>commons-discovery</groupId>
-            <artifactId>commons-discovery</artifactId>
-            <version>0.2</version>
-            <scope>runtime</scope>
-        </dependency>
-         <dependency>
-            <groupId>org.apache.axis</groupId>
-            <artifactId>axis-saaj</artifactId>
-            <version>1.4</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>axis</groupId>
-            <artifactId>axis-wsdl4j</artifactId>
-            <version>1.5.1</version>
-            <scope>runtime</scope>
-        </dependency>
-      </dependencies>
+        <dependencies>
+             <dependency>
+                <groupId>com.sun.xml</groupId>
+                <artifactId>jaxws-tools</artifactId>
+                <version>2.0EA3</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.jws</groupId>
+                        <artifactId>jsr181-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>xfire</groupId>
+                <artifactId>xfire-jsr181-api</artifactId>
+                <version>1.0-M1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-activation_1.0.2_spec</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>stax</groupId>
+                <artifactId>stax</artifactId>
+                <version>1.2.0_rc2-dev</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.messaging.saaj</groupId>
+                <artifactId>saaj-impl</artifactId>
+                <version>1.3</version>
+            </dependency>
+        </dependencies>
 
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/${artifactId}</url>
-        </site>
-    </distributionManagement>
+        <!-- EBI repositories -->
+        <repositories>
+           <repository>
+                <id>ebi-repo</id>
+                <name>The EBI internal repository</name>
+                <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+
 
 </project>

@@ -5,13 +5,14 @@
  */
 package uk.ac.ebi.intact.search.wsclient;
 
-import uk.ac.ebi.intact.search.wsclient.generated.PartnerResult;
-import uk.ac.ebi.intact.search.wsclient.generated.Search;
-import uk.ac.ebi.intact.search.wsclient.generated.SearchAccessServiceLocator;
-import uk.ac.ebi.intact.search.wsclient.generated.InteractionInfo;
+import uk.ac.ebi.intact.search.wsclient.generated.*;
 
+import javax.xml.namespace.QName;
 import java.net.URL;
 import java.rmi.RemoteException;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 /**
  * Client for the Search Web Service
@@ -23,7 +24,7 @@ import java.rmi.RemoteException;
 public class SearchServiceClient
 {
 
-    private static final String DEFAULT_URL = "http://www.ebi.ac.uk/intact/search-ws/services/SearchService";
+    private static final String DEFAULT_URL = "http://www.ebi.ac.uk/intact/search-ws/search?wsdl";
 
     /**
      * Stub to handle the search web service
@@ -38,10 +39,8 @@ public class SearchServiceClient
 
         try
         {
-            SearchAccessServiceLocator serviceLocator = new SearchAccessServiceLocator();
-            serviceLocator.setMaintainSession(true);
-
-            this.search = serviceLocator.getSearchService(new URL(DEFAULT_URL));
+            SearchService searchService = new SearchService(new URL(DEFAULT_URL), new QName("urn:searchws", "SearchPort"));
+            this.search = searchService.getSearchPort();
         }
         catch (Exception e)
         {
@@ -55,10 +54,8 @@ public class SearchServiceClient
 
         try
         {
-            SearchAccessServiceLocator serviceLocator = new SearchAccessServiceLocator();
-            serviceLocator.setMaintainSession(true);
-
-            this.search = serviceLocator.getSearchService(new URL(searchWsUrl));
+            SearchService searchService = new SearchService(new URL(searchWsUrl), new QName("urn:searchws", "SearchPort"));
+            this.search = searchService.getSearchPort();
         }
         catch (Exception e)
         {
@@ -75,7 +72,12 @@ public class SearchServiceClient
      *         can get the list of Uniprot IDs for the proteins that interact with the provided protein
      * @throws RemoteException
      */
-    public PartnerResult[] findPartnersUsingUniprotIds(String[] proteinIds) throws RemoteException
+    public List<PartnerResult> findPartnersUsingUniprotIds(String[] proteinIds) throws RemoteException
+    {
+        return search.findPartnersUsingUniprotIds(Arrays.asList(proteinIds));
+    }
+
+    private List<PartnerResult> findPartnersUsingUniprotIds(List<String> proteinIds) throws RemoteException
     {
         return search.findPartnersUsingUniprotIds(proteinIds);
     }
@@ -85,13 +87,15 @@ public class SearchServiceClient
      * Finds the Uniprot IDs of the partners (the proteins which the protein provided interact)
      * for the provided a Uniprot IDs
      *
-     * @param proteinIds The Uniprot IDs to look for
+     * @param proteinId The Uniprot IDs to look for
      * @return The list of Uniprot IDs for the proteins that interact with the provided protein
      * @throws RemoteException
      */
-    public String[] findPartnersUsingUniprotIds(String proteinIds) throws RemoteException
+    public List<String> findPartnersUsingUniprotIds(String proteinId) throws RemoteException
     {
-        return search.findPartnersUsingUniprotIds(new String[]{proteinIds})[0].getPartnerUniprotAcs();
+        List<String> proteinIds = new ArrayList<String>();
+        proteinIds.add(proteinId);
+        return search.findPartnersUsingUniprotIds(proteinIds).iterator().next().getPartnerUniprotAcs();
     }
 
     /**
@@ -101,7 +105,7 @@ public class SearchServiceClient
      * @return Array of <code>Interaction</code> with interaction information
      * @throws RemoteException
      */
-    public InteractionInfo[] getInteractionInfoUsingUniprotIds(String id1, String id2) throws RemoteException
+    public List<InteractionInfo> getInteractionInfoUsingUniprotIds(String id1, String id2) throws RemoteException
     {
         return search.getInteractionInfoUsingUniprotIds(id1, id2);
     }
@@ -113,7 +117,7 @@ public class SearchServiceClient
      * @return Array of <code>Interaction</code> with interaction information
      * @throws RemoteException
      */
-    public InteractionInfo[] getInteractionInfoUsingIntactIds(String id1, String id2) throws RemoteException
+    public List<InteractionInfo> getInteractionInfoUsingIntactIds(String id1, String id2) throws RemoteException
     {
         return search.getInteractionInfoUsingIntactIds(id1, id2);
     }
