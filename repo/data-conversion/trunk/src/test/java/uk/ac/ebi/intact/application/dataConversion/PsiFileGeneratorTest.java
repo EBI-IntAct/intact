@@ -65,7 +65,7 @@ public class PsiFileGeneratorTest extends TestCase
         DisplayXML.write(doc, writer, "   ");
 
         String xmlDoc = writer.toString();
-        assertEquals(58964, xmlDoc.length());
+        assertEquals(10872, xmlDoc.length());
 
         // 2.5
         doc = PsiFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion25(), mapping);
@@ -74,7 +74,7 @@ public class PsiFileGeneratorTest extends TestCase
         DisplayXML.write(doc, writer, "   ");
 
         xmlDoc = writer.toString();
-        assertEquals(128793, xmlDoc.length());
+        assertEquals(35226, xmlDoc.length());
 
     }
 
@@ -173,13 +173,19 @@ public class PsiFileGeneratorTest extends TestCase
         {
             Collection<Interaction> interactions = PsiFileGenerator.getInteractionsForExperimentListItem(item);
 
-            File xml1 = new File("target/psi1", item.getFilename());
-            if (xml1.exists()) xml1.delete(); // delete if it exists already
+            File xml1 = new File("target"+ File.separator +"psi1", item.getFilename());
+            if (xml1.exists()) {
+                xml1.delete(); // delete if it exists already
+            }
             PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_1, mapping, xml1, true);
-            assertFalse(xml1.exists());
+            assertTrue( xml1.exists() );
 
-            PsiValidatorReport report25 = PsiFileGenerator.writePsiData(interactions, PsiVersion.VERSION_25, mapping, new File("target/psi25/test-file.xml", item.getFilename()), true);
-            assertTrue(report25.isValid());
+            PsiValidatorReport report25 = PsiFileGenerator.writePsiData(interactions,
+                                                                        PsiVersion.VERSION_25,
+                                                                        mapping,
+                                                                        new File("target"+File.separator+"psi25"+File.separator+"test-file.xml", item.getFilename()),
+                                                                        true);
+            assertTrue( report25.isValid() );
         }
     }
 
