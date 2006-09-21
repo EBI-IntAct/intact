@@ -8,13 +8,12 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioSource2xmlI;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
-import uk.ac.ebi.intact.model.CvCompartment;
 import uk.ac.ebi.intact.model.CvTissue;
 
 /**
@@ -184,11 +183,6 @@ public class BioSource2xmlPSI2Test extends PsiDownloadTest {
         assertNotNull( tissue );
         bioSource.setCvTissue( tissue );
 
-        CvCompartment compartment = (CvCompartment) createCvObject( CvCompartment.class, "compartment",
-                                                                    "compartment fullname", "MI:0003" );
-        assertNotNull( compartment );
-        bioSource.setCvCompartment( compartment );
-
         // call the method we are testing
         Element element = bsi.createOrganism( session, parent, bioSource );
 
@@ -202,11 +196,11 @@ public class BioSource2xmlPSI2Test extends PsiDownloadTest {
         assertEquals( "9606", organism.getAttribute( "ncbiTaxId" ) );
 
         // should have names
-        assertEquals( 4, organism.getChildNodes().getLength() );
+        assertEquals( 3, organism.getChildNodes().getLength() );
 
         // check names
         // 4 because we count all descendant Element having the name 'names', biosource(1) + CVs(3)
-        assertEquals( 4, organism.getElementsByTagName( "names" ).getLength() );
+        assertEquals( 3, organism.getElementsByTagName( "names" ).getLength() );
         // TODO write a method that returns an Element by name coming from the direct level
         Element names = (Element) organism.getElementsByTagName( "names" ).item( 0 );
         assertNotNull( names );
@@ -243,20 +237,5 @@ public class BioSource2xmlPSI2Test extends PsiDownloadTest {
         // check xrefs
         xrefElement = (Element) tissueElement.getElementsByTagName( "xref" ).item( 0 );
         assertHasPrimaryRef( xrefElement, "MI:0002", "psi-mi", null, null );
-
-        // check compartment
-        Element compartmentElement = (Element) organism.getElementsByTagName( "compartment" ).item( 0 );
-        assertNotNull( compartmentElement );
-
-        // check tissue's names
-        names = (Element) compartmentElement.getElementsByTagName( "names" ).item( 0 );
-        assertNotNull( names );
-        assertEquals( 2, names.getChildNodes().getLength() );
-        assertHasShortlabel( names, "compartment" );
-        assertHasFullname( names, "compartment fullname" );
-
-        // check xrefs
-        xrefElement = (Element) compartmentElement.getElementsByTagName( "xref" ).item( 0 );
-        assertHasPrimaryRef( xrefElement, "MI:0003", "psi-mi", null, null );
     }
 }
