@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>1.0.4</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.app.search</groupId>
+    <artifactId>search-wsclient</artifactId>
+    <packaging>jar</packaging>
+    <version>1.2.0</version>
+    <!-- last released 1.2.0 -->
+    <name>Search WS Client</name>
+    <description>Client for the Search Web Services</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-wsclient/trunk/</url>
+    </scm>
+
+    <properties>
+        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+    </properties>
+
+    <build>
+           <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>jaxws-maven-plugin</artifactId>
+                    <version>1.0-alpha-ebi</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>wsimport</goal>
+                            </goals>
+                        </execution>
+                   </executions>
+                   <configuration>
+                        <packageName>uk.ac.ebi.intact.search.wsclient.generated</packageName> <!-- The name of your generated source package -->
+                   </configuration>
+               </plugin>
+             </plugins>
+        </build>
+
+        <dependencies>
+             <dependency>
+                <groupId>com.sun.xml</groupId>
+                <artifactId>jaxws-tools</artifactId>
+                <version>2.0EA3</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.jws</groupId>
+                        <artifactId>jsr181-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>xfire</groupId>
+                <artifactId>xfire-jsr181-api</artifactId>
+                <version>1.0-M1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-activation_1.0.2_spec</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>stax</groupId>
+                <artifactId>stax</artifactId>
+                <version>1.2.0_rc2-dev</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.messaging.saaj</groupId>
+                <artifactId>saaj-impl</artifactId>
+                <version>1.3</version>
+            </dependency>
+        </dependencies>
+
+        <!-- EBI repositories -->
+        <repositories>
+           <repository>
+                <id>ebi-repo</id>
+                <name>The EBI internal repository</name>
+                <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>false</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+
+
+</project>

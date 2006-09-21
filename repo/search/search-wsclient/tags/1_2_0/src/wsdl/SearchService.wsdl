@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions xmlns:tns="urn:searchws" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:searchws" name="SearchService">
+  <types>
+    <xsd:schema>
+      <xsd:import namespace="urn:searchws" schemaLocation="http://www.ebi.ac.uk:80/intact/search-ws/search?xsd=1"></xsd:import>
+    </xsd:schema>
+  </types>
+  <message name="getVersion">
+    <part name="parameters" element="tns:getVersion"></part>
+  </message>
+
+  <message name="getVersionResponse">
+    <part name="parameters" element="tns:getVersionResponse"></part>
+  </message>
+  <message name="getInteractionInfoUsingUniprotIds">
+    <part name="parameters" element="tns:getInteractionInfoUsingUniprotIds"></part>
+  </message>
+  <message name="getInteractionInfoUsingUniprotIdsResponse">
+    <part name="parameters" element="tns:getInteractionInfoUsingUniprotIdsResponse"></part>
+  </message>
+
+  <message name="getInteractionInfoUsingIntactIds">
+    <part name="parameters" element="tns:getInteractionInfoUsingIntactIds"></part>
+  </message>
+  <message name="getInteractionInfoUsingIntactIdsResponse">
+    <part name="parameters" element="tns:getInteractionInfoUsingIntactIdsResponse"></part>
+  </message>
+  <message name="findPartnersUsingUniprotIds">
+    <part name="parameters" element="tns:findPartnersUsingUniprotIds"></part>
+  </message>
+
+  <message name="findPartnersUsingUniprotIdsResponse">
+    <part name="parameters" element="tns:findPartnersUsingUniprotIdsResponse"></part>
+  </message>
+  <portType name="Search">
+    <operation name="getVersion">
+      <input message="tns:getVersion"></input>
+      <output message="tns:getVersionResponse"></output>
+    </operation>
+    <operation name="getInteractionInfoUsingUniprotIds">
+
+      <input message="tns:getInteractionInfoUsingUniprotIds"></input>
+      <output message="tns:getInteractionInfoUsingUniprotIdsResponse"></output>
+    </operation>
+    <operation name="getInteractionInfoUsingIntactIds">
+      <input message="tns:getInteractionInfoUsingIntactIds"></input>
+      <output message="tns:getInteractionInfoUsingIntactIdsResponse"></output>
+    </operation>
+    <operation name="findPartnersUsingUniprotIds">
+      <input message="tns:findPartnersUsingUniprotIds"></input>
+
+      <output message="tns:findPartnersUsingUniprotIdsResponse"></output>
+    </operation>
+  </portType>
+  <binding name="SearchPortBinding" type="tns:Search">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+    <operation name="getVersion">
+      <soap:operation soapAction=""></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+    <operation name="getInteractionInfoUsingUniprotIds">
+      <soap:operation soapAction=""></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+    <operation name="getInteractionInfoUsingIntactIds">
+      <soap:operation soapAction=""></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+    <operation name="findPartnersUsingUniprotIds">
+      <soap:operation soapAction=""></soap:operation>
+      <input>
+        <soap:body use="literal"></soap:body>
+
+      </input>
+      <output>
+        <soap:body use="literal"></soap:body>
+      </output>
+    </operation>
+  </binding>
+  <service name="SearchService">
+    <port name="SearchPort" binding="tns:SearchPortBinding">
+      <soap:address location="http://www.ebi.ac.uk:80/intact/search-ws/search"></soap:address>
+
+    </port>
+  </service>
+</definitions>
+
