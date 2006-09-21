@@ -37,7 +37,6 @@
     </properties>
 
     <build>
-            <finalName>${artifactId}-${db.alias}-${version}</finalName>
            <plugins>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
