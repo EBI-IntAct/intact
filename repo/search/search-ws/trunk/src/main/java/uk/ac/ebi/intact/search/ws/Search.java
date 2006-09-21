@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.jws.soap.SOAPBinding;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,17 +31,17 @@ import java.util.Properties;
  */
 @WebService(name="Search", targetNamespace = "urn:searchws")
 //@SOAPBinding(style=SOAPBinding.Style.RPC, use= SOAPBinding.Use.LITERAL)
-@SOAPBinding(style=SOAPBinding.Style.DOCUMENT, use=SOAPBinding.Use.LITERAL, parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
-public class SearchService
+//@SOAPBinding(style=SOAPBinding.Style.DOCUMENT, use=SOAPBinding.Use.LITERAL, parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
+public class Search
 {
 
-    private static final Log log = LogFactory.getLog(SearchService.class);
+    private static final Log log = LogFactory.getLog(Search.class);
 
     //private DaoFactory daoFactory;
 
-    public SearchService()
+    public Search()
     {
-        log.debug("Initializing SearchService...");
+        log.debug("Initializing Search...");
 
         IntactSession intactSession = new WebServiceSession();
         IntactConfigurator.initIntact(intactSession);
@@ -50,37 +49,40 @@ public class SearchService
     }
     
     @WebMethod()
-    public ArrayList<InteractionInfo> getInteractionInfoUsingUniprotIds(String uniprotId1, String uniprotId2)
+    public InteractionInfo[] getInteractionInfoUsingUniprotIds(String uniprotId1, String uniprotId2)
     {
         DaoFactory daoFactory = getDataContext().getDaoFactory();
 
         List<ProteinImpl> protsForId1 = daoFactory.getProteinDao().getByUniprotId(uniprotId1);
         List<ProteinImpl> protsForId2 = daoFactory.getProteinDao().getByUniprotId(uniprotId2);
 
-        ArrayList<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
+        List<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
 
         for (Protein prot1 : protsForId1)
         {
              for (Protein prot2 : protsForId2)
              {
-                 List<InteractionInfo> results = getInteractionInfoUsingIntactIds(prot1.getAc(), prot2.getAc());
-                 interInfos.addAll(results);
+                 InteractionInfo[] results = getInteractionInfoUsingIntactIds(prot1.getAc(), prot2.getAc());
+                 for (InteractionInfo result : results)
+                 {
+                     interInfos.add(result);
+                 }
              }
         }
 
         getDataContext().commitTransaction();
 
-        return interInfos;
+        return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
 
     @WebMethod()
-    public ArrayList<InteractionInfo> getInteractionInfoUsingIntactIds(String id1, String id2)
+    public InteractionInfo[] getInteractionInfoUsingIntactIds(String id1, String id2)
     {
         DaoFactory daoFactory = getDataContext().getDaoFactory();
 
         List<Interaction> interactions = daoFactory.getInteractionDao().getInteractionsForProtPair(id1,id2);
 
-        ArrayList<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
+        List<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
 
         for (Interaction inter : interactions)
         {
@@ -110,7 +112,7 @@ public class SearchService
 
         getDataContext().commitTransaction();
 
-        return interInfos;
+        return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
 
     /**
@@ -120,7 +122,7 @@ public class SearchService
      * @return
      */
     @WebMethod()
-    public ArrayList<PartnerResult> findPartnersUsingUniprotIds(String[] proteinIds)  {
+    public PartnerResult[] findPartnersUsingUniprotIds(String[] proteinIds)  {
         if (log.isDebugEnabled())
         {
             if (proteinIds.length == 1)
@@ -133,7 +135,7 @@ public class SearchService
             }
         }
 
-        ArrayList<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
+        List<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
 
         int totalFound = 0;
 
@@ -157,7 +159,7 @@ public class SearchService
             log.debug("Total partners found: "+totalFound);
         }
 
-        return results;
+        return results.toArray(new PartnerResult[results.size()]);
     }
      
 
@@ -173,7 +175,7 @@ public class SearchService
         Properties properties = new Properties();
         try
         {
-            properties.load(SearchService.class.getResourceAsStream("/uk/ac/ebi/intact/search/ws/BuildInfo.properties"));
+            properties.load(Search.class.getResourceAsStream("/uk/ac/ebi/intact/search/ws/BuildInfo.properties"));
         }
         catch (IOException e)
         {

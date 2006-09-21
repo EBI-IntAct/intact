@@ -4,6 +4,6 @@
         version="2.0">
     <endpoint
             name="Search"
-            implementation="uk.ac.ebi.intact.search.ws.SearchService"
+            implementation="uk.ac.ebi.intact.search.ws.Search"
             url-pattern="/search"/>
 </endpoints>

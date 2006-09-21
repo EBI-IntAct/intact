@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-ws</artifactId>
     <packaging>war</packaging>
-    <version>1.5-SNAPSHOT</version>
-    <!-- last released 1.4.0 -->
+    <version>1.4.1</version>
+    <!-- last released 1.4.1 -->
     <name>Intact Search Web Service</name>
     <description>A web service interface to retrieve data from intact</description>
 
@@ -35,75 +35,6 @@
     <build>
         <finalName>${artifactId}-${db.alias}-${version}</finalName>
        <plugins>
-           <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxws-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-               </executions>
-               <configuration>
-                    <packageName>uk.ac.ebi.uk.test.jaxws</packageName>
-               </configuration>
-           </plugin>
-            -->
-           <plugin>
-               <groupId>org.apache.maven.plugins</groupId>
-               <artifactId>maven-antrun-plugin</artifactId>
-               <executions>
-                   <execution>
-                       <id>compile</id>
-                       <phase>compile</phase>
-                       <configuration>
-                           <tasks>
-
-                               <property name="outputDir" value="target/classes"/>
-
-                               <taskdef name="apt" classname="com.sun.tools.ws.ant.Apt">
-                                   <classpath refid="maven.compile.classpath"/>
-                               </taskdef>
-                               <taskdef name="wsgen" classname="com.sun.tools.ws.ant.WsGen">
-                                    <classpath refid="maven.compile.classpath"/>
-                                </taskdef>
-                                <!--
-                               <apt debug="true"
-                                       verbose="false"
-                                       destdir="${outputDir}"
-                                       sourcedestdir="${outputDir}"
-                                       sourcepath="${outputDir}">
-                                   <classpath refid="maven.compile.classpath"/>
-
-                                   <source dir="src/main/java">
-                                       <include name="**/ws/*.java"/>
-                                   </source>
-                               </apt>
-                                  -->
-                               <mkdir dir="${project.build.directory}/${project.build.finalName}/WEB-INF/wsdl"/>
-
-                               <wsgen resourcedestdir="${outputDir}"
-                                      sei="uk.ac.ebi.intact.search.ws.SearchService"
-                                      keep="true"
-                                      sourcedestdir="${outputDir}"
-                                      destdir="${project.build.directory}/${project.build.finalName}/WEB-INF/wsdl"
-                                      genwsdl="true">
-                                   <classpath refid="maven.compile.classpath">
-                                   </classpath>
-                               </wsgen>
-                           </tasks>
-                           <sourceRoot>${project.build.directory}/classes-jaxws/</sourceRoot>
-                       </configuration>
-                       <goals>
-                           <goal>run</goal>
-                       </goals>
-                   </execution>
-               </executions>
-               
-           </plugin>
-
            <plugin>
                <groupId>org.apache.myfaces.tobago</groupId>
                <artifactId>maven-apt-plugin</artifactId>
@@ -198,13 +129,5 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/${artifactId}</url>
-        </site>
-    </distributionManagement>
 
 </project>
