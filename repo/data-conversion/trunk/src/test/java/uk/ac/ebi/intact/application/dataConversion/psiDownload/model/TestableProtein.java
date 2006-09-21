@@ -32,16 +32,16 @@ public class TestableProtein extends ProteinImpl {
         }
 
         // count of required chunk to fit the sequence
-        int chunkCount = aSequence.length() / ourMaxSeqLength;
-        if ( aSequence.length() % ourMaxSeqLength > 0 ) {
+        int chunkCount = aSequence.length() / MAX_SEQ_LENGTH_PER_CHUNK;
+        if ( aSequence.length() % MAX_SEQ_LENGTH_PER_CHUNK > 0 ) {
             chunkCount++;
         }
 
         String chunk = null;
         for ( int i = 0; i < chunkCount; i++ ) {
 
-            chunk = aSequence.substring( i * ourMaxSeqLength,
-                                         Math.min( ( i + 1 ) * ourMaxSeqLength,
+            chunk = aSequence.substring( i * MAX_SEQ_LENGTH_PER_CHUNK,
+                                         Math.min( ( i + 1 ) * MAX_SEQ_LENGTH_PER_CHUNK,
                                                    aSequence.length() ) );
 
             // create new chunk
