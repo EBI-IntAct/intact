@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>1.3.5</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.app.search</groupId>
+    <artifactId>search-ws</artifactId>
+    <packaging>war</packaging>
+    <version>1.4.1</version>
+    <!-- last released 1.4.1 -->
+    <name>Intact Search Web Service</name>
+    <description>A web service interface to retrieve data from intact</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-ws/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search-ws/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search-ws/trunk/</url>
+    </scm>
+
+    <build>
+        <finalName>${artifactId}-${db.alias}-${version}</finalName>
+       <plugins>
+           <plugin>
+               <groupId>org.apache.myfaces.tobago</groupId>
+               <artifactId>maven-apt-plugin</artifactId>
+               <executions>
+                   <execution>
+                       <phase>generate-sources</phase>
+                       <configuration>
+                           <generated>target/jax-ws-apt-sources</generated>
+                           <aptOptions>x=3</aptOptions>
+                           <target>1.5</target>
+                           <nocompile>false</nocompile>
+                           <showWarnings>true</showWarnings>
+                       </configuration>
+                       <goals>
+                           <goal>execute</goal>
+                       </goals>
+                   </execution>
+               </executions>
+           </plugin>
+       </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>1.4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-ejb3-client</artifactId>
+            <version>3.0-rc9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.xml</groupId>
+            <artifactId>jaxws-api</artifactId>
+            <version>2.0EA3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml</groupId>
+            <artifactId>jaxws-tools</artifactId>
+            <version>2.0EA3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jws</groupId>
+                    <artifactId>jsr181-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>sun.jdk</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.5.0</version>
+            <scope>system</scope>
+            <systemPath>${java.home}/../lib/tools.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-jsr181-api</artifactId>
+            <version>1.0-M1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-activation_1.0.2_spec</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0_rc2-dev</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.messaging.saaj</groupId>
+            <artifactId>saaj-impl</artifactId>
+            <version>1.3</version>
+        </dependency>
+    </dependencies>    
+
+    <!-- EBI repositories -->
+    <repositories>
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>
