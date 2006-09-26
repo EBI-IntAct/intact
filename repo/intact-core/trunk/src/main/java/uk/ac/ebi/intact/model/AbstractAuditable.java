@@ -15,13 +15,10 @@
  */
 package uk.ac.ebi.intact.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.lucene.Keyword;
-
-import javax.persistence.*;
-import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 /**
@@ -61,7 +58,7 @@ public abstract class AbstractAuditable implements Auditable {
     }
 
 
-    @Temporal
+    @Temporal(value = TemporalType.TIMESTAMP)
     public Date getCreated() {
         return created;
     }
@@ -74,7 +71,7 @@ public abstract class AbstractAuditable implements Auditable {
         this.created = created;
     }
 
-    @Temporal
+    @Temporal(value = TemporalType.TIMESTAMP)
     public Date getUpdated() {
         return updated;
     }
