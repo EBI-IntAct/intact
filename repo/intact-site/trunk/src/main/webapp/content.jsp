@@ -1,4 +1,4 @@
-i<table border="0" cellpadding="0" cellspacing="0" width="434">
+<table border="0" cellpadding="0" cellspacing="0" width="434">
 <tbody>
 <tr>
 <td>
