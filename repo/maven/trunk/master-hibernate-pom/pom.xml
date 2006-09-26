@@ -15,8 +15,8 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released 1.3.5 -->
+    <version>1.3.6</version>
+    <!-- last released 1.3.6 -->
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
@@ -55,6 +55,7 @@
                     <password>${db.password}</password>
                     <showSql>${showSql}</showSql>
                     <scope>${hibernate.scope}</scope>
+                    <connectionProviderClass>${db.connectionProviderClass}</connectionProviderClass>
                     <hibernateEvents>
                         <hibernateEvent>
                             <type>pre-insert</type>
