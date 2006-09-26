@@ -25,8 +25,7 @@
 </head>
 
 
-<body leftmargin="0" topmargin="0" rightmargin="0" bottommargin="0" onunload="callUnLoadMethods()"
-      onload="EbiPreloadImages('services');" marginheight="0" marginwidth="0">
+<body leftmargin="0" topmargin="0" rightmargin="0" bottommargin="0" marginheight="0" marginwidth="0">
 
 <!-- START EBI Header -->
 
