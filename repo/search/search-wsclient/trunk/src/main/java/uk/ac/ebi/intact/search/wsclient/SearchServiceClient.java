@@ -5,14 +5,17 @@
  */
 package uk.ac.ebi.intact.search.wsclient;
 
-import uk.ac.ebi.intact.search.wsclient.generated.*;
+import uk.ac.ebi.intact.search.wsclient.generated.InteractionInfo;
+import uk.ac.ebi.intact.search.wsclient.generated.PartnerResult;
+import uk.ac.ebi.intact.search.wsclient.generated.Search;
+import uk.ac.ebi.intact.search.wsclient.generated.SearchService;
 
 import javax.xml.namespace.QName;
 import java.net.URL;
 import java.rmi.RemoteException;
-import java.util.List;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Client for the Search Web Service
@@ -39,7 +42,7 @@ public class SearchServiceClient
 
         try
         {
-            SearchService searchService = new SearchService(new URL(DEFAULT_URL), new QName("urn:searchws", "SearchPort"));
+            SearchService searchService = new SearchService(new URL(DEFAULT_URL), new QName("urn:searchws", "SearchService"));
             this.search = searchService.getSearchPort();
         }
         catch (Exception e)
@@ -54,7 +57,7 @@ public class SearchServiceClient
 
         try
         {
-            SearchService searchService = new SearchService(new URL(searchWsUrl), new QName("urn:searchws", "SearchPort"));
+            SearchService searchService = new SearchService(new URL(searchWsUrl), new QName("urn:searchws", "SearchService"));
             this.search = searchService.getSearchPort();
         }
         catch (Exception e)
