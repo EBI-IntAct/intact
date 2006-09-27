@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>app-commons</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.1</version>
+    <version>1.5-SNAPSHOT</version>
     <!-- last released 1.4.1 -->
     <name>IntAct Application Commons</name>
     <description>Common classes for all the IntAct applications</description>
