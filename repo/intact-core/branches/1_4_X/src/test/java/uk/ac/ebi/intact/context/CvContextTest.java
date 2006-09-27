@@ -29,11 +29,13 @@ public class CvContextTest extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         this.cvContext = IntactContext.getCurrentInstance().getCvContext();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
         cvContext = null;
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public void testGetCurrentInstance() throws Exception {
