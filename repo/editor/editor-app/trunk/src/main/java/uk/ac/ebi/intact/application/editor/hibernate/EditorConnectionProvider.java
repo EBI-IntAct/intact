@@ -45,7 +45,6 @@ public class EditorConnectionProvider implements ConnectionProvider
 
             log.debug("Getting connection for user: " + currentUser);
             log.debug("CurrentUser: " + currentUser);
-            log.debug("CurrentUserPassword: " + currentUserPassword);
 
             if (!driverLoaded)
             {
