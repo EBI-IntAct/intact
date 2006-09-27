@@ -16,10 +16,9 @@ import uk.ac.ebi.intact.context.*;
  */
 public class IntactContextWrapper extends IntactContext
 {
-        public IntactContextWrapper(UserContext userContext, DataContext dataContext, IntactSession session)
+        public IntactContextWrapper(DataContext dataContext, IntactSession session)
         {
-            super(userContext, dataContext, session);
+            super(dataContext, session);
             IntactContext.setCurrentInstance(this);
         }
-
 }

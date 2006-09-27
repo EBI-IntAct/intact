@@ -62,6 +62,10 @@ public class WebappSession extends IntactSession
 
     public void setApplicationAttribute(String name, Object attribute)
     {
+        if (log.isDebugEnabled())
+        {
+            log.debug("APP: "+name+"="+attribute);
+        }
         servletContext.setAttribute(name, attribute);
     }
 
@@ -72,6 +76,10 @@ public class WebappSession extends IntactSession
 
     public void setAttribute(String name, Serializable attribute)
     {
+        if (log.isDebugEnabled())
+        {
+            log.debug("SES: "+name+"="+attribute);
+        }
         session.setAttribute(name, attribute);
     }
 
@@ -82,7 +90,11 @@ public class WebappSession extends IntactSession
 
     public void setRequestAttribute(String name, Object value)
     {
-       request.setAttribute(name,value);
+        if (log.isDebugEnabled())
+        {
+            log.debug("REQ: "+name+"="+value);
+        }
+        request.setAttribute(name,value);
     }
 
     public boolean containsInitParam(String name)
