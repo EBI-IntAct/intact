@@ -38,8 +38,9 @@ public class UserAuthenticator {
     public static EditUserI authenticate(String username, String password)
             throws AuthenticateException {
         try {
-            UserContext userContext = IntactContext.getCurrentInstance().getUserContext();
-            userContext.setUserId(username);
+           IntactContext intactContext = IntactContext.getCurrentInstance();
+            UserContext userContext = intactContext.getUserContext();
+            userContext.setUserId(username.toUpperCase());
             userContext.setUserPassword(password);
             return new EditUser(username, password);
         }
