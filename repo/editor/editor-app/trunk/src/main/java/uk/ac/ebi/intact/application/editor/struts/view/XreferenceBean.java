@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -423,11 +425,11 @@ public class XreferenceBean extends AbstractEditKeyBean {
         private ActionErrors myGoErrors;
         private GoServerProxy.GoResponse myGoResponse;
 
-        private void addErrors(ActionError error) {
+        private void addErrors(ActionMessage error) {
             if (myGoErrors == null) {
                 myGoErrors = new ActionErrors();
             }
-            myGoErrors.add(ActionErrors.GLOBAL_ERROR, error);
+            myGoErrors.add(ActionMessages.GLOBAL_MESSAGE, error);
         }
     }
 }

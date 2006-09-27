@@ -423,7 +423,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // The error message.
             String msg = ie.getRootCause() != null ? ie.getRootCause().getMessage()
                     : "Update failure, root cause is not availabe";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update", msg));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionError("error.update", msg));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }

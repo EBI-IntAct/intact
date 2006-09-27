@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.util.MessageResources;
 import org.apache.struts.action.*;
+import org.apache.struts.util.MessageResources;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
@@ -260,8 +260,8 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         if (!getLockManager().acquire(ac, owner)) {
             ActionErrors errors = new ActionErrors();
             // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.lock", ac, getLockManager().getOwner(ac)));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("error.lock", ac, getLockManager().getOwner(ac)));
             return errors;
         }
         return null;
