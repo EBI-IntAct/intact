@@ -3,13 +3,12 @@ package uk.ac.ebi.intact.application.editor.hibernate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.connection.ConnectionProvider;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
-import uk.ac.ebi.intact.util.EditorConnectionProviderDeleteMe;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -23,7 +22,7 @@ import java.util.Properties;
  */
 public class EditorConnectionProvider implements ConnectionProvider
 {
-     private static final Log log = LogFactory.getLog(EditorConnectionProviderDeleteMe.class);
+     private static final Log log = LogFactory.getLog(EditorConnectionProvider.class);
 
     private boolean driverLoaded;
 
