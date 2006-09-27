@@ -162,13 +162,14 @@ public class IntactConfigurator
             initIntact(session);
         }
 
-        IntactContext context = getIntactContextFromSession(session);
+        IntactContext context = null;/*etIntactContextFromSession(session);
 
         if (context != null)
         {
+            IntactContext.setCurrentInstance(context);
             return context;
-        }
-
+        }  */
+         /*
         String defaultUser = null;
         String defaultPassword = ((Configuration)RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig().getConfiguration())
                 .getProperty(Environment.PASS);
@@ -191,21 +192,21 @@ public class IntactConfigurator
         {
             e.printStackTrace();
         }
-
-        log.debug("Creating user context, for user: "+defaultUser);
-        UserContext userContext = new UserContext(defaultUser);
-        userContext.setUserPassword(defaultPassword);
+          */
+        //log.debug("Creating user context, for user: "+defaultUser);
+        //UserContext userContext = new UserContext(defaultUser);
+        //userContext.setUserPassword(defaultPassword);
 
         log.debug("Creating data context...");
         DataContext dataContext = new DataContext(session);
 
         // start a context
         log.info("Creating IntactContext...");
-        context = new IntactContextWrapper(userContext, dataContext, session);
+        context = new IntactContextWrapper(dataContext, session);
         persistInstitutionIfNecessary(context);
         persistSchemaVersionIfNecessary(context);
 
-        putIntactContextInSession(context, session);
+        //putIntactContextInSession(context, session);
 
         return context;
     }
