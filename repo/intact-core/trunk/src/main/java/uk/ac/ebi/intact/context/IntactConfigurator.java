@@ -48,6 +48,7 @@ public class IntactConfigurator
     private static final String INSTITUTION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.INSTITUTION_TO_BE_PERSISTED";
     private static final String SCHEMA_VERSION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.SCHEMA_VERSION_TO_BE_PERSISTED";
 
+    private static final String INITIALIZED_APP_ATT_NAME = IntactConfigurator.class+"_INITIALIZED";
 
     /**
      * Initializes the fundamental intact parameters, such as data configs, the default prefix,  and default data
@@ -59,6 +60,11 @@ public class IntactConfigurator
     public static void initIntact(IntactSession session) throws IntactInitializationError
     {
         log.info("Initializing intact-core with session of class: "+session.getClass());
+
+        if (isInitialized(session))
+        {
+            throw new IntactInitializationError("IntAct already initialized");
+        }
 
         // when logging info, print init params
         if (log.isInfoEnabled())
@@ -140,6 +146,8 @@ public class IntactConfigurator
             CvContext.getCurrentInstance(session).loadCommonCvObjects();
             tx.commit();
         }
+
+        setInitialized(session, true);
     }
 
     public static IntactContext createIntactContext(IntactSession session)
@@ -384,6 +392,23 @@ public class IntactConfigurator
     private static void setSchemaVersionToBePersisted(IntactSession session)
     {
         session.setApplicationAttribute(SCHEMA_VERSION_TO_BE_PERSISTED_FLAG, Boolean.TRUE);
+    }
+
+    private static void setInitialized(IntactSession session, boolean initialized)
+    {
+        session.setApplicationAttribute(INITIALIZED_APP_ATT_NAME, initialized);
+    }
+
+    public static boolean isInitialized(IntactSession session)
+    {
+        Object obj = session.getApplicationAttribute(INITIALIZED_APP_ATT_NAME);
+
+        if (obj == null)
+        {
+            return false;
+        }
+
+        return (Boolean) obj;
     }
 
 }
