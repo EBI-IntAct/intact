@@ -36,7 +36,7 @@ public class IntactContext implements Serializable
 
     public static IntactContext getCurrentInstance()
     {
-        if (currentInstance.get() == null)
+        if (!currentInstanceExists())
         {
             // stack trace element to know from where this method was called
             StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
@@ -49,6 +49,11 @@ public class IntactContext implements Serializable
         }
 
        return currentInstance.get();
+    }
+
+    public static boolean currentInstanceExists()
+    {
+       return currentInstance.get() != null;
     }
 
     public static void initStandaloneContext()
