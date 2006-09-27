@@ -19,8 +19,6 @@ public class IntactContext implements Serializable
 {
     private static final Log log = LogFactory.getLog(IntactContext.class);
 
-    public static String SESSION_CONTEXT_NAME = IntactContext.class.getName();
-
     private IntactSession session;
 
     private UserContext userContext;
