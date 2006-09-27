@@ -61,7 +61,7 @@ public abstract class AbstractAuditable implements Auditable {
     }
 
 
-    @Temporal
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getCreated() {
         return created;
     }
@@ -74,7 +74,7 @@ public abstract class AbstractAuditable implements Auditable {
         this.created = created;
     }
 
-    @Temporal
+    @Temporal(TemporalType.TIMESTAMP)
     public Date getUpdated() {
         return updated;
     }
