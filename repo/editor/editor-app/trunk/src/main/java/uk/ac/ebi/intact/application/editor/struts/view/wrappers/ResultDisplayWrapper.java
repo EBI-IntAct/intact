@@ -102,20 +102,36 @@ public class ResultDisplayWrapper extends TableDecorator {
     }
 
     public String getCreated(){
-        return DateToolbox.formatDate(((ResultRowData) getObject()).getCreated());
+        String created = new String();
+        try {
+         created = DateToolbox.formatDate(((ResultRowData) getObject()).getCreated());
+        }
+        catch(Exception e){
+            log.debug(e.getCause().getMessage());
+            log.debug(e.getCause().getMessage());
+        }
+        return created;
     }
 
     public String getUpdated(){
+
         return DateToolbox.formatDate(((ResultRowData) getObject()).getUpdated());
     }
 
     public String getCreationInfo(){
+        if((ResultRowData) getObject() != null){
          //Created 2005-JAN-26 by LUISA.
         log.debug("getShortlabel" + ((ResultRowData) getObject()).getShortLabel());
         log.debug("getCreated" + ((ResultRowData) getObject()).getCreated());
         log.debug("getCreator" + ((ResultRowData) getObject()).getCreator());
-
-         return  this.getCreated() + " by " + this.getCreator() + ".";
+        }
+        String creationInfo = new String();
+        try{
+            creationInfo = this.getCreated() + " by " + this.getCreator() + ".";
+        }catch(Exception e){
+            log.debug(e.getMessage());
+        }
+        return creationInfo;
     }
 
     public String getUpdateInfo(){
@@ -125,7 +141,16 @@ public class ResultDisplayWrapper extends TableDecorator {
         log.debug("getUpdaed" + ((ResultRowData) getObject()).getUpdated());
         log.debug("getUpdator" + ((ResultRowData) getObject()).getUpdator());
         }
-         return this.getUpdated() + " by " + this.getUpdator() + ".";
+        String updateInfo = new String();
+        try{
+            updateInfo= this.getUpdated() + " by " + this.getUpdator() + ".";
+        }catch(Exception e){
+            log.debug(updateInfo);
+            log.debug(e.getMessage());
+        }
+        log.debug(updateInfo);
+         
+         return updateInfo;
     }
 
     /**

@@ -28,6 +28,8 @@ import uk.ac.ebi.intact.searchengine.SearchHelperI;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.UpdateProteins;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -38,6 +40,7 @@ import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.sql.SQLException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -532,7 +535,7 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // Set the helper as it has already been closed.
         Collection prots;
 
-            prots = myProteinFactory.insertSPTrProteins(pid);
+            prots = getMyProteinFactory().insertSPTrProteins(pid);
 
         if (prots.size() > max) {
             // Exceeds the maximum size.
@@ -550,13 +553,23 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
 
     public Exception getProteinParseException() {
         // Map of exceptions.
-        Map map = myProteinFactory.getParsingExceptions();
+        Map map = getMyProteinFactory().getParsingExceptions();
         // Only interested in the first entry as the parsing is limited to a
         // single entry. Guard against empty exceptions
         if (!map.values().isEmpty()) {
             return (Exception) map.values().iterator().next();
         }
         return null;
+    }
+
+    public UpdateProteinsI getMyProteinFactory(){
+        if(IntactContext.getCurrentInstance().getDataContext().isTransactionActive()){
+            log.debug("Transaction is active");
+        }
+        if(myProteinFactory == null){
+            myProteinFactory = new UpdateProteins();
+        }
+        return myProteinFactory;
     }
 
     public void addToSearchCache(Collection<ResultRowData> results) {
