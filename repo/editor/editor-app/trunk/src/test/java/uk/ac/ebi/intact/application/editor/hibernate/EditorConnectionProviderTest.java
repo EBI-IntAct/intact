@@ -8,13 +8,11 @@ package uk.ac.ebi.intact.application.editor.hibernate;
 import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.application.editor.LoginPropertiesGetter;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -34,7 +32,7 @@ public class EditorConnectionProviderTest extends TestCase
 
     public void testDaoAccess()
     {
-        String url = HibernateUtil.getConfiguration().getProperty(Environment.URL);
+        String url = ((Configuration)IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration()).getProperty(Environment.URL);
 
         LoginPropertiesGetter props = new LoginPropertiesGetter();
         String name = props.getName();
@@ -55,12 +53,8 @@ public class EditorConnectionProviderTest extends TestCase
             e.printStackTrace();
         }
 
-        IntactTransaction tx = DaoFactory.beginTransaction();
-
-        Protein p = DaoFactory.getProteinDao().getByAc("EBI-493");
+        Protein p = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc("EBI-493");
         assertNotNull(p);
-
-        tx.commit();
 
         log.info("Testing data access for USER_2");
 
@@ -76,12 +70,8 @@ public class EditorConnectionProviderTest extends TestCase
             e.printStackTrace();
         }
 
-        tx = DaoFactory.beginTransaction();
-
-        p = DaoFactory.getProteinDao().getByAc("EBI-493");
+        p = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc("EBI-493");
         assertNotNull(p);
-
-        tx.commit();
     }
 
 }

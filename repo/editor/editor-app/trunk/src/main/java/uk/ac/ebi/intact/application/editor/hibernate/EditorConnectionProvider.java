@@ -7,6 +7,8 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.connection.ConnectionProvider;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -20,7 +22,7 @@ import java.util.Properties;
  */
 public class EditorConnectionProvider implements ConnectionProvider
 {
-    private static final Log log = LogFactory.getLog(EditorConnectionProvider.class);
+     private static final Log log = LogFactory.getLog(EditorConnectionProviderDeleteMe.class);
 
     private boolean driverLoaded;
 
@@ -31,40 +33,47 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public Connection getConnection() throws SQLException
     {
-        Configuration configuration = (Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
-                
-        String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
-        String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
-        String url = configuration.getProperty(Environment.URL);
-
-        log.debug("Getting connection for user: " + currentUser);
-        log.debug("CurrentUser: " + currentUser);
-        log.debug("CurrentUserPassword: " + currentUserPassword);
-
-
-        if (!driverLoaded)
-        {
-            String driverClass = configuration.getProperty(Environment.DRIVER);
-            try
-            {
-                Class.forName(driverClass);
-            }
-            catch (ClassNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-            driverLoaded = true;
-        }
         Connection connection;
-        if(currentUser != null){
-            connection = DriverManager.getConnection(url, currentUser, currentUserPassword);
-        }
-        else{
-            log.debug("Using default connection");
-            String name = configuration.getProperty(Environment.USER);
-            String password = configuration.getProperty(Environment.PASS);
 
-            connection = DriverManager.getConnection(url,name,password);
+        if (IntactContext.currentInstanceExists())
+        {
+            Configuration configuration = (Configuration)IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
+
+            String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+            String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
+            String url = configuration.getProperty(Environment.URL);
+
+            log.debug("Getting connection for user: " + currentUser);
+            log.debug("CurrentUser: " + currentUser);
+            log.debug("CurrentUserPassword: " + currentUserPassword);
+
+
+            if (!driverLoaded)
+            {
+                String driverClass = configuration.getProperty(Environment.DRIVER);
+                try
+                {
+                    Class.forName(driverClass);
+                }
+                catch (ClassNotFoundException e)
+                {
+                    e.printStackTrace();
+                }
+                driverLoaded = true;
+            }
+
+            if (currentUser != null)
+            {
+                connection = DriverManager.getConnection(url, currentUser, currentUserPassword);
+            }
+            else
+            {
+                connection = createDefaultConnection();
+            }
+        }
+        else // currentInstance does not exist
+        {
+             connection = createDefaultConnection();
         }
 
         return connection;
@@ -82,5 +91,31 @@ public class EditorConnectionProvider implements ConnectionProvider
     public boolean supportsAggressiveRelease()
     {
         return false;
+    }
+
+    private Connection createDefaultConnection() throws SQLException
+    {
+        StandardCoreDataConfig stdDataConfig = new StandardCoreDataConfig(new StandaloneSession());
+
+        Configuration configuration = stdDataConfig.getConfiguration();
+        configuration.configure();
+
+        String name = configuration.getProperty(Environment.USER);
+        String password = configuration.getProperty(Environment.PASS);
+        String url = configuration.getProperty(Environment.URL);
+        String driver = configuration.getProperty(Environment.DRIVER);
+
+        try
+        {
+            Class.forName(driver);
+        }
+        catch (ClassNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+
+        log.debug("Using default connection - User: " + name + " Url: " + url);
+
+        return DriverManager.getConnection(url, name, password);
     }
 }
