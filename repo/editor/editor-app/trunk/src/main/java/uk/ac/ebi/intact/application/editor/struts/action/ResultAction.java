@@ -6,9 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action;
 
-import org.apache.struts.action.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
@@ -73,10 +73,10 @@ public class ResultAction extends AbstractEditorAction {
         // of allowing to access pages directly).
         if ((ac == null) || (type == null) || !getService().isValidTopic(type)) {
             LOGGER.error("Invalid values submitted for ac=" + ac + " and type=" + type);
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.invalid.edit.inputs"));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("error.invalid.edit.inputs"));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }

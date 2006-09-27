@@ -106,7 +106,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         // The results to display.
 
-        List<ResultRowData> results = getResults(searchClass, searchString, max, request, ActionErrors.GLOBAL_ERROR);
+        List<ResultRowData> results = getResults(searchClass, searchString, max, request, ActionMessages.GLOBAL_MESSAGE);
 
         if (results.isEmpty()) {
             // Errors or empty or too large
@@ -119,7 +119,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             ResultRowData row = results.get(0);
 
             // Try to acquire the lock.
-            ActionErrors errors = acquire(row.getAc(), user.getUserName());
+            ActionMessages errors = acquire(row.getAc(), user.getUserName());
             if (errors != null) {
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
