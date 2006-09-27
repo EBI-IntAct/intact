@@ -9,6 +9,7 @@ import org.hibernate.connection.ConnectionProvider;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.util.EditorConnectionProviderDeleteMe;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -46,7 +47,6 @@ public class EditorConnectionProvider implements ConnectionProvider
             log.debug("Getting connection for user: " + currentUser);
             log.debug("CurrentUser: " + currentUser);
             log.debug("CurrentUserPassword: " + currentUserPassword);
-
 
             if (!driverLoaded)
             {
