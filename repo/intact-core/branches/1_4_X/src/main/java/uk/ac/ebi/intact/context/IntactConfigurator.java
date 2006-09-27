@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.SchemaVersion;
@@ -49,6 +51,8 @@ public class IntactConfigurator
     private static final String SCHEMA_VERSION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.SCHEMA_VERSION_TO_BE_PERSISTED";
 
     private static final String INITIALIZED_APP_ATT_NAME = IntactConfigurator.class+"_INITIALIZED";
+
+    private static final String INTACT_CONTEXT_SESS_ATT_NAME = IntactConfigurator.class+"_INTACT_CONTEXT";
 
     /**
      * Initializes the fundamental intact parameters, such as data configs, the default prefix,  and default data
@@ -158,7 +162,16 @@ public class IntactConfigurator
             initIntact(session);
         }
 
+        IntactContext context = getIntactContextFromSession(session);
+
+        if (context != null)
+        {
+            return context;
+        }
+
         String defaultUser = null;
+        String defaultPassword = ((Configuration)RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig().getConfiguration())
+                .getProperty(Environment.PASS);
 
         if (log.isDebugEnabled())
         {
@@ -181,17 +194,35 @@ public class IntactConfigurator
 
         log.debug("Creating user context, for user: "+defaultUser);
         UserContext userContext = new UserContext(defaultUser);
+        userContext.setUserPassword(defaultPassword);
 
         log.debug("Creating data context...");
         DataContext dataContext = new DataContext(session);
 
         // start a context
         log.info("Creating IntactContext...");
-        IntactContext context = new IntactContextWrapper(userContext, dataContext, session);
+        context = new IntactContextWrapper(userContext, dataContext, session);
         persistInstitutionIfNecessary(context);
         persistSchemaVersionIfNecessary(context);
 
+        putIntactContextInSession(context, session);
+
         return context;
+    }
+
+    private static IntactContext getIntactContextFromSession(IntactSession session)
+    {
+        if (!session.isRequestAvailable())
+        {
+            return null;
+        }
+
+        return (IntactContext) session.getAttribute(INTACT_CONTEXT_SESS_ATT_NAME);
+    }
+
+    private static void putIntactContextInSession(IntactContext context, IntactSession session)
+    {
+        session.setAttribute(INTACT_CONTEXT_SESS_ATT_NAME, context);
     }
 
     private static void checkSchemaCompatibility(IntactSession session)
