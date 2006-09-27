@@ -21,8 +21,8 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-engine</artifactId>
     <packaging>jar</packaging>
-    <version>1.4-SNAPSHOT</version>
-    <!-- last released version 1.4.0 -->
+    <version>1.4.1</version>
+    <!-- last released version 1.4.1 -->
     <name>Search engine</name>
     <description>To perform IntAct searches</description>
 
