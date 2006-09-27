@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LoginEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -88,15 +89,9 @@ public class LoginAction extends AbstractEditorAction {
 //        // Create an instance of EditorService.
 //        EditUserI user = new EditUser(username, password);
 
-        // Invalidate any previous sessions.
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            session.invalidate();
-        }
-        // Create a new session.
-        session = request.getSession(true);
+        HttpSession session = request.getSession();
 
-        LOGGER.info("Created a new session");
+        //LOGGER.info("Created a new session");
 
         // Set the status for the filter to let logged in users to get through.
         session.setAttribute(EditorConstants.LOGGED_IN, Boolean.TRUE);

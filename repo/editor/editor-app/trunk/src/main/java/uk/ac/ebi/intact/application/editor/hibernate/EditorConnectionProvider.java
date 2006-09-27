@@ -22,9 +22,10 @@ import java.util.Properties;
  */
 public class EditorConnectionProvider implements ConnectionProvider
 {
-     private static final Log log = LogFactory.getLog(EditorConnectionProvider.class);
+    private static final Log log = LogFactory.getLog(EditorConnectionProvider.class);
 
     private boolean driverLoaded;
+    private String currentUser;
 
     public void configure(Properties properties) throws HibernateException
     {
@@ -39,12 +40,11 @@ public class EditorConnectionProvider implements ConnectionProvider
         {
             Configuration configuration = (Configuration)IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
 
-            String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+            currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
             String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
             String url = configuration.getProperty(Environment.URL);
 
             log.debug("Getting connection for user: " + currentUser);
-            log.debug("CurrentUser: " + currentUser);
 
             if (!driverLoaded)
             {
@@ -79,7 +79,8 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public void closeConnection(Connection connection) throws SQLException
     {
-         // no connections are closed
+        log.debug("Closing connection for user: "+currentUser); 
+        connection.close();
     }
 
     public void close() throws HibernateException
@@ -98,7 +99,7 @@ public class EditorConnectionProvider implements ConnectionProvider
         Configuration configuration = stdDataConfig.getConfiguration();
         configuration.configure();
 
-        String name = configuration.getProperty(Environment.USER);
+        currentUser = configuration.getProperty(Environment.USER);
         String password = configuration.getProperty(Environment.PASS);
         String url = configuration.getProperty(Environment.URL);
         String driver = configuration.getProperty(Environment.DRIVER);
@@ -112,8 +113,8 @@ public class EditorConnectionProvider implements ConnectionProvider
             e.printStackTrace();
         }
 
-        log.debug("Using default connection - User: " + name + " Url: " + url);
+        log.debug("Using default connection - User: " + currentUser + " Url: " + url);
 
-        return DriverManager.getConnection(url, name, password);
+        return DriverManager.getConnection(url, currentUser, password);
     }
 }
