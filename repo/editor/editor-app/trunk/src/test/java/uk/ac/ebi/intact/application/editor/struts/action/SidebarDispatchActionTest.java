@@ -12,8 +12,7 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * This class permit to test the SidebarDispatchAction.
@@ -39,18 +38,16 @@ import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
  */
 public class SidebarDispatchActionTest extends MockStrutsTestCase {
 
-    private IntactTransaction tx;
-
     public void setUp() throws Exception {
         super.setUp();
 
-        tx = DaoFactory.beginTransaction();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
 
-        tx.commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
     }
 
