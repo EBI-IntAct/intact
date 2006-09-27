@@ -1190,6 +1190,8 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         myAnnotObject.setFullName(getFullName());
 
         persistAnnotatedObject();
+        
+
         log.debug("As I have persisted myAnnotObject ac is " + myAnnotObject.getAc());
 
         // Save the annotation size for comparision.

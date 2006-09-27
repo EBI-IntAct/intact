@@ -155,6 +155,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
             myXref.setSecondaryId(mySecondaryId);
             myXref.setDbRelease(myReleaseNumber);
             myXref.setCvXrefQualifier(xqual);
+            myXref.setParent(annotatedObject);
         }
         return myXref;
     }

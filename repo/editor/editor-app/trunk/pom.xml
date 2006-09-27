@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.4.0</version>
+        <version>1.4.3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -51,6 +51,7 @@
 
     <properties>
         <maven.test.skip>true</maven.test.skip>
+        <db.connectionProviderClass>uk.ac.ebi.intact.application.editor.hibernate.EditorConnectionProvider</db.connectionProviderClass>
     </properties>
 
     <profiles>
@@ -79,13 +80,38 @@
          <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.4.3</version>
+            <version>1.4.4</version>
+        </dependency>
+
+          <dependency>
+              <groupId>antlr</groupId>
+              <artifactId>antlr</artifactId>
+              <version>2.7.5</version>
+          </dependency>
+
+          <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate</artifactId>
+              <version>3.2.0.cr4</version>
+          </dependency>
+
+
+          <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>2.0</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.app.search</groupId>
             <artifactId>search-engine</artifactId>
             <version>1.4-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app</groupId>
+            <artifactId>app-commons</artifactId>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
