@@ -21,13 +21,13 @@ public class IntactContext implements Serializable
 
     private IntactSession session;
 
-    private UserContext userContext;
+    //private UserContext userContext;
     private DataContext dataContext;
 
 
-    protected IntactContext(UserContext userContext, DataContext dataContext, IntactSession session)
+    protected IntactContext(DataContext dataContext, IntactSession session)
     {
-        this.userContext = userContext;
+        //this.userContext = userContext;
         this.session = session;
         this.dataContext = dataContext;
     }
@@ -88,7 +88,7 @@ public class IntactContext implements Serializable
         }
     };
 
-    protected static void setCurrentInstance(IntactContext context)
+    public static void setCurrentInstance(IntactContext context)
     {
         currentInstance.set(context);
     }
@@ -96,7 +96,7 @@ public class IntactContext implements Serializable
 
     public UserContext getUserContext()
     {
-        return userContext;
+        return UserContext.getCurrentInstance(session);
     }
 
     public CvContext getCvContext()

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.Collection;
+import java.io.Serializable;
 
 /**
  * TODO comment this!
@@ -19,7 +20,7 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public class DataContext
+public class DataContext implements Serializable
 {
 
     private static final Log log = LogFactory.getLog(DataContext.class);
