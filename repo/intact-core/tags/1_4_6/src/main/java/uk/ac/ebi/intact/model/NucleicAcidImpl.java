@@ -7,8 +7,11 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import javax.persistence.*;
+
+import org.hibernate.annotations.IndexColumn;
+
+import java.util.List;
 
 /**
  * An implementation of nucleic acid sequence.
@@ -42,5 +45,13 @@ public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editabl
     public NucleicAcidImpl(Institution owner, BioSource source, String shortLabel,
                            CvInteractorType type) {
         super(owner, source, shortLabel, type);
+    }
+
+    //IndexColumn(name = "sequenceIndex", base=0)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OrderBy("sequenceIndex")
+    @Override
+    public List<SequenceChunk> getSequenceChunks() {
+        return super.getSequenceChunks();
     }
 }
