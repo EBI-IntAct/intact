@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master-webapp</artifactId>
+        <version>1.4.3</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.app.editor</groupId>
+    <artifactId>editor-app</artifactId>
+    <packaging>war</packaging>
+    <version>1.4.0-rc1</version>
+    <name>Editor</name>
+    <description>To edit IntAct data</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/editor-app/trunk/</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.editor</groupId>
+                <artifactId>maven-editortopics-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>generate-topics</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+        <db.connectionProviderClass>uk.ac.ebi.intact.application.editor.hibernate.EditorConnectionProvider</db.connectionProviderClass>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>test-user</id>
+            <build>
+                <testResources>
+                    <testResource>
+                        <directory>src/test/resources</directory>
+                        <filtering>true</filtering>
+                    </testResource>
+                    <testResource>
+                        <directory>src/main/webapp</directory>
+                    </testResource>
+                </testResources>
+            </build>
+
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
+      <dependencies>
+        <!-- Needed by the EditorTopic plugin -->
+         <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>1.4.5</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-engine</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app</groupId>
+            <artifactId>app-commons</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+
+          <dependency>
+              <groupId>antlr</groupId>
+              <artifactId>antlr</artifactId>
+              <version>2.7.5</version>
+          </dependency>
+
+          <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate</artifactId>
+              <version>3.2.0.cr4</version>
+          </dependency>
+
+
+          <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>2.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+          <dependency>
+              <groupId>displaytag</groupId>
+              <artifactId>displaytag</artifactId>
+              <version>1.0-unknown</version>
+          </dependency>
+          <dependency>
+              <groupId>taglibs</groupId>
+              <artifactId>standard</artifactId>
+              <version>1.0</version>
+          </dependency>
+          <dependency>
+              <groupId>jstl</groupId>
+              <artifactId>jstl</artifactId>
+              <version>1.0</version>
+          </dependency>
+
+          <dependency>
+              <groupId>concurrent</groupId>
+              <artifactId>concurrent</artifactId>
+              <version>1.3.1</version>
+          </dependency>
+
+
+          <!-- Test dependencies -->
+          <dependency>
+            <groupId>strutstestcase</groupId>
+            <artifactId>strutstestcase</artifactId>
+            <version>2.1.2-1.1-2.3</version>
+            <scope>test</scope>
+        </dependency>
+
+       </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+         <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+     <pluginRepositories>
+        <pluginRepository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
