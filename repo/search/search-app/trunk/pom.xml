@@ -14,14 +14,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.4.0</version>
+        <version>1.5-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-app</artifactId>
     <packaging>war</packaging>
-    <version>1.4-SNAPSHOT</version>
+    <version>1.5-SNAPSHOT</version>
     <!-- last released: 1.3.0 -->
     <name>Search application</name>
     <description>Search web interface</description>
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.app.search</groupId>
             <artifactId>search-engine</artifactId>
-            <version>1.3.0</version>
+            <version>1.5-SNAPSHOT</version>
         </dependency>
 
         <dependency>
