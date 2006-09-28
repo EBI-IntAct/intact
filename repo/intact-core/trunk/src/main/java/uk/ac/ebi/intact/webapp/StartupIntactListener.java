@@ -54,8 +54,8 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
+        log.debug("LogFactory.release and destroying application");
         LogFactory.release(Thread.currentThread().getContextClassLoader());
-        log.debug("ServletContext destroyed.");
     }
 
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent)
