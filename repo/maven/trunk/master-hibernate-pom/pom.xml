@@ -45,7 +45,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
-                <version>1.2.0</version>
+                <version>1.2.1</version>
                 <configuration>
                     <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
                     <dialect>${db.dialect}</dialect>
@@ -148,6 +148,10 @@
                 </property>
             </activation>
 
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
             <properties>
                 <db.platform>Oracle</db.platform>
                 <db.driver>oracle.jdbc.OracleDriver</db.driver>
@@ -174,6 +178,10 @@
                 </property>
             </activation>
 
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
             <properties>
                 <db.platform>PostgreSQL</db.platform>
                 <db.driver>org.postgresql.Driver</db.driver>
@@ -199,6 +207,10 @@
                     <value>h2</value>
                 </property>
             </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.platform}-${version}</finalName>
+            </build>
 
             <properties>
                 <db.platform>H2Database</db.platform>
@@ -257,6 +269,11 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
             <version>3.2.0.cr2</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.0.4</version>
         </dependency>
     </dependencies>
 
