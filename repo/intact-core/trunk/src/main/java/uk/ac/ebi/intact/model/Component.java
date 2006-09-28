@@ -29,8 +29,6 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
 
     public static final float STOICHIOMETRY_NOT_DEFINED = 0;
 
-    private static final String DEFAULT_SHORT_LABEL = "";
-
     ///////////////////////////////////////
     //attributes
 
@@ -102,7 +100,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     public Component( Institution owner, Interaction interaction,
                       Interactor interactor, CvComponentRole role ) {
 
-        this( owner, DEFAULT_SHORT_LABEL, interaction, interactor, role );
+        this( owner, interactor.getShortLabel(), interaction, interactor, role );
     }
 
     /**
