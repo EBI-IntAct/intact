@@ -89,6 +89,8 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
         String topic = (String) theForm.get("topic");
         String searchString = (String) theForm.get("searchString");
 
+        searchString =  searchString.replaceAll("\\*", "%");
+
         // The current topic, so the sidebar displays this as the currently
         // selected type.
         user.setSelectedTopic(topic);
