@@ -25,7 +25,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>1.3.6</version>
+        <version>1.3.7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -45,7 +45,6 @@
     </scm>
                          
     <properties>
-        <maven.test.skip>true</maven.test.skip>
         <maven.pmd.skip>true</maven.pmd.skip>
         <hibernate.scope>test</hibernate.scope>
     </properties>
@@ -58,33 +57,6 @@
             </resource>
         </resources>
     </build>
-
-    <profiles>
-        <profile>
-            <id>ebi-test</id>
-            <properties>
-                <maven.test.skip>false</maven.test.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>ebi-prod</id>
-            <properties>
-                <maven.test.skip>false</maven.test.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>ebi-pub</id>
-            <properties>
-                <maven.test.skip>false</maven.test.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>ebi-pub2</id>
-            <properties>
-                <maven.test.skip>false</maven.test.skip>
-            </properties>
-        </profile>
-    </profiles>
 
     <dependencies>
         <dependency>
