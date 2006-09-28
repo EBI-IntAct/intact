@@ -191,7 +191,7 @@ public class SearchHelper implements SearchHelperI {
                             " with name alias ID " +
                             value);
 
-                Collection<Alias> aliases = getDaoFactory().getAliasDao().getByNameLike(value);
+                Collection<Alias> aliases = getDaoFactory().getAliasDao(Alias.class).getByNameLike(value);
 
                 //could get more than one alias, eg if the name is a wildcard search value -
                 //then need to go through each alias found and accumulate the results...
