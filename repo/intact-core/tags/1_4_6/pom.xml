@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.5</version>
-    <!-- last released 1.4.5 -->
+    <version>1.4.6</version>
+    <!-- last released 1.4.3 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
@@ -43,7 +43,7 @@
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk/</url>
     </scm>
-                         
+
     <properties>
         <maven.test.skip>true</maven.test.skip>
         <maven.pmd.skip>true</maven.pmd.skip>
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
-            <version>3.0</version>
+            <version>2.0</version>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
