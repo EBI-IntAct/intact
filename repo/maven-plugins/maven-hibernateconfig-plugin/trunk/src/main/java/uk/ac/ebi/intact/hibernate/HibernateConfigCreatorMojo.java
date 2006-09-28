@@ -268,8 +268,14 @@ public class HibernateConfigCreatorMojo
         line = line.replaceAll("\\$\\{lucene.analyzer\\}",
                createPropertyLine("lucene.analyzer", luceneAnalyzer, "Lucene analyser") );
 
-        if (sessionFactoryName == null) sessionFactoryName = "";
-        line = line.replaceAll("\\$\\{session_factory_name\\}", "name=\""+sessionFactoryName+"\"");
+        if (sessionFactoryName == null || sessionFactoryName.trim().equals(""))
+        {
+            line = line.replaceAll("\\$\\{session_factory_name\\}", "name=\""+sessionFactoryName+"\"");
+        }
+        else
+        {
+            line.replaceAll("\\$\\{session_factory_name\\}", "");
+        }
 
         return line;
     }
