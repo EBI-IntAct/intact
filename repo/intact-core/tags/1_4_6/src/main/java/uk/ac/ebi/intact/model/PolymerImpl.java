@@ -19,7 +19,6 @@ import java.util.List;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.PolymerImpl")
 public abstract class PolymerImpl extends InteractorImpl implements Polymer {
 
     //Constants
@@ -148,11 +147,12 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
         this.crc64 = crc64;
     }
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @IndexColumn(name = "sequenceIndex")
+    @Transient
     public List<SequenceChunk> getSequenceChunks() {
         return sequenceChunks;
     }
+
+
 
     public void setSequenceChunks(List<SequenceChunk> sequenceChunks)
     {

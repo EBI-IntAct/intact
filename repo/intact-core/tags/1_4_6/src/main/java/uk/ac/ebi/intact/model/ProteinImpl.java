@@ -7,8 +7,11 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
-import javax.persistence.DiscriminatorValue;
+import javax.persistence.*;
+
+import org.hibernate.annotations.IndexColumn;
+
+import java.util.List;
 
 
 /**
@@ -59,6 +62,14 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
 
         //super call sets up a valid AnnotatedObject (should an Interactor be better defined?)
         this(owner, source, shortLabel, null);
+    }
+
+    //   IndexColumn(name = "sequenceIndex", base=0)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OrderBy("sequenceIndex")
+    @Override
+    public List<SequenceChunk> getSequenceChunks() {
+        return super.getSequenceChunks();
     }
 
     /**
