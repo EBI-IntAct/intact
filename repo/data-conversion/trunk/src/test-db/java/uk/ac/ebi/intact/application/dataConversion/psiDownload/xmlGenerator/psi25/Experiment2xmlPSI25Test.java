@@ -1,19 +1,32 @@
-// Copyright (c) 2002-2003 The European Bioinformatics Institute, and others.
-// All rights reserved. Please see the file LICENSE
-// in the root directory of this distribution.
-
+/**
+ * Copyright 2006 The European Bioinformatics Institute, and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Element;
-import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
+import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.model.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * TODO document this ;o)
@@ -21,7 +34,8 @@ import uk.ac.ebi.intact.model.*;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id:Experiment2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
-public class Experiment2xmlPSI25Test extends PsiDownloadTest {
+public class Experiment2xmlPSI25Test extends PsiDownloadTest
+{
 
     /**
      * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.

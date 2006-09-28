@@ -13,10 +13,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.AbstractAnnotatedObject2xml;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1.AnnotatedObject2xmlPSI1;
-import uk.ac.ebi.intact.model.Alias;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.InteractorXref;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
@@ -73,10 +70,10 @@ public class AnnotatedObject2xmlPSI2Test extends PsiDownloadTest {
         protein.addXref( new InteractorXref ( owner, go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
         protein.addXref( new InteractorXref ( owner, go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
 
-        protein.addAlias( new Alias( owner, protein, geneName, "BBC1" ) );
-        protein.addAlias( new Alias( owner, protein, geneNameSynonym, "MTI1" ) );
-        protein.addAlias( new Alias( owner, protein, locusName, "YJL020C/YJL021C" ) );
-        protein.addAlias( new Alias( owner, protein, orfName, "J1305/J1286" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, geneName, "BBC1" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, geneNameSynonym, "MTI1" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, locusName, "YJL020C/YJL021C" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, orfName, "J1305/J1286" ) );
 
         protein.addAnnotation( new Annotation( owner, comment, "an interresting comment." ) );
         protein.addAnnotation( new Annotation( owner, remark, "an interresting remark." ) );

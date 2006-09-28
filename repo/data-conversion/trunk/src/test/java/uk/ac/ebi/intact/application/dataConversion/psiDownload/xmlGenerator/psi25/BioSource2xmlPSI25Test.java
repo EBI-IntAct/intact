@@ -171,7 +171,7 @@ public class BioSource2xmlPSI25Test extends PsiDownloadTest {
 
         CvAliasType aliasType = new CvAliasType( owner, "otherName" );
         aliasType.addXref( new CvObjectXref( owner, psi, "MI:wxyz", null, null, identity ) );
-        bioSource.addAlias( new Alias( owner, bioSource, aliasType, "homme" ) );
+        bioSource.addAlias( new BioSourceAlias( owner, bioSource, aliasType, "homme" ) );
 
         CvCellType cellType = (CvCellType) createCvObject( CvCellType.class, "a_431", "Human epidermoid carcinoma",
                                                            "MI:0001" );
