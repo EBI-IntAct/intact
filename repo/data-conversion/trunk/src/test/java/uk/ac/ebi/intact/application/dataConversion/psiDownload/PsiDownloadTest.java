@@ -139,7 +139,7 @@ public class PsiDownloadTest extends TestCase {
         for ( int i = 0; i < aliases.length; i++ ) {
             String alias = aliases[ i ];
             // TODO: update the way the Alias is created in order to mimic the Xref.
-            bioSource.addAlias( new Alias( owner, bioSource, null, alias ) );
+            bioSource.addAlias( new BioSourceAlias( owner, bioSource, null, alias ) );
         }
 
         return bioSource;

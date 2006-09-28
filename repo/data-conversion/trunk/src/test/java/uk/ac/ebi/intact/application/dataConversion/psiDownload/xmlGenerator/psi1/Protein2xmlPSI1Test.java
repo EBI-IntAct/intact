@@ -70,10 +70,10 @@ public class Protein2xmlPSI1Test extends PsiDownloadTest {
         protein.addXref( new InteractorXref ( owner, go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
         protein.addXref( new InteractorXref ( owner, go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
 
-        protein.addAlias( new Alias( owner, protein, geneName, "BBC1" ) );
-        protein.addAlias( new Alias( owner, protein, geneNameSynonym, "MTI1" ) );
-        protein.addAlias( new Alias( owner, protein, locusName, "YJL020C/YJL021C" ) );
-        protein.addAlias( new Alias( owner, protein, orfName, "J1305/J1286" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, geneName, "BBC1" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, geneNameSynonym, "MTI1" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, locusName, "YJL020C/YJL021C" ) );
+        protein.addAlias( new InteractorAlias( owner, protein, orfName, "J1305/J1286" ) );
 
         protein.addAnnotation( new Annotation( owner, comment, "an interresting comment." ) );
         protein.addAnnotation( new Annotation( owner, remark, "an interresting remark." ) );
