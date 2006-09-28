@@ -11,11 +11,11 @@ import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
-import javax.servlet.ServletContextListener;
-import javax.servlet.ServletContextEvent;
 
 /**
  * TODO: comment this!
@@ -54,6 +54,7 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)
     {
+        LogFactory.release(Thread.currentThread().getContextClassLoader());
         log.debug("ServletContext destroyed.");
     }
 
