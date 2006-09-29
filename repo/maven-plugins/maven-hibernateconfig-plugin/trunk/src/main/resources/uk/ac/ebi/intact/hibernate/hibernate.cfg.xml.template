@@ -39,24 +39,6 @@
 
         ${lucene.analyzer}
 
-        <!-- Hibernate Annotations (and package-info.java)
-
-        Done in the class IntactAnnotator.
-
-        <mapping package="org.mypackage"/>
-        <mapping class="org.MyClass/>
-        -->
-
-        <!-- Enables the hibernate validation framework -->
-        <event type="pre-update">
-            <listener
-              class="org.hibernate.validator.event.ValidatePreUpdateEventListener"/>
-        </event>
-        <event type="pre-insert">
-            <listener
-              class="org.hibernate.validator.event.ValidatePreInsertEventListener"/>
-        </event>
-        
 ${hibernateEvents}
 
     </session-factory>
