@@ -31,10 +31,14 @@ public class IntactConfigurator
 {
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
 
-    private static final String DEFAULT_INSTITUTION_LABEL = "not-defined";
-    private static final String DEFAULT_INSTITUTION_FULL_NAME = "";
-    private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "";
-    private static final String DEFAULT_INSTITUTION_URL = "";
+    private static final String DEFAULT_INSTITUTION_LABEL = "ebi";
+    private static final String DEFAULT_INSTITUTION_FULL_NAME = "European Bioinformatics Institute";
+    private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "European Bioinformatics Institute; " +
+                                                                    "Wellcome Trust Genome Campus; " +
+                                                                    "Hinxton, Cambridge; " +
+                                                                    "CB10 1SD; " +
+                                                                    "United Kingdom";
+    private static final String DEFAULT_INSTITUTION_URL = "http://www.ebi.ac.uk/";
 
     private static final String DEFAULT_AC_PREFIX = "UNK";
     
