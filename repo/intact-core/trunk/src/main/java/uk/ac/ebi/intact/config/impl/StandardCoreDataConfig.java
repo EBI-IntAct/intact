@@ -31,6 +31,8 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
 
     public static final String NAME = "uk.ac.ebi.intact.config.STANDARD_CORE";
 
+    private boolean listenersRegistered = false;
+
     public StandardCoreDataConfig(IntactSession session)
     {
         super(session);
@@ -57,8 +59,15 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
     public Configuration getConfiguration()
     {
         Configuration configuration = super.getConfiguration();
-        configuration.setListener("pre-insert", new IntactObjectEventListener());
-        configuration.setListener("pre-update", new IntactObjectEventListener());
+
+        if (!listenersRegistered)
+        {
+            log.info("Registering core EventListeners");
+            configuration.setListener("pre-insert", new IntactObjectEventListener());
+            configuration.setListener("pre-update", new IntactObjectEventListener());
+            listenersRegistered = true;
+        }
+
         return configuration;
     }
 

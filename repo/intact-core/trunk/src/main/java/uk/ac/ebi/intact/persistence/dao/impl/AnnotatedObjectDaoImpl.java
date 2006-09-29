@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
@@ -215,7 +216,6 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
     public void saveOrUpdate(T objToPersist)
     {
         super.saveOrUpdate(objToPersist);
-        deleteSearchItemsForAnnotatedbject(objToPersist);
         saveSearchItemsForAnnotatedObject(objToPersist);
     }
 
@@ -223,8 +223,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
     public void update(T objToUpdate)
     {
         super.update(objToUpdate);
-        deleteSearchItemsForAnnotatedbject(objToUpdate);
-        saveSearchItemsForAnnotatedObject(objToUpdate);
+        updateSearchItemsForAnnotatedbject(objToUpdate);
     }
 
     private void saveSearchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
@@ -234,15 +233,40 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
             SearchItemPk pk = new SearchItemPk(searchItem.getAc(), searchItem.getValue(), searchItem.getObjClass(), searchItem.getType());
             if (null == getSession().get(SearchItem.class, pk))
             {
-                getSession().save(searchItem);
+               getSession().saveOrUpdate(searchItem);
             }
+        }
+    }
+
+    private void updateSearchItemsForAnnotatedbject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
+    {
+
+        Criteria crit = getSession().createCriteria(SearchItem.class)
+                .add(Restrictions.eq("ac", ao.getAc()));
+
+        List<SearchItem> searchItems = searchItemsForAnnotatedObject(ao);
+        List<SearchItem> oldSearchItems = crit.list();
+
+        Collection<SearchItem> itemsToRemove = CollectionUtils.subtract(searchItems,  oldSearchItems);
+
+        for (SearchItem itemToRemove : itemsToRemove)
+        {
+            getSession().delete(itemToRemove);
+        }
+
+        Collection<SearchItem> itemsToSave = CollectionUtils.subtract(oldSearchItems, searchItems);
+
+        for (SearchItem itemToSave : itemsToSave)
+        {
+            getSession().save(itemToSave);
         }
     }
 
     private void deleteSearchItemsForAnnotatedbject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
     {
+
         Query deleteQuery = getSession().createQuery("delete SearchItem searchItem where searchItem.ac = :ac");
-        deleteQuery.setParameter("ac", ao.getAc());        
+        deleteQuery.setParameter("ac", ao.getAc());
 
         int count = deleteQuery.executeUpdate();
 
@@ -250,6 +274,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         {
             log.debug(count + " SearchItems removed for: "+ao.getAc());
         }
+
     }
 
     private static List<SearchItem> searchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
