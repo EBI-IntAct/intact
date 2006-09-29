@@ -7,14 +7,15 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.io.File;
-
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.meta.DbInfo;
+import org.hibernate.cfg.Configuration;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.event.IntactObjectEventListener;
+import uk.ac.ebi.intact.model.meta.DbInfo;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -49,6 +50,16 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
         packages.add(DbInfo.class.getPackage().getName());
 
         return packages;
+    }
+
+
+    @Override
+    public Configuration getConfiguration()
+    {
+        Configuration configuration = super.getConfiguration();
+        configuration.setListener("pre-insert", new IntactObjectEventListener());
+        configuration.setListener("pre-update", new IntactObjectEventListener());
+        return configuration;
     }
 
     protected File getConfigFile()

@@ -50,7 +50,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         super(session);
         this.packagesWithEntities = getPackagesWithEntities();
 
-        configuration = new AnnotationConfiguration();
+        configuration = getConfiguration();
     }
 
     
@@ -196,6 +196,11 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     @Override
     public Configuration getConfiguration()
     {
+        if (configuration == null)
+        {
+            configuration = new AnnotationConfiguration();
+        }
+
         return configuration;
     }
 

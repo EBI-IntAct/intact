@@ -35,6 +35,7 @@ public final class RuntimeConfig implements Serializable
     private final Map<String, DataConfig> dataConfigs;
     private DataConfig defaultDataConfig;
     private boolean readOnlyApp;
+    private boolean synchronizedSearchItems;
 
     private RuntimeConfig()
     {
@@ -134,5 +135,15 @@ public final class RuntimeConfig implements Serializable
     public void setReadOnlyApp(boolean readOnlyApp)
     {
         this.readOnlyApp = readOnlyApp;
+    }
+
+    public boolean isSynchronizedSearchItems()
+    {
+        return synchronizedSearchItems;
+    }
+
+    public void setSynchronizedSearchItems(boolean synchronizedSearchItems)
+    {
+        this.synchronizedSearchItems = synchronizedSearchItems;
     }
 }

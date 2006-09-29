@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.SchemaVersion;
@@ -19,7 +17,6 @@ import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,18 +31,15 @@ public class IntactConfigurator
 {
     private static final Log log = LogFactory.getLog(IntactConfigurator.class);
 
-    private static final String DEFAULT_INSTITUTION_LABEL = "ebi";
-    private static final String DEFAULT_INSTITUTION_FULL_NAME = "European Bioinformatics Institute";
-    private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "European Bioinformatics Institute; " +
-                                                                    "Wellcome Trust Genome Campus; " +
-                                                                    "Hinxton, Cambridge; " +
-                                                                    "CB10 1SD; " +
-                                                                    "United Kingdom";
-    private static final String DEFAULT_INSTITUTION_URL = "http://www.ebi.ac.uk/";
+    private static final String DEFAULT_INSTITUTION_LABEL = "not-defined";
+    private static final String DEFAULT_INSTITUTION_FULL_NAME = "";
+    private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "";
+    private static final String DEFAULT_INSTITUTION_URL = "";
 
     private static final String DEFAULT_AC_PREFIX = "UNK";
     
     private static final String DEFAULT_READ_ONLY_APP = Boolean.TRUE.toString();
+    private static final String DEFAULT_SYNCHRONIZED_SEARCH_ITEMS = Boolean.FALSE.toString();
 
     private static final String INSTITUTION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.INSTITUTION_TO_BE_PERSISTED";
     private static final String SCHEMA_VERSION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.SCHEMA_VERSION_TO_BE_PERSISTED";
@@ -137,6 +131,12 @@ public class IntactConfigurator
         boolean readOnly = Boolean.parseBoolean(strReadOnly);
         config.setReadOnlyApp(readOnly);
         log.debug("Application is read-only: "+readOnly);
+
+        // synchronize search items
+        String strSynchronizeSearchItems = getInitParamValue(session, IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS, DEFAULT_SYNCHRONIZED_SEARCH_ITEMS);
+        boolean syncSearchItems = Boolean.parseBoolean(strSynchronizeSearchItems);
+        config.setSynchronizedSearchItems(syncSearchItems);
+        log.debug("Application synchronizes SearchItems: "+syncSearchItems);
 
         // load the institution
         loadInstitution(session);
