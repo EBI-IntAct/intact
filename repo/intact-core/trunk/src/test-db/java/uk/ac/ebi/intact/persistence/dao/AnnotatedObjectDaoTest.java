@@ -65,4 +65,18 @@ public class AnnotatedObjectDaoTest extends TestCase {
         List annotatedObjects = annotatedObjectDao.getByShortlabelOrAcLike("butkevich-2004-%");
         assertEquals(annotatedObjects.size(),4);
     }
+      /*
+    public void testGetByAc()
+    {
+        Class clazzToSearch = Component.class;
+        String[] acs = new String[] {"EBITEST-5000", "EBITEST-5003"};
+        List<? extends AnnotatedObject> res = daoFactory.getAnnotatedObjectDao(clazzToSearch).getByAc(acs);
+
+        System.out.println("Results: "+res.size());
+
+        for (AnnotatedObject ao : res)
+        {
+            System.out.println(ao.getAc());
+        }
+    }  */
 }

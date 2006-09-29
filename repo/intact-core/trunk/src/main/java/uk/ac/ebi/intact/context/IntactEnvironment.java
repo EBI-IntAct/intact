@@ -67,4 +67,10 @@ public interface IntactEnvironment
      */
     public static final String READ_ONLY_APP = "uk.ac.ebi.intact.READ_ONLY_APP";
 
+    /**
+     * If true, the IA_SEARCH table is maintained by hibernate in a syncronized way. When an
+     * AnnotatedObject is modified, the SearchItems are modified accordingly. Default: false
+     */
+    public static final String SYNCHRONIZED_SEARCH_ITEMS = "uk.ac.ebi.intact.SYNCHRONIZED_SEARCH_ITEMS";
+
 }

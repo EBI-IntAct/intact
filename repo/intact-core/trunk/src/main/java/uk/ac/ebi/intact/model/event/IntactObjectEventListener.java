@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.model;
+package uk.ac.ebi.intact.model.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,6 +12,8 @@ import org.hibernate.event.PreInsertEventListener;
 import org.hibernate.event.PreUpdateEvent;
 import org.hibernate.event.PreUpdateEventListener;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Auditable;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import java.util.Date;
 
@@ -32,6 +34,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
         if (!(preInsertEvent.getEntity() instanceof Auditable))
         {
             log.debug("No auditable object: "+preInsertEvent.getId());
+            return false;
         }
 
         log.debug("Inserting audit info for: "+preInsertEvent.getId());
@@ -42,7 +45,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
         auditable.setCreated(now);
         auditable.setUpdated(now);
 
-        String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+        String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId().toUpperCase();
         auditable.setCreator(currentUser);
         auditable.setUpdator(currentUser);
 
@@ -74,7 +77,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
         IntactObject intactObject = (IntactObject) preUpdateEvent.getEntity();
         intactObject.setUpdated(now);
 
-        String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
+        String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId().toUpperCase();
         intactObject.setUpdator(currentUser);
 
         String[] names = preUpdateEvent.getPersister().getPropertyNames();

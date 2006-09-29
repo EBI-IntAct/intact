@@ -5,21 +5,22 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Session;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.Order;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -31,6 +32,8 @@ import java.util.Collections;
 @SuppressWarnings({"unchecked"})
 public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObjectDaoImpl<T> implements AnnotatedObjectDao<T>
 {
+
+    private static final Log log = LogFactory.getLog(AnnotatedObjectDaoImpl.class);
 
     public AnnotatedObjectDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
@@ -190,4 +193,81 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                         Restrictions.like("shortLabel",searchString).ignoreCase())).list();
     }
 
+    /**
+     * Persists the annotated object, creating the search items
+     * @param objToPersist
+     */
+    @Override
+    public void persist(T objToPersist)
+    {
+        super.persist(objToPersist);
+        saveSearchItemsForAnnotatedObject(objToPersist);
+    }
+
+    @Override
+    public void delete(T objToDelete)
+    {
+        super.delete(objToDelete);
+        deleteSearchItemsForAnnotatedbject(objToDelete);
+    }
+
+    @Override
+    public void saveOrUpdate(T objToPersist)
+    {
+        super.saveOrUpdate(objToPersist);
+        deleteSearchItemsForAnnotatedbject(objToPersist);
+        saveSearchItemsForAnnotatedObject(objToPersist);
+    }
+
+    @Override
+    public void update(T objToUpdate)
+    {
+        super.update(objToUpdate);
+        deleteSearchItemsForAnnotatedbject(objToUpdate);
+        saveSearchItemsForAnnotatedObject(objToUpdate);
+    }
+
+    private void saveSearchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
+    {
+        for (SearchItem searchItem : searchItemsForAnnotatedObject(ao))
+        {
+            SearchItemPk pk = new SearchItemPk(searchItem.getAc(), searchItem.getValue(), searchItem.getObjClass(), searchItem.getType());
+            if (null == getSession().get(SearchItem.class, pk))
+            {
+                getSession().save(searchItem);
+            }
+        }
+    }
+
+    private void deleteSearchItemsForAnnotatedbject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
+    {
+        Query deleteQuery = getSession().createQuery("delete SearchItem searchItem where searchItem.ac = :ac");
+        deleteQuery.setParameter("ac", ao.getAc());        
+
+        int count = deleteQuery.executeUpdate();
+
+        if (log.isDebugEnabled())
+        {
+            log.debug(count + " SearchItems removed for: "+ao.getAc());
+        }
+    }
+
+    private static List<SearchItem> searchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
+    {
+        List<SearchItem> searchItems = new ArrayList<SearchItem>();
+        searchItems.add(new SearchItem(ao.getAc(), ao.getAc(), ao.getClass().getName(), "ac"));
+        searchItems.add(new SearchItem(ao.getAc(), ao.getShortLabel(), ao.getClass().getName(), "shortlabel"));
+
+        if (ao.getFullName() != null)
+        {
+            searchItems.add(new SearchItem(ao.getAc(), ao.getAc(), ao.getClass().getName(), "fullname"));
+        }
+
+        for (Alias alias : ao.getAliases())
+        {
+            searchItems.add(new SearchItem(ao.getAc(), alias.getName(), ao.getClass().getName(), alias.getCvAliasType().getShortLabel()));
+        }
+
+        return searchItems;
+    }
 }
