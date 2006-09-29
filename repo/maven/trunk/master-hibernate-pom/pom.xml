@@ -45,7 +45,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
-                <version>1.2.1</version>
+                <version>1.2.2</version>
                 <configuration>
                     <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
                     <dialect>${db.dialect}</dialect>
