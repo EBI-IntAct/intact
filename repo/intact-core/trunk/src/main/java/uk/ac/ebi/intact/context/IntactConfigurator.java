@@ -387,7 +387,7 @@ public class IntactConfigurator
         {
             Institution institution = context.getConfig().getInstitution();
 
-            log.debug("Persisting institution");
+            log.debug("Persisting institution: "+institution.getShortLabel());
             context.getDataContext().getDaoFactory().getInstitutionDao().persist( institution );
             context.getDataContext().commitTransaction();
 
@@ -412,7 +412,7 @@ public class IntactConfigurator
         {
             DbInfo dbInfo = new DbInfo(DbInfo.SCHEMA_VERSION, SchemaVersion.minimumVersion().toString());
 
-            log.debug("Persisting schema version");
+            log.debug("Persisting schema version: "+SchemaVersion.minimumVersion().toString());
             context.getDataContext().getDaoFactory().getDbInfoDao().persist( dbInfo );
             context.getDataContext().commitTransaction();
 

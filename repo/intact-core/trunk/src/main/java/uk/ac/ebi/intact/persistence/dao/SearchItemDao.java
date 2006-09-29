@@ -5,18 +5,17 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
-import uk.ac.ebi.intact.model.SearchItem;
+import org.hibernate.Session;
 
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface SearchItemDao extends IntactObjectDao<SearchItem>
+public interface SearchItemDao extends BaseDao<Session>
 {
     Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type);
 

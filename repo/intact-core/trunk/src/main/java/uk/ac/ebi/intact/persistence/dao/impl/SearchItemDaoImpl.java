@@ -11,6 +11,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.SearchItem;
+import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.Map;
  * @since <pre>25-Apr-2006</pre>
  */
 @SuppressWarnings({"unchecked"})
-public class SearchItemDaoImpl extends IntactObjectDaoImpl<SearchItem> implements uk.ac.ebi.intact.persistence.dao.SearchItemDao
+public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implements SearchItemDao
 {
 
     public SearchItemDaoImpl(Session session, IntactSession intactSession)
