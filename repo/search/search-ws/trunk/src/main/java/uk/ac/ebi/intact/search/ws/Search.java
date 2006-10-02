@@ -29,7 +29,7 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>08-Aug-2006</pre>
  */
-@WebService(name="Search", targetNamespace = "urn:searchws")
+@WebService(name="Search", targetNamespace = "uk.ac.ebi.intact.search.wsclient.generated")
 //@SOAPBinding(style=SOAPBinding.Style.RPC, use= SOAPBinding.Use.LITERAL)
 //@SOAPBinding(style=SOAPBinding.Style.DOCUMENT, use=SOAPBinding.Use.LITERAL, parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
 public class Search
