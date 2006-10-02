@@ -49,9 +49,6 @@
                             </goals>
                         </execution>
                    </executions>
-                   <configuration>
-                        <packageName>uk.ac.ebi.intact.search.wsclient.generated</packageName> <!-- The name of your generated source package -->
-                   </configuration>
                </plugin>
              </plugins>
         </build>
