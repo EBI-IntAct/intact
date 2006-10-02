@@ -55,7 +55,7 @@ public class ElapsedTimeTest extends TestCase {
         Calendar cal = new GregorianCalendar();
         cal.set(Calendar.SECOND, TIME_IN_SECONDS);
 
-        assertEquals(cal.getTime(), elapsedTime.getFinalTime());
+        assertEquals(cal.getTime().toString(), elapsedTime.getFinalTime().toString());
     }
 
     public static Test suite() {
