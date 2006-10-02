@@ -171,18 +171,32 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
 
     protected Disjunction disjunctionForArray(String propertyName, String[] values)
     {
+        return disjunctionForArray(propertyName, values, false);
+    }
+
+    protected Disjunction disjunctionForArray(String propertyName, String[] values, boolean ignoreCase)
+    {
         Disjunction disj = Restrictions.disjunction();
 
         for (String value : values)
         {
+            SimpleExpression res;
+
             if (value.contains("%"))
             {
-                disj.add(Restrictions.like(propertyName, value));
+                res = Restrictions.like(propertyName, value);
             }
             else
             {
-                disj.add(Restrictions.eq(propertyName, value));
+                res = Restrictions.eq(propertyName, value);
             }
+
+            if (ignoreCase)
+            {
+                res.ignoreCase();
+            }
+
+            disj.add(res);
         }
 
         return disj;

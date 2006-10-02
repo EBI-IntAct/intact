@@ -35,9 +35,14 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
     public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type)
     {
+        return countGroupsByValuesLike(values,objClasses,type,true);
+    }
+
+    public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type, boolean ignoreCase)
+    {
         Map<String,Integer> results = new HashMap<String,Integer>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClasses, type)
+        List<Object[]> critRes = criteriaByValues(values, objClasses, type, ignoreCase)
                                      .setProjection(Projections.projectionList()
                                              .add(Projections.countDistinct("ac"))
                                              .add(Projections.groupProperty("objClass"))).list();
@@ -52,7 +57,7 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
     public List<String> getDistinctAc(String[] values, String[] objClasses, String type, int firstResult, int maxResults){
 
-         return criteriaByValues(values, objClasses, type)
+         return criteriaByValues(values, objClasses, type, true)
                                     .setFirstResult(firstResult)
                                     .setMaxResults(maxResults)
                                     .setProjection(
@@ -65,7 +70,7 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
         Map<String,String> results = new HashMap<String,String>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClasses, type)
+        List<Object[]> critRes = criteriaByValues(values, objClasses, type, true)
                                     .setFirstResult(firstResult)
                                     .setMaxResults(maxResults)
                                     .setProjection(Projections.projectionList()
@@ -80,14 +85,14 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
         return results;
     }
 
-    private Criteria criteriaByValues(String[] values, String[] objClasses, String type)
+    private Criteria criteriaByValues(String[] values, String[] objClasses, String type, boolean ignoreCase)
     {
         Criteria crit = getSession().createCriteria(SearchItem.class);
 
         // no restriction (WHERE) necessary if only one value is passed and it is a wildcard
         if (!(values.length == 1 && values[0].equals("%")))
         {
-            crit.add(disjunctionForArray("value", values));
+            crit.add(disjunctionForArray("value", values, ignoreCase));
         }
 
         if (objClasses != null)
@@ -99,7 +104,9 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
             else
             {
                 if (objClasses[0] != null)
+                {
                     crit.add(Restrictions.eq("objClass", objClasses[0]));
+                }
             }
         }
 
