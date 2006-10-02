@@ -343,13 +343,13 @@ public class SearchHelper implements SearchHelperI {
         // and not "all"
         boolean hasType = (type != null) && (!type.trim().equals("")) && !type.equals("all");
 
-        logger.info("search with value with query : " + query + " searchClass :" + searchClass.getMappedClass().getName());
+        logger.debug("search with value with query : " + query + " searchClass :" + searchClass.getMappedClass().getName());
         // replace  the "*" with "%"
 
         String sqlValue = query.replaceAll("\\*", "%");
         sqlValue = sqlValue.replaceAll("\\'", "");
         sqlValue = sqlValue.toLowerCase();
-        logger.info(sqlValue);
+        logger.debug("SQL value: "+sqlValue);
 
         // split the query
         Collection<String> someSearchValues = this.splitQuery(sqlValue);
@@ -382,7 +382,8 @@ public class SearchHelper implements SearchHelperI {
         //  type and objClass have to be null if they are not to be used in the query
         if (!hasType) type = null;
 
-        logger.info("Getting counts");
+        if (logger.isDebugEnabled())
+            logger.debug("Getting counts from the IA_SEARCH table");
 
         // We create the array of classes to use in the query for the IA_SEARCH table
         // If it is a unspecific CvObject, we need to subclass for all the CvObject subclasses
@@ -395,6 +396,12 @@ public class SearchHelper implements SearchHelperI {
         {
             objClasses = new String[] { searchClass.getMappedClass().getName()};
         }
+        else
+        {
+            if (logger.isDebugEnabled())
+                logger.debug("SearchClass not specified, will search for anything in IA_SEARCH");
+            //objClasses = SearchClass.annotatedObjectClassesAsStringArray();
+        }
 
 
         Map<String,Integer> resultInfo = getCountResultsUsingSessionCache(sqlValue, values, objClasses, type);
@@ -404,16 +411,16 @@ public class SearchHelper implements SearchHelperI {
 
         for (Map.Entry<String,Integer> entry : resultInfo.entrySet())
         {
-            logger.info("Class: "+entry.getKey()+" - count: "+entry.getValue());
+            logger.debug("Class: "+entry.getKey()+" - count: "+entry.getValue());
             count = count + entry.getValue();
         }
 
-        logger.info("Count = " + count);
+        logger.debug("Count = " + count);
 
         // check the result size if the result is too large return an empty ResultWrapper
 
         if (count > maximumResultSize && !paginatedSearch) {
-            logger.info("Result too Large return an empty result Wrapper");
+            logger.debug("Result too Large return an empty result Wrapper");
             return new ResultWrapper(count, maximumResultSize, resultInfo);
         }
 
@@ -578,9 +585,9 @@ public class SearchHelper implements SearchHelperI {
 
         String value = values[0];
 
-        String institutionPrefix = "EBI";
+        String institutionPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
 
-        return (value.toUpperCase().startsWith(institutionPrefix+"-") && !value.endsWith("%"));
+        return (value.toUpperCase().startsWith(institutionPrefix) && !value.endsWith("%"));
 
     }
 
@@ -593,14 +600,14 @@ public class SearchHelper implements SearchHelperI {
         String attCurrentSearch = "CurrentSearch";
         String attCounts = "CurrentSearchCounts";
 
-        String firstObjClass = null;
+        String classesToSearchInfo = null;
         if (objClasses != null && objClasses.length > 0)
         {
-            firstObjClass = objClasses[0];
+            classesToSearchInfo = Arrays.asList(objClasses).toString();
         }
 
         // the value of the attribute is different, to identify the exact search
-        String searchAttValue = searchValues+"_"+firstObjClass+"_"+null;
+        String searchAttValue = searchValues+"_"+classesToSearchInfo+"_"+null;
 
         Map<String,Integer> resultInfo;
 
@@ -617,7 +624,10 @@ public class SearchHelper implements SearchHelperI {
         }
         else
         {
-            logger.info("Executing count query - type: " + type+" objClass: "+firstObjClass);
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Executing count query - values: "+Arrays.asList(values)+" ; type: " + type+" ; objClasses: "+classesToSearchInfo);
+            }
 
             resultInfo = getDaoFactory().getSearchItemDao().countGroupsByValuesLike(values, objClasses, type);
 
