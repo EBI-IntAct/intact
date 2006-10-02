@@ -169,4 +169,20 @@ public enum SearchClass
 
     }
 
+    public static String[] annotatedObjectClassesAsStringArray()
+    {
+        List<String> aoClasses = new ArrayList<String>();
+
+        for (SearchClass sc : SearchClass.values())
+        {
+            if (AnnotatedObject.class.isAssignableFrom(sc.getMappedClass())
+                    && sc != SearchClass.NOSPECIFIED)
+            {
+                aoClasses.add(sc.getMappedClass().getName());
+            }
+        }
+
+        return aoClasses.toArray(new String[aoClasses.size()]);
+    }
+
 }
