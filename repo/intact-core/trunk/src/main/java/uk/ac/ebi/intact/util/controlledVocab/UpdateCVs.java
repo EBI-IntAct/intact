@@ -943,7 +943,11 @@ public class UpdateCVs {
 
                         cvObject.addAnnotation( annot );
                         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-                        log.debug("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
+
+                        if (log.isDebugEnabled())
+                        {
+                            log.debug("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: "+cvObject.getShortLabel() + "("+cvObject.getAc()+")" );
+                        }
 
                     } else {
 
