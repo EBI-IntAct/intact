@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<definitions xmlns:tns="urn:searchws" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="urn:searchws" name="SearchService">
+<definitions xmlns:tns="uk.ac.ebi.intact.search.wsclient.generated" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="uk.ac.ebi.intact.search.wsclient.generated" name="SearchService">
   <types>
     <xsd:schema>
-      <xsd:import namespace="urn:searchws" schemaLocation="http://www.ebi.ac.uk:80/intact/search-ws/search?xsd=1"></xsd:import>
+      <xsd:import namespace="uk.ac.ebi.intact.search.wsclient.generated" schemaLocation="http://www.ebi.ac.uk:80/intact/search-ws/search?xsd=1"></xsd:import>
     </xsd:schema>
   </types>
   <message name="getVersion">
