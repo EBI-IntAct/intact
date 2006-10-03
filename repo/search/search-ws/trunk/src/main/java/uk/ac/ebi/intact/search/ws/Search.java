@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Collections;
 
 /**
  * TODO comment this!
@@ -29,7 +30,7 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>08-Aug-2006</pre>
  */
-@WebService(name="Search", targetNamespace = "uk.ac.ebi.intact.search.wsclient.generated")
+@WebService(name="Search", targetNamespace = "http://ebi.ac.uk/intact/search/wsclient/generated")
 //@SOAPBinding(style=SOAPBinding.Style.RPC, use= SOAPBinding.Use.LITERAL)
 //@SOAPBinding(style=SOAPBinding.Style.DOCUMENT, use=SOAPBinding.Use.LITERAL, parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
 public class Search
@@ -145,7 +146,16 @@ public class Search
         {
             ProteinImpl prot = daoFactory.getProteinDao().getByXref(uniprotId);
 
-            List<String> protIds = daoFactory.getProteinDao().getPartnersUniprotIdsByProteinAc(prot.getAc());
+            List<String> protIds;
+
+            if (prot != null)
+            {
+                protIds = daoFactory.getProteinDao().getPartnersUniprotIdsByProteinAc(prot.getAc());
+            }
+            else
+            {
+                protIds = Collections.EMPTY_LIST;
+            }
 
             totalFound = totalFound+protIds.size();
 
