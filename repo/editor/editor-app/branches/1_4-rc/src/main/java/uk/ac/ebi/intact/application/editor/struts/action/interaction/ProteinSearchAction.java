@@ -85,9 +85,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
 
         // Error if all three fields are empty.
         if ((acLen == 0) && (spAcLen == 0) && (shortLabelLen == 0)) {
-            ActionMessages errors = new ActionMessages();
+            ActionErrors errors = new ActionErrors();
             errors.add("int.interact.search",
-                    new ActionMessage("error.int.interact.search.input"));
+                    new ActionError("error.int.interact.search.input"));
             saveErrors(request, errors);
             setAnchor(request, intform);
             return mapping.getInputForward();
@@ -99,9 +99,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
         if (acLen != 0) {
             Matcher matcher = ourIntactAcPat.matcher(ac);
             if (!matcher.matches()) {
-                ActionMessages errors = new ActionMessages();
+                ActionErrors errors = new ActionErrors();
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.ac"));
+                        new ActionError("error.int.interact.search.ac"));
                 saveErrors(request, errors);
                 setAnchor(request, intform);
                 return mapping.getInputForward();
@@ -112,9 +112,9 @@ public class ProteinSearchAction extends AbstractEditorAction {
         else if (spAcLen != 0) {
             Matcher matcher = ourSpAcPat.matcher(spAc);
             if (!matcher.matches()) {
-                ActionMessages errors = new ActionMessages();
+                ActionErrors errors = new ActionErrors();
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.sp"));
+                        new ActionError("error.int.interact.search.sp"));
                 saveErrors(request, errors);
                 setAnchor(request, intform);
                 return mapping.getInputForward();
@@ -147,16 +147,16 @@ public class ProteinSearchAction extends AbstractEditorAction {
             catch (IntactException ie) {
                 // This can only happen when problems with creating an internal helper
                 // This error is already logged from the User class.
-                ActionMessages errors = new ActionMessages();
-                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.intact"));
+                ActionErrors errors = new ActionErrors();
+                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.intact"));
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
             }
         }
         // Check the size
         if (rw.isTooLarge()) {
-            ActionMessages errors = new ActionMessages();
-            errors.add("int.interact.search", new ActionMessage("error.int.interact.search.many",
+            ActionErrors errors = new ActionErrors();
+            errors.add("int.interact.search", new ActionError("error.int.interact.search.many",
                     Integer.toString(rw.getPossibleResultSize()), param, Integer.toString(max)));
             saveErrors(request, errors);
             setAnchor(request, intform);
@@ -167,17 +167,17 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Search found any results?
         if (rw.isEmpty()) {
             // The error to display on the web page.
-            ActionMessages errors = new ActionMessages();
+            ActionErrors errors = new ActionErrors();
             // Log the error if we have one.
             Exception exp = user.getProteinParseException();
             if (exp != null) {
                 LOGGER.error("", exp);
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + ac));
+                        new ActionError("error.int.interact.search.empty.parse", param + " : " + ac));
             }
             else {
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.empty", param + " : " + ac));
+                        new ActionError("error.int.interact.search.empty", param + " : " + ac));
             }
             saveErrors(request, errors);
             setAnchor(request, intform);
