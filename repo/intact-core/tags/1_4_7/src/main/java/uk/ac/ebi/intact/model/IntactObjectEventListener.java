@@ -85,6 +85,18 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
             {
                 values[i] = now;
             }
+            if(names[i].equals("creator")){
+                if (values[i] == null){
+                    values[i] = intactObject.getCreator();
+                }
+                log.debug("The value for created user is " + values[i]);
+            }
+            if(names[i].equals("created")){
+                if (values[i] == null){
+                    values[i] = intactObject.getCreated();
+                }
+                log.debug("The value for created user is " + values[i]);
+            }
 
             if (names[i].equals("updator"))
             {
