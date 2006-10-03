@@ -48,6 +48,8 @@ public interface IntactObjectDao<T extends IntactObject>
 
     void delete(T objToDelete);
 
+    int deleteByAc(String ac);
+
     void deleteAll(Collection<T> objsToDelete);
 
     void saveOrUpdate(T objToPersist);

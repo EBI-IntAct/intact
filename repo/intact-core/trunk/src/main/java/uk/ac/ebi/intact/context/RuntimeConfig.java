@@ -29,17 +29,21 @@ public final class RuntimeConfig implements Serializable
     private static final Log log = LogFactory.getLog(RuntimeConfig.class);
 
     private static final String APPLICATION_PARAM_NAME = RuntimeConfig.class.getName()+".CONFIG";
+    private static final String DEFAULT_DATA_CONFIG_PARAM_NAME = RuntimeConfig.class.getName()+".DEFAULT_DATA_CONFIG";
+
+    private IntactSession session;
 
     private Institution institution;
     private String acPrefix;
     private final Map<String, DataConfig> dataConfigs;
-    private DataConfig defaultDataConfig;
+
     private boolean readOnlyApp;
     private boolean synchronizedSearchItems;
 
-    private RuntimeConfig()
+    private RuntimeConfig(IntactSession session)
     {
         this.dataConfigs = new HashMap<String,DataConfig>();
+        this.session = session;
     }
 
     public static RuntimeConfig getCurrentInstance(IntactSession session)
@@ -48,10 +52,23 @@ public final class RuntimeConfig implements Serializable
                 = (RuntimeConfig)session.getApplicationAttribute(APPLICATION_PARAM_NAME);
         if (runtimeConfig == null)
         {
-            log.debug("Creating new RuntimeConfig");
-            runtimeConfig = new RuntimeConfig();
-            session.setApplicationAttribute(APPLICATION_PARAM_NAME, runtimeConfig);
+            runtimeConfig = initRuntime(session, null);
         }
+        return runtimeConfig;
+    }
+
+    public static RuntimeConfig initRuntime(IntactSession session, DataConfig dataConfig)
+    {
+        log.debug("Creating new RuntimeConfig");
+        RuntimeConfig runtimeConfig = new RuntimeConfig(session);
+
+        if (dataConfig != null)
+        {
+            runtimeConfig.addDataConfig(dataConfig, true);
+        }
+
+        session.setApplicationAttribute(APPLICATION_PARAM_NAME, runtimeConfig);
+
         return runtimeConfig;
     }
 
@@ -112,15 +129,18 @@ public final class RuntimeConfig implements Serializable
             addDataConfig(dataConfig);
         }
 
-        defaultDataConfig = dataConfig;
+        session.setApplicationAttribute(DEFAULT_DATA_CONFIG_PARAM_NAME, dataConfig);
     }
 
     public DataConfig getDefaultDataConfig()
     {
+        DataConfig defaultDataConfig = (DataConfig) session.getApplicationAttribute(DEFAULT_DATA_CONFIG_PARAM_NAME);
+
         if (defaultDataConfig == null)
         {
             log.warn("No default data config configured. Using: "+ StandardCoreDataConfig.NAME);
             defaultDataConfig = getDataConfig(StandardCoreDataConfig.NAME);
+            session.setApplicationAttribute(DEFAULT_DATA_CONFIG_PARAM_NAME, defaultDataConfig);
         }
 
         return defaultDataConfig;

@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -125,6 +126,14 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         checkReadOnly();
 
         getSession().delete( objToDelete );
+    }
+
+    public int deleteByAc(String ac)
+    {
+        Query deleteQuery = getSession().createQuery("delete "+getEntityClass()+" item where item.ac = :ac");
+        deleteQuery.setParameter("ac", ac);
+
+        return deleteQuery.executeUpdate();
     }
 
     public void deleteAll( Collection<T> objsToDelete ) {

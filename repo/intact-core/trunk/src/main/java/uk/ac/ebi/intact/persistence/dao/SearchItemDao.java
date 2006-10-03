@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.persistence.dao;
 
 import org.hibernate.Session;
+import uk.ac.ebi.intact.model.SearchItem;
 
 import java.util.List;
 import java.util.Map;
@@ -22,4 +23,12 @@ public interface SearchItemDao extends BaseDao<Session>
     List<String> getDistinctAc(String[] values, String[] objClasses, String type, int firstResult, int maxResults);
 
     Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String[] objClasses, String type, int firstResult, int maxResults);
+
+    List<SearchItem> getByAc(String ac);
+
+    void persist(SearchItem searchItem);
+
+    void delete(SearchItem searchItem);
+
+    int deleteByAc(String ac);
 }

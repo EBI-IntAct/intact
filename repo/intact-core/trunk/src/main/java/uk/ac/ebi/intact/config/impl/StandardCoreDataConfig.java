@@ -11,6 +11,7 @@ import org.hibernate.cfg.Configuration;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.event.IntactObjectEventListener;
+import uk.ac.ebi.intact.model.event.SearchItemSyncEventListener;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 
 import java.io.File;
@@ -31,7 +32,7 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
 
     public static final String NAME = "uk.ac.ebi.intact.config.STANDARD_CORE";
 
-    private boolean listenersRegistered = false;
+    private boolean listenersRegistered;
 
     public StandardCoreDataConfig(IntactSession session)
     {
@@ -60,12 +61,26 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
     {
         Configuration configuration = super.getConfiguration();
 
-        if (!listenersRegistered)
+        if (!isListenersRegistered())
         {
-            log.info("Registering core EventListeners");
+            if (log.isDebugEnabled())
+            {
+                log.info("Registering core EventListeners:");
+                log.debug("\tRegistering: " + IntactObjectEventListener.class);
+            }
             configuration.setListener("pre-insert", new IntactObjectEventListener());
             configuration.setListener("pre-update", new IntactObjectEventListener());
-            listenersRegistered = true;
+
+            if (log.isDebugEnabled())
+            {
+                log.debug("\tRegistering: " + SearchItemSyncEventListener.class);
+            }
+            SearchItemSyncEventListener sisl = new SearchItemSyncEventListener(getSession());
+            configuration.setListener("post-insert", sisl);
+            configuration.setListener("post-commit-update", sisl);
+            configuration.setListener("pre-delete", sisl);
+
+            setListenersRegistered(true);
         }
 
         return configuration;
@@ -75,5 +90,19 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig
     {
         // uses the default file in the classpath (/hibernate.cfg.xml)
         return null;
+    }
+
+    protected void setListenersRegistered(boolean listenersRegistered)
+    {
+        //getSession().setApplicationAttribute(LISTENERS_REGISTERED_FLAG, listenersRegistered);
+        this.listenersRegistered = listenersRegistered;
+    }
+
+    protected boolean isListenersRegistered()
+    {
+        return listenersRegistered;
+
+        //Object listenersRegistered = getSession().getApplicationAttribute(LISTENERS_REGISTERED_FLAG);
+        //return (listenersRegistered == null)? Boolean.FALSE :(Boolean) listenersRegistered;
     }
 }

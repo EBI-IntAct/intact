@@ -9,10 +9,14 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.annotation.PotentialThreat;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.SearchItem;
 import uk.ac.ebi.intact.persistence.dao.SearchItemDao;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +87,108 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
         }
 
         return results;
+    }
+
+    public List<SearchItem> getByAc(String ac)
+    {
+        return getSession().createCriteria(SearchItem.class)
+                .add(Restrictions.eq("ac", ac)).list();
+    }
+
+    @PotentialThreat(description = "This method is using raw SQL (INSERT Query), which may create problems " +
+                    "when run with hibernate",
+                     origin = "This code is used in a EventListener, so it cannot be committed correctly")
+    public void persist(SearchItem searchItem)
+    {
+        String sql = "INSERT INTO ia_search (ac,value,objclass,type) VALUES (?,?,?,?)";
+        executeQueryUpdateForSearchItem(sql, searchItem);
+    }
+
+    @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
+                    "when run with hibernate",
+                     origin = "This code is used in a EventListener, so it cannot be committed correctly")
+    public void delete(SearchItem searchItem)
+    {
+         String sql = "DELETE from ia_search WHERE (ac=?, value=?, objclass=?, type=?)";
+         executeQueryUpdateForSearchItem(sql, searchItem);
+    }
+
+    private int executeQueryUpdateForSearchItem(String sql, SearchItem searchItem)
+    {
+        int rows = 0;
+
+        Connection connection = null;
+        try
+        {
+            connection = getSession().connection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, searchItem.getAc());
+            statement.setString(2, searchItem.getValue());
+            statement.setString(3, searchItem.getObjClass());
+            statement.setString(4, searchItem.getType());
+
+            rows = statement.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                try
+                {
+                    connection.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return rows;
+    }
+
+    @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
+                        "when run with hibernate",
+                         origin = "This code is used in a EventListener, so it cannot be committed correctly")
+    public int deleteByAc(String ac)
+    {
+        String sql = "DELETE FROM ia_search WHERE ac=?";
+
+        int rows = 0;
+
+        Connection connection = null;
+        try
+        {
+            connection = getSession().connection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            statement.setString(1, ac);
+
+            rows = statement.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            if (connection != null)
+            {
+                try
+                {
+                    connection.close();
+                }
+                catch (SQLException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return rows;
     }
 
     private Criteria criteriaByValues(String[] values, String[] objClasses, String type, boolean ignoreCase)

@@ -29,6 +29,15 @@ public class IntactTransaction
         this.transaction = transaction;
 
         log.debug("Transaction started");
+        /*
+        int i=0;
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+        {
+            log.debug(ste.toString());
+
+            if (i == 10) break;
+            i++;
+        }   */
     }
 
     public void commit() throws IntactException
@@ -43,6 +52,10 @@ public class IntactTransaction
         {
             throw new IntactException("Commit exception", e);
         }
+
+        assert (wasCommitted());
+
+        log.debug("Transaction committed");
     }
 
     public void rollback() throws IntactException

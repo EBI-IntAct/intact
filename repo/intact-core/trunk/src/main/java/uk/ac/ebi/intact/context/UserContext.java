@@ -1,18 +1,14 @@
 package uk.ac.ebi.intact.context;
 
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.DriverManager;
-import java.io.Serializable;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+
+import java.io.Serializable;
+import java.sql.Connection;
 
 /**
  *
@@ -21,6 +17,8 @@ import org.hibernate.cfg.Environment;
  */
 public class UserContext implements Serializable
 {
+
+    private static final Log log = LogFactory.getLog(UserContext.class);
 
     private static final String SESSION_ATT_NAME = UserContext.class.getName();
 
@@ -58,6 +56,11 @@ public class UserContext implements Serializable
 
     private static UserContext createDefaultUserContext(IntactSession session)
     {
+        if (log.isDebugEnabled())
+        {
+            log.debug("Creating UserContext...");
+        }
+
         AbstractHibernateDataConfig defaultDataConfig = (AbstractHibernateDataConfig) RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig();
 
         Configuration configuration = defaultDataConfig.getConfiguration();
@@ -66,7 +69,9 @@ public class UserContext implements Serializable
         String currentUser = configuration.getProperty(Environment.USER);
         String password = configuration.getProperty(Environment.PASS);
 
-        return new UserContext(currentUser, password);
+        UserContext userContext = new UserContext(currentUser, password);
+
+        return userContext;
     }
 
     public String getUserId()

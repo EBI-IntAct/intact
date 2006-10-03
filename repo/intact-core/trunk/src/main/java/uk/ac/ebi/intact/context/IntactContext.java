@@ -71,11 +71,12 @@ public class IntactContext implements Serializable
             standardDataConfig = new StandardCoreDataConfig(session);
         }
 
-       if (standardDataConfig.isInitialized())
+       if (!standardDataConfig.isInitialized())
        {
-            RuntimeConfig.getCurrentInstance(session).addDataConfig(standardDataConfig, true);
+          standardDataConfig.initialize();  
        }
-        
+
+       RuntimeConfig.initRuntime(session, standardDataConfig);
        IntactConfigurator.initIntact(session);
        IntactConfigurator.createIntactContext(session);
     }
