@@ -122,6 +122,10 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         {
             deleteSearchItemsForAnnotatedObject((AnnotatedObject)obj);
         }
+        else if (obj instanceof Xref)
+        {
+            deleteSearchItemForXref((Xref)obj);
+        }
         else if (obj instanceof Alias)
         {
             deleteSearchItemForAlias((Alias)obj);
@@ -208,6 +212,19 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         }
 
         SearchItem searchItem = searchItemForAlias(alias);
+
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getSearchItemDao().delete(searchItem);
+    }
+
+    private void deleteSearchItemForXref(Xref xref)
+    {
+        if (log.isDebugEnabled())
+        {
+            log.debug("Deleting SearchItems for Xref: " + xref.getPrimaryId() + " (" + xref.getAc() + "); Parent AC: " + xref.getParentAc());
+        }
+
+        SearchItem searchItem = searchItemForXref(xref);
 
         IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                 .getSearchItemDao().delete(searchItem);
