@@ -21,7 +21,10 @@ import org.hibernate.event.*;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.RuntimeConfig;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Alias;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.SearchItem;
+import uk.ac.ebi.intact.model.Xref;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,37 +47,6 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
     {
        this.intactSession = intactSession;
     }
-     /*
-    public boolean onPreInsert(PreInsertEvent preInsertEvent)
-        {
-            if (!RuntimeConfig.getCurrentInstance(intactSession).isSynchronizedSearchItems())
-            {
-                return false;
-            }
-
-            Object obj = preInsertEvent.getEntity();
-
-            if (log.isDebugEnabled())
-            {
-                if (obj instanceof IntactObject)
-                {
-                    IntactObject io = (IntactObject)obj;
-                    log.debug("post-commit-insert for: "+io.getAc()+" ("+io.getClass()+")");
-                }
-            }
-
-            if (obj instanceof AnnotatedObject)
-            {
-                insertSearchItemForAnnotatedObject((AnnotatedObject)obj, false);
-            }
-            else if (obj instanceof Alias)
-            {
-                insertSearchItemForAlias((Alias)obj);
-            }
-
-            return true;
-        }
-        */
 
     public void onPostInsert(PostInsertEvent postInsertEvent)
     {
@@ -85,18 +57,13 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
 
         Object obj = postInsertEvent.getEntity();
 
-        if (log.isDebugEnabled())
-        {
-            if (obj instanceof IntactObject)
-            {
-                IntactObject io = (IntactObject)obj;
-                log.debug("post-commit-insert for: "+io.getAc()+" ("+io.getClass()+")");
-            }
-        }
-
         if (obj instanceof AnnotatedObject)
         {
             insertSearchItemForAnnotatedObject((AnnotatedObject)obj, false);
+        }
+        else if (obj instanceof Xref)
+        {
+            insertSearchItemForXref((Xref)obj);
         }
         else if (obj instanceof Alias)
         {
@@ -106,10 +73,6 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         {
             return;
         }
-
-        //AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) RuntimeConfig.getCurrentInstance(intactSession).getDefaultDataConfig();
-
-        //DaoFactory.getCurrentInstance(intactSession, dataConfig).getBaseDao().flushCurrentSession();
     }
 
     public void onPostUpdate(PostUpdateEvent postUpdateEvent)
@@ -134,12 +97,16 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
             deleteSearchItemsForAnnotatedObject(alias.getParent());
             insertSearchItemForAnnotatedObject(alias.getParent(), true);
         }
+        else if (obj instanceof Xref)
+        {
+            Xref xref = (Xref)obj;
+            deleteSearchItemsForAnnotatedObject(xref.getParent());
+            insertSearchItemForAnnotatedObject(xref.getParent(), true);
+        }
         else
         {
             return;
         }
-
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public boolean onPreDelete(PreDeleteEvent preDeleteEvent)
@@ -163,8 +130,6 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         {
             return false;
         }
-
-        //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         return false;
     }
@@ -206,9 +171,22 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
                 .getSearchItemDao().persist(searchItem);
     }
 
-    private void updateSearchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
+    private void insertSearchItemForXref(Xref xref)
     {
-        
+        if (log.isDebugEnabled())
+        {
+            log.debug("Inserting SearchItems for Xref: " + xref.getPrimaryId() + " (" + xref.getAc() + "); Parent AC: " + xref.getParentAc());
+        }
+
+        SearchItem searchItem = searchItemForXref(xref);
+
+        if (log.isDebugEnabled())
+        {
+            log.debug("\t" + searchItem);
+        }
+
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getSearchItemDao().persist(searchItem);
     }
 
     private void deleteSearchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
@@ -261,5 +239,11 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
     {
         return new SearchItem(alias.getParentAc(), alias.getName(),
                 alias.getParent().getClass().getName(), alias.getCvAliasType().getShortLabel());
+    }
+
+    private static SearchItem searchItemForXref(Xref xref)
+    {
+        return new SearchItem(xref.getParentAc(), xref.getPrimaryId(),
+                xref.getParent().getClass().getName(), "xref");
     }
 }

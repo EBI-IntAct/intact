@@ -85,7 +85,7 @@ public class UpdateCVs {
             update( ontology, aClass );
 
             // commit tx after updating each class
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
     }
 
@@ -126,7 +126,6 @@ public class UpdateCVs {
          * for each
          *     check children and apply hierarchy to IntAct
          */
-
             Collection<CvObject> intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
 
             log.debug( "\t " + intactTerms.size() + " term(s) found in IntAct." );
@@ -331,7 +330,7 @@ public class UpdateCVs {
                 }
             }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     /**
@@ -1273,7 +1272,7 @@ public class UpdateCVs {
         // CvTopic( obsolete )
         getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF );
       
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        //IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     /**
