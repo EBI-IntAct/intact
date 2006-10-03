@@ -8,10 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.actions.LookupDispatchAction;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -149,7 +147,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * non null value is returned to indicate errors.
      */
     protected ActionErrors acquire(String ac, String owner) {
-        return acquire(ac, owner, ActionMessages.GLOBAL_MESSAGE);
+        return acquire(ac, owner, ActionErrors.GLOBAL_ERROR);
     }
 
     /**
@@ -166,7 +164,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         if (!getLockManager().acquire(ac, owner)) {
             ActionErrors errors = new ActionErrors();
             // The owner of the lock (not the current user).
-            errors.add(errGroup, new ActionMessage("error.lock", ac,
+            errors.add(errGroup, new ActionError("error.lock", ac,
                     getLockManager().getOwner(ac)));
             return errors;
         }
@@ -218,7 +216,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
             // No matches found - forward to a suitable page
             ActionErrors errors = new ActionErrors();
             errors.add(errorType, new ActionError("error.search.nomatch",
-                    searchString, searchString));
+                                                                           searchString, searchString));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
