@@ -17,7 +17,6 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActi
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
