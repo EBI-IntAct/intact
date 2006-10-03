@@ -44,7 +44,7 @@ public class EditorExceptionHandler extends ExceptionHandler {
         ActionForward forward = new ActionForward(path);
 
         // The error to store.
-        ActionError error;
+        ActionMessage error;
         // The prtoperty name for this error.
         String property = null;
 
