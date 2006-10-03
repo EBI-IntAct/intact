@@ -166,40 +166,7 @@ public class IntactConfigurator
             initIntact(session);
         }
 
-        IntactContext context = null;/*etIntactContextFromSession(session);
-
-        if (context != null)
-        {
-            IntactContext.setCurrentInstance(context);
-            return context;
-        }  */
-         /*
-        String defaultUser = null;
-        String defaultPassword = ((Configuration)RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig().getConfiguration())
-                .getProperty(Environment.PASS);
-
-        if (log.isDebugEnabled())
-        {
-            log.debug("Data Configs registered: "+RuntimeConfig.getCurrentInstance(session).getDataConfigs());
-        }
-
-        DaoFactory daoFactory = DaoFactory.getCurrentInstance(session,
-                RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
-
-        try
-        {
-            IntactTransaction tx = daoFactory.beginTransaction();
-            defaultUser = daoFactory.getBaseDao().getDbUserName();
-            tx.commit();
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-          */
-        //log.debug("Creating user context, for user: "+defaultUser);
-        //UserContext userContext = new UserContext(defaultUser);
-        //userContext.setUserPassword(defaultPassword);
+        IntactContext context;
 
         log.debug("Creating data context...");
         DataContext dataContext = new DataContext(session);
@@ -210,24 +177,8 @@ public class IntactConfigurator
         persistInstitutionIfNecessary(context);
         persistSchemaVersionIfNecessary(context);
 
-        //putIntactContextInSession(context, session);
 
         return context;
-    }
-
-    private static IntactContext getIntactContextFromSession(IntactSession session)
-    {
-        if (!session.isRequestAvailable())
-        {
-            return null;
-        }
-
-        return (IntactContext) session.getAttribute(INTACT_CONTEXT_SESS_ATT_NAME);
-    }
-
-    private static void putIntactContextInSession(IntactContext context, IntactSession session)
-    {
-        session.setAttribute(INTACT_CONTEXT_SESS_ATT_NAME, context);
     }
 
     private static void checkSchemaCompatibility(IntactSession session)
@@ -388,8 +339,11 @@ public class IntactConfigurator
             Institution institution = context.getConfig().getInstitution();
 
             log.debug("Persisting institution: "+institution.getShortLabel());
-            context.getDataContext().getDaoFactory().getInstitutionDao().persist( institution );
-            context.getDataContext().commitTransaction();
+            DaoFactory daoFactory = DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
+            IntactTransaction tx = daoFactory.beginTransaction();
+            daoFactory.getInstitutionDao().persist( institution );
+            //context.getDataContext().commitTransaction();
+            tx.commit();
 
             session.setApplicationAttribute(INSTITUTION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }
@@ -413,8 +367,12 @@ public class IntactConfigurator
             DbInfo dbInfo = new DbInfo(DbInfo.SCHEMA_VERSION, SchemaVersion.minimumVersion().toString());
 
             log.debug("Persisting schema version: "+SchemaVersion.minimumVersion().toString());
-            context.getDataContext().getDaoFactory().getDbInfoDao().persist( dbInfo );
-            context.getDataContext().commitTransaction();
+
+            DaoFactory daoFactory = DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig());
+            IntactTransaction tx = daoFactory.beginTransaction();
+            daoFactory.getDbInfoDao().persist( dbInfo );
+            //context.getDataContext().commitTransaction();
+            tx.commit();
 
             session.setApplicationAttribute(SCHEMA_VERSION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }

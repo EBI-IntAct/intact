@@ -5,21 +5,20 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.RuntimeConfig;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -181,6 +180,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         listTotal.removeAll(subList);
         return listTotal;
     }
+    
     /**
      * This method will search in the database an AnnotatedObject of type T having it's shortlabel or it's
      * ac like the searchString given in argument.
@@ -193,130 +193,5 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
                 .add(Restrictions.or(
                         Restrictions.like("ac",searchString).ignoreCase(),
                         Restrictions.like("shortLabel",searchString).ignoreCase())).list();
-    }
-
-    /**
-     * Persists the annotated object, creating the search items
-     * @param objToPersist
-     */
-    @Override
-    public void persist(T objToPersist)
-    {
-        super.persist(objToPersist);
-        saveSearchItemsForAnnotatedObject(objToPersist);
-    }
-
-    @Override
-    public void delete(T objToDelete)
-    {
-        super.delete(objToDelete);
-        deleteSearchItemsForAnnotatedbject(objToDelete);
-    }
-
-    @Override
-    public void saveOrUpdate(T objToPersist)
-    {
-        super.saveOrUpdate(objToPersist);
-        saveSearchItemsForAnnotatedObject(objToPersist);
-    }
-
-    @Override
-    public void update(T objToUpdate)
-    {
-        super.update(objToUpdate);
-        updateSearchItemsForAnnotatedbject(objToUpdate);
-    }
-
-    private void saveSearchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
-    {
-        if (!RuntimeConfig.getCurrentInstance(getIntactSession()).isSynchronizedSearchItems())
-        {
-            return;
-        }
-
-        for (SearchItem searchItem : searchItemsForAnnotatedObject(ao))
-        {
-            SearchItemPk pk = new SearchItemPk(searchItem.getAc(), searchItem.getValue(), searchItem.getObjClass(), searchItem.getType());
-            if (null == getSession().get(SearchItem.class, pk))
-            {
-               getSession().saveOrUpdate(searchItem);
-            }
-        }
-    }
-
-    private void updateSearchItemsForAnnotatedbject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
-    {
-        if (!RuntimeConfig.getCurrentInstance(getIntactSession()).isSynchronizedSearchItems())
-        {
-            return;
-        }
-
-        Criteria crit = getSession().createCriteria(SearchItem.class)
-                .add(Restrictions.eq("ac", ao.getAc()));
-
-        List<SearchItem> searchItems = searchItemsForAnnotatedObject(ao);
-        List<SearchItem> oldSearchItems = crit.list();
-
-        Collection<SearchItem> itemsToRemove = CollectionUtils.subtract(searchItems,  oldSearchItems);
-
-        for (SearchItem itemToRemove : itemsToRemove)
-        {
-            SearchItemPk pk = new SearchItemPk(itemToRemove.getAc(), itemToRemove.getValue(), itemToRemove.getObjClass(), itemToRemove.getType());
-            SearchItem existingSearchItem = (SearchItem) getSession().get(SearchItem.class, pk);
-            if (existingSearchItem != null)
-            {
-               getSession().delete(existingSearchItem);
-            }
-        }
-
-        Collection<SearchItem> itemsToSave = CollectionUtils.subtract(oldSearchItems, searchItems);
-
-        for (SearchItem itemToSave : itemsToSave)
-        {
-            SearchItemPk pk = new SearchItemPk(itemToSave.getAc(), itemToSave.getValue(), itemToSave.getObjClass(), itemToSave.getType());
-            SearchItem existingSearchItem = (SearchItem) getSession().get(SearchItem.class, pk);
-            if (existingSearchItem != null)
-            {
-               getSession().saveOrUpdate(existingSearchItem);
-            }
-        }
-    }
-
-    private void deleteSearchItemsForAnnotatedbject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
-    {
-        if (!RuntimeConfig.getCurrentInstance(getIntactSession()).isSynchronizedSearchItems())
-        {
-            return;
-        }
-        
-        Query deleteQuery = getSession().createQuery("delete SearchItem searchItem where searchItem.ac = :ac");
-        deleteQuery.setParameter("ac", ao.getAc());
-
-        int count = deleteQuery.executeUpdate();
-
-        if (log.isDebugEnabled())
-        {
-            log.debug(count + " SearchItems removed for: "+ao.getAc());
-        }
-
-    }
-
-    private static List<SearchItem> searchItemsForAnnotatedObject(AnnotatedObject<? extends Xref, ? extends Alias> ao)
-    {
-        List<SearchItem> searchItems = new ArrayList<SearchItem>();
-        searchItems.add(new SearchItem(ao.getAc(), ao.getAc(), ao.getClass().getName(), "ac"));
-        searchItems.add(new SearchItem(ao.getAc(), ao.getShortLabel(), ao.getClass().getName(), "shortlabel"));
-
-        if (ao.getFullName() != null)
-        {
-            searchItems.add(new SearchItem(ao.getAc(), ao.getFullName(), ao.getClass().getName(), "fullname"));
-        }
-
-        for (Alias alias : ao.getAliases())
-        {
-            searchItems.add(new SearchItem(ao.getAc(), alias.getName(), ao.getClass().getName(), alias.getCvAliasType().getShortLabel()));
-        }
-
-        return searchItems;
     }
 }

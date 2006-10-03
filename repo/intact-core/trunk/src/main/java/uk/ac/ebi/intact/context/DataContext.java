@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.util.Collection;
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * TODO comment this!
@@ -74,7 +74,14 @@ public class DataContext implements Serializable
         if (daoFactory.isTransactionActive())
         {
             daoFactory.getCurrentTransaction().commit();
+
+            if (log.isDebugEnabled())
+            {
+                log.debug("Committed transaction: "+dataConfigName);
+            }
         }
+
+        assert (daoFactory.isTransactionActive() == false);
     }
 
     public void commitAllActiveTransactions()
