@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -35,7 +37,7 @@ import java.util.*;
  * @version $Id$
  */
 public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
-
+    protected static Log log = LogFactory.getLog(InteractionViewBean.class);
     /**
      * The KD.
      */
@@ -1115,8 +1117,16 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             for (FeatureBean fb : (Iterable<FeatureBean>) cb.getFeaturesToDelete())
             {
                 Feature featureToDel = fb.getUpdatedFeature();
+                if(featureToDel != null && featureToDel.getAc() != null){
+                    featureToDel = featureDao.getByAc(featureToDel.getAc());
+                }
+
                 // Remove from the component and delete the feature
+                log.debug("Remove feature from component");
                 comp.removeBindingDomain(featureToDel);
+                log.debug("Save or update comp");
+                componentDao.saveOrUpdate(comp);
+                log.debug("Delete feature");
                 featureDao.delete(featureToDel);
 
                 // No further action if this feature is not linked.
