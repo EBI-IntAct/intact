@@ -2,7 +2,7 @@
 <definitions xmlns:tns="http://ebi.ac.uk/intact/search/wsclient/generated" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns="http://schemas.xmlsoap.org/wsdl/" targetNamespace="http://ebi.ac.uk/intact/search/wsclient/generated" name="SearchService">
   <types>
     <xsd:schema>
-      <xsd:import namespace="http://ebi.ac.uk/intact/search/wsclient/generated" schemaLocation="http://localhost:8080/search-ws/search?xsd=1"></xsd:import>
+      <xsd:import namespace="http://ebi.ac.uk/intact/search/wsclient/generated" schemaLocation="http://www.ebi.ac.uk/intact/search-ws/search?xsd=1"></xsd:import>
     </xsd:schema>
   </types>
   <message name="getInteractionInfoUsingUniprotIds">
