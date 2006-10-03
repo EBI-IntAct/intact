@@ -42,7 +42,7 @@ public class SearchServiceClient
 
         try
         {
-            SearchService searchService = new SearchService(new URL(DEFAULT_URL), new QName("urn:searchws", "SearchService"));
+            SearchService searchService = new SearchService(new URL(DEFAULT_URL), new QName("http://ebi.ac.uk/intact/search/wsclient/generated", "SearchService"));
             this.search = searchService.getSearchPort();
         }
         catch (Exception e)
@@ -57,7 +57,7 @@ public class SearchServiceClient
 
         try
         {
-            SearchService searchService = new SearchService(new URL(searchWsUrl), new QName("urn:searchws", "SearchService"));
+            SearchService searchService = new SearchService(new URL(searchWsUrl), new QName("http://ebi.ac.uk/intact/search/wsclient/generated", "SearchService"));
             this.search = searchService.getSearchPort();
         }
         catch (Exception e)
