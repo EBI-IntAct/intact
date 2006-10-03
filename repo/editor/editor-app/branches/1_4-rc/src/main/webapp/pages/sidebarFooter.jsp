@@ -29,6 +29,7 @@
 
     <c:if test="${not empty user.databaseName}">
         Database: <c:out value="${user.databaseName}"/>
+        <br/>
     </c:if>
 
     <i><bean:message bundle="buildInfo" key="build.version"/></i>
