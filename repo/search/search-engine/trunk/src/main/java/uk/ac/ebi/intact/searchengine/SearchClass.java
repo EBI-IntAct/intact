@@ -27,6 +27,7 @@ public enum SearchClass
     INTERACTOR("Interactor", InteractorImpl.class),
     INTERACTION("Interaction", InteractionImpl.class),
     SMALL_MOLECULE("SmallMolecule", SmallMoleculeImpl.class),
+    COMPONENT("Component", Component.class),
 
     CV_OBJECT("CvObject", CvObject.class),
     CV_ALIAS_TYPE("CvAliasType", CvAliasType.class),
