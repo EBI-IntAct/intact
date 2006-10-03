@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -17,6 +19,7 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,7 +49,7 @@ import java.util.Map;
  *      path="/do/secure/edit"
  */
 public class SidebarDispatchAction extends AbstractEditorDispatchAction {
-
+     protected static Log log = LogFactory.getLog(SidebarDispatchAction.class);
     // Implements super's abstract methods.
 
     /**
@@ -97,18 +100,21 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
 
         LOGGER.info("The current topic is " + topic);
 
-        // The maximum number of items to retrieve.
-        int max = getService().getInteger("search.max");
 
         // The class for the topic.
-        Class searchClass = Class.forName(getService().getClassName(topic));
+        SearchClass searchClass =  SearchClass.valueOfShortName(topic);
+        Class classToSearch = searchClass.getMappedClass();//Class.forName(getService().getClassName(topic));
+        log.debug("The searched class is : " + classToSearch.getName());
 
+        // The maximum number of items to retrieve.
+        int max = getService().getInteger("search.max");
+        log.debug("Max is " + max);
         // The array to store queries.
 //        Query[] queries = getSearchQueries(searchClass, searchString);
 
         // The results to display.
 
-        List<ResultRowData> results = getResults(searchClass, searchString, max, request, ActionMessages.GLOBAL_MESSAGE);
+        List<ResultRowData> results = getResults(classToSearch, searchString, max, request, ActionErrors.GLOBAL_ERROR);
 
         if (results.isEmpty()) {
             // Errors or empty or too large
@@ -121,7 +127,7 @@ public class SidebarDispatchAction extends AbstractEditorDispatchAction {
             ResultRowData row = results.get(0);
 
             // Try to acquire the lock.
-            ActionMessages errors = acquire(row.getAc(), user.getUserName());
+            ActionErrors errors = acquire(row.getAc(), user.getUserName());
             if (errors != null) {
                 saveErrors(request, errors);
                 return mapping.findForward(FAILURE);
