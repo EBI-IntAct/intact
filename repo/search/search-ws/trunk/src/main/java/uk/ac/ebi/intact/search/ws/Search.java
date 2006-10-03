@@ -139,33 +139,40 @@ public class Search
         List<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
 
         int totalFound = 0;
+        int intactProtsFound = 0;
 
         DaoFactory daoFactory = getDataContext().getDaoFactory();
 
         for (String uniprotId : proteinIds)
         {
-            ProteinImpl prot = daoFactory.getProteinDao().getByXref(uniprotId);
+            List<ProteinImpl> protsWithThisUniprotId = daoFactory.getProteinDao().getByUniprotId(uniprotId);
 
-            List<String> protIds;
+            intactProtsFound = protsWithThisUniprotId.size();
 
-            if (prot != null)
+            for (ProteinImpl prot : protsWithThisUniprotId)
             {
-                protIds = daoFactory.getProteinDao().getPartnersUniprotIdsByProteinAc(prot.getAc());
-            }
-            else
-            {
-                protIds = Collections.EMPTY_LIST;
-            }
+                List<String> protIds;
 
-            totalFound = totalFound+protIds.size();
+                if (prot != null)
+                {
+                    protIds = daoFactory.getProteinDao().getPartnersUniprotIdsByProteinAc(prot.getAc());
+                }
+                else
+                {
+                    protIds = Collections.EMPTY_LIST;
+                }
 
-            results.add(new PartnerResult(uniprotId, protIds.toArray(new String[protIds.size()])));
+                totalFound = totalFound+protIds.size();
+
+                results.add(new PartnerResult(uniprotId, protIds.toArray(new String[protIds.size()])));
+            }
         }
 
         getDataContext().commitTransaction();
 
         if (log.isDebugEnabled())
         {
+            log.debug("Total IntAct prots found: "+intactProtsFound);
             log.debug("Total partners found: "+totalFound);
         }
 
