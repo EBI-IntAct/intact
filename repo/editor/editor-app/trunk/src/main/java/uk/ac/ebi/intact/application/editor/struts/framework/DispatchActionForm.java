@@ -9,7 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
-import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;

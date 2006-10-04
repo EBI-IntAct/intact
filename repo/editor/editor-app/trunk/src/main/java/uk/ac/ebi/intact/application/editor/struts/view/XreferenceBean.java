@@ -9,8 +9,6 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -368,18 +366,22 @@ public class XreferenceBean extends AbstractEditKeyBean {
         try {
             result.myGoResponse = proxy.query(getPrimaryId());
         }
+        catch (GoServerProxy.GoIdNotFoundException ex) {
+
+            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ex);
+            // GO id not found.
+            result.addErrors("error.xref.go.search",new ActionError("error.xref.go.search",
+                    getPrimaryId()));
+            return result;
+        }
         catch (IOException ioe) {
             Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ioe);
             // Error in communcating with the server.
-            result.addErrors(new ActionError("error.xref.go.connection",
+            result.addErrors("error.xref.go.connection",new ActionError("error.xref.go.connection",
                     ioe.getMessage()));
+            return result;
         }
-        catch (GoServerProxy.GoIdNotFoundException ex) {
-            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ex);
-            // GO id not found.
-            result.addErrors(new ActionError("error.xref.go.search",
-                    getPrimaryId()));
-        }
+
         return result;
     }
 
@@ -425,11 +427,12 @@ public class XreferenceBean extends AbstractEditKeyBean {
         private ActionErrors myGoErrors;
         private GoServerProxy.GoResponse myGoResponse;
 
-        private void addErrors(ActionMessage error) {
+        private void addErrors(String property, ActionError error) {
             if (myGoErrors == null) {
                 myGoErrors = new ActionErrors();
             }
-            myGoErrors.add(ActionMessages.GLOBAL_MESSAGE, error);
+//            myGoErrors.add(ActionErrors.GLOBAL_ERROR, error);
+            myGoErrors.add(property, error);
         }
     }
 }

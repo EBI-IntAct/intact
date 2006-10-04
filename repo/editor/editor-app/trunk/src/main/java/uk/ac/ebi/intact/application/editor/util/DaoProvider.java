@@ -10,6 +10,8 @@ import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * TODO comment it.
@@ -18,8 +20,11 @@ import uk.ac.ebi.intact.context.IntactContext;
  * @version $Id$
  */
 public class DaoProvider {
+    protected static Log log = LogFactory.getLog(DaoProvider.class);
+
 
     public static AnnotatedObjectDao getDaoFactory(Class clazz){
+        log.debug("Clazz.getName() : " +  clazz.getName());
         if(Protein.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getProteinDao();
         }else if (BioSource.class.isAssignableFrom(clazz)){
@@ -74,11 +79,11 @@ public class DaoProvider {
         }else if (Interaction.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getInteractionDao();
         }else if (NucleicAcid.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao(NucleicAcidImpl.class);
         }else if (Protein.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao(ProteinImpl.class);
         }else if(SmallMolecule.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao(SmallMoleculeImpl.class);
         }
         else throw new IntactException("Class " + clazz.getName() + " is not a searchable object");
     }

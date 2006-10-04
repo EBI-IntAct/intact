@@ -107,7 +107,9 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
 
         // Search value to search experiment.
         String searchValue = intform.getExpSearchValue();
-
+        if (searchValue != null){
+            searchValue = searchValue.replaceAll("\\*", "%");
+        }
         if (searchValue.length() == 0) {
             ActionErrors errors = new ActionErrors();
             errors.add("int.exp.search",

@@ -101,7 +101,11 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         int max = getService().getInteger("int.search.limit");
 
         // The results to display.
-        List results = getResults(Interaction.class,expform.getSearchValue(), max, request, "err.search");
+        String searchValue = expform.getSearchValue();
+        if(searchValue != null){
+            searchValue = searchValue.replaceAll("\\*", "%");
+        }
+        List results = getResults(Interaction.class,searchValue, max, request, "err.search");
 
         if (results.isEmpty()) {
             // Errors or empty or too large

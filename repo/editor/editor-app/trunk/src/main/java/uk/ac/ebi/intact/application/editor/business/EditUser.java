@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -30,6 +32,8 @@ import uk.ac.ebi.intact.util.NewtServerProxy;
 import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.UpdateProteins;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -259,6 +263,13 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public EditUser(String user, String password) throws IntactException {
         myUserName = user;
         myPassword = password;
+//        try {
+        try {
+            myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        log.debug("Database name is " + myDatabaseName);
         // Initialize the object.
 //        initialize();
     }
