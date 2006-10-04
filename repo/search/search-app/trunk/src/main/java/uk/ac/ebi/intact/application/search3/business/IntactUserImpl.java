@@ -120,16 +120,18 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
     }
 
     public String getDatabaseName() {
+        String dbName = null;
         try
         {
-            return getDaoFactory().getBaseDao().getDbName();
+            dbName = getDaoFactory().getBaseDao().getDbName();
+            dbName = dbName.substring(dbName.lastIndexOf("/"), dbName.length());
         }
         catch (SQLException e)
         {
             e.printStackTrace();
         }
 
-        return null;
+        return dbName;
     }
 
 //    public String getSearchCritera() {
