@@ -28,6 +28,7 @@
    
     <modules>
         <module>maven</module>
+        <module>intact-commons</module>
         <module>intact-core</module>
         <module>app-commons</module>
         <module>search-engine</module>
