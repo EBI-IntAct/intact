@@ -34,7 +34,7 @@
     <packaging>jar</packaging>
     <version>1.0-SNAPSHOT</version>
     <!-- last released -->
-    <name>Intact Core</name>
+    <name>Intact Commons</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Commons, utility classes that do not use the database</description>
 
