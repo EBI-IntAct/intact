@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.util.Date;
+import java.io.Serializable;
 
 /**
  * An instance of this class contains information for the display library to display
@@ -18,7 +19,7 @@ import java.util.Date;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public class ResultRowData {
+public class ResultRowData implements Serializable {
 
     private String myAc;
     private String myShortLabel;

@@ -151,9 +151,9 @@ public class BioSourceAction extends AbstractEditorAction {
         // Any existing tax ids?
         if (taxIdExists(results, ac)) {
             // Found a tax id which belongs to another biosource.
-            ActionMessages msgs = new ActionMessages();
+            ActionErrors msgs = new ActionErrors();
             String link = getBioSourcesLink(results, ac);
-            msgs.add("bs.taxid", new ActionMessage("error.newt.taxid", taxid, link));
+            msgs.add("bs.taxid", new ActionError("error.newt.taxid", taxid, link));
             saveMessages(request, msgs);
         }
         // Update the screen

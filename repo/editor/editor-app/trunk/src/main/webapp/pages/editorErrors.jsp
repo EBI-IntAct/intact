@@ -13,14 +13,14 @@
 <%@ page language="java"%>
 
 <%-- Need this import for constant --%>
-<%@ page import="org.apache.struts.action.ActionMessages,
+<%@ page import="org.apache.struts.action.ActionErrors,
                  uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants"%>
 
 <%@ taglib uri="/WEB-INF/tld/struts-html.tld" prefix="html"%>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic"%>
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld" prefix="bean"%>
 
-<logic:messagesPresent name="<%=ActionMessages.GLOBAL_MESSAGE%>">
+<logic:messagesPresent name="<%=ActionErrors.GLOBAL_ERROR%>">
     <table width="100%" border="0" cellspacing="1" cellpadding="2">
 
         <%-- Error messages --%>

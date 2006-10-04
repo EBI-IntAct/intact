@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -31,6 +33,8 @@ import java.util.*;
  * @version $Id$
  */
 public class FeatureViewBean extends AbstractEditViewBean<Feature> {
+    protected static Log log = LogFactory.getLog(FeatureViewBean.class);
+
     // Class Data
 
     /**
@@ -553,7 +557,11 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             // Create the updated range.
             Range range = rangeBean.getUpdatedRange();
             // Set the sequence for the range.
-            range.setSequence(sequence);
+            log.debug("The sequence or the range is : " + sequence);
+//            sequence = range.prepareSequence(sequence);
+            range.prepareSequence(sequence);
+            log.debug("The sequence or the range is : " + range.getSequence());
+
             // Avoid creating duplicate Ranges.
             if (feature.getRanges().contains(range))
             {
