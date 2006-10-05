@@ -164,6 +164,11 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
             log.debug("Inserting SearchItems for Alias: " + alias.getName() + " (" + alias.getAc() + "); Parent AC: " + alias.getParentAc());
         }
 
+        if (!isAliasSearchable(alias))
+        {
+            return;
+        }
+
         SearchItem searchItem = searchItemForAlias(alias);
 
         if (log.isDebugEnabled())
@@ -209,6 +214,11 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         if (log.isDebugEnabled())
         {
             log.debug("Deleting SearchItems for Alias: " + alias.getName() + " (" + alias.getAc() + "); Parent AC: " + alias.getParentAc());
+        }
+
+        if (!isAliasSearchable(alias))
+        {
+            return;
         }
 
         SearchItem searchItem = searchItemForAlias(alias);
@@ -262,5 +272,10 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
     {
         return new SearchItem(xref.getParentAc(), xref.getPrimaryId(),
                 xref.getParent().getClass().getName(), "xref");
+    }
+
+    private static boolean isAliasSearchable(Alias alias)
+    {
+        return alias.getCvAliasType() != null;
     }
 }

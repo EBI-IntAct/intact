@@ -1172,7 +1172,24 @@ public class UpdateCVs {
             if ( ! cvObject.getAliases().contains( alias ) ) {
                 cvObject.addAlias( alias );
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist( alias );
-                log.debug("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )" );
+
+                if (log.isWarnEnabled())
+                {
+                    if (specificType == null)
+                    {
+                        log.warn("Term without specific type: " + cvTerm.getFullName());
+                    }
+                    else
+                    {
+                        if (log.isDebugEnabled())
+                        {
+
+                            log.debug("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )");
+                        }
+                    }
+                }
+
+
             }
         }
     }
