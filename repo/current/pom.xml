@@ -28,6 +28,8 @@
    
     <modules>
         <module>maven</module>
+        <module>intact-annotations</module>
+        <module>intact-apt</module>
         <module>intact-commons</module>
         <module>intact-core</module>
         <module>app-commons</module>
