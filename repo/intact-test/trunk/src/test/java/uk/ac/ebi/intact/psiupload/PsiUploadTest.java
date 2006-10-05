@@ -57,7 +57,7 @@ public class PsiUploadTest  extends AbstractIntactTest
 
     public void testImportCVs() throws Exception
     {
-        File oboFile = new File(PsiUploadTest.class.getResource("intact.obo").getFile());
+        File oboFile = new File(PsiUploadTest.class.getResource("psi-binder-4intact.obo").getFile());
 
         UpdateCVs.loadFile(oboFile);
     }
