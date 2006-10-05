@@ -255,7 +255,11 @@ public class PSILoader extends AbstractLoader {
                                 cvTerm.addSynonym( synonym );
 
                             } else {
-                                throw new IllegalStateException( "Unsupported Xref Type: " + type );
+                                if (desc == null || desc.trim().equals(""))
+                                {
+                                    throw new InvalidOboFormatException("Description 'ALIAS' or 'ANNOTATION' missing for type "+type+" in term: "+term.getName());
+                                }
+                                throw new InvalidOboFormatException( "Unsupported Xref Type " + type +" for term: "+term.getName());
                             }
                             break;
 
