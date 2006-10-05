@@ -17,11 +17,13 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Collections;
 
 /**
  * TODO comment this!
@@ -31,14 +33,16 @@ import java.util.Collections;
  * @since <pre>08-Aug-2006</pre>
  */
 @WebService(name="Search", targetNamespace = "http://ebi.ac.uk/intact/search/wsclient/generated")
-//@SOAPBinding(style=SOAPBinding.Style.RPC, use= SOAPBinding.Use.LITERAL)
-//@SOAPBinding(style=SOAPBinding.Style.DOCUMENT, use=SOAPBinding.Use.LITERAL, parameterStyle=SOAPBinding.ParameterStyle.WRAPPED)
 public class Search
 {
 
     private static final Log log = LogFactory.getLog(Search.class);
 
     //private DaoFactory daoFactory;
+    
+    //@Resource
+    private WebServiceContext wsContext;
+
 
     public Search()
     {
@@ -47,6 +51,13 @@ public class Search
         IntactSession intactSession = new WebServiceSession();
         IntactConfigurator.initIntact(intactSession);
         //daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+    }
+
+    private Search getCurrentSearch()
+    {
+        MessageContext mc = wsContext.getMessageContext();
+        HttpSession session = ((javax.servlet.http.HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+        return null; 
     }
     
     @WebMethod()
