@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-apt</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <!-- last released -->
+    <version>0.1</version>
+    <!-- last released 0.1 -->
     <name>Intact APT</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Annotation Processors for IntAct</description>
