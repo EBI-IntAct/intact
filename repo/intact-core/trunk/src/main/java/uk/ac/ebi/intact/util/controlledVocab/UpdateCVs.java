@@ -9,10 +9,25 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvAliasType;
+import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvObjectAlias;
+import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.util.controlledVocab.model.*;
+import uk.ac.ebi.intact.util.controlledVocab.model.CvTerm;
+import uk.ac.ebi.intact.util.controlledVocab.model.CvTermAnnotation;
+import uk.ac.ebi.intact.util.controlledVocab.model.CvTermSynonym;
+import uk.ac.ebi.intact.util.controlledVocab.model.CvTermXref;
+import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -22,7 +37,16 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Class handling the update of CvObject.
@@ -183,8 +207,15 @@ public class UpdateCVs {
 
                     CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
 
+                    String shortLabelName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
+
+                    if (log.isWarnEnabled() && !shortLabelName.equals(cvTerm.getShortName()))
+                    {
+                        log.warn("Cv Term name trimmed: "+cvTerm.getShortName()+" - to "+shortLabelName);
+                    }
+
                     // search by shortlabel
-                    cvObject = cvObjectDao.getByShortLabel(cvTerm.getShortName());
+                    cvObject = cvObjectDao.getByShortLabel(shortLabelName);
 
                     if ( cvObject == null ) {
                         // could not find it, hence create it.
@@ -194,7 +225,8 @@ public class UpdateCVs {
                                     cvObjectClass.getConstructor( new Class[]{ Institution.class, String.class } );
 
                             cvObject = (CvObject)
-                                    constructor.newInstance( new Object[]{ institution, cvTerm.getShortName() } );
+                                    constructor.newInstance( new Object[]{ institution, shortLabelName } );
+                            cvObject.setFullName(cvTerm.getFullName());
                         } catch ( Exception e ) {
                             e.printStackTrace();
                             continue;
@@ -203,7 +235,7 @@ public class UpdateCVs {
                         // persist it
                         cvObjectDao.persist( cvObject );
                         String className = getShortClassName( cvObject.getClass() );
-                        log.debug( "\t Creating " + className + "( " + cvObject.getShortLabel() + " )" );
+                        log.debug( "\t Creating " + className + "( " + shortLabelName + " )" );
 
                         // add that new term in the index
                         intactIndex.put( cvTerm.getId(), cvObject );
@@ -789,13 +821,13 @@ public class UpdateCVs {
         boolean hasPsiIdentifier = id.startsWith( "MI:" );
         boolean hasIntactIdentifier = id.startsWith( "IA:" );
 
-        log.debug( "\t Updating CV: " + cvTerm.getShortName() + " (" + id + ")" );
+        String trimmedShortName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
 
         boolean needsUpdate = false;
 
         // shortname
-        if ( !cvObject.getShortLabel().equals( cvTerm.getShortName() ) ) {
-            cvObject.setShortLabel( cvTerm.getShortName() );
+        if ( !cvObject.getShortLabel().equals( trimmedShortName )) {
+            cvObject.setShortLabel( trimmedShortName );
             needsUpdate = true;
             log.debug( "\t\t Updated shortlabel (" + cvTerm.getShortName() + ")" );
         }
@@ -804,7 +836,10 @@ public class UpdateCVs {
         if ( cvObject.getFullName() != null ) {
             if ( !cvObject.getFullName().equals( cvTerm.getFullName() ) ) {
                 cvObject.setFullName( cvTerm.getFullName() );
-                log.debug( "\t\t Updated fullname (" + cvTerm.getShortName() + ")" );
+                if (log.isDebugEnabled())
+                {
+                    log.debug( "\t\t Updated fullname from '"+cvObject.getFullName()+"' to '"+cvTerm.getFullName()+"'. (" + trimmedShortName + ")" );
+                }
                 needsUpdate = true;
             }
         } else {
@@ -812,13 +847,16 @@ public class UpdateCVs {
             if ( cvTerm.getFullName() != null ) {
                 cvObject.setFullName( cvTerm.getFullName() );
                 needsUpdate = true;
-                log.debug( "\t\t Updated fullname (" + cvTerm.getShortName() + ")" );
+                log.debug( "\t\t Updated fullname, from null to '"+cvTerm.getFullName()+"' (" + trimmedShortName + ")" );
             }
         }
 
-        // TODO if we convert the id into a Xref before starting the update, the two if below would be handled in the loop for Xrefs.
+        if (log.isDebugEnabled() && needsUpdate)
+        {
+            log.debug( "\t Updating CV: " + trimmedShortName + " (" + id + ")" );
+        }
 
-        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+       Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Xref psi-mi/identity
         if ( ! hasIntactTermGotPsiIdentifier && hasPsiIdentifier ) {
@@ -1164,8 +1202,12 @@ public class UpdateCVs {
 
             if ( ! alias.getName().equals( synonym.getName() ) ) {
                 // the synonym was truncated, we don't import these.
-                log.debug("\t\t Skipping Alias( " + specificType.getShortLabel() + ", '" +
+
+                if (log.isDebugEnabled() && specificType != null)
+                {
+                    log.debug("\t\t Skipping Alias( " + specificType.getShortLabel() + ", '" +
                                     synonym.getName() + "' ) ... the content would be truncated." );
+                }
                 continue;
             }
 
