@@ -15,8 +15,8 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>1.4.1</version>
-    <!-- last released 1.4.1 -->
+    <version>1.4.2</version>
+    <!-- last released 1.4.2 -->
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
@@ -45,7 +45,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
-                <version>1.2.3</version>
+                <version>1.2.4</version>
                 <configuration>
                     <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
                     <dialect>${db.dialect}</dialect>
