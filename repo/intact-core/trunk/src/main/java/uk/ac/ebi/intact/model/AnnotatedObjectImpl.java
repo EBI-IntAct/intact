@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.lucene.Text;
 import org.hibernate.validator.Length;
 import org.hibernate.validator.NotNull;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -91,7 +92,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
         //super call sets creation time data
         super();
 
-        this.shortLabel = prepareShortLabel( shortLabel );
+        this.shortLabel = AnnotatedObjectUtils.prepareShortLabel( shortLabel );
         setOwner( owner );
     }
     // Class methods
@@ -106,31 +107,12 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
     }
 
     public void setShortLabel( String shortLabel ) {
-        this.shortLabel = shortLabel;
-    }
-
-    private String prepareShortLabel( String shortLabel )
-    {
-        if( shortLabel == null ) {
-
-            throw new NullPointerException( "Must define a non null short label for a " + getClass().getName() );
-
-        } else {
-
-            // delete leading and trailing spaces.
-            shortLabel = shortLabel.trim();
-
-            if( "".equals( shortLabel ) ) {
-                throw new IllegalArgumentException(
-                        "Must define a non empty short label for a " + getClass().getName() );
-            }
-
-            if( shortLabel.length() >= MAX_SHORT_LABEL_LEN ) {
-                shortLabel = shortLabel.substring( 0, MAX_SHORT_LABEL_LEN );
-            }
+        if (shortLabel != null && shortLabel.length() > MAX_SHORT_LABEL_LEN)
+        {
+            throw new FieldTooLongException(shortLabel, "shortLabel", MAX_SHORT_LABEL_LEN);
         }
 
-        return shortLabel;
+        this.shortLabel = shortLabel;
     }
 
     @Column(length = 250)

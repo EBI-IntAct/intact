@@ -56,6 +56,7 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
             if (names[i].equals("created") || names[i].equals("updated"))
             {
                 values[i] = now;
+                continue;
             }
 
             if (names[i].equals("creator") || names[i].equals("updator"))
@@ -80,6 +81,22 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId().toUpperCase();
         intactObject.setUpdator(currentUser);
 
+        // there are cases where and object is created and updated within the same session
+        // in those cases, when update the value of creator is lost and we put it again here
+        // if that happens
+        boolean updateCreationInfo = intactObject.getCreator() == null;
+
+        if (updateCreationInfo)
+        {
+            intactObject.setCreated(now);
+            intactObject.setUpdated(now);
+
+            if (log.isWarnEnabled())
+            {
+                log.warn("Updated creation info when updating audit, because it was null");
+            }
+        }
+
         String[] names = preUpdateEvent.getPersister().getPropertyNames();
         Object[] values = preUpdateEvent.getState();
         for (int i = 0; i < names.length; i++)
@@ -87,17 +104,21 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
             if (names[i].equals("updated"))
             {
                 values[i] = now;
+                continue;
             }
+
             if (names[i].equals("updator"))
             {
                 log.debug("Current user is " + currentUser);
                 values[i] = currentUser;
+                continue;
             }
             if (names[i].equals("creator"))
             {
                 if(values[i] == null){
                     values[i] = intactObject.getCreator();
                 }
+                continue;
             }
              if (names[i].equals("created"))
             {
