@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact.hibernate</groupId>
     <artifactId>maven-hibernateconfig-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.2.4</version>
+    <version>1.3-SNAPSHOT</version>
     <!-- last released 1.2.4 -->
     <name>Plugin - Hibernate config file creator</name>
     <description>
