@@ -464,7 +464,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         // The alias AC.
         CvObjectDao<CvAliasType> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvAliasType.class);
         String ac = cvObjectDao.getByXref(CvAliasType.GENE_NAME_MI_REF).getAc();
-        /*Query query*/Collection<Alias> aliases = qf.getGeneNameQuery(ac, myInteractor.getAc());
+        /*Query query*/Collection<InteractorAlias> aliases = qf.getGeneNameQuery(ac, myInteractor.getAc());
 
         // The flag to say that we are processing the first gene name.
         boolean first = true;
@@ -472,7 +472,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         // Run through the query result set.
 //        for (Iterator iter = aliases.iterator()/*helper.getIteratorByReportQuery(query)*/;
 //             iter.hasNext(); ) {
-         for( Alias alias : aliases ){
+         for( InteractorAlias alias : aliases ){
 
             String name = alias.getName();
 
