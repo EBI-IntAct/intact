@@ -189,6 +189,11 @@ public class DaoFactory implements Serializable
         return new InteractionDaoImpl(getCurrentSession(), intactSession);
     }
 
+     public <T extends InteractorImpl> InteractorDao<T> getInteractorDao(Class<T> entityType)
+    {
+        return new InteractorDaoImpl<T>(entityType, getCurrentSession(), intactSession);
+    }
+    
     public InteractorDao<InteractorImpl> getInteractorDao()
     {
         return new InteractorDaoImpl<InteractorImpl>(InteractorImpl.class, getCurrentSession(), intactSession);
