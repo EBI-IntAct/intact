@@ -40,7 +40,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.hibernate</groupId>
                 <artifactId>maven-hibernateconfig-plugin</artifactId>
-                <version>1.2.2</version>
+                <version>1.2.4</version>
                 <configuration>
                     <dialect>org.hibernate.dialect.H2Dialect</dialect>
                     <driver>org.h2.Driver</driver>
@@ -51,16 +51,6 @@
                     <scope>test</scope>
                     <showSql>${showSql}</showSql>
                     <luceneIndexDir>${project.basedir}/target/lucene-index</luceneIndexDir>
-                    <hibernateEvents>
-                        <hibernateEvent>
-                            <type>pre-insert</type>
-                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
-                        </hibernateEvent>
-                        <hibernateEvent>
-                            <type>pre-update</type>
-                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
-                        </hibernateEvent>
-                    </hibernateEvents>
                 </configuration>
                 <executions>
                     <execution>
