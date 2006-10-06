@@ -270,7 +270,7 @@ public class HibernateConfigCreatorMojo
 
         if (sessionFactoryName == null || sessionFactoryName.trim().equals(""))
         {
-            line.replaceAll("\\$\\{session_factory_name\\}", "");
+            line = line.replaceAll("\\$\\{session_factory_name\\}", "");
         }
         else
         {
