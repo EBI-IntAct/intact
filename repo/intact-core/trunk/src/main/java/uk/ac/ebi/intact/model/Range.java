@@ -374,7 +374,7 @@ public class Range extends BasicObjectImpl {
        // Get the sequence from start if there is no fuzzy type.
         if ( fromCvFuzzyType == null ) {
             setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
-            return sequence;
+            return this.sequence;
         }
         // Truncate according to type.
         if ( fromCvFuzzyType.isCTerminal() ) {
@@ -385,7 +385,7 @@ public class Range extends BasicObjectImpl {
             setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
         }
 
-        return sequence;
+        return this.sequence;
     }
 
     public String getSequence() {
