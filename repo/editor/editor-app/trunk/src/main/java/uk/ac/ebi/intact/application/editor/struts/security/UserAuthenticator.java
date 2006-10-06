@@ -44,7 +44,7 @@ public class UserAuthenticator {
             userContext.setUserPassword(password);
             return new EditUser(username, password);
         }
-        catch (IntactException ie) {
+        catch (Exception ie) {
             log.error(username + " disallowed", ie);
             throw new AuthenticateException(username + " disallowed");
         }
