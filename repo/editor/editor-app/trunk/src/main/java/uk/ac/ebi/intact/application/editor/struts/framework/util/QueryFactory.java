@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import uk.ac.ebi.intact.model.Alias;
 import uk.ac.ebi.intact.model.ExperimentXref;
+import uk.ac.ebi.intact.model.InteractorAlias;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.AliasDao;
@@ -41,12 +42,12 @@ public class QueryFactory {
      * @param parent the AC of the parent (AC of the Protein)
      * @return the query to extract the gene name for given protein AC
      */
-    public Collection<Alias> getGeneNameQuery(String aliasAc, String parent) {
+    public Collection<InteractorAlias> getGeneNameQuery(String aliasAc, String parent) {
 
-        Collection<Alias> aliasesToReturn = new ArrayList<Alias>();
-        AliasDao aliasDao = DaoProvider.getDaoFactory().getAliasDao();
-        Collection<Alias> geneNames = aliasDao.getColByPropertyName("parentAc", parent);
-        for(Alias alias : geneNames ){
+        Collection<InteractorAlias> aliasesToReturn = new ArrayList<InteractorAlias>();
+        AliasDao aliasDao = DaoProvider.getDaoFactory().getAliasDao(InteractorAlias.class);
+        Collection<InteractorAlias> geneNames = aliasDao.getColByPropertyName("parentAc", parent);
+        for(InteractorAlias alias : geneNames ){
             if(alias.getCvAliasType() != null && alias.getCvAliasType().getAc().equals(aliasAc)){
                 aliasesToReturn.add(alias);
             }
