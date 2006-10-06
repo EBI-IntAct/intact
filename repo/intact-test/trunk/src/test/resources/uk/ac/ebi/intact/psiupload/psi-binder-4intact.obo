@@ -3163,6 +3163,7 @@ related_synonym: "MTS" []
 related_synonym: "protein transduction domains" []
 related_synonym: "PTDs" []
 related_synonym: "Trojan peptides" []
+exact_synonym: "cell penet pept tag" []
 is_a: MI:0507 ! tag
 
 [Term]
@@ -3203,6 +3204,7 @@ is_a: MI:0744 ! reverse phase array
 id: MI:0746
 name: western blot sensu proteome binder
 def: "Western blot is a method to test the specificity of the interaction between a binder (natural antibody or recombinant) with its target protein in a given sample of tissue homogenate or extract. It uses gel electrophoresis to separate denatured proteins by mass. The proteins are then transferred out of the gel and onto a membrane (typically nitrocellulose), where they are \"probed\" with the antibodies under study." [pubmed:14755292 "primary-reference"]
+exact_synonym: "wblot sensu p binder" []
 is_a: MI:0400 ! affinity technology
 
 [Term]
@@ -3349,15 +3351,17 @@ is_a: MI:0766 ! single chain binder
 
 [Term]
 id: MI:0768
-name: heavy chain binder
+name: heavy chain only binder
 def: "heavy chain only binder" [pubmed:14755292 "primary-reference"]
+exact_synonym: "heavy chain binder" []
 related_synonym: "heavy chain only" []
 is_a: MI:0750 ! binder
 
 [Term]
 id: MI:0769
-name: h l chain binder
+name: heavy and light chain only binder
 def: "heavy chain only binder" [pubmed:14755292 "primary-reference"]
+exact_synonym: "hl chain binder" []
 related_synonym: "heavy chain only" []
 is_a: MI:0750 ! binder
 
