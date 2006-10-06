@@ -68,4 +68,11 @@
 
     </logic:iterate>
 
+        <tr>
+          <td width="10" valign="top" ></td>
+          <td valign="top"  >
+          <a href="logout">Logout</a>
+          </td>
+        </tr>
+
 </table>
