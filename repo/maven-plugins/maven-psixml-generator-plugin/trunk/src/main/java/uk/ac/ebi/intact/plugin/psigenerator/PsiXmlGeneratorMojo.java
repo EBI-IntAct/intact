@@ -91,7 +91,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         getLog().debug( "searchPattern: " + searchPattern );
 
 
-        if( ! speciesEnabled && ! publicationsEnabled && ! datasetsEnabled ) {
+        if ( ! speciesEnabled && ! publicationsEnabled && ! datasetsEnabled ) {
             throw new MojoExecutionException( "User requested not to produce any classification. One should be at least enabled. abort." );
         }
 
@@ -108,7 +108,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 getLog().info( "Using existing classification by species: " + getSpeciesFile() );
             }
         } else {
-            getLog().info( "User requested species classification not to be run." );
+            getLog().info( "Skip species classification at user request." );
         }
 
         if ( publicationsEnabled ) {
@@ -120,7 +120,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 getLog().info( "Using existing classification by publications: " + getPublicationsFile() );
             }
         } else {
-            getLog().info( "User requested publications classification not to be run." );
+            getLog().info( "Skip publication classification at user request." );
         }
 
         if ( datasetsEnabled ) {
@@ -132,11 +132,15 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 getLog().info( "Using existing classification by datasets: " + getDatasetsFile() );
             }
         } else {
-            getLog().info( "User requested datasets classification not to be run." );
+            getLog().info( "Skip dataset classification at user request." );
         }
 
-        CvMapping mapping = new CvMapping();
-        mapping.loadFile( getReverseMapping() );
+        CvMapping mapping = null;
+        if ( hasPsi1( psiVersions ) ) {
+            // only load CV mapping if we do want to generate PSI 1.0
+            mapping = new CvMapping();
+            mapping.loadFile( getReverseMapping() );
+        }
 
         if ( getSpeciesFile().exists() && getPublicationsFile().exists() && getDatasetsFile().exists() ) {
             Collection<ExperimentListItem> items = generateAllClassifications();
@@ -174,6 +178,22 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         }
     }
 
+    /**
+     * Checks if any of the version is PSI MI 1.0.
+     *
+     * @param psiVersions the list of loaded versions.
+     *
+     * @return true if found, false otherwise.
+     */
+    private boolean hasPsi1( List<Version> psiVersions ) {
+        for ( Version version : psiVersions ) {
+            if ( version.getNumber().equals( "1.0" ) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void readClassificationAndWritePsiXmls( File classificationFile, CvMapping mapping ) throws IOException {
         BufferedReader reader = new BufferedReader( new FileReader( classificationFile ) );
         String line;
@@ -200,8 +220,11 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
             long start = System.currentTimeMillis();
 
-            PsiValidatorReport validationReport = PsiFileGenerator.writePsiData( interactions, PsiVersion.valueOf( version.getNumber() ), mapping,
-                                                                                 targetFile, version.isValidate() );
+            PsiValidatorReport validationReport = PsiFileGenerator.writePsiData( interactions,
+                                                                                 PsiVersion.valueOf( version.getNumber() ),
+                                                                                 mapping,
+                                                                                 targetFile,
+                                                                                 version.isValidate() );
 
             if ( !validationReport.isValid() ) {
                 writeToInvalidFile( item, version, validationReport );
