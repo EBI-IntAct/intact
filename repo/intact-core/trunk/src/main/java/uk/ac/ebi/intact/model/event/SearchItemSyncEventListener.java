@@ -255,7 +255,14 @@ public class SearchItemSyncEventListener implements PostInsertEventListener, Pos
         {
             for (Alias alias : ao.getAliases())
             {
-                searchItems.add(new SearchItem(ao.getAc(), alias.getName(), ao.getClass().getName(), alias.getCvAliasType().getShortLabel()));
+                if (alias.getCvAliasType() != null)
+                {
+                    searchItems.add(new SearchItem(ao.getAc(), alias.getName(), ao.getClass().getName(), alias.getCvAliasType().getShortLabel()));
+                }
+                else
+                {
+                    log.warn("Couldn't insert SearchItem for Alias, as it cvAliasType is null: "+alias.getName());
+                }
             }
         }
 
