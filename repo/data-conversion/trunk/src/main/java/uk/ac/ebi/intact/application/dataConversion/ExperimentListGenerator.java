@@ -337,12 +337,12 @@ public class ExperimentListGenerator {
 
                             dataset.setPmid( pubmedId );
 
-                            if( ! dataset2experimentSet.containsKey( datasets ) ) {
+                            if( false == dataset2experimentSet.containsKey( dataset ) ) {
                                 // initialize association
                                 experimentList = new ArrayList<SimplifiedAnnotatedObject<Experiment>>( 4 );
                                 dataset2experimentSet.put( dataset, experimentList );
                             } else {
-                                experimentList = dataset2experimentSet.get( datasets );
+                                experimentList = dataset2experimentSet.get( dataset );
                             }
 
                             experimentList.add( new SimplifiedAnnotatedObject<Experiment>( experiment ) );
