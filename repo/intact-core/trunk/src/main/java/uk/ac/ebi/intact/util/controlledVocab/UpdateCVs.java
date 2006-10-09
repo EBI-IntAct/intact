@@ -9,25 +9,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvAliasType;
-import uk.ac.ebi.intact.model.CvDagObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvObjectAlias;
-import uk.ac.ebi.intact.model.CvObjectXref;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTerm;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermAnnotation;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermSynonym;
-import uk.ac.ebi.intact.util.controlledVocab.model.CvTermXref;
-import uk.ac.ebi.intact.util.controlledVocab.model.IntactOntology;
+import uk.ac.ebi.intact.util.controlledVocab.model.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,16 +23,7 @@ import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Class handling the update of CvObject.
@@ -197,7 +174,7 @@ public class UpdateCVs {
             ////////////////////////////////////////
             // 2. update of the terms' content
             Collection oboTerms = ontology.getCvTerms( cvObjectClass );
-            System.out.println( "\t " + oboTerms.size() + " term(s) loaded from definition file." );
+            log.debug( "\t " + oboTerms.size() + " term(s) loaded from definition file." );
             for ( Iterator iterator = oboTerms.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
                 CvObject cvObject = (CvObject) intactIndex.get( cvTerm.getId() );
@@ -242,7 +219,7 @@ public class UpdateCVs {
                     }
                 } else {
                     String className = getShortClassName( cvObject.getClass() );
-                    System.out.println( "\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )" );
+                    log.debug( "\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )" );
                 }
 
                 // update its content
@@ -558,8 +535,14 @@ public class UpdateCVs {
      * @throws IllegalArgumentException if the class given is not a concrete type of CvObject (eg. CvDatabase)
      */
     public static CvObject getCvObject( Class clazz,
-                                        String shortlabel ) throws IntactException {
+                                        String shortlabel) throws IntactException {
         return getCvObject( clazz, shortlabel, null );
+    }
+
+    public static CvObject getCvObject( Class clazz,
+                                        String shortlabel,
+                                        String mi) throws IntactException {
+        return getCvObject( clazz, shortlabel, mi, shortlabel);
     }
 
     /**
@@ -578,7 +561,8 @@ public class UpdateCVs {
      */
     public static CvObject getCvObject( Class clazz,
                                         String shortlabel,
-                                        String mi ) throws IntactException {
+                                        String mi,
+                                        String defaultFullName) throws IntactException {
 
         // Check that the given class is a CvObject or one if its sub-type.
         if ( !CvObject.class.isAssignableFrom( clazz ) ) {
@@ -611,9 +595,12 @@ public class UpdateCVs {
                 Constructor constructor = clazz.getConstructor( new Class[]{ Institution.class, String.class } );
                 cv = (CvObject) constructor.newInstance( new Object[]{ institution, shortlabel } );
 
+                // by default add the shortLabel as fullName
+                cv.setFullName(defaultFullName);
+
                 // persist it
                 cvObjectDao.persist( cv );
-                log.debug( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + shortlabel + " )." );
+                log.debug( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + cv.getShortLabel() +" - "+cv.getFullName()+" )." );
 
                 // create MI Xref if necessary
                 if ( mi != null && mi.startsWith( "MI:" ) ) {
@@ -624,7 +611,8 @@ public class UpdateCVs {
                     } else {
                         psi = (CvDatabase) getCvObject( CvDatabase.class,
                                                         CvDatabase.PSI_MI,
-                                                        CvDatabase.PSI_MI_MI_REF );
+                                                        CvDatabase.PSI_MI_MI_REF,
+                                                        CvDatabase.PSI_MI);
                     }
 
                     CvXrefQualifier identity = null;
@@ -633,7 +621,8 @@ public class UpdateCVs {
                     } else {
                         identity = (CvXrefQualifier) getCvObject( CvXrefQualifier.class,
                                                                   CvXrefQualifier.IDENTITY,
-                                                                  CvXrefQualifier.IDENTITY_MI_REF );
+                                                                  CvXrefQualifier.IDENTITY_MI_REF,
+                                                                  "identical object");
                     }
 
                     CvObjectXref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
@@ -1296,7 +1285,7 @@ public class UpdateCVs {
         // of psi-mi so they will be updated later.
 
         // CvXrefQualifier( identity )
-        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF );
+        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, "identical object" );
 
         // CvDatabase( psi-mi )
         psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF );
@@ -1308,16 +1297,16 @@ public class UpdateCVs {
         getCvObject(CvDatabase.class, CvDatabase.PUBMED, CvDatabase.PUBMED_MI_REF );
 
         // CvDatabase( go )
-        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF );
+        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF, "gene ontology definition reference" );
 
         // CvDatabase( so )
-        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF );
+        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF, "sequence ontology" );
 
         // CvDatabase( resid )
         getCvObject(CvDatabase.class, CvDatabase.RESID, CvDatabase.RESID_MI_REF );
 
         // CvXrefQualifier( go-definition-ref )
-        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF, CvXrefQualifier.GO_DEFINITION_REF_MI_REF );
+        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF );
 
         // CvXrefQualifier( see-also )
         getCvObject(CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO, CvXrefQualifier.SEE_ALSO_MI_REF );
