@@ -64,7 +64,7 @@ CREATE TABLE IA_controlledvocab_alias
 TABLESPACE &&intactIndexTablespace
 ;
 
-CREATE index i_controlledvocab_alias$parent_ac on IA_controlledvocab_alias(parent_ac) TABLESPACE &&intactIndexTablespace
+CREATE index i_cv_alias$parent_ac on IA_controlledvocab_alias(parent_ac) TABLESPACE &&intactIndexTablespace
 ;
 
 set term off
