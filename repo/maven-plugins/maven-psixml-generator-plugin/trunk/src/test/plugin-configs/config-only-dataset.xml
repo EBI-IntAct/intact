@@ -1,0 +1,52 @@
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-psixml-generator-plugin</artifactId>
+                <configuration>
+
+                    <targetPath>target/psixml-test</targetPath>
+
+                    <speciesFilename>classification_by_species.txt</speciesFilename>
+                    <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+                    <datasetsFilename>classification_by_datasets.txt</datasetsFilename>
+
+                    <searchPattern>%</searchPattern>
+
+                    <overwrite>true</overwrite>
+                    <experimentErrorFile>target/psixml-test-dataset/experiment-error.log</experimentErrorFile>
+                    <negativeExperimentsFile>target/psixml-test-dataset/negative-experiments.log</negativeExperimentsFile>
+                    <invalidFilePrefix>invalid-xmls</invalidFilePrefix>
+                    <reverseMappingFile>reverseMapping.txt</reverseMappingFile>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <zipXml>false</zipXml>
+
+                    <classifications>
+                        <classification>
+                            <name>publications</name>
+                            <enabled>false</enabled>
+                        </classification>
+                        <classification>
+                            <name>species</name>
+                            <enabled>false</enabled>
+                        </classification>
+                        <classification>
+                            <name>datasets</name>
+                            <enabled>true</enabled>
+                        </classification>
+                    </classifications>
+
+                    <psiVersions>
+                        <version>
+                            <number>2.5</number>
+                            <folderName>psi25</folderName>
+                            <validate>true</validate>
+                        </version>
+                    </psiVersions>
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
