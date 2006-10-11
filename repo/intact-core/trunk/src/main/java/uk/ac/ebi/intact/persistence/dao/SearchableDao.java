@@ -39,9 +39,9 @@ public interface SearchableDao extends BaseDao<Session>
 
     List<? extends Searchable> getByQuery(SearchableQuery query, Integer firstResults, Integer maxResults);
 
-    List<? extends Searchable> getByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResults, Integer maxResults);
+    List<? extends Searchable> getByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResult, Integer maxResults);
 
-    <T extends Searchable> List<T> getByQuery(Class<T> searchableClass, SearchableQuery query, Integer firstResults, Integer maxResults);
+    <T extends Searchable> List<T> getByQuery(Class<T> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults);
 
     List<String> getAcsByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults);
 }
