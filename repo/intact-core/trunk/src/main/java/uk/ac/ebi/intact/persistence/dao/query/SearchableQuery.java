@@ -27,7 +27,6 @@ import java.io.Serializable;
  */
 public class SearchableQuery implements Serializable
 {
-    private String searchClass;
     private String ac;
     private String shortLabel;
     private String description;
@@ -46,16 +45,6 @@ public class SearchableQuery implements Serializable
 
     public SearchableQuery()
     {
-    }
-
-    public String getSearchClass()
-    {
-        return searchClass;
-    }
-
-    public void setSearchClass(String searchClass)
-    {
-        this.searchClass = searchClass;
     }
 
     public String getAc()
