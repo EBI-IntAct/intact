@@ -14,7 +14,8 @@ import java.util.Collection;
  *
  * @see uk.ac.ebi.intact.model.InteractionImpl
  */
-public interface Interaction extends Interactor {
+public interface Interaction extends Interactor
+{
 
     public Float getKD();
 

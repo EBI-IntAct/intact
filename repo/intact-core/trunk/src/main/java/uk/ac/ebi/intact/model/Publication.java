@@ -17,7 +17,8 @@ import java.util.Iterator;
  * @version $Id$
  * @since <pre>11-May-2006</pre>
  */
-@Entity(name = "ia_publication")
+@Entity
+@Table(name = "ia_publication")
 public class Publication extends AnnotatedObjectImpl<PublicationXref,PublicationAlias> implements Editable {
 
     /**
@@ -32,7 +33,6 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
 
     ///////////////////////////
     // Constructors
-    @Deprecated
     public Publication() {
     }
 

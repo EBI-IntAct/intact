@@ -43,7 +43,7 @@ public class PublicationAlias extends Alias
         super(anOwner, annotatedObject, cvAliasType, name);
     }
 
-    @ManyToOne(targetEntity = Publication.class)
+    @ManyToOne(targetEntity = Publication.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_ac")
     public AnnotatedObject getParent()
     {

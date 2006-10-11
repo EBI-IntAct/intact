@@ -214,6 +214,11 @@ public class DaoFactory implements Serializable
         return new RangeDaoImpl(getCurrentSession(), intactSession);
     }
 
+    public SearchableDao getSearchableDao()
+    {
+        return new SearchableDaoImpl(getCurrentSession(), intactSession);
+    }
+
     public SearchItemDao getSearchItemDao()
     {
         return new SearchItemDaoImpl(getCurrentSession(), intactSession);

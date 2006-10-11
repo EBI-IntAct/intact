@@ -43,7 +43,7 @@ public class LineExport {
 
     private Map<String,String> protAcToUniprotIdCache = new LRUMap(4096);
 
-    private CvObject uniprotCcExport = getCvContext().getByLabel(CvTopic.UNIPROT_CC_EXPORT);
+    private CvObject uniprotCcExport = getCvContext().getByLabel(CvTopic.class, CvTopic.UNIPROT_CC_EXPORT);
     //////////////////////////
     // Constants
 
@@ -326,7 +326,7 @@ public class LineExport {
         }
 
         if( cv == null ) {
-            cv = IntactContext.getCurrentInstance().getCvContext().getByLabel( shortlabel );
+            cv = IntactContext.getCurrentInstance().getCvContext().getByLabel( clazz, shortlabel );
         }
 
         if ( cv == null ) {
@@ -633,7 +633,7 @@ public class LineExport {
                     if (log.isDebugEnabled())
                         log.debug("\t\t\t\tAnnotation CvTopic: "+_annotation.getCvTopic());
 
-                    if ( getCvContext().getByLabel(CvTopic.UNIPROT_DR_EXPORT).equals( _annotation.getCvTopic() ) ) {
+                    if ( getCvContext().getByLabel(CvTopic.class, CvTopic.UNIPROT_DR_EXPORT).equals( _annotation.getCvTopic() ) ) {
 
                         log.debug( logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation );
 
@@ -863,7 +863,7 @@ public class LineExport {
 
             for (Annotation annotation : annotations)
             {
-                if (getCvContext().getByLabel(CvTopic.UNIPROT_DR_EXPORT).equals(annotation.getCvTopic()))
+                if (getCvContext().getByLabel(CvTopic.class, CvTopic.UNIPROT_DR_EXPORT).equals(annotation.getCvTopic()))
                 {
 
                     log.debug(logPrefix + annotation);
@@ -938,7 +938,7 @@ public class LineExport {
         for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && false == isNegative; ) {
             Annotation annotation = iterator.next();
 
-            if ( getCvContext().getByLabel(CvTopic.NEGATIVE).equals( annotation.getCvTopic() ) ) {
+            if ( getCvContext().getByLabel(CvTopic.class, CvTopic.NEGATIVE).equals( annotation.getCvTopic() ) ) {
                 isNegative = true;
             }
         }
@@ -956,7 +956,7 @@ public class LineExport {
 
         for (Annotation annotation : interaction.getAnnotations())
         {
-            if (getCvContext().getByLabel(CvTopic.CC_NOTE).equals(annotation.getCvTopic()))
+            if (getCvContext().getByLabel(CvTopic.class, CvTopic.CC_NOTE).equals(annotation.getCvTopic()))
             {
                 if (notes == null)
                 {
@@ -1115,7 +1115,7 @@ public class LineExport {
 
         boolean needsUpdate = true;
 
-        CvTopic noUniprotUpdate = (CvTopic) getCvContext().getByLabel(CvTopic.NON_UNIPROT);
+        CvTopic noUniprotUpdate = getCvContext().getByLabel(CvTopic.class, CvTopic.NON_UNIPROT);
 
         if ( null == noUniprotUpdate ) {
             // in case the term hasn't been created, assume there are no proteins created via editor.
