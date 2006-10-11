@@ -17,6 +17,9 @@ import java.util.List;
  */
 public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
 {
-     List<T> getByPsiMiRefCollection(Collection<String> psiMis);
-//    List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
+    List<T> getByPsiMiRefCollection(Collection<String> psiMis);
+
+    List<T> getByObjClass(Class[] objClasses);
+
+    <T extends CvObject> T getByShortLabel(Class<T> cvType, String label);
 }

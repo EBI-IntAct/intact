@@ -19,64 +19,64 @@ public interface AnnotatedObject<T extends Xref, A extends Alias> extends BasicO
     /**
      * This matches with the column size for short label
      */
-    public static final int MAX_SHORT_LABEL_LEN = 20;
+    static final int MAX_SHORT_LABEL_LEN = 20;
 
-    public String getShortLabel();
+    String getShortLabel();
 
-    public void setShortLabel(String shortLabel);
+    void setShortLabel(String shortLabel);
 
-    public String getFullName();
+    String getFullName();
 
-    public void setFullName(String fullName);
+    void setFullName(String fullName);
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setAnnotations(Collection<Annotation> someAnnotation);
+    void setAnnotations(Collection<Annotation> someAnnotation);
 
-    public Collection<Annotation> getAnnotations();
+    Collection<Annotation> getAnnotations();
 
-    public void addAnnotation(Annotation annotation);
+    void addAnnotation(Annotation annotation);
 
-    public void removeAnnotation(Annotation annotation);
+    void removeAnnotation(Annotation annotation);
 
     ///////////////////
     // Xref related
     ///////////////////
-    public void setXrefs(Collection<T> someXrefs);
+    void setXrefs(Collection<T> someXrefs);
 
-    public Collection<T> getXrefs();
+    Collection<T> getXrefs();
 
-    public void addXref(T aXref);
+    void addXref(T aXref);
 
-    public void removeXref(T xref);
+    void removeXref(T xref);
 
     ///////////////////
     // Alias related
     ///////////////////
-    public void setAliases(Collection<A> someAliases);
+    void setAliases(Collection<A> someAliases);
 
-    public Collection<A> getAliases();
+    Collection<A> getAliases();
 
-    public void addAlias( A alias );
+    void addAlias( A alias );
 
-    public void removeAlias( A alias );
+    void removeAlias( A alias );
 
-    public void setReferences(Collection<Reference> someReferences);
+    void setReferences(Collection<Reference> someReferences);
 
-    public Collection<Reference> getReferences();
+    Collection<Reference> getReferences();
 
-    public void addReference(Reference reference);
+    void addReference(Reference reference);
 
-    public void removeReference(Reference reference);
+    void removeReference(Reference reference);
 
-//    public AnnotatedObject update(IntactHelper helper) throws IntactException;
+//    AnnotatedObject update(IntactHelper helper) throws IntactException;
 //
-//    public Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner);
+//    Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner);
 
-    public boolean equals (Object o);
+    boolean equals (Object o);
 
-    public int hashCode();
+    int hashCode();
 
-    public String toString();
+    String toString();
 
 }

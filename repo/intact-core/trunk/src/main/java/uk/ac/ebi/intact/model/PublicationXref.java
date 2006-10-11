@@ -39,7 +39,7 @@ public class PublicationXref extends Xref
         super(anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
     }
 
-    @ManyToOne(targetEntity = Publication.class)
+    @ManyToOne(targetEntity = Publication.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_ac")
     public AnnotatedObject getParent()
     {

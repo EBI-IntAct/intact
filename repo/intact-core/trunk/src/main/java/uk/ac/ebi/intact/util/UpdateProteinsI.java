@@ -214,8 +214,8 @@ public abstract class UpdateProteinsI {
             isoFormParentXrefQualifier = (CvXrefQualifier) cvContext.getByMiRef( CvXrefQualifier.ISOFORM_PARENT_MI_REF );
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) cvContext.getByLabel( CvTopic.ISOFORM_COMMENT );
-            noUniprotUpdate = (CvTopic) cvContext.getByLabel( CvTopic.NON_UNIPROT);
+            isoformComment = (CvTopic) cvContext.getByLabel( CvTopic.class, CvTopic.ISOFORM_COMMENT );
+            noUniprotUpdate = (CvTopic) cvContext.getByLabel( CvTopic.class, CvTopic.NON_UNIPROT);
 
 
             geneNameAliasType = (CvAliasType) cvContext.getByMiRef( CvAliasType.GENE_NAME_MI_REF );

@@ -12,5 +12,6 @@ package uk.ac.ebi.intact.model;
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  */
-public interface Protein extends Polymer {
+public interface Protein extends Polymer
+{
 }

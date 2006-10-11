@@ -97,7 +97,8 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
     @PotentialThreat(description = "This method is using raw SQL (INSERT Query), which may create problems " +
                     "when run with hibernate",
-                     origin = "This code is used in a EventListener, so it cannot be committed correctly")
+                     origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                             "need a workaroung")
     public void persist(SearchItem searchItem)
     {
         String sql = "INSERT INTO ia_search (ac,value,objclass,type) VALUES (?,?,?,?)";
@@ -106,7 +107,8 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
     @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
                     "when run with hibernate",
-                     origin = "This code is used in a EventListener, so it cannot be committed correctly")
+                     origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                             "need a workaroung")
     public void delete(SearchItem searchItem)
     {
          String sql = "DELETE from ia_search WHERE (ac=?, value=?, objclass=?, type=?)";
@@ -153,7 +155,8 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
 
     @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
                         "when run with hibernate",
-                         origin = "This code is used in a EventListener, so it cannot be committed correctly")
+                         origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                             "need a workaroung")
     public int deleteByAc(String ac)
     {
         String sql = "DELETE FROM ia_search WHERE ac=?";

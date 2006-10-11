@@ -23,7 +23,8 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_experiment")
 @EditorTopic
-public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAlias> implements Editable {
+public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAlias> implements Editable, Searchable
+{
 
     ///////////////////////////////////////
     // associations

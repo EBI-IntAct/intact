@@ -48,9 +48,9 @@ public class CvContextTest extends TestCase {
     }
 
     public void testGetByLabel() throws Exception {
-        assertEquals("EBI-375443", cvContext.getByLabel(CvTopic.CC_NOTE).getAc());
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.UNIPROT).getShortLabel());
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.UNIPROT).getShortLabel());
+        assertEquals("EBI-375443", cvContext.getByLabel(CvTopic.class, CvTopic.CC_NOTE).getAc());
+        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.class, CvDatabase.UNIPROT).getShortLabel());
+        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.class, CvDatabase.UNIPROT).getShortLabel());
     }
 
     public void testGetByMiRef() throws Exception {

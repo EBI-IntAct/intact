@@ -18,7 +18,9 @@ import java.util.Collection;
 @Entity
 @Table(name = "ia_controlledvocab")
 @DiscriminatorColumn(name="objclass", discriminatorType = DiscriminatorType.STRING, length = 255)
-public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObjectAlias> {
+public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObjectAlias> implements Searchable
+{
+    private String objClass;
 
     public CvObject() {
         //super call sets creation time data
@@ -38,6 +40,17 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         //super call sets up a valid AnnotatedObject (and also CvObject, as there is
         //nothing more to add)
         super( shortLabel, owner );
+    }
+
+    @Column(name = "objclass", insertable = false, updatable = false)
+    public String getObjClass()
+    {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass)
+    {
+        this.objClass = objClass;
     }
 
     @ManyToMany

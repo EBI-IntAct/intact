@@ -9,8 +9,6 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
@@ -25,8 +23,6 @@ import java.util.List;
  * @since 09/01/2006
  */
 public class DbInfoDaoImplTest extends TestCase {
-
-    private static final Log log = LogFactory.getLog(DbInfoDaoImplTest.class);
 
     public DbInfoDaoImplTest(String name) {
         super(name);
