@@ -178,4 +178,19 @@ public class WebappSession extends IntactSession
 
         return list;
     }
+
+    public ServletContext getServletContext()
+    {
+        return servletContext;
+    }
+
+    public HttpServletRequest getRequest()
+    {
+        return request;
+    }
+
+    public HttpSession getSession()
+    {
+        return session;
+    }
 }

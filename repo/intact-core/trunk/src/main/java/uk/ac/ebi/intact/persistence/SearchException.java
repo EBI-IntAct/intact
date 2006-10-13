@@ -36,6 +36,17 @@ public class SearchException extends Exception {
 
     }
 
+
+    public SearchException(String message, Throwable cause)
+    {
+        super(message, cause);
+    }
+
+    public SearchException(Throwable cause)
+    {
+        super(cause);
+    }
+
     public String getNestedMessage() {
 
         if (nestedMessage != null) {
