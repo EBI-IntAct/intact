@@ -15,18 +15,20 @@
  */
 package uk.ac.ebi.intact.application.search3;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 
 import java.io.Serializable;
 import java.util.Map;
 
 /**
- * TODO comment this!
+ * Convenience class to access all stored variables in a clear way
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -34,6 +36,7 @@ import java.util.Map;
  */
 public class SearchWebappContext implements Serializable
 {
+    private static final Log log = LogFactory.getLog(SearchWebappContext.class);
 
     private static final String SEARCH_ATT_NAME = "uk.ac.ebi.intact.search.internal.SEARCH_WEBAPP_CONTEXT";
 
@@ -128,6 +131,7 @@ public class SearchWebappContext implements Serializable
 
         if (page == null)
         {
+            log.debug("Current page is null. Setting to 0");
             page = Integer.valueOf(0);
         }
 
@@ -136,6 +140,7 @@ public class SearchWebappContext implements Serializable
 
     public void setCurrentPage(Integer currentPage)
     {
+        log.debug("Current page set to: "+currentPage);
         session.setRequestAttribute(CURRENT_PAGE, currentPage);
     }
 

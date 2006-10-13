@@ -17,31 +17,28 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.DynaActionForm;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
+import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.*;
-
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.SearchWebappContext;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
-import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.searchengine.ResultWrapper;
-import uk.ac.ebi.intact.searchengine.SearchHelper;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.persistence.SearchException;
 
 /**
  * Provides the actions required to carry out search operations for intact via a web-based interface. The search
@@ -360,7 +357,7 @@ public class NewSearchAction extends SearchActionBase
         if (!multipleValueSearch && isAccession(searchValue))
         {
             logger.debug("Creating SearchableQuery for accession only");
-            query.setAcs(new String[] {searchValue});
+            query.setAc(searchValue);
         }
         else
         {

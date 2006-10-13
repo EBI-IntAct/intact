@@ -15,22 +15,19 @@
  */
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.controller.SearchActionBase;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.SearchEnvironment;
-import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.business.IntactException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.DynaActionForm;
+import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
+import uk.ac.ebi.intact.application.search3.struts.controller.SearchActionBase;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -135,11 +132,9 @@ public class AdvancedSearchAction extends SearchActionBase
         // create the searchable query object
         SearchableQuery searchableQuery = new SearchableQuery();
 
-        if (ac != null && ac.length() > 0)
-        {
-            searchableQuery.setAcs(commaSeparatedListToArray(ac));
-        }
+        searchableQuery.setAc(ac);
         searchableQuery.setShortLabel(shortlabel);
+        searchableQuery.setFullText(fulltext);
         searchableQuery.setDescription(description);
         searchableQuery.setAnnotationText(annotation);
         searchableQuery.setXref(xref);
