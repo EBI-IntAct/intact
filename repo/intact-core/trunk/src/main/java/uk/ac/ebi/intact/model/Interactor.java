@@ -16,28 +16,32 @@ import java.util.Collection;
  */
 public interface Interactor extends AnnotatedObject<InteractorXref,InteractorAlias> {
 
-    public BioSource getBioSource();
+    String getObjClass();
 
-    public void setBioSource( BioSource bioSource );
+    void setObjClass(String objClass);
+
+    BioSource getBioSource();
+
+    void setBioSource( BioSource bioSource );
 
     ///////////////////////////////////////
     // access methods for associations
-    public void setActiveInstances(Collection<Component> someActiveInstance);
+    void setActiveInstances(Collection<Component> someActiveInstance);
 
-    public Collection<Component> getActiveInstances();
+    Collection<Component> getActiveInstances();
 
-    public void addActiveInstance(Component component);
+    void addActiveInstance(Component component);
 
-    public void removeActiveInstance(Component component);
+    void removeActiveInstance(Component component);
 
-    public void setProducts(Collection<Product> someProduct);
+    void setProducts(Collection<Product> someProduct);
 
-    public Collection<Product> getProducts();
+    Collection<Product> getProducts();
 
-    public void addProduct(Product product);
+    void addProduct(Product product);
 
-    public void removeProduct(Product product);
+    void removeProduct(Product product);
 
-    public CvInteractorType getCvInteractorType();
-    public void setCvInteractorType(CvInteractorType type);
+    CvInteractorType getCvInteractorType();
+    void setCvInteractorType(CvInteractorType type);
 }

@@ -102,6 +102,16 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
 
     ///////////////////////////////////////
     //access methods for attributes
+    @Column(name = "objclass", insertable = false, updatable = false)
+    public String getObjClass()
+    {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass)
+    {
+        this.objClass = objClass;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biosource_ac")

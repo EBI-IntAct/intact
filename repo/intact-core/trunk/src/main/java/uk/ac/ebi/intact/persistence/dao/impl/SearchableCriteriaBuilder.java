@@ -61,6 +61,8 @@ public class SearchableCriteriaBuilder
 
     public DetachedCriteria createCriteria(Class<? extends Searchable> searchableClass)
     {
+        log.debug("Search for: "+searchableClass);
+
         DetachedCriteria criteria = DetachedCriteria.forClass(searchableClass);
 
         Junction junction;
@@ -92,19 +94,18 @@ public class SearchableCriteriaBuilder
 
         Junction jXref = Restrictions.conjunction();
 
-        if (xrefPrimaryId != null)
+        if (isValueValid(xrefPrimaryId))
         {
             addRestriction(jXref, xrefProperty(criteria, PRIMARY_ID_PROPERTY), xrefPrimaryId, true);
         }
-        if (xrefDb != null)
+        if (isValueValid(xrefDb))
         {
             addRestriction(jXref, xrefCvDatabaseProperty(criteria, SHORT_LABEL_PROPERTY), xrefDb, false);
         }
-        if (xrefPrimaryId != null && xrefDb != null)
+        if (isValueValid(xrefPrimaryId) || isValueValid(xrefDb))
         {
             junction.add(jXref);
         }
-
 
         // annotation
         String annotText = query.getAnnotationText();
@@ -112,113 +113,170 @@ public class SearchableCriteriaBuilder
 
         Junction jAnnot = Restrictions.conjunction();
 
-        if (annotText != null)
+        if (isValueValid(annotText))
         {
             addRestriction(jAnnot, annotationProperty(criteria, "annotationText"), annotText, false);
         }
-        if (annotTopic != null)
+        if (isValueValid(annotTopic))
         {
             addRestriction(jAnnot, annotationCvTopicProperty(criteria, SHORT_LABEL_PROPERTY), annotTopic, false);
         }
-        if (annotText != null || annotTopic != null)
+        if (isValueValid(annotText) || isValueValid(annotTopic))
         {
             junction.add(jAnnot);
         }
 
+        // searchable is an interactor
         if (searchableClass.isAssignableFrom(Interactor.class))
         {
             // cvInteractionType
-            Disjunction disjCvInteractionType = Restrictions.disjunction();
-
-            addRestriction(disjCvInteractionType, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionTypeLabel(), true);
-
-            if (query.isIncludeCvInteractionTypeChildren())
+            if (isValueValid(query.getCvInteractionTypeLabel()))
             {
-                Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
-                                        cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY),
-                                        cvInteractionTypeProperty(criteria, CV_OBJCLASS_PROPERTY),
-                                        CvInteractionType.class, query.getCvInteractionTypeLabel());
+                Disjunction disjCvInteractionType = Restrictions.disjunction();
 
-                if (childJunct != null)
+                addRestriction(disjCvInteractionType, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionTypeLabel(), true);
+
+                if (query.isIncludeCvInteractionTypeChildren())
                 {
-                    disjCvInteractionType.add(childJunct);
-                }
-            }
+                    Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
+                            cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY),
+                            cvInteractionTypeProperty(criteria, CV_OBJCLASS_PROPERTY),
+                            CvInteractionType.class, query.getCvInteractionTypeLabel());
 
-            junction.add(disjCvInteractionType);
+                    if (childJunct != null)
+                    {
+                        disjCvInteractionType.add(childJunct);
+                    }
+                }
+
+                junction.add(disjCvInteractionType);
+            }
         }
 
-
+        // searchable is a experiment
         if (searchableClass.isAssignableFrom(Experiment.class))
         {
-            log.debug("Experiment search");
-
-            Disjunction disjCvIdentification = Restrictions.disjunction();
-            
             // cvInteractionDetection
-            addRestriction(disjCvIdentification, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvIdentificationLabel(), true);
-
-            if (query.isIncludeCvIdentificationChildren())
+            if (isValueValid(query.getCvIdentificationLabel()))
             {
-                Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
-                                            cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY),
-                                            cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY),
-                                            CvIdentification.class, query.getCvIdentificationLabel());
+                Disjunction disjCvIdentification = Restrictions.disjunction();
 
-                if (childJunct != null)
+                addRestriction(disjCvIdentification, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvIdentificationLabel(), true);
+
+                if (query.isIncludeCvIdentificationChildren())
                 {
-                    disjCvIdentification.add(childJunct);
+                    Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
+                            cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY),
+                            cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY),
+                            CvIdentification.class, query.getCvIdentificationLabel());
+
+                    if (childJunct != null)
+                    {
+                        disjCvIdentification.add(childJunct);
+                    }
                 }
+
+                junction.add(disjCvIdentification);
             }
 
-            junction.add(disjCvIdentification);
-
-            Disjunction disjCvInteraction = Restrictions.disjunction();
-    
             // cvInteractionDetection
-            addRestriction(disjCvInteraction, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionLabel(), true);
-
-            if (query.isIncludeCvInteractionChildren())
+            if (isValueValid(query.getCvInteractionLabel()))
             {
-                Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
-                                        cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY),
-                                        cvInteractionProperty(criteria, CV_OBJCLASS_PROPERTY),
-                                        CvInteraction.class, query.getCvInteractionLabel());
+                Disjunction disjCvInteraction = Restrictions.disjunction();
 
-                if (childJunct != null)
+
+                addRestriction(disjCvInteraction, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionLabel(), true);
+
+                if (query.isIncludeCvInteractionChildren())
                 {
-                    disjCvInteraction.add(childJunct);
-                }
-            }
+                    Junction childJunct = getChildrenDisjunctionForCvInteractionType(criteria,
+                            cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY),
+                            cvInteractionProperty(criteria, CV_OBJCLASS_PROPERTY),
+                            CvInteraction.class, query.getCvInteractionLabel());
 
-            junction.add(disjCvInteraction);
+                    if (childJunct != null)
+                    {
+                        disjCvInteraction.add(childJunct);
+                    }
+                }
+
+                junction.add(disjCvInteraction);
+            }
         }
 
+        // finally add the junction created by all the properties to the main criteria
         criteria.add(junction);
 
         return criteria;
     }
 
+    private void addRestriction(Junction junction, String property, String[] values, boolean exactEquality)
+    {
+        if (values == null)
+        {
+            return;
+        }
+
+        if (values.length == 0)
+        {
+            return;
+        }
+        
+        if (values.length == 1)
+        {
+            addRestriction(junction,property,values[0], exactEquality);
+            return;
+        }
+
+        log.debug("Restriction: "+property+"="+Arrays.toString(values));
+
+        Disjunction disj = Restrictions.disjunction();
+
+        for (String value : values)
+        {
+
+            if (isValueValid(value))
+            {
+                if (exactEquality)
+                {
+                    disj.add(Restrictions.eq(property, value.toLowerCase()).ignoreCase());
+                }
+                else
+                {
+                    disj.add(Restrictions.like(property, DaoUtils.replaceWildcardsByPercent(value).toLowerCase()).ignoreCase());
+                }
+            }
+        }
+
+        junction.add(disj);
+    }
+
     private void addRestriction(Junction junction, String property, String value, boolean exactEquality)
     {
-        if (value != null && !value.trim().equals(""))
+        if (isValueValid(value))
         {
+            if (isCommaSeparatedValue(value))
+            {
+                String[] values = commaSeparatedValueToArray(value);
+                addRestriction(junction, property, values, exactEquality);
+            }
+
             log.debug("Restriction: "+property+"="+value);
             
             if (exactEquality)
             {
-                junction.add(Restrictions.eq(property, value).ignoreCase());
+                junction.add(Restrictions.eq(property, value.toLowerCase()).ignoreCase());
             }
             else
             {
-                junction.add(Restrictions.like(property, DaoUtils.replaceWildcardsByPercent(value)).ignoreCase());
+                junction.add(Restrictions.like(property, DaoUtils.replaceWildcardsByPercent(value).toLowerCase()).ignoreCase());
             }
         }
     }
 
     private void addFullTextRestriction(Class<? extends Searchable> searchableClass, DetachedCriteria criteria, String value, boolean autoAddWildcards)
     {
-        if (value != null && !value.trim().equals(""))
+        if (isValueValid(value))
         {
             if (autoAddWildcards)
             {
@@ -387,6 +445,28 @@ public class SearchableCriteriaBuilder
         }
 
         return aliasName + "." + property;
+    }
+
+    private static boolean isValueValid(String value)
+    {
+        return value != null && value.trim().length() > 0;
+    }
+
+    private static boolean isCommaSeparatedValue(String value)
+    {
+        return value.contains(",");
+    }
+
+    private static String[] commaSeparatedValueToArray(String commaSeparatedValue)
+    {
+        String[] arr = commaSeparatedValue.split(",");
+
+        for (int i=0; i<arr.length; i++)
+        {
+            arr[i] = arr[i].trim();
+        }
+
+        return arr;
     }
 
 

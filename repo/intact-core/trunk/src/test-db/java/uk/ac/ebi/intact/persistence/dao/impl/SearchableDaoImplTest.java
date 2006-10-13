@@ -48,7 +48,7 @@ public class SearchableDaoImplTest extends TestCase
     public void testCountByQuery_ac() throws Exception
     {
         SearchableQuery query = new SearchableQuery();
-        query.setAc("EBI-12345");
+        query.setAcs(new String[] {"EBI-12345"});
 
         int count = dao.countByQuery(InteractorImpl.class, query);
         assertEquals(1, count);
