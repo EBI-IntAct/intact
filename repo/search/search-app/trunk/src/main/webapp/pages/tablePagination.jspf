@@ -1,3 +1,6 @@
+<%@ page import="uk.ac.ebi.intact.application.search3.SearchWebappContext" %>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants" %>
 <!--
     Renders a pagination table for the data shown. The attribute SearchConstants.TOTAL_RESULTS_ATT_NAME
     has to be already in request scope, so the paginator knows which is the total results and can
@@ -13,19 +16,26 @@
     {   // opening block so there is no variable name clash if there is more than one paginator per view
 
         // pagination use the parameter "page"
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(IntactContext.getCurrentInstance());
 
         String strPage = request.getParameter("page");
+
+        if (strPage == null)
+        {
+            strPage = webappContext.getCurrentPage().toString();
+        }
+
         int currentPage = 0;
 
         int pageCount = 0;
         int totalResults = 0;
-        int resultsPerPage = SearchConstants.RESULTS_PER_PAGE;
+        int resultsPerPage = webappContext.getResultsPerPage();
 
-        if (strPage != null && strPage.length() != 0 && request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME) != null)
+        if (strPage != null && strPage.length() > 0 && webappContext.getTotalResults() != null)
         {
             currentPage = Integer.valueOf(strPage);
-            totalResults = (Integer)request.getAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME);
-            pageCount = (totalResults / resultsPerPage)+1;
+            totalResults = webappContext.getTotalResults();
+            pageCount = (totalResults / resultsPerPage) + 1;
         }
 
         // The url without the page parameter. We use this variable to generate the url for each page
@@ -34,33 +44,35 @@
 
         if (request.getQueryString() != null)
         {
-            urlWithoutPage = request.getQueryString().replaceAll("&page="+currentPage, "");
+            urlWithoutPage = request.getQueryString().replaceAll("&page=" + currentPage, "");
         }
 
         if (!urlWithoutPage.contains("searchString="))
         {
-             urlWithoutPage = urlWithoutPage+"&searchString="+request.getParameter("searchString");
+            urlWithoutPage = urlWithoutPage + "&searchString=" + request.getParameter("searchString");
         }
 
         if (!urlWithoutPage.contains("searchClass="))
         {
             if (request.getAttribute("searchClass") != null)
             {
-                urlWithoutPage = urlWithoutPage+"&searchClass="+request.getAttribute("searchClass");
+                urlWithoutPage = urlWithoutPage + "&searchClass=" + request.getAttribute("searchClass");
             }
             else
             {
                 if (request.getParameter("searchClass") != null)
                 {
-                urlWithoutPage = urlWithoutPage+"&searchClass="+request.getParameter("searchClass");
+                    urlWithoutPage = urlWithoutPage + "&searchClass=" + request.getParameter("searchClass");
                 }
             }
         }
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags
         request.getParameterMap().put("page", currentPage);
-        request.getParameterMap().put("resultsPerPage", SearchConstants.RESULTS_PER_PAGE);
-        request.getParameterMap().put("totalResults", totalResults);
+
+        request.getParameterMap().put("resultsPerPage", webappContext.getResultsPerPage());
+        request.getParameterMap().put("totalResults", webappContext.getTotalResults());
+
         request.getParameterMap().put("pageCount", pageCount);
         request.getParameterMap().put("urlWithoutPage", urlWithoutPage);
     }

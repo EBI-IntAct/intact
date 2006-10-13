@@ -1,34 +1,47 @@
-/*
-Copyright (c) 2002 The European Bioinformatics Institute, and others.
-All rights reserved. Please see the file LICENSE
-in the root directory of this distribution.
-*/
-
+/**
+ * Copyright 2006 The European Bioinformatics Institute, and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.SearchWebappContext;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.searchengine.ResultWrapper;
-import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.searchengine.SearchHelper;
-import uk.ac.ebi.intact.context.IntactContext;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.DynaActionForm;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.ServletException;
+import java.io.IOException;
 import java.util.*;
+
+import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.searchengine.SearchHelper;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.SearchException;
 
 /**
  * Provides the actions required to carry out search operations for intact via a web-based interface. The search
@@ -39,9 +52,10 @@ import java.util.*;
  * @author Chris Lewington (clewing@ebi.ac.uk)
  * @version $Id$
  */
-public class SearchAction extends IntactBaseAction {
+public class NewSearchAction extends SearchActionBase
+{
 
-    private static final Log logger = LogFactory.getLog(SearchAction.class);
+    private static final Log logger = LogFactory.getLog(NewSearchAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
@@ -60,9 +74,11 @@ public class SearchAction extends IntactBaseAction {
      * @throws Exception ...
      */
     @Override
-    public ActionForward execute( ActionMapping mapping, ActionForm form,
+    public ActionForward executeSearch( ActionMapping mapping, ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response ) throws Exception {
+                                  HttpServletResponse response )
+                                         throws SearchException
+    {
 
         logger.info( "search action" );
         // Clear any previous errors.
@@ -71,15 +87,14 @@ public class SearchAction extends IntactBaseAction {
         // Get the page to search, if using paginated search
         String strPage = request.getParameter("page");
         int page = 0;
-        boolean paginatedSearch = false;
 
         if (strPage != null && strPage.length() != 0)
         {
-            paginatedSearch = true;
+            SearchWebappContext.getCurrentInstance(getIntactContext()).setPaginatedSearch(true);
             page = Integer.valueOf(strPage);
         }
 
-        if (logger.isDebugEnabled() && paginatedSearch)
+        if (logger.isDebugEnabled() && isPaginatedSearch())
         {
             logger.debug("Performing paginated search. Page: "+page);
         }
@@ -178,17 +193,17 @@ public class SearchAction extends IntactBaseAction {
                     // that takes care of a potential bug when searching for a protein AC
                     // having splice variant. That would pull the master + all splice variants
                     ResultWrapper subResults = this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "ac",
-                                                               user, paginatedSearch, page);
+                                                               user, isPaginatedSearch(), page);
 
                     if (subResults.isEmpty())
                     {
                         // then look for all fields if nothing has been found.
                         //finished all current options, and still nothing - return a failure
                         subResults =
-                                this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "all", user, paginatedSearch, page);
+                                this.getResults(searchHelper, SearchClass.PROTEIN, criteria, "all", user, isPaginatedSearch(), page);
                     }
 
-                    if ( subResults.isTooLarge() && !paginatedSearch) {
+                    if ( subResults.isTooLarge() && !isPaginatedSearch()) {
                     // resultset too large, forward to statistic page
                         logger.info( "subresult is too large" );
                         request.setAttribute( SearchConstants.RESULT_INFO, subResults.getInfo() );
@@ -238,12 +253,12 @@ public class SearchAction extends IntactBaseAction {
             else {
                //try now the specified String case first
                 results =
-                        this.getResults( searchHelper, searchClass, searchValue, filterValue, user, paginatedSearch, page);
+                        this.getResults( searchHelper, searchClass, searchValue, filterValue, user, isPaginatedSearch(), page);
 
                 request.setAttribute(SearchConstants.TOTAL_RESULTS_ATT_NAME, results.getTotalResultsCount());
             }
 
-            if ( results.isTooLarge() && !paginatedSearch) {
+            if ( results.isTooLarge() && !isPaginatedSearch()) {
 
                 logger.info( "Results set is too Large for the specified search criteria" );
                 request.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + searchValue + "'" );
@@ -314,6 +329,74 @@ public class SearchAction extends IntactBaseAction {
         }
     }
 
+
+    public SearchableQuery createSearchableQuery(ActionForm form)
+    {
+        DynaActionForm dyForm = (DynaActionForm) form;
+
+        String searchValue = (String) dyForm.get( "searchString" );
+        SearchClass searchClass = SearchClass.valueOfShortName((String)dyForm.get( "searchClass" ));
+        String binaryValue = (String) dyForm.get( "binary" );
+        String viewValue = (String) dyForm.get( "view" );
+        String filterValue = (String) dyForm.get( "filter" );
+
+        String[] values = searchValue.split(",");
+
+        boolean multipleValueSearch = (values.length > 1);
+
+        for (int i=0; i<values.length; i++)
+        {
+            // Feature Request #1485467 : Add a wildcard at the end
+            String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+
+            if (!values[i].endsWith("*") && !isAccession(values[i]))
+            {
+                values[i] = values[i]+"*";
+            }
+        }
+
+        SearchableQuery query = new SearchableQuery();
+
+        if (!multipleValueSearch && isAccession(searchValue))
+        {
+            logger.debug("Creating SearchableQuery for accession only");
+            query.setAcs(new String[] {searchValue});
+        }
+        else
+        {
+            // TODO: now only getting the first value
+            logger.warn("Only using the first value in search: "+values[0]);
+            String val = values[0];
+            query.setFullText(val);
+        }
+
+        return query;
+    }
+
+    private static boolean isAccession(String value)
+    {
+        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+        return value.toLowerCase().startsWith(acPrefix.toLowerCase()+"-")
+                && !value.endsWith("*")
+                && !value.endsWith("%");
+    }
+
+    /**
+     * Checks if there is only one value, and then if this value is an accession returns true
+     */
+    private static boolean isQuerySearchingOnlyOneAc(String[] values)
+    {
+        if (values.length > 1 || values.length == 0)
+        {
+            return false;
+        }
+
+        String value = values[0];
+
+        return (isAccession(value) && !value.endsWith("%"));
+
+    }
+
     /**
      * Decides how to perform the search, based upon whether or not the intact type has been specified. If not then all
      * the currently defined search types will be iterated through to collect all matches. If the type is specified then
@@ -328,7 +411,7 @@ public class SearchAction extends IntactBaseAction {
      *
      * @return Collection A Collection of the results, or empty if none found.
      *
-     * @throws IntactException Thrown if there was a searching problem
+     * @throws uk.ac.ebi.intact.business.IntactException Thrown if there was a searching problem
      */
     private ResultWrapper getResults( SearchHelper helper, SearchClass searchClass,
                                       String searchValue, String filterValue, IntactUserIF user, boolean paginatedSearch, int page)
@@ -342,7 +425,7 @@ public class SearchAction extends IntactBaseAction {
         if (paginatedSearch)
         {
             int resultsPerPage = SearchWebappContext.getCurrentInstance().getResultsPerPage();
-            firstResult = (page-1)* resultsPerPage;
+            firstResult = (page-1)*resultsPerPage;
             maxResults = resultsPerPage;
         }
 
@@ -359,5 +442,16 @@ public class SearchAction extends IntactBaseAction {
         }    */
 
         return result;
+    }
+
+
+    public SearchableQuery createSearchableQuery()
+    {
+        return null;
+    }
+
+    public Class<? extends Searchable>[] getSearchableTypes()
+    {
+        return new Class[0];
     }
 }

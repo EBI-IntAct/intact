@@ -72,10 +72,14 @@ public class MainDetailView  extends AbstractView
         // only we will put the searched at the beginning if we are in the first page (or the view is not paginated)
         if (getCurrentPage() <= 1)
         {
-            String searched = (String) request.getSession().getAttribute(SearchConstants.SEARCH_CRITERIA);
+            Object objSearchableQuery = request.getSession().getAttribute(SearchConstants.SEARCH_CRITERIA);
 
-            if (searched != null)
+            String searched = null;
+
+            if (objSearchableQuery != null)
             {
+                searched = objSearchableQuery.toString();
+
                 // FIXME not only the search is an AC. Now, if another thing is used, the interaction won't be placed prominently
                 priorInteractionAcs = searched.replaceAll("'", "").split(",");
             }

@@ -36,6 +36,22 @@
         </description>
     </context-param>
 
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.MAX_RESULTS_PER_PAGE</param-name>
+        <param-value>50</param-value>
+        <description>
+            Number of results shown per page, by default
+        </description>
+    </context-param>      uk.ac.ebi.intact.search.HELP_LINK
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.HELP_LINK</param-name>
+        <param-value>/do/search?searchString=</param-value>
+        <description>
+            The search link (relative to context root)
+        </description>
+    </context-param>
+
     <!--  NB XML config files for the DB MUST be referred to here relative
           to the WEB-INF/classes directory as that is where the class loader
           will start to look. The leading "/" MUST be present if the config
@@ -69,6 +85,15 @@
     <filter>
         <filter-name>intactFilter</filter-name>
         <filter-class>uk.ac.ebi.intact.webapp.IntactSessionRequestFilter</filter-class>
+        <init-param>
+            <param-name>uk.ac.ebi.intact.filter.EXCLUDED_EXTENSIONS</param-name>
+            <param-value>*.jpg,*.gif,*.png</param-value>
+            <description>
+                List of extensions. If the request URL ends with one of the params provided,
+                it won't be filtered by the IntactSessionRequestFilter and no IntactContext
+                will be created for those requests.
+            </description>
+        </init-param>
     </filter>
 
     <filter-mapping>

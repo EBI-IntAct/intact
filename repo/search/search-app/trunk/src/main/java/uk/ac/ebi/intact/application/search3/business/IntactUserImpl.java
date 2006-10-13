@@ -124,7 +124,11 @@ public class IntactUserImpl<T extends IntactObject> implements IntactUserIF<T>, 
         try
         {
             dbName = getDaoFactory().getBaseDao().getDbName();
-            dbName = dbName.substring(dbName.lastIndexOf("/"), dbName.length());
+
+            if (dbName.contains("/"))
+            {
+                dbName = dbName.substring(dbName.lastIndexOf("/"), dbName.length());
+            }
         }
         catch (SQLException e)
         {

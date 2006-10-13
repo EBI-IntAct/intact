@@ -115,10 +115,10 @@ public interface SearchConstants {
     public static final String MAX_ITEMS_MAP = "maxMap";
 
     /**
-     * Indetifies the map (stored in the servlet context) which contains the the count and classname
+     * Indetifies the map which contains the the count and classname
      * from the initial search request for displaying on the the tooLarge jsp
      */
-    public static final String RESULT_INFO = "resultInfo";
+    public static final String RESULT_INFO = "uk.ac.ebi.intact.search.internal.RESULTS_INFO";
 
     /**
      * Maximum size for the initial request of objects
@@ -281,5 +281,5 @@ public interface SearchConstants {
 
     public static final int RESULTS_PER_PAGE = 30;
     public static final String DATA_PAGE_INDEX_ATT_NAME = "uk.ac.ebi.intact.PAGE_INDEX";
-    public static final String TOTAL_RESULTS_ATT_NAME = "uk.ac.ebi.intact.TOTAL_RESULTS";
+    public static final String TOTAL_RESULTS_ATT_NAME = "uk.ac.ebi.intact.search.internal.TOTAL_RESULTS";
 }

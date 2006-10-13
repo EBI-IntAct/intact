@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
@@ -55,7 +56,7 @@ public abstract class AbstractView
     }
 
     public int getItemsPerPage() {
-        return SearchConstants.RESULTS_PER_PAGE;
+        return SearchWebappContext.getCurrentInstance().getResultsPerPage();
     }
 
     public abstract int getTotalItems();

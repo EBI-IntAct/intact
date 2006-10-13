@@ -27,7 +27,8 @@ import java.io.IOException;
  * @author Michael Kleen
  * @version $Id$
  */
-public abstract class AbstractResultAction extends SearchBaseAction {
+public abstract class AbstractResultAction extends IntactSearchAction
+{
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web

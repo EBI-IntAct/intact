@@ -105,16 +105,16 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 if(btn[x].value == "any"){
                    openrow(idArrayAny);
                 }
-                if(btn[x].value == "experiment"){
+                if(btn[x].value == "uk.ac.ebi.intact.model.Experiment"){
                    openrow(idArrayExperiment);
                 }
-                if(btn[x].value == "interaction"){
+                if(btn[x].value == "uk.ac.ebi.intact.model.InteractionImpl"){
                    openrow(idArrayInteraction);
                 }
-                if(btn[x].value == "cv"){
+                if(btn[x].value == "uk.ac.ebi.intact.model.CvObject"){
                    openrow(idArrayCv);
                 }
-                if(btn[x].value == "protein"){
+                if(btn[x].value == "uk.ac.ebi.intact.model.ProteinImpl"){
                    openrow(idArrayProtein);
                 }
                 break;
@@ -317,7 +317,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 <table>
                 <tr>
                     <td  class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="cv" onclick="resetForm(this.value); " />
+                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.CvObject" onclick="resetForm(this.value); " />
                             Controlled Vocabulary Term
                     </td>
                     <td style="vertical-align: middle;">
@@ -328,7 +328,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="experiment" onclick="resetForm(this.value); " />
+                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.Experiment" onclick="resetForm(this.value); " />
                           Experiment
                     </td>
                     <td  style="vertical-align: middle;">
@@ -339,7 +339,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="interaction" onclick="resetForm(this.value); " />
+                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.InteractionImpl" onclick="resetForm(this.value); " />
                           Interaction
                     </td>
                     <td style="vertical-align: middle;">
@@ -350,7 +350,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="protein" onclick="resetForm(this.value);" />
+                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.ProteinImpl" onclick="resetForm(this.value);" />
                           Protein
                      </td>
                      <td style="vertical-align: middle;">

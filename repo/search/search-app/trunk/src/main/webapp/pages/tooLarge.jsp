@@ -19,7 +19,6 @@
 
 
 <%
-    String query = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
     TooLargeViewBean bean =(TooLargeViewBean) request.getAttribute(SearchConstants.VIEW_BEAN);
 
    %>
