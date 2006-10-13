@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact.tools</groupId>
     <artifactId>intact-psi-validator</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <!-- last released:  -->
+    <version>1.0</version>
+    <!-- last released: 1.0 -->
     <name>Data conversions</name>
     <description>Validation of PSI files</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
@@ -44,8 +44,8 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/tools/intact-psi-validator/trunk/</url>
     </scm>
     
-    <!-- EBI repo -->
     <repositories>
+        <!-- EBI repo, to retrieve the parent -->
         <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
