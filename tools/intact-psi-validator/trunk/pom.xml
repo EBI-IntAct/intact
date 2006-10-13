@@ -25,14 +25,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.5</version>
+        <version>1.0.6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.tools</groupId>
     <artifactId>intact-psi-validator</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <!-- last released: 1.0 -->
     <name>Data conversions</name>
     <description>Validation of PSI files</description>
@@ -73,6 +73,11 @@
     </dependencies>
 
     <distributionManagement>
+        <repository>
+            <id>ebi-repo</id>
+            <name>EBI Repository</name>
+            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo</url>
+        </repository>
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
