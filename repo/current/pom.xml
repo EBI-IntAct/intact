@@ -66,6 +66,7 @@
             <id>all-modules</id>
             <modules>
                 <module>plugins</module>
+                <module>tools</module>
                 <module>search-ws</module>
                 <module>search-wsclient</module>
                 <module>sanity-checker</module>
