@@ -15,34 +15,28 @@
  */
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
-import uk.ac.ebi.intact.application.search3.SearchEnvironment;
-import uk.ac.ebi.intact.application.search3.SearchWebappContext;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.persistence.dao.SearchableDao;
-import uk.ac.ebi.intact.persistence.SearchException;
-import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.util.DebugUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.SearchException;
+import uk.ac.ebi.intact.persistence.dao.SearchableDao;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Abstraction of the IntactBaseAction. Gives access to the IntActUser.
@@ -171,16 +165,25 @@ public abstract class SearchActionBase extends IntactSearchAction
             size += num;
         }
 
-        log.debug("Results found: " + size);
+        if (log.isDebugEnabled())
+        {
+             log.debug("Results found: " + size+", distributed in: "+resultInfo);
+        }
 
         SearchWebappContext.getCurrentInstance(getIntactContext()).setResultsInfo(resultInfo);
         SearchWebappContext.getCurrentInstance(getIntactContext()).setTotalResults(size);
 
-        if (resultInfo.size() == 1)
+        if (resultInfo.size() == 1 && size > maxResults)
         {
+            if (log.isDebugEnabled())
+                log.debug("Only one kind of results found, and the number of results ("+size+") is " +
+                    "higher than the max page size ("+maxResults+"). Then this is a paginated search");
+
             SearchWebappContext.getCurrentInstance(intactContext).setPaginatedSearch(true);
+            SearchWebappContext.getCurrentInstance(intactContext).setCurrentPage(1);
         }
 
+        /*
         if (size > maxResults && !isPaginatedSearch())
         {
 
@@ -190,11 +193,17 @@ public abstract class SearchActionBase extends IntactSearchAction
             return mapping.findForward(SearchConstants.FORWARD_TOO_LARGE);
 
         }
+        */
         if (size == 0)
         {
             //finished all current options, and still nothing - return a failure
             log.debug("No matches were found for the specified search criteria");
             return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
+        }
+
+        if (log.isDebugEnabled() && resultInfo.size() > 1)
+        {
+            log.debug("Found results of different types");
         }
 
         return null;
@@ -210,7 +219,11 @@ public abstract class SearchActionBase extends IntactSearchAction
         Integer firstResult = getFirstResult();
         Integer maxResults = SearchWebappContext.getCurrentInstance().getResultsPerPage();
 
-        log.debug("Paginated query: firstResult="+firstResult+" maxResults="+maxResults);
+        if (log.isDebugEnabled())
+        {
+            log.debug("Paginated query: page=" + SearchWebappContext.getCurrentInstance().getCurrentPage()
+                    + " firstResult=" + firstResult + " maxResults=" + maxResults);
+        }
         
         SearchableDao dao = IntactContext.getCurrentInstance().getDataContext()
                 .getDaoFactory().getSearchableDao();
@@ -318,7 +331,16 @@ public abstract class SearchActionBase extends IntactSearchAction
                 throw new IntactException("Current page is null, but search is set to be paginated");
             }
 
-            firstResult = (currentPage-1)* resultsPerPage;
+            if (currentPage == 0)
+            {
+                throw new IntactException("Current page is 0, but search is set to be paginated, so it should be at least one. " +
+                        "Set the current page before trying to do a query");
+            }
+            else
+            {
+               firstResult = (currentPage-1)* resultsPerPage;
+            }
+
         }
 
         return firstResult;
@@ -338,15 +360,5 @@ public abstract class SearchActionBase extends IntactSearchAction
         return searchableQuery;
     }
 
-    protected String[] commaSeparatedListToArray(String commaSeparatedValue)
-    {
-        String[] arr = commaSeparatedValue.split(",");
-
-        for (int i=0; i<arr.length; i++)
-        {
-            arr[i] = arr[i].trim();
-        }
-
-        return arr;
-    }
+    
 }
