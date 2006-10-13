@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.editor</groupId>
     <artifactId>editor-app</artifactId>
     <packaging>war</packaging>
-    <version>1.4.0-rc1</version>
+    <version>1.5-SNAPSHOT</version>
     <name>Editor</name>
     <description>To edit IntAct data</description>
 
@@ -36,7 +36,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.editor</groupId>
                 <artifactId>maven-editortopics-plugin</artifactId>
-                <version>1.0</version>
+                <version>1.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
