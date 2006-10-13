@@ -55,9 +55,9 @@ public class DispatcherAction extends IntactBaseAction {
                                   HttpServletRequest request,
                                   HttpServletResponse response ) throws Exception {
 
-        logger.info( "Enter Dispatcher action" );
+        logger.debug( "Enter Dispatcher action" );
 
-        logger.info( "dispatcher action: analysing user's query..." );
+        logger.debug( "dispatcher action: analysing user's query..." );
 
         // Handler to the Intact User.
         IntactUserIF user = super.getIntactUser( getSession( request ) );
@@ -65,7 +65,7 @@ public class DispatcherAction extends IntactBaseAction {
             //just set up a new user for the session - if it fails, need to give up!
             user = super.setupUser( request );
             if ( user == null ) {
-                logger.info( "no user, forward failer" );
+                logger.debug( "no user, forward failer" );
                 return mapping.findForward( SearchConstants.FORWARD_FAILURE );
             }
         }
@@ -76,24 +76,24 @@ public class DispatcherAction extends IntactBaseAction {
         final String binaryValue = user.getBinaryValue();
         final String viewSource = user.getView();
 
-        logger.info( "Binary Value " + binaryValue );
-        logger.info( "View Value " + viewSource );
+        logger.debug( "Binary Value " + binaryValue );
+        logger.debug( "View Value " + viewSource );
 
 
         Object resultItem = results.iterator().next();
-        logger.info( "First item className: " + resultItem.getClass().getName() );
+        logger.debug( "First item className: " + resultItem.getClass().getName() );
 
         // now check the type, and forward to the relevant action
         if ( results.size() == 1 ) {
             // check for Experiment first
             if ( ( Experiment.class.isAssignableFrom( resultItem.getClass() ) ) ) {
 
-                logger.info( "It's a Experiment, ask forward to SingleResultAction" );
+                logger.debug( "It's a Experiment, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_DETAILS_ACTION );
                 // now check if it's an Interaction
             } else if ( ( Interaction.class.isAssignableFrom( resultItem.getClass() ) ) ) {
 
-                logger.info( "It's a Interaction, ask forward to SingleResultAction" );
+                logger.debug( "It's a Interaction, ask forward to SingleResultAction" );
 
                 request.setAttribute("searchClass", SearchClass.INTERACTION.getShortName());
 
@@ -107,16 +107,16 @@ public class DispatcherAction extends IntactBaseAction {
                 if ( ( viewSource != null ) && ( viewSource.equals( "partner" ) ) ) {
                     if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                         // it's a self interactions from outside
-                        logger.info( "It's a Protein, NucleicAcid or SmallMolecule,  forwarding to BinaryProteinAction" );
+                        logger.debug( "It's a Protein, NucleicAcid or SmallMolecule,  forwarding to BinaryProteinAction" );
                         return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
                     } else {
                         // it's a request from inside the jsp
-                        logger.info( "It's a Protein, NucleicAcid or SmallMolecule, forwarding to  PartnerResultAction" );
+                        logger.debug( "It's a Protein, NucleicAcid or SmallMolecule, forwarding to  PartnerResultAction" );
                         return mapping.findForward( SearchConstants.FORWARD_BINARY_ACTION );
                     }
                 }
                 // we want the single Protein View
-                logger.info( "It's a Protein, NucleicAcid or SmallMolecule, ask forward to SingleResultAction" );
+                logger.debug( "It's a Protein, NucleicAcid or SmallMolecule, ask forward to SingleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SINGLE_ACTION );
 
             } // now it can only be a CvObject or a BioSource
@@ -141,17 +141,17 @@ public class DispatcherAction extends IntactBaseAction {
 
             if ( binaryValue != null && !binaryValue.equals( "" ) ) {
                 // it's a binary interaction request
-                logger.info( "Dispatcher ask forwarding to BinaryProteinAction" );
+                logger.debug( "Dispatcher ask forwarding to BinaryProteinAction" );
                 return mapping.findForward( SearchConstants.FORWARD_BINARYINTERACTOR_ACTION );
 
             } else {
                 // it's a  multiple requst
-                logger.info( "Dispatcher ask forward to SimpleResultAction" );
+                logger.debug( "Dispatcher ask forward to SimpleResultAction" );
                 return mapping.findForward( SearchConstants.FORWARD_SIMPLE_ACTION );
             }
         }
         // something went wrong here, forward to error page
-        logger.info( "Something went wrong here, forward to error page" );
+        logger.debug( "Something went wrong here, forward to error page" );
         return mapping.findForward( SearchConstants.FORWARD_FAILURE );
     }
 }

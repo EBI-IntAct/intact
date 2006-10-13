@@ -232,13 +232,22 @@ Query     _________       ____________      |     _________      _____________
                 type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvancedSearchAction"
                 name="advancedForm"
                 validate="true"
-                scope="request"
-                input="/advancedSearch.jsp">
+                scope="request">
 
+            <forward name="noMatch" path="no.match.layout"/>
+            <forward name="sessionLost" path="/do/welcome"/>
+            <forward name="tooLarge" path="/do/tooLarge"/>
+            <forward name="dispatcher" path="/do/dispatcher"/>
+            <!--<forward name="binary" path="binary.layout"/>-->
+            <!--<forward name="pairwise" path="pairwise.layout"/>-->
+            <forward name="noInteractor" path="no.interactor.layout"/>
+            <forward name="false" path="no.resource.layout"/>
+             <!--
             <forward name="tooLarge" path="/do/advTooLarge"/>
             <forward name="error" path="adv.search.layout"/>
             <forward name="advDispatcher" path="/do/advDispatcher"/>
             <forward name="indexError" path="adv.no.index.layout"/>
+            -->
 
         </action>
 

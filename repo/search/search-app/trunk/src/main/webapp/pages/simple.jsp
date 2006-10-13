@@ -78,24 +78,28 @@ to identify the source page of the request to the Action classes.
 <span class="smalltext">Search Results for
 
     <%
-        String params = (String) session.getAttribute(SearchConstants.SEARCH_CRITERIA);
+        Object objParams = session.getAttribute(SearchConstants.SEARCH_CRITERIA);
 
-        if( params.length() > 20 ) {
+        if (objParams != null)
+        {
+            String params = objParams.toString();
+            if( params.length() > 20 ) {
 
-            // split the params and display 10 per lines.
-            StringTokenizer st = new StringTokenizer( params, "," );
-            int count = 0;
-            while( st.hasMoreTokens() ) {
-                out.write( st.nextToken() );
-                out.write( ',' );
-                count++;
-                if( (count % 10) == 0 ) {
-                    out.write( "<br>" );
+                // split the params and display 10 per lines.
+                StringTokenizer st = new StringTokenizer( params, "," );
+                int count = 0;
+                while( st.hasMoreTokens() ) {
+                    out.write( st.nextToken() );
+                    out.write( ',' );
+                    count++;
+                    if( (count % 10) == 0 ) {
+                        out.write( "<br>" );
+                    }
                 }
-            }
 
-        } else {
-            out.write( params );
+            } else {
+                out.write( params );
+            }
         }
 
     %>

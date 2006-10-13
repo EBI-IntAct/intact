@@ -43,7 +43,7 @@ public class SimpleResultAction extends AbstractResultAction {
     @Override
     protected String processResults(HttpServletRequest request, String helpLink) {
 
-        logger.info("enter simple action");
+        logger.debug("enter simple action");
 
         HttpSession session = super.getSession(request);
 
@@ -53,7 +53,7 @@ public class SimpleResultAction extends AbstractResultAction {
         //get the search results from the request
         Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) request.getAttribute(SearchConstants.SEARCH_RESULTS);
 
-        logger.info("SimpleAction: Collection contains " + results.size() + " items.");
+        logger.debug("SimpleAction: Collection contains " + results.size() + " items.");
 
         String contextPath = request.getContextPath();
         //build the URL for searches and pass to the view beans

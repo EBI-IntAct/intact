@@ -18,7 +18,13 @@
 
 <%
     // get the search query 
-    String info = (String) session.getAttribute( SearchConstants.SEARCH_CRITERIA );
+    String info = null;
+    Object obj = session.getAttribute( SearchConstants.SEARCH_CRITERIA );
+
+    if (obj != null)
+    {
+        info = obj.toString();
+    }
 
 %>
 
@@ -26,14 +32,16 @@
     <span class="middletext">Search Results: No Matches!  <br></span
 
 <h3>Sorry - could not find any Interactor, Interaction, Experiment, or CvObject
-  by trying to match  <font color="red"> <%= info.substring(info.indexOf('=') + 1) %> </font> with: </h3>
+  by trying to match  <font color="red"> <%= info.substring(info.indexOf('=') + 1) %> </font></h3>
 
+  <!--
   <ul>
       <li>AC,
       <li>short label,
       <li>xref Primary ID or
       <li>a full name.
   </ul>
+  -->
 
   <h3>Please try again!</h3>
 

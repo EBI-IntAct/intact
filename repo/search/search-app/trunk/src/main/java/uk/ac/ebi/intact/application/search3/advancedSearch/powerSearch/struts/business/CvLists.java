@@ -6,6 +6,8 @@
 package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.util.AnnotationFilter;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.view.bean.CvBean;
 import uk.ac.ebi.intact.application.search3.business.Constants;
@@ -32,7 +34,7 @@ public class CvLists {
     /**
      * Logger for that class.
      */
-    private static Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
+    private static final Log logger = LogFactory.getLog(CvLists.class);
 
     // collection holding per CvDatabase object one CvBean
     private Collection<CvBean> cvDatabase = null;
@@ -48,6 +50,12 @@ public class CvLists {
 
     // collection holding per CvIdentification object one CvBean
     private Collection<CvBean> cvIdentification = null;
+
+    public static final String NO_CV_INTERACTION_SELECTED = "-no CvInteraction-";
+    public static final String NO_CV_INTERACTION_TYPE_SELECTED = "-no CvInteractionType-";
+    public static final String ALL_TOPICS_SELECTED = "-all topics-";
+    public static final String ALL_DATABASES_SELECTED = "-all databases-";
+    public static final String NO_CV_IDENTIFICATION_SELECTED = "-no CvIdentification-";
 
 
     public CvLists() {
@@ -94,7 +102,7 @@ public class CvLists {
         logger.info( "in initCVDatabaseList" );
         this.cvDatabase = new ArrayList<CvBean>();
         // add an empty CV bean for the default case
-        CvBean emptyBean = new CvBean( null, "-all databases-", "all databases selected" );
+        CvBean emptyBean = new CvBean( null, ALL_DATABASES_SELECTED, "all databases selected" );
         this.cvDatabase.add( emptyBean );
 
         addMenuListItem( CvDatabase.class, this.cvDatabase );
@@ -140,7 +148,7 @@ public class CvLists {
 
         this.cvTopic = new ArrayList<CvBean>();
         // add an empty CV bean for the default case
-        CvBean emptyBean = new CvBean( null, "-all topics-", "all topics selected" );
+        CvBean emptyBean = new CvBean( null, ALL_TOPICS_SELECTED, "all topics selected" );
         this.cvTopic.add( emptyBean );
 
         List<CvTopic> cvTopics = IntactContext.getCurrentInstance()
@@ -180,7 +188,7 @@ public class CvLists {
 
         this.cvInteraction = new ArrayList<CvBean>();
         // add an empty CV bean for the default case
-        CvBean emptyBean = new CvBean( null, "-no CvInteraction-", "no interaction selected" );
+        CvBean emptyBean = new CvBean( null, NO_CV_INTERACTION_SELECTED, "no interaction selected" );
         this.cvInteraction.add( emptyBean );
 
         addMenuListItem( CvInteraction.class, this.cvInteraction );
@@ -208,7 +216,7 @@ public class CvLists {
 
         this.cvInteractionType = new ArrayList<CvBean>();
         // add an empty CV bean for the default case
-        CvBean emptyBean = new CvBean( null, "-no CvInteractionType-", "no CvInteractionType selected" );
+        CvBean emptyBean = new CvBean( null, NO_CV_INTERACTION_TYPE_SELECTED, "no CvInteractionType selected" );
         this.cvInteractionType.add( emptyBean );
 
         // sort the list by shortlabel
@@ -234,7 +242,7 @@ public class CvLists {
 
         this.cvIdentification = new ArrayList<CvBean>();
         // add an empty CV bean for the default case
-        CvBean emptyBean = new CvBean( null, "-no CvIdentification-", "no identification selected" );
+        CvBean emptyBean = new CvBean( null, NO_CV_IDENTIFICATION_SELECTED, "no identification selected" );
         this.cvIdentification.add( emptyBean );
 
         addMenuListItem( CvIdentification.class, this.cvIdentification );

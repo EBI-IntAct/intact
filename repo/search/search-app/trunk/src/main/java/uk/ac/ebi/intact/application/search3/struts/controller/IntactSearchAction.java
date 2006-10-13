@@ -2,22 +2,38 @@ package uk.ac.ebi.intact.application.search3.struts.controller;
 
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.SearchableDao;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionForm;
+
+import java.util.List;
+import java.util.Collection;
+import java.util.Map;
+import java.io.IOException;
 
 /**
  * Abstraction of the IntactBaseAction. Gives access to the IntActUser.
  *
  * @author Michael Kleen
- * @version SearchBaseAction.java Date: Feb 17, 2005 Time: 4:13:44 PM
+ * @version IntactSearchAction.java Date: Feb 17, 2005 Time: 4:13:44 PM
  */
-public abstract class SearchBaseAction extends IntactBaseAction {
-
-    private static final Log log = LogFactory.getLog(SearchBaseAction.class);
+public abstract class IntactSearchAction extends IntactBaseAction {
 
     private HttpServletRequest myRequest;
 
@@ -61,4 +77,5 @@ public abstract class SearchBaseAction extends IntactBaseAction {
         String searchURL = contextPath.concat( appPath );
         return searchURL;
     }
+
 }
