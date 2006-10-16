@@ -54,8 +54,8 @@ public class CvContextTest extends TestCase {
     }
 
     public void testGetByMiRef() throws Exception {
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.UNIPROT_MI_REF).getShortLabel());
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.UNIPROT_MI_REF).getShortLabel());
+        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF).getShortLabel());
+        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF).getShortLabel());
     }
 
     public static Test suite() {

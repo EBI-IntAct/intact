@@ -166,8 +166,8 @@ public abstract class UpdateProteinsI {
              * Load CVs
              */
 
-            sgdDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.SGD_MI_REF ); // sgd
-            uniprotDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.UNIPROT_MI_REF ); // uniprot
+            sgdDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.SGD_MI_REF ); // sgd
+            uniprotDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.UNIPROT_MI_REF ); // uniprot
 
             // search for the SRS link.
             Collection<Annotation> annotations = uniprotDatabase.getAnnotations();
@@ -202,29 +202,29 @@ public abstract class UpdateProteinsI {
                 throw new UpdateException( msg );
             }
 
-            intactDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.INTACT_MI_REF );
-            goDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.GO_MI_REF );
-            interproDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.INTERPRO_MI_REF );
-            flybaseDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.FLYBASE_MI_REF );
-            reactomeDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.REACTOME_PROTEIN_PSI_REF );
-            hugeDatabase = (CvDatabase) cvContext.getByMiRef( CvDatabase.HUGE_MI_REF );
+            intactDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.INTACT_MI_REF );
+            goDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.GO_MI_REF );
+            interproDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.INTERPRO_MI_REF );
+            flybaseDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.FLYBASE_MI_REF );
+            reactomeDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF );
+            hugeDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.HUGE_MI_REF );
 
-            identityXrefQualifier = (CvXrefQualifier) cvContext.getByMiRef( CvXrefQualifier.IDENTITY_MI_REF );
-            secondaryXrefQualifier = (CvXrefQualifier) cvContext.getByMiRef( CvXrefQualifier.SECONDARY_AC_MI_REF );
-            isoFormParentXrefQualifier = (CvXrefQualifier) cvContext.getByMiRef( CvXrefQualifier.ISOFORM_PARENT_MI_REF );
+            identityXrefQualifier =  cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+            secondaryXrefQualifier = cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF );
+            isoFormParentXrefQualifier = cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF );
 
             // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = (CvTopic) cvContext.getByLabel( CvTopic.class, CvTopic.ISOFORM_COMMENT );
-            noUniprotUpdate = (CvTopic) cvContext.getByLabel( CvTopic.class, CvTopic.NON_UNIPROT);
+            isoformComment = cvContext.getByLabel( CvTopic.class, CvTopic.ISOFORM_COMMENT );
+            noUniprotUpdate = cvContext.getByLabel( CvTopic.class, CvTopic.NON_UNIPROT);
 
 
-            geneNameAliasType = (CvAliasType) cvContext.getByMiRef( CvAliasType.GENE_NAME_MI_REF );
-            geneNameSynonymAliasType = (CvAliasType) cvContext.getByMiRef( CvAliasType.GENE_NAME_SYNONYM_MI_REF );
-            isoformSynonym = (CvAliasType) cvContext.getByMiRef( CvAliasType.ISOFORM_SYNONYM_MI_REF );
-            locusNameAliasType = (CvAliasType) cvContext.getByMiRef( CvAliasType.LOCUS_NAME_MI_REF );
-            orfNameAliasType = (CvAliasType) cvContext.getByMiRef( CvAliasType.ORF_NAME_MI_REF );
+            geneNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.GENE_NAME_MI_REF );
+            geneNameSynonymAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF );
+            isoformSynonym = cvContext.getByMiRef( CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF );
+            locusNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF );
+            orfNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.ORF_NAME_MI_REF );
 
-            proteinType = (CvInteractorType) cvContext.getByMiRef( CvInteractorType.getProteinMI() );
+            proteinType = (CvInteractorType) cvContext.getByMiRef( CvInteractorType.class, CvInteractorType.getProteinMI() );
 
 
     }

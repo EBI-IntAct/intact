@@ -319,7 +319,7 @@ public class LineExport {
         CvObject cv = null;
 
         if( mi != null ) {
-            cv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(mi);
+            cv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(clazz, mi);
             if( cv == null ) {
                 log.error( "The MI reference you gave doesn't exists. Using the shortlabel instead." );
             }
@@ -398,8 +398,8 @@ public class LineExport {
 
         Collection<InteractorXref> xrefs = protein.getXrefs();
 
-        CvDatabase uniprotCv = (CvDatabase) IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF);
-        CvXrefQualifier identityCv = (CvXrefQualifier) IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF);
+        CvDatabase uniprotCv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identityCv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
 
         for ( InteractorXref xref : xrefs ) {
             if ( uniprotCv.equals( xref.getCvDatabase() ) &&
@@ -433,8 +433,8 @@ public class LineExport {
         for ( Iterator<InteractorXref> iterator = xrefs.iterator(); iterator.hasNext() && !found; ) {
             Xref xref = iterator.next();
 
-            if ( getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF).equals( xref.getCvDatabase() ) &&
-                 getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
+            if ( getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF).equals( xref.getCvDatabase() ) &&
+                 getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
                 ac = xref.getPrimaryId();
                 found = true;
             }
@@ -1024,17 +1024,17 @@ public class LineExport {
         }
 
         // look first for gene-name
-        List<Alias> geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.GENE_NAME_MI_REF));
+        List<Alias> geneNames = selectAliasByCvTopic( queryProtein.getAliases(), getCvContext().getByMiRef(CvAliasType.class, CvAliasType.GENE_NAME_MI_REF));
 
         if ( geneNames.isEmpty() ) {
 
             // then look for locus
-            geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.LOCUS_NAME_MI_REF) );
+            geneNames = selectAliasByCvTopic( queryProtein.getAliases(), getCvContext().getByMiRef(CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF) );
 
             if ( geneNames.isEmpty() ) {
 
                 // then look for orf
-                geneNames = selectAliasByCvTopic( queryProtein.getAliases(), (CvAliasType) getCvContext().getByMiRef(CvAliasType.ORF_NAME_MI_REF) );
+                geneNames = selectAliasByCvTopic( queryProtein.getAliases(), getCvContext().getByMiRef(CvAliasType.class, CvAliasType.ORF_NAME_MI_REF) );
 
                 if ( geneNames.isEmpty() ) {
 

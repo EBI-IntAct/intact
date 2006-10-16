@@ -138,7 +138,7 @@ public class DRLineExport extends LineExport {
                     for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !annotationFound; ) {
                         final Annotation annotation = (Annotation) iterator3.next();
 
-                        CvTopic authorConfidenceTopic = (CvTopic) getCvContext().getByMiRef(CvTopic.AUTHOR_CONFIDENCE_MI_REF);
+                        CvTopic authorConfidenceTopic = getCvContext().getByMiRef(CvTopic.class, CvTopic.AUTHOR_CONFIDENCE_MI_REF);
 
                         if ( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                             String text = annotation.getAnnotationText();
@@ -425,7 +425,7 @@ public class DRLineExport extends LineExport {
                     for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !found; ) {
                         final Annotation annotation = (Annotation) iterator3.next();
 
-                        CvTopic authorConfidenceTopic = (CvTopic) getCvContext().getByMiRef(CvTopic.AUTHOR_CONFIDENCE_MI_REF);
+                        CvTopic authorConfidenceTopic = getCvContext().getByMiRef(CvTopic.class, CvTopic.AUTHOR_CONFIDENCE_MI_REF);
 
                         if ( authorConfidenceTopic.equals( annotation.getCvTopic() ) ) {
                             String text = annotation.getAnnotationText();
