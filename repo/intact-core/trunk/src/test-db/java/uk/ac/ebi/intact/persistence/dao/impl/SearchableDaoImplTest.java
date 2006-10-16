@@ -48,7 +48,7 @@ public class SearchableDaoImplTest extends TestCase
     public void testCountByQuery_ac() throws Exception
     {
         SearchableQuery query = new SearchableQuery();
-        query.setAcs(new String[] {"EBI-12345"});
+        query.setAc("EBI-12345");
 
         int count = dao.countByQuery(InteractorImpl.class, query);
         assertEquals(1, count);
@@ -99,6 +99,32 @@ public class SearchableDaoImplTest extends TestCase
         List<? extends Searchable> results = dao.getByQuery(ProteinImpl.class, query, 0, 50);
 
         assertEquals(24, results.size());
+    }
+
+    public void testGetByQuery_experiments_standard_disjunction() throws Exception
+    {
+        String search = "bruno%";
+
+        SearchableQuery query = new SearchableQuery();
+        query.setShortLabel(search);
+        query.setDescription(search);
+        query.setXref(search);
+        query.setAc(search);
+        query.setDisjunction(true);
+
+        List<? extends Searchable> results = dao.getByQuery(Experiment.class, query, 0, 50);
+
+        for (Searchable searchable : results)
+        {
+            System.out.println(((AnnotatedObject)searchable).getAc());
+        }
+          /*
+        List<String> acs = dao.getAcsByQuery(Experiment.class, query, 0, 50);
+
+        for (String ac : acs)
+        {
+            System.out.println(ac);
+        }    */
     }
 
     public void testGetByQuery_std() throws Exception

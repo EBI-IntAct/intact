@@ -15,6 +15,9 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query;
 
+import org.apache.commons.beanutils.BeanUtils;
+import uk.ac.ebi.intact.business.IntactException;
+
 import java.io.Serializable;
 
 /**
@@ -238,7 +241,7 @@ public class SearchableQuery implements Serializable
     {
         if (value != null && value.toString().length() > 0)
         {
-            sb.append(prop+"='").append(value).append('\'').append(",");
+            sb.append(prop+"='").append(value).append('\'').append(";");
         }
     }
 
@@ -342,4 +345,78 @@ public class SearchableQuery implements Serializable
         result = 31 * result + (disjunction ? 1 : 0);
         return result;
     }
+
+
+    /**
+     * Create a <code>SearchableQuery</code> from a String. Using a regex pattern, gets the properties
+     * and values from the expression and creates the query object using reflection
+     */
+    public static SearchableQuery paseSearchableQuery(String searchableQueryStr)
+    {
+        if (!isSearchableQuery(searchableQueryStr))
+        {
+            throw new IntactException("Not a parseable SearchableQuery: "+searchableQueryStr);
+        }
+
+        SearchableQuery query = new SearchableQuery();
+
+        searchableQueryStr = searchableQueryStr.substring(1, searchableQueryStr.length()-1);
+
+        String[] tokens = searchableQueryStr.split(";");
+
+        for (String token : tokens)
+        {
+            String[] propAndValue = token.split("=");
+
+            String propName = propAndValue[0];
+
+            String propValue = propAndValue[1];
+
+            // remove quotes if needed
+            if (propValue.startsWith("'") && propValue.endsWith("'"))
+            {
+                propValue = propValue.substring(1,propValue.length()-1);
+            }
+
+             // check if the value is a boolean
+            try
+            {
+                if (propValue.equals(Boolean.TRUE.toString()) || propValue.equals(Boolean.FALSE.toString()))
+                {
+                    addPropertyWithReflection(query, propName, Boolean.valueOf(propValue));
+                }
+                else
+                {
+                    addPropertyWithReflection(query, propName, propValue);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new IntactException("Exception parsing SearchQuery from String: "+searchableQueryStr);
+            }
+        }
+
+        return query;
+    }
+
+    private static void addPropertyWithReflection(SearchableQuery query, String propName, Object value)
+            throws Exception
+    {
+        BeanUtils.setProperty(query, propName, value);
+    }
+
+    public static boolean isSearchableQuery(String searchableQueryStr)
+    {
+        if (searchableQueryStr == null)
+        {
+            return false;
+        }
+
+        searchableQueryStr = searchableQueryStr.trim();
+
+        return searchableQueryStr.startsWith("{") && searchableQueryStr.endsWith("}");
+    }
+
+
+
 }
