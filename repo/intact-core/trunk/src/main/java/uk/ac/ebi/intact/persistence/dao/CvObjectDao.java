@@ -22,4 +22,6 @@ public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
     List<T> getByObjClass(Class[] objClasses);
 
     <T extends CvObject> T getByShortLabel(Class<T> cvType, String label);
+
+    <T extends CvObject> T getByPrimaryId(Class<T> cvType, String miRef);
 }
