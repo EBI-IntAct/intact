@@ -12,9 +12,7 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean,
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Iterator"%>
 
 

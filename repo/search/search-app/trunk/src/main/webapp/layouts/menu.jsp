@@ -1,7 +1,6 @@
 <%@ taglib uri="http://struts.apache.org/tags-logic" prefix="logic" %>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>
-<%@ page import="java.util.Iterator" %>
 
 <%-- Menu Layout
   This layout render a menu with links.
@@ -38,7 +37,7 @@
         <%  // Add server url if link start with "/"
             String link = item.getLink();
             if (link.startsWith("/")) {
-                // remove the application name from the path
+                // remove the webapp name from the path
                 link = serverPath.substring (0, serverPath.lastIndexOf('/')) + link;
             }
         %>

@@ -1,5 +1,5 @@
 <%@ page language="java" %>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html" %>
 <%@ taglib uri="http://struts.apache.org/tags-tiles" prefix="tiles" %>

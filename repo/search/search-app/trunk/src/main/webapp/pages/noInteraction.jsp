@@ -2,8 +2,7 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.controller.SearchAction,
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Collection,
                  java.util.Iterator"%>
  <%--

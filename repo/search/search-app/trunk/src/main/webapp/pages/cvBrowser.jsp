@@ -1,5 +1,4 @@
-<%@ page import="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.Constants,
-                 uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.ImageBean"%><html><head>
+<%@ page import="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.Constants"%><html><head>
 <%@ taglib uri="http://ebi.ac.uk/intact/advanced-search" prefix="advancedSearch" %>
 
 <html:html>

@@ -102,7 +102,7 @@ Query     _________       ____________      |     _________      _____________
 
         <!-- Process when user clicks on the logo to enter the application. -->
         <action path="/welcome"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.WelcomeAction"
                 scope="request">
             <forward name="success" path="search.layout"/>
             <forward name="noResource" path="no.resource.layout"/>
@@ -111,7 +111,7 @@ Query     _________       ____________      |     _________      _____________
 
         <!-- Process when user accesses search via HierarchView application -->
         <action path="/hvWelcome"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.WelcomeAction"
                 scope="request">
             <forward name="success" path="/do/search"/>
         </action>
@@ -125,7 +125,7 @@ Query     _________       ____________      |     _________      _____________
 
         <action path="/search"
                 name="sidebarForm"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.NewSearchAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.NewSearchAction"
                 scope="request">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -140,7 +140,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- Process a user the forward to the secific view site -->
 
         <action path="/dispatcher"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.DispatcherAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.DispatcherAction"
                 scope="session">
             <forward name="sessionLost" path="/do/welcome"/>
             <forward name="single" path="/do/single"/>
@@ -155,7 +155,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- Process when user accesses search via a pairwise query -->
 
         <action path="/pairwise"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.WelcomeAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.WelcomeAction"
                 scope="request">
             <forward name="success" path="/do/search"/>
         </action>
@@ -163,7 +163,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- Process when user accesses search via a pairwise query -->
 
         <action path="/single"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.SingleResultAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.SingleResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="singleInteractor" path="singleInteractor.layout"/>
@@ -173,7 +173,7 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/binary"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryResultAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.BinaryResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -181,7 +181,7 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/simple"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.SimpleResultAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.SimpleResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -189,7 +189,7 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/binaryInteractor"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.BinaryProteinAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.BinaryProteinAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>    <!-- IT DOESN'T SEEM TO BE USED -->
             <forward name="noInteractions" path="no.interactions.layout"/>
@@ -199,7 +199,7 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/details"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.DetailsResultAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.DetailsResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -209,7 +209,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- ========== Error Actions ================================== -->
 
         <action path="/tooLarge"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.TooLargeAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.TooLargeAction"
                 scope="session">
             <forward name="results" path="too.large.layout"/>
         </action>
@@ -219,7 +219,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- Entrance of the advanced search application -->
 
         <action path="/initAdvSearch"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.InitAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.InitAction"
                 scope="session">
 
             <forward name="success" path="adv.search.layout"/>
@@ -229,7 +229,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- Processes the advanced search-->
 
         <action path="/advsearch"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvancedSearchAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvancedSearchAction"
                 name="advancedForm"
                 validate="true"
                 scope="request">
@@ -254,7 +254,7 @@ Query     _________       ____________      |     _________      _____________
         <!-- dispatcher for the advanced search-->
 
         <action path="/advDispatcher"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvDispatcherAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvDispatcherAction"
                 scope="session">
             <forward name="sessionLost" path="/do/welcome"/>
             <forward name="single" path="/do/single"/>
@@ -265,7 +265,7 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/advSimple"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvSimpleResultAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvSimpleResultAction"
                 scope="session">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>
@@ -273,13 +273,13 @@ Query     _________       ____________      |     _________      _____________
         </action>
 
         <action path="/advTooLarge"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.AdvTooLargeAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvTooLargeAction"
                 scope="session">
             <forward name="results" path="adv.too.large.layout"/>
         </action>
 
         <action path="/showGraph"
-                type="uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
+                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
                 name="advancedForm"
                 scope="session">
             <forward name="showCvDag" path="/pages/cvBrowser.jsp"/>
@@ -288,7 +288,7 @@ Query     _________       ____________      |     _________      _____________
         <!--  InterProSearchAction -->
 
         <action path="/interProSearch"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.InterProSearchAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.InterProSearchAction"
                 scope="request">
             <forward name="waiting_page" path="waiting.page.layout"/>
         </action>
@@ -296,7 +296,7 @@ Query     _________       ____________      |     _________      _____________
         <!--  WaitingInterProSearchAction -->
 
         <action path="/waitingInterProSearch"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.WaitingInterProSearchAction"
+                type="uk.ac.ebi.intact.webapp.search.struts.controller.WaitingInterProSearchAction"
                 scope="request">
             <forward name="waiting_page" path="waiting.page.layout"/>
         </action>

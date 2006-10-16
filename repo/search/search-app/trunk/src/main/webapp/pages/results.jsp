@@ -9,16 +9,13 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.AbstractViewBean,
-                 uk.ac.ebi.intact.model.Protein"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
+                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
+                 java.util.StringTokenizer"%>
 
-<!-- Import util classes -->
-<%@ page import="java.util.*"%>
- <%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
- <%@ page import="uk.ac.ebi.intact.application.commons.util.*"%>
+ <!-- Import util classes -->
 
-<%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
+ <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/c.tld" prefix="c"%>
 

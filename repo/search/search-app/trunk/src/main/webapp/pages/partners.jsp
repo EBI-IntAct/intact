@@ -16,17 +16,14 @@
 <%@ page autoFlush="true" %>
 
 <!-- Intact classes needed -->
-<%@ page import="uk.ac.ebi.intact.application.commons.util.UrlUtil,
-                 uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView"%>
+<%@ page import="uk.ac.ebi.intact.searchengine.SearchClass,
+                 uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersViewBean,
+                 java.util.Collection"%>
 
 <!-- Standard Java classes -->
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean"%>
-<%@ page import="uk.ac.ebi.intact.searchengine.SearchClass"%>
-<%@ page import="java.util.Collection"%>
-<%@ page import="java.util.Iterator" %>
-<%@ page import="java.util.List" %>
+<%@ page import="java.util.Iterator"%>
+<%@ page import="java.util.List"%>
 
 <!-- may make use of these later to tidy up the JSP a little -->
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>

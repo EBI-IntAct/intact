@@ -1,5 +1,5 @@
-<%@ page import="uk.ac.ebi.intact.application.search3.SearchWebappContext" %>
 <%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
 <!--
 Renders a pagination table for the data shown. The attribute SearchConstants.TOTAL_RESULTS_ATT_NAME
 has to be already in request scope, so the paginator knows which is the total results and can
