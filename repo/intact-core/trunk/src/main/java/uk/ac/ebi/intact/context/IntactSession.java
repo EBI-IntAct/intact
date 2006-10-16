@@ -22,7 +22,7 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>04/08/2006</pre>
  */
-public abstract class IntactSession implements Serializable
+public abstract class IntactSession
 {
     private static final String DEFAULT_PROP_FILE = "/intact.properties";
 
