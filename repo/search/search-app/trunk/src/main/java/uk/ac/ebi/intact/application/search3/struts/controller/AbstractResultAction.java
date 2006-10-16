@@ -69,7 +69,7 @@ public abstract class AbstractResultAction extends IntactSearchAction
         }
 
         //use the procesRequest method instead....
-        return mapping.findForward( processResults( request, user.getHelpLink() ) );
+        return mapping.findForward( processResults( request ) );
 
     }
 
@@ -84,5 +84,5 @@ public abstract class AbstractResultAction extends IntactSearchAction
      *
      * @return String the forward code for the parent execute method to return.
      */
-    protected abstract String processResults( HttpServletRequest request, String helpLink );
+    protected abstract String processResults( HttpServletRequest request );
 }

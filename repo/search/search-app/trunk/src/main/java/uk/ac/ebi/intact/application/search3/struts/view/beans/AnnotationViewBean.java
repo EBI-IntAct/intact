@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 
 /**
@@ -16,21 +15,14 @@ public class AnnotationViewBean {
      */
     private final Annotation anAnnotation;
 
-    /**
-     * A search URL.
-     */
-    private final String searchURL;
-
 
     /**
      * Constructs an AnnotationViewBean object.
      *
      * @param anAnnotation an Annotation object
-     * @param searchURL    a String ...
      */
-    public AnnotationViewBean( final Annotation anAnnotation, final String searchURL ) {
+    public AnnotationViewBean( final Annotation anAnnotation ) {
         this.anAnnotation = anAnnotation;
-        this.searchURL = searchURL;
     }
 
     /**
@@ -53,15 +45,6 @@ public class AnnotationViewBean {
     }
 
     /**
-     * Returns the search url value.
-     *
-     * @return a String representing the search url value
-     */
-    public String getSearchUrl() {
-        return this.searchURL;
-    }
-
-    /**
      * Returns the object value.
      *
      * @return an Annotation object representing the object value
@@ -70,24 +53,4 @@ public class AnnotationViewBean {
         return this.anAnnotation;
     }
 
-    /**
-     * Returns the type of the given object.
-     *
-     * @param anAnnotatedObject the object of which we want to know the name.
-     *
-     * @return a nice name for the given object.
-     */
-    private String getIntactType( final AnnotatedObject anAnnotatedObject ) {
-
-        final String objectIntactType;
-        final String className = anAnnotatedObject.getClass().getName();
-        final String basicType = className.substring( className.lastIndexOf( "." ) + 1 );
-
-        objectIntactType = ( ( basicType.indexOf( "Impl" ) == -1 ) ?
-                             basicType : basicType.substring( 0, basicType.indexOf( "Impl" ) ) );
-
-
-        return objectIntactType;
-
-    }
-}
+ }

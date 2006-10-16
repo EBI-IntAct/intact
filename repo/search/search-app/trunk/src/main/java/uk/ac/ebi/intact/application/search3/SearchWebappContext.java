@@ -24,7 +24,6 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -34,22 +33,21 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>12-Oct-2006</pre>
  */
-public class SearchWebappContext implements Serializable
+public class SearchWebappContext
 {
     private static final Log log = LogFactory.getLog(SearchWebappContext.class);
-
-    private static final String SEARCH_ATT_NAME = "uk.ac.ebi.intact.search.internal.SEARCH_WEBAPP_CONTEXT";
 
     private static final String SEARCHABLE_QUERY_ATT_NAME = "uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY";
     private static final String RESULTS_INFO_ATT_NAME = "uk.ac.ebi.intact.search.internal.RESULTS_INFO";
     private static final String TOTAL_RESULTS_ATT_NAME = "uk.ac.ebi.intact.search.internal.TOTAL_RESULTS";
-    private static final String CURRENT_PAGE = "uk.ac.ebi.intact.search.internal.CURRENT_PAGE";
+    private static final String CURRENT_PAGE_ATT_NAME = "uk.ac.ebi.intact.search.internal.CURRENT_PAGE_ATT_NAME";
     private static final String IS_PAGINATED_SEARCH_ATT_NAME = "uk.ac.ebi.intact.search.internal.PAGINATED_SEARCH";
     private static final String RESULTS_PER_PAGE = "uk.ac.ebi.intact.search.internal.RESULTS_PER_PAGE";
 
     private IntactSession session;
 
     private String helpLink;
+    private String searchUrl;
 
     private SearchWebappContext()
     {
@@ -62,12 +60,12 @@ public class SearchWebappContext implements Serializable
 
     public static SearchWebappContext getCurrentInstance(IntactContext context)
     {
-        SearchWebappContext swc = (SearchWebappContext) context.getSession().getAttribute(SEARCH_ATT_NAME);
+        SearchWebappContext swc = currentInstance.get();
 
         if (swc == null)
         {
             swc = new SearchWebappContext();
-            context.getSession().setAttribute(SEARCH_ATT_NAME, swc);
+            currentInstance.set(swc);
         }
 
         swc.setSession(context.getSession());
@@ -75,7 +73,15 @@ public class SearchWebappContext implements Serializable
         return swc;
     }
 
-    public SearchableQuery getSearchablequery()
+    private static ThreadLocal<SearchWebappContext> currentInstance = new ThreadLocal<SearchWebappContext>()
+    {
+        protected SearchWebappContext initialValue()
+        {
+            return null;
+        }
+    };
+
+    public SearchableQuery getCurrentSearch()
     {
         return (SearchableQuery) session.getRequestAttribute(SEARCHABLE_QUERY_ATT_NAME);
     }
@@ -127,26 +133,33 @@ public class SearchWebappContext implements Serializable
 
     public Integer getCurrentPage()
     {
-        Integer page = (Integer) session.getRequestAttribute(CURRENT_PAGE);
+        Integer page = (Integer) session.getRequestAttribute(CURRENT_PAGE_ATT_NAME);
 
         if (page == null)
         {
             log.debug("Current page is null. Setting to 0");
-            page = Integer.valueOf(0);
+            page = 0;
         }
 
-        return 0;
+        return page;
     }
 
     public void setCurrentPage(Integer currentPage)
     {
         log.debug("Current page set to: "+currentPage);
-        session.setRequestAttribute(CURRENT_PAGE, currentPage);
+        session.setRequestAttribute(CURRENT_PAGE_ATT_NAME, currentPage);
     }
 
     public Boolean isPaginatedSearch()
     {
-        return (Boolean) session.getRequestAttribute(IS_PAGINATED_SEARCH_ATT_NAME);
+        Boolean isPaginated = (Boolean) session.getRequestAttribute(IS_PAGINATED_SEARCH_ATT_NAME);
+
+        if (isPaginated == null)
+        {
+            isPaginated = false;
+        }
+
+        return isPaginated;
     }
 
     public void setPaginatedSearch(Boolean paginatedSearch)
@@ -166,7 +179,23 @@ public class SearchWebappContext implements Serializable
         //build the help link out of the context path - strip off the 'search' bit...
         String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(((WebappSession)session).getRequest());
 
-        return absPathWithoutContext.concat(relativeHelpLink);
+        helpLink = absPathWithoutContext.concat(relativeHelpLink);
+
+        return helpLink;
+    }
+
+    public String getSearchUrl()
+    {
+        if (searchUrl != null)
+        {
+            return searchUrl;
+        }
+
+        String appPath = session.getInitParam(SearchEnvironment.SEARCH_LINK);
+
+        searchUrl = ((WebappSession)session).getRequest().getContextPath().concat(appPath);
+
+        return searchUrl;
     }
 
     public Integer getMaxResultsPerPage()

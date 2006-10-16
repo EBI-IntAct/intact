@@ -42,10 +42,18 @@
         <description>
             Number of results shown per page, by default
         </description>
-    </context-param>      uk.ac.ebi.intact.search.HELP_LINK
+    </context-param>
 
     <context-param>
         <param-name>uk.ac.ebi.intact.search.HELP_LINK</param-name>
+        <param-value>site/displayDoc.jsp?section=</param-value>
+        <description>
+            The help link (relative to intact root)
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.SEARCH_LINK</param-name>
         <param-value>/do/search?searchString=</param-value>
         <description>
             The search link (relative to context root)

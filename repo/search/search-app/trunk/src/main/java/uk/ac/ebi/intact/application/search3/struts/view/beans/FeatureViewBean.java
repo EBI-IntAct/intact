@@ -52,12 +52,9 @@ public class FeatureViewBean extends AbstractViewBean {
      * Constructor. Takes a Feature that relates to an Interaction, and wraps the beans for it.
      *
      * @param feature     The Feature we are interested in
-     * @param link        The link to help pages
-     * @param searchURL   The standard search URL
-     * @param contextPath The platform context path for the application
      */
-    public FeatureViewBean( Feature feature, String link, String searchURL, String contextPath ) {
-        super( link, contextPath );
+    public FeatureViewBean( Feature feature ) {
+        super( );
         this.searchURL = searchURL;
         this.feature = feature;
         dbUrls = new HashMap<CvObject, String>();
@@ -114,8 +111,7 @@ public class FeatureViewBean extends AbstractViewBean {
      */
     public FeatureViewBean getBoundFeatureView() {
         if ( feature.getBoundDomain() != null ) {
-            return new FeatureViewBean( feature.getBoundDomain(),
-                                        getHelpLink(), searchURL, getContextPath() );
+            return new FeatureViewBean( feature.getBoundDomain() );
         }
         return null;
     }

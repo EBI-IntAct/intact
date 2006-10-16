@@ -7,13 +7,14 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -51,7 +52,7 @@ public class PartnersView extends AbstractView
      */
     private List<PartnersViewBean> interactionPartners;
 
-    public PartnersView(HttpServletRequest request, Interactor interactor, String helpLink, String searchUrl)
+    public PartnersView(HttpServletRequest request, Interactor interactor)
     {
         super(request);
         this.interactor = interactor;
@@ -94,7 +95,7 @@ public class PartnersView extends AbstractView
         }
 
         // Creates the main interactor PartnersViewBean
-        interactorCandidate = createPartnersViewBean(interactor, true, helpLink, searchUrl, request.getContextPath(), interactionAcsForMainInteractor);
+        interactorCandidate = createPartnersViewBean(interactor, true, interactionAcsForMainInteractor);
 
         // We iterate through the map to retrieve all the partners, with their interaction ACs,
         // and create a PArtnerViewBean with each entry
@@ -108,16 +109,16 @@ public class PartnersView extends AbstractView
             {
                 // We retrieve each interactor from the database, to create the bean
                 Interactor partnerInteractor = getDaoFactory().getInteractorDao().getByAc(partnerInteractorAc);
-                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, helpLink, searchUrl, request.getContextPath(), entry.getValue());
+                PartnersViewBean bean = createPartnersViewBean(partnerInteractor, false, entry.getValue());
                 interactionPartners.add(bean);
             }
         }
 
     }
 
-    private PartnersViewBean createPartnersViewBean(Interactor interactor, boolean mainInteractor, String helpLink, String searchUrl, String contextPath, Collection<String> interactionAcs)
+    private PartnersViewBean createPartnersViewBean(Interactor interactor, boolean mainInteractor, Collection<String> interactionAcs)
     {
-         PartnersViewBean bean = new PartnersViewBean(interactor,helpLink, contextPath);
+         PartnersViewBean bean = new PartnersViewBean(interactor);
 
         // Bean creation
         List<String> geneNames = getDaoFactory().getInteractorDao().getGeneNamesByInteractorAc(interactor.getAc());
@@ -127,9 +128,9 @@ public class PartnersView extends AbstractView
         bean.setNumberOfInteractions(interactionAcs.size());
         bean.setUniprotAc(getUniprotAc(interactor));
         bean.setIdentityXrefURL(getIdentityXrefUrl(interactor));
-        bean.setInteractorSearchURL(getInteractorSearchURL(searchUrl, interactor));
-        bean.setInteractorPartnerUrl(getInteractorPartnerURL(searchUrl, interactor));
-        bean.setInteractionsSearchURL(getInteractionsSearchURL(searchUrl, interactionAcs));
+        bean.setInteractorSearchURL(getInteractorSearchURL(interactor));
+        bean.setInteractorPartnerUrl(getInteractorPartnerURL(interactor));
+        bean.setInteractionsSearchURL(getInteractionsSearchURL(interactionAcs));
 
         return bean;
     }
@@ -174,7 +175,7 @@ public class PartnersView extends AbstractView
      *
      * @return String The complete search URL to perform a (possibly multiple) search for this Protein's Interactions
      */
-    private String getInteractionsSearchURL(String searchUrl, Collection<String> interactionAcs) {
+    private String getInteractionsSearchURL(Collection<String> interactionAcs) {
 
         String interactionSearchURL = "";
 
@@ -187,13 +188,15 @@ public class PartnersView extends AbstractView
                 sb.append( "," );
             }
 
-            interactionSearchURL = searchUrl + sb.toString();
+            interactionSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + sb.toString();
         }
         return interactionSearchURL;
     }
 
 
-    private String getInteractorSearchURL(String searchUrl, Interactor interactor) {
+    private String getInteractorSearchURL(Interactor interactor) {
+        String searchUrl = SearchWebappContext.getCurrentInstance().getSearchUrl();
+
         if( interactor instanceof Protein ) {
             return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass=Protein&amp;view=single" +
                    "&filter=ac";
@@ -203,7 +206,9 @@ public class PartnersView extends AbstractView
 
     }
 
-    private String getInteractorPartnerURL(String searchUrl, Interactor interactor) {
+    private String getInteractorPartnerURL(Interactor interactor) {
+        String searchUrl = SearchWebappContext.getCurrentInstance().getSearchUrl();
+
         if (interactor instanceof Protein)
         {
             return getSimpleSearchURL(searchUrl,interactor) + "&amp;searchClass=Protein&amp;view=partner" +

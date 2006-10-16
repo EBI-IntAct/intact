@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 
@@ -9,19 +10,14 @@ import uk.ac.ebi.intact.searchengine.SearchClass;
  */
 public class SingleResultViewBean {
     private final String intactType;
-    private final String helpLink;
-    private final String searchLink;
     private final String searchString;
     private final int count;
 
 
-    public SingleResultViewBean( final String intactType, final int count, final String helpLink,
-                                 final String searchLink, final String searchString ) {
+    public SingleResultViewBean( final String intactType, final int count, final String searchString ) {
 
         this.intactType = intactType;
         this.count = count;
-        this.helpLink = helpLink;
-        this.searchLink = searchLink;
         this.searchString = searchString.replaceAll( "\\'", "" );
 
     }
@@ -39,6 +35,7 @@ public class SingleResultViewBean {
     }
 
     public String getHelpURL() {
+        String helpLink = SearchWebappContext.getCurrentInstance().getHelpLink();
 
         if ( intactType.equalsIgnoreCase( "Protein" ) ) {
             return helpLink + "Interactor";
@@ -61,10 +58,12 @@ public class SingleResultViewBean {
     }
 
     public String getSearchLink() {
+        String searchLink = SearchWebappContext.getCurrentInstance().getSearchUrl();
+
         if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
-            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=";
+            return searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=";
         } else {
-            return this.searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=1";
+            return searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=1";
             //return "-";
         }
     }

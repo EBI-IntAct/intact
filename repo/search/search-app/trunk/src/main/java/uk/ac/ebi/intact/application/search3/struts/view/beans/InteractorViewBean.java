@@ -6,10 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.SearchReplace;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -31,20 +33,12 @@ import java.util.*;
  */
 public class InteractorViewBean extends AbstractViewBean {
 
+    private static final Log logger = LogFactory.getLog(InteractorViewBean.class);
+
     /**
      * The Protein for which the view is required.
      */
     private Interactor interactor;
-
-    /**
-     * The gene names related to the Protein. Buffer so we can return a String
-     */
-    private StringBuffer geneNames;
-
-    /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private String searchURL;
 
     /**
      * Map of retrieved DB URLs already retrieved from the DB. This is basically a cache to avoid recomputation every
@@ -64,31 +58,14 @@ public class InteractorViewBean extends AbstractViewBean {
     private String bioSearchURL;
 
     /**
-     * List of Gene Names which should be filtered on. The values are set in the bean's constructor.
-     */
-    private static ArrayList geneNameFilter = new ArrayList();
-
-    static {
-        // TODO somehow find a way to use MI references that are stable
-        geneNameFilter.add( "gene name" );
-        geneNameFilter.add( "gene name-synonym" );
-        geneNameFilter.add( "orf name" );
-        geneNameFilter.add( "locus name" );
-    }
-
-    /**
      * The bean constructor requires a Protein to wrap, plus beans on the context path to the search application and the
      * help link.
      *
      * @param interactor  The Interactor whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      */
-    public InteractorViewBean( Interactor interactor, String link, String searchURL, String contextPath ) {
-        super( link, contextPath );
+    public InteractorViewBean( Interactor interactor ) {
+        super( );
         dbUrls = new HashMap();
-        this.searchURL = searchURL;
         this.interactor = interactor;
     }
 
@@ -222,7 +199,7 @@ public class InteractorViewBean extends AbstractViewBean {
 
             if (ac != null)
             {
-                bioSearchURL = searchURL + getBioAc() + "&amp;searchClass=BioSource";
+                bioSearchURL = super.getSearchLink() + getBioAc() + "&amp;searchClass=BioSource";
             }
         }
 
@@ -238,7 +215,7 @@ public class InteractorViewBean extends AbstractViewBean {
 
         if ( interactorSearchURL == null ) {
             //set it on the first call
-            interactorSearchURL = searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;filter=ac";
+            interactorSearchURL = super.getSearchLink() + interactor.getAc() + "&amp;searchClass=Protein&amp;filter=ac";
         }
         return interactorSearchURL;
     }
@@ -253,7 +230,7 @@ public class InteractorViewBean extends AbstractViewBean {
      */
     public String getCvDbURL( Xref xref ) {
 
-        return ( searchURL + xref.getCvDatabase().getAc() + "&amp;searchClass=CvDatabase&amp;filter=ac" );
+        return ( super.getSearchLink() + xref.getCvDatabase().getAc() + "&amp;searchClass=CvDatabase&amp;filter=ac" );
     }
 
     /**
@@ -278,7 +255,7 @@ public class InteractorViewBean extends AbstractViewBean {
      */
     public String getCvQualifierURL( Xref xref ) {
 
-        return ( searchURL + xref.getCvXrefQualifier().getAc() + "&amp;searchClass=CvXrefQualifier&amp;filter=ac" );
+        return ( super.getSearchLink() + xref.getCvXrefQualifier().getAc() + "&amp;searchClass=CvXrefQualifier&amp;filter=ac" );
     }
 
 
@@ -376,7 +353,7 @@ public class InteractorViewBean extends AbstractViewBean {
     }
 
     public String getBinaryViewUrl() {
-        return ( searchURL + interactor.getAc() + "&amp;filter=ac&amp;searchClass=Interactor&amp;view=partner" );
+        return ( super.getSearchLink() + interactor.getAc() + "&amp;filter=ac&amp;searchClass=Interactor&amp;view=partner" );
     }
 
     private DaoFactory getDaoFactory()

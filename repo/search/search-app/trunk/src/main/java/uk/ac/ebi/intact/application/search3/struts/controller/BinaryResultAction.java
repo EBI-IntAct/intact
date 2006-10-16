@@ -6,21 +6,15 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersView;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Interactor;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 
 /**
  * Performs the construction of view beans that will be used for a the partner view. It will calculate the interactions
@@ -41,7 +35,7 @@ public class BinaryResultAction extends AbstractResultAction {
      *
      * @return String the return code for forwarding use by the execute method
      */
-    protected String processResults( HttpServletRequest request, String helpLink ) {
+    protected String processResults( HttpServletRequest request ) {
 
         logger.info( "binary result  action" );
 
@@ -64,7 +58,7 @@ public class BinaryResultAction extends AbstractResultAction {
 
             for (AnnotatedObject interactor : results)
             {
-                view = new PartnersView(request,(Interactor)interactor, helpLink, searchURL);
+                view = new PartnersView(request,(Interactor)interactor);
             }
 
             // We store the PartnersView in the request, and it will be accessed from the jsp page

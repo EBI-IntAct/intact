@@ -6,6 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView;
 import uk.ac.ebi.intact.model.Experiment;
@@ -14,9 +16,6 @@ import uk.ac.ebi.intact.searchengine.SearchClass;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Performs the beans view for the Experiement View.
@@ -38,12 +37,11 @@ public class DetailsResultAction extends AbstractResultAction {
      * Action type.
      *
      * @param request  The request to be processed
-     * @param helpLink The contextual help link
      *
      * @return String the forward code for the parent execute method to return.
      */
     @Override
-    protected String processResults( HttpServletRequest request, String helpLink ) {
+    protected String processResults( HttpServletRequest request ) {
 
         //new info to process, so get the search results from the request
         Collection results = (Collection) request.getAttribute( SearchConstants.SEARCH_RESULTS );
@@ -53,10 +51,6 @@ public class DetailsResultAction extends AbstractResultAction {
         }
 
         logger.info( "DetailAction: result Collection contains " + results.size() + " items." );
-
-        // String appPath = getServlet().getServletContext().getInitParameter("searchLink");
-        // String searchURL = request.getContextPath().concat(appPath);
-        String searchURL = super.getSearchURL();
 
         //regardless of the result size, just build a viewbean for each result and put into
         //a Collection for use by the JSP - but first check we have the correct type for this
@@ -83,7 +77,7 @@ public class DetailsResultAction extends AbstractResultAction {
              }
 
             Experiment experiment = experiments.iterator().next();
-            MainDetailView view = new MainDetailView(request, experiment, helpLink, searchURL);
+            MainDetailView view = new MainDetailView(request, experiment);
 
             // We store the MainDetailView in the request, and it will be accessed from the jsp page
             request.setAttribute( SearchConstants.VIEW_BEAN, view );

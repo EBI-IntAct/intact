@@ -119,7 +119,7 @@ public class TooLargeAction extends IntactBaseAction {
             }
             else if (searchClass.isCvObjectSubclass())
             {
-                cvCount += resultInfo.get(className);
+                cvCount += resultInfo.get(objClass);
             }
         } // for
 
@@ -144,31 +144,26 @@ public class TooLargeAction extends IntactBaseAction {
 
         if ( experimentCount > 0 ) {
             tooLargeViewBean.add( new SingleResultViewBean( SearchClass.EXPERIMENT.getShortName(),
-                                                            experimentCount,
-                                                            helpLink, searchURL, query ) );
+                                                            experimentCount, query ) );
         }
 
         if ( interactionCount > 0 ) {
             tooLargeViewBean.add( new SingleResultViewBean( SearchClass.INTERACTION.getShortName(),
-                                                            interactionCount,
-                                                            helpLink, searchURL, query ) );
+                                                            interactionCount, query ) );
         }
 
         if ( proteinCount > 0 ) {
             tooLargeViewBean.add( new SingleResultViewBean( SearchClass.PROTEIN.getShortName(),
-                                                            proteinCount,
-                                                            helpLink, searchURL, query ) );
+                                                            proteinCount, query ) );
         }
 
         if ( nucleicAcidCount > 0 ) {
             tooLargeViewBean.add( new SingleResultViewBean( SearchClass.NUCLEIC_ACID.getShortName(),
-                                                            nucleicAcidCount,
-                                                            helpLink, searchURL, query ) );
+                                                            nucleicAcidCount, query ) );
         }
 
         if ( cvCount > 0 ) {
-            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.CV_OBJECT.getShortName(), cvCount,
-                                                            helpLink, searchURL, query ) );
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.CV_OBJECT.getShortName(), cvCount, query ) );
         }
 
         // add the viewbean to the request and forward to the jsp

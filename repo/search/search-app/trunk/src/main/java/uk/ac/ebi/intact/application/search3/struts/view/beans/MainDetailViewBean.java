@@ -1,5 +1,8 @@
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.application.search3.business.Constants;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.SearchClass;
@@ -20,6 +23,8 @@ import java.util.*;
  */
 public class MainDetailViewBean extends AbstractViewBean {
 
+    private static final Log logger = LogFactory.getLog(MainDetailViewBean.class);
+
     /**
      * This view bean provides beans for an Experiment.
      */
@@ -30,11 +35,6 @@ public class MainDetailViewBean extends AbstractViewBean {
      * Experiment view by default. Avoids messing around with null values etc for a wrapped Interaction.
      */
     private boolean interactionView;
-
-    /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private String searchURL;
 
     /**
      * Cached search URL, set up on first request for it.
@@ -101,14 +101,6 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     private static ArrayList<String> geneNameFilter = new ArrayList<String>( 4 );
 
-    static {
-        // TODO somehow find a way to use MI references that are stable
-        geneNameFilter.add( "gene name" );
-        geneNameFilter.add( "gene name-synonym" );
-        geneNameFilter.add( "orf name" );
-        geneNameFilter.add( "locus name" );
-    }
-
     /**
      * The maximum number of pages that can be displayed. This is only of relevance to 'large' Experiments, ie those
      * with more than {@link Constants} MAX_PAGE_SIZE Interactions.
@@ -139,22 +131,18 @@ public class MainDetailViewBean extends AbstractViewBean {
      * the help link.
      *
      * @param obj         The Experiment whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      *
      * @throws NullPointerException     thrown if the object to wrap is null
      * @throws IllegalArgumentException thrown if the parameter is not an Experiment
      */
-    public MainDetailViewBean( Experiment obj, List<Interaction> interactionList, String link, String searchURL, String contextPath) {
-        super( link, contextPath );
+    public MainDetailViewBean( Experiment obj, List<Interaction> interactionList) {
+        super( );
         this.interactionList = interactionList;
 
         if ( obj == null ) {
             throw new NullPointerException( "MainDetailViewBean: can't display null object!" );
         }
 
-        this.searchURL = searchURL;
         this.obj = obj;
         dbUrls = new HashMap<CvObject, String>();
 
@@ -491,7 +479,7 @@ public class MainDetailViewBean extends AbstractViewBean {
                 {
                     if (!seen.contains(feature))
                     {
-                        linkedFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
+                        linkedFeatures.add(new FeatureViewBean(feature));
 
                         seen.add(feature);
 
@@ -533,7 +521,7 @@ public class MainDetailViewBean extends AbstractViewBean {
             {
                 if (feature.getBoundDomain() == null)
                 {
-                    singleFeatures.add(new FeatureViewBean(feature, getHelpLink(), searchURL, this.getContextPath()));
+                    singleFeatures.add(new FeatureViewBean(feature));
                 }
             }
         } //
@@ -895,7 +883,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvDbURL( Xref xref ) {
 
-        return ( searchURL + xref.getCvDatabase().getAc() +
+        return ( SearchWebappContext.getCurrentInstance().getSearchUrl() + xref.getCvDatabase().getAc() +
                  "&amp;searchClass=CvDatabase&amp;" );
     }
 
@@ -906,7 +894,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      * @return String a String representation of a URL link for the Xref beans (CvXrefQualifier)
      */
     public String getCvQualifierURL( CvXrefQualifier cvXrefQualifier) {
-         return ( searchURL + cvXrefQualifier.getAc() +
+         return ( SearchWebappContext.getCurrentInstance().getSearchUrl() + cvXrefQualifier.getAc() +
                      "&amp;searchClass=CvXrefQualifier&amp;" );
     }
 
@@ -986,7 +974,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + obj.getAc() + "&amp;searchClass=" + getIntactType() +
+            objSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + obj.getAc() + "&amp;searchClass=" + getIntactType() +
                            "&filter=ac";
         }
         return objSearchURL;
@@ -1006,7 +994,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         if ( cvInteractionSearchURL == "" ) {
             //set it on the first call
             //get the CvInteraction object and pull out its AC
-            cvInteractionSearchURL = searchURL + obj.getCvInteraction().getAc()
+            cvInteractionSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + obj.getCvInteraction().getAc()
                                      + "&amp;searchClass=CvInteraction&filter=ac";
         }
         return cvInteractionSearchURL;
@@ -1026,7 +1014,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         if ( cvIdentificationSearchURL == "" ) {
             //set it on the first call
             //get the CvIdentification object and pull out its AC
-            cvIdentificationSearchURL = searchURL + obj.getCvIdentification().getAc()
+            cvIdentificationSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + obj.getCvIdentification().getAc()
                                         + "&amp;searchClass=CvIdentification&filter=ac";
         }
         return cvIdentificationSearchURL;
@@ -1043,7 +1031,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         if ( interaction.getCvInteractionType() == null ) {
             return "-";
         }
-        return searchURL + interaction.getCvInteractionType().getAc()
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + interaction.getCvInteractionType().getAc()
                + "&amp;searchClass=CvInteractionType&filter=ac";
     }
 
@@ -1056,7 +1044,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         if ( bioSourceSearchURL == null ) {
             //set it on the first call
-            bioSourceSearchURL = searchURL + obj.getBioSource().getAc()
+            bioSourceSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + obj.getBioSource().getAc()
                                  + "&amp;searchClass=BioSource";
         }
         return bioSourceSearchURL;
@@ -1071,7 +1059,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
 //    public String getProteinBiosourceURL( Protein protein ) { // no usage
     public String getInteractorBiosourceURL( Interactor interactor ) {
-        return searchURL + interactor.getBioSource().getAc() + "&amp;searchClass=BioSource";
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + interactor.getBioSource().getAc() + "&amp;searchClass=BioSource";
     }
 
     /**
@@ -1084,7 +1072,7 @@ public class MainDetailViewBean extends AbstractViewBean {
     public String getBiosourceURL( BioSource bioSource ) {
 
         if ( bioSource != null ) {
-            return searchURL + bioSource.getAc() + "&amp;searchClass=BioSource";
+            return SearchWebappContext.getCurrentInstance().getSearchUrl() + bioSource.getAc() + "&amp;searchClass=BioSource";
         } else {
             return "-";
         }
@@ -1130,7 +1118,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvTopicSearchURL( Annotation annot ) {
 
-        return searchURL + annot.getCvTopic().getAc() + "&amp;searchClass=CvTopic&filter=ac";
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + annot.getCvTopic().getAc() + "&amp;searchClass=CvTopic&filter=ac";
     }
 
     /**
@@ -1143,7 +1131,7 @@ public class MainDetailViewBean extends AbstractViewBean {
      */
     public String getCvComponentRoleSearchURL( Component comp ) {
 
-        return searchURL + comp.getCvComponentRole().getAc() +
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + comp.getCvComponentRole().getAc() +
                "&amp;searchClass=CvComponentRole&filter=ac";
     }
 
@@ -1161,7 +1149,7 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         SearchClass sc = SearchClass.valueOfMappedClass(interactor.getClass());
 
-        return searchURL + interactor.getAc() + "&amp;searchClass="+sc.getShortName()+"&amp;view=single&filter=ac";
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + interactor.getAc() + "&amp;searchClass="+sc.getShortName()+"&amp;view=single&filter=ac";
     }
 
     /**
@@ -1177,9 +1165,9 @@ public class MainDetailViewBean extends AbstractViewBean {
 
         // TRY TO MODIFY FROM PROTEIN TO INTERACTOR
         if ( interactor instanceof Protein ) {
-            return searchURL + interactor.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
+            return SearchWebappContext.getCurrentInstance().getSearchUrl() + interactor.getAc() + "&amp;searchClass=Protein&amp;view=partner&filter=ac";
         } else {
-            return searchURL + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=partner&filter=ac";
+            return SearchWebappContext.getCurrentInstance().getSearchUrl() + interactor.getAc() + "&amp;searchClass=NucleicAcid&amp;view=partner&filter=ac";
         }
 
     }

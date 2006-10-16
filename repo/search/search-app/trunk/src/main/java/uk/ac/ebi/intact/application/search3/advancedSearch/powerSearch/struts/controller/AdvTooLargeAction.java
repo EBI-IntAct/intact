@@ -12,11 +12,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.search3.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.TooLargeViewBean;
-import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -119,22 +119,22 @@ public class AdvTooLargeAction extends IntactBaseAction {
 
         if (experimentCount > 0) {
             tooLargeViewBean.add(new SingleResultViewBean("Experiment", experimentCount,
-                    helpLink, searchURL, query));
+                     query));
         }
 
         if (interactionCount > 0) {
             tooLargeViewBean.add(new SingleResultViewBean("Interaction", interactionCount,
-                    helpLink, searchURL, query));
+                     query));
         }
 
         if (proteinCount > 0) {
             tooLargeViewBean.add(new SingleResultViewBean("Protein", proteinCount,
-                    helpLink, searchURL, query));
+                    query));
         }
 
         if (cvCount > 0) {
             tooLargeViewBean.add(new SingleResultViewBean("Controlled vocabulary term", cvCount,
-                    helpLink, searchURL, query));
+                    query));
         }
 
         // add the viewbean to the request and forward to the jsp

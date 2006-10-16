@@ -30,7 +30,12 @@ public interface SearchEnvironment
     static final String MAX_RESULTS_PER_PAGE = "uk.ac.ebi.intact.search.MAX_RESULTS_PER_PAGE";
 
     /**
-     * The search link (relative to context root)
+     * The help link (relative to the intact root)
      */
     static final String HELP_LINK = "uk.ac.ebi.intact.search.HELP_LINK";
+
+    /**
+     * The search link (relative to context root)
+     */
+    static final String SEARCH_LINK = "uk.ac.ebi.intact.search.SEARCH_LINK";
 }
