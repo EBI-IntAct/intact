@@ -112,7 +112,7 @@
     <!-- Action Servlet Configuration -->
     <servlet>
         <servlet-name>action</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.application.search3.struts.framework.IntactActionServlet</servlet-class>
+        <servlet-class>uk.ac.ebi.intact.webappch.struts.framework.IntactActionServlet</servlet-class>
         <init-param>
             <param-name>application</param-name>
             <param-value>/config/IntactResources</param-value>
@@ -139,7 +139,7 @@
     <!-- Drawing dynamic Images -->
     <servlet>
         <servlet-name>dynamicImage</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
+        <servlet-class>uk.ac.ebi.intact.webappchadvancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
     </servlet>
 
 

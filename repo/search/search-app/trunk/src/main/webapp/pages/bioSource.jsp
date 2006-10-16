@@ -13,15 +13,9 @@ in the root directory of this distribution.
 <%@ page language="java" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 java.util.Iterator,
-                 uk.ac.ebi.intact.model.Annotation,
-                 uk.ac.ebi.intact.model.Xref,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean,                 
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.XrefViewBean,
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Collection,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.AnnotationViewBean,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"
+                 java.util.Iterator"
     %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>

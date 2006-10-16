@@ -21,11 +21,7 @@
 <%@ page autoFlush="true" %>
 
 <!-- Mostly used by the javascript for HV -->
-<%@ page import="uk.ac.ebi.intact.application.commons.util.UrlUtil,
-                 uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.InteractorViewBean,
-                 uk.ac.ebi.intact.model.Xref,
+<%@ page import="uk.ac.ebi.intact.model.Xref,
                  java.util.Collection,
                  java.util.Iterator"%>
 

@@ -32,17 +32,13 @@ to identify the source page of the request to the Action classes.
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.commons.util.UrlUtil,
-                 uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean,
-                 uk.ac.ebi.intact.model.Experiment,
+<%@ page import="uk.ac.ebi.intact.model.Experiment,
                  uk.ac.ebi.intact.model.Interaction,
                  uk.ac.ebi.intact.model.Interactor,
-                 uk.ac.ebi.intact.searchengine.SearchClass"%>
+                 uk.ac.ebi.intact.searchengine.SearchClass,
+                 java.util.*"%>
 
 <%-- Standard Java classes --%>
-<%@ page import="java.util.*"%>
 
 <%-- may make use of these later to tidy up the JSP a little --%>
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>

@@ -25,13 +25,10 @@
 <%@ page autoFlush="true" %>
 
 <%-- Intact classes needed --%>
-<%@ page import="uk.ac.ebi.intact.application.search3.business.IntactServiceIF,
-                 uk.ac.ebi.intact.application.search3.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView,
-                 uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
-                 uk.ac.ebi.intact.model.*" %>
-<%@ page import="uk.ac.ebi.intact.persistence.dao.query.SearchableQuery" %>
-<%@ page import="java.util.*" %>
+<%@ page import="uk.ac.ebi.intact.model.*,
+                 uk.ac.ebi.intact.persistence.dao.query.SearchableQuery,
+                 uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
+                 java.util.*" %>
 
 <%-- Standard Java classes --%>
 

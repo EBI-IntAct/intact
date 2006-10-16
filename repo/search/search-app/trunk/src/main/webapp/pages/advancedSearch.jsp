@@ -7,7 +7,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 <%@ page import="uk.ac.ebi.intact.model.CvIdentification,
                  uk.ac.ebi.intact.model.CvInteraction,
                  uk.ac.ebi.intact.model.CvInteractionType"%>
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants"%>
 <%@ page language="java" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>

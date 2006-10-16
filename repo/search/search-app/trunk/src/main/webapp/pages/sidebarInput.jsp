@@ -2,8 +2,6 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.application.search3.struts.util.SearchConstants"%>
-
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 
