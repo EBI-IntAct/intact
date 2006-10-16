@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.application.search3.struts.view.beans;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class MainDetailView  extends AbstractView
     private Experiment experiment;
     private MainDetailViewBean mainDetailViewBean;
 
-    public MainDetailView(HttpServletRequest request, Experiment experiment, String link, String searchUrl)
+    public MainDetailView(HttpServletRequest request, Experiment experiment)
     {
         super(request);
         this.experiment = experiment;
@@ -116,7 +116,7 @@ public class MainDetailView  extends AbstractView
 
         // if specific interactions for this experiment are searched, fetch them from the database
 
-        this.mainDetailViewBean = new MainDetailViewBean(experiment, interactions, link, searchUrl, request.getContextPath());
+        this.mainDetailViewBean = new MainDetailViewBean(experiment, interactions );
     }
 
 

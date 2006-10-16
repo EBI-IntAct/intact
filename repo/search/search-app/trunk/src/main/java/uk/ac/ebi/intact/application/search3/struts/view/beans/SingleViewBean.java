@@ -6,6 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 
@@ -24,11 +25,6 @@ public class SingleViewBean extends AbstractViewBean {
      * The AnnotatedObject (currently BioSource, CvObjects)
      */
     private final AnnotatedObject obj;
-
-    /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private final String searchURL;
 
     /**
      * Cached search URL, set up on first request for it.
@@ -50,14 +46,9 @@ public class SingleViewBean extends AbstractViewBean {
      * type.
      *
      * @param obj         The AnnotatedObject whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      */
-    public SingleViewBean( final AnnotatedObject obj, final String link, final String searchURL,
-                           final String contextPath ) {
-        super( link, contextPath );
-        this.searchURL = searchURL;
+    public SingleViewBean( final AnnotatedObject obj ) {
+        super( );
         this.obj = obj;
     }
 
@@ -121,7 +112,7 @@ public class SingleViewBean extends AbstractViewBean {
         if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
+            objSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
         }
         return objSearchURL;
     }
@@ -160,7 +151,7 @@ public class SingleViewBean extends AbstractViewBean {
      */
     public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(
+        final String aSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType(
                 anAnnotatedObject );
         return aSearchURL;
 
@@ -171,7 +162,7 @@ public class SingleViewBean extends AbstractViewBean {
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType(
+        final String aSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + this.obj.getAc() + "&amp;searchClass=" + getIntactType(
                 this.obj );
         return aSearchURL;
 

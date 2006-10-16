@@ -6,11 +6,14 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,6 +29,8 @@ import java.util.Set;
  * @version $Id$
  */
 public class SimpleViewBean extends AbstractViewBean {
+    
+    private static final Log logger = LogFactory.getLog(SimpleViewBean.class);
 
     private static String EMPTY_SPACE = " ";
 
@@ -42,11 +47,6 @@ public class SimpleViewBean extends AbstractViewBean {
      * in the constructor.
      */
     private String relatedItemsSize = EMPTY_SPACE;
-
-    /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private String searchURL;
 
     /**
      * Cached search URL, set up on first request for it.
@@ -67,13 +67,9 @@ public class SimpleViewBean extends AbstractViewBean {
      * type.
      *
      * @param obj         The AnnotatedObject whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      */
-    public SimpleViewBean( AnnotatedObject obj, String link, String searchURL, String contextPath ) {
-        super( link, contextPath );
-        this.searchURL = searchURL;
+    public SimpleViewBean( AnnotatedObject obj ) {
+        super( );
         this.obj = obj;
     }
 
@@ -197,7 +193,7 @@ public class SimpleViewBean extends AbstractViewBean {
         if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + obj.getAc() + "&amp;searchClass=" + getIntactType();
+            objSearchURL = SearchWebappContext.getCurrentInstance().getSearchUrl() + obj.getAc() + "&amp;searchClass=" + getIntactType();
         }
         return objSearchURL;
     }
@@ -212,7 +208,7 @@ public class SimpleViewBean extends AbstractViewBean {
      */
     public String getObjSearchURL( Class<? extends IntactObject> clazz, String ac ) {
 
-        return searchURL + ac + "&amp;searchClass=" + getIntactType( clazz );
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + ac + "&amp;searchClass=" + getIntactType( clazz );
     }
 
     /**

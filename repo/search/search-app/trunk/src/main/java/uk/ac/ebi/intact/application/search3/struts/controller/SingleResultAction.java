@@ -6,17 +6,18 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.BioSourceViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.CvObjectViewBean;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.InteractorViewBean;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This Action class performs the construction of view beans that will be used for every  single view for Interactions,
@@ -37,7 +38,7 @@ public class SingleResultAction extends AbstractResultAction {
      * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
      */
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults(HttpServletRequest request) {
         logger.info("Single Result Action");
         //get the search results from the request
         Collection results = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
@@ -53,8 +54,7 @@ public class SingleResultAction extends AbstractResultAction {
 
         if (Interactor.class.isAssignableFrom(result.getClass())) {
             logger.info("Creating a new InteractorViewBean");
-            InteractorViewBean bean = new InteractorViewBean((Interactor) result, helpLink, searchURL,
-                                                             request.getContextPath());
+            InteractorViewBean bean = new InteractorViewBean((Interactor) result);
             logger.info("Forward to single Protein View");
             request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
             return SearchConstants.FORWARD_INTERACTOR;
@@ -62,8 +62,7 @@ public class SingleResultAction extends AbstractResultAction {
         }
         else if (BioSource.class.isAssignableFrom(result.getClass())) {
             logger.info("Creating a new BioSourceViewBean");
-            BioSourceViewBean bean = new BioSourceViewBean((BioSource) result, helpLink, searchURL,
-                                                           request.getContextPath());
+            BioSourceViewBean bean = new BioSourceViewBean((BioSource) result);
             logger.info("Forward to single BioSource View");
             request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
             return SearchConstants.FORWARD_BIOSOURCE;
@@ -71,8 +70,7 @@ public class SingleResultAction extends AbstractResultAction {
         }
         else if (CvObject.class.isAssignableFrom(result.getClass())) {
             logger.info("Creating a new CvObjectViewBean");
-            CvObjectViewBean bean = new CvObjectViewBean((CvObject) result, helpLink, searchURL,
-                                                         request.getContextPath());
+            CvObjectViewBean bean = new CvObjectViewBean((CvObject) result);
             logger.info("Forward to single CvObject View");
             request.getSession().setAttribute(SearchConstants.VIEW_BEAN, bean);
             return SearchConstants.FORWARD_CVOBJECT;

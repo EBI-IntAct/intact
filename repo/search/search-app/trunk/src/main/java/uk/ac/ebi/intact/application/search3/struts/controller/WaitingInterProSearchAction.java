@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  * @see InterProSearchAction
  */
 public class WaitingInterProSearchAction extends AbstractResultAction {
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults(HttpServletRequest request) {
 
         // the IntAct ACs of the selected Proteins
         String ac = request.getParameter("ac");

@@ -4,7 +4,6 @@ import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.controller.AbstractResultAction;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
@@ -14,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -41,28 +39,18 @@ public class AdvSimpleResultAction extends AbstractResultAction {
      * is needed to forward to view.
      *
      * @param request  The request object containing the data we want
-     * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
      */
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults(HttpServletRequest request) {
 
         logger.info("enter simple action");
 
         HttpSession session = super.getSession(request);
 
-        // Handle to the Intact User.
-        IntactUserIF user = super.getIntactUser(session);
-
         //get the search results from the request
         final IterableMap resultMap = (IterableMap) request.getAttribute(SearchConstants.SEARCH_RESULTS_MAP);
 
         logger.info("SimpleAction: Map contains " + resultMap.size() + " keys.");
-
-        String contextPath = request.getContextPath();
-        //build the URL for searches and pass to the view beans
-        String searchURL = super.getSearchURL();
-
-        logger.info("SearchLink: " + searchURL);
 
         //we can build a List, partitioned by type, here inseatd of
         //in the JSP. That way the JSP only ever gets things to display, unless
@@ -83,7 +71,7 @@ public class AdvSimpleResultAction extends AbstractResultAction {
             //now add in the sublists to the in the partitionlist
             for (AnnotatedObject result : results)
             {
-                temp.add(new SimpleViewBean(result, user.getHelpLink(), searchURL, contextPath));
+                temp.add(new SimpleViewBean(result));
                 logger.info("add " + result.getShortLabel());
             }
 

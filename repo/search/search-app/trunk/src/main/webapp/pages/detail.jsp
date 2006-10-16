@@ -30,6 +30,7 @@
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailView,
                  uk.ac.ebi.intact.application.search3.struts.view.beans.MainDetailViewBean,
                  uk.ac.ebi.intact.model.*" %>
+<%@ page import="uk.ac.ebi.intact.persistence.dao.query.SearchableQuery" %>
 <%@ page import="java.util.*" %>
 
 <%-- Standard Java classes --%>
@@ -69,24 +70,30 @@
 <span class="smalltext">Search Results for
 
     <%
-        String params = (String) session.getAttribute( SearchConstants.SEARCH_CRITERIA );
+        SearchableQuery query = SearchWebappContext.getCurrentInstance().getCurrentSearch();
+        String params = query.toString();
 
-        if ( params.length() > 30 ) {
+        if (params.length() > 30)
+        {
 
             // split the params and display 10 per lines.
-            StringTokenizer st = new StringTokenizer( params, "," );
+            StringTokenizer st = new StringTokenizer(params, ",");
             int count = 0;
-            while ( st.hasMoreTokens() ) {
-                out.write( st.nextToken() );
-                out.write( ',' );
+            while (st.hasMoreTokens())
+            {
+                out.write(st.nextToken());
+                out.write(',');
                 count++;
-                if ( ( count % 10 ) == 0 ) {
-                    out.write( "<br>" );
+                if ((count % 10) == 0)
+                {
+                    out.write("<br>");
                 }
             }
 
-        } else {
-            out.write( params );
+        }
+        else
+        {
+            out.write(params);
         }
 
     %>

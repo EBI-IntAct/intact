@@ -34,11 +34,6 @@ public class BioSourceViewBean extends AbstractViewBean {
     private final BioSource obj;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private final String searchURL;
-
-    /**
      * Cached search URL, set up on first request for it.
      */
     private String objSearchURL;
@@ -55,14 +50,9 @@ public class BioSourceViewBean extends AbstractViewBean {
      * application and the help link.
      *
      * @param obj         The BioSource whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      */
-    public BioSourceViewBean( final BioSource obj, final String link, final String searchURL,
-                              final String contextPath ) {
-        super( link, contextPath );
-        this.searchURL = searchURL;
+    public BioSourceViewBean( final BioSource obj ) {
+        super( );
         this.obj = obj;
     }
 
@@ -131,7 +121,7 @@ public class BioSourceViewBean extends AbstractViewBean {
         if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
+            objSearchURL = this.getSearchLink() + this.obj.getAc() + "&amp;searchClass=" + getIntactType();
         }
         return objSearchURL;
     }
@@ -163,7 +153,7 @@ public class BioSourceViewBean extends AbstractViewBean {
             //run through the filter
             if ( false == AnnotationFilter.getInstance().isFilteredOut( annotation ) ) {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( annotation, this.searchURL );
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( annotation );
                 result.add( anAnnotationViewBean );
             }
         }
@@ -185,7 +175,7 @@ public class BioSourceViewBean extends AbstractViewBean {
         // then create a collection of XrefViewBean
         for ( Iterator iterator = someXrefs.iterator(); iterator.hasNext(); ) {
             final Xref aXref = ( (Xref) iterator.next() );
-            result.add( new XrefViewBean( aXref, this.getHelpLink(), this.searchURL ) );
+            result.add( new XrefViewBean( aXref ) );
 
         }
         return result;
@@ -223,7 +213,7 @@ public class BioSourceViewBean extends AbstractViewBean {
      */
     public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject );
+        final String aSearchURL = super.getSearchLink() + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject );
         return aSearchURL;
 
     }
@@ -235,7 +225,7 @@ public class BioSourceViewBean extends AbstractViewBean {
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj );
+        final String aSearchURL = super.getSearchLink() + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj );
         return aSearchURL;
 
     }

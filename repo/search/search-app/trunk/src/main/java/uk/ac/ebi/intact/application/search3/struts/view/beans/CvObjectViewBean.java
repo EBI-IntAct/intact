@@ -34,11 +34,6 @@ public class CvObjectViewBean extends AbstractViewBean {
     private final CvObject obj;
 
     /**
-     * Holds the URL to perform subsequent searches from JSPs - used to build 'complete' URLs for use by JSPs
-     */
-    private final String searchURL;
-
-    /**
      * Cached search URL, set up on first request for it.
      */
     private String objSearchURL;
@@ -55,14 +50,9 @@ public class CvObjectViewBean extends AbstractViewBean {
      * the help link. The object itself can be any one of Experiment, Protein, Interaction or CvObject type.
      *
      * @param obj         The CvObject whose beans are to be displayed
-     * @param link        The link to the help pages
-     * @param searchURL   The general URL to be used for searching (can be filled in later).
-     * @param contextPath The path to the search application.
      */
-    public CvObjectViewBean( final CvObject obj, final String link, final String searchURL,
-                             final String contextPath ) {
-        super( link, contextPath );
-        this.searchURL = searchURL;
+    public CvObjectViewBean( final CvObject obj ) {
+        super(  );
         this.obj = obj;
 
     }
@@ -129,7 +119,7 @@ public class CvObjectViewBean extends AbstractViewBean {
         if ( objSearchURL == null ) {
             //set it on the first call
             //NB need to get the correct intact type of the wrapped object
-            objSearchURL = searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType() +
+            objSearchURL = super.getSearchLink() + this.obj.getAc() + "&amp;searchClass=" + getIntactType() +
                            "&filter=ac";
         }
         return objSearchURL;
@@ -160,7 +150,7 @@ public class CvObjectViewBean extends AbstractViewBean {
 
         for ( Iterator<Annotation> iterator = someAnnotations.iterator(); iterator.hasNext(); ) {
             Annotation anAnnotation = ( iterator.next() );
-            AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( anAnnotation, "" );
+            AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean( anAnnotation );
             result.add( anAnnotationViewBean );
         }
         return result;
@@ -182,7 +172,7 @@ public class CvObjectViewBean extends AbstractViewBean {
             if (false == AnnotationFilter.getInstance().isFilteredOut(annotation))
             {
                 // if it's not in the filter get them
-                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation, this.searchURL);
+                AnnotationViewBean anAnnotationViewBean = new AnnotationViewBean(annotation);
                 result.add(anAnnotationViewBean);
             }
         }
@@ -204,7 +194,7 @@ public class CvObjectViewBean extends AbstractViewBean {
 
         for (CvObjectXref aXref : someXrefs)
         {
-            result.add(new XrefViewBean(aXref, this.getHelpLink(), this.searchURL));
+            result.add(new XrefViewBean(aXref));
 
         }
 
@@ -236,7 +226,7 @@ public class CvObjectViewBean extends AbstractViewBean {
      */
     public String getSearchUrl( final AnnotatedObject anAnnotatedObject ) {
 
-        final String aSearchURL = this.searchURL + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject ) + "&filter=ac";
+        final String aSearchURL = super.getSearchLink() + anAnnotatedObject.getAc() + "&amp;searchClass=" + getIntactType( anAnnotatedObject ) + "&filter=ac";
         return aSearchURL;
 
     }
@@ -248,7 +238,7 @@ public class CvObjectViewBean extends AbstractViewBean {
      */
     public String getSearchUrl() {
 
-        final String aSearchURL = this.searchURL + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj ) + "&filter=ac";
+        final String aSearchURL = super.getSearchLink() + this.obj.getAc() + "&amp;searchClass=" + getIntactType( this.obj ) + "&filter=ac";
         return aSearchURL;
 
     }

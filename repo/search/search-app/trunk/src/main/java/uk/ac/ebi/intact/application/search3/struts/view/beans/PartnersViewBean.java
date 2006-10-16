@@ -79,13 +79,11 @@ public class PartnersViewBean extends AbstractViewBean {
      * general searchURL and the help link.
      *
      * @param interactor        The Interactor whose beans are to be displayed
-     * @param helpLink    The link to the help pages
-     * @param contextPath The path to the search application.
      */
 
 //    public PartnersViewBean( Protein prot, String helpLink, String searchURL, String contextPath ) {  // 1 usage in BinaryResultAction
-    public PartnersViewBean( Interactor interactor, String helpLink, String contextPath ) {
-        super( helpLink, contextPath );
+    public PartnersViewBean( Interactor interactor ) {
+        super( );
         this.interactor = interactor;
     }
 

@@ -6,6 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.SearchReplace;
@@ -23,16 +24,10 @@ import java.util.Iterator;
 public class XrefViewBean {
 
     private Xref obj;
-    private String helpLink;
-    private String searchURL;
 
 
-    public XrefViewBean( final Xref obj, final String link, final String searchURL ) {
-
-
+    public XrefViewBean( final Xref obj ) {
         this.obj = obj;
-        this.helpLink = link;
-        this.searchURL = searchURL;
     }
 
     /**
@@ -146,7 +141,7 @@ public class XrefViewBean {
     }
 
     public String getTypeUrl() {
-        return this.helpLink + "Xref.cvrefType";
+        return SearchWebappContext.getCurrentInstance().getHelpLink() + "Xref.cvrefType";
 
     }
 }

@@ -158,11 +158,6 @@ public interface Constants {
     public static final int MAXIMUM_RESULT_SIZE = 50;
 
     /**
-     * This can go here later.
-     */
-    public static final String SEARCH_URL = "searchUrl";
-
-    /**
      * Contains a list of the shortlabels of the items found in a search result. Used by JSPs to decide what shortlabels
      * should be highlighted.
      */

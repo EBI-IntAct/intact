@@ -125,7 +125,7 @@ Query     _________       ____________      |     _________      _____________
 
         <action path="/search"
                 name="sidebarForm"
-                type="uk.ac.ebi.intact.application.search3.struts.controller.SearchAction"
+                type="uk.ac.ebi.intact.application.search3.struts.controller.NewSearchAction"
                 scope="request">
             <forward name="noMatch" path="no.match.layout"/>
             <forward name="sessionLost" path="/do/welcome"/>

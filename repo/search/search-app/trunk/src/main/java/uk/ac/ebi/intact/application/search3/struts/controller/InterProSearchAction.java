@@ -1,28 +1,21 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.business.interpro.InterproConstants;
 import uk.ac.ebi.intact.application.search3.business.interpro.InterproSearch;
 import uk.ac.ebi.intact.application.search3.business.interpro.ThresholdExceededException;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.util.*;
 
 /**
  * This Action class performs the determination of UniprotKB IDs out of IntAct ACs. <br> These UniprotKB IDs are then
@@ -45,7 +38,7 @@ public class InterProSearchAction extends AbstractResultAction {
 
     private static final Log logger = LogFactory.getLog(InterProSearchAction.class);
 
-    protected String processResults( HttpServletRequest request, String helpLink ) {
+    protected String processResults( HttpServletRequest request ) {
 
         // Collects the parameters of the request
         //Gets the IntAct ACs from the Proteins ticked by the user within the search application

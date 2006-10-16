@@ -17,20 +17,13 @@ package uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.c
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.application.search3.struts.controller.SearchActionBase;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Advanced search action querying directly the Database
@@ -44,34 +37,6 @@ public class AdvancedSearchAction extends SearchActionBase
     private static final Log logger = LogFactory.getLog(AdvancedSearchAction.class);
 
 
-    /**
-     * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
-     * component that will create it). Return an ActionForward instance describing where and how control should be
-     * forwarded, or null if the response has already been completed.
-     *
-     * @param mapping  - The <code>ActionMapping</code> used to select this instance
-     * @param form     - The optional <code>ActionForm</code> bean for this request (if any)
-     * @param request  - The HTTP request we are processing
-     * @param response - The HTTP response we are creating
-     *
-     * @return - represents a destination to which the controller servlet, <code>ActionServlet</code>, might be directed
-     *         to perform a RequestDispatcher.forward() or HttpServletResponse.sendRedirect() to, as a result of
-     *         processing activities of an <code>Action</code> class
-     *
-     * @throws java.io.IOException      ...
-     * @throws javax.servlet.ServletException ...
-     */
-    @Override
-    public ActionForward executeSearch( ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response )
-            throws SearchException
-    {
-            return null;
-    }
-
-
     public Class<? extends Searchable>[] getSearchableTypes()
     {
         DynaActionForm dyForm = (DynaActionForm) getForm();
@@ -79,7 +44,7 @@ public class AdvancedSearchAction extends SearchActionBase
 
         getIntactContext().getSession().setAttribute( SearchConstants.SEARCH_CLASS, searchClassString );
 
-        logger.info("Search class: "+searchClassString);
+        logger.debug("Search class: "+searchClassString);
 
         if (searchClassString.equals("any"))
         {
@@ -117,17 +82,17 @@ public class AdvancedSearchAction extends SearchActionBase
         cvDB = cvDB.trim();
         cvTopic = cvTopic.trim();
 
-        logger.info( "searchClass: " + searchClassString );
-        logger.info( "acs: " + ac );
-        logger.info( "shortlabel: " + shortlabel );
-        logger.info( "description: " + description );
-        logger.info( "annotation: " + annotation );
-        logger.info( "cvtopic: " + cvTopic );
-        logger.info( "xref: " + xref );
-        logger.info( "cvDB: " + cvDB );
-        logger.info( "cvInteraction: " + cvInteraction );
-        logger.info( "cvInteractionType: " + cvInteractionType );
-        logger.info( "cvIdentification: " + cvIdentification );
+        logger.debug( "searchClass: " + searchClassString );
+        logger.debug( "acs: " + ac );
+        logger.debug( "shortlabel: " + shortlabel );
+        logger.debug( "description: " + description );
+        logger.debug( "annotation: " + annotation );
+        logger.debug( "cvtopic: " + cvTopic );
+        logger.debug( "xref: " + xref );
+        logger.debug( "cvDB: " + cvDB );
+        logger.debug( "cvInteraction: " + cvInteraction );
+        logger.debug( "cvInteractionType: " + cvInteractionType );
+        logger.debug( "cvIdentification: " + cvIdentification );
 
         // create the searchable query object
         SearchableQuery searchableQuery = new SearchableQuery();

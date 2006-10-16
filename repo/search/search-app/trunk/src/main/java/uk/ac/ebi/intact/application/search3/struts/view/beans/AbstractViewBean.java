@@ -6,8 +6,11 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.search3.struts.view.beans;
 
-import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.search3.business.Constants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.search3.SearchWebappContext;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 
@@ -27,17 +30,7 @@ public abstract class AbstractViewBean implements Serializable {
     /**
      * Logger for that class.
      */
-    protected transient static final Logger logger = Logger.getLogger( Constants.LOGGER_NAME );
-
-    /**
-     * The default link to help pages (to localhost). Typically used in stylesheets.
-     */
-    private String helpLink;
-
-    /**
-     * Context path of the current application.
-     */
-    private String contextPath;
+    private static final Log logger = LogFactory.getLog(AbstractViewBean.class);
 
     /**
      * A collection of short labels to highlight.
@@ -45,14 +38,9 @@ public abstract class AbstractViewBean implements Serializable {
     private Set highlightMap;
 
     /**
-     * Construst an instance of this class with help link.
-     *
-     * @param link        the link to help page.
-     * @param contextPath the path of the application.
+     * Construst an instance of this class.
      */
-    public AbstractViewBean( String link, String contextPath ) {
-        helpLink = link;
-        this.contextPath = contextPath;
+    public AbstractViewBean() {
     }
 
     /**
@@ -86,7 +74,12 @@ public abstract class AbstractViewBean implements Serializable {
      * @return String which represents the url based link to the intact help section
      */
     public String getHelpLink() {
-        return helpLink;
+        return SearchWebappContext.getCurrentInstance().getHelpLink();
+    }
+
+    public String getSearchLink()
+    {
+        return SearchWebappContext.getCurrentInstance().getSearchUrl();
     }
 
     /**
@@ -95,7 +88,7 @@ public abstract class AbstractViewBean implements Serializable {
      * @return String which represents the context path
      */
     public String getContextPath() {
-        return contextPath;
+        return ((WebappSession) IntactContext.getCurrentInstance().getSession()).getRequest().getContextPath();
     }
 
     /**

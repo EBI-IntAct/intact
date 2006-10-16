@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.business.IntactUserIF;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.SimpleViewBean;
@@ -11,9 +13,6 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This Action class performs the construction of view beans that will be used by the simple.jsp
@@ -37,11 +36,10 @@ public class SimpleResultAction extends AbstractResultAction {
      * is needed to forward to view.
      *
      * @param request  The request object containing the data we want
-     * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
      */
     @Override
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults(HttpServletRequest request) {
 
         logger.debug("enter simple action");
 
@@ -78,23 +76,23 @@ public class SimpleResultAction extends AbstractResultAction {
              //now create a relevant view bean for each type in the result set...
             if (searchClass == SearchClass.EXPERIMENT)
             {
-                expList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+                expList.add(new SimpleViewBean(obj));
             }
             else if (searchClass == SearchClass.INTERACTION)
             {
-                interactionList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+                interactionList.add(new SimpleViewBean(obj));
             }
             else if (searchClass == SearchClass.PROTEIN)
             {
-                proteinList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+                proteinList.add(new SimpleViewBean(obj));
             }
             else if (searchClass == SearchClass.NUCLEIC_ACID)
             {
-                nucleicAcidList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+                nucleicAcidList.add(new SimpleViewBean(obj));
             }
             else if (searchClass.isCvObjectSubclass())
             {
-                cvObjectList.add(new SimpleViewBean(obj, user.getHelpLink(), searchURL, contextPath));
+                cvObjectList.add(new SimpleViewBean(obj));
             }
         } // for
 

@@ -26,7 +26,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
@@ -49,16 +48,12 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     private static final Log log = LogFactory.getLog(SearchActionBase.class);
 
-    private boolean paginatedSearch;
-
     private IntactContext intactContext;
     private ActionMapping mapping;
     private ActionForm form;
 
     private HttpServletRequest request;
     private HttpServletResponse response;
-
-    private int page;
 
      @Override
     public ActionForward execute( ActionMapping mapping,
@@ -96,17 +91,14 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         // page
         String strPage = request.getParameter("page");
-        this.page = 0;
 
         if (strPage != null && strPage.length() != 0)
         {
             webappContext.setPaginatedSearch(true);
-            page = Integer.valueOf(strPage);
-        }
+            webappContext.setCurrentPage(Integer.valueOf(strPage));
 
-        if (log.isDebugEnabled() && isPaginatedSearch())
-        {
-            log.debug("Performing paginated search. Page: "+page);
+            if (log.isDebugEnabled())
+                log.debug("Performing paginated search. Page: "+webappContext.getCurrentPage());
         }
 
         // starting query
@@ -123,12 +115,6 @@ public abstract class SearchActionBase extends IntactSearchAction
         return searchUsingQuery();
 
     }
-
-    public abstract ActionForward executeSearch( ActionMapping mapping,
-                                  ActionForm form,
-                                  HttpServletRequest request,
-                                  HttpServletResponse response )
-            throws SearchException;
 
     public abstract SearchableQuery createSearchableQuery();
 
@@ -173,7 +159,13 @@ public abstract class SearchActionBase extends IntactSearchAction
         SearchWebappContext.getCurrentInstance(getIntactContext()).setResultsInfo(resultInfo);
         SearchWebappContext.getCurrentInstance(getIntactContext()).setTotalResults(size);
 
-        if (resultInfo.size() == 1 && size > maxResults)
+        if (size == 0)
+        {
+            //finished all current options, and still nothing - return a failure
+            log.debug("No matches were found for the specified search criteria");
+            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
+        }
+        else if (resultInfo.size() == 1 && size > maxResults)
         {
             if (log.isDebugEnabled())
                 log.debug("Only one kind of results found, and the number of results ("+size+") is " +
@@ -182,28 +174,10 @@ public abstract class SearchActionBase extends IntactSearchAction
             SearchWebappContext.getCurrentInstance(intactContext).setPaginatedSearch(true);
             SearchWebappContext.getCurrentInstance(intactContext).setCurrentPage(1);
         }
-
-        /*
-        if (size > maxResults && !isPaginatedSearch())
+        else if (resultInfo.size() > 1 && size > 0 && size > maxResults)
         {
-
-            log.debug("Results set is too Large for the specified search criteria");
-            //request.setAttribute( SearchConstants.SEARCH_CRITERIA, "'" + searchValue + "'" );
-            getIntactContext().getSession().setRequestAttribute(SearchConstants.RESULT_INFO, resultInfo);
+            log.debug("Found results of different types. Forwarding to the summary view");
             return mapping.findForward(SearchConstants.FORWARD_TOO_LARGE);
-
-        }
-        */
-        if (size == 0)
-        {
-            //finished all current options, and still nothing - return a failure
-            log.debug("No matches were found for the specified search criteria");
-            return mapping.findForward(SearchConstants.FORWARD_NO_MATCHES);
-        }
-
-        if (log.isDebugEnabled() && resultInfo.size() > 1)
-        {
-            log.debug("Found results of different types");
         }
 
         return null;
@@ -326,11 +300,6 @@ public abstract class SearchActionBase extends IntactSearchAction
             Integer resultsPerPage = SearchWebappContext.getCurrentInstance().getResultsPerPage();
             Integer currentPage = SearchWebappContext.getCurrentInstance().getCurrentPage();
 
-            if (currentPage == null)
-            {
-                throw new IntactException("Current page is null, but search is set to be paginated");
-            }
-
             if (currentPage == 0)
             {
                 throw new IntactException("Current page is 0, but search is set to be paginated, so it should be at least one. " +
@@ -349,7 +318,11 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     public SearchableQuery getSearchableQuery()
     {
-        SearchableQuery searchableQuery = (SearchableQuery) getIntactContext().getSession().getRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY");
+        SearchableQuery searchableQuery = null;
+
+         // create the query
+        searchableQuery = (SearchableQuery) getIntactContext().getSession().getRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY");
+
         if (searchableQuery == null)
         {
             log.debug("Creating new searchable query");

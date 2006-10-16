@@ -1,21 +1,17 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
 import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
-import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.StringTokenizer;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This Action class performs the calculating and the construction of view beans that will be used for a for an url
@@ -38,15 +34,14 @@ public class BinaryProteinAction extends AbstractResultAction {
      * processing in a single place for each Action type.
      *
      * @param request  The request object containing the data we want
-     * @param helpLink The help link to use
      * @return String the return code for forwarding use by the execute method
      */
-    protected String processResults(HttpServletRequest request, String helpLink) {
+    protected String processResults(HttpServletRequest request) {
 
         logger.info("binary protein action");
 
         final Collection someInteractors = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
-        Collection results = Collections.EMPTY_LIST;
+        Collection results;
 
         logger.info("resultset size " + someInteractors.size());
         HttpSession session = super.getSession(request);
@@ -64,8 +59,7 @@ public class BinaryProteinAction extends AbstractResultAction {
 
             if (hasSelfInteraction) {
                 logger.info("BinaryAction: protein has a self interaction ");
-                beanList.add(new PartnersViewBean(selfInteractor, helpLink,
-                                                  request.getContextPath()));
+                beanList.add(new PartnersViewBean(selfInteractor));
                 request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
                 return SearchConstants.FORWARD_PARTNER_VIEW;
 
