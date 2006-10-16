@@ -144,8 +144,8 @@ public class CCLineExport extends LineExport {
     private Collection<ProteinImpl> getProteinFromIntact(  String uniprotID ) throws IntactException {
 
         Collection<ProteinImpl> proteins = getProteinByXref(uniprotID,
-                                                                 (CvDatabase)getCvContext().getByMiRef(CvDatabase.UNIPROT_MI_REF),
-                                                                 (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.IDENTITY_MI_REF));
+                                                                 (CvDatabase)getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF),
+                                                                 (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF));
         //Collection<ProteinImpl> proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByUniprotId(uniprotID);
 
         if ( proteins.size() == 0 ) {
@@ -160,11 +160,11 @@ public class CCLineExport extends LineExport {
         {
             String ac = protein.getAc();
             Collection<ProteinImpl> sv = getProteinByXref(ac,
-                                                          (CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
-                    (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF));
+                                                          (CvDatabase)getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF),
+                    (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF));
 //      Collection<ProteinImpl> sv =              IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao()
-//                    .getByXrefLike((CvDatabase)getCvContext().getByMiRef(CvDatabase.INTACT_MI_REF),
-//                            (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF), ac);
+//                    .getByXrefLike((CvDatabase)getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF),
+//                            (CvXrefQualifier)getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF), ac);
 
             spliceVariants.addAll(sv);
         }
@@ -383,8 +383,8 @@ public class CCLineExport extends LineExport {
             for ( Iterator iterator1 = experiment.getXrefs().iterator(); iterator1.hasNext() && !found; ) {
                 Xref xref = (Xref) iterator1.next();
 
-                if ( getCvContext().getByMiRef(CvDatabase.PUBMED_MI_REF).equals( xref.getCvDatabase() ) &&
-                     getCvContext().getByMiRef(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
+                if ( getCvContext().getByMiRef(CvDatabase.class, CvDatabase.PUBMED_MI_REF).equals( xref.getCvDatabase() ) &&
+                     getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF).equals( xref.getCvXrefQualifier() ) ) {
                     found = true;
                     pubmeds.add( xref.getPrimaryId() );
                 }
@@ -604,7 +604,7 @@ public class CCLineExport extends LineExport {
                     Collection annotations = interaction.getAnnotations();
                     boolean annotationFound = false;
 
-                    CvTopic authorConfidenceTopic = (CvTopic) getCvContext().getByMiRef(CvTopic.AUTHOR_CONFIDENCE_MI_REF);
+                    CvTopic authorConfidenceTopic = (CvTopic) getCvContext().getByMiRef(CvTopic.class, CvTopic.AUTHOR_CONFIDENCE_MI_REF);
 
                     // We assume here that an interaction has only one Annotation( uniprot-dr-export ).
                     for ( Iterator iterator3 = annotations.iterator(); iterator3.hasNext() && !annotationFound; ) {

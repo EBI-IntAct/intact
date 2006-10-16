@@ -32,7 +32,7 @@ public final class CvContext implements Serializable
 
     private Map<String, CvObject> cachedByAc;
     private Map<LabelKey, CvObject> cachedByLabel;
-    private Map<String, CvObject> cachedByMiRef;
+    private Map<MiRefKey, CvObject> cachedByMiRef;
 
     private IntactSession session;
 
@@ -42,7 +42,7 @@ public final class CvContext implements Serializable
 
         this.cachedByAc = new HashMap<String, CvObject>();
         this.cachedByLabel = new HashMap<LabelKey, CvObject>();
-        this.cachedByMiRef = new HashMap<String, CvObject>();
+        this.cachedByMiRef = new HashMap<MiRefKey, CvObject>();
     }
 
     public static CvContext getCurrentInstance(IntactSession session)
@@ -113,19 +113,26 @@ public final class CvContext implements Serializable
         return cvObject;
     }
 
-    public CvObject getByMiRef(String miRef)
+    public <T extends CvObject> T getByMiRef(Class<T> cvType, String miRef)
     {
-        return getByMiRef(miRef, false);
+        return (T) getByMiRef(cvType, miRef, false);
     }
 
-    public CvObject getByMiRef(String miRef, boolean forceReload)
+    public <T extends CvObject> T getByMiRef(Class<T> cvType, String miRef, boolean forceReload)
     {
-        if (!forceReload && cachedByMiRef.containsKey(miRef))
+        if (miRef == null)
         {
-            return cachedByMiRef.get(miRef);
+            throw new NullPointerException("miRef");
         }
 
-        CvObject cvObject = getDaoFactory().getCvObjectDao().getByXref(miRef);
+        MiRefKey key = new MiRefKey(miRef, cvType);
+
+        if (!forceReload && cachedByMiRef.containsKey(key))
+        {
+            return (T) cachedByMiRef.get(key);
+        }
+
+        T cvObject = getDaoFactory().getCvObjectDao().getByPrimaryId(cvType, miRef);
 
         if (cvObject == null)
         {
@@ -147,67 +154,67 @@ public final class CvContext implements Serializable
 
     public void loadCommonCvObjects()
     {
-        getByMiRef(CvDatabase.INTACT_MI_REF);
-        getByMiRef(CvDatabase.GO_MI_REF);
-        getByMiRef(CvDatabase.INTERPRO_MI_REF);
-        getByMiRef(CvDatabase.FLYBASE_MI_REF);
-        getByMiRef(CvDatabase.REACTOME_PROTEIN_PSI_REF);
-        getByMiRef(CvDatabase.HUGE_MI_REF);
-        getByMiRef(CvXrefQualifier.IDENTITY_MI_REF);
-        getByMiRef(CvXrefQualifier.SECONDARY_AC_MI_REF);
-        getByMiRef(CvXrefQualifier.ISOFORM_PARENT_MI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.GO_MI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.INTERPRO_MI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.FLYBASE_MI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF);
+        getByMiRef(CvDatabase.class, CvDatabase.HUGE_MI_REF);
+        getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        getByMiRef(CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF);
+        getByMiRef(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF);
 
         // only one search by shortlabel as it still doesn't have MI number.
         getByLabel(CvTopic.class, CvTopic.ISOFORM_COMMENT);
         getByLabel(CvTopic.class, CvTopic.NON_UNIPROT);
 
-        getByMiRef(CvAliasType.GENE_NAME_MI_REF);
-        getByMiRef(CvAliasType.GENE_NAME_SYNONYM_MI_REF);
-        getByMiRef(CvAliasType.ISOFORM_SYNONYM_MI_REF);
-        getByMiRef(CvAliasType.LOCUS_NAME_MI_REF);
-        getByMiRef(CvAliasType.ORF_NAME_MI_REF);
-        getByMiRef(CvInteractorType.getProteinMI());
+        getByMiRef(CvAliasType.class, CvAliasType.GENE_NAME_MI_REF);
+        getByMiRef(CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF);
+        getByMiRef(CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF);
+        getByMiRef(CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF);
+        getByMiRef(CvAliasType.class, CvAliasType.ORF_NAME_MI_REF);
+        getByMiRef(CvAliasType.class, CvInteractorType.getProteinMI());
     }
 
     public CvComponentRole getBait() throws IntactException
     {
-        return (CvComponentRole) getByMiRef(CvComponentRole.BAIT_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.BAIT_PSI_REF);
     }
 
     public CvComponentRole getPrey() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.PREY_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.PREY_PSI_REF);
     }
 
     public CvComponentRole getNeutral() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.NEUTRAL_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.NEUTRAL_PSI_REF);
     }
 
     public CvComponentRole getSelf() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.SELF_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.SELF_PSI_REF);
     }
 
     public CvComponentRole getEnzyme() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.ENZYME_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.ENZYME_PSI_REF);
     }
 
     public CvComponentRole getEnzymeTarget() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.ENZYME_TARGET_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.ENZYME_TARGET_PSI_REF);
     }
 
     public CvComponentRole getUnspecified() throws IntactException
     {
 
-        return (CvComponentRole) getByMiRef(CvComponentRole.UNSPECIFIED_PSI_REF);
+        return getByMiRef(CvComponentRole.class, CvComponentRole.UNSPECIFIED_PSI_REF);
     }
 
     private void putCv(CvObject cv)
@@ -218,7 +225,7 @@ public final class CvContext implements Serializable
 
     private void putCvInMiRef(String miRef, CvObject cv)
     {
-        cachedByMiRef.put(miRef, cv);
+          cachedByMiRef.put(new MiRefKey(miRef, cv.getClass()), cv);
     }
 
     private DaoFactory getDaoFactory()
@@ -321,6 +328,67 @@ public final class CvContext implements Serializable
         {
             int result;
             result = (label != null ? label.hashCode() : 0);
+            result = 31 * result + (cvType != null ? cvType.hashCode() : 0);
+            return result;
+        }
+    }
+
+    /**
+     * Convenient class to be stored as the label key, to avoid having returned more than one result per label.
+     * The combination of cv object class and label is unique
+     */
+    private class MiRefKey
+    {
+        private String miRef;
+        private Class<? extends CvObject> cvType;
+
+
+        public MiRefKey(String miRef, Class<? extends CvObject> cvType)
+        {
+            this.miRef = miRef;
+            this.cvType = cvType;
+        }
+
+        public String getMiRef()
+        {
+            return miRef;
+        }
+
+        public Class<? extends CvObject> getCvType()
+        {
+            return cvType;
+        }
+
+
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+
+            MiRefKey miRefKey = (MiRefKey) o;
+
+            if (cvType != null ? !cvType.equals(miRefKey.cvType) : miRefKey.cvType != null)
+            {
+                return false;
+            }
+            if (miRef != null ? !miRef.equals(miRefKey.miRef) : miRefKey.miRef != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public int hashCode()
+        {
+            int result;
+            result = (miRef != null ? miRef.hashCode() : 0);
             result = 31 * result + (cvType != null ? cvType.hashCode() : 0);
             return result;
         }
