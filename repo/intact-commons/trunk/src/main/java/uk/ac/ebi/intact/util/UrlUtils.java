@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.util;
 import uk.ac.ebi.intact.util.filter.UrlFilter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -55,6 +56,14 @@ public class UrlUtils
      */
    public static List<URL> listFilesFromFolderUrl(URL folderUrl, UrlFilter filter, boolean recursive) throws IOException
    {
+       if (folderUrl == null)
+       {
+           throw new NullPointerException("Url cannot be null");
+       }
+
+       File localFile = new File(folderUrl.getFile());
+       boolean isLocal = localFile.exists();
+
        if (!folderUrl.toString().endsWith("/"))
        {
            folderUrl = new URL(folderUrl.toString()+"/");
@@ -72,11 +81,22 @@ public class UrlUtils
             {
                 URL url = urlFromLine(folderUrl, line);
 
-                if (isDirectory(line))
+                boolean isLocalDir = isLocal && new File(url.getFile()).isDirectory();
+
+                if (isLocalDir || isRemoteDirectory(line))
                 {
                     if (recursive)
                     {
-                        URL childFolder = new URL(urlFromLine(folderUrl, line).toString()+"/");
+                        URL childFolder = null;
+
+                        if (isLocal)
+                        {
+                            childFolder = new File(localFile, line).toURL();
+                        }
+                        else
+                        {
+                           childFolder = new URL(urlFromLine(folderUrl, line).toString()+"/");
+                        }
                         urls.addAll(listFilesFromFolderUrl(childFolder, filter, recursive));
                     }
                 }
@@ -112,7 +132,7 @@ public class UrlUtils
         return new URL(folderUrl.toString()+tokens[tokens.length-1]);
     }
 
-    private static boolean isDirectory(String line)
+    private static boolean isRemoteDirectory(String line)
     {
         return line.startsWith("d");
     }
