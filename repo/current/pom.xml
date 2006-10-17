@@ -67,7 +67,8 @@
             <modules>
                 <module>plugins</module>
                 <module>tools</module>
-                <module>search-ws</module>
+                <module>intact-dbutils</module>
+		<module>search-ws</module>
                 <module>search-wsclient</module>
                 <module>sanity-checker</module>
                 <module>graph2mif-server</module>
