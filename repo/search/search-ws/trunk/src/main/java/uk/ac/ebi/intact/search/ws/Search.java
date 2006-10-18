@@ -17,6 +17,8 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.io.IOException;
@@ -38,6 +40,8 @@ public class Search
 
     private static final Log log = LogFactory.getLog(Search.class);
 
+    //private static final String SEARCH_SESSION_ATT_NAME = Search.class+".ATT";
+
     //private DaoFactory daoFactory;
     
     //@Resource
@@ -56,8 +60,11 @@ public class Search
     private Search getCurrentSearch()
     {
         MessageContext mc = wsContext.getMessageContext();
-        HttpSession session = ((javax.servlet.http.HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
-        return null; 
+        HttpSession session = ((HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+
+        //Search search
+
+        return null;
     }
     
     @WebMethod()
