@@ -27,9 +27,6 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
     //attributes
 
     //attributes used for mapping BasicObjects - project synchron
-    // TODO: should be move out of the model.
-    private String bioSourceAc;
-
     private String objClass;
 
     /**
@@ -104,6 +101,17 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref>
 
     ///////////////////////////////////////
     //access methods for attributes
+
+    @Column(insertable = false, updatable = false)
+    public String getObjClass()
+    {
+        return objClass;
+    }
+
+    public void setObjClass(String objClass)
+    {
+        this.objClass = objClass;
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "biosource_ac")
