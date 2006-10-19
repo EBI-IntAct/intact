@@ -26,7 +26,7 @@ import java.io.Serializable;
  * 
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>09-Oct-2006</pre>
+ * @since 1.5
  */
 public class SearchableQuery implements Serializable
 {

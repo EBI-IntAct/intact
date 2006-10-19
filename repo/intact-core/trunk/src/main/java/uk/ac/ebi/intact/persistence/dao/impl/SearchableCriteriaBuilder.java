@@ -17,7 +17,9 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Junction;
 import org.hibernate.criterion.Restrictions;
@@ -27,14 +29,17 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Allows to create a criteria from an {@link uk.ac.ebi.intact.persistence.dao.query.SearchableQuery}
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>10-Oct-2006</pre>
+ * @since 1.5
  */
 public class SearchableCriteriaBuilder
 {
@@ -42,8 +47,6 @@ public class SearchableCriteriaBuilder
 
     private SearchableQuery query;
     private Set<String> aliasesCreated;
-
-    private Map<String,String> aliasesMap;
 
     private static final String SHORT_LABEL_PROPERTY = "shortLabel";
     private static final String FULL_NAME_PROPERTY = "fullName";
@@ -55,15 +58,19 @@ public class SearchableCriteriaBuilder
     {
         this.query = query;
         aliasesCreated = new HashSet<String>();
-
-        aliasesMap = new HashMap<String,String>();
     }
 
-    public DetachedCriteria createCriteria(Class<? extends Searchable> searchableClass)
+    /**
+     * Completes a provided criteria with the necessary restrictions.
+     * @param searchableClass the class to search
+     * @param session a hibernate session
+     * @return
+     */
+    public Criteria createCriteria(Class<? extends Searchable> searchableClass, Session session)
     {
         log.debug("Search for: "+searchableClass);
 
-        DetachedCriteria criteria = DetachedCriteria.forClass(searchableClass);
+        Criteria criteria = session.createCriteria(searchableClass);
 
         Junction junction;
 
@@ -274,7 +281,7 @@ public class SearchableCriteriaBuilder
         }
     }
 
-    private void addFullTextRestriction(Class<? extends Searchable> searchableClass, DetachedCriteria criteria, String value, boolean autoAddWildcards)
+    private void addFullTextRestriction(Class<? extends Searchable> searchableClass, Criteria criteria, String value, boolean autoAddWildcards)
     {
         if (isValueValid(value))
         {
@@ -308,7 +315,7 @@ public class SearchableCriteriaBuilder
         }
     }
 
-    private Junction getChildrenDisjunctionForCvInteractionType(DetachedCriteria criteria, String shortLabelProperty, String objClassProperty, Class<? extends CvObject> cvType, String cvShortLabel)
+    private Junction getChildrenDisjunctionForCvInteractionType(Criteria criteria, String shortLabelProperty, String objClassProperty, Class<? extends CvObject> cvType, String cvShortLabel)
     {
         log.debug("\tGetting children for: " + cvShortLabel);
 
@@ -356,7 +363,7 @@ public class SearchableCriteriaBuilder
         return disj;
     }
 
-    private String annotationProperty(DetachedCriteria criteria, String property)
+    private String annotationProperty(Criteria criteria, String property)
     {
         String aliasName = "annotation";
 
@@ -369,46 +376,47 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
-    private String xrefProperty(DetachedCriteria criteria, String property)
+    private String xrefProperty(Criteria criteria, String property)
     {
         String aliasName = "xref";
 
         if (!aliasesCreated.contains(aliasName))
         {
-            criteria.createAlias("xrefs", aliasName);
+            criteria.createAlias("xrefs", aliasName, CriteriaSpecification.LEFT_JOIN);
+
             aliasesCreated.add(aliasName);
         }
 
         return aliasName + "." + property;
     }
 
-    private String annotationCvTopicProperty(DetachedCriteria criteria, String property)
+    private String annotationCvTopicProperty(Criteria criteria, String property)
     {
         String aliasName = "annotCvTopic";
 
         if (!aliasesCreated.contains(aliasName))
         {
-            criteria.createAlias(annotationProperty(criteria, "cvTopic"), aliasName);
+            criteria.createAlias(annotationProperty(criteria, "cvTopic"), aliasName, CriteriaSpecification.LEFT_JOIN);
             aliasesCreated.add(aliasName);
         }
 
         return aliasName + "." + property;
     }
 
-    private String xrefCvDatabaseProperty(DetachedCriteria criteria, String property)
+    private String xrefCvDatabaseProperty(Criteria criteria, String property)
     {
         String aliasName = "xrefCvDatabase";
 
         if (!aliasesCreated.contains(aliasName))
         {
-            criteria.createAlias(xrefProperty(criteria, "cvDatabase"), aliasName);
+            criteria.createAlias(xrefProperty(criteria, "cvDatabase"), aliasName, CriteriaSpecification.LEFT_JOIN);
             aliasesCreated.add(aliasName);
         }
 
         return aliasName + "." + property;
     }
 
-    private String cvInteractionTypeProperty(DetachedCriteria criteria, String property)
+    private String cvInteractionTypeProperty(Criteria criteria, String property)
     {
         String aliasName = "cvInteractionType";
 
@@ -421,7 +429,7 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
-    private String cvIdentificationProperty(DetachedCriteria criteria, String property)
+    private String cvIdentificationProperty(Criteria criteria, String property)
     {
         String aliasName = "cvIdentification";
 
@@ -434,7 +442,7 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
-    private String cvInteractionProperty(DetachedCriteria criteria, String property)
+    private String cvInteractionProperty(Criteria criteria, String property)
     {
         String aliasName = "cvInteraction";
 

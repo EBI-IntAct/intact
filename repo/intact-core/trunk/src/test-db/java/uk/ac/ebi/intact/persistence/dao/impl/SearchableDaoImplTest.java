@@ -167,4 +167,17 @@ public class SearchableDaoImplTest extends TestCase
         assertFalse(results.isEmpty());
     }
 
+    public void testCountByQuery_interaction_label() throws Exception
+    {
+        String search = "lsm7%";
+
+        SearchableQuery query = new SearchableQuery();
+        query.setDisjunction(true);
+        query.setShortLabel(search);
+        query.setXref(search);
+
+        assertTrue(dao.countByQuery(InteractionImpl.class, query) >= 15);
+
+    }
+
 }
