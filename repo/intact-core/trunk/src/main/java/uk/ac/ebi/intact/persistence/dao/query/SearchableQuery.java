@@ -351,7 +351,7 @@ public class SearchableQuery implements Serializable
      * Create a <code>SearchableQuery</code> from a String. Using a regex pattern, gets the properties
      * and values from the expression and creates the query object using reflection
      */
-    public static SearchableQuery paseSearchableQuery(String searchableQueryStr)
+    public static SearchableQuery parseSearchableQuery(String searchableQueryStr)
     {
         if (!isSearchableQuery(searchableQueryStr))
         {

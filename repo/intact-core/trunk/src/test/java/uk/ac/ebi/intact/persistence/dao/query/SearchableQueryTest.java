@@ -37,7 +37,7 @@ public class SearchableQueryTest extends TestCase {
 
         try
         {
-            sq = SearchableQuery.paseSearchableQuery(str);
+            sq = SearchableQuery.parseSearchableQuery(str);
         }
         catch (Throwable t)
         {
@@ -60,7 +60,7 @@ public class SearchableQueryTest extends TestCase {
 
         try
         {
-            sq = SearchableQuery.paseSearchableQuery(str);
+            sq = SearchableQuery.parseSearchableQuery(str);
         }
         catch (Throwable t)
         {
