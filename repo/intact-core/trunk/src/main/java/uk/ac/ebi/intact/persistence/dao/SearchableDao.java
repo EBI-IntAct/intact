@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>08-May-2006</pre>
+ * @since 1.5
  */
 public interface SearchableDao extends BaseDao<Session>
 {

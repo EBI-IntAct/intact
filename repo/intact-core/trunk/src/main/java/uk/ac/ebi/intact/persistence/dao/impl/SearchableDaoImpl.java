@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -27,17 +26,14 @@ import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Searches
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>10-Oct-2006</pre>
+ * @since 1.5
  */
 public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl> implements SearchableDao
 {
@@ -48,11 +44,11 @@ public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl>
 
     public Integer countByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query)
     {
-        DetachedCriteria criteria = new SearchableCriteriaBuilder(query)
-                .createCriteria(searchableClass);
+        Criteria criteria = new SearchableCriteriaBuilder(query)
+                .createCriteria(searchableClass, getSession());
         criteria.setProjection(Projections.countDistinct("ac"));
 
-        List<Integer> list = criteria.getExecutableCriteria(getSession()).list();
+        List<Integer> list = criteria.list();
 
         int count = 0;
 
@@ -116,6 +112,11 @@ public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl>
 
         List<String> acs = getAcsByQuery(searchableClass, query, firstResult, maxResults);
 
+        if (acs.isEmpty())
+        {
+            return Collections.EMPTY_LIST;
+        }
+
         Criteria crit = getSession().createCriteria(searchableClass)
                 .add(Restrictions.in("ac", acs));
 
@@ -124,11 +125,9 @@ public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl>
 
     public List<String> getAcsByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults)
     {
-        DetachedCriteria criteria = new SearchableCriteriaBuilder(query)
-                .createCriteria(searchableClass)
+        Criteria crit = new SearchableCriteriaBuilder(query)
+                .createCriteria(searchableClass, getSession())
                 .setProjection(Projections.distinct(Property.forName("ac")));
-
-        Criteria crit = criteria.getExecutableCriteria(getSession());
 
         if (firstResult != null)
         {

@@ -20,7 +20,7 @@ package uk.ac.ebi.intact.model;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>10-Oct-2006</pre>
+ * @since 1.5
  */
 public interface Searchable
 {
