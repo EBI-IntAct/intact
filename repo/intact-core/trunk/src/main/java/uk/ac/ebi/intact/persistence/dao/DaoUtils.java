@@ -48,6 +48,13 @@ public class DaoUtils
         return value;
     }
 
+    public static boolean isValueForLike(String value)
+    {
+        String replacedValue = replaceWildcardsByPercent(value);
+
+        return (replacedValue.startsWith("%") || replacedValue.endsWith("%"));
+    }
+
     /**
      * Adds a percent symbol (%) to the start and end of the value
      * so it can be used in like queries

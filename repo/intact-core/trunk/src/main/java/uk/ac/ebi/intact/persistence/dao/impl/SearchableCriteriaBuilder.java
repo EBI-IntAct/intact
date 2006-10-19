@@ -68,7 +68,15 @@ public class SearchableCriteriaBuilder
      */
     public Criteria createCriteria(Class<? extends Searchable> searchableClass, Session session)
     {
-        log.debug("Search for: "+searchableClass);
+        if (query == null)
+        {
+            throw new NullPointerException("SearchableQuery cannot be null");
+        }
+
+        if (log.isDebugEnabled())
+        {
+            log.debug("Search for: "+searchableClass+", with query: "+query);
+        }
 
         Criteria criteria = session.createCriteria(searchableClass);
 
@@ -84,13 +92,13 @@ public class SearchableCriteriaBuilder
         }
 
         // ac
-        addRestriction(junction, AC_PROPERTY, query.getAc(), true);
+        addRestriction(junction, AC_PROPERTY, query.getAc());
 
         // shortLabel
-        addRestriction(junction, SHORT_LABEL_PROPERTY, query.getShortLabel(), false);
+        addRestriction(junction, SHORT_LABEL_PROPERTY, query.getShortLabel());
 
         // description
-        addRestriction(junction, FULL_NAME_PROPERTY, query.getDescription(), false);
+        addRestriction(junction, FULL_NAME_PROPERTY, query.getDescription());
 
         // full-text
         addFullTextRestriction(searchableClass, criteria, query.getFullText(), true);
@@ -103,11 +111,11 @@ public class SearchableCriteriaBuilder
 
         if (isValueValid(xrefPrimaryId))
         {
-            addRestriction(jXref, xrefProperty(criteria, PRIMARY_ID_PROPERTY), xrefPrimaryId, true);
+            addRestriction(jXref, xrefProperty(criteria, PRIMARY_ID_PROPERTY), xrefPrimaryId);
         }
         if (isValueValid(xrefDb))
         {
-            addRestriction(jXref, xrefCvDatabaseProperty(criteria, SHORT_LABEL_PROPERTY), xrefDb, false);
+            addRestriction(jXref, xrefCvDatabaseProperty(criteria, SHORT_LABEL_PROPERTY), xrefDb);
         }
         if (isValueValid(xrefPrimaryId) || isValueValid(xrefDb))
         {
@@ -122,11 +130,11 @@ public class SearchableCriteriaBuilder
 
         if (isValueValid(annotText))
         {
-            addRestriction(jAnnot, annotationProperty(criteria, "annotationText"), annotText, false);
+            addRestriction(jAnnot, annotationProperty(criteria, "annotationText"), annotText);
         }
         if (isValueValid(annotTopic))
         {
-            addRestriction(jAnnot, annotationCvTopicProperty(criteria, SHORT_LABEL_PROPERTY), annotTopic, false);
+            addRestriction(jAnnot, annotationCvTopicProperty(criteria, SHORT_LABEL_PROPERTY), annotTopic);
         }
         if (isValueValid(annotText) || isValueValid(annotTopic))
         {
@@ -217,6 +225,7 @@ public class SearchableCriteriaBuilder
         return criteria;
     }
 
+
     private void addRestriction(Junction junction, String property, String[] values, boolean exactEquality)
     {
         if (values == null)
@@ -256,6 +265,17 @@ public class SearchableCriteriaBuilder
         }
 
         junction.add(disj);
+    }
+
+    private void addRestriction(Junction junction, String property, String value)
+    {
+        if (!isValueValid(value))
+        {
+            return;
+        }
+
+        boolean exactEquality = !DaoUtils.isValueForLike(value);
+        addRestriction(junction, property, value, exactEquality);
     }
 
     private void addRestriction(Junction junction, String property, String value, boolean exactEquality)
