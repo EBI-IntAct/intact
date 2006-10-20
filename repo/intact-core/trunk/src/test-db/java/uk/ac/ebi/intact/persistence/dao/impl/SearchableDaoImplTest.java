@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.util.DebugUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -80,14 +79,23 @@ public class SearchableDaoImplTest extends TestCase
         assertEquals(2, results.size());
     }
 
+    public void testGetByQuery_description() throws Exception
+    {
+        SearchableQuery query = new SearchableQuery();
+        query.setDescription("%\"yeast two-hybrid\"%");
+
+        List<Experiment> results = dao.getByQuery(Experiment.class, query, 0, 50);
+
+        assertTrue(results.size() > 30);
+    }
+
     public void testGetByQuery_annotation() throws Exception
     {
         SearchableQuery query = new SearchableQuery();
         query.setAnnotationText("%subcellular%");
 
         List<InteractorImpl> results = dao.getByQuery(InteractorImpl.class, query, 0, 50);
-        assertEquals(2, results.size());
-        System.out.println(DebugUtil.acList(results));
+        assertFalse(results.isEmpty());
     }
 
     public void testGetByQuery_annotation_and_topic() throws Exception

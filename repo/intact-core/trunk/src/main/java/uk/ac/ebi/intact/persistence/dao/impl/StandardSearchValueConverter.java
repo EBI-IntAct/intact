@@ -19,6 +19,7 @@ import org.hibernate.criterion.Conjunction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 
 /**
@@ -56,6 +57,9 @@ public class StandardSearchValueConverter implements SearchValueConverter
         {
             token = token.trim();
             token = replacedToValue(token);
+
+            token = addPercentIfNecessary(token);
+            token = removeQuotesIfNecessary(token);
 
             if (token.startsWith("+"))
             {
@@ -127,7 +131,6 @@ public class StandardSearchValueConverter implements SearchValueConverter
                 {
                     isInsidePhrase = true;
                 }
-                continue;
             }
 
             if (isInsidePhrase)
@@ -155,6 +158,63 @@ public class StandardSearchValueConverter implements SearchValueConverter
     {
         String value = replaced.replaceAll(REPLACED_SPACE, " ");
         value = value.replaceAll(REPLACED_COMMA, ",");
+
+        return value;
+    }
+
+
+    /**
+     * Feature Request #1485467 : Add a wildcard at the end of the value, when necessary
+     * @param value the value to change
+     * @return a String with the wildcard added, if necessary
+     */
+    private static String addPercentIfNecessary(String value)
+    {
+        value = DaoUtils.replaceWildcardsByPercent(value);
+
+        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+
+        if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
+                && !value.startsWith("\"") && !value.endsWith("\""))
+        {
+            value = value+"%";
+        }
+
+        return value;
+    }
+
+    private static String removeQuotesIfNecessary(String value)
+    {
+        if (!value.contains("\""))
+        {
+            return value;
+        }
+
+        boolean initialPercent = value.startsWith("%");
+        boolean endPercent = value.endsWith("%");
+
+        if (initialPercent)
+        {
+            value = value.substring(1);
+        }
+
+        if (endPercent)
+        {
+            value = value.substring(0, value.length()-1);
+        }
+
+        if (value.startsWith("\""))
+        {
+            value = value.substring(1);
+        }
+
+        if (value.endsWith("\""))
+        {
+            value = value.substring(0, value.length()-1);
+        }
+
+        if (initialPercent) value = "%"+value;
+        if (endPercent) value = value+"%";
 
         return value;
     }

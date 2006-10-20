@@ -45,6 +45,11 @@ public class DaoUtils
             value = value.substring(0, value.length()-1)+"%";
         }
 
+        value = value.replaceAll("\\* ", "% ");
+        value = value.replaceAll(" \\*", " %");
+        value = value.replaceAll("\\*,", "%,");
+        value = value.replaceAll(",\\*", "%");
+
         return value;
     }
 
