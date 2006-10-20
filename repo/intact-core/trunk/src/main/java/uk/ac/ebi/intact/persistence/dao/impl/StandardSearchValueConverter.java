@@ -1,0 +1,161 @@
+/**
+ * Copyright 2006 The European Bioinformatics Institute, and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package uk.ac.ebi.intact.persistence.dao.impl;
+
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.Disjunction;
+import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.persistence.dao.DaoUtils;
+
+/**
+ * TODO comment this!
+ *
+ * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @version $Id$
+ */
+public class StandardSearchValueConverter implements SearchValueConverter
+{
+
+    private static final String REPLACED_SPACE = "&nbsp;";
+    private static final String REPLACED_COMMA = "&comma;";
+
+    public Criterion valueToCriterion(String propertyName, String value)
+    {
+        if (value == null)
+        {
+            throw new NullPointerException("Value cannot be null");
+        }
+
+        Conjunction conjunction = Restrictions.conjunction();
+        Disjunction disjunction = Restrictions.disjunction();
+
+        // if the value contains quotes, transform any space or comma inside the quotes
+        // so they won't be used to separate the different tokens for the value
+        if (value.contains("\""))
+        {
+             value = replaceSymbolsInPhrases(value);
+        }
+
+        String[] tokens = value.split("\\s|,");
+
+        for (String token : tokens)
+        {
+            token = token.trim();
+            token = replacedToValue(token);
+
+            if (token.startsWith("+"))
+            {
+                token = token.substring(1);
+
+                if (DaoUtils.isValueForLike(value))
+                {
+                    conjunction.add(Restrictions.like(propertyName, token).ignoreCase());
+                }
+                else
+                {
+                    conjunction.add(Restrictions.eq(propertyName, token).ignoreCase());
+                }
+            }
+            else if (token.startsWith("-"))
+            {
+               token = token.substring(1);
+
+                if (DaoUtils.isValueForLike(value))
+                {
+                    conjunction.add(Restrictions.not(Restrictions.like(propertyName, token).ignoreCase()));
+                }
+                else
+                {
+                    conjunction.add(Restrictions.ne(propertyName, token).ignoreCase());
+                }
+            }
+            else
+            {
+                if (DaoUtils.isValueForLike(value))
+                {
+                    disjunction.add(Restrictions.like(propertyName, token).ignoreCase());
+                }
+                else
+                {
+                    disjunction.add(Restrictions.eq(propertyName, token).ignoreCase());
+                }
+            }
+        }
+
+        conjunction.add(disjunction);
+
+        return conjunction;
+    }
+
+    private static String replaceSymbolsInPhrases(String value)
+    {
+        boolean isInsidePhrase = false;
+
+        StringBuffer replacedValue = new StringBuffer();
+        StringBuffer currentPhrase = new StringBuffer();
+
+        char[] valueChars = value.toCharArray();
+
+        for (int i=0; i<valueChars.length; i++)
+        {
+            char c = valueChars[i];
+
+            if (c == '"')
+            {
+                if (isInsidePhrase)
+                {
+                    isInsidePhrase = false;
+
+                    String replacedPhrase = valueToReplaced(currentPhrase.toString());
+                    replacedValue.append(replacedPhrase);
+                }
+                else
+                {
+                    isInsidePhrase = true;
+                }
+                continue;
+            }
+
+            if (isInsidePhrase)
+            {
+                currentPhrase.append(c);
+            }
+            else
+            {
+                replacedValue.append(c);
+            }
+        }
+
+        return replacedValue.toString();
+    }
+
+    private static String valueToReplaced(String value)
+    {
+        String replaced = value.replaceAll("\\s", REPLACED_SPACE);
+        replaced = replaced.replaceAll(",", REPLACED_COMMA);
+
+        return replaced;
+    }
+
+    private static String replacedToValue(String replaced)
+    {
+        String value = replaced.replaceAll(REPLACED_SPACE, " ");
+        value = value.replaceAll(REPLACED_COMMA, ",");
+
+        return value;
+    }
+}
