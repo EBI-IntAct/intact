@@ -24,6 +24,9 @@
 <%@ page import="uk.ac.ebi.intact.model.Xref,
                  java.util.Collection,
                  java.util.Iterator"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.InteractorViewBean" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
 
 <!-- Standard Java imports -->
 
@@ -32,21 +35,15 @@
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean" %>
 
 <%
-    // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE);
-
-    //build the absolute path out of the context path for 'search'
-    //NB for eg HV and help pages, we have to use the relative path because the
-    //ctxt path includes search
-    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
+    SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = absPathWithoutContext.concat("mine/display.jsp");
+    String hvPath = webappContext.getHierarchViewAbsoluteUrl();
+    String minePath = webappContext.getMineAbsoluteUrl();
 
     //The view bean used to provide the data for this JSP. Could probably use
     //the jsp:useBean tag instead, but do it simply for now...
-    InteractorViewBean bean = (InteractorViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
+    InteractorViewBean bean = (InteractorViewBean) session.getAttribute(SearchConstants.VIEW_BEAN);
     // InteractorViewBean bean = (InteractorViewBean)request.getAttribute(SearchConstants.VIEW_BEAN);
 %>
 

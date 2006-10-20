@@ -17,13 +17,14 @@
 
 <!-- Intact classes needed -->
 <%@ page import="uk.ac.ebi.intact.searchengine.SearchClass,
-                 uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
                  uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersViewBean,
                  java.util.Collection"%>
 
 <!-- Standard Java classes -->
 <%@ page import="java.util.Iterator"%>
 <%@ page import="java.util.List"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersView" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
 
 <!-- may make use of these later to tidy up the JSP a little -->
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
@@ -31,23 +32,18 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
-    // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute(
-            SearchConstants.INTACT_SERVICE);
-
-    //build the absolute path out of the context path for 'search'
-    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
+    SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = absPathWithoutContext.concat("mine/display.jsp");
+    String hvPath = webappContext.getHierarchViewAbsoluteUrl();
+    String minePath = webappContext.getMineAbsoluteUrl();
 
     //The View object containing the beans to render
     PartnersView partnersView = (PartnersView) request.getAttribute(SearchConstants.VIEW_BEAN);
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures this will never be null
-    List<String> highlightList = (List<String>)request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
+    List<String> highlightList = (List<String>) request.getAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST);
 
     // We set the searchClass in the request, if the search comes directly using the search box on the left.
     // Used for pagination purposes

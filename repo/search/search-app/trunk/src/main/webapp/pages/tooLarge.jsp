@@ -14,12 +14,14 @@
 
 <%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Iterator"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.TooLargeViewBean" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.SingleResultViewBean" %>
 
 
 <%
-    TooLargeViewBean bean =(TooLargeViewBean) request.getAttribute(SearchConstants.VIEW_BEAN);
+    TooLargeViewBean bean = (TooLargeViewBean) request.getAttribute(SearchConstants.VIEW_BEAN);
 
-   %>
+%>
 
   <span class="smalltext"> </span>
 
@@ -56,10 +58,11 @@
 
          </tr>
 
-         <%  SingleResultViewBean singleResult;
-             for (Iterator iterator = bean.getSingleResults().iterator(); iterator.hasNext();) {
-               singleResult = (SingleResultViewBean) iterator.next ();
-          %>
+         <% SingleResultViewBean singleResult;
+             for (Iterator iterator = bean.getSingleResults().iterator(); iterator.hasNext();)
+             {
+                 singleResult = (SingleResultViewBean) iterator.next();
+         %>
                      <tr>
                         <td>
                             <!-- Intact Type -->

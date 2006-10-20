@@ -10,7 +10,7 @@ package uk.ac.ebi.intact.webapp.search.struts.util;
  * Contains constants required for the Search webapp.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:SearchConstants.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public interface SearchConstants {
 
@@ -107,12 +107,6 @@ public interface SearchConstants {
      * class to be searched for, needed for the advanced search
      */
     public static final String SEARCH_CLASS = "search_class";
-
-    /**
-     * Identifies the map (stored in the servlet context) which contains the maximum display size
-     * values for various intact types.
-     */
-    public static final String MAX_ITEMS_MAP = "maxMap";
 
     /**
      * Indetifies the map which contains the the count and classname

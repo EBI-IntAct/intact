@@ -17,6 +17,9 @@ in the root directory of this distribution.
                  uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Collection"
     %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.CvObjectViewBean" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.AnnotationViewBean" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.XrefViewBean" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
@@ -65,12 +68,13 @@ in the root directory of this distribution.
                     <b><span style="color: rgb(255, 0, 0);"><%= bean.getObjIntactName() %></span></b>
                 </td>
 
-<%  // get all Xrefs
+<% // get all Xrefs
     // find out which size the table have to be
-    Collection<XrefViewBean> someXrefBeans =  bean.getXrefs();
+    Collection<XrefViewBean> someXrefBeans = bean.getXrefs();
     Collection<AnnotationViewBean> someAnnotations = bean.getFilteredAnnotations();
     // put in a extra field in the table
-    if(someXrefBeans.size() != 0 || someAnnotations.size() != 0)  {  %>
+    if (someXrefBeans.size() != 0 || someAnnotations.size() != 0)
+    { %>
                     <td class="headerdarkmid" colspan="2">
                          &nbsp;
                      </td>
@@ -198,7 +202,7 @@ in the root directory of this distribution.
 
                       <!-- type -->
                      <td class="data">
-                        <a href="<%=bean.getHelpLink() + "Xref.cvrefType" %>" target="new"/>
+                        <a href="<%=bean.getHelpLink() + "Xref.cvrefType" %>" target="new">
                         <%=aXref.getType()%></a>
                         &nbsp;
                         <!-- if we got no XrefQualifierName it's not "linkable" -->

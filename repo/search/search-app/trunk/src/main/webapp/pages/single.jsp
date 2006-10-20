@@ -17,12 +17,13 @@ in the root directory of this distribution.
                  uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.Iterator"
     %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.SingleViewBean" %>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
 <%@ taglib uri="http://struts.apache.org/tags-bean" prefix="bean"%>
 
 <%
-    SingleViewBean bean = (SingleViewBean)session.getAttribute(SearchConstants.VIEW_BEAN);
+    SingleViewBean bean = (SingleViewBean) session.getAttribute(SearchConstants.VIEW_BEAN);
 %>
 
 <h3>Search Results for

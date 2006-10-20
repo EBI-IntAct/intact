@@ -25,6 +25,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
+import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
@@ -69,16 +70,6 @@ public abstract class SearchActionBase extends IntactSearchAction
         this.response = response;
 
         SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(intactContext);
-        /*
-        try
-        {
-            return executeSearch(mapping, form, request, response);
-        }
-        catch (Throwable e)
-        {
-            e.printStackTrace();
-            throw new ServletException(e);
-        } */
 
         log.info( "in SearchActionBase");
         // Clear any previous errors.
@@ -105,15 +96,31 @@ public abstract class SearchActionBase extends IntactSearchAction
         SearchWebappContext.getCurrentInstance(getIntactContext())
                 .setSearchableQuery(getSearchableQuery());
 
-        ActionForward af = checkNumberOfResults();
-
-        if (af != null)
+        if (webappContext.getCurrentResultCount() == null || !webappContext.isPaginatedSearch())
         {
-            return af;
+            countResults();
+
+            // forward to a place or another depending on the counts
+            ActionForward af = forwardIfNecessary();
+
+            if (af != null)
+            {
+                return af;
+            }
+        }
+        else
+        {
+            Class<? extends Searchable> searchClass = getSearchableTypes()[0];
+
+            int count = webappContext.getResultCountFor(searchClass);
+
+            if (log.isDebugEnabled()) log.debug("Using existing results count, to get the count for "+searchClass+": "+count);
+
+            webappContext.setTotalResults(count);
         }
 
+        // if results are to be fetched, get the results and return the appropriate actionForward
         return searchUsingQuery();
-
     }
 
     public abstract SearchableQuery createSearchableQuery();
@@ -123,12 +130,12 @@ public abstract class SearchActionBase extends IntactSearchAction
     /**
      * Search using a <code>SearchableQuery</code> and not the lucene index
      */
-    public ActionForward checkNumberOfResults()
+    protected Map<Class<? extends Searchable>, Integer> countResults()
     {
         log.debug("Checking number of results");
 
-        int maxResults = SearchWebappContext.getCurrentInstance().getResultsPerPage();
-        
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
+
         SearchableDao dao = getIntactContext().getDataContext()
                 .getDaoFactory().getSearchableDao();
 
@@ -144,6 +151,18 @@ public abstract class SearchActionBase extends IntactSearchAction
             resultInfo = dao.countByQuery(getSearchableQuery());
         }
 
+        webappContext.setCurrentResultCount(resultInfo);
+
+        return resultInfo;
+    }
+
+    private ActionForward forwardIfNecessary ()
+    {
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
+
+        Map<Class<? extends Searchable>, Integer> resultInfo = webappContext.getCurrentResultCount();
+        int maxResults = webappContext.getResultsPerPage();
+
         int size = 0;
 
         for (int num : resultInfo.values())
@@ -156,8 +175,7 @@ public abstract class SearchActionBase extends IntactSearchAction
              log.debug("Results found: " + size+", distributed in: "+resultInfo);
         }
 
-        SearchWebappContext.getCurrentInstance(getIntactContext()).setResultsInfo(resultInfo);
-        SearchWebappContext.getCurrentInstance(getIntactContext()).setTotalResults(size);
+        webappContext.setTotalResults(size);
 
         if (size == 0)
         {
@@ -171,8 +189,8 @@ public abstract class SearchActionBase extends IntactSearchAction
                 log.debug("Only one kind of results found, and the number of results ("+size+") is " +
                     "higher than the max page size ("+maxResults+"). Then this is a paginated search");
 
-            SearchWebappContext.getCurrentInstance(intactContext).setPaginatedSearch(true);
-            SearchWebappContext.getCurrentInstance(intactContext).setCurrentPage(1);
+            webappContext.setPaginatedSearch(true);
+            webappContext.setCurrentPage(1);
         }
         else if (resultInfo.size() > 1 && size > 0 && size > maxResults)
         {
@@ -196,7 +214,8 @@ public abstract class SearchActionBase extends IntactSearchAction
         if (log.isDebugEnabled())
         {
             log.debug("Paginated query: page=" + SearchWebappContext.getCurrentInstance().getCurrentPage()
-                    + " firstResult=" + firstResult + " maxResults=" + maxResults);
+                    + " firstResult=" + firstResult + " maxResults=" + maxResults+" totalResults: "
+                    + SearchWebappContext.getCurrentInstance().getTotalResults());
         }
         
         SearchableDao dao = IntactContext.getCurrentInstance().getDataContext()
@@ -247,15 +266,6 @@ public abstract class SearchActionBase extends IntactSearchAction
         //single object views, the original search beans are lost
 
         getIntactContext().getSession().setAttribute(SearchConstants.LAST_VALID_SEARCH, getSearchableQuery());
-
-        log.warn("HELP LINK COMMENTED");
-        //String relativeHelpLink = getIntactContext().getSession()
-        //        .getInitParam(SearchEnvironment.HELP_LINK);
-
-        //build the help link out of the context path - strip off the 'search' bit...
-        //String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(getRequest());
-        //String helpLink = absPathWithoutContext.concat(relativeHelpLink);
-        //getIntactUser().setHelpLink(helpLink);
 
         return mapping.findForward(SearchConstants.FORWARD_DISPATCHER_ACTION);
     }

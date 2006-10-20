@@ -16,30 +16,51 @@
 package uk.ac.ebi.intact.webapp.search.struts.controller;
 
 import org.apache.struts.action.DynaActionForm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.searchengine.SearchClass;
+
+import java.util.Arrays;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Execute simple searches
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:NewSearchAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class NewSearchAction extends SearchActionBase
 {
 
+    private static final Log log = LogFactory.getLog(NewSearchAction.class);
+
     public SearchableQuery createSearchableQuery()
     {
-        DynaActionForm dyForm = (DynaActionForm) getForm();
+        String searchValue;
 
-        String searchValue = (String) dyForm.get( "searchString" );
+        searchValue = getParameterFromUrl("searchString");
 
-        SearchableQuery query = null;
+        if (searchValue == null)
+        {
+            DynaActionForm dyForm = (DynaActionForm) getForm();
+            searchValue = (String) dyForm.get( "searchString" );
+
+            if (log.isDebugEnabled()) log.debug("Getting 'searchString' from form: "+searchValue);
+        }
+        else
+        {
+            if (log.isDebugEnabled()) log.debug("Getting 'searchString' from parameter: "+searchValue);
+        }
+
+        SearchableQuery query;
 
         if (SearchableQuery.isSearchableQuery(searchValue))
         {
-            query = SearchableQuery.paseSearchableQuery(searchValue);
+            query = SearchableQuery.parseSearchableQuery(searchValue);
         }
         else
         {
@@ -84,5 +105,39 @@ public class NewSearchAction extends SearchActionBase
                             ProteinImpl.class,
                             NucleicAcidImpl.class,
                             CvObject.class };
+    }
+
+    private String getParameterFromUrl(String paramName)
+    {
+        String url = getRequest().getQueryString();
+
+        String[] params = url.split("&");
+
+        for (String param : params)
+        {
+            String[] nameAndValue = param.split("=", 2);
+
+            if (nameAndValue.length < 2)
+            {
+                return null;
+            }
+
+            String name = nameAndValue[0];
+            String value = nameAndValue[1];
+
+            if (name.equals(paramName))
+            {
+                try
+                {
+                    return URLDecoder.decode(value, "UTF-8");
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return null;
     }
 }
