@@ -15,6 +15,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -96,9 +97,28 @@ public class SearchServiceClient
      */
     public List<String> findPartnersUsingUniprotIds(String proteinId) throws RemoteException
     {
-        List<String> proteinIds = new ArrayList<String>();
-        proteinIds.add(proteinId);
-        return search.findPartnersUsingUniprotIds(proteinIds).iterator().next().getPartnerUniprotAcs();
+        if (proteinId == null)
+        {
+            throw new NullPointerException("proteinId cannot be null");
+        }
+
+        List<String> proteinIds = Collections.unmodifiableList(Arrays.asList(proteinId));
+
+        List<PartnerResult> results = search.findPartnersUsingUniprotIds(proteinIds);
+
+        if (results.isEmpty())
+        {
+            return Collections.EMPTY_LIST;
+        }
+
+        List<String> partners = new ArrayList<String>(results.size());
+
+        for (PartnerResult result : results)
+        {
+            partners.addAll(result.getPartnerUniprotAcs());
+        }
+
+        return partners;
     }
 
     /**

@@ -14,7 +14,7 @@ public class SearchClientTest extends TestCase
     public void testFindPartnersUsingUniprotIds() throws Exception
     {
         SearchServiceClient client = new SearchServiceClient();
-        List<String> uniprotIds = client.findPartnersUsingUniprotIds("Q9VZ59");
+        List<String> uniprotIds = client.findPartnersUsingUniprotIds("P52292");
 
         for (String id : uniprotIds)
         {
