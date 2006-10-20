@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+import org.xml.sax.InputSource;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,6 +26,9 @@ import psidev.psi.mi.validator.extensions.mi25.Mi25Validator;
 import psidev.psi.mi.validator.framework.ValidatorMessage;
 import psidev.psi.mi.validator.framework.ValidatorException;
 import psidev.psi.mi.validator.framework.MessageLevel;
+import uk.ac.ebi.intact.util.psivalidator.PsiValidatorReport;
+import uk.ac.ebi.intact.util.psivalidator.PsiValidator;
+import uk.ac.ebi.intact.util.psivalidator.PsiValidatorMessage;
 
 /**
  * This class is the responsible of reading and validating the PSI File and creating a validation report
@@ -156,67 +160,44 @@ public class PsiReportBuilder
      */
     private static boolean validateXmlSyntax(PsiReport report, InputStream is) throws IOException
     {
+
+        PsiValidatorReport validationReport = PsiValidator.validate(new InputSource(is));
+
+        boolean xmlValid = validationReport.isValid();
+
         //InputStream xsd = PsiReportBuilder.class.getResourceAsStream("/uk/ac/ebi/imex/psivalidator/resource/MIF25.xsd");
 
         // we create a printwriter to write the output of the exceptions, if any.
         StringWriter sw = new StringWriter();
-        PrintWriter writer = new PrintWriter(sw);
 
-        try
-        {
-            // parse an XML document into a DOM tree
-            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document document = parser.parse(is);
-
-            // create a SchemaFactory capable of understanding WXS schemas
-            //SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-            // load a WXS schema, represented by a Schema instance
-            //Source schemaFile = new StreamSource(xsd);
-            //Schema schema = factory.newSchema(schemaFile);
-
-            // create a Validator instance, which can be used to validate an instance document
-            //Validator validator = schema.newValidator();
-
-            // validate the DOM tree
-            //validator.validate(new DOMSource(document));
-        }
-        // all the exceptions write the stacktrace to the printwriter
-        catch (ParserConfigurationException e)
-        {
-            e.printStackTrace(writer);
-        }
-        catch (SAXException e)
-        {
-            e.printStackTrace(writer);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace(writer);
-        }
-
-        // we get a stream with the contents printed by the writer
-        String output = sw.getBuffer().toString();
-
-        if (log.isDebugEnabled())
-            log.debug("Is there XML validation output? "+output.equals(""));
-
-        // if the output is empty, the document is valid
-        if (output.equals(""))
+        // the document is valid ?
+        if (xmlValid)
         {
             // we set the report status and report with the specified texts
             report.setXmlSyntaxStatus("valid");
             report.setXmlSyntaxReport("Document is valid");
-
-            return true;
+        }
+        else
+        {
+            // if the output contains information, the xml validation is invalid.
+            // We put that information as the xml syntax report.
+            report.setXmlSyntaxStatus("invalid");
+            report.setXmlSyntaxReport(getOutputFromReport(validationReport));
         }
 
-        // if the output contains information, the xml validation is invalid.
-        // We put that information as the xml syntax report.
-        report.setXmlSyntaxStatus("invalid");
-        report.setXmlSyntaxReport(output);
+        return xmlValid;
+    }
 
-        return false;
+    private static String getOutputFromReport(PsiValidatorReport report)
+    {
+        StringBuffer sb = new StringBuffer(128);
+
+        for (PsiValidatorMessage message : report.getMessages())
+        {
+            sb.append(message.toString()+"\n");
+        }
+
+        return sb.toString();
     }
 
 
