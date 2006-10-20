@@ -130,7 +130,7 @@ public class IntactConfigurator
         }
 
         // check the schema Version
-        checkSchemaCompatibility(session);
+        //checkSchemaCompatibility(session);
 
         // read only
         String strReadOnly = getInitParamValue(session, IntactEnvironment.READ_ONLY_APP, DEFAULT_READ_ONLY_APP);

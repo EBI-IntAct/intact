@@ -149,7 +149,7 @@ public abstract class PolymerImpl extends InteractorImpl implements Polymer {
     }
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
-    @IndexColumn(name = "sequenceIndex")
+    @IndexColumn(name = "sequence_index")
     public List<SequenceChunk> getSequenceChunks() {
         return sequenceChunks;
     }
