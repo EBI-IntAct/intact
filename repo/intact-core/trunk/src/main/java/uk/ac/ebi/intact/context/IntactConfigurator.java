@@ -128,7 +128,14 @@ public class IntactConfigurator
         }
 
         // check the schema Version
-        checkSchemaCompatibility(session);
+        // read only
+        String strForceNoSchemaCheck = getInitParamValue(session, IntactEnvironment.FORCE_NO_SCHEMA_VERSION_CHECK, Boolean.FALSE.toString());
+        boolean forceNoSchemaCheck = Boolean.parseBoolean(strForceNoSchemaCheck);
+
+        if (!forceNoSchemaCheck)
+        {
+            checkSchemaCompatibility(session);
+        }
 
         // read only
         String strReadOnly = getInitParamValue(session, IntactEnvironment.READ_ONLY_APP, DEFAULT_READ_ONLY_APP);

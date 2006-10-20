@@ -73,4 +73,10 @@ public interface IntactEnvironment
      */
     public static final String SYNCHRONIZED_SEARCH_ITEMS = "uk.ac.ebi.intact.SYNCHRONIZED_SEARCH_ITEMS";
 
+
+    /**
+     * If true, don't check the schema version agains the intact-core version. Default: false
+     */
+    public static final String FORCE_NO_SCHEMA_VERSION_CHECK = "uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK";
+
 }
