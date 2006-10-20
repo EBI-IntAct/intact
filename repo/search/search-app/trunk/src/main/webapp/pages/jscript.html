@@ -56,8 +56,8 @@ function writeToWindow(form, msg, id) {
     }
     if (id == 0) {
         var link = "<%=hvPath%>"
-                + "?AC=" + ac + "&depth=" + "<%= service.getHierarchViewProp("hv.depth")%>"
-                                                 + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
+                + "?AC=" + ac + "&depth=" + "<%= webappContext.getHierarchViewDepth()%>"
+                                                 + "&method=" + "<%=webappContext.getHierarchViewMethod()%>";
         //window.alert(link);
         makeNewWindow(link);
     }

@@ -37,6 +37,9 @@ to identify the source page of the request to the Action classes.
                  uk.ac.ebi.intact.model.Interactor,
                  uk.ac.ebi.intact.searchengine.SearchClass,
                  java.util.*"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.SimpleViewBean" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
 
 <%-- Standard Java classes --%>
 
@@ -46,25 +49,17 @@ to identify the source page of the request to the Action classes.
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
-    // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute(
-            SearchConstants.INTACT_SERVICE);
 
-    //build the absolute path out of the context path for 'search'
-    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
+    SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = absPathWithoutContext.concat("mine/display.jsp");
+    // is used by the script included in the file jscript.html
+    String hvPath = webappContext.getHierarchViewAbsoluteUrl();
+    String minePath = webappContext.getMineAbsoluteUrl();
 
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
-    List<List<SimpleViewBean>> partitionList = (List<List<SimpleViewBean>>)request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-
-    //get the maximum size beans from the context for later use
-    Map sizeMap = (Map)session.getServletContext().getAttribute(SearchConstants.MAX_ITEMS_MAP);
-
-
+    List<List<SimpleViewBean>> partitionList = (List<List<SimpleViewBean>>) request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
 
 %>
 <%-- The javascript for the button bars.... --%>
@@ -132,13 +127,14 @@ partitioned list to do this --%>
 
 <%
     List<SimpleViewBean> displayList = null;     //use this as each iteration holder
-    for(Iterator<List<SimpleViewBean>> it1 = partitionList.iterator(); it1.hasNext();) {
+    for (Iterator<List<SimpleViewBean>> it1 = partitionList.iterator(); it1.hasNext();)
+    {
         displayList = it1.next();
 
-    //need a handle on this to write out some header info and typecheck...
-    SimpleViewBean firstItem = displayList.iterator().next();
+        //need a handle on this to write out some header info and typecheck...
+        SimpleViewBean firstItem = displayList.iterator().next();
 
-    SearchClass firstItemSearchClass = SearchClass.valueOfMappedClass(firstItem.getObject().getClass());
+        SearchClass firstItemSearchClass = SearchClass.valueOfMappedClass(firstItem.getObject().getClass());
 %>
 
 <%-- If we get to here we know we have something to show, so we need a button bar...

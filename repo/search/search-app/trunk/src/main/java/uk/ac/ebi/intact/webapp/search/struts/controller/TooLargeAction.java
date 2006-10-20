@@ -6,11 +6,13 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.model.SmallMoleculeImpl;
+import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.webapp.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 import uk.ac.ebi.intact.webapp.search.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.webapp.search.struts.view.beans.TooLargeViewBean;
+import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,7 +27,7 @@ import java.util.Map;
  * web-interface.
  *
  * @author Michael Kleen (mkleen@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:TooLargeAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class TooLargeAction extends IntactBaseAction {
 
@@ -51,7 +53,8 @@ public class TooLargeAction extends IntactBaseAction {
         //TODO use here a iteratable map instead
 
         // get the resultinfo from the initial request from the search action
-        final Map<?,Integer> resultInfo = ( Map ) request.getAttribute( SearchConstants.RESULT_INFO );
+        final Map<Class<? extends Searchable>,Integer> resultInfo =
+                SearchWebappContext.getCurrentInstance().getCurrentResultCount();
         logger.debug( "Result info: "+ resultInfo );
 
         final Collection someKeys = resultInfo.keySet();

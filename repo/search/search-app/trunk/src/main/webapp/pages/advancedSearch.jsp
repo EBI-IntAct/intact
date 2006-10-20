@@ -367,17 +367,18 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 
                         <ul>
                           <span align="center"><h4>Usage Hints</h4><br> </span>
-                          <li>'*' will match any number of characters<br />
+                          <li>'*' or '%' will match any number of characters
+                              when used at the beginning or end of a term<br />
                           </li>
-                          <li>'?' will match only one character<br />
+                          <li>a list of terms separated by ',' (comma) or<br>
+                              by ' ' (space) will be interpreted as "match<br>
+                              any of these (OR)"<br />
                           </li>
-                          <li>it is not possible to start with '*' or '?'<br />
-                          </li>
-                          <li>a list of terms separated by ',' (comma) will be <br>
-                              interpreted as "match any of these (OR)"<br />
-                          </li>
-                          <li>a list of terms separated by '+' will be <br>
+                          <li>prefixing a term with '+' will be <br>
                               interpreted as "match all of these (AND)"<br />
+                          </li>
+                            <li>prefixing a term with '-' will exclude <br>
+                              the results containing that term<br />
                           </li>
                           <li>word phrases have to be put in double quotes<br />
                           </li>
@@ -440,6 +441,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
             </td>
         </tr>
 
+        <%--
         <tr>
            <td class="headerlight" style="vertical-align: top;"><small><small>
                <html:text property="fulltext" size="40" /></small></small>
@@ -447,6 +449,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
            <td  colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: top;">anywhere in the object annotation (fulltext search)<br />
            </td>
         </tr>
+        --%>
 
             <tr>
                 <td class="headerlight" style="vertical-align: top;">
@@ -489,7 +492,9 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                           <html:options collection="cvInteractions" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
-                      <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteraction.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteraction')">
+                       <html:checkbox property="cvInteractionIncludeChildren">Include children in search</html:checkbox>
+                       <br>
+                       <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteraction.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteraction')">
                 </td>
 
             <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> where this method has been used to determine the interaction
@@ -504,6 +509,8 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                           <html:options collection="cvIdentifications" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
+                      <html:checkbox property="cvIdentificationIncludeChildren">Include children in search</html:checkbox>
+                      <br>
                       <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvIdentification.class.getName() %>', '<%=request.getContextPath()%>', 'cvIdentification')">
             </td>
 
@@ -519,9 +526,10 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                           <html:options collection="cvInteractionTypes" property="shortlabel" labelProperty="shortlabel" />
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
-
+                      <html:checkbox property="cvInteractionTypeIncludeChildren">Include children in search</html:checkbox>
+                      <br>
                       <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteractionType.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteractionType')">
-                </td>
+             </td>
 
             <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;"> having this interaction type
                                                                                                <intact:documentation section="Interaction" /></td>

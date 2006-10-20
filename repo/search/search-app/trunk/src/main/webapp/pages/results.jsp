@@ -9,9 +9,10 @@
 <%@ page buffer="none"    %>
 <%@ page autoFlush="true" %>
 
-<%@ page import="uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
-                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
                  java.util.StringTokenizer"%>
+ <%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
+ <%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.AbstractViewBean" %>
 
  <!-- Import util classes -->
 
@@ -21,15 +22,11 @@
 
 
 <%
-    // To allow access hierarchView properties.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute( SearchConstants.INTACT_SERVICE);
-
-    //build the absolute path out of the context path for 'search'
-    String absPathWithoutContext = UrlUtil.absolutePathWithoutContext(request);
+    SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = absPathWithoutContext.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = absPathWithoutContext.concat("mine/display.jsp");
+    String hvPath = webappContext.getHierarchViewAbsoluteUrl();
+    String minePath = webappContext.getMineAbsoluteUrl();
 %>
 
 <script language="JavaScript" type="text/javascript">
@@ -91,8 +88,8 @@
             }
         }
         var link = "<%=hvPath%>"
-            + "?AC=" + ac + "&depth=" + <%=service.getHierarchViewProp("hv.depth")%>
-            + "&method=" + "<%=service.getHierarchViewProp("hv.method")%>";
+            + "?AC=" + ac + "&depth=" + <%=webappContext.getHierarchViewDepth()%>
+            + "&method=" + "<%=webappContext.getHierarchViewMethod()%>";
         //window.alert(link);
         makeNewWindow(link);
     }
@@ -167,12 +164,16 @@
 <%
     AbstractViewBean bean = (AbstractViewBean) session.getAttribute(SearchConstants.VIEW_BEAN);
 
-    if (bean == null) {
+    if (bean == null)
+    {
         out.write("nothing found in the session.");
-    }  else {
+    }
+    else
+    {
 
-         if(bean.showGraphButtons()) {
-         //display links - none to display for single object views.
+        if (bean.showGraphButtons())
+        {
+            //display links - none to display for single object views.
 %>
                 <html:link href='javascript:checkAll()'>
                     Check All
@@ -183,11 +184,7 @@
 <%
          }
 
-        //build the help link - uses the current host path information
-        //plus the filename as specified in the servlet context
-        String relativeHelpLink = this.getServletConfig().getServletContext().getInitParameter("helpLink");
-        //build the help link out of the context path - strip off the 'search' bit...
-        String helpLink = relativePath.concat(relativeHelpLink) + bean.getHelpSection();
+        String helpLink = webappContext.getHelpLink();
 
 %>
         <html:link href="<%=helpLink %>" target="new">

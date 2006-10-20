@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
+import uk.ac.ebi.intact.model.Searchable;
 
 import java.util.Map;
 
@@ -29,8 +30,8 @@ import java.util.Map;
  * Convenience class to access all stored variables in a clear way
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
- * @since <pre>12-Oct-2006</pre>
+ * @version $Id:SearchWebappContext.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
+ * @since 1.5
  */
 public class SearchWebappContext
 {
@@ -47,6 +48,10 @@ public class SearchWebappContext
 
     private String helpLink;
     private String searchUrl;
+    private String hierarchViewUrl;
+    private String mineUrl;
+
+    private Map<Class<? extends Searchable>, Integer> currentResultCount;
 
     private SearchWebappContext()
     {
@@ -91,16 +96,6 @@ public class SearchWebappContext
 
         //TODO will be eliminated eventually
         session.setAttribute(SearchConstants.SEARCH_CRITERIA, query);
-    }
-
-    public Map<?,Integer> getResultsInfo()
-    {
-        return (Map) session.getAttribute(RESULTS_INFO_ATT_NAME);
-    }
-
-    public void setResultsInfo(Map<?,Integer> resultsInfo)
-    {
-        session.setRequestAttribute(RESULTS_INFO_ATT_NAME, resultsInfo);
     }
 
     public Integer getTotalResults()
@@ -214,6 +209,68 @@ public class SearchWebappContext
     public void setSession(IntactSession session)
     {
         this.session = session;
+    }
+
+    public String getAbsolutePathWithoutContext()
+    {
+        return absolutePathWithoutContext((WebappSession)session);
+    }
+
+    public String getHierarchViewAbsoluteUrl()
+    {
+        if (hierarchViewUrl != null)
+        {
+            return hierarchViewUrl;
+        }
+
+        hierarchViewUrl = getAbsolutePathWithoutContext().concat(
+            session.getInitParam(SearchEnvironment.HIERARCH_VIEW_URL));
+
+        return hierarchViewUrl;
+    }
+
+    public String getHierarchViewMethod()
+    {
+        return session.getInitParam(SearchEnvironment.HIERARCH_VIEW_METHOD);
+    }
+
+    public String getHierarchViewDepth()
+    {
+        return session.getInitParam(SearchEnvironment.HIERARCH_VIEW_DEPTH);
+    }
+
+    public String getMineAbsoluteUrl()
+    {
+        if (mineUrl != null)
+        {
+            return mineUrl;
+        }
+
+        mineUrl = getAbsolutePathWithoutContext().concat(
+                session.getInitParam(SearchEnvironment.MINE_URL));
+
+        return mineUrl;
+    }
+
+
+    public Map<Class<? extends Searchable>, Integer> getCurrentResultCount()
+    {
+        return currentResultCount;
+    }
+
+    public void setCurrentResultCount(Map<Class<? extends Searchable>, Integer> currentResultCount)
+    {
+        this.currentResultCount = currentResultCount;
+    }
+
+    public Integer getResultCountFor(Class<? extends Searchable> searchable)
+    {
+        if (currentResultCount == null)
+        {
+            return 0;
+        }
+
+        return currentResultCount.get(searchable);
     }
 
     /**

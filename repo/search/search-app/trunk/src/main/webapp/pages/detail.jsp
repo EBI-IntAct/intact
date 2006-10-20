@@ -27,8 +27,10 @@
 <%-- Intact classes needed --%>
 <%@ page import="uk.ac.ebi.intact.model.*,
                  uk.ac.ebi.intact.persistence.dao.query.SearchableQuery,
-                 uk.ac.ebi.intact.webapp.search.business.IntactServiceIF,
                  java.util.*" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailView" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailViewBean" %>
 
 <%-- Standard Java classes --%>
 
@@ -38,16 +40,11 @@
 <%@ taglib uri="http://java.sun.com/jstl/core" prefix="c"%>
 
 <%
-    // To allow access hierarchView properties. Used only by the javascript.
-    IntactServiceIF service = (IntactServiceIF) application.getAttribute(SearchConstants.INTACT_SERVICE);
-
-    //build the absolute path out of the context path for 'search'
-    String ctxtPath = (request.getContextPath());
-    String relativePath = ctxtPath.substring(0, ctxtPath.lastIndexOf("search"));
+    SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
     //build the URL for hierarchView from the absolute path and the relative beans..
-    String hvPath = relativePath.concat(service.getHierarchViewProp("hv.url"));
-    String minePath = relativePath.concat("mine/display.jsp");
+    String hvPath = webappContext.getHierarchViewAbsoluteUrl();
+    String minePath = webappContext.getMineAbsoluteUrl();
 
     //the list of shortlabels for the search matches - need to be highlighted
     //NB the SearchAction ensures (in most cases!) this will not be null
@@ -122,7 +119,7 @@
         highlightList.add( existingBean.getObjIntactName() );
     }
      */
-        MainDetailViewBean bean = detailView.getMainDetailViewBean();
+    MainDetailViewBean bean = detailView.getMainDetailViewBean();
 
 
 %>
@@ -516,7 +513,7 @@
     <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="5">
         <a href="<%= bean.getHelpLink() + "Interaction.kD"%>"
            target="new" class="tdlink">
-            Dissociation constant (Kd)</a><br>
+            Dissociation constant (Kd) M</a><br>
     </td>
 
 </tr>
@@ -783,7 +780,9 @@
            target="new" class="tdlink">Ac</a>
     </td>
 
-    <td nowrap="nowrap" class="headerlight">Interactor type<br></td>
+    <td class="headerlight">Interactor type<br></td>
+
+    <td class="headerlight">Stoichiometry</td>
 
     <!-- 'uniprot description' title cell -->
     <%-- *** NOTE ***
@@ -858,6 +857,11 @@
     <!--interator type-->
     <td class="data">
         <%= bean.getInteractorType( interactor )%>
+    </td>
+
+    <!-- stoichiometry -->
+    <td class="data" style="vertical-align: top;">
+        <%= ( component.getStoichiometry() != 0F ) ? component.getStoichiometry() : "-" %>
     </td>
 
     <!-- uniprot description -->

@@ -13,7 +13,6 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.webapp.search.business.IntactServiceIF;
 import uk.ac.ebi.intact.webapp.search.business.IntactUserIF;
 import uk.ac.ebi.intact.webapp.search.business.IntactUserImpl;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
@@ -28,7 +27,7 @@ import java.util.Map;
  * Super class for all Intact related action classes.
  *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:IntactBaseAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public abstract class IntactBaseAction extends Action {
 
@@ -43,17 +42,6 @@ public abstract class IntactBaseAction extends Action {
      * Error container
      */
     private ActionErrors myErrors = new ActionErrors();
-
-    /**
-     * Returns the only instance of Intact Service instance.
-     *
-     * @return only instance of the <code>IntactServiceImpl</code> class.
-     */
-    protected IntactServiceIF getIntactService() {
-        IntactServiceIF service = (IntactServiceIF)
-                getApplicationObject(SearchConstants.INTACT_SERVICE);
-        return service;
-    }
 
     /**
      * Returns the Intact User instance saved in a session.

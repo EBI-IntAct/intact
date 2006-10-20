@@ -60,6 +60,38 @@
         </description>
     </context-param>
 
+    <!-- HierarchView related params -->
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.HIERARCH_VIEW_URL</param-name>
+        <param-value>hierarchView/display.jsp</param-value>
+        <description>
+            Relative URL for hierarchView
+        </description>
+    </context-param>
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.HIERARCH_VIEW_DEPTH</param-name>
+        <param-value>1</param-value>
+        <description>
+            Default depth
+        </description>
+    </context-param>
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.HIERARCH_VIEW_METHOD</param-name>
+        <param-value>All</param-value>
+        <description>
+            Hierarch view method to use
+        </description>
+    </context-param>
+
+    <!-- Mine related params -->
+    <context-param>
+        <param-name>uk.ac.ebi.intact.search.MINE_URL</param-name>
+        <param-value>mine/display.jsp</param-value>
+        <description>
+            Relative URL for mine
+        </description>
+    </context-param>
+
     <!--  NB XML config files for the DB MUST be referred to here relative
           to the WEB-INF/classes directory as that is where the class loader
           will start to look. The leading "/" MUST be present if the config
@@ -112,7 +144,7 @@
     <!-- Action Servlet Configuration -->
     <servlet>
         <servlet-name>action</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.webappch.struts.framework.IntactActionServlet</servlet-class>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
         <init-param>
             <param-name>application</param-name>
             <param-value>/config/IntactResources</param-value>
@@ -139,7 +171,7 @@
     <!-- Drawing dynamic Images -->
     <servlet>
         <servlet-name>dynamicImage</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.webappchadvancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
+        <servlet-class>uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.business.graphdraw.servlet.ImageServlet</servlet-class>
     </servlet>
 
 

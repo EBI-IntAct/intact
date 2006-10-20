@@ -19,8 +19,8 @@ package uk.ac.ebi.intact.webapp.search;
  * Configuration constant names
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
- * @since <pre>11-Oct-2006</pre>
+ * @version $Id:SearchEnvironment.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
+ * @since 1.5
  */
 public interface SearchEnvironment
 {
@@ -38,4 +38,26 @@ public interface SearchEnvironment
      * The search link (relative to context root)
      */
     static final String SEARCH_LINK = "uk.ac.ebi.intact.search.SEARCH_LINK";
+
+    /**
+     * Relative URL for hierarchView
+     */
+    static final String HIERARCH_VIEW_URL = "uk.ac.ebi.intact.search.HIERARCH_VIEW_URL";
+
+    /**
+     *  Default hierarchView depth
+     */
+    static final String HIERARCH_VIEW_DEPTH = "uk.ac.ebi.intact.search.HIERARCH_VIEW_DEPTH";
+
+    /**
+     * Hierarch view method to use
+     */
+    static final String HIERARCH_VIEW_METHOD = "uk.ac.ebi.intact.search.HIERARCH_VIEW_METHOD";
+
+    /**
+     *  Relative URL for mine
+     */
+    static final String MINE_URL = "uk.ac.ebi.intact.search.MINE_URL";
+
+   
 }
