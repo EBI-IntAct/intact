@@ -55,8 +55,8 @@ public class IdentifierCheckerTest extends TestCase {
     
     public void testSpliceVariantId() {
         // positive test
-        assertTrue( IdentifierChecker.isProteinId( "P12345-1" ) );
-        assertTrue( IdentifierChecker.isProteinId( "Q98765-1" ) );
+        assertTrue( IdentifierChecker.isSpliceVariantId( "P12345-1" ) );
+        assertTrue( IdentifierChecker.isSpliceVariantId( "Q98765-1" ) );
 
         // negative tests
         assertFalse( IdentifierChecker.isSpliceVariantId( " P12345-1" ) );  // spaces
@@ -81,11 +81,11 @@ public class IdentifierCheckerTest extends TestCase {
         assertTrue( IdentifierChecker.isFeatureChainId( "PRO_1234567890" ) );
 
         // negative tests
-        assertTrue( IdentifierChecker.isFeatureChainId( "P12345" ) );   // protein id
-        assertTrue( IdentifierChecker.isFeatureChainId( "P12345-1" ) ); // splice variant id
-        assertTrue( IdentifierChecker.isFeatureChainId( " PRO_1234567890" ) );  // spaces
-        assertTrue( IdentifierChecker.isFeatureChainId( " PRO_1234567890 " ) ); // spaces
-        assertTrue( IdentifierChecker.isFeatureChainId( "PRO_1234567890 " ) );  // spaces
+        assertFalse( IdentifierChecker.isFeatureChainId( "P12345" ) );   // protein id
+        assertFalse( IdentifierChecker.isFeatureChainId( "P12345-1" ) ); // splice variant id
+        assertFalse( IdentifierChecker.isFeatureChainId( " PRO_1234567890" ) );  // spaces
+        assertFalse( IdentifierChecker.isFeatureChainId( " PRO_1234567890 " ) ); // spaces
+        assertFalse( IdentifierChecker.isFeatureChainId( "PRO_1234567890 " ) );  // spaces
         assertFalse( IdentifierChecker.isFeatureChainId( "PRO_12345678900" ) );        // 11 digits at the end
         assertFalse( IdentifierChecker.isFeatureChainId( "P12345-PRO_12345678900" ) ); // 11 digits at the end
         assertFalse( IdentifierChecker.isFeatureChainId( "P123456-PRO_12345678900" ) ); // wrong prot prefix
