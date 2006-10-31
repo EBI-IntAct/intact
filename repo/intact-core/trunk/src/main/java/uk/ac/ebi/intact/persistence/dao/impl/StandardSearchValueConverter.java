@@ -70,7 +70,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
             {
                 token = removeModifierFromTerm(token, MODIFIER_PLUS);
 
-                if (DaoUtils.isValueForLike(value))
+                if (DaoUtils.isValueForLike(token))
                 {
                     conjunction.add(Restrictions.like(propertyName, token).ignoreCase());
                 }
@@ -83,7 +83,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
             {
                 token = removeModifierFromTerm(token, MODIFIER_MINUS);
 
-                if (DaoUtils.isValueForLike(value))
+                if (DaoUtils.isValueForLike(token))
                 {
                     conjunction.add(Restrictions.not(Restrictions.like(propertyName, token).ignoreCase()));
                 }
@@ -94,7 +94,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
             }
             else
             {
-                if (DaoUtils.isValueForLike(value))
+                if (DaoUtils.isValueForLike(token))
                 {
                     disjunction.add(Restrictions.like(propertyName, token).ignoreCase());
                 }

@@ -126,13 +126,22 @@ public class SearchableDaoImplTest extends TestCase
         {
             System.out.println(((AnnotatedObject)searchable).getAc());
         }
-          /*
-        List<String> acs = dao.getAcsByQuery(Experiment.class, query, 0, 50);
 
-        for (String ac : acs)
-        {
-            System.out.println(ac);
-        }    */
+    }
+
+    public void testCountByQuery_description2() throws Exception
+    {
+        String search = "butkevich-2004-1";
+
+        SearchableQuery query = new SearchableQuery();
+        query.setShortLabel(search);
+        query.setDescription(search);
+        query.setXref(search);
+        query.setAc(search);
+        query.setDisjunction(true);
+
+        int count = dao.countByQuery(Experiment.class, query);
+        assertEquals(1, count);
     }
 
     public void testGetByQuery_std() throws Exception
