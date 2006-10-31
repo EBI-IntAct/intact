@@ -18,7 +18,7 @@
 
     <tag>
         <name>displayCvDag</name>
-        <tag-class>uk.ac.ebi.intact.application.search3.advancedSearch.powerSearch.struts.taglibs.DisplayCvDagObjectTag</tag-class>
+        <tag-class>uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.taglibs.DisplayCvDagObjectTag</tag-class>
         <body-content>empty</body-content>
         <description>
             Displays the cvDag graph if the picture has been generated

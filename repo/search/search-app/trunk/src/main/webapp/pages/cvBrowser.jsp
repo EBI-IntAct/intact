@@ -1,4 +1,6 @@
-<%@ page import="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.Constants"%><html><head>
+<%@ page import="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.Constants"%>
+<%@ page import="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.business.graphdraw.ImageBean" %>
+<html><head>
 <%@ taglib uri="http://ebi.ac.uk/intact/advanced-search" prefix="advancedSearch" %>
 
 <html:html>
@@ -8,10 +10,10 @@
 
     <%
         // retreive the Bean that contains the CV name.
-        ImageBean imageBean = (ImageBean) session.getServletContext().getAttribute( Constants.IMAGE_BEAN );
+        ImageBean imageBean = (ImageBean) session.getServletContext().getAttribute(Constants.IMAGE_BEAN);
 
         // get the given field name from the request
-        String fieldName = (String) request.getParameter( "field" );
+        String fieldName = (String) request.getParameter("field");
     %>
 
     <script language="javascript" type="text/javascript">
