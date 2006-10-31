@@ -64,7 +64,7 @@
 <span class="smalltext">Search Results for
 
     <%
-        SearchableQuery query = SearchWebappContext.getCurrentInstance().getCurrentSearch();
+        SearchableQuery query = SearchWebappContext.getCurrentInstance().getCurrentSearchQuery();
         String params = query.toString();
 
         if (params.length() > 30)

@@ -84,27 +84,17 @@ public class NewSearchAction extends SearchActionBase
 
         if (searchClassName == null)
         {
-            return defaultSearchableTypes();
+            return DEFAULT_SEARCHABLE_TYPES;
         }
 
         SearchClass searchClass = SearchClass.valueOfShortName(searchClassName);
 
         if (searchClass == SearchClass.NOSPECIFIED)
         {
-            return defaultSearchableTypes();
+            return DEFAULT_SEARCHABLE_TYPES;
         }
 
         return new Class[] { searchClass.getMappedClass() };
-    }
-
-    @SuppressWarnings("unchecked")
-    protected Class<? extends Searchable>[] defaultSearchableTypes()
-    {
-        return new Class[] {Experiment.class,
-                            InteractionImpl.class,
-                            ProteinImpl.class,
-                            NucleicAcidImpl.class,
-                            CvObject.class };
     }
 
     private String getParameterFromUrl(String paramName)
@@ -129,13 +119,18 @@ public class NewSearchAction extends SearchActionBase
             {
                 try
                 {
-                    return URLDecoder.decode(value, "UTF-8");
+                    value = URLDecoder.decode(value, "UTF-8");
                 }
-                catch (UnsupportedEncodingException e)
+                catch (Throwable t)
                 {
-                    e.printStackTrace();
+                    if (log.isDebugEnabled())
+                    {
+                        log.debug("Could not decode to UTF-8: "+value);
+                    }
                 }
             }
+
+            return value;
         }
 
         return null;

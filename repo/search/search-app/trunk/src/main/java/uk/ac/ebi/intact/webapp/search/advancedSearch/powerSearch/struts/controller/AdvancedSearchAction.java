@@ -37,9 +37,15 @@ public class AdvancedSearchAction extends SearchActionBase
 
     private static final Log logger = LogFactory.getLog(AdvancedSearchAction.class);
 
+    private Class<? extends Searchable>[] searchableTypes;
 
     public Class<? extends Searchable>[] getSearchableTypes()
     {
+        if (searchableTypes != null)
+        {
+            return searchableTypes;
+        }
+
         DynaActionForm dyForm = (DynaActionForm) getForm();
         String searchClassString = (String) dyForm.get( "searchObject" );
 
@@ -49,13 +55,13 @@ public class AdvancedSearchAction extends SearchActionBase
 
         if (searchClassString.equals("any"))
         {
-            return null;
+            return DEFAULT_SEARCHABLE_TYPES;
         }
 
         try
         {
-            Class clazz = Class.forName(searchClassString);
-            return new Class[] { clazz };
+            searchableTypes = new Class[] { Class.forName(searchClassString) };
+            return searchableTypes;
         }
         catch (ClassNotFoundException e)
         {
@@ -86,7 +92,10 @@ public class AdvancedSearchAction extends SearchActionBase
         cvTopic = cvTopic.trim();
 
         // add automatic wildcards to the description
-        description = DaoUtils.addPercents(description);
+        if (description != null && description.length() > 0)
+        {
+            description = DaoUtils.addPercents(description);
+        }
 
         // create the searchable query object
         SearchableQuery searchableQuery = new SearchableQuery();

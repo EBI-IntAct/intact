@@ -19,7 +19,7 @@
     <span class="middletext">Search Results: No Matches!  <br></span
 
 <h3>Sorry - could not find any Result
-  by trying to match  <font color="red"> <%= SearchWebappContext.getCurrentInstance().getCurrentSearch() %> </font></h3>
+  by trying to match  <font color="red"> <%= SearchWebappContext.getCurrentInstance().getCurrentSearchQuery() %> </font></h3>
 
   <!--
   <ul>

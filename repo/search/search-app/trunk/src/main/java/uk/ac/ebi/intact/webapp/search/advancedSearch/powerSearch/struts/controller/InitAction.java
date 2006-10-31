@@ -30,7 +30,7 @@ import java.util.Collection;
  * Implementation of <strong>Action</strong> that initialise the webapp.
  *
  * @author Anja Friedrichsen
- * @version $Id$
+ * @version $Id:InitAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public final class InitAction extends IntactBaseAction {
 
@@ -64,10 +64,6 @@ public final class InitAction extends IntactBaseAction {
         if ( super.setupUser( request ) == null ) {
             // not possible to set up an user, forward to errorpage
             return mapping.findForward( SearchConstants.FORWARD_FAILURE );
-
-        } else if ( !helper.connected() ) {
-            // the database is not connected forward to errorpage
-            return mapping.findForward( SearchConstants.FORWARD_NO_RESOURCE );
 
         } else {
 
