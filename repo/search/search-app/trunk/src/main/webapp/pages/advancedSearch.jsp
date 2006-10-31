@@ -287,7 +287,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
               </td>
               <td colspan="2" rowspan="1" class="headerdarkmid" style="vertical-align: middle;">Perform the search according to the criteria selected<br>
               </td>
-              <td colspan="1" rowspan="8" class="headerdark" style="vertical-align: top;">
+              <td colspan="1" rowspan="7" class="headerdark" style="vertical-align: top;">
               </td>
               <td id="Interaction2" colspan="1" rowspan="1" class="headerlight" style="vertical-align: middle;">Interaction Examples<br>
               </td>
@@ -391,23 +391,23 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
 
 
 
-            <td id="Any2" colspan="1" rowspan="8" class="headerlight" style="vertical-align: middle;">
+            <td id="Any2" colspan="1" rowspan="7" class="headerlight" style="vertical-align: middle;">
                   <img src="<%=request.getContextPath()%>/images/anyExample.png" align="left" border="0">
             </td>
 
-            <td id="Cv2" colspan="1" rowspan="8" class="headerlight" style="vertical-align: middle;">
+            <td id="Cv2" colspan="1" rowspan="7" class="headerlight" style="vertical-align: middle;">
                   <img src="<%=request.getContextPath()%>/images/cvExample.png" align="left" border="0">
             </td>
 
-            <td id="Interaction3" colspan="1" rowspan="9" class="headerlight" style="vertical-align: middle;">
+            <td id="Interaction3" colspan="1" rowspan="8" class="headerlight" style="vertical-align: middle;">
                   <img src="<%=request.getContextPath()%>/images/interExample.png" align="left" border="0">
             </td>
 
-            <td id="Experiment4" colspan="1" rowspan="10" class="headerlight" style="vertical-align: middle;">
+            <td id="Experiment4" colspan="1" rowspan="9" class="headerlight" style="vertical-align: middle;">
                   <img src="<%=request.getContextPath()%>/images/expExample.png" align="left" border="0">
             </td>
 
-            <td id="Protein2" colspan="1" rowspan="8" class="headerlight" style="vertical-align: middle;">
+            <td id="Protein2" colspan="1" rowspan="7" class="headerlight" style="vertical-align: middle;">
                   <img src="<%=request.getContextPath()%>/images/protExample.png" align="left" border="0">
             </td>
 
@@ -417,7 +417,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
             <td class="headerlight" style="vertical-align: top;">
                <html:text property="acNumber" size="40"/>
             </td>
-            <td class="headerdarkmid" style="vertical-align: middle;">accession number
+            <td class="headerdarkmid" style="vertical-align: middle; white-space: nowrap;">accession number
                                                                      <intact:documentation section="BasicObject.ac" /><br>
             </td>
 
