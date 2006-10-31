@@ -10,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
@@ -18,6 +20,7 @@ import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -96,18 +99,16 @@ public class MainDetailView  extends AbstractView
 
             for (String priorAc : priorInteractionAcs)
             {
-                Interaction inter = getDaoFactory().getInteractionDao().getByAc(priorAc);
-                if (inter != null)
-                {
-                    interactions.add(inter);
-                }
+                priorAc = DaoUtils.replaceWildcardsByPercent(priorAc);
+                Collection<InteractionImpl> inters = getDaoFactory().getInteractionDao().getByAcLike(priorAc, true);
+                interactions.addAll(inters);
             }
         }
 
         // we load the rest of interactions for that experiment
         // if we are in the first page
         interactions.addAll(getDaoFactory().getExperimentDao()
-                .getInteractionsForExperimentWithAcExcluding(experiment.getAc(), priorInteractionAcs, firstResult, maxResults - priorInteractionAcs.length));
+                .getInteractionsForExperimentWithAcExcludingLike(experiment.getAc(), priorInteractionAcs, firstResult, maxResults - priorInteractionAcs.length));
 
 
         if (log.isDebugEnabled())

@@ -224,7 +224,7 @@
     </td>
 
     <!-- 'host' title, linked to help -->
-    <td colspan="3" nowrap="nowrap" class="headerdarkmid">
+    <td colspan="4" nowrap="nowrap" class="headerdarkmid">
         <a href="<%= bean.getHelpLink() + "Interactor.bioSource"%>" target="new"
            class="tdlink">Host
         </a>
@@ -270,11 +270,11 @@
 
     <% if ( bean.getExperimentBioSourceName().equalsIgnoreCase( "-" ) ) { %>
     <!-- linked to BioSource search -->
-    <td colspan="4" class="lefttop">
+    <td colspan="5" class="lefttop">
         <nobr><%= bean.getExperimentBioSourceName() %></nobr>
     </td>
     <% } else { %>
-    <td colspan="3" class="lefttop">
+    <td colspan="4" class="lefttop">
         <a href="<%= bean.getBioSourceSearchURL() %>">
             <nobr><%= bean.getExperimentBioSourceName() %></nobr>
         </a>
@@ -293,7 +293,7 @@
     </td>
 
     <!-- the description itself -->
-    <td colspan="8" class="lefttop"><%= bean.getObjDescription() %></td>
+    <td colspan="9" class="lefttop"><%= bean.getObjDescription() %></td>
 </tr>
 
 <!-- Experiment Annotation row  -->
@@ -341,7 +341,7 @@
         </td>
 
         <!-- annotation text cell -->
-        <td class="data" style="vertical-align: top;" rowspan="1" colspan="7">
+        <td class="data" style="vertical-align: top;" rowspan="1" colspan="9">
             <%
                 //need to check for a 'url' annotation and hyperlink them if so...
                 if ( annot.getCvTopic().getShortLabel().equals( CvTopic.URL ) ) {
@@ -434,7 +434,7 @@
     </td>
 
     <%-- CvXrefQualifier, linked to search for CV --%>
-    <td style="vertical-align: top;" rowspan="1" colspan="5">
+    <td style="vertical-align: top;" rowspan="1" colspan="6">
         <%
             CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
             if (cvXrefQualifier != null)
@@ -510,7 +510,7 @@
     <!-- 'dissociation constant' header cell, linked to help -->
     <%-- ** NB: make sure the text is 'Kd' and not 'kD' ** --%>
     <%-- <td style="vertical-align: top;" rowspan="1" colspan="4">  --%>
-    <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="5">
+    <td style="vertical-align: top;" class="headerlight" rowspan="1" colspan="6">
         <a href="<%= bean.getHelpLink() + "Interaction.kD"%>"
            target="new" class="tdlink">
             Dissociation constant (Kd) M</a><br>
@@ -561,7 +561,7 @@
     </td>
 
     <!-- dissociation constant -->
-    <td class="data" style="vertical-align: top;" rowspan="1" colspan="5">
+    <td class="data" style="vertical-align: top;" rowspan="1" colspan="6">
         <%= ( interaction.getKD() != null && interaction.getKD() != 0F ) ? interaction.getKD().toString() : "-" %>
     </td>
 </tr>
@@ -577,7 +577,7 @@
             Description
         </a>
     </td>
-    <td colspan="8" class="lefttop">
+    <td colspan="9" class="lefttop">
         <%= ( interaction.getFullName() != null ) ? interaction.getFullName() : "-" %>
     </td>
 
@@ -638,7 +638,7 @@
         //need to check for a 'url' annotation and hyperlink them if so...
         if ( annot.getCvTopic().getShortLabel().equals( CvTopic.URL ) ) {
     %>
-    <td style="vertical-align: top;" rowspan="1" colspan="7">
+    <td style="vertical-align: top;" rowspan="1" colspan="8">
         <a href="<%= annot.getAnnotationText() %>" class="tdlink" target="_blank">
             <%
                 String ann = annot.getAnnotationText();
@@ -652,7 +652,7 @@
                 else {
 
         %>
-    <td style="vertical-align: top;" rowspan="1" colspan="7" class="data">
+    <td style="vertical-align: top;" rowspan="1" colspan="8" class="data">
         <%
                 String ann = annot.getAnnotationText();
                 if (ann == null) ann = "-";
@@ -734,7 +734,7 @@
     </td>
 
     <%-- CvXrefQualifier, linked to search for CV --%>
-    <td style="vertical-align: top;" rowspan="1" colspan="5">
+    <td style="vertical-align: top;" rowspan="1" colspan="6">
         <%
             CvXrefQualifier cvXrefQualifier = xref.getCvXrefQualifier();
             if (cvXrefQualifier != null)
@@ -956,14 +956,14 @@
     <td style="vertical-align: top;" class="headerlight" rowspan="<%= featureRows.size() %>" colspan="1">
         <a href="<%= bean.getHelpLink() + "FEATURES_HELP_SECTION"%>" class="tdlink">Sequence features</a>
     </td>
-    <td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
+    <td class="data" style="vertical-align: top;" rowspan="1" colspan="9">
         <%= iterator.next() %>
     </td>
 </tr>
 <%
     while ( iterator.hasNext() ) {
 %>
-<tr><td class="data" style="vertical-align: top;" rowspan="1" colspan="8">
+<tr><td class="data" style="vertical-align: top;" rowspan="1" colspan="9">
     <%= iterator.next() %>
 </td></tr>
 <%
