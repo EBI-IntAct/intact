@@ -14,13 +14,17 @@
 <html:form action="/search" focus="searchString">
     <table>
         <tr>
-            <td><html:text property="searchString" size="16"/></td>
+            <td>
+                <html:text styleId="searchId" property="searchString" size="16"/>
+             </td>
         </tr>
         <tr>
             <td>
                 <html:submit titleKey="sidebar.button.search.title">
                     <bean:message key="sidebar.button.search"/>
                 </html:submit>
+                &nbsp;
+                <a onclick="var box = document.getElementById('searchId'); box.value=''; box.focus()" href="#">Clean value</a>
             </td>
         </tr>
     </table>

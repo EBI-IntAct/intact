@@ -11,7 +11,9 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
+import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:MainDetailView.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  * @since <pre>31-May-2006</pre>
  */
 public class MainDetailView  extends AbstractView
@@ -39,6 +41,8 @@ public class MainDetailView  extends AbstractView
     {
         super(request);
         this.experiment = experiment;
+
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
         // pagination preparation here
         // pagination preparation here
@@ -72,16 +76,13 @@ public class MainDetailView  extends AbstractView
         // only we will put the searched at the beginning if we are in the first page (or the view is not paginated)
         if (getCurrentPage() <= 1)
         {
-            Object objSearchableQuery = request.getSession().getAttribute(SearchConstants.SEARCH_CRITERIA);
+            SearchableQuery query = webappContext.getCurrentSearchQuery();
 
-            String searched = null;
-
-            if (objSearchableQuery != null)
+            if (query != null)
             {
-                searched = objSearchableQuery.toString();
-
-                // FIXME not only the search is an AC. Now, if another thing is used, the interaction won't be placed prominently
-                priorInteractionAcs = searched.replaceAll("'", "").split(",");
+                // FIXME query.getAc() does not necessarily return an ac, as it can be anytype of query.
+                // Now, if another thing is used, the interaction won't be placed prominently
+                priorInteractionAcs = new String[]  { query.getAc() };
             }
 
             if (log.isDebugEnabled())

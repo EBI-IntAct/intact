@@ -4,6 +4,9 @@ import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
+import java.net.URLEncoder;
+import java.io.UnsupportedEncodingException;
+
 /**
  * @author Michael Kleen
  * @version SingleResultViewBean.java Date: Dec 15, 2004 Time: 10:43:16 AM
@@ -60,10 +63,21 @@ public class SingleResultViewBean {
     public String getSearchLink() {
         String searchLink = SearchWebappContext.getCurrentInstance().getSearchUrl();
 
+        String searchQuery = searchString;
+
+        try
+        {
+            searchQuery = URLEncoder.encode(searchString, "utf-8");
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+
         if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
-            return searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=";
+            return searchLink + searchQuery + "&searchClass=" + this.getSearchType()+"&page=";
         } else {
-            return searchLink + this.searchString + "&searchClass=" + this.getSearchType()+"&page=1";
+            return searchLink + searchQuery + "&searchClass=" + this.getSearchType()+"&page=1";
             //return "-";
         }
     }

@@ -69,8 +69,8 @@ calculate the pages to render. The results per page is determined by SearchConst
         // the variables are put in the request scope so we will be able to use them with the jstl tags
         request.getParameterMap().put("page", currentPage);
 
-        request.getParameterMap().put("resultsPerPage", swc.getResultsPerPage());
-        request.getParameterMap().put("totalResults", swc.getTotalResults());
+        request.getParameterMap().put("resultsPerPage", resultsPerPage);
+        request.getParameterMap().put("totalResults", totalResults);
 
         request.getParameterMap().put("pageCount", pageCount);
         request.getParameterMap().put("urlWithoutPage", urlWithoutPage);

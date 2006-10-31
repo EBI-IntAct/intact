@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.webapp.search;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.collections.map.LRUMap;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
@@ -24,7 +25,7 @@ import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Searchable;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * Convenience class to access all stored variables in a clear way
@@ -38,20 +39,21 @@ public class SearchWebappContext
     private static final Log log = LogFactory.getLog(SearchWebappContext.class);
 
     private static final String SEARCHABLE_QUERY_ATT_NAME = "uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY";
+    private static final String SEARCHABLE_TYPES_ATT_NAME = "uk.ac.ebi.intact.search.internal.SEARCHABLE_TYPES";
     private static final String RESULTS_INFO_ATT_NAME = "uk.ac.ebi.intact.search.internal.RESULTS_INFO";
     private static final String TOTAL_RESULTS_ATT_NAME = "uk.ac.ebi.intact.search.internal.TOTAL_RESULTS";
     private static final String CURRENT_PAGE_ATT_NAME = "uk.ac.ebi.intact.search.internal.CURRENT_PAGE_ATT_NAME";
     private static final String IS_PAGINATED_SEARCH_ATT_NAME = "uk.ac.ebi.intact.search.internal.PAGINATED_SEARCH";
-    private static final String RESULTS_PER_PAGE = "uk.ac.ebi.intact.search.internal.RESULTS_PER_PAGE";
+    private static final String RESULTS_PER_PAGE_ATT_NAME = "uk.ac.ebi.intact.search.internal.RESULTS_PER_PAGE_ATT_NAME";
+    private static final String QUERY_HISTORY_ATT_NAME = "uk.ac.ebi.intact.search.internal.QUERY_HISTORY_ATT_NAME";
+    private static final String QUERY_RESULT_COUNTS_APPL_ATT_NAME = "uk.ac.ebi.intact.search.internal.QUERY_RESULT_COUNTS_APPL_ATT_NAME";
+
+    // Be careful when using class variables, because they are initialized each request. So get/set the values
+    // to session attributes if you want to maintain an attribute across requests
 
     private IntactSession session;
+    private static final int APPL_HISTORY_SIZE = 10000;
 
-    private String helpLink;
-    private String searchUrl;
-    private String hierarchViewUrl;
-    private String mineUrl;
-
-    private Map<Class<? extends Searchable>, Integer> currentResultCount;
 
     private SearchWebappContext()
     {
@@ -85,17 +87,30 @@ public class SearchWebappContext
         }
     };
 
-    public SearchableQuery getCurrentSearch()
+    public SearchableQuery getCurrentSearchQuery()
     {
         return (SearchableQuery) session.getRequestAttribute(SEARCHABLE_QUERY_ATT_NAME);
     }
 
-    public void setSearchableQuery(SearchableQuery query)
+    public void setCurrentSearchQuery(SearchableQuery query)
     {
-        session.setRequestAttribute(SEARCHABLE_QUERY_ATT_NAME, query);
+        session.setAttribute(SEARCHABLE_QUERY_ATT_NAME, query);
 
-        //TODO will be eliminated eventually
+        // TODO this will be elimintated eventually
+        // backwards compatibility
+        session.setRequestAttribute(SEARCHABLE_QUERY_ATT_NAME, query);
         session.setAttribute(SearchConstants.SEARCH_CRITERIA, query);
+    }
+
+    public void setCurrentSearchTypes(Class<? extends Searchable>[] searchTypes)
+    {
+        session.setRequestAttribute(SEARCHABLE_TYPES_ATT_NAME, searchTypes);
+    }
+
+    @SuppressWarnings("unchecked")
+    public Class<? extends Searchable>[] getCurrentSearchTypes()
+    {
+        return (Class[]) session.getRequestAttribute(SEARCHABLE_TYPES_ATT_NAME);
     }
 
     public Integer getTotalResults()
@@ -110,7 +125,7 @@ public class SearchWebappContext
 
     public Integer getResultsPerPage()
     {
-        Integer resPage = (Integer) session.getRequestAttribute(RESULTS_PER_PAGE);
+        Integer resPage = (Integer) session.getRequestAttribute(RESULTS_PER_PAGE_ATT_NAME);
 
         if (resPage == null)
         {
@@ -122,7 +137,7 @@ public class SearchWebappContext
 
     public void setResultsPerPage(Integer resultsPerPage)
     {
-        session.setRequestAttribute(RESULTS_PER_PAGE, resultsPerPage);
+        session.setRequestAttribute(RESULTS_PER_PAGE_ATT_NAME, resultsPerPage);
     }
 
     public Integer getCurrentPage()
@@ -163,33 +178,19 @@ public class SearchWebappContext
     
     public String getHelpLink()
     {
-        if (helpLink != null)
-        {
-            return helpLink;
-        }
-
         String relativeHelpLink = session.getInitParam(SearchEnvironment.HELP_LINK);
 
         //build the help link out of the context path - strip off the 'search' bit...
         String absPathWithoutContext = absolutePathWithoutContext(((WebappSession)session));
 
-        helpLink = absPathWithoutContext.concat(relativeHelpLink);
-
-        return helpLink;
+        return absPathWithoutContext.concat(relativeHelpLink);
     }
 
     public String getSearchUrl()
     {
-        if (searchUrl != null)
-        {
-            return searchUrl;
-        }
-
         String appPath = session.getInitParam(SearchEnvironment.SEARCH_LINK);
 
-        searchUrl = ((WebappSession)session).getRequest().getContextPath().concat(appPath);
-
-        return searchUrl;
+        return ((WebappSession)session).getRequest().getContextPath().concat(appPath);
     }
 
     public Integer getMaxResultsPerPage()
@@ -205,6 +206,81 @@ public class SearchWebappContext
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public HashMap<SearchHistoryKey,Map<Class<? extends Searchable>, Integer>> getQueryHistory()
+    {
+        HashMap queryHistory = (HashMap)
+                    IntactContext.getCurrentInstance()
+                .getSession().getAttribute(QUERY_HISTORY_ATT_NAME);
+        
+        if (queryHistory == null)
+        {
+            queryHistory = new HashMap<SearchHistoryKey,Map<Class<? extends Searchable>, Integer>>();
+            IntactContext.getCurrentInstance()
+                .getSession().setAttribute(QUERY_HISTORY_ATT_NAME, queryHistory);
+        }
+
+        return queryHistory;
+    }
+
+    public void addQueryToHistory(SearchHistoryKey key, Map<Class<? extends Searchable>, Integer> resultsCount)
+    {
+        if (resultsCount == null)
+        {
+            return;
+        }
+
+        if (log.isDebugEnabled()) log.debug("Adding query to history: "+key.toString());
+        
+        getQueryHistory().put(key, resultsCount);
+
+        // disgreggate the results, and create a new entry with application scope for each search type
+        for (Map.Entry<Class<? extends Searchable>,Integer> entry : resultsCount.entrySet())
+        {
+            SearchHistoryKey appKey = new SearchHistoryKey(key.getQuery(), new Class[] {entry.getKey()});
+            Integer value = entry.getValue();
+
+            if (value != null)
+            {
+                if (log.isDebugEnabled())
+                    log.debug("Adding query to app history: "+appKey.toString()+" ; Value: "+value);
+            
+                getApplicationQueryHistory().put(appKey, value);
+            }
+        }
+    }
+
+    public Map<Class<? extends Searchable>, Integer> getResultCountsFromAppHistory(SearchableQuery query, Class<? extends Searchable>[] types)
+    {
+        if (query == null)
+        {
+            throw new NullPointerException("query cannot be null");
+        }
+
+        if (types == null)
+        {
+            throw new NullPointerException("types cannot be null");
+        }
+
+        Map<Class<? extends Searchable>, Integer> counts = new HashMap<Class<? extends Searchable>, Integer>();
+
+        // if all the results are in the application history, create the map.
+        // If any of the results if missing, return null and they will be counted again later
+        for (Class<? extends Searchable> searchable : types)
+        {
+            Integer count = getResultCountFor(query, searchable);
+
+            if (count != null)
+                counts.put(searchable, count);
+        }
+
+        if (counts.size() == types.length)
+        {
+            return counts;
+        }
+
+        return null;
+    }
 
     public void setSession(IntactSession session)
     {
@@ -218,15 +294,8 @@ public class SearchWebappContext
 
     public String getHierarchViewAbsoluteUrl()
     {
-        if (hierarchViewUrl != null)
-        {
-            return hierarchViewUrl;
-        }
-
-        hierarchViewUrl = getAbsolutePathWithoutContext().concat(
+        return getAbsolutePathWithoutContext().concat(
             session.getInitParam(SearchEnvironment.HIERARCH_VIEW_URL));
-
-        return hierarchViewUrl;
     }
 
     public String getHierarchViewMethod()
@@ -241,36 +310,47 @@ public class SearchWebappContext
 
     public String getMineAbsoluteUrl()
     {
-        if (mineUrl != null)
-        {
-            return mineUrl;
-        }
-
-        mineUrl = getAbsolutePathWithoutContext().concat(
+        return getAbsolutePathWithoutContext().concat(
                 session.getInitParam(SearchEnvironment.MINE_URL));
-
-        return mineUrl;
     }
 
-
+    @SuppressWarnings("unchecked")
     public Map<Class<? extends Searchable>, Integer> getCurrentResultCount()
     {
-        return currentResultCount;
+        return (Map) session.getRequestAttribute(RESULTS_INFO_ATT_NAME);
     }
 
     public void setCurrentResultCount(Map<Class<? extends Searchable>, Integer> currentResultCount)
     {
-        this.currentResultCount = currentResultCount;
+        session.setRequestAttribute(RESULTS_INFO_ATT_NAME, currentResultCount);
+
+        SearchableQuery query = getCurrentSearchQuery();
+        Class<? extends Searchable>[] types = getCurrentSearchTypes();
+        SearchHistoryKey key = new SearchHistoryKey(query, types);
+
+        addQueryToHistory(key, currentResultCount);
     }
 
-    public Integer getResultCountFor(Class<? extends Searchable> searchable)
+    public Integer getResultCountFor(SearchableQuery query, Class<? extends Searchable> searchable)
     {
-        if (currentResultCount == null)
+        return getApplicationQueryHistory().get(new SearchHistoryKey(query, new Class[]{searchable}));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<SearchHistoryKey,Integer> getApplicationQueryHistory()
+    {
+        Map queryHistory = (LRUMap)
+                    IntactContext.getCurrentInstance()
+                .getSession().getApplicationAttribute(QUERY_RESULT_COUNTS_APPL_ATT_NAME);
+
+        if (queryHistory == null)
         {
-            return 0;
+            queryHistory = new LRUMap(APPL_HISTORY_SIZE);
+            IntactContext.getCurrentInstance()
+                .getSession().setApplicationAttribute(QUERY_RESULT_COUNTS_APPL_ATT_NAME, queryHistory);
         }
 
-        return currentResultCount.get(searchable);
+        return queryHistory;
     }
 
     /**
@@ -284,4 +364,5 @@ public class SearchWebappContext
 
         return absolutePathWithoutContext;
     }
+
 }

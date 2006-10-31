@@ -22,12 +22,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
-import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
+import uk.ac.ebi.intact.webapp.search.SearchHistoryKey;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
 import javax.servlet.ServletException;
@@ -56,6 +55,14 @@ public abstract class SearchActionBase extends IntactSearchAction
     private HttpServletRequest request;
     private HttpServletResponse response;
 
+    protected static Class<? extends Searchable>[] DEFAULT_SEARCHABLE_TYPES
+            = new Class[] {
+                            Experiment.class,
+                            InteractionImpl.class,
+                            ProteinImpl.class,
+                            NucleicAcidImpl.class,
+                            CvObject.class };
+
      @Override
     public ActionForward execute( ActionMapping mapping,
                                   ActionForm form,
@@ -83,7 +90,7 @@ public abstract class SearchActionBase extends IntactSearchAction
         // page
         String strPage = request.getParameter("page");
 
-        if (strPage != null && strPage.length() != 0)
+        if (strPage != null && strPage.length() > 0)
         {
             webappContext.setPaginatedSearch(true);
             webappContext.setCurrentPage(Integer.valueOf(strPage));
@@ -91,12 +98,22 @@ public abstract class SearchActionBase extends IntactSearchAction
             if (log.isDebugEnabled())
                 log.debug("Performing paginated search. Page: "+webappContext.getCurrentPage());
         }
+        else
+        {
+            if (log.isDebugEnabled())
+                log.debug("Performing non-paginated search.");
+
+            webappContext.setPaginatedSearch(false);
+        }
 
         // starting query
-        SearchWebappContext.getCurrentInstance(getIntactContext())
-                .setSearchableQuery(getSearchableQuery());
+        webappContext.setCurrentSearchQuery(getSearchableQuery());
+        webappContext.setCurrentSearchTypes(getSearchableTypes());
 
-        if (webappContext.getCurrentResultCount() == null || !webappContext.isPaginatedSearch())
+        boolean explicitSearch = request.getParameter("searchClass") != null;
+
+        // if the query is not paginated, count the results
+        if (!explicitSearch)
         {
             countResults();
 
@@ -110,13 +127,32 @@ public abstract class SearchActionBase extends IntactSearchAction
         }
         else
         {
+            // paginated search, get the results from a existing query
             Class<? extends Searchable> searchClass = getSearchableTypes()[0];
 
-            int count = webappContext.getResultCountFor(searchClass);
+            if (log.isDebugEnabled())
+                log.debug("Getting existing result count for class "+searchClass+ " in history, using query: "+getSearchableQuery());
 
-            if (log.isDebugEnabled()) log.debug("Using existing results count, to get the count for "+searchClass+": "+count);
+            Integer count = webappContext.getResultCountFor(getSearchableQuery(), searchClass);
 
-            webappContext.setTotalResults(count);
+            if (count != null)
+            {
+                if (log.isDebugEnabled()) log.debug("Results for "+searchClass+": "+count);
+                webappContext.setTotalResults(count);
+            }
+            else
+            {
+                if (log.isWarnEnabled())
+                {
+                    log.warn("No results count found for class "+searchClass+ " using query: "+getSearchableQuery());
+                    log.warn("HISTORY: "+webappContext.getQueryHistory().size()+" queries");
+
+                    for (SearchHistoryKey key : webappContext.getQueryHistory().keySet())
+                    {
+                        log.warn("\t"+key);
+                    }
+                }
+            }
         }
 
         // if results are to be fetched, get the results and return the appropriate actionForward
@@ -136,19 +172,32 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
-        SearchableDao dao = getIntactContext().getDataContext()
-                .getDaoFactory().getSearchableDao();
-
         // count the results
-        Map<Class<? extends Searchable>, Integer> resultInfo;
+        Map<Class<? extends Searchable>, Integer> resultInfo =
+                webappContext.getResultCountsFromAppHistory(getSearchableQuery(), getSearchableTypes());
 
-        if (getSearchableTypes() != null)
+        if (resultInfo == null)
         {
-            resultInfo = dao.countByQuery(getSearchableTypes(), getSearchableQuery());
+            if (log.isDebugEnabled())
+                log.debug("No results found in the application scope, from previous searches. Counting from db.");
+
+            SearchableDao dao = getIntactContext().getDataContext()
+                    .getDaoFactory().getSearchableDao();
+
+            if (getSearchableTypes() != null)
+            {
+                resultInfo = dao.countByQuery(getSearchableTypes(), getSearchableQuery());
+            }
+            else
+            {
+                resultInfo = dao.countByQuery(getSearchableQuery());
+            }
         }
         else
         {
-            resultInfo = dao.countByQuery(getSearchableQuery());
+            if (log.isDebugEnabled())
+                log.debug("Results retrieved from previous searches: "+resultInfo);
+
         }
 
         webappContext.setCurrentResultCount(resultInfo);
@@ -336,9 +385,13 @@ public abstract class SearchActionBase extends IntactSearchAction
         if (searchableQuery == null)
         {
             log.debug("Creating new searchable query");
+
+            // replace percents
+
             searchableQuery = createSearchableQuery();
 
-            getIntactContext().getSession().setRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY", searchableQuery);
+            SearchWebappContext.getCurrentInstance().setCurrentSearchQuery(searchableQuery);
+            //getIntactContext().getSession().setRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY", searchableQuery);
         }
         return searchableQuery;
     }
