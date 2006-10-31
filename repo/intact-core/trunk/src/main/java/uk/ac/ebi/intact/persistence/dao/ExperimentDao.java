@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 
 import java.util.List;
 
@@ -22,4 +22,6 @@ public interface ExperimentDao extends AnnotatedObjectDao<Experiment>
     List<Interaction> getInteractionsForExperimentWithAc(String ac, int firstResult, int maxResults);
 
     List<Interaction> getInteractionsForExperimentWithAcExcluding(String ac, String[] excludedAcs, int firstResult, int maxResults);
+
+    List<Interaction> getInteractionsForExperimentWithAcExcludingLike(String ac, String[] excludedAcsLike, int firstResult, int maxResults);
 }
