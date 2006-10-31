@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
 import java.util.List;
@@ -64,6 +65,25 @@ public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implem
         for (String excludedAc : excludedAcs)
         {
             crit.add(Restrictions.ne("ac", excludedAc));
+        }
+
+         crit.createCriteria("experiments")
+             .add(Restrictions.idEq(ac));
+
+        return crit.list();
+    }
+
+
+    public List<Interaction> getInteractionsForExperimentWithAcExcludingLike(String ac, String[] excludedAcsLike, int firstResult, int maxResults)
+    {
+        Criteria crit =  getSession().createCriteria(InteractionImpl.class)
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults);
+
+        for (String excludedAc : excludedAcsLike)
+        {
+            excludedAc = DaoUtils.replaceWildcardsByPercent(excludedAc);
+            crit.add(Restrictions.not(Restrictions.like("ac", excludedAc)));
         }
 
          crit.createCriteria("experiments")
