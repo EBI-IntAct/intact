@@ -23,7 +23,7 @@ import java.util.Collection;
                      joinColumns = {@JoinColumn(name="annotation_ac")} )
 @Indexed(index = "lucene-indexes/intact-objects")
 @EditorTopic
-public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias> implements Editable {
+public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias> implements Editable, Searchable {
 
     ///////////////////////////////////////
     //attributes
