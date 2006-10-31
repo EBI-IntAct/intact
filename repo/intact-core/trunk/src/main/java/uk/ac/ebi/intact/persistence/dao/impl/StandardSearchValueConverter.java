@@ -33,6 +33,8 @@ public class StandardSearchValueConverter implements SearchValueConverter
 
     private static final String REPLACED_SPACE = "&nbsp;";
     private static final String REPLACED_COMMA = "&comma;";
+    private static final String MODIFIER_PLUS = "+";
+    private static final String MODIFIER_MINUS = "-";
 
     public Criterion valueToCriterion(String propertyName, String value)
     {
@@ -51,6 +53,9 @@ public class StandardSearchValueConverter implements SearchValueConverter
              value = replaceSymbolsInPhrases(value);
         }
 
+        value = value.trim();
+
+        // split the value in tokens by space or comma 
         String[] tokens = value.split("\\s|,");
 
         for (String token : tokens)
@@ -58,12 +63,12 @@ public class StandardSearchValueConverter implements SearchValueConverter
             token = token.trim();
             token = replacedToValue(token);
 
-            token = addPercentIfNecessary(token);
+            token = addEndPercentIfNecessary(token);
             token = removeQuotesIfNecessary(token);
 
-            if (token.startsWith("+"))
+            if (isTermPrefixedByModifier(token, MODIFIER_PLUS))
             {
-                token = token.substring(1);
+                token = removeModifierFromTerm(token, MODIFIER_PLUS);
 
                 if (DaoUtils.isValueForLike(value))
                 {
@@ -74,9 +79,9 @@ public class StandardSearchValueConverter implements SearchValueConverter
                     conjunction.add(Restrictions.eq(propertyName, token).ignoreCase());
                 }
             }
-            else if (token.startsWith("-"))
+            else if (isTermPrefixedByModifier(token, MODIFIER_MINUS))
             {
-               token = token.substring(1);
+                token = removeModifierFromTerm(token, MODIFIER_MINUS);
 
                 if (DaoUtils.isValueForLike(value))
                 {
@@ -168,7 +173,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
      * @param value the value to change
      * @return a String with the wildcard added, if necessary
      */
-    private static String addPercentIfNecessary(String value)
+    private static String addEndPercentIfNecessary(String value)
     {
         value = DaoUtils.replaceWildcardsByPercent(value);
 
@@ -217,5 +222,39 @@ public class StandardSearchValueConverter implements SearchValueConverter
         if (endPercent) value = value+"%";
 
         return value;
+    }
+
+    /**
+     * check if a term has a modifier
+     */
+    private static boolean isTermPrefixedByModifier(String term, String modifier)
+    {
+        return (term.startsWith(modifier)
+                || term.startsWith("%"+modifier)
+                || term.startsWith(modifier+" "));
+    }
+
+    /**
+     * Remove any modifier present in the first two chars of a term
+     */
+    private static String removeModifierFromTerm(String term, String modifier)
+    {
+        String firstTwo;
+        String remaining;
+
+        if (term.length() >=2)
+        {
+            firstTwo = term.substring(0,2);
+            remaining = term.substring(2, term.length());
+        }
+        else
+        {
+            firstTwo = term;
+            remaining = "";
+        }
+
+        firstTwo = firstTwo.replace(modifier, "");
+
+        return firstTwo+remaining;
     }
 }
