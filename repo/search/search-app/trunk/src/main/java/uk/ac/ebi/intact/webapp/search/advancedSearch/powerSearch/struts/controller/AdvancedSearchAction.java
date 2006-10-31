@@ -97,6 +97,11 @@ public class AdvancedSearchAction extends SearchActionBase
             description = DaoUtils.addPercents(description);
         }
 
+        if (annotation != null && annotation.length() > 0)
+        {
+            annotation = DaoUtils.addPercents(annotation);
+        }
+
         // create the searchable query object
         SearchableQuery searchableQuery = new SearchableQuery();
 
