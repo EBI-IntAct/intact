@@ -151,10 +151,7 @@ public class SearchableCriteriaBuilder
             // cvInteractionType
             if (isValueValid(query.getCvInteractionTypeLabel()))
             {
-                Disjunction disjCvInteractionType = Restrictions.disjunction();
-
                 Conjunction objAndLabelConj = Restrictions.conjunction();
-                disjCvInteractionType.add(objAndLabelConj);
 
                 addRestriction(objAndLabelConj, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionTypeLabel(), true);
                 objAndLabelConj.add(Restrictions.eq(cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY), CvInteractionType.class.getName()));
@@ -166,13 +163,22 @@ public class SearchableCriteriaBuilder
                             cvInteractionTypeProperty(criteria, CV_OBJCLASS_PROPERTY),
                             CvInteractionType.class, query.getCvInteractionTypeLabel());
 
-                    if (childJunct != null)
+                    if (childJunct != null) // children found, create the disjunction
                     {
+                        Disjunction disjCvInteractionType = Restrictions.disjunction();
+                        disjCvInteractionType.add(objAndLabelConj);
                         disjCvInteractionType.add(childJunct);
+                        junction.add(disjCvInteractionType);
+                    }
+                    else
+                    {
+                         junction.add(objAndLabelConj);
                     }
                 }
-
-                junction.add(disjCvInteractionType);
+                else
+                {
+                    junction.add(objAndLabelConj);
+                }
             }
         }
 
@@ -182,11 +188,7 @@ public class SearchableCriteriaBuilder
             // cvInteractionDetection
             if (isValueValid(query.getCvIdentificationLabel()))
             {
-                Disjunction disjCvIdentification = Restrictions.disjunction();
-
                 Conjunction objAndLabelConj = Restrictions.conjunction();
-                disjCvIdentification.add(objAndLabelConj);
-
                 objAndLabelConj.add(Restrictions.eq(cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY), CvIdentification.class.getName()));
 
                 addRestriction(objAndLabelConj, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvIdentificationLabel(), true);
@@ -198,24 +200,29 @@ public class SearchableCriteriaBuilder
                             cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY),
                             CvIdentification.class, query.getCvIdentificationLabel());
 
-                    if (childJunct != null)
+                    if (childJunct != null) // children found, create the disjunction
                     {
+                        Disjunction disjCvIdentification = Restrictions.disjunction();
+                        disjCvIdentification.add(objAndLabelConj);
                         disjCvIdentification.add(childJunct);
+                        junction.add(disjCvIdentification);
+                    }
+                    else
+                    {
+                         junction.add(objAndLabelConj);
                     }
                 }
-
-                junction.add(disjCvIdentification);
+                else
+                {
+                    junction.add(objAndLabelConj);
+                }
             }
 
             // cvInteractionDetection
             if (isValueValid(query.getCvInteractionLabel()))
             {
-                Disjunction disjCvInteraction = Restrictions.disjunction();
-
                 Conjunction objAndLabelConj = Restrictions.conjunction();
-                disjCvInteraction.add(objAndLabelConj);
-
-                objAndLabelConj.add(Restrictions.eq(cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY), CvInteraction.class.getName()));
+                objAndLabelConj.add(Restrictions.eq(cvInteractionProperty(criteria, CV_OBJCLASS_PROPERTY), CvInteraction.class.getName()));
 
                 addRestriction(objAndLabelConj, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionLabel(), true);
 
@@ -226,13 +233,22 @@ public class SearchableCriteriaBuilder
                             cvInteractionProperty(criteria, CV_OBJCLASS_PROPERTY),
                             CvInteraction.class, query.getCvInteractionLabel());
 
-                    if (childJunct != null)
+                    if (childJunct != null)  // children found, create the disjunction
                     {
+                        Disjunction disjCvInteraction = Restrictions.disjunction();
                         disjCvInteraction.add(childJunct);
+                        disjCvInteraction.add(objAndLabelConj);
+                        junction.add(disjCvInteraction);
+                    }
+                    else
+                    {
+                        junction.add(objAndLabelConj);
                     }
                 }
-
-                junction.add(disjCvInteraction);
+                else
+                {
+                    junction.add(objAndLabelConj);
+                }
             }
         }
 
@@ -327,6 +343,11 @@ public class SearchableCriteriaBuilder
         Disjunction mainDisjunction = Restrictions.disjunction();
 
         Map<Class<? extends CvObject>,Set<String>> classifiedChildren = getChildrenCvClassified(cvDagObject);
+
+        if (classifiedChildren.isEmpty())
+        {
+            return null;
+        }
 
         for (Map.Entry<Class<? extends CvObject>,Set<String>> childEntry : classifiedChildren.entrySet())
         {
