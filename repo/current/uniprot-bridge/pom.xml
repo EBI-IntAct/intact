@@ -39,9 +39,9 @@
 
         <!-- UniProt Remote API -->
         <dependency>
-            <groupId>uk.ac.ebi.uniprot</groupId>
+            <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>remote-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>8.9</version>
         </dependency>
 
     </dependencies>
