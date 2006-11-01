@@ -117,7 +117,9 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
 //
 //        System.out.println( "entryUrl = " + entryUrl );
 
-        String url = "http://www.expasy.org/uniprot/" + ac + ".txt";
+        // http://www.ebi.uniprot.org/entry/P21181?format=text&ascii
+        String url = "http://www.ebi.uniprot.org/entry/" + ac + "?format=text&ascii";
+//        String url = "http://www.expasy.org/uniprot/" + ac + ".txt";
 
         log.debug( "Built URL: " + url );
 
