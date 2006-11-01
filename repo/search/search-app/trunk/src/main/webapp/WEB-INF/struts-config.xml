@@ -79,9 +79,9 @@ Query     _________       ____________      |     _________      _____________
             <form-property name="cvInteractionTypes" type="java.util.Collection"/>
             <form-property name="cvTest" type="java.util.Collection"/>
             <form-property name="cvName" type="java.lang.String"/>
-            <form-property name="cvIdentificationIncludeChildren" type="java.lang.Boolean"/>
-            <form-property name="cvInteractionIncludeChildren" type="java.lang.Boolean"/>
-            <form-property name="cvInteractionTypeIncludeChildren" type="java.lang.Boolean"/>
+            <form-property name="cvIdentificationIncludeChildren" type="java.lang.Boolean" initial="true"/>
+            <form-property name="cvInteractionIncludeChildren" type="java.lang.Boolean" initial="true"/>
+            <form-property name="cvInteractionTypeIncludeChildren" type="java.lang.Boolean" initial="true"/>
 
         </form-bean>
 

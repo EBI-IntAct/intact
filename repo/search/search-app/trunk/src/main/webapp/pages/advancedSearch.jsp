@@ -114,7 +114,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 if(btn[x].value == "uk.ac.ebi.intact.model.CvObject"){
                    openrow(idArrayCv);
                 }
-                if(btn[x].value == "uk.ac.ebi.intact.model.ProteinImpl"){
+                if(btn[x].value == "uk.ac.ebi.intact.model.PolymerImpl"){
                    openrow(idArrayProtein);
                 }
                 break;
@@ -128,7 +128,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
         // clear the description
         document.advancedForm["description"].value = "";
         // clear the fulltext search
-        document.advancedForm["fulltext"].value = "";
+        //document.advancedForm["fulltext"].value = "";
         // clear the cvTopic textfield
         document.advancedForm["annotation"].value = "";
         // clear the cvDatabase textfield
@@ -350,8 +350,8 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                 <table>
                 <tr>
                     <td class="headerlight" style="vertical-align: middle;">
-                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.ProteinImpl" onclick="resetForm(this.value);" />
-                          Protein
+                        <html:radio property="searchObject" value="uk.ac.ebi.intact.model.PolymerImpl" onclick="resetForm(this.value);" />
+                          Interactor
                      </td>
                      <td style="vertical-align: middle;">
                        <intact:documentation section="Interactor" />
@@ -493,6 +493,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                        <html:checkbox property="cvInteractionIncludeChildren">Include children in search</html:checkbox>
+                       <input type="hidden" name="cvInteractionIncludeChildren" value="false">
                        <br>
                        <input type="button" name="button1" value="Interaction Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteraction.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteraction')">
                 </td>
@@ -510,6 +511,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                       <html:checkbox property="cvIdentificationIncludeChildren">Include children in search</html:checkbox>
+                      <input type="hidden" name="cvIdentificationIncludeChildren" value="false">
                       <br>
                       <input type="button" name="button2" value="Participant Detection Browser" style="width: 200" onclick="openCvBrowser('<%= CvIdentification.class.getName() %>', '<%=request.getContextPath()%>', 'cvIdentification')">
             </td>
@@ -527,6 +529,7 @@ response.setDateHeader ("Expires", 0);          //prevents caching at the proxy 
                       </html:select><br>
                        <img src="<%=request.getContextPath()%>/images/spacer.gif" width="100" height="5" border="0"><br>
                       <html:checkbox property="cvInteractionTypeIncludeChildren">Include children in search</html:checkbox>
+                      <input type="hidden" name="cvInteractionTypeIncludeChildren" value="false">
                       <br>
                       <input type="button" name="button3" value="CvInteractionType Browser" style="width: 200" onclick="openCvBrowser('<%= CvInteractionType.class.getName() %>', '<%=request.getContextPath()%>', 'cvInteractionType')">
              </td>

@@ -41,11 +41,6 @@ public class AdvancedSearchAction extends SearchActionBase
 
     public Class<? extends Searchable>[] getSearchableTypes()
     {
-        if (searchableTypes != null)
-        {
-            return searchableTypes;
-        }
-
         DynaActionForm dyForm = (DynaActionForm) getForm();
         String searchClassString = (String) dyForm.get( "searchObject" );
 
@@ -72,11 +67,9 @@ public class AdvancedSearchAction extends SearchActionBase
     public SearchableQuery createSearchableQuery()
     {
         DynaActionForm dyForm = (DynaActionForm) getForm();
-        String searchClassString = (String) dyForm.get( "searchObject" );
         String ac = (String) dyForm.get( "acNumber" );
         String shortlabel = (String) dyForm.get( "shortlabel" );
         String description = (String) dyForm.get( "description" );
-        //String fulltext = (String) dyForm.get( "fulltext" );
         String annotation = (String) dyForm.get( "annotation" );
         String cvTopic = (String) dyForm.get( "cvTopic" );
         String xref = (String) dyForm.get( "xRef" );

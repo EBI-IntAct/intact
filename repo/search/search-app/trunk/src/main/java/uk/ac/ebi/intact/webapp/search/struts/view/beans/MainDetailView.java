@@ -85,7 +85,11 @@ public class MainDetailView  extends AbstractView
             {
                 // FIXME query.getAc() does not necessarily return an ac, as it can be anytype of query.
                 // Now, if another thing is used, the interaction won't be placed prominently
-                priorInteractionAcs = new String[]  { query.getAc() };
+                String ac = query.getAc();
+                if (ac != null && ac.trim().length() > 0)
+                {
+                    priorInteractionAcs = new String[]  { query.getAc() };
+                }
             }
 
             if (log.isDebugEnabled())
@@ -107,8 +111,16 @@ public class MainDetailView  extends AbstractView
 
         // we load the rest of interactions for that experiment
         // if we are in the first page
-        interactions.addAll(getDaoFactory().getExperimentDao()
+        if (priorInteractionAcs.length > 0)
+        {
+            interactions.addAll(getDaoFactory().getExperimentDao()
                 .getInteractionsForExperimentWithAcExcludingLike(experiment.getAc(), priorInteractionAcs, firstResult, maxResults - priorInteractionAcs.length));
+        }
+        else
+        {
+            interactions.addAll(getDaoFactory().getExperimentDao()
+                .getInteractionsForExperimentWithAc(experiment.getAc(), firstResult, maxResults));
+        }
 
 
         if (log.isDebugEnabled())

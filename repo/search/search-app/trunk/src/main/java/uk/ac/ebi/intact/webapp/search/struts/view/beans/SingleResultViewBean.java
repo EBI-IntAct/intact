@@ -61,7 +61,8 @@ public class SingleResultViewBean {
     }
 
     public String getSearchLink() {
-        String searchLink = SearchWebappContext.getCurrentInstance().getSearchUrl();
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
+        String searchLink = webappContext.getSearchUrl();
 
         String searchQuery = searchString;
 
@@ -74,7 +75,7 @@ public class SingleResultViewBean {
             e.printStackTrace();
         }
 
-        if ( count < SearchConstants.MAXIMUM_RESULT_SIZE ) {
+        if ( count < webappContext.getMaxResultsPerPage() ) {
             return searchLink + searchQuery + "&searchClass=" + this.getSearchType()+"&page=";
         } else {
             return searchLink + searchQuery + "&searchClass=" + this.getSearchType()+"&page=1";

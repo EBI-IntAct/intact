@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.webapp.search.business.IntactUserIF;
@@ -26,7 +27,7 @@ import java.util.Collection;
  * forward to the appropriate result actions.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:DispatcherAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class DispatcherAction extends IntactBaseAction {
 
@@ -59,22 +60,11 @@ public class DispatcherAction extends IntactBaseAction {
 
         logger.debug( "dispatcher action: analysing user's query..." );
 
-        // Handler to the Intact User.
-        IntactUserIF user = super.getIntactUser( getSession( request ) );
-        if ( user == null ) {
-            //just set up a new user for the session - if it fails, need to give up!
-            user = super.setupUser( request );
-            if ( user == null ) {
-                logger.debug( "no user, forward failer" );
-                return mapping.findForward( SearchConstants.FORWARD_FAILURE );
-            }
-        }
-
         //not an exisiting page request, so get the search results from the request
         final Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) request.getAttribute( SearchConstants.SEARCH_RESULTS );
 
-        final String binaryValue = user.getBinaryValue();
-        final String viewSource = user.getView();
+        final String binaryValue = request.getParameter("binary");
+        final String viewSource = request.getParameter("view");
 
         logger.debug( "Binary Value " + binaryValue );
         logger.debug( "View Value " + viewSource );

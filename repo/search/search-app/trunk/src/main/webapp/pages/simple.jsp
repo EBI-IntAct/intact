@@ -293,7 +293,7 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             --%>
 
             <td nowrap="nowrap" style="vertical-align: top;">
-               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=partner" + "&filter=ac"%>">
+               <a href="<%= searchURL + "&" + SearchConstants.PAGE_SOURCE + "=partner" + "&filter=ac&page=1"%>">
                    <b><span style="color: rgb(255, 0, 0);"><%=bean.getObjIntactName()%></span></b></a><br>
             </td>
 
@@ -330,14 +330,14 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             --%>
 
             <td nowrap="nowrap" style="vertical-align: top;">
-               <a href="<%= searchURL + "&filter=ac" %>">
+               <a href="<%= searchURL + "&filter=ac&page=1" %>">
                    <b><span style="color: rgb(255, 0, 0);"><%=bean.getObjIntactName()%></span></b></a><br>
             </td>
 
             <!-- Ac linked to single view -->
 
               <td nowrap="nowrap" style="vertical-align: top;">
-               <a href="<%= searchURL + "&filter=ac" %>"><%= bean.getObjAc() %></a><br>
+               <a href="<%= searchURL + "&filter=ac&page=1" %>"><%= bean.getObjAc() %></a><br>
             </td>
 
 

@@ -35,6 +35,14 @@ calculate the pages to render. The results per page is determined by SearchConst
                 pageCount = 1;
                 totalResults = 0;
             }
+
+            if (totalResults <= swc.getMaxResultsPerPage())
+            {
+                currentPage = 0;
+                swc.setPaginatedSearch(false);
+                swc.setCurrentPage(0);
+                pageCount = 1;
+            }
         }
 
         // The url without the page parameter. We use this variable to generate the url for each page
