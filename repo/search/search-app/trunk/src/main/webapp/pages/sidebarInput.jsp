@@ -24,7 +24,7 @@
                     <bean:message key="sidebar.button.search"/>
                 </html:submit>
                 &nbsp;
-                <a onclick="var box = document.getElementById('searchId'); box.value=''; box.focus()" href="#">Clean value</a>
+                <a onclick="var box = document.getElementById('searchId'); box.value=''; box.focus()" href="#">Clean</a>
             </td>
         </tr>
     </table>

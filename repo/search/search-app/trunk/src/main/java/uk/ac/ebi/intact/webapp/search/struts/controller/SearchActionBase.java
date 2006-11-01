@@ -142,16 +142,13 @@ public abstract class SearchActionBase extends IntactSearchAction
             }
             else
             {
-                if (log.isWarnEnabled())
+                if (log.isDebugEnabled())
                 {
-                    log.warn("No results count found for class "+searchClass+ " using query: "+getSearchableQuery());
-                    log.warn("HISTORY: "+webappContext.getQueryHistory().size()+" queries");
-
-                    for (SearchHistoryKey key : webappContext.getQueryHistory().keySet())
-                    {
-                        log.warn("\t"+key);
-                    }
+                    log.debug("No results count found for class "+searchClass+ " using query: "+getSearchableQuery());
                 }
+
+                // count results again
+                countResults();
             }
         }
 
@@ -257,7 +254,21 @@ public abstract class SearchActionBase extends IntactSearchAction
     {
         log.debug("Search using query: "+getSearchableQuery());
 
-        Integer firstResult = getFirstResult();
+        Integer firstResult;
+
+        // there is a little hack here for the first result, the parntner view is a special
+        // view where the pagination is for the children of the element found in the results,
+        // this is why when going to a page different than 1, I have to retrieve the first
+        // result (the view will then get the corresponding children using the page)
+        if (isGoingToParnerView())
+        {
+            firstResult = 0;
+        }
+        else
+        {
+            firstResult = getFirstResult();
+        }
+
         Integer maxResults = SearchWebappContext.getCurrentInstance().getResultsPerPage();
 
         if (log.isDebugEnabled())
@@ -396,5 +407,18 @@ public abstract class SearchActionBase extends IntactSearchAction
         return searchableQuery;
     }
 
+    private boolean isGoingToParnerView()
+    {
+        String view = request.getParameter("view");
+
+        if (view != null)
+        {
+            return view.equals("partner");
+        }
+        else
+        {
+            return false;
+        }
+    }
     
 }
