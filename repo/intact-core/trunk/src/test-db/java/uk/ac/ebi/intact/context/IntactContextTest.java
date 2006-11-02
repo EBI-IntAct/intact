@@ -38,7 +38,7 @@ public class IntactContextTest extends TestCase {
         IntactContext ctx = IntactContext.getCurrentInstance();
 
         assertNotNull(ctx.getInstitution());
-        assertEquals("EBITEST", ctx.getConfig().getAcPrefix());
+        assertEquals("EBI", ctx.getConfig().getAcPrefix());
 
         assertNotNull(ctx.getDataContext());
 

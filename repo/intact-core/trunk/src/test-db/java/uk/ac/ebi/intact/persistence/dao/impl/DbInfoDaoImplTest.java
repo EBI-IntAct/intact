@@ -49,7 +49,7 @@ public class DbInfoDaoImplTest extends TestCase {
     public void testGetAll() throws Exception {
         List<DbInfo> all = dao.getAll();
 
-        assertEquals(1, all.size());
+        assertEquals(2, all.size());
     }
 
     public static Test suite() {
