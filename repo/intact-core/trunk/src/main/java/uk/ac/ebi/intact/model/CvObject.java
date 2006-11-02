@@ -134,7 +134,7 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
      */
     @Override
     public int hashCode() {
-        int result = getClass().hashCode();
+        int result = super.hashCode();
 
         Xref idXref = getIdentityXref();
 
@@ -142,7 +142,7 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         if ( idXref != null ) {
             result = 29 * result + idXref.getPrimaryId().hashCode();
         } else {
-            result = 29 * result + getShortLabel().hashCode();
+            result = 29 * result + ((getShortLabel() == null)? 31 :getShortLabel().hashCode());
         }
 
         return result;

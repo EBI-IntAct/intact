@@ -69,7 +69,7 @@ public class StandaloneSessionTest extends TestCase
 
     public void testSetGetInitParam() throws Exception
     {
-        assertEquals("EBITEST", session.getInitParam(IntactEnvironment.AC_PREFIX_PARAM_NAME));
+        assertEquals("EBI", session.getInitParam(IntactEnvironment.AC_PREFIX_PARAM_NAME));
         assertEquals("ebi", session.getInitParam(IntactEnvironment.INSTITUTION_LABEL));
 
         assertFalse(session.containsInitParam(IntactEnvironment.READ_ONLY_APP));

@@ -80,6 +80,29 @@ public class CvObjectDaoImplTest extends TestCase
         assertEquals(2, set.size());
     }
 
+    public void testGetAllDistinctProperty_filtered() throws Exception
+    {
+        Class cvClass = CvDatabase.class;
+
+        dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(cvClass);
+
+        List<String> cvDatabases = dao.getAllDistinctProperty("shortLabel", true, true);
+
+        assertFalse(cvDatabases.isEmpty());
+        /*
+        for (CvObject cvDatabase : cvDatabases)
+        {
+            String label = cvDatabase.getShortLabel();
+
+            if (label.equals("interaction xref"))
+            {
+                fail("Unexpected CvDatabase found: interactor xref");
+            }
+        }  */
+
+        System.out.println(cvDatabases);
+    }
+
     public static Test suite()
     {
         return new TestSuite(CvObjectDaoImplTest.class);
