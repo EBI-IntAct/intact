@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -21,6 +20,7 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -146,21 +146,18 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
      * @param excludeHidden if true exclude the hidden CVs
      * @return the list of CVs
      */
+    /**
+     * Gets all the CVs for the current entity
+     * @param excludeObsolete if true exclude the obsolete CVs
+     * @param excludeHidden if true exclude the hidden CVs
+     * @return the list of CVs
+     */
     public List<T> getAll(boolean excludeObsolete, boolean excludeHidden)
     {
-        return criteriaForAll(excludeObsolete, excludeHidden).list();
-    }
 
-    public List getAllDistinctProperty(String propertyName, boolean excludeObsolete, boolean excludeHidden)
-    {
-        return criteriaForAll(excludeObsolete, excludeHidden)
-                .setProjection(Projections.distinct(Property.forName(propertyName))).list();
-    }
-
-    private Criteria criteriaForAll(boolean excludeObsolete, boolean excludeHidden)
-    {
         Criteria crit = getSession().createCriteria(getEntityClass()).addOrder(Order.asc("shortLabel"));
-
+        List<T> listTotal = crit.list();
+        Collection<T> subList = Collections.EMPTY_LIST;
         if (excludeObsolete || excludeHidden)
         {
             crit.createAlias("annotations", "annot")
@@ -169,21 +166,25 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
 
         if (excludeObsolete && excludeHidden)
         {
-            crit.add(Restrictions.not(Restrictions.or(
+            crit.add(Restrictions.or(
                     Restrictions.eq("annotTopic.shortLabel", CvTopic.OBSOLETE),
                     Restrictions.eq("annotTopic.shortLabel",CvTopic.HIDDEN))
-                    ));
+                    );
+            subList = crit.list();
         }
         else if (excludeObsolete && !excludeHidden)
         {
             crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.OBSOLETE));
+            subList = crit.list();
         }
         else if (!excludeObsolete && excludeHidden)
         {
             crit.add(Restrictions.ne("annotTopic.shortLabel", CvTopic.HIDDEN));
+            subList = crit.list();
         }
 
-        return crit;
+        listTotal.removeAll(subList);
+        return listTotal;
     }
 
     /**
