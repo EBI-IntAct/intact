@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.util.DebugUtil;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -80,13 +81,13 @@ public class CvObjectDaoImplTest extends TestCase
         assertEquals(2, set.size());
     }
 
-    public void testGetAllDistinctProperty_filtered() throws Exception
+    public void testGetAll_filtered() throws Exception
     {
         Class cvClass = CvDatabase.class;
 
         dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(cvClass);
 
-        List<String> cvDatabases = dao.getAllDistinctProperty("shortLabel", true, true);
+        List<CvObject> cvDatabases = dao.getAll(true, true);
 
         assertFalse(cvDatabases.isEmpty());
         /*
@@ -100,7 +101,7 @@ public class CvObjectDaoImplTest extends TestCase
             }
         }  */
 
-        System.out.println(cvDatabases);
+        System.out.println(DebugUtil.labelList(cvDatabases));
     }
 
     public static Test suite()

@@ -49,9 +49,6 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     List<T> getByAnnotationTopicAndDescription(CvTopic topic, String description);
 
     List<T> getAll(boolean excludeObsolete, boolean excludeHidden);
-
-    List getAllDistinctProperty(String propertyName, boolean excludeObsolete, boolean excludeHidden);
-
     /**
      * This method will search in the database an AnnotatedObject of type T having it's shortlabel or it's
      * ac like the searchString given in argument.
