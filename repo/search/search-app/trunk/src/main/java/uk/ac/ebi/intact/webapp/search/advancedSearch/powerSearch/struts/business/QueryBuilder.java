@@ -22,7 +22,9 @@ import java.util.StringTokenizer;
  * This class provides methods which build a SQL like query out of the given information.
  *
  * @author Anja Friedrichsen
- * @version $Id$
+ * @version $Id:QueryBuilder.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
+ *
+ * @deprecated
  */
 public class QueryBuilder {
 
