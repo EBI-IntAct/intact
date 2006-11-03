@@ -18,6 +18,8 @@ import uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.Constants;
 import uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.webapp.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -95,20 +97,19 @@ public final class InitAction extends IntactBaseAction {
 
             logger.info( "got cv collections..." );
 
-            // Session to access various session objects. This will create
-            //a new session if one does not exist.
-            HttpSession session = super.getSession( request );
+            IntactContext context = IntactContext.getCurrentInstance();
+            IntactSession intactSession = context.getSession();
 
             //clear the error message
-            session.setAttribute( Constants.ERROR_MESSAGE, "" );
+            intactSession.setAttribute( Constants.ERROR_MESSAGE, "" );
 
             // these collections are used later to be displayed in the drop down list in the JSP
             // TODO create contants for these fields !!!
-            getServlet().getServletContext().setAttribute( "cvDatabases", cvDatabases );
-            getServlet().getServletContext().setAttribute( "cvTopics", cvTopics );
-            getServlet().getServletContext().setAttribute( "cvInteractions", cvInteractions );
-            getServlet().getServletContext().setAttribute( "cvIdentifications", cvIdentifications );
-            getServlet().getServletContext().setAttribute( "cvInteractionTypes", cvInteractionTypes );
+            intactSession.setApplicationAttribute( "cvDatabases", cvDatabases );
+            intactSession.setApplicationAttribute( "cvTopics", cvTopics );
+            intactSession.setApplicationAttribute( "cvInteractions", cvInteractions );
+            intactSession.setApplicationAttribute( "cvIdentifications", cvIdentifications );
+            intactSession.setApplicationAttribute( "cvInteractionTypes", cvInteractionTypes );
 
             //set up a valid user if possible
             if ( super.setupUser( request ) == null ) {

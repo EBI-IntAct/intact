@@ -250,33 +250,6 @@ Query     _________       ____________      |     _________      _____________
 
         </action>
 
-        <!-- dispatcher for the advanced search-->
-
-        <action path="/advDispatcher"
-                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvDispatcherAction"
-                scope="session">
-            <forward name="sessionLost" path="/do/welcome"/>
-            <forward name="single" path="/do/single"/>
-            <forward name="binary" path="/do/binary"/>
-            <forward name="details" path="/do/details"/>
-            <forward name="simple" path="/do/advSimple"/>
-            <forward name="binaryInteractor" path="/do/binaryInteractor"/>
-        </action>
-
-        <action path="/advSimple"
-                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvSimpleResultAction"
-                scope="session">
-            <forward name="noMatch" path="no.match.layout"/>
-            <forward name="sessionLost" path="/do/welcome"/>
-            <forward name="simpleResults" path="simple.layout"/>
-        </action>
-
-        <action path="/advTooLarge"
-                type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.AdvTooLargeAction"
-                scope="session">
-            <forward name="results" path="adv.too.large.layout"/>
-        </action>
-
         <action path="/showGraph"
                 type="uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.controller.ShowCvGraphAction"
                 name="advancedForm"

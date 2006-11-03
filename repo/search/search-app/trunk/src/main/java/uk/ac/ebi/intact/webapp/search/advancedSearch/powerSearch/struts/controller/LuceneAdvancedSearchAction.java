@@ -41,7 +41,9 @@ import java.util.*;
  * copied and modified from the SearchAction in search
  *
  * @author Anja Friedrichsen, Michael Kleen
- * @version $Id$
+ * @version $Id:LuceneAdvancedSearchAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
+ *
+ * @deprecated
  */
 public class LuceneAdvancedSearchAction extends IntactBaseAction {
 
