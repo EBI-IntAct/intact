@@ -54,7 +54,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
     /**
      * Classification to process.
      *
-     * @parameter default-value="true"
+     * @parameter
      */
     protected List<Classification> classifications;
 
