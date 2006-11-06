@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -54,6 +55,13 @@ public class InteractionDaoTest extends TestCase
         List<Interaction> interactions = interactionDao.getInteractionsForProtPair("EBI-1004115", "EBI-710997");
         assertNotNull(interactions);
         assertEquals("Expected 2 interactions for protein pair: EBI-1004115,EBI-710997", 2, interactions.size());
+    }
+
+    public void testGetSelfInteractionsByProtAc() throws Exception
+    {
+        Collection<Interaction> selfInteractions = interactionDao.getSelfInteractionsByProtAc("EBI-2790");
+
+        assertEquals("Expected 1 self-interaction for interactor: EBI-2790", 1, selfInteractions.size());
     }
 
 }

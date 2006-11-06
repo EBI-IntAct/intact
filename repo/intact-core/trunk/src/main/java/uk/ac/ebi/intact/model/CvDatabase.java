@@ -7,10 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 
 /**
@@ -104,10 +102,7 @@ public class CvDatabase extends CvObject implements Editable {
     /**
      * This constructor should <b>not</b> be used as it could result in objects with invalid state. It is here for
      * object mapping purposes only and if possible will be made private.
-     *
-     * @deprecated Use the full constructor instead
      */
-    @Deprecated
     public CvDatabase() {
         //super call sets creation time data
         super();

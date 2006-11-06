@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 
 /**
@@ -72,9 +72,7 @@ public class CvXrefQualifier extends CvObject implements Editable {
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
      *
-     * @deprecated Use the full constructor instead
      */
-    @Deprecated
     public CvXrefQualifier() {
         //super call sets creation time data
         super();
