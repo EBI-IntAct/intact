@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.persistence.dao;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,4 +27,6 @@ public interface InteractionDao extends InteractorDao<InteractionImpl>
     List<Interaction> getInteractionsByInteractorAc(String interactorAc);
 
     List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2);
+
+    Collection<Interaction> getSelfInteractionsByProtAc(String protAc);
 }

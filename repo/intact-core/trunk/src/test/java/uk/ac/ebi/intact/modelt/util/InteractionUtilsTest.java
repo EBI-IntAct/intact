@@ -19,7 +19,7 @@ import java.util.List;
  * Test for <code>InteractionUtilsTest</code>
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:InteractionUtilsTest.java 5965 2006-08-23 14:35:46 +0100 (Wed, 23 Aug 2006) baranda $
  * @since 08/22/2006
  */
 public class InteractionUtilsTest extends TestCase {
@@ -47,6 +47,11 @@ public class InteractionUtilsTest extends TestCase {
         assertFalse(InteractionUtils.isSelfInteraction(createBinaryInteraction()));
     }
 
+    public void testIsSelfInteraction2() throws Exception
+    {
+        assertTrue(InteractionUtils.isSelfInteraction(createSelfInteraction2()));
+    }
+
     public void testContainsNonProteinInteractors() throws Exception
     {
         assertTrue(InteractionUtils.containsNonProteinInteractors(createBinaryInteractionWithNonProtein()));
@@ -60,8 +65,8 @@ public class InteractionUtilsTest extends TestCase {
     private InteractionImpl createBinaryInteraction()
     {
         List<Component> comps = new ArrayList<Component>();
-        comps.add(createProteinComponent());
-        comps.add(createProteinComponent());
+        comps.add(createProteinComponent("EBI-1"));
+        comps.add(createProteinComponent("EBI-2"));
 
         return new InteractionImpl(new ArrayList(), comps, null, null, "Int-"+System.currentTimeMillis(), null);
     }
@@ -69,7 +74,7 @@ public class InteractionUtilsTest extends TestCase {
     private InteractionImpl createBinaryInteractionWithNonProtein()
     {
         List<Component> comps = new ArrayList<Component>();
-        comps.add(createProteinComponent());
+        comps.add(createProteinComponent("EBI-1"));
         comps.add(createNonProteinComponent());
 
         return new InteractionImpl(new ArrayList(), comps, null, null, "Int-"+System.currentTimeMillis(), null);
@@ -79,19 +84,39 @@ public class InteractionUtilsTest extends TestCase {
     {
         List<Component> comps = new ArrayList<Component>();
 
-        Component c = createProteinComponent();
+        Component c = createProteinComponent("EBI-1");
         CvComponentRole role = new CvComponentRole();
         role.setShortLabel(CvComponentRole.SELF);
+        role.addXref(new CvObjectXref(null, null, CvComponentRole.SELF_PSI_REF, null));
         c.setCvComponentRole(role);
         comps.add(c);
 
         return new InteractionImpl(new ArrayList(), comps, null, null, "Int-"+System.currentTimeMillis(), null);
     }
 
-    private Component createProteinComponent()
+    private InteractionImpl createSelfInteraction2()
+    {
+        List<Component> comps = new ArrayList<Component>();
+
+        Component c = createProteinComponent("EBI-1");
+        CvComponentRole role = new CvComponentRole();
+        role.setShortLabel(CvComponentRole.SELF);
+        role.addXref(new CvObjectXref(null, new CvDatabase(), CvComponentRole.SELF_PSI_REF, new CvXrefQualifier()));
+        c.setCvComponentRole(role);
+        comps.add(c);
+        comps.add(c);
+
+        return new InteractionImpl(new ArrayList(), comps, null, null, "Int-"+System.currentTimeMillis(), null);
+    }
+
+     private Component createProteinComponent(String ac)
     {
         ProteinImpl prot = new ProteinImpl(null, null, "Prot-"+System.currentTimeMillis(), null);
-        return new Component(null, new InteractionImpl(), prot, new CvComponentRole());
+        prot.setAc(ac);
+        Component c = new Component(null, new InteractionImpl(), prot, new CvComponentRole());
+        c.setInteractorAc(ac);
+
+        return c;
     }
 
     private Component createNonProteinComponent()

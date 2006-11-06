@@ -83,12 +83,28 @@ public class InteractionUtils
         if (componentCount == 1)
         {
             Component comp = components.iterator().next();
+            CvObject role = comp.getCvComponentRole();
 
-            if (comp.getStoichiometry() == 0 &&
-                    comp.getCvComponentRole().getShortLabel().equals(CvComponentRole.SELF))
+            if (comp.getStoichiometry() == 0 && role != null)
             {
-                return true;
+                for (CvObjectXref xref : role.getXrefs())
+                {
+                    if (xref.getPrimaryId().equals(CvComponentRole.SELF_PSI_REF))
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
             }
+        }
+        else if (componentCount == 2)
+        {
+            Iterator<Component> iter = components.iterator();
+            Component comp1 = iter.next();
+            Component comp2 = iter.next();
+
+            return (comp1.getInteractorAc().equals(comp2.getInteractorAc()));
         }
 
         return false;
