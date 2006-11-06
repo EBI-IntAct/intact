@@ -7,7 +7,10 @@ package uk.ac.ebi.intact.model.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.ProteinImpl;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -75,7 +78,7 @@ public class InteractionUtils
      * @param interaction
      * @return
      */
-    public static boolean isSelfInteraction(Interaction interaction)
+    public static boolean isSelfBinaryInteraction(Interaction interaction)
     {
         Collection<Component> components = interaction.getComponents();
         int componentCount = components.size();
@@ -84,11 +87,18 @@ public class InteractionUtils
         {
             Component comp = components.iterator().next();
 
-            if (comp.getStoichiometry() == 0 &&
-                    comp.getCvComponentRole().getShortLabel().equals(CvComponentRole.SELF))
+            if (comp.getStoichiometry() == 2)
             {
                 return true;
             }
+        }
+        else if (componentCount == 2)
+        {
+            Iterator<Component> iter = components.iterator();
+            Component comp1 = iter.next();
+            Component comp2 = iter.next();
+
+            return (comp1.getInteractorAc().equals(comp2.getInteractorAc()));
         }
 
         return false;

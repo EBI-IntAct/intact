@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.4.5-3</version>
-    <!-- last released 1.4.5 -->
+    <version>1.4.5-4</version>
+    <!-- last released 1.4.5-4 -->
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
