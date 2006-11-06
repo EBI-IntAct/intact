@@ -955,7 +955,7 @@ public class CCLineExport extends LineExport {
                             if (!uniprotIDs.contains(uniprotID_2_check))
                             {
 
-                                log.debug("\t\t " + uniprotID_2 + " was not eligible for DR export, that interaction is not taken into account.");
+                                log.debug("\t\t " + uniprotID_2 + " was not eligible for DR export, because it was not found in the uniprot ID list");
                                 iterator.remove();
 
                             }
@@ -1080,7 +1080,7 @@ public class CCLineExport extends LineExport {
             drProcessedCount++;
 
             log.debug("Committing transaction");
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         } // i (all eligible uniprot IDs)
 
