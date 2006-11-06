@@ -26,7 +26,6 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
-import uk.ac.ebi.intact.webapp.search.SearchHistoryKey;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
 import javax.servlet.ServletException;
@@ -75,6 +74,14 @@ public abstract class SearchActionBase extends IntactSearchAction
         this.form = form;
         this.request = request;
         this.response = response;
+
+        // redirect to the dispatcher if the binary view is required
+        String binaryView = request.getParameter("binary");
+        if (binaryView != null && binaryView.length() > 0)
+        {
+             log.debug("Request URL contains the binary parameter. Preparing the binary view...");
+             return prepareBinaryView(binaryView);
+        }
 
         SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(intactContext);
 
@@ -405,6 +412,24 @@ public abstract class SearchActionBase extends IntactSearchAction
             //getIntactContext().getSession().setRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY", searchableQuery);
         }
         return searchableQuery;
+    }
+
+    private ActionForward prepareBinaryView(String binaryValue)
+    {
+        SearchableQuery query = new SearchableQuery();
+        query.setAc(binaryValue);
+
+        log.debug("Executing query "+query+" for searchable type: InteractorImpl");
+
+        List results = getIntactContext().getDataContext()
+                .getDaoFactory().getSearchableDao().getByQuery(new Class[] {InteractorImpl.class}, query, 0, Integer.MAX_VALUE);
+
+        SearchWebappContext.getCurrentInstance().setCurrentSearchQuery(query);
+        getIntactContext().getSession().setRequestAttribute(SearchConstants.SEARCH_RESULTS, results);
+
+        log.debug("Got "+results.size()+" results. Forwarding to the binaryInteractor Action");
+
+        return mapping.findForward(SearchConstants.FORWARD_BINARYINTERACTOR_ACTION);
     }
 
     private boolean isGoingToParnerView()
