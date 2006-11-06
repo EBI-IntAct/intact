@@ -38,18 +38,18 @@ public class InteractionUtilsTest extends TestCase {
     public void testIsBinaryInteraction() throws Exception
     {
         assertTrue(InteractionUtils.isBinaryInteraction(createBinaryInteraction()));
-        assertFalse(InteractionUtils.isBinaryInteraction(createSelfInteraction()));
+        assertTrue(InteractionUtils.isBinaryInteraction(createSelfBinaryInteraction()));
     }
 
     public void testIsSelfInteraction() throws Exception
     {
-        assertTrue(InteractionUtils.isSelfInteraction(createSelfInteraction()));
-        assertFalse(InteractionUtils.isSelfInteraction(createBinaryInteraction()));
+        assertTrue(InteractionUtils.isSelfBinaryInteraction(createSelfBinaryInteraction()));
+        assertFalse(InteractionUtils.isSelfBinaryInteraction(createBinaryInteraction()));
     }
 
     public void testIsSelfInteraction2() throws Exception
     {
-        assertTrue(InteractionUtils.isSelfInteraction(createSelfInteraction2()));
+        assertTrue(InteractionUtils.isSelfBinaryInteraction(createSelfInteraction2()));
     }
 
     public void testContainsNonProteinInteractors() throws Exception
@@ -80,11 +80,12 @@ public class InteractionUtilsTest extends TestCase {
         return new InteractionImpl(new ArrayList(), comps, null, null, "Int-"+System.currentTimeMillis(), null);
     }
 
-    private InteractionImpl createSelfInteraction()
+    private InteractionImpl createSelfBinaryInteraction()
     {
         List<Component> comps = new ArrayList<Component>();
 
         Component c = createProteinComponent("EBI-1");
+        c.setStoichiometry(2.0f);
         CvComponentRole role = new CvComponentRole();
         role.setShortLabel(CvComponentRole.SELF);
         role.addXref(new CvObjectXref(null, null, CvComponentRole.SELF_PSI_REF, null));
@@ -100,8 +101,8 @@ public class InteractionUtilsTest extends TestCase {
 
         Component c = createProteinComponent("EBI-1");
         CvComponentRole role = new CvComponentRole();
-        role.setShortLabel(CvComponentRole.SELF);
-        role.addXref(new CvObjectXref(null, new CvDatabase(), CvComponentRole.SELF_PSI_REF, new CvXrefQualifier()));
+        //role.setShortLabel(CvComponentRole.SELF);
+        //role.addXref(new CvObjectXref(null, new CvDatabase(), CvComponentRole.SELF_PSI_REF, new CvXrefQualifier()));
         c.setCvComponentRole(role);
         comps.add(c);
         comps.add(c);

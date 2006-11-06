@@ -113,7 +113,7 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
         return query.list();
     }
 
-    public Collection<Interaction> getSelfInteractionsByProtAc(String protAc)
+    public Collection<Interaction> getSelfBinaryInteractionsByProtAc(String protAc)
     {
         List<Interaction> interactions = getInteractionsByInteractorAc(protAc);
 
@@ -121,7 +121,7 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
 
         for (Interaction inter : interactions)
         {
-            boolean isSelfInteraction = InteractionUtils.isSelfInteraction(inter);
+            boolean isSelfInteraction = InteractionUtils.isSelfBinaryInteraction(inter);
 
             if (isSelfInteraction)
             {
