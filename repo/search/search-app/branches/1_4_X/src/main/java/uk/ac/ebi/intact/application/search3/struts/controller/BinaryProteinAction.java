@@ -1,21 +1,18 @@
 package uk.ac.ebi.intact.application.search3.struts.controller;
 
-import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.search3.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.application.search3.struts.util.SearchConstants;
-import uk.ac.ebi.intact.application.search3.struts.view.beans.PartnersViewBean;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interactor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.StringTokenizer;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * This Action class performs the calculating and the construction of view beans that will be used for a for an url
@@ -46,55 +43,52 @@ public class BinaryProteinAction extends AbstractResultAction {
         logger.info("binary protein action");
 
         final Collection someInteractors = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
-        Collection results = Collections.EMPTY_LIST;
+        Collection<? extends AnnotatedObject> results;
 
-        logger.info("resultset size " + someInteractors.size());
+        logger.info("interactors in result set: " + someInteractors.size());
         HttpSession session = super.getSession(request);
 
         // first check for self interactions
 
         if (someInteractors.size() == 1) {
-            Collection<PartnersViewBean> beanList = new ArrayList<PartnersViewBean>(1);
-            logger.info("Binary Protein Action: one 1 Protein");
 
             final Interactor selfInteractor = (Interactor) someInteractors.iterator().next();
-            results = ProteinUtils.getSelfInteractions(selfInteractor);
 
-            boolean hasSelfInteraction = results.size() > 0;
+            String protAc = selfInteractor.getAc();
 
-            if (hasSelfInteraction) {
-                logger.info("BinaryAction: protein has a self interaction ");
-                beanList.add(new PartnersViewBean(selfInteractor, helpLink,
-                                                  request.getContextPath()));
-                request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
-                return SearchConstants.FORWARD_PARTNER_VIEW;
+            logger.info("Binary Protein Action: 1 Protein: "+protAc);
 
+            results = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getInteractionDao().getSelfBinaryInteractionsByProtAc(protAc);
+
+            if (logger.isDebugEnabled())
+            {
+                boolean hasSelfInteraction = results.size() > 0;
+
+                if (hasSelfInteraction)
+                {
+                    logger.debug("BinaryAction: protein has a self interaction ");
+                }
             }
-
         }
         else if (someInteractors.size() == 2) {
             logger.info("binary interactions");
 
-            // we got more than 1 protein, so check for binary Interactions between them
-//            try {
             results = ProteinUtils.getBinaryInteractions(someInteractors);
-            logger.info("results interactions size : " + results.size());
-//            }
-//            catch (IntactException e) {
-//                logger.info("wrong datatype, forward to errorpage");
-//                return SearchConstants.FORWARD_FAILURE;
-//            }
+            logger.debug("results interactions size : " + results.size());
 
         }
         else {
 
             // If we got more than 2 proteins forward to errorpage
-            logger.info("more than 2 Proteins, forward to errorpage");
+            logger.debug("more than 2 Proteins, forward to errorpage");
             return SearchConstants.FORWARD_TOO_MANY_INTERACTORS;
         }
 
+        logger.debug("Interactions found: "+results.size());
+
         if (!results.isEmpty()) {
-            logger.info("search sucessful");
+            logger.debug("search sucessful");
             //TODO use session here
             request.setAttribute(SearchConstants.SEARCH_RESULTS, results);
             // the simple action handle the prasentation of the interactions
