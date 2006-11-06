@@ -8,16 +8,20 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO comment this
@@ -107,5 +111,24 @@ public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> imple
         query.setParameter("protAc2", protAc2);
 
         return query.list();
+    }
+
+    public Collection<Interaction> getSelfBinaryInteractionsByProtAc(String protAc)
+    {
+        List<Interaction> interactions = getInteractionsByInteractorAc(protAc);
+
+        Set<Interaction> selfInteractions = new HashSet<Interaction>();
+
+        for (Interaction inter : interactions)
+        {
+            boolean isSelfInteraction = InteractionUtils.isSelfBinaryInteraction(inter);
+
+            if (isSelfInteraction)
+            {
+                selfInteractions.add(inter);
+            }
+        }
+
+        return selfInteractions;
     }
 }
