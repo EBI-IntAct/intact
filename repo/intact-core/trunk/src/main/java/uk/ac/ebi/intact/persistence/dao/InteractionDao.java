@@ -28,5 +28,5 @@ public interface InteractionDao extends InteractorDao<InteractionImpl>
 
     List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2);
 
-    Collection<Interaction> getSelfInteractionsByProtAc(String protAc);
+    Collection<Interaction> getSelfBinaryInteractionsByProtAc(String protAc);
 }

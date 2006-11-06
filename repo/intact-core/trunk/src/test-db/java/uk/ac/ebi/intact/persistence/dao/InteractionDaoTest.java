@@ -59,7 +59,7 @@ public class InteractionDaoTest extends TestCase
 
     public void testGetSelfInteractionsByProtAc() throws Exception
     {
-        Collection<Interaction> selfInteractions = interactionDao.getSelfInteractionsByProtAc("EBI-2790");
+        Collection<Interaction> selfInteractions = interactionDao.getSelfBinaryInteractionsByProtAc("EBI-2790");
 
         assertEquals("Expected 1 self-interaction for interactor: EBI-2790", 1, selfInteractions.size());
     }
