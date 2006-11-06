@@ -6,8 +6,9 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionErrors;
 import org.apache.struts.validator.ValidatorForm;
 
 import javax.servlet.http.HttpServletRequest;
@@ -75,8 +76,8 @@ public class DispatchActionForm extends ValidatorForm {
      *
      * @param mapping the mapping used to select this instance
      * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
+     * @return <tt>ActionMessages</tt> object that contains validation errors. If
+     * no errors are found, <tt>null</tt> or an empty <tt>ActionMessages</tt>
      * object is returned.
      */
     public ActionErrors validate(ActionMapping mapping,

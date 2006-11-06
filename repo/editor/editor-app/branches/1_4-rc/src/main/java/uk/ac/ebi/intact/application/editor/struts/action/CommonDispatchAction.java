@@ -229,8 +229,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Does this bean exist in the current view?
             if (view.annotationExists(cb)) {
                 // The errors to display.
-                ActionErrors errors = new ActionErrors();
-                errors.add("new.annotation", new ActionError("error.annotation.exists"));
+                ActionMessages errors = new ActionMessages();
+                errors.add("new.annotation", new ActionMessage("error.annotation.exists"));
                 saveErrors(request, errors);
 
                 // Set the anchor
@@ -287,8 +287,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
         // Does this bean exist in the current view?
         if (view.xrefExists(xb)) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("new.xref", new ActionError("error.xref.exists"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("new.xref", new ActionMessage("error.xref.exists"));
             saveErrors(request, errors);
 
             // Set the anchor
@@ -298,7 +298,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
-            ActionErrors errors = xb.setFromGoServer(user.getGoProxy());
+            ActionMessages errors = xb.setFromGoServer(user.getGoProxy());
             // Non null error indicates errors.
             if (errors != null) {
                 saveErrors(request, errors);
@@ -314,8 +314,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // If if return false we display the error.
         Xref xref = createXref(xb, view);
         if(!xref.hasValidPrimaryId()){
-            ActionErrors errors = new ActionErrors();
-            errors.add("new.xref", new ActionError("error.xref.pid.not.valid"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("new.xref", new ActionMessage("error.xref.pid.not.valid"));
             saveErrors(request, errors);
 
             // Set the anchor
@@ -419,11 +419,11 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // Log the stack trace.
             LOGGER.error("Exception trying to persist the view ", ie);
             // Error with updating.
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The error message.
             String msg = ie.getRootCause() != null ? ie.getRootCause().getMessage()
                     : "Update failure, root cause is not availabe";
-            errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update", msg));
+            errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.update", msg));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
@@ -513,8 +513,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // If the user who is trying to Accept or Review the experiment is the user who has curated the experiment
         // display the error : "You can not Accept or Review your own curated experiment"d
         if(userName.toUpperCase().trim().equals(creator.toUpperCase())){
-            ActionErrors errors = new ActionErrors();
-            errors.add("new.annotation", new ActionError("error.curator.accepter"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("new.annotation", new ActionMessage("error.curator.accepter"));
             saveErrors(request, errors);
             // Set the anchor
             setAnchor(request, editorForm);

@@ -48,5 +48,9 @@
         </td>
     </tr>
 </table>
-<html:errors property="int.sanity.exp"/>
-<html:errors property="err.search"/>
+<html:messages id="msg" property="int.sanity.exp">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="err.search">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

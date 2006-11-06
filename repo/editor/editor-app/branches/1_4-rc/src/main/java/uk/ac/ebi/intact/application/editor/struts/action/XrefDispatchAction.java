@@ -211,8 +211,8 @@ public class XrefDispatchAction extends AbstractEditorAction {
             xb.setEditState(AbstractEditBean.ERROR);
 
             // The errors to display.
-            ActionErrors errors = new ActionErrors();
-            errors.add("xref.exists", new ActionError("error.edit.xref.exists"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("xref.exists", new ActionMessage("error.edit.xref.exists"));
             // Save the errors to display later
             saveErrors(request, errors);
 
@@ -225,7 +225,7 @@ public class XrefDispatchAction extends AbstractEditorAction {
 
         // For Go database, set values from the Go server.
         if (xb.getDatabase().equals("go")) {
-            ActionErrors errors = xb.setFromGoServer(user.getGoProxy());
+            ActionMessages errors = xb.setFromGoServer(user.getGoProxy());
             // Non null error indicates errors.
             if (errors != null) {
                 saveErrors(request, errors);

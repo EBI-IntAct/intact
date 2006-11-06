@@ -10,8 +10,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.commons.util.UrlUtil;
 import uk.ac.ebi.intact.application.editor.exception.EmptyTopicsException;
 import uk.ac.ebi.intact.business.IntactException;
@@ -310,9 +310,9 @@ public class EditorService {
 
         // Any errors?
         if (request.getAttribute(errorkey) != null) {
-            ActionErrors errors = (ActionErrors) request.getAttribute(errorkey);
+            ActionMessages errors = (ActionMessages) request.getAttribute(errorkey);
             // Only interested in the first (or only) error.
-            ActionError error = (ActionError) errors.get().next();
+            ActionMessage error = (ActionMessage) errors.get().next();
 
             // The key this error is stored.
             String key = error.getKey();
@@ -329,7 +329,7 @@ public class EditorService {
 //        if (request.getAttribute(msgkey) != null) {
 //        	ActionMessages msgs = (ActionMessages) request.getAttribute(msgkey);
 //			// Only interested in the first (or only) message.
-//			ActionError msg = (ActionError) msgs.get().next();
+//			ActionMessage msg = (ActionMessage) msgs.get().next();
 //
 //			// The key this error is stored.
 //			String key = msg.getKey();

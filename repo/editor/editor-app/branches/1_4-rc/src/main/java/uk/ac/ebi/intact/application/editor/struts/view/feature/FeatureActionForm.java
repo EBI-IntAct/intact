@@ -6,8 +6,8 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.DispatchActionForm;
@@ -337,17 +337,17 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
 
     // Validate Methods
 
-    public ActionErrors validateAddRange() {
+    public ActionMessages validateAddRange() {
         return getNewRange().validate("new");
     }
 
-    public ActionErrors validateSaveRange() {
+    public ActionMessages validateSaveRange() {
         return getSelectedRange().validate("edit");
     }
 
-    public ActionErrors validateSubmit() {
+    public ActionMessages validateSubmit() {
         // Look for unsaved xrefs.
-        ActionErrors errors = myDelegate.validateUnsavedXref();
+        ActionMessages errors = myDelegate.validateUnsavedXref();
         if (errors != null) {
             return errors;
         }
@@ -359,9 +359,9 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
         else {
             // Must have ranges.
             if (myRanges.isEmpty()) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("feature.range.empty",
-                           new ActionError("error.feature.range.empty"));
+                           new ActionMessage("error.feature.range.empty"));
             }
             else {
                 // Check for unsaved ranges.
@@ -372,7 +372,7 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
     }
 
     // Override the super method
-    public ActionErrors validateSaveAndContinue() {
+    public ActionMessages validateSaveAndContinue() {
         return validateSubmit();
     }
 
@@ -381,9 +381,9 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
      * @param fullname
      * @param featureSep
      * @param rangeSep
-     * @return and ActionError
+     * @return and ActionMessage
      */
-    public ActionErrors testValidateMutations(String fullname, String featureSep,
+    public ActionMessages testValidateMutations(String fullname, String featureSep,
                                               String rangeSep) {
         return doValidateMutations(fullname, featureSep, rangeSep);
     }
@@ -393,25 +393,25 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
      *
      * @return null if no errors found.
      */
-    private ActionErrors checkUnsavedRanges() {
+    private ActionMessages checkUnsavedRanges() {
         // The errors to return.
-        ActionErrors errors = null;
+        ActionMessages errors = null;
 
         // Look for any unsaved or error proteins.
         for (Iterator iter = myRanges.iterator(); iter.hasNext();) {
             RangeBean rb = (RangeBean) iter.next();
             // They all must be in view mode. Flag an error if not.
             if (!rb.getEditState().equals(AbstractEditBean.VIEW)) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("feature.range.unsaved",
-                           new ActionError("error.feature.range.unsaved"));
+                           new ActionMessage("error.feature.range.unsaved"));
                 break;
             }
         }
         return errors;
     }
 
-    private ActionErrors validateMutations() {
+    private ActionMessages validateMutations() {
         EditorService service = (EditorService)
                 super.getServlet().getServletContext().getAttribute(EditorConstants.EDITOR_SERVICE);
 
@@ -427,17 +427,17 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
      * @param rangeSep the seprator char for a range
      * @return may be null if there no errors.
      */
-    private static ActionErrors doValidateMutations(String text, String featureSep,
+    private static ActionMessages doValidateMutations(String text, String featureSep,
                                                     String rangeSep) {
         // The errors to return.
-        ActionErrors errors = null;
+        ActionMessages errors = null;
 
         StringTokenizer stk1 = new StringTokenizer(text, featureSep);
         if (!stk1.hasMoreTokens()) {
             // No Features given in the full name.
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add("feature.mutation.empty",
-                       new ActionError("error.feature.mutation.empty"));
+                       new ActionMessage("error.feature.mutation.empty"));
             return errors;
         }
         // Found some features.
@@ -470,23 +470,23 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
      * @param seen a list of seen ranges for a Feature
      * @return null if there are no errors.
      */
-    private static ActionErrors validateMutationElement(String element, List seen) {
+    private static ActionMessages validateMutationElement(String element, List seen) {
         // The action errors to return.
-        ActionErrors errors = null;
+        ActionMessages errors = null;
         Matcher matcher = MUT_ITEM_REGX.matcher(element);
         if (matcher.matches()) {
             // The element is in correct format.
             if (matcher.group(1).equals(matcher.group(3))) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("feature.mutation.invalid",
-                           new ActionError("error.feature.mutation.same", matcher.group(1),
+                           new ActionMessage("error.feature.mutation.same", matcher.group(1),
                                            matcher.group(3)));
             }
             // A valid element. Check if the range value was seen before or not.
             if (seen.contains(matcher.group(2))) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("feature.mutation.invalid",
-                           new ActionError("error.feature.mutation.range", element,
+                           new ActionMessage("error.feature.mutation.range", element,
                                            matcher.group(2)));
             }
             else {
@@ -496,9 +496,9 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
         }
         else {
             // Invalid entry.
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add("feature.mutation.invalid",
-                       new ActionError("error.feature.mutation.format", element));
+                       new ActionMessage("error.feature.mutation.format", element));
         }
         return errors;
     }

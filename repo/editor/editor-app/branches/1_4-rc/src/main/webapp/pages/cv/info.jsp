@@ -53,4 +53,6 @@
         </td>
     </tr>
 </table>
-<html:errors property="shortLabel"/>
+<html:messages id="msg" property="shortLabel">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
