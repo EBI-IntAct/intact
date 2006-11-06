@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.webapp.search.struts.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
@@ -21,7 +22,7 @@ import java.util.Collection;
  * and give back the code to forward to the coresponding JSP site for the representation of the results.
  *
  * @author Michael Kleen
- * @version $Id$
+ * @version $Id:BinaryResultAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class BinaryResultAction extends AbstractResultAction {
 
@@ -31,7 +32,6 @@ public class BinaryResultAction extends AbstractResultAction {
      * Implements abstract method AbstractResultAction.processResults.
      *
      * @param request  The request object containing the data we want
-     * @param helpLink The help link to use
      *
      * @return String the return code for forwarding use by the execute method
      */
@@ -39,7 +39,8 @@ public class BinaryResultAction extends AbstractResultAction {
 
         logger.info( "binary result  action" );
 
-        Collection<AnnotatedObject> results = (Collection<AnnotatedObject>) request.getAttribute( SearchConstants.SEARCH_RESULTS );
+        Collection<AnnotatedObject> results = (Collection<AnnotatedObject>) IntactContext.getCurrentInstance()
+                .getSession().getRequestAttribute(SearchConstants.SEARCH_RESULTS);
 
         //initial sanity check - empty results should be just ignored
         if ( results.isEmpty() ) {
@@ -47,9 +48,6 @@ public class BinaryResultAction extends AbstractResultAction {
         }
 
         logger.info( "BinaryAction: result Collection contains " + results.size() + " items." );
-
-        //useful URL info
-        String searchURL = super.getSearchURL();
 
         // check first for if we got the correct type and then build a collection of resulttypes
         if ( Interactor.class.isAssignableFrom( results.iterator().next().getClass() ) ) {

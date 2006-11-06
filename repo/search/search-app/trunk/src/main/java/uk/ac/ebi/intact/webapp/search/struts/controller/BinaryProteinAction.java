@@ -2,10 +2,11 @@ package uk.ac.ebi.intact.webapp.search.struts.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.webapp.search.struts.util.ProteinUtils;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
-import uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersViewBean;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -40,55 +41,55 @@ public class BinaryProteinAction extends AbstractResultAction {
 
         logger.info("binary protein action");
 
-        final Collection someInteractors = (Collection) request.getAttribute(SearchConstants.SEARCH_RESULTS);
-        Collection results;
+        final Collection someInteractors = (Collection<AnnotatedObject>) IntactContext.getCurrentInstance()
+                .getSession().getRequestAttribute(SearchConstants.SEARCH_RESULTS);
 
-        logger.info("resultset size " + someInteractors.size());
+        Collection<? extends AnnotatedObject> results;
+
+        logger.info("interactors in result set: " + someInteractors.size());
         HttpSession session = super.getSession(request);
 
         // first check for self interactions
 
         if (someInteractors.size() == 1) {
-            Collection<PartnersViewBean> beanList = new ArrayList<PartnersViewBean>(1);
-            logger.info("Binary Protein Action: one 1 Protein");
 
             final Interactor selfInteractor = (Interactor) someInteractors.iterator().next();
-            results = ProteinUtils.getSelfInteractions(selfInteractor);
 
-            boolean hasSelfInteraction = results.size() > 0;
+            String protAc = selfInteractor.getAc();
 
-            if (hasSelfInteraction) {
-                logger.info("BinaryAction: protein has a self interaction ");
-                beanList.add(new PartnersViewBean(selfInteractor));
-                request.setAttribute(SearchConstants.VIEW_BEAN_LIST, beanList);
-                return SearchConstants.FORWARD_PARTNER_VIEW;
+            logger.info("Binary Protein Action: 1 Protein: "+protAc);
 
+            results = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getInteractionDao().getSelfInteractionsByProtAc(protAc);
+
+            if (logger.isDebugEnabled())
+            {
+                boolean hasSelfInteraction = results.size() > 0;
+
+                if (hasSelfInteraction)
+                {
+                    logger.debug("BinaryAction: protein has a self interaction ");
+                }
             }
-
         }
         else if (someInteractors.size() == 2) {
             logger.info("binary interactions");
 
-            // we got more than 1 protein, so check for binary Interactions between them
-//            try {
             results = ProteinUtils.getBinaryInteractions(someInteractors);
-            logger.info("results interactions size : " + results.size());
-//            }
-//            catch (IntactException e) {
-//                logger.info("wrong datatype, forward to errorpage");
-//                return SearchConstants.FORWARD_FAILURE;
-//            }
+            logger.debug("results interactions size : " + results.size());
 
         }
         else {
 
             // If we got more than 2 proteins forward to errorpage
-            logger.info("more than 2 Proteins, forward to errorpage");
+            logger.debug("more than 2 Proteins, forward to errorpage");
             return SearchConstants.FORWARD_TOO_MANY_INTERACTORS;
         }
 
+        logger.debug("Interactions found: "+results.size());
+
         if (!results.isEmpty()) {
-            logger.info("search sucessful");
+            logger.debug("search sucessful");
             //TODO use session here
             request.setAttribute(SearchConstants.SEARCH_RESULTS, results);
             // the simple action handle the prasentation of the interactions
@@ -96,9 +97,7 @@ public class BinaryProteinAction extends AbstractResultAction {
 
         }
         else {
-
-
-            logger.info("no interactions found between these proteins resultset empty");
+            logger.debug("no interactions found between these proteins resultset empty");
             // create statistic
             String info = (String) session.getAttribute("binary");
             StringTokenizer st = new StringTokenizer(info, ",");
@@ -109,7 +108,7 @@ public class BinaryProteinAction extends AbstractResultAction {
                 query.add(value);
             }
 
-            logger.info("forward to no interactions view");
+            logger.debug("forward to no interactions view");
             // add the statistics to the request and forward to the no interactions jsp
             request.setAttribute(SearchConstants.RESULT_INFO, query);
 

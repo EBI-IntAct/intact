@@ -134,6 +134,7 @@ Query     _________       ____________      |     _________      _____________
             <!--<forward name="pairwise" path="pairwise.layout"/>-->
             <forward name="noInteractor" path="no.interactor.layout"/>
             <forward name="false" path="no.resource.layout"/>
+            <forward name="binaryInteractor" path="/do/binaryInteractor"/>
         </action>
 
         <!-- Process a user the forward to the secific view site -->

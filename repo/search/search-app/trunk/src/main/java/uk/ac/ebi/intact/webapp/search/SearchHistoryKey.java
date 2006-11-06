@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.webapp.search;
 import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Arrays;
 * @author Bruno Aranda (baranda@ebi.ac.uk)
 * @version $Id$
 */
-public class SearchHistoryKey
+public class SearchHistoryKey implements Serializable
 {
     private String queryString;
     private Class<? extends Searchable>[] searchableTypes;
