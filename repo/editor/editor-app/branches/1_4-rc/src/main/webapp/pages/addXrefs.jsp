@@ -127,8 +127,18 @@
 
 </div>
 
-<html:errors property="xref.db"/>
-<html:errors property="xref.pid"/>
-<html:errors property="new.xref"/>
-<html:errors property="error.xref.go.connection"/>
-<html:errors property="error.xref.go.search"/>
+<html:messages id="msg" property="xref.db">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="xref.pid">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="new.xref">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="error.xref.go.connection">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="error.xref.go.search">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

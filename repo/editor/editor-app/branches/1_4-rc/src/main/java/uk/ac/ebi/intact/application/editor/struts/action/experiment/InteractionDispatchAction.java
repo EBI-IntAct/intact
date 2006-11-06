@@ -79,8 +79,8 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
 
         Set recentInts = user.getCurrentInteractions();
         if (recentInts.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("err.search", new ActionError("error.exp.int.search.recent.empty"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("err.search", new ActionMessage("error.exp.int.search.recent.empty"));
             saveErrors(request, errors);
         }
         else {

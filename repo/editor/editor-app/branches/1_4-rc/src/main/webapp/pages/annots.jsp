@@ -127,6 +127,10 @@
     </table>
 
     <%-- Errors are displayed here --%>
-    <html:errors property="annotation.exists"/>
-    <html:errors property="annotation.unsaved"/>
+    <html:messages id="msg" property="annotation.exists">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+    </html:messages>
+    <html:messages id="msg" property="annotation.unsaved">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+    </html:messages>
 </c:if>

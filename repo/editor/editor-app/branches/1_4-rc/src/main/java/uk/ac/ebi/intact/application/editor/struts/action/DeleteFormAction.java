@@ -74,8 +74,8 @@ public class DeleteFormAction extends AbstractEditorAction {
 //                // error is reported via the main exception (ie1).
 //            }
             // Error with deleting the object.
-            ActionErrors errors = new ActionErrors();
-            errors.add(EDITOR_ERROR, new ActionError("error.delete",
+            ActionMessages errors = new ActionMessages();
+            errors.add(EDITOR_ERROR, new ActionMessage("error.delete",
                     ie1.getNestedMessage()));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);

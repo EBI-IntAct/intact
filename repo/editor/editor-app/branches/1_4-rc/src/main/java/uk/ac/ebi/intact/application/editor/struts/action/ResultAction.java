@@ -73,10 +73,10 @@ public class ResultAction extends AbstractEditorAction {
         // of allowing to access pages directly).
         if ((ac == null) || (type == null) || !getService().isValidTopic(type)) {
             LOGGER.error("Invalid values submitted for ac=" + ac + " and type=" + type);
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
             errors.add(ActionMessages.GLOBAL_MESSAGE,
-                    new ActionError("error.invalid.edit.inputs"));
+                    new ActionMessage("error.invalid.edit.inputs"));
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);
         }
@@ -87,7 +87,7 @@ public class ResultAction extends AbstractEditorAction {
         EditUserI user = getIntactUser(request);
 
         // Try to acquire the lock.
-        ActionErrors errors = acquire(ac, user.getUserName());
+        ActionMessages errors = acquire(ac, user.getUserName());
         if (errors != null) {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);

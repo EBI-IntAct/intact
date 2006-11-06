@@ -159,4 +159,6 @@
 </table>
 
 <%-- Display errors for linking --%>
-<html:errors property="feature.link"/>
+<html:messages id="msg" property="feature.link">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

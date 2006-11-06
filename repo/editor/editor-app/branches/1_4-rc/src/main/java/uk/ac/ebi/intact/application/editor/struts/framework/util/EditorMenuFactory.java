@@ -169,22 +169,20 @@ public class EditorMenuFactory {
             ourNucleicAcidMiRefs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
             ourNucleicAcidMiRefs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
 
+           // Before the cv were organised as follow : the CvInteractorType Peptide was a child of Protein.
+            // So I could just search for the children of Protein to build the menu. But now it changed and Peptide is
+            // a "brother" of Protein as well as Nucleic. So I have to hard code the menu.
             CvInteractorType protein = CvHelper.getProtein();
-            ourProteinMiRefs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
-            ourProteinMiRefs.add(CvInteractorType.PROTEIN_MI_REF);
+            proteinMIs.add(CvInteractorType.PEPTIDE_MI_REF);
+            proteinMIs.add(CvInteractorType.PROTEIN_MI_REF);
+//            ourProteinMiRefs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
+//            ourProteinMiRefs.add(CvInteractorType.PROTEIN_MI_REF);
 
         } catch (IntactException e) {
             LOGGER.error("Problem trying to load the MI numbers for the CvInteractorType and children of protein " +
                     "and nucleic acid : ", e);
             e.printStackTrace();
         }
-//        for (String miRef : nucleicAcidMIs ){//Iterator iter = CvInteractorType.getNucleicAcidMIs().iterator();iter.hasNext();) {
-//            ourNucleicAcidCriteria.addOrCriteria(buildMICriteria(miRef));
-//        }
-//        for (String miRef : proteinMIs ){//Iterator iter = CvInteractorType.getProteinMIs().iterator();iter.hasNext();) {
-//            ourProteinCriteria.addOrCriteria(buildMICriteria(miRef));
-//        }
-
     }
 
     // No instantiation from outside.

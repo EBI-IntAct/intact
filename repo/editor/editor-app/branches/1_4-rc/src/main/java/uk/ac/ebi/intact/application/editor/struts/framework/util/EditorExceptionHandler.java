@@ -55,7 +55,7 @@ public class EditorExceptionHandler extends ExceptionHandler {
             myLogger.info(ex);
             ValidationException valex = (ValidationException) ex;
             property = valex.getFilterKey();
-            error = new ActionError(valex.getMessageKey());
+            error = new ActionMessage(valex.getMessageKey());
         }
         else if (ex instanceof BaseException) {
             System.out.println("Encountered a base exception");
@@ -63,10 +63,10 @@ public class EditorExceptionHandler extends ExceptionHandler {
             myLogger.error("", ex);
             // Editor specific exception.
             BaseException baseEx = (BaseException) ex;
-            error = new ActionError(baseEx.getMessageKey(), baseEx.getMessage());
+            error = new ActionMessage(baseEx.getMessageKey(), baseEx.getMessage());
         }
         else {
-            error = new ActionError(config.getKey());
+            error = new ActionMessage(config.getKey());
             property = error.getKey();
             // Unexpected error. Log it.
             myLogger.error("", ex);

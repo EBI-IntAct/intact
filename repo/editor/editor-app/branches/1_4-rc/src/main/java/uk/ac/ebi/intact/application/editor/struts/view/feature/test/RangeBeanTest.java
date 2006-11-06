@@ -9,7 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
@@ -87,7 +87,7 @@ public class RangeBeanTest extends TestCase {
         RangeBean bean = new RangeBean();
 
         // Collects errors.
-        ActionErrors errors;
+        ActionMessages errors;
 
         // TEST: Empty values for from and to range (likely if user hasn't entered
         // anything).

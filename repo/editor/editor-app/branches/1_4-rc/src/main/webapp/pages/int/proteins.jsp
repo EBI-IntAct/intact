@@ -367,5 +367,9 @@
         </nested:iterate>
     </table>
 </c:if>
-<html:errors property="int.prot.role"/>
-<html:errors property="int.unsaved.prot"/>
+<html:messages id="msg" property="int.prot.role">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="int.unsaved.prot">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

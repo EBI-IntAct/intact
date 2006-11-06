@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
-import org.apache.struts.action.ActionErrors;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.actions.LookupDispatchAction;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -108,8 +108,8 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * it is not null. For all instances, false is returned.
      */
     protected boolean hasErrors(HttpServletRequest request) {
-        ActionErrors errors =
-                (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        ActionMessages errors =
+                (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
         if (errors != null) {
             // Empty menas no errors.
             return !errors.isEmpty();
@@ -146,8 +146,8 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * @return null if there are no errors in acquiring the lock or else
      * non null value is returned to indicate errors.
      */
-    protected ActionErrors acquire(String ac, String owner) {
-        return acquire(ac, owner, ActionErrors.GLOBAL_ERROR);
+    protected ActionMessages acquire(String ac, String owner) {
+        return acquire(ac, owner, ActionMessages.GLOBAL_MESSAGE);
     }
 
     /**
@@ -159,12 +159,12 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
      * @return null if there are no errors in acquiring the lock or else
      * non null value is returned to indicate errors.
      */
-    protected ActionErrors acquire(String ac, String owner, String errGroup) {
+    protected ActionMessages acquire(String ac, String owner, String errGroup) {
         // Try to acuire the lock.
         if (!getLockManager().acquire(ac, owner)) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
-            errors.add(errGroup, new ActionError("error.lock", ac,
+            errors.add(errGroup, new ActionMessage("error.lock", ac,
                     getLockManager().getOwner(ac)));
             return errors;
         }
@@ -179,15 +179,15 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         try{
             annotatedObjectDao = DaoProvider.getDaoFactory(searchClass);
         }catch(IntactException ie){
-            ActionErrors errors = new ActionErrors();
-            errors.add(errorType, new ActionError("error.intact"));
+            ActionMessages errors = new ActionMessages();
+            errors.add(errorType, new ActionMessage("error.intact"));
             saveErrors(request, errors);
             log.error("Problem getting the dao" + ie.getCause());
         }
 
         if(annotatedObjectDao == null){
-            ActionErrors errors = new ActionErrors();
-            errors.add(errorType, new ActionError("error.intact"));
+            ActionMessages errors = new ActionMessages();
+            errors.add(errorType, new ActionMessage("error.intact"));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
@@ -198,15 +198,15 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
         catch (IntactException ie) {
             // This can only happen when problems with creating an internal helper
             // This error is already logged from the User class.
-            ActionErrors errors = new ActionErrors();
-            errors.add(errorType, new ActionError("error.intact"));
+            ActionMessages errors = new ActionMessages();
+            errors.add(errorType, new ActionMessage("error.intact"));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
         }
 
         if (results.size() > max) {
-            ActionErrors errors = new ActionErrors();
-            errors.add(errorType, new ActionError("error.search.large",
+            ActionMessages errors = new ActionMessages();
+            errors.add(errorType, new ActionMessage("error.search.large",
                             Integer.toString(results.size())));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;
@@ -214,8 +214,8 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
 
         if (results.isEmpty()) {
             // No matches found - forward to a suitable page
-            ActionErrors errors = new ActionErrors();
-            errors.add(errorType, new ActionError("error.search.nomatch",
+            ActionMessages errors = new ActionMessages();
+            errors.add(errorType, new ActionMessage("error.search.nomatch",
                                                                            searchString, searchString));
             saveErrors(request, errors);
             return Collections.EMPTY_LIST;

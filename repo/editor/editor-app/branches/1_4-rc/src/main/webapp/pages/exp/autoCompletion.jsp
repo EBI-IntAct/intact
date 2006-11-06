@@ -39,5 +39,7 @@
         </td>
     </tr>
 </table>
-<html:errors property="autocomp"/>
-<%--<html:messages id="" property="autocomp"/>--%>
+<html:messages id="msg" property="autocomp">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<%--<html:messages id="msg" id="" property="autocomp"/>--%>

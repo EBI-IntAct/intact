@@ -66,4 +66,6 @@
         </tr>
     </table>
 </c:if>
-<html:errors property="err.search"/>
+<html:messages id="msg" property="err.search">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
