@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -42,18 +42,19 @@ public class CvInteractorType extends CvDagObject {
 
     public static final String SMALL_MOLECULE = "small molecule";
     public static final String SMALL_MOLECULE_MI_REF="MI:0328";
-    
+
+    public static final String PEPTIDE_MI_REF = "MI:0327";
     /**
      * A list of MI numbers for Nucleic acid type
      */
-    private static final List<String> ourNucleicAcidMIs = Arrays.asList(new String[] {
+   private static final List<String> ourNucleicAcidMIs = Arrays.asList(new String[] {
         "MI:0318", "MI:0319", "MI:0320", "MI:0321", "MI:0322", "MI:0323",
-        "MI:0324", "MI:0325", "MI:0607", "MI:0608", "MI:0609", "MI:0610", "MI:0611"});
+        "MI:0324", "MI:0325", "MI:0607", "MI:0608", "MI:0609", "MI:0610", "MI:0611","MI:0679", "MI:0680", "MI:0681"});
 
     /**
      * A list of MI numbers for a Protein type.
      */
-    private static final List<String> ourProteinMIs = Arrays.asList(new String[] {
+     private static final List<String> ourProteinMIs = Arrays.asList(new String[] {
         ourProteinMI, "MI:0327"});
 
     /**
