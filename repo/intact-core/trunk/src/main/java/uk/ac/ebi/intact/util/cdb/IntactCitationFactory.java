@@ -11,6 +11,7 @@ package uk.ac.ebi.intact.util.cdb;
 
 import uk.ac.ebi.cdb.bean.Author;
 import uk.ac.ebi.cdb.bean.Citation;
+import uk.ac.ebi.cdb.webservice.WSCitation;
 import uk.ac.ebi.cdb.webservice.proxy.WSCitationProxy;
 
 import java.util.Iterator;
@@ -124,7 +125,7 @@ public class IntactCitationFactory {
 
         Citation c = null;
         try {
-            c = citProxy.getMedlineCitation( new Integer( pubmedId ) );
+            c = citProxy.getCitation(WSCitation.DATASOURCE_PUBMED,  pubmedId );
         } catch ( Exception e ) {
 
             if ( e.getMessage().indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
