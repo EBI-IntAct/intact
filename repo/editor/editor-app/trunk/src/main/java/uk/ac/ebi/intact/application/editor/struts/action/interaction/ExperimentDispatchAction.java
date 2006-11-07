@@ -20,7 +20,6 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,9 +84,9 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
 
         Set recentExps = user.getCurrentExperiments();
         if (recentExps.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             errors.add("int.exp.search",
-                    new ActionError("error.int.exp.search.recent.empty"));
+                    new ActionMessage("error.int.exp.search.recent.empty"));
             saveErrors(request, errors);
             return mapping.getInputForward();
         }
@@ -108,12 +107,12 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         // Search value to search experiment.
         String searchValue = intform.getExpSearchValue();
         if (searchValue != null){
-            searchValue = searchValue.replaceAll("\\*", "%");
-        }
-        if (searchValue.length() == 0) {
-            ActionErrors errors = new ActionErrors();
+             searchValue = searchValue.replaceAll("\\*", "%");
+         }
+          if (searchValue.length() == 0) {
+            ActionMessages errors = new ActionMessages();
             errors.add("int.exp.search",
-                    new ActionError("error.int.exp.search.input"));
+            new ActionMessage("error.int.exp.search.input"));
             saveErrors(request, errors);
             setAnchor(request, intform);
             return mapping.getInputForward();

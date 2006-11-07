@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
+import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
-import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
 import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
@@ -79,8 +79,8 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
 
         Set recentInts = user.getCurrentInteractions();
         if (recentInts.isEmpty()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("err.search", new ActionError("error.exp.int.search.recent.empty"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("err.search", new ActionMessage("error.exp.int.search.recent.empty"));
             saveErrors(request, errors);
         }
         else {
@@ -103,7 +103,7 @@ public class InteractionDispatchAction extends AbstractEditorDispatchAction {
         // The results to display.
         String searchValue = expform.getSearchValue();
         if(searchValue != null){
-            searchValue = searchValue.replaceAll("\\*", "%");
+             searchValue = searchValue.replaceAll("\\*", "%");
         }
         List results = getResults(Interaction.class,searchValue, max, request, "err.search");
 

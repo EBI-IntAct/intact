@@ -70,4 +70,6 @@
     </display:table>
 </c:if>
 
-<html:errors property="err.interaction"/>
+<html:messages id="msg" property="err.interaction">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

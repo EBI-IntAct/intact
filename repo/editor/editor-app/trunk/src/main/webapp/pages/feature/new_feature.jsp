@@ -73,14 +73,20 @@
             <td class="tableCell">
                 <html:text property="shortLabel" size="20" maxlength="20" name="featureForm"
                     styleClass="inputRequired"/>
-                <html:errors property="shortLabel"/>
+                <html:messages id="msg" property="shortLabel">
+                    <font color="red"><li><bean:write name="msg" /></li></font>
+                </html:messages>
             </td>
         </c:if>
 
         <td class="tableCell">
             <html:text property="fullName" size="80" maxlength="80" name="featureForm"/>
-            <html:errors property="feature.mutation.empty"/>
-            <html:errors property="feature.mutation.invalid"/>
+            <html:messages id="msg" property="feature.mutation.empty">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
+            <html:messages id="msg" property="feature.mutation.invalid">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -99,7 +105,9 @@
                     </td>
                 </tr>
             </table>
-            <html:errors property="feature.type"/>
+            <html:messages id="msg" property="feature.type">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
 
@@ -123,7 +131,7 @@
 </table>
 
 <%----%>
-<%--<html:messages id="message" message="true">--%>
+<%--<html:messages id="msg" id="message" message="true">--%>
 <%--	<span class="warning">--%>
 <%--		<bean:write name="message" filter="false"/>--%>
 <%--	</span>--%>

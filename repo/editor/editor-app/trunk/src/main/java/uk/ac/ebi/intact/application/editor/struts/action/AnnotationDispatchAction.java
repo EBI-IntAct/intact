@@ -197,9 +197,9 @@ public class AnnotationDispatchAction extends AbstractEditorAction {
             // Mark the bean as error.
             cb.setEditState(AbstractEditBean.ERROR);
 
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             errors.add("annotation.exists",
-                    new ActionError("error.edit.annotation.exists"));
+                    new ActionMessage("error.edit.annotation.exists"));
             // Save the errors to display later
             saveErrors(request, errors);
 

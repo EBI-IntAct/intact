@@ -65,7 +65,7 @@ public class BioSourceAction extends AbstractEditorAction {
                                  HttpServletResponse response)
             throws Exception {
         // To report errors.
-        ActionErrors errors;
+        ActionMessages errors;
 
         // Extract the tax id from the form.
         BioSourceActionForm bsform = (BioSourceActionForm) form;
@@ -84,8 +84,8 @@ public class BioSourceAction extends AbstractEditorAction {
         }
         catch (NumberFormatException nfe) {
             LOGGER.error("The given taxid was not an integer value : ",nfe);
-            errors = new ActionErrors();
-            errors.add("bs.taxid", new ActionError("error.taxid.mask", taxid));
+            errors = new ActionMessages();
+            errors.add("bs.taxid", new ActionMessage("error.taxid.mask", taxid));
             saveErrors(request, errors);
             // Non integer value for taxid. Display the error in the input page.
             return mapping.getInputForward();
@@ -116,8 +116,8 @@ public class BioSourceAction extends AbstractEditorAction {
 
         // Validate the scientific name.
         if (newtName.length() == 0) {
-            errors = new ActionErrors();
-            errors.add("bs.taxid", new ActionError("error.newt.name", taxid));
+            errors = new ActionMessages();
+            errors.add("bs.taxid", new ActionMessage("error.newt.name", taxid));
             // Save the error and continue on.
             saveErrors(request, errors);
         }
@@ -164,7 +164,7 @@ public class BioSourceAction extends AbstractEditorAction {
                                                          String taxid,
                                                          HttpServletRequest request) {
         // To report errors.
-        ActionErrors errors;
+        ActionMessages errors;
 
         // Handler to the Newt server.
         NewtServerProxy newtServer = user.getNewtProxy();
@@ -177,15 +177,15 @@ public class BioSourceAction extends AbstractEditorAction {
         catch (IOException ioe) {
             // Error in communcating with the server.
             LOGGER.error(" Error in communicating with the server : ",ioe);
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add("bs.taxid",
-                    new ActionError("error.newt.connection", ioe.getMessage()));
+                    new ActionMessage("error.newt.connection", ioe.getMessage()));
             saveErrors(request, errors);
         }
         catch (NewtServerProxy.TaxIdNotFoundException ex) {
             LOGGER.error("The taxid " + taxid + " couldn't be found in Newt", ex);
-            errors = new ActionErrors();
-            errors.add("bs.taxid", new ActionError("error.newt.search", taxid));
+            errors = new ActionMessages();
+            errors.add("bs.taxid", new ActionMessage("error.newt.search", taxid));
             saveErrors(request, errors);
         }
         return newtResponse;

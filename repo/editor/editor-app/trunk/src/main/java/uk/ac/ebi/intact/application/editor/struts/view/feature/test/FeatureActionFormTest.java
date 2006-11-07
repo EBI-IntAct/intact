@@ -8,11 +8,11 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature.test;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.log4j.Logger;
-import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 
 import java.util.ResourceBundle;
 
@@ -65,10 +65,10 @@ public class FeatureActionFormTest extends TestCase {
         String rangeSep = ourResourceBundle.getString("mutation.range.sep");
 
         // Reference to errors in validating the form.
-        ActionErrors errors;
+        ActionMessages errors;
 
         // For a single error.
-        ActionError error;
+        ActionMessage error;
         // For a key.
         String key;
 
@@ -84,7 +84,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.empty", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.empty", error.getKey());
 
         // --------------------------------------------------------------------
@@ -96,7 +96,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.format", error.getKey());
         assertEquals(error.getValues()[0], "K235t");
 
@@ -109,7 +109,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.format", error.getKey());
         assertEquals(error.getValues()[0], "kfgt");
 
@@ -122,7 +122,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.format", error.getKey());
         assertEquals(error.getValues()[0], "ser");
 
@@ -136,7 +136,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.format", error.getKey());
         assertEquals(error.getValues()[0], "lys");
 
@@ -150,7 +150,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.range", error.getKey());
         assertEquals(error.getValues()[0], "trp123asp");
         assertEquals(error.getValues()[1], "123");
@@ -164,7 +164,7 @@ public class FeatureActionFormTest extends TestCase {
         assertNotNull(errors);
         key = (String) errors.properties().next();
         assertEquals("feature.mutation.invalid", key);
-        error = (ActionError) errors.get(key).next();
+        error = (ActionMessage) errors.get(key).next();
         assertEquals("error.feature.mutation.same", error.getKey());
         assertEquals(error.getValues()[0], "trp");
         assertEquals(error.getValues()[1], "trp");

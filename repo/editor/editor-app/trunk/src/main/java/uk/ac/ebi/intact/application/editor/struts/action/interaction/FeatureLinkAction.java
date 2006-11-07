@@ -91,17 +91,17 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
 
         // Check for any error Features.
         if (fbs[0].isError() || fbs[1].isError()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("feature.link", new ActionError("error.int.feature"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("feature.link", new ActionMessage("error.int.feature"));
             saveErrors(request, errors);
             return updateForm(mapping, form, request);
         }
 
         // Check if they already have bound domains.
         if (fbs[0].hasBoundDomain() || fbs[1].hasBoundDomain()) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             errors.add("feature.link",
-                    new ActionError("error.int.feature.link.error"));
+                    new ActionMessage("error.int.feature.link.error"));
             saveErrors(request, errors);
         }
         else {
@@ -131,17 +131,17 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
 
         // Check for any error Features.
         if (fb.isError()) {
-            ActionErrors errors = new ActionErrors();
-            errors.add("feature.link", new ActionError("error.int.feature"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("feature.link", new ActionMessage("error.int.feature"));
             saveErrors(request, errors);
             return updateForm(mapping, form, request);
         }
 
         // Check if they already have bound domains.
         if (!fb.hasBoundDomain()) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             errors.add("feature.link",
-                    new ActionError("error.int.feature.unlink.error"));
+                    new ActionMessage("error.int.feature.unlink.error"));
             saveErrors(request, errors);
         }
         else {

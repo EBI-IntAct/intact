@@ -1,5 +1,5 @@
-<%@ page import="org.apache.struts.util.PropertyMessageResources,
-                 org.apache.struts.Globals"%><!--
+<%@ page import="org.apache.struts.Globals,
+                 org.apache.struts.util.PropertyMessageResources"%><!--
   - Author: Sugath Mudali (smudali@ebi.ac.uk)
   - Version: $Id$
   - Copyright (c) 2002-2004 The European Bioinformatics Institute, and others.
@@ -159,4 +159,6 @@
 </table>
 
 <%-- Display errors for linking --%>
-<html:errors property="feature.link"/>
+<html:messages id="msg" property="feature.link">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

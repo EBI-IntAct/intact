@@ -87,7 +87,7 @@ public class ResultAction extends AbstractEditorAction {
         EditUserI user = getIntactUser(request);
 
         // Try to acquire the lock.
-        ActionErrors errors = acquire(ac, user.getUserName());
+        ActionMessages errors = acquire(ac, user.getUserName());
         if (errors != null) {
             saveErrors(request, errors);
             return mapping.findForward(FAILURE);

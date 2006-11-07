@@ -5,13 +5,11 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.editor.util;
 
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 /**
  * TODO comment it.
@@ -20,11 +18,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id$
  */
 public class DaoProvider {
-    protected static Log log = LogFactory.getLog(DaoProvider.class);
-
 
     public static AnnotatedObjectDao getDaoFactory(Class clazz){
-        log.debug("Clazz.getName() : " +  clazz.getName());
         if(Protein.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getProteinDao();
         }else if (BioSource.class.isAssignableFrom(clazz)){
@@ -79,11 +74,11 @@ public class DaoProvider {
         }else if (Interaction.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getInteractionDao();
         }else if (NucleicAcid.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao(NucleicAcidImpl.class);
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }else if (Protein.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao(ProteinImpl.class);
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }else if(SmallMolecule.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao(SmallMoleculeImpl.class);
+            return DaoProvider.getDaoFactory().getInteractorDao();
         }
         else throw new IntactException("Class " + clazz.getName() + " is not a searchable object");
     }

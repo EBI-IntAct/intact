@@ -52,7 +52,9 @@
         </td>
     </tr>
 </table>
-<html:errors property="int.interact.search"/>
+<html:messages id="msg" property="int.interact.search">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 
 
 
@@ -113,4 +115,4 @@
         <!--</td>-->
     <!--</tr>-->
 <!--</table>-->
-<%--<html:errors property="int.interact.search"/>--%>
+<%--<html:messages id="msg" property="int.interact.search"/>--%>
