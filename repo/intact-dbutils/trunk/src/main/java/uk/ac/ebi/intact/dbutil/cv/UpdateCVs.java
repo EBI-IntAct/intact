@@ -1553,7 +1553,7 @@ public class UpdateCVs {
 
     public static void load(File oboFile) throws PsiLoaderException, IOException
     {
-        load(oboFile, null);
+        load(new FileInputStream(oboFile), null);
     }
 
     public static void load(File oboFile, File annotFile) throws PsiLoaderException, IOException
