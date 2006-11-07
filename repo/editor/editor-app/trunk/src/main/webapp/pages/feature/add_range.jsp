@@ -45,13 +45,17 @@
         <td class="tableCell">
             <html:text property="newRange.fromRange" size="20" maxlength="20" name="featureForm"
                 styleClass="inputRequired"/>
-            <br/><html:errors property="new.fromRange"/>
+            <br/><html:messages id="msg" property="new.fromRange">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell">
             <html:text property="newRange.toRange" size="20" maxlength="20" name="featureForm"
                 styleClass="inputRequired"/>
-            <html:errors property="new.toRange"/>
+            <html:messages id="msg" property="new.toRange">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -63,4 +67,6 @@
 </table>
 
 <%-- Display errors for invalid range intervals --%>
-<html:errors property="new.range"/>
+<html:messages id="msg" property="new.range">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

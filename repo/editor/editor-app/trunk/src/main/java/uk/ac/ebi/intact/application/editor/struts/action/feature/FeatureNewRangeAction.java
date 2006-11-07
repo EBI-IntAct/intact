@@ -45,9 +45,9 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
 
         // Does the range exist in the current ranges?
         if (view.rangeExists(rbnew)) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             errors.add("new.range",
-                    new ActionError("error.feature.range.exists"));
+                    new ActionMessage("error.feature.range.exists"));
             saveErrors(request, errors);
             // Incorrect values for ranges. Display the error in the input page.
             return mapping.getInputForward();
@@ -58,8 +58,8 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
         try{
             int toRange = Integer.parseInt(newRangeBean.getToRange());
             if(toRange<0){
-                ActionErrors errors = new ActionErrors();
-                errors.add("new.range",new ActionError("error.feature.range.toRange.isInt.isNegativ"));
+                ActionMessages errors = new ActionMessages();
+                errors.add("new.range",new ActionMessage("error.feature.range.toRange.isInt.isNegativ"));
                 saveErrors(request, errors);
                 return mapping.getInputForward();
              }
@@ -72,8 +72,8 @@ public class FeatureNewRangeAction extends AbstractEditorAction {
         try{
             int fromRange = Integer.parseInt(newRangeBean.getFromRange());
             if(fromRange<0){
-                ActionErrors errors = new ActionErrors();
-                errors.add("new.range",new ActionError("error.feature.range.toRange.isInt.isNegativ"));
+                ActionMessages errors = new ActionMessages();
+                errors.add("new.range",new ActionMessage("error.feature.range.toRange.isInt.isNegativ"));
                 saveErrors(request, errors);
                 return mapping.getInputForward();
              }

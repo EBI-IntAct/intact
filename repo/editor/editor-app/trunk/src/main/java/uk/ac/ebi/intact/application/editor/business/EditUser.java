@@ -8,8 +8,6 @@ package uk.ac.ebi.intact.application.editor.business;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LogoutEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -18,9 +16,10 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.InteractionRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRowData;
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
-import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
+import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
@@ -29,11 +28,8 @@ import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
 import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.util.UpdateProteinsI;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -44,7 +40,6 @@ import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.sql.SQLException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -263,13 +258,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public EditUser(String user, String password) throws IntactException {
         myUserName = user;
         myPassword = password;
-//        try {
-        try {
-            myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        log.debug("Database name is " + myDatabaseName);
         // Initialize the object.
 //        initialize();
     }

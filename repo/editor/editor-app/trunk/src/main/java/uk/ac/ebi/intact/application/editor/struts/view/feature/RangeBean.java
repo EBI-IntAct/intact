@@ -7,8 +7,8 @@
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
@@ -222,9 +222,9 @@ public class RangeBean extends AbstractEditKeyBean {
      *
      * @return null if no errors found in validating from/to ranges.
      */
-    public ActionErrors validate(String prefix) {
+    public ActionMessages validate(String prefix) {
         // The errors to return.
-        ActionErrors errors = null;
+        ActionMessages errors = null;
 
         // Stores the range values.
         int[] ranges;
@@ -243,16 +243,16 @@ public class RangeBean extends AbstractEditKeyBean {
 
             // Check the validity of ranges.
             if (fromStart > fromEnd) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add(prefix + ".fromRange",
-                        new ActionError("error.feature.range.interval.invalid"));
+                        new ActionMessage("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
             Logger.getLogger(EditorConstants.LOGGER).error("", iae);
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".fromRange",
-                    new ActionError("error.feature.range.invalid"));
+                    new ActionMessage("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
         if (errors != null) {
@@ -273,15 +273,15 @@ public class RangeBean extends AbstractEditKeyBean {
 
             // Check the validity of ranges.
             if (toStart > toEnd) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add(prefix + ".toRange",
-                        new ActionError("error.feature.range.interval.invalid"));
+                        new ActionMessage("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
             Logger.getLogger(EditorConstants.LOGGER).error("", iae);
-            errors = new ActionErrors();
-            errors.add(prefix + ".toRange", new ActionError("error.feature.range.invalid"));
+            errors = new ActionMessages();
+            errors.add(prefix + ".toRange", new ActionMessage("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
         if (errors != null) {
@@ -290,29 +290,29 @@ public class RangeBean extends AbstractEditKeyBean {
         // Need to validate the from and start ranges. These validations are
         // copied from Range constructor.
         if (fromEnd < fromStart) {
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".range",
-                    new ActionError("error.feature.range.fromEnd.less.fromStart"));
+                    new ActionMessage("error.feature.range.fromEnd.less.fromStart"));
         }
         else if (toEnd < toStart) {
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".range",
-                    new ActionError("error.feature.range.toEnd.less.toStart"));
+                    new ActionMessage("error.feature.range.toEnd.less.toStart"));
         }
         else if (fromEnd > toStart) {
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".range",
-                    new ActionError("error.feature.range.fromEnd.more.toStart"));
+                    new ActionMessage("error.feature.range.fromEnd.more.toStart"));
         }
         else if (fromStart > toEnd) {
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".range",
-                    new ActionError("error.feature.range.fromStart.more.toEnd"));
+                    new ActionMessage("error.feature.range.fromStart.more.toEnd"));
         }
         else if (fromStart > toStart) {
-            errors = new ActionErrors();
+            errors = new ActionMessages();
             errors.add(prefix + ".range",
-                    new ActionError("error.feature.range.fromStart.more.toStart"));
+                    new ActionMessage("error.feature.range.fromStart.more.toStart"));
         }
         return errors;
     }

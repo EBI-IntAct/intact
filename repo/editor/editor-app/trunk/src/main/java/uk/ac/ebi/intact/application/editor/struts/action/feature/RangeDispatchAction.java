@@ -75,9 +75,9 @@ public class RangeDispatchAction extends AbstractEditorAction {
                 bean.setEditState(AbstractEditBean.ERROR);
 
                 // The errors to display.
-                ActionErrors errors = new ActionErrors();
+                ActionMessages errors = new ActionMessages();
                 errors.add("feature.range.exists",
-                        new ActionError("error.feature.range.exists"));
+                        new ActionMessage("error.feature.range.exists"));
                 saveErrors(request, errors);
                 // Display the errors.
                 return mapping.getInputForward();

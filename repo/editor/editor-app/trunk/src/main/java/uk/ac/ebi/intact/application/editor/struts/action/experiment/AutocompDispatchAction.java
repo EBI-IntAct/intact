@@ -370,32 +370,32 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         }catch (NumberFormatException e){  //If the pubmed Id do not have the good format
             LOGGER.error("The given pubmed id is not an integer : ", e);
-            ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp.wrong.format"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp.wrong.format"));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.
             return mapping.getInputForward();
         }catch (PublicationNotFoundException e){  //If the publication is not found
             LOGGER.error(" The publication corresponding to pubmedId " + pubmedId + "couldn't be found : ", e);
-            ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp.publication.not.found"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp.publication.not.found"));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.
             return mapping.getInputForward();
         }catch(UnexpectedException e){ //Unexpected exception
             LOGGER.error("", e);
-            ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp"));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.
             return mapping.getInputForward();
         }catch(Throwable t){ //Any other kind of exception
             LOGGER.error("",t);
-            ActionErrors errors = new ActionErrors();
-            errors.add("autocomp", new ActionError("error.exp.autocomp"));
+            ActionMessages errors = new ActionMessages();
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp"));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.

@@ -64,7 +64,9 @@
         </td>
     </tr>
 </table>
-<html:errors property="shortLabel"/>
+<html:messages id="msg" property="shortLabel">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 
 <p></p>
 
@@ -105,14 +107,18 @@
                     </td>
                 </tr>
             </table>
-            <html:errors property="interactionType"/>
+            <html:messages id="msg" property="interactionType">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="intForm">
                 <html:options name="organismmenu" />
             </html:select>
-            <html:errors property="organism"/>
+            <html:messages id="msg" property="organism">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
     </tr>
 </table>

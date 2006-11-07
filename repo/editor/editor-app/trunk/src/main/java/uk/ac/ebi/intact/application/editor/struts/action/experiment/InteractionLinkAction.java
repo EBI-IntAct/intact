@@ -6,10 +6,10 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
-import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
@@ -69,7 +69,7 @@ public class InteractionLinkAction extends CommonDispatchAction {
         assert inter != null;
 
         // Try to acquire the lock.
-        ActionErrors errors = acquire(intAc, user.getUserName(), "err.interaction");
+        ActionMessages errors = acquire(intAc, user.getUserName(), "err.interaction");
         if (errors != null) {
             saveErrors(request, errors);
             return mapping.getInputForward();

@@ -6,19 +6,19 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
-import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Date;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -216,42 +216,42 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
 
     // Validate methods
 
-    public ActionErrors validateAddAnnotation() {
-        ActionErrors errors = null;
+    public ActionMessages validateAddAnnotation() {
+        ActionMessages errors = null;
         // The bean to extract the values.
         if (getNewAnnotation().getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             // Set the anchor for the page to scroll.
-            errors = new ActionErrors();
-            errors.add("annotation", new ActionError("error.annotation.topic"));
+            errors = new ActionMessages();
+            errors.add("annotation", new ActionMessage("error.annotation.topic"));
         }
         return errors;
     }
 
-    public ActionErrors validateAddCrossreference() {
-        ActionErrors errors = null;
+    public ActionMessages validateAddCrossreference() {
+        ActionMessages errors = null;
         // The bean to extract the values.
         XreferenceBean xb = getNewXref();
         if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors = new ActionErrors();
-            errors.add("xref.db", new ActionError("error.xref.database"));
+            errors = new ActionMessages();
+            errors.add("xref.db", new ActionMessage("error.xref.database"));
         }
         // Primary id is required.
         if (errors == null && AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
-            errors = new ActionErrors();
-            errors.add("xref.pid", new ActionError("error.xref.pid"));
+            errors = new ActionMessages();
+            errors.add("xref.pid", new ActionMessage("error.xref.pid"));
         }
         return errors;
     }
 
-    public ActionErrors validateSubmit() {
-        ActionErrors errors = null;
+    public ActionMessages validateSubmit() {
+        ActionMessages errors = null;
         // Look for unsaved annotations.
         for (Iterator iter = myAnnotations.iterator(); iter.hasNext(); ) {
             CommentBean cb = (CommentBean) iter.next();
             if (!cb.getEditState().equals(AbstractEditBean.VIEW)) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("annotation.unsaved",
-                           new ActionError("error.annotation.unsaved"));
+                           new ActionMessage("error.annotation.unsaved"));
                 break;
             }
         }
@@ -262,18 +262,18 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return errors;
     }
 
-    public ActionErrors validateSaveAndContinue() {
+    public ActionMessages validateSaveAndContinue() {
         return validateSubmit();
     }
 
-    public ActionErrors validateUnsavedXref() {
-        ActionErrors errors = null;
+    public ActionMessages validateUnsavedXref() {
+        ActionMessages errors = null;
         for (Iterator iter = myXrefs.iterator(); iter.hasNext(); ) {
             XreferenceBean xb = (XreferenceBean) iter.next();
             if (!xb.getEditState().equals(AbstractEditBean.VIEW)) {
-                errors = new ActionErrors();
+                errors = new ActionMessages();
                 errors.add("xref.unsaved",
-                           new ActionError("error.xref.unsaved"));
+                           new ActionMessage("error.xref.unsaved"));
                 break;
             }
         }

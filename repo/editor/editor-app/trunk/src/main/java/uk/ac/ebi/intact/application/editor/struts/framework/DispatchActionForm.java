@@ -16,8 +16,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
-
 /**
  * The super class for all the dispatch action forms.
  *
@@ -75,8 +73,8 @@ public class DispatchActionForm extends ValidatorForm {
      *
      * @param mapping the mapping used to select this instance
      * @param request the servlet request we are processing
-     * @return <tt>ActionErrors</tt> object that contains validation errors. If
-     * no errors are found, <tt>null</tt> or an empty <tt>ActionErrors</tt>
+     * @return <tt>ActionMessages</tt> object that contains validation errors. If
+     * no errors are found, <tt>null</tt> or an empty <tt>ActionMessages</tt>
      * object is returned.
      */
     public ActionErrors validate(ActionMapping mapping,

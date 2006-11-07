@@ -7,8 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view;
 
 import org.apache.log4j.Logger;
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -292,7 +292,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
      * @param proxy the GO Proxy to get the GO response
      * @return non null for errors in accessing the Go server.
      */
-    public ActionErrors setFromGoServer(GoServerProxy proxy) {
+    public ActionMessages setFromGoServer(GoServerProxy proxy) {
         // Get the response from the Go server.
         GoResult result = getGoResponse(proxy);
 
@@ -370,14 +370,14 @@ public class XreferenceBean extends AbstractEditKeyBean {
 
             Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ex);
             // GO id not found.
-            result.addErrors("error.xref.go.search",new ActionError("error.xref.go.search",
+            result.addErrors("error.xref.go.search",new ActionMessage("error.xref.go.search",
                     getPrimaryId()));
             return result;
         }
         catch (IOException ioe) {
             Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ioe);
             // Error in communcating with the server.
-            result.addErrors("error.xref.go.connection",new ActionError("error.xref.go.connection",
+            result.addErrors("error.xref.go.connection",new ActionMessage("error.xref.go.connection",
                     ioe.getMessage()));
             return result;
         }
@@ -424,14 +424,14 @@ public class XreferenceBean extends AbstractEditKeyBean {
     // Static class to encapsulate GO response and action errors.
 
     private static class GoResult {
-        private ActionErrors myGoErrors;
+        private ActionMessages myGoErrors;
         private GoServerProxy.GoResponse myGoResponse;
 
-        private void addErrors(String property, ActionError error) {
+        private void addErrors(String property, ActionMessage error) {
             if (myGoErrors == null) {
-                myGoErrors = new ActionErrors();
+                myGoErrors = new ActionMessages();
             }
-//            myGoErrors.add(ActionErrors.GLOBAL_ERROR, error);
+//            myGoErrors.add(ActionMessages.GLOBAL_MESSAGE, error);
             myGoErrors.add(property, error);
         }
     }

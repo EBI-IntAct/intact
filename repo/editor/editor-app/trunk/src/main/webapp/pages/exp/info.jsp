@@ -63,9 +63,11 @@
         </td>
     </tr>
 </table>
-<html:errors property="shortLabel"/>
+<html:messages id="msg" property="shortLabel">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 <%----%>
-<%--<html:messages id="message" message="true">--%>
+<%--<html:messages id="msg" id="message" message="true">--%>
 <%--	<span class="warning">--%>
 <%--		<bean:write name="message" filter="false"/>--%>
 <%--	</span>--%>
@@ -103,7 +105,9 @@
             <html:select property="organism" name="expForm" styleClass="inputRequired">
                 <html:options name="organismmenu"/>
             </html:select>
-            <html:errors property="organism"/>
+            <html:messages id="msg" property="organism">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -121,7 +125,9 @@
                     </td>
                 </tr>
             </table>
-            <html:errors property="inter"/>
+            <html:messages id="msg" property="inter">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -139,7 +145,9 @@
                     </td>
                 </tr>
             </table>
-            <html:errors property="ident"/>
+            <html:messages id="msg" property="ident">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
     </tr>
 </table>

@@ -51,7 +51,9 @@
         </td>
     </tr>
 </table>
-<html:errors property="shortLabel"/>
+<html:messages id="msg" property="shortLabel">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 
 <table class="table" width="100%" border="0" cellspacing="1" cellpadding="2">
     <tr class="tableRowHeader">
@@ -67,17 +69,23 @@
             <html:select property="interactorType" name="seqForm" styleClass="inputRequired">
                 <html:options name="polymermenu" />
             </html:select>
-            <html:errors property="polymer"/>
+            <html:messages id="msg" property="polymer">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:select property="organism" name="seqForm" styleClass="inputRequired">
                 <html:options name="organismmenu" />
             </html:select>
-            <html:errors property="organism"/>
+            <html:messages id="msg" property="organism">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="sequence" name="seqForm" rows="3" cols="90"/>
-            <html:errors property="sequence"/>
+            <html:messages id="msg" property="sequence">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
     </tr>
     <tr class="tableRowEven">

@@ -6,8 +6,8 @@
 
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
-import org.apache.struts.action.ActionError;
-import org.apache.struts.action.ActionErrors;
+import org.apache.struts.action.ActionMessage;
+import org.apache.struts.action.ActionMessages;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
@@ -220,8 +220,8 @@ public class InteractionActionForm extends EditorActionForm {
      * @return errors if two features not selected (exactly). A null is returned
      * if there no errors.
      */
-    public ActionErrors validateLinkFeatures() {
-        ActionErrors errors = null;
+    public ActionMessages validateLinkFeatures() {
+        ActionMessages errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
                 && count <= 2;) {
@@ -235,8 +235,8 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
         if (count != 2) {
-            errors = new ActionErrors();
-            errors.add("feature.link", new ActionError("error.int.feature.link"));
+            errors = new ActionMessages();
+            errors.add("feature.link", new ActionMessage("error.int.feature.link"));
         }
         return errors;
     }
@@ -247,8 +247,8 @@ public class InteractionActionForm extends EditorActionForm {
      * @return errors if a single feature wasn't selected. A null is returned
      * if there no errors.
      */
-    public ActionErrors validateUnlinkFeatures() {
-        ActionErrors errors = null;
+    public ActionMessages validateUnlinkFeatures() {
+        ActionMessages errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
                 && count <= 1;) {
@@ -262,8 +262,8 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
         if (count != 1) {
-            errors = new ActionErrors();
-            errors.add("feature.link", new ActionError("error.int.feature.unlink"));
+            errors = new ActionMessages();
+            errors.add("feature.link", new ActionMessage("error.int.feature.unlink"));
         }
         return errors;
     }

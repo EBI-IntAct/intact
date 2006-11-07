@@ -159,8 +159,8 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      * it is not null. For all instances, false is returned.
      */
     protected boolean hasErrors(HttpServletRequest request) {
-        ActionErrors errors =
-                (ActionErrors) request.getAttribute(Globals.ERROR_KEY);
+        ActionMessages errors =
+                (ActionMessages) request.getAttribute(Globals.ERROR_KEY);
         if (errors != null) {
             // Empty menas no errors.
             return !errors.isEmpty();
@@ -255,10 +255,10 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
      * @return null if there are no errors in acquiring the lock or else
      * non null value is returned to indicate errors.
      */
-    protected ActionErrors acquire(String ac, String owner) {
+    protected ActionMessages acquire(String ac, String owner) {
         // Try to acuire the lock.
         if (!getLockManager().acquire(ac, owner)) {
-            ActionErrors errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
             errors.add(ActionErrors.GLOBAL_ERROR,
                     new ActionError("error.lock", ac, getLockManager().getOwner(ac)));

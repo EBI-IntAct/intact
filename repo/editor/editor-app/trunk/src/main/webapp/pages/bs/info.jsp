@@ -66,7 +66,9 @@
         </td>
     </tr>
 </table>
-<html:errors property="shortLabel"/>
+<html:messages id="msg" property="shortLabel">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 
 <p></p>
 
@@ -102,7 +104,9 @@
         <td class="tableCell">
             <html:text property="taxId" name="bsForm" size="10" maxlength="16"
                 styleClass="inputRequired"/>
-            <html:errors property="taxId"/>
+            <html:messages id="msg" property="taxId">
+                <font color="red"><li><bean:write name="msg" /></li></font>
+            </html:messages>
         </td>
 
         <td class="tableCell" align="left" valign="top">
@@ -124,6 +128,10 @@
 	</span>	
 </html:messages>
 
-<html:errors property="bs.taxid"/>
-<html:errors property="bs.sanity.taxid.dup"/>
+<html:messages id="msg" property="bs.taxid">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="bs.sanity.taxid.dup">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
         

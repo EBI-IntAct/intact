@@ -114,11 +114,15 @@
                 <c:if test="${save or error}">
                     <td class="tableCell">
                         <html:text name="ranges" size="10" property="fromRange" indexed="true"/>
-                        <br/><html:errors property="edit.fromRange"/>
+                        <br/><html:messages id="msg" property="edit.fromRange">
+                                <font color="red"><li><bean:write name="msg" /></li></font>
+                            </html:messages>
                     </td>
                     <td class="tableCell">
                         <html:text name="ranges" size="10" property="toRange" indexed="true"/>
-                        <br/><html:errors property="edit.toRange"/>
+                        <br/><html:messages id="msg" property="edit.toRange">
+                             <font color="red"><li><bean:write name="msg" /></li></font>
+                        </html:messages>
                     </td>
                     <td class="tableCell">
                         <html:select name="ranges" property="link" indexed="true">
@@ -135,7 +139,15 @@
 </c:if>
 
 <%-- Invalid values for from and to --%>
-<html:errors property="edit.range"/>
-<html:errors property="feature.range.unsaved"/>
-<html:errors property="feature.range.exists"/>
-<html:errors property="feature.range.empty"/>
+<html:messages id="msg" property="edit.range">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="feature.range.unsaved">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="feature.range.exists">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="feature.range.empty">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>

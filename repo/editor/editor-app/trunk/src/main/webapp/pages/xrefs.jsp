@@ -158,6 +158,6 @@
     </table>
 
     <%-- Errors are displayed here --%>
-    <html:errors property="xref.exists"/>
-    <html:errors property="xref.unsaved"/>
+    <html:messages id="msg" property="xref.exists"/>
+    <html:messages id="msg" property="xref.unsaved"/>
 </c:if>

@@ -88,5 +88,12 @@
 
 </div>
 
-<html:errors property="annotation"/>
-<html:errors property="new.annotation"/>
+
+<html:messages  id="msg" property="annotation">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<html:messages id="msg" property="new.annotation">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
+<%--<html:messages id="msg" property="annotation"/>--%>
+<%--<html:messages id="msg" property="new.annotation"/>--%>
