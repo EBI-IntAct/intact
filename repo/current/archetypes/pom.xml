@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-maven-plugins</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>IntAct Maven Archetypes</name>
+    <url>http://www.ebi.ac.uk/~baranda/intact/archetypes</url>
+    <description>Intact maven plugins</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/archetypes</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/archetypes</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/archetypes</url>
+    </scm>
+
+    <modules>
+        <module>intact-archetype-mojo</module>
+        <module>intact-archetype-jar</module>
+    </modules>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/maven-plugins</url>
+        </site>
+    </distributionManagement>
+
+</project>
