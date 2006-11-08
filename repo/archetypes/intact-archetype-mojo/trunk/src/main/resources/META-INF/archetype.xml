@@ -8,6 +8,7 @@
     </testSources>
     <testResources>
         <resource>src/test/resources/intact.properties</resource>
+        <resource>src/test/resources/log4j.properties</resource>
     </testResources>
     <resources>
         <resource>src/test/plugin-configs/simple-config.xml</resource>
