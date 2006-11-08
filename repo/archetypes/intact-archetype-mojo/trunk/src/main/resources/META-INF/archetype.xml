@@ -12,5 +12,6 @@
     </testResources>
     <resources>
         <resource>src/test/plugin-configs/simple-config.xml</resource>
+        <resource>LICENSE</resource>
     </resources>
 </archetype>
