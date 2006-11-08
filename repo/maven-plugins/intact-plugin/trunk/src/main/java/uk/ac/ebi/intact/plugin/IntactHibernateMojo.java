@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 import java.sql.SQLException;
 import java.io.File;
@@ -41,6 +42,14 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
     protected File hibernateConfig;
 
     private boolean initialized;
+
+    public void execute() throws MojoExecutionException, MojoFailureException
+    {
+        initializeHibernate();
+        executeIntactMojo();
+    }
+
+    protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException;
 
     protected void initializeHibernate() throws MojoExecutionException
     {
