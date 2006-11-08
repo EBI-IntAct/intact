@@ -17,10 +17,10 @@ package uk.ac.ebi.intact.plugin.myplugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
@@ -38,7 +38,7 @@ public class MyMojo
      */
     @Override
     public void executeIntactMojo()
-        throws MojoExecutionException, MojoFailureException
+        throws MojoExecutionException, MojoFailureException, IOException
     {
         File outputDir = super.getDirectory();
 
