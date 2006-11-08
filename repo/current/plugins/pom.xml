@@ -32,6 +32,7 @@
         <module>maven-psixml-generator-plugin</module>
         <module>maven-uniprotexport-plugin</module>
         <module>cv-maven-plugin</module>
+        <module>dbupdate-maven-plugin</module>
     </modules>
 
     <distributionManagement>
