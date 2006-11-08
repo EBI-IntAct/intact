@@ -1,0 +1,6 @@
+<archetype>
+  <id>plugin</id>
+  <sources>
+    <source>src/main/java/uk/ac/ebi/intact/plugin/myplugin/MyMojo.java</source>
+  </sources>
+</archetype>
