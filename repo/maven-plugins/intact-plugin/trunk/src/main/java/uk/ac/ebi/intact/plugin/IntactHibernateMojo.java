@@ -27,7 +27,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 
 /**
- * TODO comment this!
+ * Base class for plugins that require hibernate access
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
