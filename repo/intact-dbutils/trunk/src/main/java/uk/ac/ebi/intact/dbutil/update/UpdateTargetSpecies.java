@@ -176,19 +176,9 @@ public class UpdateTargetSpecies {
         return targets;
     }
 
-
-    /**
-     * M A I N
-     */
-    public static void main( String[] args ) throws IntactException, SQLException {
-
-            if (log.isInfoEnabled())
-            {
-                log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
-                log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
-            }
-
-            init( );
+    public static List<String> update()
+    {
+        init( );
 
             // get all experiments
             Collection experiments = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getAll();
@@ -296,6 +286,23 @@ public class UpdateTargetSpecies {
 
 
             } // experiments
+
+        return stats;
+    }
+
+
+    /**
+     * M A I N
+     */
+    public static void main( String[] args ) throws IntactException, SQLException {
+
+            if (log.isInfoEnabled())
+            {
+                log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+                log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
+            }
+
+            List<String> stats = update();
 
             // write stats in a file.
             try {
