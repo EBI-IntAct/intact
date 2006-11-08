@@ -39,6 +39,11 @@ public class MojoUtils
      */
     public static void prepareFile(File file, boolean createParentFolder) throws IOException
     {
+        if (file == null)
+        {
+            throw new NullPointerException("file cannot be null");
+        }
+
         if (file.exists())
         {
             return;
