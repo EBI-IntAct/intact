@@ -20,6 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 import java.sql.SQLException;
 import java.io.File;
+import java.io.IOException;
 
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.context.IntactEnvironment;
@@ -46,10 +47,18 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
     public void execute() throws MojoExecutionException, MojoFailureException
     {
         initializeHibernate();
-        executeIntactMojo();
+
+        try
+        {
+            executeIntactMojo();
+        }
+        catch (IOException e)
+        {
+            throw new MojoExecutionException("Problems executing Mojo", e);
+        }
     }
 
-    protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException;
+    protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException;
 
     protected void initializeHibernate() throws MojoExecutionException
     {
