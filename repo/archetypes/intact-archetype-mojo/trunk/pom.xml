@@ -25,8 +25,8 @@
 
    <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>1.4.2</version>
+        <artifactId>intact-master</artifactId>
+        <version>1.0.6</version>
    </parent>
 
     <!-- EBI repositories -->
