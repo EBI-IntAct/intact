@@ -1,0 +1,16 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>cv-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>src/test/resources/uk/ac/ebi/intact/plugin/cv/hibernate.h2.cfg.xml</hibernateConfig>
+                    <outputFile>target/myOutput.log</outputFile>
+
+                    <importedOboFile>src/test/resources/uk/ac/ebi/intact/plugin/cv/obo/intact.obo</importedOboFile>
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
