@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.dbutil.cv.model.IntactOntology;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -647,7 +648,7 @@ public class DownloadCVs {
         Set allCvClasses = new HashSet();
         for ( Iterator iterator = cvObjects.iterator(); iterator.hasNext(); ) {
             CvObject cvObject = (CvObject) iterator.next();
-            allCvClasses.add( cvObject.getClass() );
+            allCvClasses.add( CgLibUtil.removeCglibEnhanced(cvObject.getClass()) );
         }
 
         Map typeMapping = IntactOntology.getTypeMapping( true ); // incl. DAGs and non DAGs

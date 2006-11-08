@@ -9,19 +9,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.dbutil.cv.model.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.dbutil.cv.model.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -580,23 +574,29 @@ public class UpdateCVs {
 
         // if an MI is available, search using it
         if ( mi != null ) {
+            log.debug("Looking up term by mi: "+mi);
             cv = cvObjectDao.getByXref(mi);
         }
 
         // if not found by MI, then search by shortlabel
         if ( cv == null ) {
             // Search by Name
+            log.debug("Not found. Now, looking up term by short label: "+shortlabel);
+
             cv = cvObjectDao.getByShortLabel(shortlabel);
         }
 
         // if still not found, then create it.
         if ( cv == null ) {
+
+            log.debug("Not found. Then, create it");
+
             // create it
             try {
 
                 // create a new object using refection
                 Constructor constructor = clazz.getConstructor( new Class[]{ Institution.class, String.class } );
-                cv = (CvObject) constructor.newInstance( new Object[]{ institution, shortlabel } );
+                cv = (CvObject) constructor.newInstance( institution, shortlabel );
 
                 // by default add the shortLabel as fullName
                 cv.setFullName(defaultFullName);
