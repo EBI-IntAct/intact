@@ -36,7 +36,6 @@ public class MyMojo
     /**
      * Main execution method, which is called after hibernate has been initialized
      */
-    @Override
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
     {
