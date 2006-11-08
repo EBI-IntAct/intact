@@ -3,4 +3,13 @@
   <sources>
     <source>src/main/java/uk/ac/ebi/intact/plugin/myplugin/MyMojo.java</source>
   </sources>
+    <testSources>
+        <source>src/test/java/uk/ac/ebi/intact/plugin/myplugin/MyMojoTest.java</source>
+    </testSources>
+    <testResources>
+        <resource>src/test/resources/intact.properties</resource>
+    </testResources>
+    <resources>
+        <resource>src/test/plugin-configs/simple-config.xml</resource>
+    </resources>
 </archetype>
