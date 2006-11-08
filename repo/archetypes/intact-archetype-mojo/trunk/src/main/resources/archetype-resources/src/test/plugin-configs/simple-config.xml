@@ -1,0 +1,12 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>${artifactId}</artifactId>
+                <configuration>
+                    <outputFile>target/myOutput.log</outputFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
