@@ -9,8 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.dbutil.cv.model.IntactOntology;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -632,7 +632,7 @@ public class DownloadCVs {
         }
     }
 
-    private void download( BufferedWriter out ) throws IOException, IntactException {
+    public void download( BufferedWriter out ) throws IOException, IntactException {
 
         // 1. Get all CvObject
         log.info( "Loading all IntAct CVs ... " );
