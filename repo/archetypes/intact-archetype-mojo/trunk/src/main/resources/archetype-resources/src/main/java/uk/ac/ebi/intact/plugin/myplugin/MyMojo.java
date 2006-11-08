@@ -1,5 +1,3 @@
-package uk.ac.ebi.intact.plugin.myplugin;
-
 /*
  * Copyright 2006 The European Bioinformatics Institute.
  *
@@ -15,30 +13,35 @@ package uk.ac.ebi.intact.plugin.myplugin;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package uk.ac.ebi.intact.plugin.myplugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 
-import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 
 import java.io.File;
 
 /**
- * Test goal
+ * Example mojo. This mojo is executed when the goal "mygoal" is called.
  *
  * @goal mygoal
  * 
  * @phase process-resources
  */
 public class MyMojo
-    extends IntactAbstractMojo
+    extends IntactHibernateMojo
 {
 
-    public void execute()
+    /**
+     * Main execution method, which is called after hibernate has been initialized
+     */
+    @Override
+    public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException
     {
         File outputDir = super.getDirectory();
 
-        // TODO: implement plugin
+        // TODO: put your logic here
     }
 }
