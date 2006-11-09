@@ -3,14 +3,14 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.Interactor;
 
 /**
  * A simple node class for temporary processing, for example to prepare output for graph analysis packages.
  */
-public class Node extends BasicGraph implements NodeI {
+public class Node extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements NodeI {
 
     private Interactor interactor;
 

@@ -3,18 +3,21 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE 
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
+
+import uk.ac.ebi.intact.model.BasicObject;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
 
 import java.util.Collection;
 import java.util.HashMap;
 
-import uk.ac.ebi.intact.model.BasicObject;
-import uk.ac.ebi.intact.model.Interactor;
-
 /**
  * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
-public interface GraphI extends BasicGraphI {
+public interface GraphI extends uk.ac.ebi.intact.simpleGraph.BasicGraphI
+{
 
     public void addNode(BasicGraphI aNode);
 

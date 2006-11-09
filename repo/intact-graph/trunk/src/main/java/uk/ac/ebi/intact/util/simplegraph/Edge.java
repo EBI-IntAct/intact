@@ -3,12 +3,13 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE 
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 
-public class Edge extends BasicGraph implements EdgeI {
+public class Edge extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements EdgeI {
 
     ///////////////////////////////////////
     // attributes

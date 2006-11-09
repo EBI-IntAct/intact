@@ -4,7 +4,7 @@
  * distribution.
  */
 
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
 
 import java.util.HashMap;
 
