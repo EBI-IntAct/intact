@@ -6,14 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.msd.generator.intactGenerator;
 
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvIdentification;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 

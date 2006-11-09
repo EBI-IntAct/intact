@@ -53,6 +53,24 @@ public class SearchableDaoImplTest extends TestCase
         assertEquals(1, count);
     }
 
+     public void testCountByQuery_2ac() throws Exception
+    {
+        SearchableQuery query = new SearchableQuery();
+        query.setAc("EBI-12345,EBI-104987");
+
+        int count = dao.countByQuery(InteractorImpl.class, query);
+        assertEquals(2, count);
+    }
+
+    public void testCountByQuery_2ac_self() throws Exception
+    {
+        SearchableQuery query = new SearchableQuery();
+        query.setAc("EBI-29657,EBI-29657");
+
+        int count = dao.countByQuery(InteractorImpl.class, query);
+        assertEquals(1, count);
+    }
+
     public void testCountByQuery_all_standard() throws Exception
     {
         SearchableQuery query = new SearchableQuery();

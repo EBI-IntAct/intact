@@ -160,25 +160,7 @@
             <artifactId>sptr</artifactId>
             <version>(8.6,]</version>
         </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi</groupId>
-            <artifactId>cdbWebservices</artifactId>
-            <version>[6,)</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi</groupId>
-            <artifactId>ols</artifactId>
-            <version>1.6</version>
-        </dependency>
-        
 
-        <!-- Used by the OBO import -->
-        <dependency>
-            <groupId>org.geneontology</groupId>
-            <artifactId>oboedit</artifactId>
-            <version>beta8</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
 
     <!-- EBI repositories -->
