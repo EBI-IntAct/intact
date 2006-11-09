@@ -11,6 +11,7 @@
         <resource>src/test/resources/log4j.properties</resource>
     </testResources>
     <resources>
+        <resource>src/main/resources/plugin-info.properties</resource>
         <resource>src/test/plugin-configs/simple-config.xml</resource>
         <resource>LICENSE</resource>
     </resources>
