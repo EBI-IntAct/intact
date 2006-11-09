@@ -40,6 +40,7 @@ import java.net.MalformedURLException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.sql.SQLException;
 
 /**
  * This class stores information about an Intact Web user session. Instead of
@@ -256,10 +257,15 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * due to an invalid user.
      */
     public EditUser(String user, String password) throws IntactException {
-        myUserName = user;
+       myUserName = user;
         myPassword = password;
-        // Initialize the object.
-//        initialize();
+//        try {
+        try {
+            myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        log.debug("Database name is " + myDatabaseName);
     }
 
     // Methods to handle special serialization issues.
