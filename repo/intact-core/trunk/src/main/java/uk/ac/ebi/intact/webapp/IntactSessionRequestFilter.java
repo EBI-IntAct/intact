@@ -70,11 +70,14 @@ public class IntactSessionRequestFilter implements Filter {
         }
         catch (IOException e)
         {
-           e.printStackTrace();
+//           e.printStackTrace();
+        	// use the lograther than standard output or some errors could be raised 
+        	log.error("intact session: ", e);
         }
         catch (ServletException e)
         {
-           e.printStackTrace();
+//           e.printStackTrace();
+        	log.error("intact session: ", e);
         }
         finally
         {
@@ -85,7 +88,8 @@ public class IntactSessionRequestFilter implements Filter {
             }
             catch (Exception e)
             {
-                e.printStackTrace();
+//                e.printStackTrace();
+            	log.error("intact session: ", e);
             }
         }
 
