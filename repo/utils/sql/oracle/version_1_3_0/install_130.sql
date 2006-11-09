@@ -4,40 +4,108 @@ spool install_130.log
 
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  start_date from dual;
 
-PROMPT *********************************************************************************/
-PROMPT Component related changes
-PROMPT
-@component_modifications.sql
+-- Define here global parameters used across installation files
+DEFINE intactMainTablespace         = INTACT_TAB
+
+-- D003
+DEFINE intactIndexTablespace        = INTACT_TAB
+
+-- ZPRO
+-- DEFINE intactIndexTablespace        = INTACT_IDX
+
 
 PROMPT *********************************************************************************/
-PROMPT Adding multiple Alias tables
+PROMPT "Creating new Alias tables (where we will store subset of IA_ALIAS)"
 PROMPT
-@add_multiple_alias_tables.sql
+@010_create_alias_tables.sql
 
 PROMPT *********************************************************************************/
-PROMPT Granting permissions
+PROMPT "Update IA_COMPONENT - components are now Annotated Objects"
+PROMPT "                      Add IA_COMPONENT_ALIAS"
+PROMPT "                      Add IA_COMPONENT_XREF"
+PROMPT "                      Add IA_COMPONENT2ANNOT"
 PROMPT
-@grant_permissions.sql
+@020_component_modifications.sql
 
 PROMPT *********************************************************************************/
-PROMPT Creating synonyms
+PROMPT "Creating Alias deletion trigger - avoids constraint violation."
 PROMPT
-@create_synonyms.sql
+@030_create_alias_deletion_triggers.sql
 
 PROMPT *********************************************************************************/
-PROMPT Triggers
+PROMPT "Creating Xref deletion trigger - avoids constraint violation."
 PROMPT
-@triggers.sql
+@040_create_xref_deletion_triggers.sql
 
 PROMPT *********************************************************************************/
-PROMPT Creating alias split procedure
+PROMPT "Creating Alias audit tables (7 of them)."
 PROMPT
-@createAliasSplitProcedure.sql
+@050_create_alias_audit_tables.sql
 
 PROMPT *********************************************************************************/
-PROMPT Executing procedure
+PROMPT "Creating Xref audit trigger."
 PROMPT
-@runAliasSplit.sql
+@060_create_alias_audit_triggers.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating Xref audit tables (7 of them)."
+PROMPT
+@070_create_xref_audit_tables.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating Alias audit trigger."
+PROMPT
+@080_create_xref_audit_triggers.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Grant roles - read to INTACT_SELECT, read/write to INTACT_CURATOR."
+PROMPT
+@090_grant_permissions.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating public synonyms."
+PROMPT
+@100_create_public_synonyms.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating procedure to split IA_ALIAS into specific alias tables."
+PROMPT
+@110_create_procedure_split_alias.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating procedure to split IA_ALIAS_AUDIT into specific alias audit tables."
+PROMPT
+@120_create_procedure_split_alias_audit.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating procedure to split IA_XREF into specific xref tables."
+PROMPT
+@130_create_procedure_split_xref.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating procedure to split IA_XREF_AUDIT into specific xref audit tables."
+PROMPT
+@140_create_procedure_split_xref_audit.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Migrating IA_ALIAS data into specific tables."
+PROMPT
+@150_run_alias_table_split.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Migrating IA_XREF data into specific tables."
+PROMPT
+@160_run_xref_table_split.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Migrating IA_ALIAS_AUDIT data into specific tables."
+PROMPT
+@170_run_alias_audit_split.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Migrating IA_XREF_AUDIT data into specific tables."
+PROMPT
+@180_run_xref_audit_split.sql
 
 
 UPDATE ia_db_info
