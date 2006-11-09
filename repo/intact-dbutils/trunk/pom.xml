@@ -59,6 +59,13 @@
             <artifactId>data-conversion</artifactId>
             <version>1.5-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.geneontology</groupId>
+            <artifactId>oboedit</artifactId>
+            <version>beta8</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <repositories>
