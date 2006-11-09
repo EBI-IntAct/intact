@@ -15,10 +15,8 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
