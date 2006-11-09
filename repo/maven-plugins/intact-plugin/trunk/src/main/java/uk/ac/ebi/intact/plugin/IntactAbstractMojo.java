@@ -107,7 +107,7 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
                 String groupId = pluginProps.getProperty("plugin.groupId");
                 String artifactId = pluginProps.getProperty("plugin.artifactId");
-                String version = pluginProps.getProperty("version");
+                String version = pluginProps.getProperty("plugin.version");
 
                 PluginInfo info = new PluginInfo(groupId, artifactId, version);
 
