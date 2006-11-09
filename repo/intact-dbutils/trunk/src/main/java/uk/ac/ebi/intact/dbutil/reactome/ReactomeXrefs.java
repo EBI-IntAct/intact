@@ -6,23 +6,15 @@
 package uk.ac.ebi.intact.dbutil.reactome;
 
 import org.apache.commons.cli.*;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.dbutils.QueryRunner;
-import org.apache.commons.dbutils.ResultSetHandler;
-import org.apache.commons.dbutils.handlers.BeanListHandler;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.io.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Produce a file containing all intact Xrefs to Reactome.
@@ -38,8 +30,6 @@ public class ReactomeXrefs {
 
     private static final String FILE_OPTION = "file";
     private static final String URL_OPTION = "url";
-
-    private static final String NEW_LINE = System.getProperty( "line.separator" );
 
     ///////////////////////////
     // COmmand line support
@@ -102,87 +92,14 @@ public class ReactomeXrefs {
         return "reactomeXrefs." + time + ".txt";
     }
 
-    /**
-     * Retreives web content from a URL.
-     *
-     * @param url the URL we want to download data from.
-     *
-     * @return the content as a String.
-     */
-    public static List getUrlData( URL url ) throws IOException {
+    
 
-        List beans = new ArrayList( 256 );
 
-        System.out.println( "Retreiving content for: " + url );
-
-        StringBuffer content = new StringBuffer( 4096 );
-
-        // Read all the text returned by the server
-        BufferedReader in = new BufferedReader( new InputStreamReader( url.openStream() ) );
-        String str;
-        while ( ( str = in.readLine() ) != null ) {
-            // str is one line of text; readLine() strips the newline character(s)
-
-            if ( str.startsWith( "#" ) ) {
-                continue;
-            }
-
-            StringTokenizer stringTokenizer = new StringTokenizer( str, "\t" );
-            String InteractionAc = stringTokenizer.nextToken();
-            String reactomeId = stringTokenizer.nextToken();
-
-            ReactomeBean reactomeBean = new ReactomeBean();
-            reactomeBean.setReactomeID( reactomeId );
-            reactomeBean.setInteractionAC( InteractionAc );
-
-            beans.add( reactomeBean );
-        }
-        in.close();
-
-        return beans;
-    }
-
-    /**
-     * Extract IntAct IDs from from the given list.
-     *
-     * @param xrefsFromIntact the given list of Xrefs
-     *
-     * @return a new instance of List containing all IntAct IDs.
-     */
-    private static final List getIntactIDs( List xrefsFromIntact ) {
-        List ids = new ArrayList( xrefsFromIntact.size() );
-
-        for ( Iterator iterator = xrefsFromIntact.iterator(); iterator.hasNext(); ) {
-            ReactomeBean reactomeBean = (ReactomeBean) iterator.next();
-            ids.add( reactomeBean.getInteractionAC() );
-        }
-
-        return ids;
-    }
-
-    /**
-     * Extract reactome IDs from from the given list.
-     *
-     * @param reactomeBeans the given list of Xrefs
-     *
-     * @return a new instance of List containing all reactome IDs.
-     */
-    private static final List getReactomeIDs( List reactomeBeans ) {
-
-        List ids = new ArrayList( reactomeBeans.size() );
-
-        for ( Iterator iterator = reactomeBeans.iterator(); iterator.hasNext(); ) {
-            ReactomeBean reactomeBean = (ReactomeBean) iterator.next();
-            ids.add( reactomeBean.getReactomeID() );
-        }
-
-        return ids;
-    }
 
     /////////////////////////
     // M A I N
 
-    public static void main( String[] args ) throws IntactException, SQLException {
+    public static void main( String[] args ) throws ReactomeException, SQLException {
 
         /////////////////////////////
         // Command line management
@@ -216,114 +133,20 @@ public class ReactomeXrefs {
         /////////////////////////////
         // Here the program starts
             
-            System.out.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+         System.out.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
 
-            // loading controlled vocabularied
+        List<ReactomeBean> reactomeBeans = ReactomeExport.createReactomXrefsFromIntactList();
+        ReactomeExport.exportToReactomeFile(reactomeBeans, outputFile);
 
-            CvTopic curatedComplex = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.CURATED_COMPLEX);
-            if ( curatedComplex == null ) {
-                throw new IllegalStateException( "Could not find CvTopic by shortlabel: " );
-            }
+        try
+        {
+            ReactomeValidationReport report = ReactomeExport.areXrefsFromIntactValid(reactomeBeans, new URL(urlParam));
+        }
+        catch (MalformedURLException e)
+        {
+            e.printStackTrace();
+        }
 
-            Collection<CvDatabase> databases = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXrefLike(CvDatabase.REACTOME_COMPLEX_PSI_REF);
-            if ( databases == null || databases.isEmpty() ) {
-                throw new IllegalStateException( "Could not find CvDatabase( reactome complex ) by Xref: " + CvDatabase.REACTOME_COMPLEX_PSI_REF );
-            }
-
-            CvDatabase reactome = databases.iterator().next();
-
-
-            Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
-
-            final String sql = "SELECT i.ac as interactionAC, x.primaryId as reactomeID\n" +
-                               "FROM ia_interactor i, ia_xref x, ia_annotation a, ia_int2annot i2a\n" +
-                               "WHERE i.objclass LIKE '%Interaction%' AND\n" +
-                               "      i.ac = x.parent_ac AND\n" +
-                               "      x.database_ac = '" + reactome.getAc() + "' AND\n" +
-                               "      i.ac = i2a.interactor_ac AND\n" +
-                               "      i2a.annotation_ac = a.ac AND\n" +
-                               "      a.topic_ac = '" + curatedComplex.getAc() + "'";
-
-            System.out.println( "sql = " + sql );
-
-            QueryRunner queryRunner = new QueryRunner();
-            ResultSetHandler handler = new BeanListHandler( ReactomeBean.class );
-            List xrefsFromIntact = (List) queryRunner.query( connection, sql, handler );
-
-            if ( xrefsFromIntact == null ) {
-                System.err.println( "Error: could not retreive any data about Reactome Xrefs in IntAct." );
-                System.exit( 1 );
-            }
-
-            System.out.println( "IntAct maintain " + xrefsFromIntact.size() + " Xref" +
-                                ( xrefsFromIntact.size() > 1 ? "s" : "" ) + " to Reactome." );
-
-
-            try {
-                BufferedWriter out = new BufferedWriter( new FileWriter( outputFile ) );
-
-                System.out.println( xrefsFromIntact.size() + " Reactome xref" + ( xrefsFromIntact.size() > 1 ? "s" : "" ) + " found." );
-                for ( Iterator iterator = xrefsFromIntact.iterator(); iterator.hasNext(); ) {
-                    ReactomeBean reactomeBean = (ReactomeBean) iterator.next();
-
-                    out.write( reactomeBean.toSingleLine() );
-                    out.write( NEW_LINE );
-                }
-
-                out.close();
-                System.out.println( "File closed." );
-            } catch ( IOException e ) {
-                e.printStackTrace();
-                System.exit( 1 );
-            }
-
-            // if everything went fine, then check if we have some Xref from the reactome URL to compare ours with.
-            if ( urlParam != null ) {
-                try {
-                    URL url = new URL( urlParam );
-                    List xrefsFromReactome = getUrlData( url );
-
-                    System.out.println( "Reactome maintain " + xrefsFromReactome.size() + " Xref" +
-                                        ( xrefsFromReactome.size() > 1 ? "s" : "" ) + " to IntAct." );
-
-                    // intact's reactome ID MINUS Reactome's
-                    Collection reactomeIDs = CollectionUtils.subtract( getReactomeIDs( xrefsFromIntact ),
-                                                                       getReactomeIDs( xrefsFromReactome ) );
-
-                    if ( ! reactomeIDs.isEmpty() ) {
-                        System.err.println( "We have found " + reactomeIDs.size() + " Reactome ID that are used in IntAct but not existing in Reactome anymore." );
-
-                        // print the list out.
-                        for ( Iterator iterator = reactomeIDs.iterator(); iterator.hasNext(); ) {
-                            String reactomeId = (String) iterator.next();
-                            System.out.println( reactomeId );
-                        }
-                    } else {
-                        System.out.println( "All Reactome Xref maintained in IntAct are Live in Reactome." );
-                    }
-
-                    // Reactome's IntAct ID MINUS IntAct's
-                    Collection intactIDs = CollectionUtils.subtract( getIntactIDs( xrefsFromReactome ),
-                                                                     getIntactIDs( xrefsFromIntact ) );
-
-                    if ( ! intactIDs.isEmpty() ) {
-                        System.err.println( "We have found " + intactIDs.size() + " Intact Interaction AC that are used in Reactome but not existing in IntAct anymore." );
-
-                        // print the list out.
-                        for ( Iterator iterator = intactIDs.iterator(); iterator.hasNext(); ) {
-                            String reactomeId = (String) iterator.next();
-                            System.out.println( reactomeId );
-                        }
-                    } else {
-                        System.out.println( "All Reactome Xref maintained in Reactome are Live in IntAct." );
-                    }
-
-                } catch ( MalformedURLException e ) {
-                    e.printStackTrace();
-                } catch ( IOException e ) {
-                    e.printStackTrace();
-                }
-            }
 
     }
 
