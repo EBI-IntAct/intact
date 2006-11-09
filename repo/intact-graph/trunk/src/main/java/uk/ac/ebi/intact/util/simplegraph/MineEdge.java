@@ -4,9 +4,11 @@
  * distribution.
  */
 
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
 
 /**
  * Edge class which just stores two nodes (BasicGraphI). This class is used when
@@ -14,7 +16,8 @@ import uk.ac.ebi.intact.model.Component;
  * 
  * @author Andreas Groscurth
  */
-public class MineEdge extends BasicGraph implements EdgeI {
+public class MineEdge extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements EdgeI
+{
 
     ///////////////////////////////////////
     // attributes

@@ -3,17 +3,22 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.simpleGraph;
+package uk.ac.ebi.intact.util.simplegraph;
 
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.BasicObject;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
+import uk.ac.ebi.intact.simpleGraph.EdgeI;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
-public class Graph extends BasicGraph implements GraphI {
+public class Graph extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements GraphI {
 
     /**
      * This is used in toString() in order to be platform compatible.
@@ -24,7 +29,7 @@ public class Graph extends BasicGraph implements GraphI {
     // attributes
 
     /* Nodes are unique. */
-    private HashMap<String,BasicGraphI> nodes = new HashMap<String,BasicGraphI>();
+    private HashMap<String, BasicGraphI> nodes = new HashMap<String,BasicGraphI>();
 
     /* Edges can be repeated */
     private ArrayList<EdgeI> edges = new ArrayList<EdgeI>();
