@@ -84,7 +84,7 @@ public class MineDatabaseFill {
           + "  FROM IA_INTERACTOR       INTR   "
          + "        ,IA_INT2EXP         I2E 	"
          + "        ,IA_EXPERIMENT		 EXP	"
-         + "        ,IA_XREF			 XRF    "     // -- to get the pub med id
+         + "        ,IA_EXPERIMENT_XREF			 XRF    "     // -- to get the pub med id
          + "        ,IA_CONTROLLEDVOCAB CNT1     "    //-- define the ac of the database
          + "        ,IA_CONTROLLEDVOCAB CNT2    "     //-- define the qualifier for xref, ic primary-reference
          + "   WHERE UPPER(INTR.objclass) 	 = 'UK.AC.EBI.INTACT.MODEL.INTERACTIONIMPL'  "
