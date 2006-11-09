@@ -15,10 +15,10 @@
  */
 package uk.ac.ebi.intact.plugin;
 
-import org.codehaus.plexus.util.FileUtils;
-
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 
 /**
  * Utilities for intact mojos
@@ -29,6 +29,8 @@ import java.io.IOException;
  */
 public class MojoUtils
 {
+    private static final String NEW_LINE = System.getProperty( "line.separator" );
+
     private MojoUtils(){}
 
     /**
@@ -60,5 +62,17 @@ public class MojoUtils
                 file.getParentFile().mkdirs();
             }
         }
+    }
+
+    public static void writeHeaderToFile(String title, String description, File file) throws IOException
+    {
+        FileWriter writer = new FileWriter(file);
+
+        writer.write("# "+title+" - "+new Date()+NEW_LINE);
+        writer.write("#"+NEW_LINE);
+        writer.write("# "+description+NEW_LINE);
+        writer.write(NEW_LINE);
+
+        writer.close();
     }
 }
