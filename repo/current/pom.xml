@@ -68,6 +68,8 @@
                 <module>plugins</module>
                 <module>tools</module>
                 <module>intact-dbutils</module>
+                <module>intact-cdb</module>
+                <module>intact-msd</module>
 		<module>search-ws</module>
                 <module>search-wsclient</module>
                 <module>sanity-checker</module>
