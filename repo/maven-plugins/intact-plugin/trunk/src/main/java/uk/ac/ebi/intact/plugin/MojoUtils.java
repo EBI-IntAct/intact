@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.plugin;
 
+import org.apache.maven.project.MavenProject;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -74,5 +76,11 @@ public class MojoUtils
         writer.write(NEW_LINE);
 
         writer.close();
+    }
+
+    public static void writeStandardHeaderToFile(String prefix, String description, MavenProject project, File file) throws IOException
+    {
+        String title = prefix+" - "+project.getArtifactId()+", v. "+project.getVersion(); 
+        writeHeaderToFile(title, description, file);
     }
 }
