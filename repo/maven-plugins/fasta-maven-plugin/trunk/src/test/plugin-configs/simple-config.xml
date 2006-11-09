@@ -1,0 +1,15 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>fasta-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <outputFile>target/myOutput.log</outputFile>
+
+                    <exportedFile>target/intact.fasta</exportedFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
