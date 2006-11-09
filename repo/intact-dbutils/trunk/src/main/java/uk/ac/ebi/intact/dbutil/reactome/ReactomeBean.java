@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.reactome;
+package uk.ac.ebi.intact.dbutil.reactome;
 
 /**
  * Contains the result of SQL query, populated by dbutils.
