@@ -1,0 +1,20 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>reactome-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <outputFile>target/myOutput.log</outputFile>
+
+                    <reactomeExportedFile>target/reactome.dat</reactomeExportedFile>
+                    <!--
+                    <reactomeUrl>target/reactome-export.txt</reactomeUrl>
+                    <invalidIntactAcsInReactomeFile>target/reactome-invalid_intact_in_reactome.txt</invalidIntactAcsInReactomeFile>
+                    <invalidReactomeIdsInIntactFile>target/reactome-invalid_reactome_in_intact.txt</invalidReactomeIdsInIntactFile>
+                    -->
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
