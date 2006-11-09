@@ -66,4 +66,15 @@ public class UpdateTargetSpeciesMojo
 
         getLog().info("Closed " + statsFile);
     }
+
+
+    public File getStatsFile()
+    {
+        return statsFile;
+    }
+
+    public void setStatsFile(File statsFile)
+    {
+        this.statsFile = statsFile;
+    }
 }
