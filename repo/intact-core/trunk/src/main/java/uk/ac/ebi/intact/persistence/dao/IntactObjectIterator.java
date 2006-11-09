@@ -7,9 +7,8 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.IntactObject;
 
 import java.util.Iterator;
 import java.util.List;
@@ -81,7 +80,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-                dao = null;
+        dao = null;
 
         log.debug( objectCount + " object to be read from the iterator." );
     }
@@ -119,9 +118,9 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
 
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-            log.debug( "Retreiving " + batchSize + " objects." );
-            chunk = dao.getAll( index, batchSize );
-            log.debug( "Retreived " + chunk.size() + " object(s)." );
+            //if (log.isTraceEnabled()) log.trace( "Retreiving " + batchSize + " objects." );
+            chunk = buildDao().getAll( index, batchSize );
+            //if (log.isTraceEnabled()) log.trace(  "Retreived " + chunk.size() + " object(s)." );
 
             chunkIterator = chunk.iterator();
         }
@@ -135,7 +134,6 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator {
                 dao = null;
                 chunkIterator = null;
                 chunk = null;
-                log.info( "Commiting transaction" );
             }
         }
 
