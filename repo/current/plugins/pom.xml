@@ -33,6 +33,7 @@
         <module>maven-uniprotexport-plugin</module>
         <module>cv-maven-plugin</module>
         <module>dbupdate-maven-plugin</module>
+        <module>reactome-maven-plugin</module>
     </modules>
 
     <distributionManagement>
