@@ -70,6 +70,8 @@
                 <module>intact-dbutils</module>
                 <module>intact-cdb</module>
                 <module>intact-msd</module>
+                <module>intact-go</module>
+                <module>intact-graph</module>
 		<module>search-ws</module>
                 <module>search-wsclient</module>
                 <module>sanity-checker</module>
