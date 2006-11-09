@@ -7,12 +7,9 @@ package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.util.Properties;
 
 /**
  * TODO: comment this!
@@ -24,6 +21,8 @@ import java.io.Writer;
 public abstract class IntactAbstractMojo extends AbstractMojo {
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
+
+    private static final String PLUGIN_INFO_FILE = "plugin-info.properties";
 
     /**
      * Project instance
@@ -79,8 +78,49 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
      */
     private File errorFile;
 
+    private PluginInfo pluginInfo;
+
     private Writer outputWriter;
     private Writer errorWriter;
+
+    /**
+     * Returns the PluginInfo created from the properties in a /plugin-info.properties file.
+     * If this file does not exist, it returns null
+     * @return the PluginInfo, or null
+     */
+    public PluginInfo getPluginInfo()
+    {
+        if (pluginInfo != null)
+        {
+            return pluginInfo;
+        }
+        
+        File pluginFile = new File(IntactAbstractMojo.class.getResource(PLUGIN_INFO_FILE).getFile());
+
+        if (pluginFile.exists())
+        {
+            Properties pluginProps = new Properties();
+
+            try
+            {
+                pluginProps.load(new FileInputStream(pluginFile));
+
+                String groupId = pluginProps.getProperty("plugin.groupId");
+                String artifactId = pluginProps.getProperty("plugin.artifactId");
+                String version = pluginProps.getProperty("version");
+
+                PluginInfo info = new PluginInfo(groupId, artifactId, version);
+
+                return info;
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return null;
+    }
 
     protected void writeOutputln(String line) throws IOException
     {
@@ -109,6 +149,14 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         if (outputWriter == null)
         {
             MojoUtils.prepareFile(outputFile, true);
+
+            String title = "Standard output";
+            if (getPluginInfo() != null)
+            {
+                title = title +" for "+pluginInfo.getArtifactId()+", v. "+pluginInfo.getVersion();
+            }
+            MojoUtils.writeHeaderToFile(title, "Default output file", outputFile);
+
             outputWriter = new FileWriter(outputFile);
         }
         return outputWriter;
@@ -119,6 +167,14 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         if (errorWriter == null)
         {
             MojoUtils.prepareFile(outputFile, true);
+
+            String title = "Standard error";
+            if (getPluginInfo() != null)
+            {
+                title = title +" for "+pluginInfo.getArtifactId()+", v. "+pluginInfo.getVersion();
+            }
+            MojoUtils.writeHeaderToFile(title, "Default error file", outputFile);
+
             errorWriter = new FileWriter(errorFile);
         }
 
