@@ -3,7 +3,7 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util.protein;
+package uk.ac.ebi.intact.dbutil.protein;
 
 import org.apache.commons.cli.*;
 import org.apache.log4j.Logger;
@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.util.protein.UpdateProteins;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

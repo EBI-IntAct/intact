@@ -3,9 +3,11 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.cdb;
+package uk.ac.ebi.intact.dbutil.update;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -14,6 +16,9 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
+import uk.ac.ebi.intact.util.cdb.ExperimentShortlabelGenerator;
+import uk.ac.ebi.intact.util.cdb.IntactCitation;
+import uk.ac.ebi.intact.util.cdb.IntactCitationFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,6 +42,7 @@ public class UpdateExperiments {
 
     ////////////////////////
     // Constants
+    private static final Log log = LogFactory.getLog(UpdateExperiments.class);
 
     public static final String PUBMED_ID_FLAG = "${PUBMED}";
     public static final String CITEXPLORE_URL = "http://www.ebi.ac.uk/citations/citationDetails.do?externalId=" + PUBMED_ID_FLAG + "&dataSource=MED";
@@ -92,16 +98,18 @@ public class UpdateExperiments {
      *
      * @param experiment      the experiemnt to update
      */
-    public static void updateExperiment(  Experiment experiment ) {
+    public static void updateExperiment(  Experiment experiment, boolean dryRun ) {
 
-        System.out.println( "=======================================================================================" );
-        System.out.println( "Updating experiment: " + experiment.getAc() + " " + experiment.getShortLabel() );
+        String dryRunMode = (dryRun)? " (DRY RUN MODE)" : "";
+
+        log.debug( "=======================================================================================" );
+        log.debug( "Updating experiment"+dryRunMode+": " + experiment.getAc() + " " + experiment.getShortLabel() );
 
         // find experiment pubmed id
         String pubmedId = getPubmedId( experiment );
 
         if ( pubmedId == null ) {
-            System.err.println( experiment.getShortLabel() + " doesn't have a primary-reference pubmed id." );
+            log.error( experiment.getShortLabel() + " doesn't have a primary-reference pubmed id." );
             return;
         }
 
@@ -132,7 +140,7 @@ public class UpdateExperiments {
 
             // check if the intact experiment matches the shortlabel prefix (author-year[suffix])
             if ( ! current.startsWith( experimentShortlabel ) ) {
-                System.out.println( "WARNING - the current shortlabel is " + current +
+                log.debug( "WARNING - the current shortlabel is " + current +
                                     " though we were expecting it to start with " + experimentShortlabel );
             }
 
@@ -142,7 +150,7 @@ public class UpdateExperiments {
             boolean updated = false;
             if ( ! experiment.getShortLabel().equals( experimentShortlabel ) ) {
                 experiment.setShortLabel( experimentShortlabel );
-                System.out.println( "shortlabel updated." );
+                log.debug( "shortlabel updated." );
                 updated = true;
             }
 
@@ -150,23 +158,23 @@ public class UpdateExperiments {
 
             if ( ! title.equals( experiment.getFullName() ) ) {
                 experiment.setFullName( title );
-                System.out.println( "Fullname updated" );
+                log.debug( "Fullname updated" );
                 updated = true;
             }
 
-            printReport( UpdateExperimentAnnotationsFromPudmed.update( experiment, pubmedId ) );
+            printReport( UpdateExperimentAnnotationsFromPudmed.update( experiment, pubmedId, dryRun ) );
 
             ////////////////////////////////
             // Write report.
-            System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
+            log.debug( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                 StringUtils.rightPad( current + " / " + experimentShortlabel, 50 ) +
                                 pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
 
 
         } catch ( Exception e ) {
 
-            System.out.println( "An exception was thrown diring the update process of:" );
-            System.out.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
+            log.error( "An exception was thrown diring the update process of:" );
+            log.error( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                 StringUtils.rightPad( experiment.getShortLabel(), 23 ) +
                                 pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
 
@@ -178,7 +186,7 @@ public class UpdateExperiments {
 
                 t = t.getCause();
                 if ( t != null ) {
-                    System.err.println( "============================ CAUSED BY  ========================" );
+                    log.error( "============================ CAUSED BY  ========================" );
                 }
             }
         }
@@ -189,21 +197,21 @@ public class UpdateExperiments {
      *
      * @param report
      */
-    private static void printReport( UpdateExperimentAnnotationsFromPudmed.UpdateReport report ) {
+    private static void printReport( UpdateSingleExperimentReport report ) {
         if ( report.isAuthorListUpdated() ) {
-            System.out.println( "author list updated" );
+            log.debug( "author list updated" );
         }
 
         if ( report.isContactUpdated() ) {
-            System.out.println( "contact updated" );
+            log.debug( "contact updated" );
         }
 
         if ( report.isJournalUpdated() ) {
-            System.out.println( "journal updated" );
+            log.debug( "journal updated" );
         }
 
         if ( report.isYearUpdated() ) {
-            System.out.println( "year of publication updated" );
+            log.debug( "year of publication updated" );
         }
     }
 
@@ -216,11 +224,11 @@ public class UpdateExperiments {
             // setup HTTP proxy, cf. intactCore/config/proxy.properties
             HttpProxyManager.setup();
         } catch ( HttpProxyManager.ProxyConfigurationNotFound e ) {
-            System.err.println( e.getMessage() );
+            log.error( e.getMessage() );
         }
         
             try {
-                System.out.println( "Helper created (User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() + " " +
+                log.debug( "Helper created (User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() + " " +
                                     "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() + ")" );
             } catch ( Exception e ) {
                 e.printStackTrace();
@@ -240,7 +248,7 @@ public class UpdateExperiments {
             statement.close();
             connection = null; // release the connection, don't close it, the helper is doing that for us.
 
-            System.out.println( experimentAcs.size() + " experiment's AC loaded." );
+            log.debug( experimentAcs.size() + " experiment's AC loaded." );
 
             for ( Iterator iterator = experimentAcs.iterator(); iterator.hasNext(); ) {
                 String ac = (String) iterator.next();
@@ -248,7 +256,7 @@ public class UpdateExperiments {
                 // get the experiment
                 Experiment experiment = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByAc(ac);
 
-                updateExperiment(  experiment );
+                updateExperiment(  experiment, false );
 
                 iterator.remove(); // empty the collection as we go
             }

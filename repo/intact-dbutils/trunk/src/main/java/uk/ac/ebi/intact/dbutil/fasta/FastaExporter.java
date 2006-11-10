@@ -131,6 +131,9 @@ public class FastaExporter {
 
                 sb.append( NEW_LINE );
 
+                // this is necessary, because the sequence cannot be loaded lazily
+                protein = proteinDao.getByAc(protein.getAc());
+
                 sb.append( protein.getSequence() );
 
                 sb.append( NEW_LINE );
