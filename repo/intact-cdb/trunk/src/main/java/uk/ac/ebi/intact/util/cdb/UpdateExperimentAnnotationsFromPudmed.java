@@ -142,8 +142,6 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * @param pubmedId   the pubmed from which we get the information
      *
      * @return an UpdateReport, never null.
-     *
-     * @throws IntactException
      */
     public static UpdateReport update( Experiment experiment, String pubmedId ) throws IntactException {
         return update( experiment, pubmedId, false);
@@ -157,8 +155,6 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * @param dryRun if true, do not modify the database (for simulation)
      *
      * @return an UpdateReport, never null.
-     *
-     * @throws IntactException
      */
     public static UpdateReport update( Experiment experiment, String pubmedId, boolean dryRun ) throws IntactException {
 
@@ -280,8 +276,6 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * @param experiment the CvObject in which we want to add the annotation
      * @param topic      the topic of the annotation. must not be null.
      * @param text       the text of the annotation. Can be null.
-     *
-     * @throws IntactException if something goes wrong during the update.
      */
     private static UpdatedValue addUniqueAnnotation( final Experiment experiment,
                                                 final CvTopic topic,

@@ -27,7 +27,8 @@ import java.util.regex.Pattern;
  * @since <pre>11-Aug-2005</pre>
  */
 public class IntactCitationFactory {
-                                                    private static IntactCitationFactory ourInstance;
+
+    private static IntactCitationFactory ourInstance;
     ///////////////////////////
     // Singleton's methods
     static{
