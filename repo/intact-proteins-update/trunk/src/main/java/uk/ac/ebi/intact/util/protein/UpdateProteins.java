@@ -25,6 +25,7 @@ import uk.ac.ebi.interfaces.feature.FeatureException;
 import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
+import uk.ac.ebi.interfaces.sptr.*;
 
 import java.io.*;
 import java.net.URL;
