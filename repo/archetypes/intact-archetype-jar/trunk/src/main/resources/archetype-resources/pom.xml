@@ -20,7 +20,7 @@
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/${artifactId}/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/${artifactId}/trunk</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/${artifactId}/trunk/</url>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/${artifactId}/trunk/</url>
     </scm>
 
     <build>
