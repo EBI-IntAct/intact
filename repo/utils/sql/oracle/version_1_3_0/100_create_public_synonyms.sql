@@ -12,6 +12,7 @@ create public synonym IA_Publication_Alias for INTACT.IA_Publication_Alias;
 create public synonym IA_Component_Alias for INTACT.IA_Component_Alias;
 create public synonym IA_Component_Xref for INTACT.IA_Component_Xref;
 create public synonym IA_Component2Annot for INTACT.IA_Component2Annot;
+create public synonym ia_component2annot_audit for INTACT.ia_component2annot_audit;
 
 -- alias audit tables
 create public synonym IA_BIOSOURCE_ALIAS_AUDIT for INTACT.IA_BIOSOURCE_ALIAS_AUDIT;
