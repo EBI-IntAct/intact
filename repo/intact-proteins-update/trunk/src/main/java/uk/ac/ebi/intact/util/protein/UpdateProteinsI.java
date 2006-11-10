@@ -5,7 +5,7 @@
  * Time: 1:31:41 PM
  * To change this prediction use Options | File Templates.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.util.protein;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.HttpProxyManager;
 
 import java.io.InputStream;
 import java.util.Collection;

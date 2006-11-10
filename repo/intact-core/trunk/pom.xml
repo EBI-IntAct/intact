@@ -154,12 +154,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- EBI projects -->
-        <dependency>
-            <groupId>uk.ac.ebi</groupId>
-            <artifactId>sptr</artifactId>
-            <version>(8.6,]</version>
-        </dependency>
 
     </dependencies>
 

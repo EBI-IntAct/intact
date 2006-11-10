@@ -3,16 +3,16 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
  All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.util.protein;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.util.NewtServerProxy;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
