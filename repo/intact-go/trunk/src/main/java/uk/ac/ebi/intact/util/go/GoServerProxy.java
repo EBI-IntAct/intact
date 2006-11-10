@@ -4,18 +4,17 @@ All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
 
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.util.go;
 
 import org.apache.xerces.parsers.SAXParser;
 import org.xml.sax.*;
-
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.io.IOException;
-
-import uk.ac.ebi.intact.business.IntactException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * The proxy to the Go server. An example for the use of this class:
