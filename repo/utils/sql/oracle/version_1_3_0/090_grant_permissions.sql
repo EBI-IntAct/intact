@@ -34,6 +34,8 @@ grant select, insert,update,delete on IA_Component_Xref to INTACT_CURATOR ;
 grant select on IA_Component2Annot to INTACT_SELECT ;
 grant select, insert,update,delete on IA_Component2Annot to INTACT_CURATOR ;
 
+grant select on ia_component2annot_audit to INTACT_SELECT ;
+grant select, insert,update,delete on ia_component2annot_audit to INTACT_CURATOR ;
 
 
 -- Xref audit tables
