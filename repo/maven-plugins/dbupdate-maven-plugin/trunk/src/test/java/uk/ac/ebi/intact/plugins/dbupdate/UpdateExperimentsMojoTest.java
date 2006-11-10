@@ -20,14 +20,15 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
+public class UpdateExperimentsMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/experiments-config.xml" );
 
-        UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
+        UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "experiments", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
+        mojo.setDryRun(true);
 
         mojo.execute();
     }
