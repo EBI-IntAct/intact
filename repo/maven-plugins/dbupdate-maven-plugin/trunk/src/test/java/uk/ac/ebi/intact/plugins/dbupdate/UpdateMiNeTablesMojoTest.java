@@ -17,7 +17,7 @@ public class UpdateMiNeTablesMojoTest extends AbstractMojoTestCase {
     public void testExecution() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-mine-config.xml" );
 
-        UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
+        UpdateMiNeTablesMojo mojo = (UpdateMiNeTablesMojo) lookupMojo( "mine", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
