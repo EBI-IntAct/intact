@@ -31,44 +31,107 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * Reports on what has been updated in the process.
      */
     public static class UpdateReport {
-        private boolean authorListUpdated = false;
-        private boolean contactUpdated = false;
-        private boolean yearUpdated = false;
-        private boolean journalUpdated = false;
+        private UpdatedValue authorListValue;
+        private UpdatedValue contactListValue;
+        private UpdatedValue yearListValue;
+        private UpdatedValue journalListValue;
+        private UpdatedValue authorEmailValue;
 
         public UpdateReport() {
         }
 
         public boolean isAuthorListUpdated() {
-            return authorListUpdated;
-        }
-
-        public void setAuthorListUpdated( boolean authorListUpdated ) {
-            this.authorListUpdated = authorListUpdated;
+            return authorListValue != null;
         }
 
         public boolean isContactUpdated() {
-            return contactUpdated;
-        }
-
-        public void setContactUpdated( boolean contactUpdated ) {
-            this.contactUpdated = contactUpdated;
+            return contactListValue != null;
         }
 
         public boolean isYearUpdated() {
-            return yearUpdated;
-        }
-
-        public void setYearUpdated( boolean yearUpdated ) {
-            this.yearUpdated = yearUpdated;
+            return yearListValue != null;
         }
 
         public boolean isJournalUpdated() {
-            return journalUpdated;
+            return journalListValue != null;
         }
 
-        public void setJournalUpdated( boolean journalUpdated ) {
-            this.journalUpdated = journalUpdated;
+        public boolean isAuthorEmailUpdated()
+        {
+            return authorEmailValue != null;
+        }
+
+        public UpdatedValue getAuthorListValue()
+        {
+            return authorListValue;
+        }
+
+        public void setAuthorListValue(UpdatedValue authorListValue)
+        {
+            this.authorListValue = authorListValue;
+        }
+
+        public UpdatedValue getContactListValue()
+        {
+            return contactListValue;
+        }
+
+        public void setContactListValue(UpdatedValue contactListValue)
+        {
+            this.contactListValue = contactListValue;
+        }
+
+        public UpdatedValue getYearListValue()
+        {
+            return yearListValue;
+        }
+
+        public void setYearListValue(UpdatedValue yearListValue)
+        {
+            this.yearListValue = yearListValue;
+        }
+
+        public UpdatedValue getJournalListValue()
+        {
+            return journalListValue;
+        }
+
+        public void setJournalListValue(UpdatedValue journalListValue)
+        {
+            this.journalListValue = journalListValue;
+        }
+
+        public UpdatedValue getAuthorEmailValue()
+        {
+            return authorEmailValue;
+        }
+
+        public void setAuthorEmailValue(UpdatedValue authorEmailValue)
+        {
+            this.authorEmailValue = authorEmailValue;
+        }
+    }
+
+    public static class UpdatedValue
+    {
+        private String oldValue;
+        private String newValue;
+
+        public UpdatedValue(String newValue)
+        {
+            this.newValue = newValue;
+        }
+
+        public UpdatedValue(String oldValue, String newValue)
+        {
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "[ "+oldValue+" ] -> [ "+newValue+"]";
         }
     }
 
@@ -145,23 +208,20 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // author-list
             if ( eaf.getAuthorList() != null && eaf.getAuthorList().length() != 0 ) {
-                if ( addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList(), dryRun ) ) {
-                    report.setAuthorListUpdated( true );
-                }
+                UpdatedValue uv = addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList(), dryRun );
+                report.setAuthorListValue(uv);
             }
 
             // journal
             if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 ) {
-                if ( addUniqueAnnotation(  experiment, journal, eaf.getJournal(), dryRun ) ) {
-                    report.setJournalUpdated( true );
-                }
+                UpdatedValue uv = addUniqueAnnotation(  experiment, journal, eaf.getJournal(), dryRun );
+                report.setJournalListValue(uv);
             }
 
             // year of publication
             if ( eaf.getYear() != -1 ) {
-                if ( addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ), dryRun ) ) {
-                    report.setYearUpdated( true );
-                }
+                UpdatedValue uv = addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ), dryRun );
+                report.setYearListValue(uv);
             }
 
             // email - if not there yet, add it.
@@ -173,7 +233,9 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
                     experiment.addAnnotation( annotation );
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
-                    report.setContactUpdated( true );
+
+                    UpdatedValue uv = new UpdatedValue(eaf.getAuthorEmail());
+                    report.setAuthorEmailValue(uv);
                 }
             }
 
@@ -221,12 +283,12 @@ public class UpdateExperimentAnnotationsFromPudmed {
      *
      * @throws IntactException if something goes wrong during the update.
      */
-    private static boolean addUniqueAnnotation( final Experiment experiment,
+    private static UpdatedValue addUniqueAnnotation( final Experiment experiment,
                                                 final CvTopic topic,
                                                 final String text,
                                                 final boolean dryRun ) throws IntactException {
 
-        boolean updated = false;
+        UpdatedValue updatedValue = null;
 
         if ( topic == null ) {
             throw new IllegalArgumentException( "ERROR - You must give a non null topic when updating term " + experiment.getShortLabel() );
@@ -256,7 +318,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 if (!dryRun)
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
 
-                updated = true;
+                updatedValue = new UpdatedValue(text);
 
             } else {
 
@@ -279,7 +341,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     if (!dryRun)
                         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
 
-                    updated = true;
+                    updatedValue = new UpdatedValue(oldText, text);
 
                     // remove it from the list as we are going to delete all other
                     iterator.remove();
@@ -298,10 +360,10 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
                 }
 
-                updated = true;
+                updatedValue = new UpdatedValue(_text, null);
             }
         } // topic is not null
 
-        return updated;
+        return updatedValue;
     }
 }
