@@ -128,6 +128,16 @@ public class UpdateExperimentAnnotationsFromPudmed {
             this.newValue = newValue;
         }
 
+        public String getOldValue()
+        {
+            return oldValue;
+        }
+
+        public String getNewValue()
+        {
+            return newValue;
+        }
+
         @Override
         public String toString()
         {
