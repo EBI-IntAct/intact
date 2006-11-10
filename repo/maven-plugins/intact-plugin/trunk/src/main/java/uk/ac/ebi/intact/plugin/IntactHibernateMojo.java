@@ -17,16 +17,15 @@ package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-
-import java.sql.SQLException;
-import java.io.File;
-import java.io.IOException;
-
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Base class for plugins that require hibernate access
@@ -41,6 +40,11 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
      * @required
      */
     protected File hibernateConfig;
+
+    /**
+     * @parameter 
+     */
+    private boolean dryRun;
 
     private boolean initialized;
 
@@ -98,5 +102,15 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         getLog().info( "User: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
 
         initialized = true;
+    }
+
+    public boolean isDryRun()
+    {
+        return dryRun;
+    }
+
+    public void setDryRun(boolean dryRun)
+    {
+        this.dryRun = dryRun;
     }
 }
