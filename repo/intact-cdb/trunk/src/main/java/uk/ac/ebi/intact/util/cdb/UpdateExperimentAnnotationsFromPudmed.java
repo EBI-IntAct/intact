@@ -83,6 +83,21 @@ public class UpdateExperimentAnnotationsFromPudmed {
      * @throws IntactException
      */
     public static UpdateReport update( Experiment experiment, String pubmedId ) throws IntactException {
+        return update( experiment, pubmedId, false);
+    }
+
+    /**
+     * Update the given Experiment according to the given pubmed ID.
+     *
+     * @param experiment the experiment to update
+     * @param pubmedId   the pubmed from which we get the information
+     * @param dryRun if true, do not modify the database (for simulation)
+     *
+     * @return an UpdateReport, never null.
+     *
+     * @throws IntactException
+     */
+    public static UpdateReport update( Experiment experiment, String pubmedId, boolean dryRun ) throws IntactException {
 
         ///////////////////////////
         // checking input params
@@ -130,21 +145,21 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // author-list
             if ( eaf.getAuthorList() != null && eaf.getAuthorList().length() != 0 ) {
-                if ( addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList() ) ) {
+                if ( addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList(), dryRun ) ) {
                     report.setAuthorListUpdated( true );
                 }
             }
 
             // journal
             if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 ) {
-                if ( addUniqueAnnotation(  experiment, journal, eaf.getJournal() ) ) {
+                if ( addUniqueAnnotation(  experiment, journal, eaf.getJournal(), dryRun ) ) {
                     report.setJournalUpdated( true );
                 }
             }
 
             // year of publication
             if ( eaf.getYear() != -1 ) {
-                if ( addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ) ) ) {
+                if ( addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ), dryRun ) ) {
                     report.setYearUpdated( true );
                 }
             }
@@ -208,7 +223,8 @@ public class UpdateExperimentAnnotationsFromPudmed {
      */
     private static boolean addUniqueAnnotation( final Experiment experiment,
                                                 final CvTopic topic,
-                                                final String text ) throws IntactException {
+                                                final String text,
+                                                final boolean dryRun ) throws IntactException {
 
         boolean updated = false;
 
@@ -231,9 +247,14 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 // add a new one
                 Annotation annotation = new Annotation( institution, topic );
                 annotation.setAnnotationText( text );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
+
+                if (!dryRun)
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
+
                 experiment.addAnnotation( annotation );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
+
+                if (!dryRun)
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
 
                 updated = true;
 
@@ -254,7 +275,9 @@ public class UpdateExperimentAnnotationsFromPudmed {
                     Annotation annotation = (Annotation) iterator.next();
                     String oldText = annotation.getAnnotationText();
                     annotation.setAnnotationText( text );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
+
+                    if (!dryRun)
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
 
                     updated = true;
 
@@ -268,8 +291,12 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 Annotation annotation = (Annotation) iterator.next();
                 String _text = annotation.getAnnotationText();
                 experiment.removeAnnotation( annotation );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
+
+                if (!dryRun)
+                {
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().update( experiment );
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
+                }
 
                 updated = true;
             }
