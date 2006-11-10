@@ -165,28 +165,33 @@ public class UpdateSingleExperimentReport
         this.fullNameValue = fullNameValue;
     }
 
-    public UpdateExperimentAnnotationsFromPudmed.UpdatedValue getAuthorListValue()
+    public UpdatedValue getAuthorListValue()
     {
-        return updateReport.getAuthorListValue();
+        return convertValue(updateReport.getAuthorListValue());
     }
 
-    public UpdateExperimentAnnotationsFromPudmed.UpdatedValue getContactListValue()
+    public UpdatedValue getContactListValue()
     {
-        return updateReport.getContactListValue();
+        return convertValue(updateReport.getContactListValue());
     }
 
-    public UpdateExperimentAnnotationsFromPudmed.UpdatedValue getYearListValue()
+    public UpdatedValue getYearListValue()
     {
-        return updateReport.getYearListValue();
+        return convertValue(updateReport.getYearListValue());
     }
 
-    public UpdateExperimentAnnotationsFromPudmed.UpdatedValue getJournalListValue()
+    public UpdatedValue getJournalListValue()
     {
-        return updateReport.getJournalListValue();
+        return convertValue(updateReport.getJournalListValue());
     }
 
-    public UpdateExperimentAnnotationsFromPudmed.UpdatedValue getAuthorEmailValue()
+    public UpdatedValue getAuthorEmailValue()
     {
-        return updateReport.getAuthorEmailValue();
+        return convertValue(updateReport.getAuthorEmailValue());
+    }
+
+    private UpdatedValue convertValue(UpdateExperimentAnnotationsFromPudmed.UpdatedValue ueaValue)
+    {
+        return new UpdatedValue(ueaValue.getOldValue(), ueaValue.getNewValue());
     }
 }
