@@ -16,12 +16,30 @@
 package uk.ac.ebi.intact.dbutil.update;
 
 /**
- * TODO comment this!
+ * Object representing a value that has been updated
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class UpdateExperimentsReport
+public class UpdatedValue
 {
+    private String oldValue;
+    private String newValue;
 
+    public UpdatedValue(String newValue)
+    {
+        this.newValue = newValue;
+    }
+
+    public UpdatedValue(String oldValue, String newValue)
+    {
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "[ " + oldValue + " ] -> [ " + newValue + "]";
+    }
 }
