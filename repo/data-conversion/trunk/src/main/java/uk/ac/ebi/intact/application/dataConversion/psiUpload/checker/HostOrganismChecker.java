@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.CellTypeTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.HostOrganismTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.TissueTag;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.util.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
 
 /**
  * That class .
