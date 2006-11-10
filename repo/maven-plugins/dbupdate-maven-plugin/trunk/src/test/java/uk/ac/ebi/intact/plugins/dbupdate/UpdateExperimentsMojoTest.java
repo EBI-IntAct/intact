@@ -23,10 +23,10 @@ import java.io.File;
 public class UpdateExperimentsMojoTest extends AbstractMojoTestCase
 {
 
-    public void testSimpleGeneration() throws Exception {
+    public void testUpdate() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/experiments-config.xml" );
 
-        UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "experiments", pluginXmlFile );
+        UpdateExperimentsMojo mojo = (UpdateExperimentsMojo) lookupMojo( "experiments", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
         mojo.setDryRun(true);
 
