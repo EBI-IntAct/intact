@@ -19,10 +19,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
-import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Chrono;
-import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteins;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;

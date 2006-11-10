@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ExperimentDes
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.InteractionTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinInteractorTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.CommandLineOptions;
-import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import java.util.Collection;
 import java.util.Iterator;

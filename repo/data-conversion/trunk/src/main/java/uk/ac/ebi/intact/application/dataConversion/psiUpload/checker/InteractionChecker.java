@@ -11,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import java.util.Collection;
 import java.util.Iterator;

@@ -16,9 +16,9 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.BioSourceFactory;
 import uk.ac.ebi.intact.util.Crc64;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import java.util.*;
 

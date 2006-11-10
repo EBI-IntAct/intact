@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinIntera
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.ProteinParticipantTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import java.util.Collection;
 import java.util.Iterator;

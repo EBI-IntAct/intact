@@ -11,7 +11,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.util.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
