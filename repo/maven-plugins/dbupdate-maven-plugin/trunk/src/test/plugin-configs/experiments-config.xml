@@ -5,9 +5,8 @@
                 <artifactId>dbupdate-maven-plugin</artifactId>
                 <configuration>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
-                    <outputFile>target/myOutput.log</outputFile>
-
-                    <statsFile>target/target-species.stat</statsFile>
+                    <outputFile>target/update-experiments.log</outputFile>
+                    <dryRun>true</dryRun>
                 </configuration>
             </plugin>
         </plugins>
