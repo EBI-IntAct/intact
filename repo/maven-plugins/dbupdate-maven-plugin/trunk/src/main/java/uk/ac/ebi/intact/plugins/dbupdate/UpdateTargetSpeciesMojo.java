@@ -28,7 +28,7 @@ import java.io.FileWriter;
 import java.util.List;
 
 /**
- * Example mojo. This mojo is executed when the goal "mygoal" is called.
+ * Example mojo. This mojo is executed when the goal "target-species" is called.
  *
  * @goal target-species
  *
