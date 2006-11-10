@@ -6,12 +6,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 
 /** An edge in the binary graph representation of an Interaction network.
  */
 
-public interface EdgeI extends uk.ac.ebi.intact.simpleGraph.BasicGraphI
+public interface EdgeI extends uk.ac.ebi.intact.util.simplegraph.BasicGraphI
 {
 
     public void setNode1(BasicGraphI aNode);
