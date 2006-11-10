@@ -7,8 +7,6 @@ package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.BasicObject;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +16,7 @@ import java.util.HashSet;
 /**
  * A simple graph class for temporary processing, for example to prepare output for graph analysis packages.
  */
-public class Graph extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements GraphI {
+public class Graph extends uk.ac.ebi.intact.util.simplegraph.BasicGraph implements GraphI {
 
     /**
      * This is used in toString() in order to be platform compatible.

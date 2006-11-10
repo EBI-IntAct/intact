@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.model.Interactor;
 /**
  * A simple node class for temporary processing, for example to prepare output for graph analysis packages.
  */
-public class Node extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements NodeI {
+public class Node extends uk.ac.ebi.intact.util.simplegraph.BasicGraph implements NodeI {
 
     private Interactor interactor;
 

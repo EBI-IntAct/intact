@@ -7,9 +7,8 @@ package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
 
-public class Edge extends uk.ac.ebi.intact.simpleGraph.BasicGraph implements EdgeI {
+public class Edge extends uk.ac.ebi.intact.util.simplegraph.BasicGraph implements EdgeI {
 
     ///////////////////////////////////////
     // attributes
