@@ -27,21 +27,20 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetP
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVs;
-import uk.ac.ebi.intact.util.BioSourceFactory;
-import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
 import uk.ac.ebi.intact.util.UrlUtils;
 import uk.ac.ebi.intact.util.filter.UrlFilter;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
+import uk.ac.ebi.intact.util.protein.UpdateProteins;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 
 /**

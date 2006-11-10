@@ -3,7 +3,7 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
  All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.util.protein;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
@@ -17,9 +17,11 @@ import uk.ac.ebi.intact.persistence.dao.AliasDao;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.util.Crc64;
+import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.FeatureException;
-import uk.ac.ebi.interfaces.sptr.*;
 import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;

@@ -3,13 +3,14 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.dbutil.trembl;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.util.Crc64;
+import uk.ac.ebi.intact.util.SearchReplace;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
