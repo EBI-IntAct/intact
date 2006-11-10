@@ -78,6 +78,51 @@ public class InteractionUtils
      * @param interaction
      * @return
      */
+    public static boolean isSelfInteraction(Interaction interaction)
+    {
+        if (isSelfBinaryInteraction(interaction))
+        {
+            return true;
+        }
+
+        Collection<Component> components = interaction.getComponents();
+        int componentCount = components.size();
+
+        if (componentCount == 1)
+        {
+            Component comp = components.iterator().next();
+
+            if (comp.getStoichiometry() >= 2)
+            {
+                return true;
+            }
+        }
+        else if (componentCount > 1)
+        {
+            String interactorAc = null;
+
+            for (Component comp : components)
+            {
+                if (interactorAc == null)
+                {
+                    interactorAc = comp.getInteractorAc();
+                }
+
+                if (!interactorAc.equals(comp.getInteractorAc()))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks if the interaction is a binary self interaction
+     * @param interaction
+     * @return
+     */
     public static boolean isSelfBinaryInteraction(Interaction interaction)
     {
         Collection<Component> components = interaction.getComponents();
