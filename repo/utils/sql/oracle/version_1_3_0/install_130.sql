@@ -28,6 +28,11 @@ PROMPT
 @020_component_modifications.sql
 
 PROMPT *********************************************************************************/
+PROMPT "Creating IA_COMPONENT2ANNOT audit table and trigger."
+PROMPT
+@025_create_component2annot_audit.sql
+
+PROMPT *********************************************************************************/
 PROMPT "Creating Alias deletion trigger - avoids constraint violation."
 PROMPT
 @030_create_alias_deletion_triggers.sql
