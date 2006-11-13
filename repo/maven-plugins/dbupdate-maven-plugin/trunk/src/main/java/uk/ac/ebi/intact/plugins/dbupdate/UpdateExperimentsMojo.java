@@ -49,6 +49,15 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
      */
     private File updatedFile;
 
+    /**
+     * Only experiments with this label-like pattern will be included (in SQL format,
+     * e.g. if the labelPattern go% is used, only those experiments starting with 'go' will be
+     * selected to update)
+     *
+     * @parameter
+     */
+    private String labelPattern;
+
     private Writer invalidExpWriter;
     private Writer updatedExpWriter;
 
@@ -63,7 +72,7 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
          List<UpdateSingleExperimentReport> expReports = null;
          try
          {
-             expReports = UpdateExperiments.startUpdate(ps);
+             expReports = UpdateExperiments.startUpdate(ps, labelPattern, isDryRun());
          }
          catch (SQLException e)
          {
@@ -81,6 +90,11 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
 
          for (UpdateSingleExperimentReport report : expReports)
          {
+             String invalid = (report.isInvalid())? "INVALID!" : "";
+             String updated = (report.isUpdated())? "UPDATED" : "OK";
+
+             getLog().info(report.getExperimentAc()+" "+report.getExperimentLabel()+" - "+invalid+updated);
+
              if (report.isInvalid())
              {
                  writeInvalidExp(report);
@@ -109,7 +123,7 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
     {
         if (invalidExpWriter == null)
         {
-            invalidExpWriter = new FileWriter(invalidFile);
+            invalidExpWriter = new FileWriter(invalidFile, true);
         }
 
         return invalidExpWriter;
@@ -119,7 +133,7 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
     {
         if (updatedExpWriter == null)
         {
-            updatedExpWriter = new FileWriter(updatedFile);
+            updatedExpWriter = new FileWriter(updatedFile, true);
         }
 
         return updatedExpWriter;
@@ -134,9 +148,9 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
 
     private void writeUpdatedExp(UpdateSingleExperimentReport report) throws IOException
     {
-        String line = report.getExperimentAc()+"\t"+report.getInvalidMessage()+NEW_LINE;
+        String line = report.getExperimentAc()+" - "+report.getExperimentLabel()+NEW_LINE;
 
-        getUpdatedExpWriter().write(report.getExperimentAc()+" - "+report.getExperimentLabel()+NEW_LINE);
+        getUpdatedExpWriter().write(line);
 
         if (report.isShortLabelUpdated())
             writeUpdatedLine("short-label", report.getShortLabelValue());
@@ -149,13 +163,45 @@ public class UpdateExperimentsMojo extends IntactHibernateMojo
         if (report.isContactUpdated())
             writeUpdatedLine("contact", report.getContactListValue());
         if (report.isJournalUpdated())
-            writeUpdatedLine("journal", report.getContactListValue());
+            writeUpdatedLine("journal", report.getJournalListValue());
         if (report.isYearUpdated())
-            writeUpdatedLine("year", report.getContactListValue());
+            writeUpdatedLine("year", report.getYearListValue());
     }
 
     private void writeUpdatedLine(String item, UpdatedValue value) throws IOException
     {
-        getUpdatedExpWriter().write("\t"+item+": "+value.toString()+NEW_LINE);
+        if (value != null)
+            getUpdatedExpWriter().write("\t"+item+": "+value.toString()+NEW_LINE);
+    }
+
+
+    public File getInvalidFile()
+    {
+        return invalidFile;
+    }
+
+    public void setInvalidFile(File invalidFile)
+    {
+        this.invalidFile = invalidFile;
+    }
+
+    public File getUpdatedFile()
+    {
+        return updatedFile;
+    }
+
+    public void setUpdatedFile(File updatedFile)
+    {
+        this.updatedFile = updatedFile;
+    }
+
+    public String getLabelPattern()
+    {
+        return labelPattern;
+    }
+
+    public void setLabelPattern(String labelPattern)
+    {
+        this.labelPattern = labelPattern;
     }
 }

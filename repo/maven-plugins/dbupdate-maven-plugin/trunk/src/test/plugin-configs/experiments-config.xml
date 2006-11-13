@@ -6,6 +6,10 @@
                 <configuration>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/update-experiments.log</outputFile>
+
+                    <invalidFile>target/invalid-experiments.txt</invalidFile>
+                    <updatedFile>target/updated-experiments.txt</updatedFile>
+                    <labelPattern>goshima%</labelPattern>
                     <dryRun>true</dryRun>
                 </configuration>
             </plugin>
