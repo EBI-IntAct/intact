@@ -65,9 +65,7 @@ public class MojoUtils
         {
             if (overwrite)
             {
-                FileWriter writer = new FileWriter(file);
-                writer.write("");
-                writer.close();
+                file.delete();
             }
             return;
         }
