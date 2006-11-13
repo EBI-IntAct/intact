@@ -36,12 +36,25 @@ public class MojoUtils
     private MojoUtils(){}
 
     /**
-     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary
+     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
+     * If the file exists, it will be overriden
      * @param file the file to check
      * @param createParentFolder if the parent of the file does not exist, it will create it
      * @throws IOException
      */
     public static void prepareFile(File file, boolean createParentFolder) throws IOException
+    {
+        prepareFile(file, createParentFolder, true);
+    }
+
+    /**
+     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary
+     * @param file the file to check
+     * @param createParentFolder if the parent of the file does not exist, it will create it
+     * @param overwrite remove the file if it already exists
+     * @throws IOException
+     */
+    public static void prepareFile(File file, boolean createParentFolder, boolean overwrite) throws IOException
     {
         if (file == null)
         {
@@ -50,6 +63,12 @@ public class MojoUtils
 
         if (file.exists())
         {
+            if (overwrite)
+            {
+                FileWriter writer = new FileWriter(file);
+                writer.write("");
+                writer.close();
+            }
             return;
         }
 
