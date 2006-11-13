@@ -214,7 +214,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
         if (readOnly)
         {
             throw new IntactException("This application is running on mode READ-ONLY, so it cannot persist or update " +
-                    "objects in the database. Set the init-param "+IntactEnvironment.READ_ONLY_APP+" to true if you want to " +
+                    "objects in the database. Set the init-param "+IntactEnvironment.READ_ONLY_APP+" to false if you want to " +
                     "do that.");
         }
    }
