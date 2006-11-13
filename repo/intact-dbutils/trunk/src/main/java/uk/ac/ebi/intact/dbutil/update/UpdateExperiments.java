@@ -173,6 +173,7 @@ public class UpdateExperiments {
             }
 
             UpdateExperimentAnnotationsFromPudmed.UpdateReport updateReport = UpdateExperimentAnnotationsFromPudmed.update( experiment, pubmedId, dryRun );
+            report.setUpdateReport(updateReport);
 
             printReport( updateReport, printStream );
 
@@ -185,7 +186,7 @@ public class UpdateExperiments {
 
         } catch ( Exception e ) {
 
-            printStream.println( "An exception was thrown diring the update process of:" );
+            printStream.println( "An exception was thrown during the update process of:" );
             printStream.println( StringUtils.rightPad( experiment.getAc(), 15 ) +
                                 StringUtils.rightPad( experiment.getShortLabel(), 23 ) +
                                 pubmedId + "   " + generateCitexploreUrl( pubmedId ) );
@@ -194,7 +195,8 @@ public class UpdateExperiments {
             Throwable t = (Throwable) e;
             while ( t != null ) {
 
-                t.printStackTrace();
+                report.setInvalidMessage("Exception updating: "+t.getMessage());
+                t.printStackTrace(printStream);
 
                 t = t.getCause();
                 if ( t != null ) {
@@ -206,15 +208,26 @@ public class UpdateExperiments {
         return report;
     }
 
-    public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream) throws SQLException
+    public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, boolean dryRun) throws SQLException
     {
+        return startUpdate(printStream, null, dryRun);
+    }
+
+    public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, String expLabelPattern, boolean dryRun) throws SQLException
+    {
+        String restrictionSql = "";
+
+        if (expLabelPattern != null && !expLabelPattern.equals("%"))
+        {
+            restrictionSql = "WHERE shortlabel LIKE '"+expLabelPattern+"'";
+        }
 
         // retreive all experiment ACs
             printStream.print( "Loading experiments ... " );
             printStream.flush();
             Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
             Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery( "SELECT ac FROM ia_experiment ORDER BY created" );
+            ResultSet resultSet = statement.executeQuery( "SELECT ac FROM ia_experiment "+restrictionSql+" ORDER BY created" );
             List experimentAcs = new ArrayList();
             while ( resultSet.next() ) {
                 experimentAcs.add( resultSet.getString( 1 ) );
@@ -233,7 +246,7 @@ public class UpdateExperiments {
                 // get the experiment
                 Experiment experiment = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByAc(ac);
 
-                UpdateSingleExperimentReport report = updateExperiment(  experiment, printStream, false );
+                UpdateSingleExperimentReport report = updateExperiment(  experiment, printStream, dryRun );
                 reports.add(report);
 
                 iterator.remove(); // empty the collection as we go
@@ -285,7 +298,7 @@ public class UpdateExperiments {
             }
 
             // retreive all experiment ACs
-            startUpdate(System.out);
+            startUpdate(System.out, false);
 
     }
 }
