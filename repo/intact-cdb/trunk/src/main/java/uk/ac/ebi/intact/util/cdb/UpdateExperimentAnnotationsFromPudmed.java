@@ -335,6 +335,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 if ( annotationByTopic.contains( newAnnotation ) ) {
                     // found it, then we just remove it from the list and we are done.
                     annotationByTopic.remove( newAnnotation );
+                    updatedValue = new UpdatedValue(null, text);
                 } else {
                     // not found, we recycle an existing annotation and delete all others
                     Iterator iterator = annotationByTopic.iterator();
