@@ -31,6 +31,8 @@ v_feature_ac ia_feature.ac%TYPE;
 v_publication_ac ia_publication.ac%TYPE;
 
 BEGIN
+
+  dbms_output.enable(1000000000000);
   
   -- NOTE: no check will be done for duplicated rows !!
 
