@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 
 import java.io.File;
@@ -213,8 +214,9 @@ public abstract class PsiFileGenerator
     }
 
     /**
-     * It take an interactions Collection and retrieves the ACs for the interactions that have a NucleicAcid or SmallMolecule as component.
-     * This is used in case psi version is psi1 as psi1 do not allow Nucleic Acid as Interaction's participant.
+     * It takes an interactions Collection and retrieves the ACs for the interactions that have a NucleicAcid or
+     * SmallMolecule as component.
+     * This is used in case psi version is PSI 1.0 as it does not allow Nucleic Acid as Interaction's participant.
      * @param interactions Collection of interactions
      * @return a list with the ACs which should be filtered
      */
@@ -224,8 +226,9 @@ public abstract class PsiFileGenerator
 
         for (Interaction interaction : interactions)
         {
-            if (InteractionUtils.containsNonProteinInteractors(interaction)
-                    || InteractionUtils.isSelfInteraction(interaction))
+            if ( InteractionUtils.containsNonProteinInteractors(interaction)
+                 || InteractionUtils.isSelfInteraction(interaction)
+                 || InteractionUtils.isUnaryInteraction( interaction ) )
             {
                 filteredAcs.add(interaction.getAc());
             }
