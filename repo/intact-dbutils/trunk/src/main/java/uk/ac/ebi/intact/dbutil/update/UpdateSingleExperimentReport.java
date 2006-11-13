@@ -61,12 +61,12 @@ public class UpdateSingleExperimentReport
     public boolean isUpdated()
     {
         return isAuthorEmailUpdated()
-                && isAuthorListUpdated()
-                && isContactUpdated()
-                && isFullNameUpdated()
-                && isJournalUpdated()
-                && isShortLabelUpdated()
-                && isYearUpdated();
+                || isAuthorListUpdated()
+                || isContactUpdated()
+                || isFullNameUpdated()
+                || isJournalUpdated()
+                || isShortLabelUpdated()
+                || isYearUpdated();
     }
 
     public String getExperimentAc()
@@ -107,26 +107,36 @@ public class UpdateSingleExperimentReport
 
     public boolean isAuthorListUpdated()
     {
+        if (updateReport == null) return false;
+
         return updateReport.isAuthorListUpdated();
     }
 
     public boolean isContactUpdated()
     {
+        if (updateReport == null) return false;
+
         return updateReport.isContactUpdated();
     }
 
     public boolean isYearUpdated()
     {
+        if (updateReport == null) return false;
+
         return updateReport.isYearUpdated();
     }
 
     public boolean isJournalUpdated()
     {
+        if (updateReport == null) return false;
+
         return updateReport.isJournalUpdated();
     }
 
     public boolean isAuthorEmailUpdated()
     {
+        if (updateReport == null) return false;
+        
         return updateReport.isAuthorEmailUpdated();
     }
 
