@@ -80,7 +80,14 @@ public class MojoUtils
 
     public static void writeStandardHeaderToFile(String prefix, String description, MavenProject project, File file) throws IOException
     {
-        String title = prefix+" - "+project.getArtifactId()+", v. "+project.getVersion(); 
+        String additionalInfo = "";
+
+        if (project != null) // project can be null when testing using the plugin test logic
+        {
+            additionalInfo = " - "+project.getArtifactId()+", v. "+project.getVersion();
+        }
+
+        String title = prefix+additionalInfo; 
         writeHeaderToFile(title, description, file);
     }
 }
