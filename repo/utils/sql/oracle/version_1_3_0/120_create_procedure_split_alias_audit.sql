@@ -33,6 +33,8 @@ v_publication_ac ia_publication_audit.ac%TYPE;
 
 BEGIN
 
+  dbms_output.enable(1000000000000);
+
   -- TODO clean up all specific alias tables before to fill them up
   -- no check will be done for duplicated rows !!
 
