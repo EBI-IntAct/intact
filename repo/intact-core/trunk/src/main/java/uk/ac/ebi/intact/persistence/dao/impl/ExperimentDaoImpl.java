@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -16,6 +17,7 @@ import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -54,6 +56,22 @@ public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implem
                 .setMaxResults(maxResults)
                 .createCriteria("experiments")
                 .add(Restrictions.idEq(ac)).list();
+    }
+
+    public Iterator<Interaction> getInteractionsForExperimentWithAcIterator(String ac)
+    {
+        DetachedCriteria crit = DetachedCriteria.forClass(InteractionImpl.class)
+                .createCriteria("experiments")
+                .add(Restrictions.idEq(ac));
+
+        return new IntactObjectIterator(getEntityClass(), crit);
+        /*
+        return new ScrollableIntactObjectsImpl( InteractionImpl.class,
+                getSession().createCriteria(InteractionImpl.class)
+                .createCriteria("experiments")
+                .add(Restrictions.idEq(ac))
+                .scroll());
+                */
     }
 
     public List<Interaction> getInteractionsForExperimentWithAcExcluding(String ac, String[] excludedAcs, int firstResult, int maxResults)

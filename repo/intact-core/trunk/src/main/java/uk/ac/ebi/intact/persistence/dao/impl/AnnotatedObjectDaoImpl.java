@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -21,6 +22,7 @@ import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -74,6 +76,13 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
     public Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults, boolean orderAsc)
     {
         return getByPropertyNameLike("shortLabel", value, ignoreCase, firstResult, maxResults, orderAsc);
+    }
+
+    public Iterator<T> getByShortLabelLikeIterator(String value, boolean ignoreCase)
+    {
+        DetachedCriteria crit = DetachedCriteria.forClass(getEntityClass())
+                .add(Restrictions.like("shortLabel", value));
+        return new IntactObjectIterator<T>(getEntityClass(), crit);
     }
 
     public T getByXref(String primaryId)

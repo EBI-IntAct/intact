@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -33,6 +34,8 @@ public interface AnnotatedObjectDao<T extends AnnotatedObject> extends IntactObj
     Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults);
 
     Collection<T> getByShortLabelLike(String value, boolean ignoreCase, int firstResult, int maxResults, boolean orderAsc);
+
+    Iterator<T> getByShortLabelLikeIterator(String value, boolean ignoreCase);
 
     T getByXref(String primaryId);
 
