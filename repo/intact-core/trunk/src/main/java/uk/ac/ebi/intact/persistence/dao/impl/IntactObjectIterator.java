@@ -44,7 +44,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
     /**
      * Maximum size of a chunk of data.
      */
-    public static final int DEFAULT_CHUNK_SIZE = 50;
+    public static final int DEFAULT_CHUNK_SIZE = 100;
 
     public static final int NOT_INITIALISED = -1;
 
