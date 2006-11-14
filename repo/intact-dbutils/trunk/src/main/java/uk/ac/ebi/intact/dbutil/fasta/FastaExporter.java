@@ -14,11 +14,16 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.io.*;
 import java.util.Iterator;
+import java.util.Collection;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility class exporting all proteins sequence into a fasta file.
@@ -28,6 +33,8 @@ import java.util.Iterator;
  * @since <pre>10-Jul-2006</pre>
  */
 public class FastaExporter {
+
+    private static final Log log = LogFactory.getLog(FastaExporter.class);
 
     /**
      * Cross plateform - New line
@@ -73,48 +80,64 @@ public class FastaExporter {
      * @return an <code>OutputStream</code> with the log of the process
      * @throws IOException bad thing
      */
-    public static OutputStream exportToFastaFile(File exportedFasta) throws IOException
+    public static void exportToFastaFile(PrintStream out, File exportedFasta) throws IOException
     {
         if (exportedFasta == null)
         {
             throw new NullPointerException("Provided exportedFasta file is null");
         }
 
-        OutputStream logOutStream = new ByteArrayOutputStream();
-        BufferedWriter logOutWriter = new BufferedWriter(new OutputStreamWriter(logOutStream));
-
         BufferedWriter fastaWriter = new BufferedWriter( new FileWriter( exportedFasta ) );
 
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
-        logOutWriter.write( "" +NEW_LINE);
-        logOutWriter.write( "--------------------------------------------------------" +NEW_LINE);
-        logOutWriter.write( "Legend:" +NEW_LINE);
-        logOutWriter.write( "        . : protein's sequence exported" +NEW_LINE);
-        logOutWriter.write( "        X : protein doesn't take part in any interaction." +NEW_LINE);
-        logOutWriter.write( "--------------------------------------------------------" +NEW_LINE);
-        logOutWriter.write( "" +NEW_LINE);
+        out.println( "");
+        out.println( "--------------------------------------------------------");
+        out.println( "Legend:" );
+        out.println( "        . : protein's sequence exported" );
+        out.println( "        X : protein doesn't take part in any interaction." );
+        out.println( "--------------------------------------------------------" );
+        out.println( "" );
 
-        logOutWriter.write( "Loading all proteins." +NEW_LINE);
+        out.println( "Loading all proteins." );
 
         // Load protein count using DAO.
         int proteinCount = proteinDao.countAll();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-        logOutWriter.write( proteinCount + " protein(s) loaded from the database." +NEW_LINE);
+        out.println( proteinCount + " protein(s) loaded from the database." );
 
         int count = 0;
         int countExported = 0;
         int countNoSeq = 0;
 
-        Iterator<ProteinImpl> iterator = proteinDao.iterator();
+        Iterator<ProteinImpl> iterator = proteinDao.getAllIterator();
         while ( iterator.hasNext() ) {
             ProteinImpl protein = iterator.next();
 
-            logOutWriter.write(protein.getAc());
+            if (log.isDebugEnabled())
+                log.debug(protein.getAc());
+
+            // HACK: to avoid lazyloading exceptions, we capture the exception and rebuild de Dao again (refreshing the protein)
+            Collection<Component> activeInstances = null;
+            String sequence = null;
+            try
+            {
+                activeInstances = protein.getActiveInstances();
+                sequence = protein.getSequence();
+            }
+            catch (Throwable t)
+            {
+                // this is necessary, because the sequence cannot be loaded lazily
+               // due to the autocommits done by the iterator
+                proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+                protein = proteinDao.getByAc(protein.getAc());
+
+                activeInstances = protein.getActiveInstances();
+                sequence = protein.getSequence();
+            }
 
             // Process the chunk of data
-            if ( ! protein.getActiveInstances().isEmpty() ) {
+            if ( ! activeInstances.isEmpty() ) {
 
                 StringBuffer sb = new StringBuffer( 512 );
 
@@ -130,11 +153,7 @@ public class FastaExporter {
                 }
 
                 sb.append( NEW_LINE );
-
-                // this is necessary, because the sequence cannot be loaded lazily
-                protein = proteinDao.getByAc(protein.getAc());
-
-                sb.append( protein.getSequence() );
+                sb.append( sequence );
 
                 sb.append( NEW_LINE );
 
@@ -144,37 +163,32 @@ public class FastaExporter {
 
                 // stats
                 countExported++;
-                logOutWriter.write( "." );
-                logOutWriter.flush();
+                out.print( "." );
 
             } else {
                 // stats
                 countNoSeq++;
-                logOutWriter.write( "X" );
-                logOutWriter.flush();
+                out.print( "X" );
             }
 
             count++;
             if ( ( count % 70 ) == 0 ) {
-                logOutWriter.write( "   " + count +NEW_LINE);
+                out.println( "   " + count );
             }
         }
 
-        logOutWriter.write( "" +NEW_LINE);
-        logOutWriter.write( "----------------------------------------------------------------------------------" +NEW_LINE);
-        logOutWriter.write( "Processed " + count + " protein(s)." +NEW_LINE);
-        logOutWriter.write( "Exported " + countExported + " proteins" +NEW_LINE);
-        logOutWriter.write( countNoSeq + " protein(s) were not involved in any interactions. They were filtered out." +NEW_LINE);
+        out.println( "" );
+        out.println( "----------------------------------------------------------------------------------" );
+        out.println( "Processed " + count + " protein(s)." );
+        out.println( "Exported " + countExported + " proteins" );
+        out.println( countNoSeq + " protein(s) were not involved in any interactions. They were filtered out." );
 
         fastaWriter.close();
-        logOutWriter.close();
-
-        return logOutStream;
     }
 
 
 
     public static void main( String[] args ) throws IOException {
-        exportToFastaFile( new File( "intact.fasta") );
+        exportToFastaFile( System.out, new File( "intact.fasta") );
     }
 }
