@@ -6,7 +6,9 @@
                 <configuration>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/update-target-species.log</outputFile>
+                    <dryRun>true</dryRun>
 
+                    <labelPattern>iwasaki%</labelPattern>
                     <statsFile>target/target-species.stat</statsFile>
                 </configuration>
             </plugin>

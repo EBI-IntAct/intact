@@ -27,6 +27,7 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
 
         UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
+        mojo.setDryRun(true);
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();

@@ -17,15 +17,14 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
+import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpeciesReport;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.util.List;
+import java.io.PrintStream;
 
 /**
  * Example mojo. This mojo is executed when the goal "target-species" is called.
@@ -45,6 +44,15 @@ public class UpdateTargetSpeciesMojo
     private File statsFile;
 
     /**
+     * Only experiments with this label-like pattern will be included (in SQL format,
+     * e.g. if the labelPattern go% is used, only those experiments starting with 'go' will be
+     * selected to update)
+     *
+     * @parameter
+     */
+    private String labelPattern;
+
+    /**
      * Main execution method, which is called after hibernate has been initialized
      */
     public void executeIntactMojo()
@@ -52,21 +60,11 @@ public class UpdateTargetSpeciesMojo
     {
         MojoUtils.prepareFile(statsFile, true);
 
-        List<String> stats = UpdateTargetSpecies.update();
+        PrintStream ps = new PrintStream(statsFile);
 
-        // write stats in a file.
-        BufferedWriter out = new BufferedWriter(new FileWriter(statsFile));
-        for (String line : stats)
-        {
-            out.write(line);
-            out.write(NEW_LINE);
-        }
+        UpdateTargetSpeciesReport report = UpdateTargetSpecies.update(ps, isDryRun(), labelPattern);
 
-        out.close();
-
-        getLog().info("Closed " + statsFile);
     }
-
 
     public File getStatsFile()
     {
@@ -76,5 +74,15 @@ public class UpdateTargetSpeciesMojo
     public void setStatsFile(File statsFile)
     {
         this.statsFile = statsFile;
+    }
+
+    public String getLabelPattern()
+    {
+        return labelPattern;
+    }
+
+    public void setLabelPattern(String labelPattern)
+    {
+        this.labelPattern = labelPattern;
     }
 }
