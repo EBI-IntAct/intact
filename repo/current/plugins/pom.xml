@@ -35,6 +35,7 @@
         <module>dbupdate-maven-plugin</module>
         <module>reactome-maven-plugin</module>
         <module>fasta-maven-plugin</module>
+        <module>lucene-maven-plugin</module>
     </modules>
 
     <distributionManagement>
