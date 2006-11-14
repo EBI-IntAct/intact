@@ -26,7 +26,7 @@ public class FastaExportMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/fasta-export.xml" );
 
         FastaExportMojo mojo = (FastaExportMojo) lookupMojo( "export", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );

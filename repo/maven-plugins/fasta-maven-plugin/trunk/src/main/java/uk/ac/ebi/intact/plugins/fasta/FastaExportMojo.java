@@ -22,7 +22,7 @@ import uk.ac.ebi.intact.dbutil.fasta.FastaExporter;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
@@ -46,9 +46,9 @@ public class FastaExportMojo
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        OutputStream logOut = FastaExporter.exportToFastaFile(exportedFile);
+        PrintStream ps = new PrintStream(getOutputFile());
 
-        super.getOutputWriter().write(logOut.toString());
+        FastaExporter.exportToFastaFile(ps, exportedFile);
     }
 
     public File getExportedFile()
