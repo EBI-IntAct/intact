@@ -11,10 +11,10 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.ProteinUtils;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -38,71 +38,29 @@ public class UpdateTargetSpecies {
     //////////////////////////
     // Inner class
 
-    /**
-     * Contains stats about the count of protein's biosources per experiment.
-     */
-    private static class BioSourceStat {
-        //////////////////////////
-        // Instance variable
-
-        private String name;
-        private String taxid;
-        private int count = 0;
-
-        //////////////////////////
-        // Constructor
-
-        public BioSourceStat( String name, String taxid ) {
-            this.name = name;
-            this.taxid = taxid;
-        }
-
-        ////////////////////
-        // Getters
-        public String getName() {
-            return name;
-        }
-
-        public String getTaxid() {
-            return taxid;
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        ///////////////////////
-        // Update stats
-        public void increment() {
-            count++;
-        }
-    }
-
     //////////////////////////
     // Instance variable
 
-    public static CvTopic noUniprotUpdate = null;
-    public static CvDatabase newt = null;
-    public static CvXrefQualifier targetSpeciesQualifier = null;
-    private static final String NEW_LINE = System.getProperty( "line.separator" );
+    private CvTopic noUniprotUpdate = null;
+    private CvDatabase newt = null;
+    private CvXrefQualifier targetSpeciesQualifier = null;
+
+    private Experiment currentExperiment;
 
     ///////////////////////////
     // Constructor
 
     private UpdateTargetSpecies() {
-        // no instantiable
     }
 
 
     /**
      * Collect required CVs. Throws a RuntimeException if one of the object is not found.
-     *
-     * @throws IntactException
      */
-    public static void init() throws IntactException {
+    public void init() throws IntactException {
 
         // loading required CVs
-        noUniprotUpdate = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( CvTopic.NON_UNIPROT );
+        noUniprotUpdate = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, CvTopic.NON_UNIPROT);
         if ( noUniprotUpdate == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvTopic( " +
                                              CvTopic.NON_UNIPROT + " ). abort." );
@@ -110,7 +68,7 @@ public class UpdateTargetSpecies {
             log.warn( "CvTopic( " + CvTopic.NON_UNIPROT + " ) found." );
         }
 
-        newt = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.NEWT_MI_REF );
+        newt = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF );
         if ( newt == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvDatabase( " + CvDatabase.NEWT +
                                              " ) having an Xref( " + CvDatabase.NEWT_MI_REF + " ). abort." );
@@ -118,7 +76,7 @@ public class UpdateTargetSpecies {
             log.debug( "CvDatabase( " + CvDatabase.NEWT + " ) found." );
         }
 
-        targetSpeciesQualifier = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel( CvXrefQualifier.TARGET_SPECIES );
+        targetSpeciesQualifier = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
         if ( targetSpeciesQualifier == null ) {
             throw new IllegalStateException( "The IntAct database should contain a CvXrefQualifier( " +
                                              CvXrefQualifier.TARGET_SPECIES + " ). abort." );
@@ -128,47 +86,17 @@ public class UpdateTargetSpecies {
     }
 
     /**
-     * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false, otherwise true.
-     * That flag is added to a protein when created via the editor. As some protein may have a UniProt ID as identity we
-     * don't want those to be overwitten.
-     *
-     * @param protein the protein to check
-     *
-     * @return false if no Annotation having CvTopic( no-uniprot-update ), otherwise true.
-     */
-    public static boolean isFromUniprot( final Protein protein ) {
-
-        // TODO Move this to the IntAct model
-
-        boolean isFromUniprot = true;
-
-        if ( null == noUniprotUpdate ) {
-            // in case the term hasn't been created, assume there are no proteins created via editor.
-            return true;
-        }
-
-        for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && true == isFromUniprot; ) {
-            Annotation annotation = (Annotation) iterator.next();
-
-            if ( noUniprotUpdate.equals( annotation.getCvTopic() ) ) {
-                isFromUniprot = false;
-            }
-        }
-
-        return isFromUniprot;
-    }
-
-    /**
      * Collects all Xref having a CvXrefQualifier( target-species ) linked to the given experiement.
      *
      * @param experiment
      *
      * @return a Collection of Xref. never null.
      */
-    public static Collection getTargetSpeciesXrefs( Experiment experiment ) {
+    public Collection<ExperimentXref> getTargetSpeciesXrefs( Experiment experiment ) {
 
-        Collection<Xref> targets = new ArrayList<Xref>();
-        for ( Xref xref : experiment.getXrefs() ) {
+        Collection<ExperimentXref> targets = new ArrayList<ExperimentXref>();
+
+        for ( ExperimentXref xref : experiment.getXrefs() ) {
             if ( targetSpeciesQualifier.equals( xref.getCvXrefQualifier() ) ) {
                 targets.add( xref );
             }
@@ -176,53 +104,90 @@ public class UpdateTargetSpecies {
         return targets;
     }
 
-    public static List<String> update()
+    public static UpdateTargetSpeciesReport update(PrintStream ps, boolean dryRun)
     {
+        return update(ps, dryRun, null);
+    }
+
+    public static UpdateTargetSpeciesReport update(PrintStream ps, boolean dryRun, String labelLike)
+    {
+        UpdateTargetSpecies updateTarget = new UpdateTargetSpecies();
+        UpdateTargetSpeciesReport report = updateTarget.updateTargetSpecies(ps, dryRun, labelLike);
+
+        return report;
+    }
+
+    public UpdateTargetSpeciesReport updateTargetSpecies(PrintStream ps, boolean dryRun)
+    {
+        return updateTargetSpecies(ps, dryRun, null);
+    }
+
+    public UpdateTargetSpeciesReport updateTargetSpecies(PrintStream ps, boolean dryRun, String labelLike)
+    {
+
+        UpdateTargetSpeciesReport report = new UpdateTargetSpeciesReport();
+
         init( );
 
-            // get all experiments
-            Collection experiments = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getAll();
+        ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
 
-            Map biosource2count = new HashMap( 4 );
-            Set biosources = new HashSet( 4 );
-            Set biosourcesTaxid = new HashSet( 4 );
+        Iterator<Experiment> experimentIterator;
 
-            ArrayList stats = new ArrayList( experiments.size() );
+            // get all scrollableExperiments
+        if (labelLike != null)
+        {
+            experimentIterator = experimentDao.getByShortLabelLikeIterator(labelLike, true);
+        }
+        else
+        {
+            experimentIterator = experimentDao.getAllIterator();
+        }
 
-            for ( Iterator iterator = experiments.iterator(); iterator.hasNext(); ) {
-                Experiment experiment = (Experiment) iterator.next();
+            Map<BioSource,BioSourceStat> biosource2count = new HashMap<BioSource,BioSourceStat>( 4 );
+            Set<BioSource> biosources = new HashSet<BioSource>( 4 );
+            Set<String> biosourcesTaxid = new HashSet<String>( 4 );
 
-                log.debug( "Updating " + experiment.getShortLabel() + " (" + experiment.getAc() + ")" );
+            Map<String, BioSourceStat[]> stats = new HashMap<String,BioSourceStat[]>();
 
-                // empty collections
+            while (experimentIterator.hasNext())
+            {
+                currentExperiment = experimentIterator.next();
+
+                log.debug( "Updating " + currentExperiment.getShortLabel() + " (" + currentExperiment.getAc() + ")" );
+
+                // clear collections
                 biosources.clear();
                 biosourcesTaxid.clear();
                 biosource2count.clear();
 
                 // 1. look for distinct list of Protein's biosource
-                for ( Iterator iterator1 = experiment.getInteractions().iterator(); iterator1.hasNext(); ) {
-                    Interaction interaction = (Interaction) iterator1.next();
+                Iterator<Interaction> interactionIterator = experimentDao.getInteractionsForExperimentWithAcIterator(currentExperiment.getAc());
 
-                    for ( Iterator iterator2 = interaction.getComponents().iterator(); iterator2.hasNext(); ) {
-                        Component component = (Component) iterator2.next();
+                while ( interactionIterator.hasNext() ) {
+                    Interaction interaction = interactionIterator.next();
 
+                    for (Component component : interaction.getComponents())
+                    {
                         Interactor i = component.getInteractor();
-                        if ( i instanceof Protein ) {
+                        if (i instanceof Protein)
+                        {
                             Protein protein = (Protein) i;
 
                             // we only take into account UniProt Proteins
-                            if ( isFromUniprot( protein ) ) {
+                            if (ProteinUtils.isFromUniprot(protein))
+                            {
                                 BioSource bioSource = protein.getBioSource();
 
-                                biosources.add( bioSource );
-                                biosourcesTaxid.add( bioSource.getTaxId() );
+                                biosources.add(bioSource);
+                                biosourcesTaxid.add(bioSource.getTaxId());
 
                                 // update stats for each new proteins
-                                BioSourceStat count = (BioSourceStat) biosource2count.get( bioSource );
+                                BioSourceStat count = biosource2count.get(bioSource);
 
-                                if ( count == null ) {
-                                    count = new BioSourceStat( bioSource.getShortLabel(), bioSource.getTaxId() );
-                                    biosource2count.put( bioSource, count );
+                                if (count == null)
+                                {
+                                    count = new BioSourceStat(bioSource.getShortLabel(), bioSource.getTaxId());
+                                    biosource2count.put(bioSource, count);
                                 }
 
                                 count.increment();
@@ -231,8 +196,13 @@ public class UpdateTargetSpecies {
                     } // components
                 } // interactions
 
+                // reload the current experiment here, because to iterate through the interactions the
+                // tansaction is automatically committed to avoid OutOfMemory errors.
+                experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+                currentExperiment = experimentDao.getByAc(currentExperiment.getAc());
+
                 // 2. process the list of BioSource.
-                Collection existingTargetXrefs = getTargetSpeciesXrefs( experiment );
+                Collection<ExperimentXref> existingTargetXrefs = getTargetSpeciesXrefs( currentExperiment );
                 for ( Iterator iterator1 = biosources.iterator(); iterator1.hasNext(); ) {
                     BioSource bioSource = (BioSource) iterator1.next();
 
@@ -243,51 +213,62 @@ public class UpdateTargetSpecies {
                                           targetSpeciesQualifier );
 
                     // add it only if not already there
-                    if ( ! experiment.getXrefs().contains( xref ) ) {
+                    if ( ! currentExperiment.getXrefs().contains( xref ) ) {
                         log.debug( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
-                        experiment.addXref( xref );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+
+                        if (!dryRun)
+                        {
+                            currentExperiment.addXref( xref );
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+                        }
                     } else {
                         // only keep in that collection the Xref that do not match the set of BioSource.
-                        existingTargetXrefs.remove( xref );
+
+                        if (!dryRun)
+                            existingTargetXrefs.remove( xref );
                     }
 
                 } // biosources
 
                 // 3. remove Xref( target-species ) that should not be there
-                for ( Iterator iterator1 = existingTargetXrefs.iterator(); iterator1.hasNext(); ) {
-                    ExperimentXref xref = (ExperimentXref) iterator1.next();
+                for (ExperimentXref xref : existingTargetXrefs)
+                {
+                    log.debug("\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")");
 
-                    log.debug( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
-                    experiment.removeXref( xref );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
+                    if (!dryRun)
+                    {
+                        currentExperiment.removeXref(xref);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete(xref);
+                    }
                 }
 
-                // try to free up some resource.
-                iterator.remove();
-
                 // show stats
-                StringBuffer sb = new StringBuffer( 500 );
-                sb.append( StringUtils.rightPad( experiment.getShortLabel(), 25 ) );
-                for ( Iterator iterator1 = biosource2count.keySet().iterator(); iterator1.hasNext(); ) {
-                    BioSource bioSource = (BioSource) iterator1.next();
+                 List<BioSourceStat> bioStats = new ArrayList<BioSourceStat>(biosource2count.size());
 
-                    BioSourceStat stat = (BioSourceStat) biosource2count.get( bioSource );
+                StringBuffer sb = new StringBuffer( 500 );
+                sb.append( StringUtils.rightPad( currentExperiment.getShortLabel(), 25 ) );
+                for ( Iterator<BioSource> iterator1 = biosource2count.keySet().iterator(); iterator1.hasNext(); ) {
+                    BioSource bioSource = iterator1.next();
+
+                    BioSourceStat stat = biosource2count.get( bioSource );
                     sb.append( stat.getName() ).append( "(" ).append( stat.getTaxid() ).append( "):" );
                     sb.append( stat.getCount() );
+
+                    bioStats.add(stat);
 
                     if ( iterator1.hasNext() ) {
                         sb.append( "  " );
                     }
                 }
 
-                stats.add( sb.toString() );
-                log.debug( sb.toString() );
+                ps.println( sb.toString() );
+ 
+                // fill the stats
+                stats.put( currentExperiment.getAc(), bioStats.toArray(new BioSourceStat[bioStats.size()]) );
 
+            } // scrollableExperiments
 
-            } // experiments
-
-        return stats;
+        return report;
     }
 
 
@@ -302,21 +283,7 @@ public class UpdateTargetSpecies {
                 log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
             }
 
-            List<String> stats = update();
+            update(System.out, false).getStats();
 
-            // write stats in a file.
-            try {
-                BufferedWriter out = new BufferedWriter( new FileWriter( "target-species.stat" ) );
-                for ( Iterator iterator = stats.iterator(); iterator.hasNext(); ) {
-                    String line = (String) iterator.next();
-
-                    out.write( line );
-                    out.write( NEW_LINE );
-                }
-
-                out.close();
-            } catch ( IOException e ) {
-                e.printStackTrace();
-            }
     }
 }
