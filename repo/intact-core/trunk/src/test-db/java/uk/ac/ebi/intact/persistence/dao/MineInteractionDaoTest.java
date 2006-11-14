@@ -17,10 +17,7 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import junit.framework.TestCase;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
-
-import java.util.Iterator;
+import uk.ac.ebi.intact.model.MineInteraction;
 
 /**
  * TODO comment this!
@@ -28,15 +25,15 @@ import java.util.Iterator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ExperimentDaoTest extends TestCase
+public class MineInteractionDaoTest extends TestCase
 {
-     private ExperimentDao experimentDao;
+     private MineInteractionDao mineInteractionDao;
 
     @Override
     protected void setUp() throws Exception
     {
         super.setUp();
-        experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        mineInteractionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getMineInteractionDao();
 
     }
 
@@ -44,37 +41,18 @@ public class ExperimentDaoTest extends TestCase
     protected void tearDown() throws Exception
     {
         super.tearDown();
-        experimentDao = null;
+        mineInteractionDao = null;
     }
 
-    public void testGetAllScrolled() throws Exception
+    public void testGet() throws Exception
     {
-        Iterator<Experiment> expIter = experimentDao.getAllIterator();
+        MineInteraction mineInt = mineInteractionDao.get("EBI-27228", "EBI-12377");
 
-        int i=0;
-
-        while (expIter.hasNext())
+        if (mineInt != null)
         {
-            Experiment exp = expIter.next();
-            i++;
+            MineInteraction mineIntSame = mineInteractionDao.get("EBI-12377", "EBI-27228");
+            assertEquals(mineInt, mineIntSame);
         }
-
-        assertTrue(i > 4000);
     }
 
-    public void testGetInteractionsForExperimentWithAcScroll() throws Exception
-    {
-        Iterator<Interaction> expInteraction =
-                experimentDao.getInteractionsForExperimentWithAcIterator("EBI-196429"); //giot
-
-        int i=0;
-
-        while (expInteraction.hasNext())
-        {
-            Interaction inter = expInteraction.next();
-            System.out.println(inter.getAc());
-            i++;
-        }
-
-    }
 }

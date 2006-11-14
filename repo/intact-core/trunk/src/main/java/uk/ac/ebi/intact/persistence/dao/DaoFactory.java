@@ -199,6 +199,14 @@ public class DaoFactory implements Serializable
         return new InteractorDaoImpl<InteractorImpl>(InteractorImpl.class, getCurrentSession(), intactSession);
     }
 
+    /**
+     * @since 1.5
+     */
+    public MineInteractionDao getMineInteractionDao()
+    {
+        return new MineInteractionDaoImpl(getCurrentSession(), intactSession);
+    }
+
     public ProteinDao getProteinDao()
     {
         return new ProteinDaoImpl(getCurrentSession(), intactSession);
