@@ -8,13 +8,13 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
-import uk.ac.ebi.intact.persistence.dao.IntactObjectIterator;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -54,7 +54,6 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     }
 
 
-
     /**
      * Performs a unique query for an array of ACs. Beware that depending on the database used this query has limitation
      * (for instance, in Oracle it is limited to 1000 items)
@@ -81,6 +80,12 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getSession().createCriteria( getEntityClass() ).list();
     }
 
+    public Iterator<T> getAllIterator()
+    {
+        return new IntactObjectIterator( getEntityClass(),
+                DetachedCriteria.forClass( getEntityClass() ));
+    }
+
     public List<T> getAll( int firstResult, int maxResults ) {
         return getSession().createCriteria( getEntityClass() )
                 .setFirstResult( firstResult )
@@ -94,12 +99,20 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
                 .uniqueResult();
     }
 
+    /**
+     * @deprecated use getAllIterator() instead. Method might be removed in version 1.6
+     */
+    @Deprecated
     public Iterator<T> iterator() {
-        return new IntactObjectIterator<T>( getEntityClass() );
+        return getAllIterator();
     }
 
+    /**
+     * @deprecated use getAllIterator() instead. Method might be removed in version 1.6
+     */
+    @Deprecated
     public Iterator<T> iterator( int batchSize ) {
-        return new IntactObjectIterator<T>( getEntityClass(), batchSize );
+        return getAllIterator();
     }
 
     public void update( T objToUpdate ) {

@@ -30,6 +30,8 @@ public interface IntactObjectDao<T extends IntactObject>
 
     List<T> getAll();
 
+    Iterator<T> getAllIterator();
+
     List<T> getAll(int firstResult, int maxResults);
 
     public int countAll();

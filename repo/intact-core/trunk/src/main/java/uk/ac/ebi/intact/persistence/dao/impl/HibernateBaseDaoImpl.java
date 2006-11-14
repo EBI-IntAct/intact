@@ -7,10 +7,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Disjunction;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.criterion.SimpleExpression;
+import org.hibernate.criterion.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -205,6 +202,19 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session>
     public Class<T> getEntityClass()
     {
         return entityClass;
+    }
+
+    public Object executeDetachedCriteria(DetachedCriteria crit)
+    {
+        return crit.getExecutableCriteria(getSession()).list();
+    }
+
+    public Object executeDetachedCriteria(DetachedCriteria crit, int firstResult, int maxResults)
+    {
+        return crit.getExecutableCriteria(getSession())
+                .setFirstResult(firstResult)
+                .setMaxResults(maxResults)
+                .list();
     }
 
     protected void checkReadOnly()
