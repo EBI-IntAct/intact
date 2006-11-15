@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
@@ -222,9 +223,9 @@ public class RangeBean extends AbstractEditKeyBean {
      *
      * @return null if no errors found in validating from/to ranges.
      */
-    public ActionMessages validate(String prefix) {
+    public ActionErrors validate(String prefix) {
         // The errors to return.
-        ActionMessages errors = null;
+        ActionErrors errors = null;
 
         // Stores the range values.
         int[] ranges;
@@ -243,14 +244,14 @@ public class RangeBean extends AbstractEditKeyBean {
 
             // Check the validity of ranges.
             if (fromStart > fromEnd) {
-                errors = new ActionMessages();
+                errors = new ActionErrors();
                 errors.add(prefix + ".fromRange",
                         new ActionMessage("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
             Logger.getLogger(EditorConstants.LOGGER).error("", iae);
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".fromRange",
                     new ActionMessage("error.feature.range.invalid"));
         }
@@ -273,14 +274,14 @@ public class RangeBean extends AbstractEditKeyBean {
 
             // Check the validity of ranges.
             if (toStart > toEnd) {
-                errors = new ActionMessages();
+                errors = new ActionErrors();
                 errors.add(prefix + ".toRange",
                         new ActionMessage("error.feature.range.interval.invalid"));
             }
         }
         catch (IllegalArgumentException iae) {
             Logger.getLogger(EditorConstants.LOGGER).error("", iae);
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".toRange", new ActionMessage("error.feature.range.invalid"));
         }
         // Don't check any further if we have errors.
@@ -290,27 +291,27 @@ public class RangeBean extends AbstractEditKeyBean {
         // Need to validate the from and start ranges. These validations are
         // copied from Range constructor.
         if (fromEnd < fromStart) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".range",
                     new ActionMessage("error.feature.range.fromEnd.less.fromStart"));
         }
         else if (toEnd < toStart) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".range",
                     new ActionMessage("error.feature.range.toEnd.less.toStart"));
         }
         else if (fromEnd > toStart) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".range",
                     new ActionMessage("error.feature.range.fromEnd.more.toStart"));
         }
         else if (fromStart > toEnd) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".range",
                     new ActionMessage("error.feature.range.fromStart.more.toEnd"));
         }
         else if (fromStart > toStart) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add(prefix + ".range",
                     new ActionMessage("error.feature.range.fromStart.more.toStart"));
         }
