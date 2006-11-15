@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.application.editor.event.EventListener;
 import uk.ac.ebi.intact.application.editor.event.LoginEvent;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.exception.AuthenticateException;
 import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.ServletContext;
@@ -70,7 +71,7 @@ public class LoginAction extends AbstractEditorAction {
      */
     public ActionForward execute(ActionMapping mapping, ActionForm form,
                                  HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            throws AuthenticateException {
 
         long timeOnStartLogin = System.currentTimeMillis();
 
