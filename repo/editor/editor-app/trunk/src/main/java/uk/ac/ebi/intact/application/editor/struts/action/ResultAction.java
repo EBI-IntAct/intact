@@ -73,7 +73,7 @@ public class ResultAction extends AbstractEditorAction {
         // of allowing to access pages directly).
         if ((ac == null) || (type == null) || !getService().isValidTopic(type)) {
             LOGGER.error("Invalid values submitted for ac=" + ac + " and type=" + type);
-            ActionMessages errors = new ActionErrors();
+            ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
             errors.add(ActionMessages.GLOBAL_MESSAGE,
                     new ActionMessage("error.invalid.edit.inputs"));
