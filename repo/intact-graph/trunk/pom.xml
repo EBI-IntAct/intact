@@ -24,6 +24,10 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-graph/trunk/</url>
     </scm>
 
+    <properties>
+        <hibernate.scope>test</hibernate.scope>
+    </properties>
+
     <build>
         <resources>
             <resource>
