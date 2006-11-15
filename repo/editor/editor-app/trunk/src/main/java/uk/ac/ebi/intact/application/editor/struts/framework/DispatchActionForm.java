@@ -6,9 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
+import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionErrors;
 import org.apache.struts.action.ActionMapping;
 import org.apache.struts.validator.ValidatorForm;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +29,7 @@ import java.util.Map;
  * @version $Id$
  */
 public class DispatchActionForm extends ValidatorForm {
+    protected static Log log = LogFactory.getLog(DispatchActionForm.class);
 
     /**
      * The prefix for the validator method.

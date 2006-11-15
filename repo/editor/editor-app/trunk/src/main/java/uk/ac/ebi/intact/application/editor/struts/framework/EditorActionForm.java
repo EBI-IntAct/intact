@@ -6,19 +6,20 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.framework;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
-import uk.ac.ebi.intact.application.commons.util.DateToolbox;
+import org.apache.struts.action.ActionErrors;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 
 /**
  * The form to edit cv data. This form also is the super class for other
@@ -243,13 +244,13 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return errors;
     }
 
-    public ActionMessages validateSubmit() {
-        ActionMessages errors = null;
+    public ActionErrors validateSubmit() {
+        ActionErrors errors = null;
         // Look for unsaved annotations.
         for (Iterator iter = myAnnotations.iterator(); iter.hasNext(); ) {
             CommentBean cb = (CommentBean) iter.next();
             if (!cb.getEditState().equals(AbstractEditBean.VIEW)) {
-                errors = new ActionMessages();
+                errors = new ActionErrors();
                 errors.add("annotation.unsaved",
                            new ActionMessage("error.annotation.unsaved"));
                 break;
@@ -262,16 +263,16 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
         return errors;
     }
 
-    public ActionMessages validateSaveAndContinue() {
+    public ActionErrors validateSaveAndContinue() {
         return validateSubmit();
     }
 
-    public ActionMessages validateUnsavedXref() {
-        ActionMessages errors = null;
+    public ActionErrors validateUnsavedXref() {
+        ActionErrors errors = null;
         for (Iterator iter = myXrefs.iterator(); iter.hasNext(); ) {
             XreferenceBean xb = (XreferenceBean) iter.next();
             if (!xb.getEditState().equals(AbstractEditBean.VIEW)) {
-                errors = new ActionMessages();
+                errors = new ActionErrors();
                 errors.add("xref.unsaved",
                            new ActionMessage("error.xref.unsaved"));
                 break;
