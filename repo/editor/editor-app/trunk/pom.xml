@@ -103,6 +103,12 @@
           </dependency>
 
           <dependency>
+              <groupId>struts</groupId>
+              <artifactId>struts</artifactId>
+              <version>1.2.4</version>
+          </dependency>          
+
+          <dependency>
               <groupId>org.hibernate</groupId>
               <artifactId>hibernate</artifactId>
               <version>3.2.0.cr4</version>
@@ -191,6 +197,17 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+        </pluginRepository>
+        <pluginRepository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </pluginRepository>
     </pluginRepositories>
 
