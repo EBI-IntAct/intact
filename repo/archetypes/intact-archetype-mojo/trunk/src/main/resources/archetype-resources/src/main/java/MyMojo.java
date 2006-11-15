@@ -17,6 +17,7 @@ package $package;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 
 import java.io.File;
@@ -24,6 +25,7 @@ import java.io.IOException;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
+ * Change this comments and the goal name accordingly
  *
  * @goal mygoal
  *
@@ -34,6 +36,22 @@ public class MyMojo
 {
 
     /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * An example file
+     *
+     * @parameter default-value="${project.build.directory}/dummy.txt"
+     */
+    private File dummyFile;
+
+    /**
      * Main execution method, which is called after hibernate has been initialized
      */
     public void executeIntactMojo()
@@ -42,5 +60,10 @@ public class MyMojo
         File outputDir = super.getDirectory();
 
         // TODO: put your logic here
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 }
