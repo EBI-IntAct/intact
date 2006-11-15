@@ -7,7 +7,6 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.business.EditorService;

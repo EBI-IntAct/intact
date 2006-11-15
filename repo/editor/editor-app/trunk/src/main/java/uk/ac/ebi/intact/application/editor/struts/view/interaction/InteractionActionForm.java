@@ -7,7 +7,6 @@
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.struts.action.ActionMessage;
-import org.apache.struts.action.ActionMessages;
 import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;

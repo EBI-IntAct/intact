@@ -260,8 +260,8 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
         if (!getLockManager().acquire(ac, owner)) {
             ActionMessages errors = new ActionMessages();
             // The owner of the lock (not the current user).
-            errors.add(ActionErrors.GLOBAL_ERROR,
-                    new ActionError("error.lock", ac, getLockManager().getOwner(ac)));
+            errors.add(ActionMessages.GLOBAL_MESSAGE,
+                    new ActionMessage("error.lock", ac, getLockManager().getOwner(ac)));
             return errors;
         }
         return null;
