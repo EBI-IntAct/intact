@@ -4,7 +4,6 @@
 
 package uk.ac.ebi.intact.dbutil.mine;
 
-import org.hibernate.Session;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
@@ -12,9 +11,20 @@ import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.sql.*;
-import java.util.*;
 import java.io.PrintStream;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * The class <tt>MineDatabaseFill</tt> is a utility class to fill the database table <tt>ia_interactions</tt> which is
@@ -257,18 +267,11 @@ public class MineDatabaseFill {
         String interactionAc, taxID, experimentAc, detectmethodAc, publicmedId;
         InteractorData bait;
         ResultSet taxIDSet;
-        Collection taxIDs = new HashSet();
+        Collection<String> taxIDs = new HashSet<String>();
 
         int j = 0;
         // goes through every interactor which is an interaction
         while ( interactionSet.next() ) {
-            /*
-            if (j <63000)
-            {
-                j++;
-                continue;
-            }
-             */
 
             // the interaction ac is stored
             interactionAc = interactionSet.getString( "interaction_ac" ).toUpperCase();
@@ -375,8 +378,9 @@ public class MineDatabaseFill {
 
         ps.println( "Compute connecting graphs" );
         // compute the different connecting networks for each taxid
-        for ( Iterator iter = taxIDs.iterator(); iter.hasNext(); ) {
-            setGraphIDBio( ps, con, (String) iter.next() );
+        for (String taxID1 : taxIDs)
+        {
+            setGraphIDBio(ps, con, taxID1);
         }
 
         // close database access
@@ -528,6 +532,12 @@ public class MineDatabaseFill {
     private static void setGraphIDBio( PrintStream ps, Connection con, String taxid )
             throws SQLException {
         ps.print( "." );
+
+        if (graphid > 0 && graphid % 70 == 0)
+        {
+            ps.println(" "+graphid);
+        }
+
         graphid++;
         proccessedAcs.clear();
         // query fetches all entries where the graphid is not set yet
