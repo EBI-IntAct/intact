@@ -13,7 +13,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 
 import java.io.*;
 import java.util.Collections;
@@ -206,15 +208,32 @@ public class HibernateConfigCreatorMojo
         try
         {
             Properties props = new Properties();
-            props.setProperty( "resource.loader", "file" );
-            props.setProperty( "file.resource.loader.path", templateFile.getParent() );
+
+            // when executing the test, the template is loaded from a file
+            // however, the classpath will be used when calling the plugin
+            if (isResourceInsideJar(templateFile))
+            {
+                props.setProperty(VelocityEngine.RESOURCE_LOADER, "classpath");
+                props.setProperty("classpath." + VelocityEngine.RESOURCE_LOADER + ".class",
+                      ClasspathResourceLoader.class.getName());
+                templateFilename = "/uk/ac/ebi/intact/plugins/hibernateconfig/hibernateconfig.vm";
+            }
+            else
+            {
+                props.setProperty( VelocityEngine.RESOURCE_LOADER, "file" );
+                props.setProperty( "file."+VelocityEngine.RESOURCE_LOADER+".path",
+                        templateFile.getParent() );
+                templateFilename = "hibernateconfig.vm";
+            }
+
             Velocity.init(props);
+
             template = Velocity.getTemplate(templateFilename);
         }
         catch (Exception e)
         {
             e.printStackTrace();
-            throw new MojoExecutionException("Couldn't get template: " + templateFilename);
+            throw new MojoExecutionException("Couldn't get template: " + templateFile);
         }
 
         try
@@ -263,6 +282,11 @@ public class HibernateConfigCreatorMojo
 
         }
 
+    }
+
+    private boolean isResourceInsideJar(File resourceFile)
+    {
+        return resourceFile.toString().contains(".jar!");
     }
 
     public String getTargetPath()
