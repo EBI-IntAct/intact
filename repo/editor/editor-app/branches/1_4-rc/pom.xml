@@ -95,6 +95,12 @@
         </dependency>
 
           <dependency>
+            <groupId>struts</groupId>
+            <artifactId>struts</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+
+        <dependency>
               <groupId>antlr</groupId>
               <artifactId>antlr</artifactId>
               <version>2.7.5</version>
@@ -105,7 +111,6 @@
               <artifactId>hibernate</artifactId>
               <version>3.2.0.cr4</version>
           </dependency>
-
 
           <dependency>
             <groupId>commons-httpclient</groupId>
