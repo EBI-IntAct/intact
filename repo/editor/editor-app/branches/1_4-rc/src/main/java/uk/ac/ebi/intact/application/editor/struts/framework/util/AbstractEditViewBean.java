@@ -334,11 +334,11 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public final T getAnnotatedObject() {
-        if(myAnnotObject != null && myAnnotObject.getAc() != null){
-            log.debug("myAnnotObject not null and got an ac");
+        if(myAnnotObject != null
+                && myAnnotObject.getAc() != null
+                && (! "".equals(myAnnotObject.getAc()) )){
+            log.debug("myAnnotObject not null and got an ac" + myAnnotObject.getAc());
             String ac = myAnnotObject.getAc();
-//                AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory().getAnnotatedObjectDao();
-//                myAnnotObject = (T) annotatedObjectDao.getByAc(ac);
                 if(myAnnotObject instanceof Experiment){
                     log.debug("myAnnotObject is instanceof Experiment");
                     ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
@@ -362,8 +362,9 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
                 }//myAnnotObject = annotatedObjectDao.getByAc(myAnnotObject.getAc());
             log.debug("myAnnotObject is instanceof " + myAnnotObject.getClass().getName());
 
+        }else{
+            log.debug("my annot object is null or has no ac");
         }
-        log.debug("my annot object is null or has no ac");
         return myAnnotObject;
     }
 
