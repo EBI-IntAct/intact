@@ -1,0 +1,37 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>hibernateconfig-maven-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/hibernate/config</targetPath>
+                    <filename>hibernate.cfg.xml</filename>
+                    <showSql>false</showSql>
+                    <formatSql>true</formatSql>
+                    <hbm2ddlAuto>none</hbm2ddlAuto>
+                    <scope>test</scope>
+
+                    <sessionFactoryName>FACTORY_NAME</sessionFactoryName>
+
+                    <hibernateEvents>
+                        <hibernateEvent>
+                            <type>pre-insert</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+
+                        <hibernateEvent>
+                            <type>pre-update</type>
+                            <className>uk.ac.ebi.intact.model.IntactObjectEventListener</className>
+                        </hibernateEvent>
+                    </hibernateEvents>
+
+                    <driver>uk.ac.ebi.MyDriver</driver>
+                    <dialect>uk.ac.ebi.MyDialect</dialect>
+                    <url>jdbc:mydatabase</url>
+                    <user>sa</user>
+                    <password>secret</password>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>

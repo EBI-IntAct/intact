@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.hibernate;
+package uk.ac.ebi.intact.plugins.hibernateconfig;
 
 
 /**
