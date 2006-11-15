@@ -217,28 +217,28 @@ public class EditorActionForm extends DispatchActionForm implements EditorFormI 
 
     // Validate methods
 
-    public ActionMessages validateAddAnnotation() {
-        ActionMessages errors = null;
+    public ActionErrors validateAddAnnotation() {
+        ActionErrors errors = null;
         // The bean to extract the values.
         if (getNewAnnotation().getTopic().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
             // Set the anchor for the page to scroll.
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add("annotation", new ActionMessage("error.annotation.topic"));
         }
         return errors;
     }
 
-    public ActionMessages validateAddCrossreference() {
-        ActionMessages errors = null;
+    public ActionErrors validateAddCrossreference() {
+        ActionErrors errors = null;
         // The bean to extract the values.
         XreferenceBean xb = getNewXref();
         if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add("xref.db", new ActionMessage("error.xref.database"));
         }
         // Primary id is required.
         if (errors == null && AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add("xref.pid", new ActionMessage("error.xref.pid"));
         }
         return errors;
