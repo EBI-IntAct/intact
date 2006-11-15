@@ -14,8 +14,10 @@ import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
+import org.apache.velocity.runtime.resource.loader.JarResourceLoader;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
+import org.codehaus.plexus.util.FileUtils;
 
 import java.io.*;
 import java.util.Collections;
@@ -201,34 +203,29 @@ public class HibernateConfigCreatorMojo
 
         File outputFile = new File(tempDir, filename);
 
-        String templateFilename = "hibernateconfig.vm";
-        File templateFile = new File(getClass().getResource(templateFilename).getFile());
+        // create a temporary copy of the template, so we avoid classpath issues later
+        File templateFile = null;
+        try
+        {
+            templateFile = createTempFileFromTemplate();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            throw new MojoExecutionException("Problem creating temporary copy of the template", e);
+        }
 
         Template template = null;
         try
         {
             Properties props = new Properties();
-
-            // when executing the test, the template is loaded from a file
-            // however, the classpath will be used when calling the plugin
-            if (isResourceInsideJar(templateFile))
-            {
-                props.setProperty(VelocityEngine.RESOURCE_LOADER, "classpath");
-                props.setProperty("classpath." + VelocityEngine.RESOURCE_LOADER + ".class",
-                      ClasspathResourceLoader.class.getName());
-                templateFilename = "/uk/ac/ebi/intact/plugins/hibernateconfig/hibernateconfig.vm";
-            }
-            else
-            {
-                props.setProperty( VelocityEngine.RESOURCE_LOADER, "file" );
-                props.setProperty( "file."+VelocityEngine.RESOURCE_LOADER+".path",
+            props.setProperty( VelocityEngine.RESOURCE_LOADER, "file" );
+            props.setProperty( "file."+VelocityEngine.RESOURCE_LOADER+".path",
                         templateFile.getParent() );
-                templateFilename = "hibernateconfig.vm";
-            }
 
             Velocity.init(props);
 
-            template = Velocity.getTemplate(templateFilename);
+            template = Velocity.getTemplate(templateFile.getName());
         }
         catch (Exception e)
         {
@@ -236,6 +233,7 @@ public class HibernateConfigCreatorMojo
             throw new MojoExecutionException("Couldn't get template: " + templateFile);
         }
 
+        // write the resulting file with velocity
         try
         {
             Writer writer = new FileWriter(outputFile);
@@ -284,9 +282,36 @@ public class HibernateConfigCreatorMojo
 
     }
 
-    private boolean isResourceInsideJar(File resourceFile)
+    private File createTempFileFromTemplate() throws IOException
     {
-        return resourceFile.toString().contains(".jar!");
+        String templateFilename = "hibernateconfig.vm";
+        File temporaryFile = File.createTempFile("hibernateconfig",".vm");
+        temporaryFile.deleteOnExit();
+
+        FileWriter writer = null;
+
+        try
+        {
+            InputStream is = getClass().getResourceAsStream(templateFilename);
+            writer = new FileWriter(temporaryFile);
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            String line;
+            while ((line = reader.readLine()) != null)
+            {
+                writer.write(line+"\n");
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        finally
+        {
+            writer.close();
+        }
+
+        return temporaryFile;
     }
 
     public String getTargetPath()
