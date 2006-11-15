@@ -27,7 +27,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * TODO comment this!
@@ -183,6 +185,21 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         StringWriter writer = new StringWriter();
         PrintWriter pWriter = new PrintWriter(writer);
         config.getProperties().list(pWriter);
+
+        Properties props = config.getProperties();
+
+        Enumeration e = props.propertyNames();
+
+        while (e.hasMoreElements())
+        {
+            String name = (String)e.nextElement();
+
+            if (name.startsWith("hibernate."))
+            {
+                pWriter.println(name+"="+props.getProperty(name));
+            }
+        }
+
         pWriter.close();
         writer.close();
         return writer.toString();
