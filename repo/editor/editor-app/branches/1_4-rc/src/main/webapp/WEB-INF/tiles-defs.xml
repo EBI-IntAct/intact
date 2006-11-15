@@ -17,7 +17,7 @@
     <!-- Menu links for the search page. -->
     <definition name="search.menu.links" path="/layouts/menu.jsp">
         <putList name="items">
-            <item value="Logout" link="/editor/do/logout"/>
+            <item value="Logout" link="logout"/>
             <item value="Show Users" link="javascript:showUsers();"/>
         </putList>
     </definition>
