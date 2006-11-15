@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.application.editor.struts.view.interaction.ExperimentRow
 import uk.ac.ebi.intact.application.editor.struts.view.wrappers.ResultRowData;
 import uk.ac.ebi.intact.application.editor.util.LockManager;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
+import uk.ac.ebi.intact.application.editor.exception.AuthenticateException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
@@ -260,16 +261,19 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @exception IntactException
      * due to an invalid user.
      */
-    public EditUser(String user, String password) throws IntactException {
+    public EditUser(String user, String password) throws AuthenticateException {
         myUserName = user;
         myPassword = password;
 //        try {
         try {
             myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            log.debug("Couldn't get the database name, must be an error of login");
+            throw new AuthenticateException("Wrong login or password.");
+
         }
         log.debug("Database name is " + myDatabaseName);
+
         // Initialize the object.
 //        initialize();
     }
