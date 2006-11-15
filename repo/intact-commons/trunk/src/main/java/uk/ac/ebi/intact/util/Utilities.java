@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -174,11 +176,22 @@ public class Utilities {
     /**
      * Uncompresses zipped files
      * @param zippedFile The file to uncompress
+     */
+    public static List<File> unzip(File zippedFile) throws IOException
+    {
+        return unzip(zippedFile, null);
+    }
+
+    /**
+     * Uncompresses zipped files
+     * @param zippedFile The file to uncompress
      * @param destinationDir Where to put the files
      */
-    public static void unzip(File zippedFile, File destinationDir) throws IOException
+    public static List<File> unzip(File zippedFile, File destinationDir) throws IOException
     {
         int buffer = 2048;
+
+        List<File> unzippedFiles = new ArrayList<File>();
 
         BufferedOutputStream dest = null;
         BufferedInputStream is = null;
@@ -193,8 +206,19 @@ public class Utilities {
                     (zipfile.getInputStream(entry));
             int count;
             byte data[] = new byte[buffer];
-            FileOutputStream fos = new
-                    FileOutputStream(new File(destinationDir, entry.getName()));
+
+            File destFile;
+
+            if (destinationDir != null)
+            {
+                destFile = new File(destinationDir, entry.getName());
+            }
+            else
+            {
+                destFile = new File(entry.getName());
+            }
+
+            FileOutputStream fos = new FileOutputStream(destFile);
             dest = new
                     BufferedOutputStream(fos, buffer);
             while ((count = is.read(data, 0, buffer))
@@ -205,7 +229,11 @@ public class Utilities {
             dest.flush();
             dest.close();
             is.close();
+
+            unzippedFiles.add(destFile);
         }
+
+        return unzippedFiles;
     }
 
 
