@@ -184,7 +184,6 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     {
         StringWriter writer = new StringWriter();
         PrintWriter pWriter = new PrintWriter(writer);
-        config.getProperties().list(pWriter);
 
         Properties props = config.getProperties();
 
