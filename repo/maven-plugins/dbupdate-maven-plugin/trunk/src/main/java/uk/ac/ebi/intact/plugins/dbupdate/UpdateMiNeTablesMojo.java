@@ -7,15 +7,15 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
-import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFill;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFillReport;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.MojoUtils;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.sql.SQLException;
 
 /**
@@ -27,7 +27,7 @@ import java.sql.SQLException;
 public class UpdateMiNeTablesMojo extends IntactHibernateMojo {
 
     /**
-     * @parameter default-value="${project.build.directory}/MiNe-ecluded-interactors.txt"
+     * @parameter default-value="${project.build.directory}/MiNe-excluded-interactors.txt"
      * @required
      */
     private File nullTaxIdFile;
@@ -52,7 +52,7 @@ public class UpdateMiNeTablesMojo extends IntactHibernateMojo {
         MojoUtils.writeStandardHeaderToFile("Null taxID interactors", "Interactors with null taxID",
                 getProject(), nullTaxIdFile);
 
-        FileWriter writer = new FileWriter(nullTaxIdFile);
+        FileWriter writer = new FileWriter(nullTaxIdFile, true);
         for (String interactorAc : report.getNullTaxidInteractors())
         {
             writer.write(interactorAc+NEW_LINE);
