@@ -64,21 +64,28 @@
             <version>1.4.5-3</version>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-ejb3-client</artifactId>
             <version>3.0-rc9</version>
         </dependency>
-
+         -->
         <dependency>
-            <groupId>javax.xml</groupId>
+            <groupId>javax.xml.ws</groupId>
             <artifactId>jaxws-api</artifactId>
-            <version>2.0EA3</version>
+            <version>2.1</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.xml</groupId>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.1-EA1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
-            <version>2.0EA3</version>
+            <version>2.1EA1</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.jws</groupId>
@@ -87,12 +94,25 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+            <version>2.1EA1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.jws</groupId>
+                    <artifactId>jsr181-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--
+        <dependency>
             <groupId>sun.jdk</groupId>
             <artifactId>tools</artifactId>
             <version>1.5.0</version>
             <scope>system</scope>
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
+        -->
         <dependency>
             <groupId>xfire</groupId>
             <artifactId>xfire-jsr181-api</artifactId>
@@ -151,6 +171,12 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+
+        <repository>
+            <id>java.net</id>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <layout>legacy</layout>
         </repository>
     </repositories>
 
