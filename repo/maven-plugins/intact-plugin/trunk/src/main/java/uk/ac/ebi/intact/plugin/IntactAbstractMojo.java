@@ -24,15 +24,14 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
-    private static final String PLUGIN_INFO_FILE = "plugin-info.properties";
-
     /**
      * Project instance
      *
-     * @parameter default-value="${project}"
+     * @parameter expression="${project}"
+     * @required
      * @readonly
-     */
-    private MavenProject project;
+     *
+    protected MavenProject project;
 
     /**
      * This is where build results go.
@@ -68,7 +67,7 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
      * @parameter  expression="${intact.outputFile}
                    default-value="${project.build.directory}/output.log"
      * @required
-     */
+     **/
     private File outputFile;
 
     /**
@@ -130,16 +129,7 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         return errorWriter;
     }
 
-
-    public MavenProject getProject()
-    {
-        return project;
-    }
-
-    public void setProject(MavenProject project)
-    {
-        this.project = project;
-    }
+    public abstract MavenProject getProject();
 
     public File getOutputFile()
     {
