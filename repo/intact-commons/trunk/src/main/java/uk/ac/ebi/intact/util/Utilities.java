@@ -5,13 +5,18 @@
  */
 package uk.ac.ebi.intact.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -29,21 +34,22 @@ public class Utilities {
     }
 
     /** Initialise parameters from the properties file.
-	@param aParameterName The file name of the properties file
-	from which to read.
+     @param aParameterName The file name of the properties file
+     from which to read.
 
-	This parameter must be given on the command line as
-	for example -Dconfig=pathname
+     This parameter must be given on the command line as
+     for example -Dconfig=pathname
      */
-    public static Properties getProperties(String aParameterName) throws IOException{
+    public static Properties getProperties(String aParameterName) throws IOException
+    {
 
-	// get properties
-	Properties properties = new Properties();
-	FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
-	properties.load(in);
-	in.close();
+        // get properties
+        Properties properties = new Properties();
+        FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
+        properties.load(in);
+        in.close();
 
-	return properties;
+        return properties;
     }
 
     /** compares two objects.
@@ -140,6 +146,69 @@ public class Utilities {
             }
         }
     }
+
+    /**
+     * Uncompress gzipped files
+     * @param gzippedFile The file to uncompress
+     * @param destinationFile The resulting file
+     */
+    public static void gunzip(File gzippedFile, File destinationFile) throws IOException
+    {
+        int buffer = 2048;
+
+        FileInputStream in = new FileInputStream(gzippedFile);
+        GZIPInputStream zipin = new GZIPInputStream(in);
+
+        byte[] data = new byte[buffer];
+
+        // decompress the file
+        FileOutputStream out = new FileOutputStream(destinationFile);
+        int length;
+        while ((length = zipin.read(data, 0, buffer)) != -1)
+            out.write(data, 0, length);
+        out.close();
+
+        zipin.close();
+    }
+
+    /**
+     * Uncompresses zipped files
+     * @param zippedFile The file to uncompress
+     * @param destinationDir Where to put the files
+     */
+    public static void unzip(File zippedFile, File destinationDir) throws IOException
+    {
+        int buffer = 2048;
+
+        BufferedOutputStream dest = null;
+        BufferedInputStream is = null;
+        ZipEntry entry;
+        ZipFile zipfile = new ZipFile(zippedFile);
+        Enumeration e = zipfile.entries();
+        while (e.hasMoreElements())
+        {
+            entry = (ZipEntry) e.nextElement();
+
+            is = new BufferedInputStream
+                    (zipfile.getInputStream(entry));
+            int count;
+            byte data[] = new byte[buffer];
+            FileOutputStream fos = new
+                    FileOutputStream(new File(destinationDir, entry.getName()));
+            dest = new
+                    BufferedOutputStream(fos, buffer);
+            while ((count = is.read(data, 0, buffer))
+                    != -1)
+            {
+                dest.write(data, 0, count);
+            }
+            dest.flush();
+            dest.close();
+            is.close();
+        }
+    }
+
+
 }
 
 
