@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.apache.struts.action.ActionErrors;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 
@@ -16,7 +17,7 @@ import java.util.List;
 
 /**
  * The Interaction form.
- * 
+ *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  *
@@ -206,7 +207,7 @@ public class InteractionActionForm extends EditorActionForm {
 
     // There is no need for a method to set protein dispatch because it
     // is already done via protCmd method.
-    
+
     public void setDispatchFeature(String dispatch) {
         // Only set it if not error (defualt)
         if (!dispatch.equals("error")) {
@@ -216,12 +217,12 @@ public class InteractionActionForm extends EditorActionForm {
 
     /**
      * Validates the form for when Link Selected Features button was selected.
-     * 
+     *
      * @return errors if two features not selected (exactly). A null is returned
      * if there no errors.
      */
-    public ActionMessages validateLinkFeatures() {
-        ActionMessages errors = null;
+    public ActionErrors validateLinkFeatures() {
+        ActionErrors errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
                 && count <= 2;) {
@@ -235,7 +236,7 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
         if (count != 2) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add("feature.link", new ActionMessage("error.int.feature.link"));
         }
         return errors;
@@ -247,8 +248,8 @@ public class InteractionActionForm extends EditorActionForm {
      * @return errors if a single feature wasn't selected. A null is returned
      * if there no errors.
      */
-    public ActionMessages validateUnlinkFeatures() {
-        ActionMessages errors = null;
+    public ActionErrors validateUnlinkFeatures() {
+        ActionErrors errors = null;
         int count = 0;
         for (Iterator iter0 = getComponents().iterator(); iter0.hasNext()
                 && count <= 1;) {
@@ -262,7 +263,7 @@ public class InteractionActionForm extends EditorActionForm {
             }
         }
         if (count != 1) {
-            errors = new ActionMessages();
+            errors = new ActionErrors();
             errors.add("feature.link", new ActionMessage("error.int.feature.unlink"));
         }
         return errors;

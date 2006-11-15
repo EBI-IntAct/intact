@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -35,7 +37,7 @@ import java.util.*;
  * @version $Id$
  */
 public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
-
+    protected static Log log = LogFactory.getLog(InteractionViewBean.class);
     /**
      * The KD.
      */
@@ -149,7 +151,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         // Clear existing exps and comps.
         myExperiments.clear();
         myComponents.clear();
-        
+
         // Reset the interaction view.
         resetInteraction(interaction);
 
@@ -513,7 +515,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
      * post: myComponents = myComponents@pre - 1
      * </pre>
      */
-    
+
    public void delPolymer(int pos) {
         // The component bean at position 'pos'.
         ComponentBean cb =  myComponents.get(pos);
@@ -552,7 +554,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
     /**
      * Removes all the unsaved proteins for the current protein collection. A
-     * protein bean whose state equivalent to {@link ComponentBean.SAVE_NEW} is
+     * protein bean whose state equivalent to ComponentBean.SAVE_NEW is
      * considered as unsaved.
      */
     public void removeUnsavedProteins() {
@@ -1058,7 +1060,10 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
     private void persistCurrentView() throws IntactException {
         // The current Interaction.
-        Interaction intact = (Interaction) getAnnotatedObject();
+        Interaction intact = getAnnotatedObject();
+        if(intact != null && intact.getAc() != null && (!"".equals(intact.getAc())) ){
+            intact = DaoProvider.getDaoFactory().getInteractionDao().getByAc(intact.getAc());
+        }
 
         // Add experiments here. Make sure this is done after persisting the
         // Interaction first. - IMPORTANT. don't change the order.
@@ -1067,7 +1072,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             Experiment exp = row.getExperiment();
             if (exp == null) {
                 ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
-                exp = (Experiment) experimentDao.getByAc(row.getAc());
+                exp = experimentDao.getByAc(row.getAc());
             }
             intact.addExperiment(exp);
         }
@@ -1115,8 +1120,16 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             for (FeatureBean fb : (Iterable<FeatureBean>) cb.getFeaturesToDelete())
             {
                 Feature featureToDel = fb.getUpdatedFeature();
+                if(featureToDel != null && featureToDel.getAc() != null){
+                    featureToDel = featureDao.getByAc(featureToDel.getAc());
+                }
+
                 // Remove from the component and delete the feature
+                log.debug("Remove feature from component");
                 comp.removeBindingDomain(featureToDel);
+                log.debug("Save or update comp");
+                componentDao.saveOrUpdate(comp);
+                log.debug("Delete feature");
                 featureDao.delete(featureToDel);
 
                 // No further action if this feature is not linked.
