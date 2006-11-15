@@ -554,7 +554,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
     /**
      * Removes all the unsaved proteins for the current protein collection. A
-     * protein bean whose state equivalent to {@link ComponentBean.SAVE_NEW} is
+     * protein bean whose state equivalent to ComponentBean.SAVE_NEW is
      * considered as unsaved.
      */
     public void removeUnsavedProteins() {
@@ -1060,7 +1060,10 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
     private void persistCurrentView() throws IntactException {
         // The current Interaction.
-        Interaction intact = (Interaction) getAnnotatedObject();
+        Interaction intact = getAnnotatedObject();
+        if(intact != null && intact.getAc() != null && (!"".equals(intact.getAc())) ){
+            intact = DaoProvider.getDaoFactory().getInteractionDao().getByAc(intact.getAc());
+        }
 
         // Add experiments here. Make sure this is done after persisting the
         // Interaction first. - IMPORTANT. don't change the order.
@@ -1069,7 +1072,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             Experiment exp = row.getExperiment();
             if (exp == null) {
                 ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
-                exp = (Experiment) experimentDao.getByAc(row.getAc());
+                exp = experimentDao.getByAc(row.getAc());
             }
             intact.addExperiment(exp);
         }
