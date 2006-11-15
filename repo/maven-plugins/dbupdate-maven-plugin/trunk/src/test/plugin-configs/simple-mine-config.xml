@@ -7,7 +7,7 @@
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/MiNe.log</outputFile>
 
-                    <nullTaxIdFile>target/MiNe-ecluded-interactors.txt</nullTaxIdFile>
+                    <nullTaxIdFile>target/MiNe-excluded-interactors.txt</nullTaxIdFile>
                 </configuration>
             </plugin>
         </plugins>
