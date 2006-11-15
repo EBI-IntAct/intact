@@ -24,6 +24,9 @@ import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -39,6 +42,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     private static final Log log = LogFactory.getLog(AbstractHibernateDataConfig.class);
 
     private static final String INTERCEPTOR_CLASS = "hibernate.util.interceptor_class";
+    private static final String NOT_DEFINED_JDBC_DRIVER = "NOT_DEFINED";
 
     private Configuration configuration;
 
@@ -126,7 +130,9 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             setInterceptor(configuration, null);
 
             log.debug("Session is webapp: "+getSession().isWebapp()+" / SessionFactory name: "+configuration.getProperty(Environment.SESSION_FACTORY_NAME));
-            
+
+            checkConfiguration(configuration);
+
             if (getSession().isWebapp() && configuration.getProperty(Environment.SESSION_FACTORY_NAME) != null)
             {
                 // Let Hibernate bind the factory to JNDI
@@ -150,6 +156,36 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         }
 
         setInitialized(true);
+    }
+
+    private void checkConfiguration(Configuration config) throws ConfigurationException
+    {
+        String hibernateFile = (getConfigFile() != null)? getConfigFile().toString() : "default in classpath";
+
+        String driver = config.getProperty(Environment.DRIVER);
+
+        if (driver.equals(NOT_DEFINED_JDBC_DRIVER))
+        {
+            try
+            {
+                throw new ConfigurationException("Not defined JDBC driver in the hibernate.cfg.xml ("+hibernateFile+") file.\n"
+                        +configPropertiesDump(config));
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String configPropertiesDump(Configuration config) throws IOException
+    {
+        StringWriter writer = new StringWriter();
+        PrintWriter pWriter = new PrintWriter(writer);
+        config.getProperties().list(pWriter);
+        pWriter.close();
+        writer.close();
+        return writer.toString();
     }
 
     @Override
