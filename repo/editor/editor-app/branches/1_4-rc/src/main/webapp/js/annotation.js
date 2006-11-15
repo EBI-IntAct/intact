@@ -11,7 +11,7 @@ function validateComment(element, evt) {
     // Allow backspace or else a user can't delete his/own text!!
     var desc = element.value;//document.forms[0].elements['newAnnotation.description'].value;
     var keyCode = evt.which ? evt.which : evt.keyCode;
-    if( keyCode != 08 ){
+    if( keyCode != 8 ){
         if (desc.charAt(desc.length - 1) == ' ' && desc.charAt(desc.length - 2) == ' ') {
             //keyCode == 32) {
             window.alert("Multiple spaces are not allowed");
