@@ -96,8 +96,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                 // Log the stack trace.
                 LOGGER.error("Problem in persisting mutations : ",ie);
                 // Error with updating.
-                ActionErrors errors = new ActionErrors();
-                errors.add(ActionErrors.GLOBAL_ERROR, new ActionError("error.update",
+                ActionMessages errors = new ActionMessages();
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.update",
                         ie.getRootCause().getMessage()));
                 saveErrors(request, errors);
                 forward = mapping.findForward(FAILURE);
