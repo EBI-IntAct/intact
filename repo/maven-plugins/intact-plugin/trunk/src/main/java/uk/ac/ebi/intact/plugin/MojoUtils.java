@@ -16,13 +16,12 @@
 package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -113,29 +112,23 @@ public class MojoUtils
 
     /**
      * Creates a temporary file from a resource. This is useful to avoid classloading issues
-     * @param resourceStream The stream to write in a file
+     * @param resourceUrl The stream to write in a file
      * @param prefix prefix of the temporary file created
      * @param suffix suffix of the temporary file created
      * @return the temporary file, with the content written
      * @throws java.io.IOException if there are problems writting the file
      */
-    public static File createTempFileFromResource(InputStream resourceStream, String prefix, String suffix) throws IOException
+    public static File createTempFileFromResource(URL resourceUrl, String prefix, String suffix) throws IOException
     {
         File temporaryFile = File.createTempFile(prefix,suffix);
-        temporaryFile.deleteOnExit();
+        //temporaryFile.deleteOnExit();
 
         FileWriter writer = null;
 
         try
         {
             writer = new FileWriter(temporaryFile);
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(resourceStream));
-            String line;
-            while ((line = reader.readLine()) != null)
-            {
-                writer.write(line+"\n");
-            }
+            IOUtil.copy(resourceUrl.openStream(), writer, "utf-8", 2048);
         }
         catch (IOException e)
         {
