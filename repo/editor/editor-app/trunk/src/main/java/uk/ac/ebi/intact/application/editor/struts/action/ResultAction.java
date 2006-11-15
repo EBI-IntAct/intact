@@ -76,8 +76,8 @@ public class ResultAction extends AbstractEditorAction {
             ActionErrors errors = new ActionErrors();
             // The owner of the lock (not the current user).
             errors.add(ActionMessages.GLOBAL_MESSAGE,
-                    new ActionError("error.invalid.edit.inputs"));
-            saveErrors(request, errors);
+                    new ActionMessage("error.invalid.edit.inputs"));
+            saveMessages(request, errors);
             return mapping.findForward(FAILURE);
         }
 
