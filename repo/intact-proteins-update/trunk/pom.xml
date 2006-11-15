@@ -24,6 +24,10 @@
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-proteins-update/trunk/</url>
     </scm>
 
+    <properties>
+        <hibernate.scope>test</hibernate.scope>
+    </properties>
+
     <build>
         <resources>
             <resource>
