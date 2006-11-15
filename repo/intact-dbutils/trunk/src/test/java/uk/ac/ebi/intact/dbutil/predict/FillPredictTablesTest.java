@@ -3,8 +3,7 @@ package uk.ac.ebi.intact.dbutil.predict;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import java.sql.SQLException;
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * FillPredictTables Tester.
@@ -20,10 +19,12 @@ public class FillPredictTablesTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public static Test suite() {
@@ -33,7 +34,7 @@ public class FillPredictTablesTest extends TestCase {
     ////////////////////
     // Tests
 
-    public void testMain() throws SQLException {
+    public void testMain() throws Exception {
 
         FillPredictTables.main( new String[]{} );
     }
