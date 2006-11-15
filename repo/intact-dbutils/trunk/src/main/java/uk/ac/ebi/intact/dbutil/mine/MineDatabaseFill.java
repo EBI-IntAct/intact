@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.*;
 import java.util.*;
+import java.io.PrintStream;
 
 /**
  * The class <tt>MineDatabaseFill</tt> is a utility class to fill the database table <tt>ia_interactions</tt> which is
@@ -202,16 +203,18 @@ public class MineDatabaseFill {
      * @throws SQLException    when something failed with the database connection
      * @throws IntactException if the initiation of the intact helper failed
      */
-    public static void buildDatabase() throws SQLException, IntactException {
+    public static MineDatabaseFillReport buildDatabase(PrintStream ps) throws SQLException, IntactException {
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         BaseDao dao = daoFactory.getBaseDao();
 
         // Displays the user and instance against which we are working.
-        System.out.println( "Database: " + dao.getDbName() );
-        System.out.println( "User: " + dao.getDbUserName() );
+        ps.println( "Database: " + dao.getDbName() );
+        ps.println( "User: " + dao.getDbUserName() );
 
-        Connection con = ( (Session) dao.getSession() ).connection();
+        MineDatabaseFillReport report = new MineDatabaseFillReport();
+
+        Connection con = daoFactory.connection();
         Statement stm = con.createStatement();
 
         // get the EBI - ID for a bait
@@ -219,20 +222,20 @@ public class MineDatabaseFill {
         if ( set.next() ) {
             bait_id = set.getString( 1 );
         } else {
-            System.err.println( "no identifier for a bait could be found in the database !" );
             set.close();
             stm.close();
             con.close();
-            System.exit( 0 );
+            throw new IntactException("no identifier for a bait could be found in the database !");
         }
         set.close();
+        
         // the existing data is truncated
         stm.executeUpdate( "DELETE FROM " + INTERACTION_TABLE );
 
         // the inserSTM is a statement to insert the MINE relevant data
         PreparedStatement insertDataStatement = con
                 .prepareStatement( INSERT_QUERY );
-        System.out.println( "insert interaction data" );
+        ps.println( "insert interaction data" );
 
         // all interactions are fetched from the interactor table
         ResultSet interactionSet = stm.executeQuery( SELECT_INTERACTIONS );
@@ -259,15 +262,28 @@ public class MineDatabaseFill {
         int j = 0;
         // goes through every interactor which is an interaction
         while ( interactionSet.next() ) {
+            /*
+            if (j <63000)
+            {
+                j++;
+                continue;
+            }
+             */
+
             // the interaction ac is stored
             interactionAc = interactionSet.getString( "interaction_ac" ).toUpperCase();
             experimentAc = interactionSet.getString( "experiment_ac" ).toUpperCase();
             detectmethodAc = interactionSet.getString( "detectmethod_ac" ).toUpperCase();
             publicmedId = interactionSet.getString( "pubmed_id" ).toUpperCase();
-            if ( j++ % 100 == 0 ) {
-                System.out.print( "." );
-                System.out.flush();
+            if ( j > 0 && j % 100 == 0 ) {
+                ps.print( "." );
             }
+            if ( j > 0 && j % 7000 == 0)
+                {
+                    ps.println(" "+j);
+            }
+            j++;
+
             // the lists with the nteractors are cleared to reuse them for the
             // next interaction
             baits.clear();
@@ -303,12 +319,21 @@ public class MineDatabaseFill {
 
             // the taxid for the bait is determined
             taxidSelect.setString( 1, bait.ac );
+
             taxIDSet = taxidSelect.executeQuery();
-            taxIDSet.next();
-            taxID = taxIDSet.getString( "taxid" ).toUpperCase();
-            // the taxid is added without testing wether the id already exists
-            // because a hashSet is used !
-            taxIDs.add( taxID );
+            if (taxIDSet.next())
+            {
+                taxID = taxIDSet.getString( "taxid" ).toUpperCase();
+                // the taxid is added without testing wether the id already exists
+                // because a hashSet is used !
+                taxIDs.add( taxID );
+            }
+            else
+            {
+                report.addNullTaxidInteraction(bait.ac);
+                taxID = null;
+            }
+
             taxIDSet.close();
 
             insertDataStatement.setString( 1, bait.ac );
@@ -342,22 +367,24 @@ public class MineDatabaseFill {
         insertDataStatement.close();
         interactorSelect.close();
         stm.close();
-        System.out.println();
+        ps.println();
 
         // delete all interactions which are in any part part of a negative
         // annotation/experiment
-        deleteInteractions( con );
+        deleteInteractions( ps, con );
 
-        System.out.println( "Compute connecting graphs" );
+        ps.println( "Compute connecting graphs" );
         // compute the different connecting networks for each taxid
         for ( Iterator iter = taxIDs.iterator(); iter.hasNext(); ) {
-            setGraphIDBio( con, (String) iter.next() );
+            setGraphIDBio( ps, con, (String) iter.next() );
         }
 
         // close database access
         con.close();
 
-        System.out.println();
+        ps.println();
+
+        return report;
     }
 
     /**
@@ -368,27 +395,32 @@ public class MineDatabaseFill {
      *
      * @throws SQLException if something failed on database level
      */
-    private static void deleteInteractions( Connection con ) throws SQLException {
+    private static void deleteInteractions( PrintStream ps, Connection con ) throws SQLException {
         PreparedStatement deleteStm = con.prepareStatement( DELETE_FROM_TABLE );
         Statement stm = con.createStatement();
         // delete all interactions which are annotated negativ
-        System.out
+        ps
                 .println( "Delete all interactions which have negative information" );
         ResultSet set = stm.executeQuery( DELETE_NEGATIV_ANNOTATION );
         int j = 0;
         while ( set.next() ) {
             deleteStm.setString( 1, set.getString( 1 ) );
             deleteStm.executeUpdate();
-            if ( j++ % 100 == 0 ) {
-                System.out.print( "." );
-                System.out.flush();
+            if ( j > 0 && j % 100 == 0 ) {
+                ps.print( "." );
+
             }
+            if ( j > 0 && j % 7000 == 0)
+            {
+                ps.println(" "+j);
+            }
+            j++;
         }
         set.close();
-        System.out.println();
+        ps.println();
 
         // delete all interactions which are part of a negative experiment
-        System.out
+        ps
                 .println( "Delete all interactions which are part of a negative experiment" );
 
         set = stm.executeQuery( DELETE_NEGATIV_EXPERIMENTS );
@@ -396,15 +428,19 @@ public class MineDatabaseFill {
         while ( set.next() ) {
             deleteStm.setString( 1, set.getString( 1 ) );
             deleteStm.executeUpdate();
-            if ( j++ % 100 == 0 ) {
-                System.out.print( "." );
-                System.out.flush();
+            if ( j > 0 && j % 100 == 0 ) {
+                ps.print( "." );
             }
+            if ( j> 0 && j % 7000 == 0)
+            {
+                ps.println(" "+j);
+            }
+            j++;
         }
         set.close();
         deleteStm.close();
         stm.close();
-        System.out.println();
+        ps.println();
     }
 
 
@@ -489,9 +525,9 @@ public class MineDatabaseFill {
      *
      * @throws SQLException whether something failed with the db connection
      */
-    private static void setGraphIDBio( Connection con, String taxid )
+    private static void setGraphIDBio( PrintStream ps, Connection con, String taxid )
             throws SQLException {
-        System.out.print( "." );
+        ps.print( "." );
         graphid++;
         proccessedAcs.clear();
         // query fetches all entries where the graphid is not set yet
@@ -558,7 +594,7 @@ public class MineDatabaseFill {
         selectProt.close();
         updatePST.close();
         stm.close();
-        setGraphIDBio( con, taxid );
+        setGraphIDBio( ps, con, taxid );
     }
 
     /**
@@ -569,6 +605,6 @@ public class MineDatabaseFill {
      * @throws SQLException
      */
     public static void main( String[] args ) throws SQLException {
-        buildDatabase();
+        buildDatabase(System.out);
     }
 }
