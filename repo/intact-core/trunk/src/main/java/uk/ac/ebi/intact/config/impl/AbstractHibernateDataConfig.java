@@ -162,7 +162,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
     private void checkConfiguration(Configuration config) throws ConfigurationException
     {
-        String hibernateFile = (getConfigFile() != null)? getConfigFile().toString() : "default in classpath";
+        String hibernateFile = (getConfigFile() != null)? getConfigFile().toString() :
+                AbstractHibernateDataConfig.class.getResource("/hibernate.cfg.xml").getFile();
 
         String driver = config.getProperty(Environment.DRIVER);
 
