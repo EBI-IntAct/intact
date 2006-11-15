@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.dbutil.predict;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.predict.util.FillPredictTables;
 
 import java.sql.SQLException;
 
