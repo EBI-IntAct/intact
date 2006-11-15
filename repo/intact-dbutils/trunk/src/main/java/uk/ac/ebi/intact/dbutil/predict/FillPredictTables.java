@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.application.predict.util;
+package uk.ac.ebi.intact.dbutil.predict;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
@@ -22,7 +22,12 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Random;
 
 /**
  * Runs the PAYG algorithm for Oracle database. Type ant payg-ora from the application/predict directory. Also, ensure
