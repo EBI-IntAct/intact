@@ -15,6 +15,7 @@ import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.ConfigurationException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
@@ -98,12 +99,27 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             if (cfgFile != null)
             {
                 log.info("Reading from config file: " + cfgFile);
-                configuration.configure(cfgFile);
+
+                try
+                {
+                    configuration.configure(cfgFile);
+                }
+                catch (Throwable t)
+                {
+                    throw new ConfigurationException("Couldn't configure hibernate using file: "+cfgFile);
+                }
             }
             else
             {
                 log.info("Reading from default config file");
-                configuration.configure();
+                try
+                {
+                    configuration.configure();
+                }
+                catch (Throwable t)
+                {
+                    throw new ConfigurationException("Couldn't configure hibernate using default file");
+                }
             }
 
             // Set global interceptor from configuration
