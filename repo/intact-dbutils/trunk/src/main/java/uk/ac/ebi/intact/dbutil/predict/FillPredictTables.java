@@ -61,7 +61,7 @@ public class FillPredictTables {
      * Default constructor.
      */
     public FillPredictTables() throws IntactException {
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         BaseDao dao = daoFactory.getBaseDao();
         con = ( (Session) dao.getSession() ).connection();
     }
