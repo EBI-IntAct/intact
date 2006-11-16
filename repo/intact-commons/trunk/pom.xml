@@ -32,8 +32,8 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-commons</artifactId>
     <packaging>jar</packaging>
-    <version>1.1-SNAPSHOT</version>
-    <!-- last released 1.0-->
+    <version>1.1.0</version>
+    <!-- last released 1.1.0-->
     <name>Intact Commons</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Commons, utility classes that do not use the database</description>
