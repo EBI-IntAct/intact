@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-cdb</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <name>intact-cdb Module</name>
     <description>Module for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-cdb</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/tags/intact-cdb-1.0</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/tags/intact-cdb-1.0</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-cdb/tags/intact-cdb-1.0</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-cdb/trunk/</url>
     </scm>
 
     <properties>
