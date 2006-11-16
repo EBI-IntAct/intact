@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-beta-2</version>
+    <version>1.5.0-SNAPSHOT</version>
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-2</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-2</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-core/tags/intact-core-1.5.0-beta-2</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-1</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-1</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-core/tags/intact-core-1.5.0-beta-1</url>
     </scm>
                          
     <properties>
