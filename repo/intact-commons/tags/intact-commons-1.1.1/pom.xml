@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>2</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact</groupId>
+    <artifactId>intact-commons</artifactId>
+    <packaging>jar</packaging>
+    <version>1.1.1</version>
+    <name>Intact Commons</name>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+    <description>Intact Commons, utility classes that do not use the database</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.1</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.1</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-commons/tags/intact-commons-1.1.1</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-javamail_1.3.1_spec</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>xerces</groupId>
+            <artifactId>xercesImpl</artifactId>
+            <version>2.0.2</version>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
