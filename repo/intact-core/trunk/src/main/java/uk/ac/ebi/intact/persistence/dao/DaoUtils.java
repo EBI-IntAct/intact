@@ -15,6 +15,10 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
+import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.AutoAddWildcardConverter;
+import uk.ac.ebi.intact.persistence.dao.query.StandardAutoAddWildcardConverter;
+
 /**
  * General DAO utilities
  *
@@ -109,5 +113,26 @@ public class DaoUtils
         }
 
         return value;
+    }
+
+    /**
+     * Adds wildcards to a searchable query using the standard AutoAddWildcardConverter
+     * @param query the query to convert
+     * @return a query with wildcards where necessary
+     */
+    public static SearchableQuery autoAddWildcards(SearchableQuery query)
+    {
+        return autoAddWildcards(query, new StandardAutoAddWildcardConverter());
+    }
+
+    /**
+     * Adds wildcards to a searchable query using the provided AutoAddWildcardConverter
+     * @param query the query to convert
+     * @param converter the converter to use
+     * @return a query with wildcards where necessary
+     */
+    public static SearchableQuery autoAddWildcards(SearchableQuery query, AutoAddWildcardConverter converter)
+    {
+        return converter.autoAddWildCards(query);
     }
 }
