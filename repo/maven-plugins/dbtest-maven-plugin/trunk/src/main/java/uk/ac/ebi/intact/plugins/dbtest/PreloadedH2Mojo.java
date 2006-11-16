@@ -79,6 +79,7 @@ public class PreloadedH2Mojo
         hibernateMojo.setFormatSql(true);
         hibernateMojo.setHbm2ddlAuto("none");
         hibernateMojo.setScope(scope);
+        hibernateMojo.setConnectionProviderClass("org.hibernate.connection.C3P0ConnectionProvider");
         
         hibernateMojo.setDriver("org.h2.Driver");
         hibernateMojo.setDialect("org.hibernate.dialect.H2Dialect");
