@@ -11,15 +11,15 @@
     <artifactId>intact-master-webapp</artifactId>
     <packaging>pom</packaging>
     <name>Master Webapp POM</name>
-    <version>2</version>
+    <version>3-SNAPSHOT</version>
     <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It contains information
         that is common to all web applications.
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-webapp-2</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-webapp-2</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-webapp-2</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-webapp-pom/</url>
     </scm>
 
     <profiles>
