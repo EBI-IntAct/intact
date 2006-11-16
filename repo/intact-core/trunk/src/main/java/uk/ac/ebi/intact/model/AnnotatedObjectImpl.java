@@ -315,7 +315,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
         for (Xref xref : xrefs)
         {
-            code = 29 * code + xref.hashCode();
+            code = 29 * code + xref.getPrimaryId().hashCode();
         }
 
         if (null != shortLabel)
