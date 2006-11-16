@@ -89,14 +89,12 @@ public class FillPredictTables {
 
     private void PrepareTables() throws SQLException {
 
-
-
         Statement stmt = null;
         try {
             //Create current_edge table
-            stmt = getConnection().createStatement();
-            stmt.executeUpdate( "delete FROM ia_payg_current_edge" );
-            stmt = null;
+//            stmt = getConnection().createStatement();
+//            stmt.executeUpdate( "delete FROM ia_payg_current_edge" );
+//            stmt = null;
             fillCurrentEdgesTable(); // Get interactions from intact database
 
             // NOTE: the statement is closed in fillCurrentEdgesTable()
@@ -106,9 +104,9 @@ public class FillPredictTables {
             stmt.executeUpdate( "UPDATE ia_payg_current_edge SET seen=0, conf=0" );
 
             //Setup the Pay-As-You-Go table
-            stmt.executeUpdate( "delete FROM ia_payg" );
+//            stmt.executeUpdate( "delete FROM ia_payg" );
 
-            stmt.executeUpdate( "delete FROM ia_payg_temp_node" );
+//            stmt.executeUpdate( "delete FROM ia_payg_temp_node" );
 
             stmt.executeUpdate( "INSERT INTO ia_payg_temp_node " +
                                 "SELECT distinct nidA, species " +
@@ -165,7 +163,7 @@ public class FillPredictTables {
         //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
-    public static final int CHUNK_SIZE = 100;
+    public static final int CHUNK_SIZE = 300;
 
     private void fillCurrentEdgesTable() throws SQLException {
 
@@ -188,7 +186,7 @@ public class FillPredictTables {
 
         try {
 
-            while ( i < interactionCount && i < 400 ) {
+            while ( i < interactionCount /*&& i < 400*/ ) {
 
                 IntactContext.getCurrentInstance().getDataContext().beginTransaction();
                 idao = daoFactory.getInteractionDao();
@@ -249,59 +247,6 @@ public class FillPredictTables {
                 }
             }
         }
-
-//        Statement stmt = null;
-//
-//        try {
-//            stmt = getConnection().createStatement();
-//
-//            // Iterate through the interactions
-//            System.out.println( interactions.size() + " interactions found." );
-//            for ( Iterator iterator = interactions.iterator(); iterator.hasNext(); ) {
-//                Interaction interaction = (Interaction) iterator.next();
-//
-//                Collection components = interaction.getComponents();
-//
-//                // For each interaction get the components
-//                for ( Iterator iterator2 = components.iterator(); iterator2.hasNext(); ) {
-//                    Component component = (Component) iterator2.next();
-//
-//                    Interactor interactor = component.getInteractor();
-//                    if ( interactor != null ) {//  interactor.getClass().isAssignableFrom( Protein.class )) {
-//
-//                        if ( interactor instanceof ProteinImpl ) {
-//
-//                            String role = component.getCvComponentRole().getShortLabel();
-//                            String species = interactor.getBioSource().getTaxId();
-//
-//                            if ( role.equals( "bait" ) ) {
-//                                bait = interactor.getShortLabel();
-////                            System.out.println("Bait: " + bait);
-//                            } else if ( role.equals( "prey" ) ) {
-//                                String prey = interactor.getShortLabel();
-//                                stmt.executeUpdate( "INSERT INTO ia_payg_current_edge " +
-//                                                    "VALUES(\'" + bait + "\',\'" + prey + "\',0,0,\'" + species + "\')" );
-////                            System.out.println("Prey: " + prey);
-//                            }
-//                        } else {
-//                            log.warn( "Skipping non Protein interactor: " + interactor.getClass().getSimpleName() + ". " +
-//                                      "AC: " + interactor.getAc() + " Shortlabel:" + interactor.getShortLabel() );
-//                        }
-//                    }
-//                }
-//            }
-//
-//            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-//        }
-//        finally {
-//            if ( stmt != null ) {
-//                try {
-//                    stmt.close();
-//                }
-//                catch ( SQLException e ) {
-//                }
-//            }
-//        }
     }
 
     private ArrayList getSpeciesTypes() throws SQLException {
@@ -555,12 +500,33 @@ public class FillPredictTables {
         return (String) list.get( myRandom.nextInt( list.size() ) );
     }
 
+    private void cleanTables() throws SQLException {
+        Statement stmt = getConnection().createStatement();
+        stmt.executeUpdate( "delete FROM ia_payg" );
+        stmt.executeUpdate( "delete FROM ia_payg_temp_node" );
+        stmt.executeUpdate( "delete FROM ia_payg_current_edge" );
+    }
+
     public static void main( String[] args ) throws SQLException {
+
+        long start = System.currentTimeMillis();
+        long stop = start;
+
+
         FillPredictTables pred = null;
         try {
+
             pred = new FillPredictTables();
+
+            // cleaning tables
+            log.info( "Clearing pay-as-you-go tables..." );
+            pred.cleanTables();
+
             log.info( "Preparing tables..." );
             pred.PrepareTables();
+
+            stop = System.currentTimeMillis();
+            System.out.println( "Time elapsed: " + ((stop - start) / 1000 * 60 ) ); // in minutes
 
             ArrayList species_list = pred.getSpeciesTypes();
 
@@ -594,5 +560,8 @@ public class FillPredictTables {
                 pred.closeConnection();
             }
         }
+
+        stop = System.currentTimeMillis();
+        System.out.println( "Time elapsed: " + ((stop - start) / 1000 * 60 ) ); // in minutes
     }
 }
