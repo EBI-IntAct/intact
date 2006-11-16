@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
  * @version $Id$
  * @since <pre>28-Mar-2006</pre>
  */
+@Deprecated
 public class UrlUtil
 {
     /**
