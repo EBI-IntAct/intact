@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>data-conversion</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0</version>
     <name>Data conversions</name>
     <description>Import/Exports from/to PSI files</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.0</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.0</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/tags/data-conversion-1.5.0</url>
     </scm>
 
     
@@ -49,12 +49,12 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-2</version>
+            <version>[1.5.0-beta-2,1.6)</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
             <artifactId>app-commons</artifactId>
-            <version>1.5.0-beta-1</version>
+            <version>[1.5.0-beta-1,1.6)</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
