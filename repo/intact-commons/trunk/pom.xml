@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-commons</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1</version>
+    <version>1.1.2-SNAPSHOT</version>
     <name>Intact Commons</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Commons, utility classes that do not use the database</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.1</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.1</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-commons/tags/intact-commons-1.1.1</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-commons/trunk/</url>
     </scm>
 
     <dependencies>
