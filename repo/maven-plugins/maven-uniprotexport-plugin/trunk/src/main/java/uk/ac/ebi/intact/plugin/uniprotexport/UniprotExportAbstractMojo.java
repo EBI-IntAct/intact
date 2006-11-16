@@ -8,17 +8,16 @@ package uk.ac.ebi.intact.plugin.uniprotexport;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.FileWriter;
-import java.sql.SQLException;
-
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * Base class with the common attributes for the Uniprot export mojos
@@ -100,7 +99,7 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
 
         if (System.getProperty("institution") == null)
         {
-            session.setInitParam(IntactConfigurator.INSTITUTION_LABEL, "ebi");
+            session.setInitParam(IntactEnvironment.INSTITUTION_LABEL, "ebi");
         }
         
         CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig, session);
