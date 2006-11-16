@@ -5,15 +5,14 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>1.2-SNAPSHOT</version>
-    <!-- last released 1.0.6 -->
+    <version>2</version>
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-2</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-2</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-2</url>
     </scm>
 
     <properties>
@@ -144,6 +143,14 @@
                             <param>src</param>
                         </descriptorRefs>
                         <outputDirectory>${assembly.outputDirectory}</outputDirectory>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <goals>deploy assembly:assembly</goals>
                     </configuration>
                 </plugin>
             </plugins>
