@@ -551,6 +551,6 @@ public class FillPredictTables {
         }
 
         stop = System.currentTimeMillis();
-        System.out.println( "Time elapsed: " + ((stop - start) / 1000 * 60 ) ); // in minutes
+        System.out.println( "Time elapsed: " + ((stop - start) / (1000 * 60) ) + " minute(s)." ); // in minutes
     }
 }
