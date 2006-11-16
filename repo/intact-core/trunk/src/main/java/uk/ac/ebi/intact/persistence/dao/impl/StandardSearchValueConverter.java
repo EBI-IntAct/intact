@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.persistence.dao.DaoUtils;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
+ * @since 1.5
  */
 public class StandardSearchValueConverter implements SearchValueConverter
 {
@@ -63,7 +64,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
             token = token.trim();
             token = replacedToValue(token);
 
-            token = addEndPercentIfNecessary(token);
+            //token = addEndPercentIfNecessary(token);
             token = removeQuotesIfNecessary(token);
 
             if (isTermPrefixedByModifier(token, MODIFIER_PLUS))
@@ -165,28 +166,7 @@ public class StandardSearchValueConverter implements SearchValueConverter
         value = value.replaceAll(REPLACED_COMMA, ",");
 
         return value;
-    }
-
-
-    /**
-     * Feature Request #1485467 : Add a wildcard at the end of the value, when necessary
-     * @param value the value to change
-     * @return a String with the wildcard added, if necessary
-     */
-    private static String addEndPercentIfNecessary(String value)
-    {
-        value = DaoUtils.replaceWildcardsByPercent(value);
-
-        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
-
-        if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
-                && !value.startsWith("\"") && !value.endsWith("\""))
-        {
-            value = value+"%";
-        }
-
-        return value;
-    }
+    }    
 
     private static String removeQuotesIfNecessary(String value)
     {
