@@ -56,8 +56,6 @@ public class FillPredictTables {
      */
     public FillPredictTables() {
         daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-        BaseDao dao = daoFactory.getBaseDao();
-//        con = ( (Session) dao.getSession() ).connection();
     }
 
     private Connection getConnection() {
@@ -92,9 +90,6 @@ public class FillPredictTables {
         Statement stmt = null;
         try {
             //Create current_edge table
-//            stmt = getConnection().createStatement();
-//            stmt.executeUpdate( "delete FROM ia_payg_current_edge" );
-//            stmt = null;
             fillCurrentEdgesTable(); // Get interactions from intact database
 
             // NOTE: the statement is closed in fillCurrentEdgesTable()
@@ -104,10 +99,6 @@ public class FillPredictTables {
             stmt.executeUpdate( "UPDATE ia_payg_current_edge SET seen=0, conf=0" );
 
             //Setup the Pay-As-You-Go table
-//            stmt.executeUpdate( "delete FROM ia_payg" );
-
-//            stmt.executeUpdate( "delete FROM ia_payg_temp_node" );
-
             stmt.executeUpdate( "INSERT INTO ia_payg_temp_node " +
                                 "SELECT distinct nidA, species " +
                                 "FROM ia_payg_current_edge" );
@@ -159,8 +150,6 @@ public class FillPredictTables {
                 }
             }
         }
-
-        //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public static final int CHUNK_SIZE = 300;
@@ -186,7 +175,7 @@ public class FillPredictTables {
 
         try {
 
-            while ( i < interactionCount /*&& i < 400*/ ) {
+            while ( i < interactionCount ) {
 
                 IntactContext.getCurrentInstance().getDataContext().beginTransaction();
                 idao = daoFactory.getInteractionDao();
