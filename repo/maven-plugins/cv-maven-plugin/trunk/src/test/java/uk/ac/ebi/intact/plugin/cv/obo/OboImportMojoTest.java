@@ -20,7 +20,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.io.File;
 
-public class OboImportTest extends AbstractMojoTestCase
+public class OboImportMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {

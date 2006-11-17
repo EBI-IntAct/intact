@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.plugin.cv.obo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
@@ -37,6 +38,14 @@ import java.io.IOException;
 public class OboExportMojo
         extends IntactHibernateMojo
 {
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * @parameter expression="${project.build.directory}/intact-exported.obo"
@@ -62,5 +71,10 @@ public class OboExportMojo
         out.close();
 
         getLog().info("Closed " + exportedOboFile);
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 }
