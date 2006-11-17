@@ -10,16 +10,16 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-graph</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <!-- previous released: 0.1 -->
     <name>intact-graph Module</name>
     <description>Module for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-graph</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-graph/tags/intact-graph-1.0</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-graph/tags/intact-graph-1.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-graph/tags/intact-graph-1.0</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-graph/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-graph/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-graph/trunk/</url>
     </scm>
 
     <properties>
