@@ -14,15 +14,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>1.1.0</version>
+        <version>2</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.app</groupId>
     <artifactId>statistic-view</artifactId>
     <packaging>war</packaging>
-    <version>1.2-SNAPSHOT</version>
-    <!-- last released: 1.1.0 -->
+    <version>1.5-SNAPSHOT</version>
     <name>Statistic View</name>
     <description>Statistic View Application</description>
 

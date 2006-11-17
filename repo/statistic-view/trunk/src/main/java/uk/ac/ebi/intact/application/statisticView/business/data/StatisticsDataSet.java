@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistic
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsDaoFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -134,9 +136,10 @@ public final class StatisticsDataSet {
         logger.info( "retreiving all statistics..." );
         try {
 
+            BaseDao baseDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao();
             try {
-                userName = DaoFactory.getBaseDao().getDbUserName();
-                databaseName = DaoFactory.getBaseDao().getDbName();
+                userName = baseDao.getDbUserName();
+                databaseName = baseDao.getDbName();
                 logger.info( "Helper created - access to database " + databaseName + " as " + userName );
             } catch ( SQLException e ) {
                 logger.error( "Error when trying to get the database and username.", e );

@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import uk.ac.ebi.intact.application.statisticView.business.model.StatsBase;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsBaseDao;
 import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import java.util.Collection;
 
@@ -26,9 +27,9 @@ public class StatsBaseDaoImpl<T extends StatsBase> extends HibernateBaseDaoImpl<
 
     private static final Log log = LogFactory.getLog(StatsBaseDaoImpl.class);
 
-    public StatsBaseDaoImpl(Class<T> entityClass, Session session)
+    public StatsBaseDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
     {
-        super(entityClass, session);
+        super(entityClass, session, intactSession);
     }
 
     public T getByAc(int ac)

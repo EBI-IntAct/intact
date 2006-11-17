@@ -7,7 +7,10 @@ package uk.ac.ebi.intact.application.statisticView.webapp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.WebappSession;
+import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -28,10 +31,10 @@ public class HibernateWebappListener implements ServletContextListener
     {
         log.info("Adding package with model entities and Initializing hibernate");
 
-        HibernateUtil.addPackageWithEntities("/uk/ac/ebi/intact/application/statisticView/business/model");
+        IntactSession session = new WebappSession(servletContextEvent.getServletContext(), null, null);
+        StandardCoreDataConfig dataConfig = new StandardCoreDataConfig(session);
 
-        // this initializes hibernate
-        HibernateUtil.getSessionFactory();
+        dataConfig.addPackageWithEntities(IntactStatistics.class.getPackage().getName());
     }
 
     public void contextDestroyed(ServletContextEvent servletContextEvent)
