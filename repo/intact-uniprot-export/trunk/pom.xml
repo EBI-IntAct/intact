@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-uniprot-export</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <name>intact-uniprot-export Module</name>
     <description>Module for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-uniprot-export</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-uniprot-export/tags/intact-uniprot-export-1.0</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-uniprot-export/tags/intact-uniprot-export-1.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-uniprot-export/tags/intact-uniprot-export-1.0</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-uniprot-export/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-uniprot-export/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-uniprot-export/trunk/</url>
     </scm>
 
     <build>
