@@ -60,7 +60,7 @@ public class BinaryProteinAction extends AbstractResultAction {
             logger.info("Binary Protein Action: 1 Protein: "+protAc);
 
             results = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                    .getInteractionDao().getSelfInteractionsByProtAc(protAc);
+                    .getInteractionDao().getSelfBinaryInteractionsByProtAc(protAc);
 
             if (logger.isDebugEnabled())
             {
