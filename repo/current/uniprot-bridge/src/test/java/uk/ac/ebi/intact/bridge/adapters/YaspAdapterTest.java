@@ -131,7 +131,7 @@ public class YaspAdapterTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "17-OCT-2006" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "31-OCT-2006" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
