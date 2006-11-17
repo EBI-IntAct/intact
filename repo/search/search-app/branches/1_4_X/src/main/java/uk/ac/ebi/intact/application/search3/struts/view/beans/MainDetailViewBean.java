@@ -541,7 +541,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         return singleFeatures;
     }
 
-    private boolean hasPsiReference( final AnnotatedObject<? extends Xref> ao, final String psiRef ) {
+    private boolean hasPsiReference( final AnnotatedObject<? extends Xref, ? extends Alias> ao, final String psiRef ) {
         for (Xref xref : ao.getXrefs())
         {
             if (CvDatabase.PSI_MI.equals(xref.getCvDatabase().getShortLabel()))
@@ -870,7 +870,7 @@ public class MainDetailViewBean extends AbstractViewBean {
         //geneNames = new StringBuffer();
         //the gene names are obtained from the Aliases for the Protein
         //which are of type 'gene name'...
-        Collection<Alias> aliases = interactor.getAliases();
+        Collection<InteractorAlias> aliases = interactor.getAliases();
         for (Alias alias : aliases)
         {
             if (geneNameFilter.contains(alias.getCvAliasType().getShortLabel()))
