@@ -111,7 +111,7 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
                              "need a workaroung")
     public void delete(SearchItem searchItem)
     {
-         String sql = "DELETE from ia_search WHERE (ac=?, value=?, objclass=?, type=?)";
+         String sql = "DELETE from ia_search WHERE ac=? AND value=? AND objclass=? AND type=?";
          executeQueryUpdateForSearchItem(sql, searchItem);
     }
 
