@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.application.statisticView.business.publications.jfreecha
 import uk.ac.ebi.intact.application.statisticView.business.publications.model.ExperimentBean;
 import uk.ac.ebi.intact.application.statisticView.business.publications.model.PublicationStatisticsBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.business.IntactHelper;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -34,9 +34,7 @@ public class StatisticRunner {
 
         long startTime = System.currentTimeMillis();
 
-        IntactHelper helper = new IntactHelper();
-
-        Connection connection = helper.getJDBCConnection();
+        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
 
         QueryRunner queryRunner = new QueryRunner();
 
@@ -102,7 +100,14 @@ public class StatisticRunner {
         //calculates the total runTime of this application
         StatisticUtils.getTotalRunTime( startTime );
 
-        helper.closeStore();
+        try
+        {
+            connection.close();
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
     }
 }
 

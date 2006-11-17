@@ -12,7 +12,8 @@ import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.statisticView.business.model.StatsBase;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.impl.StatsBaseDaoImpl;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.persistence.util.HibernateUtil;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 
 import java.sql.Connection;
 
@@ -25,12 +26,11 @@ import java.sql.Connection;
  */
 public class StatsDaoFactory
 {
-
     private static final Log log = LogFactory.getLog(StatsDaoFactory.class);
 
     public static <T extends StatsBase> StatsBaseDao getStatsBaseDao(Class<T> stats)
     {
-        return new StatsBaseDaoImpl<T>(stats, getCurrentSession());
+        return new StatsBaseDaoImpl<T>(stats, getCurrentSession(), IntactContext.getCurrentInstance().getSession());
     }
 
     public static Connection connection()
@@ -48,7 +48,8 @@ public class StatsDaoFactory
 
     private static Session getCurrentSession()
     {
-       return HibernateUtil.getSessionFactory().getCurrentSession();
+        AbstractHibernateDataConfig config = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        return config.getSessionFactory().getCurrentSession(); 
     }
 
 }
