@@ -20,7 +20,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class OboExportTest extends AbstractMojoTestCase
+public class OboExportMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {

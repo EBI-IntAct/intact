@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.plugin.cv.obo;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,14 @@ import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 public class OboImportMojo
         extends IntactHibernateMojo
 {
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * @parameter expression="intact.obo"
@@ -73,5 +82,10 @@ public class OboImportMojo
     public void setImportedOboFile(File importedOboFile)
     {
         this.importedOboFile = importedOboFile;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 }

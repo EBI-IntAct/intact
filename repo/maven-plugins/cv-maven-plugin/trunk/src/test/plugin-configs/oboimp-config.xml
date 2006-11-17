@@ -7,7 +7,7 @@
                     <hibernateConfig>src/test/resources/uk/ac/ebi/intact/plugin/cv/hibernate.h2.cfg.xml</hibernateConfig>
                     <outputFile>target/myOutput.log</outputFile>
 
-                    <importedOboFile>src/test/resources/uk/ac/ebi/intact/plugin/cv/obo/intact.obo</importedOboFile>
+                    <importedOboFile>src/test/resources/uk/ac/ebi/intact/plugin/cv/obo/psi-mi25-4intact.obo</importedOboFile>
 
                 </configuration>
             </plugin>
