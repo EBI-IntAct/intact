@@ -53,6 +53,8 @@ public class IntactStatisticsAction extends Action {
                                   ActionForm form,
                                   HttpServletRequest request,
                                   HttpServletResponse response ) {
+        logger.debug("Enterning execution of IntactStatisticsAction");
+
         // get the session
         HttpSession session = request.getSession();
 
@@ -67,20 +69,23 @@ public class IntactStatisticsAction extends Action {
             // read start values from the form
             start = filterForm.getStart();
             if ( start != null ) {
-                logger.info( "START: " + start );
+                logger.debug( "START: " + start );
                 request.setAttribute( "start", start );
             }
             // read stop values from the form
             stop = filterForm.getStop();
             if ( stop != null ) {
-                logger.info( "STOP: " + stop );
+                logger.debug( "STOP: " + stop );
                 request.setAttribute( "stop", stop );
             }
         }
 
         try {
             // receive the viewbean for the specific
+            logger.debug("Creating ViewBean factory");
             ViewBeanFactory chartFactory = new ViewBeanFactory( request.getContextPath() );
+
+             logger.debug("Creating ViewBean");
             intactBean = chartFactory.createViewBean( start, stop, session );
 
         } catch ( IntactException e ) {
@@ -91,10 +96,17 @@ public class IntactStatisticsAction extends Action {
             // forward to an error page if something went wrong
             logger.error( "Error when savingthe charts on disk.", ioe);
             return mapping.findForward( "error" );
+        } catch (Throwable e)
+        {
+            logger.error("Exception creating view bean", e);
+            return mapping.findForward( "error" );
         }
 
         // put the databean to the request and forward to the jsp
         request.setAttribute( "intactbean", intactBean );
+
+        logger.debug("Redirecting to result page");
+
         return mapping.findForward( Constants.FORWARD_RESULT_PAGE );
     }
 }

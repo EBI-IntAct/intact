@@ -39,7 +39,7 @@ Author: Samuel Kerrien, Michael Kleen
 
     <!-- ========== Message Resources Definitions =========================== -->
 
-    <message-resources key="main"      parameter="uk.ac.ebi.intact.app.statisticview.MainResources"/>
+    <message-resources parameter="uk.ac.ebi.intact.app.statisticview.MainResources"/>
     <message-resources key="buildInfo" parameter="uk.ac.ebi.intact.app.statisticview.BuildInfo"/>
 
     <!-- ========== Plug Ins Configuration ================================== -->

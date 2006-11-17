@@ -1,4 +1,5 @@
 <%@ page import="uk.ac.ebi.intact.persistence.dao.DaoFactory" %>
+<%@ page import="uk.ac.ebi.intact.context.IntactContext" %>
 <%@ page language="java"%>
 
 <!--
@@ -13,6 +14,6 @@
   - The common footer for the sidebar.
 --%>
 
-User: <%=DaoFactory.getBaseDao().getDbUserName()%> <br/>
-Database: <%=DaoFactory.getBaseDao().getDbName()%> <br/>
+User: <%=IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName()%> <br/>
+Database: <%=IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName()%> <br/>
 

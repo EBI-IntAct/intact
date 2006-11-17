@@ -8,12 +8,10 @@ package uk.ac.ebi.intact.application.statisticView.business.persistence.dao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import uk.ac.ebi.intact.application.statisticView.business.model.StatsBase;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.impl.StatsBaseDaoImpl;
-import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.sql.Connection;
 
@@ -26,10 +24,9 @@ import java.sql.Connection;
  */
 public class StatsDaoFactory
 {
-    private static final Log log = LogFactory.getLog(StatsDaoFactory.class);
-
     public static <T extends StatsBase> StatsBaseDao getStatsBaseDao(Class<T> stats)
     {
+        checkTransaction();
         return new StatsBaseDaoImpl<T>(stats, getCurrentSession(), IntactContext.getCurrentInstance().getSession());
     }
 
@@ -38,12 +35,9 @@ public class StatsDaoFactory
         return getCurrentSession().connection();
     }
 
-    public static IntactTransaction beginTransaction()
+    public static void checkTransaction()
     {
-        Transaction transaction = getCurrentSession().beginTransaction();
-
-        // wrap it
-        return new IntactTransaction(transaction);
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     private static Session getCurrentSession()

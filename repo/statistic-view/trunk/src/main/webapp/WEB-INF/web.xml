@@ -91,7 +91,7 @@
         <init-param>
             <!-- The name of the Struts property file, '.properties' is automatically added -->
             <param-name>application</param-name>
-            <param-value>/config/Struts</param-value>
+            <param-value>/uk/ac/ebi/intact/app/statisticview/MainResources</param-value>
         </init-param>
 
         <init-param>
