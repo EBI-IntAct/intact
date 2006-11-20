@@ -34,12 +34,14 @@ function validateComment(element, evt) {
         }
 
     }
-    if( unicodeCount > 0 ) {
-        msg = "The character you entered is not allowed. Only Unicode characters from 0020";
-        msg += "(space) to 007E(~) are allowed : '"+o+"`'" ;
-        o="";
-        window.alert(msg);
-        return false;
+    if( keyCode != 8 ){
+        if( unicodeCount > 0 ) {
+            msg = "The character you entered is not allowed. Only Unicode characters from 0020";
+            msg += "(space) to 007E(~) are allowed : '"+o+"`'" ;
+            o="";
+            window.alert(msg);
+            return false;
+        }
     }
 
     return true;
