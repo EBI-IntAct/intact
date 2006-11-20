@@ -1069,8 +1069,9 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         // Interaction first. - IMPORTANT. don't change the order.
         for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
             ExperimentRowData row = (ExperimentRowData) iter.next();
-            Experiment exp = row.getExperiment();
-            if (exp == null) {
+            Experiment exp = null;
+            if (row.getAc() != null){
+                log.debug("row ac is " + row.getAc());
                 ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                 exp = experimentDao.getByAc(row.getAc());
             }
