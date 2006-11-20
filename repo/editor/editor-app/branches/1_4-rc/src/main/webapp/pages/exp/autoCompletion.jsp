@@ -28,7 +28,7 @@
     <tr class="tableRowEven">
         <td class="tableCell">
             <html:text property="pubmedId" size="20" maxlength="20" name="expForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
