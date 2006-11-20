@@ -634,6 +634,10 @@ public class DownloadCVs {
     }
 
     public void download( BufferedWriter out ) throws IOException, IntactException {
+        download(out, false);
+    }
+
+    public void download( BufferedWriter out, boolean isDryRun ) throws IOException, IntactException {
 
         // 1. Get all CvObject
         log.info( "Loading all IntAct CVs ... " );
@@ -677,7 +681,7 @@ public class DownloadCVs {
                     // look up in the database
                     CvObject root = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByXref(miRef);
 
-                    if ( root == null ) {
+                    if ( root == null && !isDryRun) {
                         // doesn't exist yet, then create it
                         try {
                             Constructor constructor = aCvClass.getDeclaredConstructor( new Class[]{ Institution.class, String.class } );
@@ -713,6 +717,11 @@ public class DownloadCVs {
                             throw new IntactException( "Failed to create CV term (" + miRef + "), cf. nested errors.", e );
                         }
                     } // root was not found
+                    else
+                    {
+                         if (log.isDebugEnabled())
+                            log.debug("DRY RUN: root CV would have been created");
+                    }
 
                     // if not done yet, add mapping CV class to the specific root
                     if ( cvClass2root.containsKey( aCvClass ) ) {
@@ -832,14 +841,32 @@ public class DownloadCVs {
 
             String id = getIdentifier( cvObject );
 
-            if ( id == null ) {
+            if ( id == null) {
                 // neither an IA:xxxx or MI:xxxx available ...
                 try {
-                    String localId = SequenceManager.getNextId( );
+                    String localId;
+
+                    if (!isDryRun)
+                    {
+                        localId = SequenceManager.getNextId( );
+                    }
+                    else
+                    {
+                        localId = "IA-DR:"+System.currentTimeMillis();
+                    }
 
                     CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), intact, localId, null, null, identity );
-                    cvObject.addXref( xref );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+
+                    if (!isDryRun)
+                    {
+                        cvObject.addXref( xref );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+
+                    }
+                    else
+                    {
+                        log.info("A new xref would have been added to: "+cvObject.getShortLabel()+" ("+cvObject.getAc()+")");
+                    }
 
                     id = localId;
                     log.debug( "Added new Xref to '" + cvObject.getShortLabel() + "': " + id );
@@ -851,18 +878,29 @@ public class DownloadCVs {
         }
 
         // Sort terms by identity
-        List sortedCVs = new ArrayList( noMiTerms );
-        Collections.sort( sortedCVs, new Comparator() {
-            public int compare( Object o1, Object o2 ) {
-                CvObject cv1 = (CvObject) o1;
-                CvObject cv2 = (CvObject) o2;
+        List sortedCVs = new ArrayList(noMiTerms);
 
-                String id1 = getIdentifier( cv1 );
-                String id2 = getIdentifier( cv2 );
+        if (!isDryRun)
+        {
+            Collections.sort(sortedCVs, new Comparator()
+            {
+                public int compare(Object o1, Object o2)
+                {
+                    CvObject cv1 = (CvObject) o1;
+                    CvObject cv2 = (CvObject) o2;
 
-                return id1.compareTo( id2 );
-            }
-        } );
+                    String id1 = getIdentifier(cv1);
+                    String id2 = getIdentifier(cv2);
+
+                    return id1.compareTo(id2);
+                }
+            });
+
+        }
+        else
+        {
+            log.debug("DRY RUN: Terms would have been sorted by its identifier");
+        }
 
         // export terms
         for ( Iterator iterator = sortedCVs.iterator(); iterator.hasNext(); ) {
