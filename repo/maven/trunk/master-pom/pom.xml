@@ -5,7 +5,7 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>3-SNAPSHOT</version>
+    <version>3</version>
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
@@ -48,7 +48,7 @@
     <developers>
         <developer>
             <id>skerrien</id>
-            <name>Sam Kerrien</name>
+            <name>Samuel Kerrien</name>
             <email>skerrien@ebi.ac.uk</email>
             <organization>EBI</organization>
             <timezone>0</timezone>
@@ -76,14 +76,6 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
-
-    <!--
-    <scm>
-      <connection>scm:svn:http://svn.apache.org/repos/asf/myfaces/maven/trunk/master-pom</connection>
-      <developerConnection>scm:svn:https://svn.apache.org/repos/asf/myfaces/maven/trunk/master-pom</developerConnection>
-      <url>http://svn.apache.org/viewcvs.cgi/myfaces/maven/trunk/master-pom</url>
-    </scm>
-    -->
 
     <organization>
         <name>European Bioinformatics Institute, EBI</name>
@@ -439,7 +431,7 @@
             <uniqueVersion>false</uniqueVersion>
             <id>ebi-repo-snapshots</id>
             <name>EBI Snapshots Repository</name>
-            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo_snapshots</url>
         </snapshotRepository>
 
         <site>
