@@ -13,7 +13,9 @@ import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.DispatchActionForm;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
+import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
@@ -462,6 +464,25 @@ public class    FeatureActionForm extends DispatchActionForm implements EditorFo
             while (stk2.hasMoreTokens() && (errors == null));
         }
         while (stk1.hasMoreTokens() && (errors == null));
+        return errors;
+    }
+
+    // Validate methods
+
+
+    public ActionErrors validateAddCrossreference() {
+        ActionErrors errors = null;
+        // The bean to extract the values.
+        XreferenceBean xb = getNewXref();
+        if (xb.getDatabase().equals(EditorMenuFactory.SELECT_LIST_ITEM)) {
+            errors = new ActionErrors();
+            errors.add("xref.db", new ActionMessage("error.xref.database"));
+        }
+        // Primary id is required.
+        if (errors == null && AbstractEditorAction.isPropertyEmpty(xb.getPrimaryId())) {
+            errors = new ActionErrors();
+            errors.add("xref.pid", new ActionMessage("error.xref.pid"));
+        }
         return errors;
     }
 
