@@ -72,7 +72,7 @@
         <c:if test="${view.inNonMutationMode}">
             <td class="tableCell">
                 <html:text property="shortLabel" size="20" maxlength="20" name="featureForm"
-                    styleClass="inputRequired"/>
+                    styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
                 <html:messages id="msg" property="shortLabel">
                     <font color="red"><li><bean:write name="msg" /></li></font>
                 </html:messages>
@@ -80,7 +80,7 @@
         </c:if>
 
         <td class="tableCell">
-            <html:text property="fullName" size="80" maxlength="80" name="featureForm"/>
+            <html:text property="fullName" size="80" maxlength="80" name="featureForm" onkeypress="return handleEnter(this, event)"/>
             <html:messages id="msg" property="feature.mutation.empty">
                 <font color="red"><li><bean:write name="msg" /></li></font>
             </html:messages>

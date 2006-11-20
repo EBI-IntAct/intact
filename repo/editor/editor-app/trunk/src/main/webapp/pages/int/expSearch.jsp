@@ -44,7 +44,7 @@
             </html:submit>
         </td>
         <td class="tableCell">
-            <html:text property="expSearchValue" size="20" maxlength="20"/>
+            <html:text property="expSearchValue" size="20" maxlength="20" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
 </table>

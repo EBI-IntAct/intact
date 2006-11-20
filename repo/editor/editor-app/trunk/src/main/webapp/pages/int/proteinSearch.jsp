@@ -42,13 +42,13 @@
             </html:submit>
         </td>
         <td class="tableCell">
-            <html:text property="protSearchLabel" size="20" maxlength="20"/>
+            <html:text property="protSearchLabel" size="20" maxlength="20" onkeypress="return handleEnter(this, event)"/>
         </td>
         <td class="tableCell">
-            <html:text property="protSearchSpAC" size="20" maxlength="20"/>
+            <html:text property="protSearchSpAC" size="20" maxlength="20" onkeypress="return handleEnter(this, event)"/>
         </td>
         <td class="tableCell">
-            <html:text property="protSearchAC" size="20" maxlength="20"/>
+            <html:text property="protSearchAC" size="20" maxlength="20" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
 </table>

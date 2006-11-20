@@ -95,15 +95,15 @@
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:text property="newXref.primaryId" size="15"/>
+            <html:text property="newXref.primaryId" size="15" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:text property="newXref.secondaryId" size="15"/>
+            <html:text property="newXref.secondaryId" size="15" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
-            <html:text property="newXref.releaseNumber" size="15"/>
+            <html:text property="newXref.releaseNumber" size="15" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">
