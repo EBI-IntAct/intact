@@ -11,7 +11,7 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
