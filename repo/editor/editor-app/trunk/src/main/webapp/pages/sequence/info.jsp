@@ -43,11 +43,11 @@
         </td>
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20" name="seqForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
-            <html:text property="fullName" size="100" maxlength="250" name="seqForm"/>
+            <html:text property="fullName" size="100" maxlength="250" name="seqForm" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
 </table>
@@ -82,7 +82,7 @@
             </html:messages>
         </td>
         <td class="tableCell" align="left" valign="top">
-            <html:textarea property="sequence" name="seqForm" rows="3" cols="90"/>
+            <html:textarea property="sequence" name="seqForm" rows="3" cols="90" onkeypress="return handleEnter(this, event)"/>
             <html:messages id="msg" property="sequence">
                 <font color="red"><li><bean:write name="msg" /></li></font>
             </html:messages>

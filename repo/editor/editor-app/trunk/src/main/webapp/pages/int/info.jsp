@@ -48,11 +48,11 @@
 
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20"
-                name="intForm" styleClass="inputRequired"/>
+                name="intForm" styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
-            <html:text property="fullName" size="100" maxlength="250" name="intForm"/>
+            <html:text property="fullName" size="100" maxlength="250" name="intForm" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
     <tr class="tableRowEven">
@@ -89,7 +89,7 @@
 
     <tr class="tableRowHeader">
         <td class="tableCell">
-            <html:text property="kd" name="intForm" size="5" maxlength="16"/>
+            <html:text property="kd" name="intForm" size="5" maxlength="16" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell" align="left" valign="top">

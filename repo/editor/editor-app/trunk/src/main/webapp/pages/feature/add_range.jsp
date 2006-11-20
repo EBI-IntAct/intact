@@ -44,7 +44,7 @@
 
         <td class="tableCell">
             <html:text property="newRange.fromRange" size="20" maxlength="20" name="featureForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
             <br/><html:messages id="msg" property="new.fromRange">
                 <font color="red"><li><bean:write name="msg" /></li></font>
             </html:messages>
@@ -52,7 +52,7 @@
 
         <td class="tableCell">
             <html:text property="newRange.toRange" size="20" maxlength="20" name="featureForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
             <html:messages id="msg" property="new.toRange">
                 <font color="red"><li><bean:write name="msg" /></li></font>
             </html:messages>

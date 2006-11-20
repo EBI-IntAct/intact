@@ -139,13 +139,13 @@
                         </html:select>
                     </td>
                     <td class="tableCell">
-                        <html:text name="xrefs" size="15" property="primaryId" indexed="true"/>
+                        <html:text name="xrefs" size="15" property="primaryId" indexed="true" onkeypress="return handleEnter(this, event)"/>
                     </td>
                     <td class="tableCell">
-                        <html:text name="xrefs" size="15" property="secondaryId" indexed="true"/>
+                        <html:text name="xrefs" size="15" property="secondaryId" indexed="true" onkeypress="return handleEnter(this, event)"/>
                     </td>
                     <td class="tableCell">
-                        <html:text name="xrefs" size="15" property="releaseNumber" indexed="true"/>
+                        <html:text name="xrefs" size="15" property="releaseNumber" indexed="true" onkeypress="return handleEnter(this, event)"/>
                     </td>
                     <td class="tableCell">
                         <html:select name="xrefs" property="qualifier" indexed="true">

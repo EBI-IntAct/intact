@@ -47,11 +47,11 @@
         </td>
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20" name="expForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
-            <html:text property="fullName" size="100" maxlength="250" name="expForm"/>
+            <html:text property="fullName" size="100" maxlength="250" name="expForm" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
     <tr class="tableRowEven">
