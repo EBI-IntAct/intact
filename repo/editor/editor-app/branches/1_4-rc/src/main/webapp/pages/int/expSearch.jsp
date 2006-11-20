@@ -54,3 +54,6 @@
 <html:messages id="msg" property="err.search">
     <font color="red"><li><bean:write name="msg" /></li></font>
 </html:messages>
+<html:messages id="msg" property="int.exp.search">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
