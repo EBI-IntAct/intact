@@ -7,6 +7,8 @@
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/myOutput.log</outputFile>
 
+                    <dryRun>true</dryRun>
+
                     <exportedOboFile>target/intact-exported.obo</exportedOboFile>
 
                 </configuration>
