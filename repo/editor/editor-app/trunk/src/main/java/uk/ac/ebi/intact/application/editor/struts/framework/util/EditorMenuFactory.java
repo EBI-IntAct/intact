@@ -160,22 +160,19 @@ public class EditorMenuFactory {
     private static void buildProteinAndNucleicAcidCriteria(){
         CvHelper cvHelper = null;
         Collection<String> nucleicAcidMIs = new ArrayList();
-        Collection<String> proteinMIs = new ArrayList();
         try {
             cvHelper = new CvHelper();
 
+            // Get the interactor type menu list for the NucleicAcid - Editor
             CvInteractorType nucleicAcid = cvHelper.getNucleicAcid();
             ourNucleicAcidMiRefs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
             ourNucleicAcidMiRefs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
 
-           // Before the cv were organised as follow : the CvInteractorType Peptide was a child of Protein.
-            // So I could just search for the children of Protein to build the menu. But now it changed and Peptide is
-            // a "brother" of Protein as well as Nucleic. So I have to hard code the menu.
-            CvInteractorType protein = CvHelper.getProtein();
-            proteinMIs.add(CvInteractorType.PEPTIDE_MI_REF);
-            proteinMIs.add(CvInteractorType.PROTEIN_MI_REF);
-//            ourProteinMiRefs = cvHelper.getChildrenMiRefs(protein, proteinMIs);
-//            ourProteinMiRefs.add(CvInteractorType.PROTEIN_MI_REF);
+            // Get the interactor type menu list for the Protein - Editor
+            List<String> proteinMis = CvInteractorType.getProteinMIs();
+            for( String proteinMi : proteinMis){
+                ourProteinMiRefs.add(proteinMi);
+            }
 
         } catch (IntactException e) {
             LOGGER.error("Problem trying to load the MI numbers for the CvInteractorType and children of protein " +
