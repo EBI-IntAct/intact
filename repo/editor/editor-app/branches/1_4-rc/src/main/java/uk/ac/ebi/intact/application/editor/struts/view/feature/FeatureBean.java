@@ -208,6 +208,10 @@ public class FeatureBean extends AbstractEditKeyBean {
     }
 
     public Feature getFeature() {
+        if(myFeature != null && myFeature.getAc()!= null){
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
+            myFeature = featureDao.getByAc(myFeature.getAc());
+        }
         return myFeature;
     }
 
@@ -216,10 +220,10 @@ public class FeatureBean extends AbstractEditKeyBean {
      * @throws IntactException for errors in searching the database.
      */
     public Feature getUpdatedFeature() throws IntactException {
-//        if(myFeature != null && myFeature.getAc()!= null){
-//            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
-//            myFeature = featureDao.getByAc(myFeature.getAc());
-//        }
+        if(myFeature != null && myFeature.getAc()!= null){
+            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
+            myFeature = featureDao.getByAc(myFeature.getAc());
+        }
         // Need to update the short label because cloning an interaction also
         // clones a Feature (changes it shortlabel).
         myFeature.setShortLabel(getShortLabel());
