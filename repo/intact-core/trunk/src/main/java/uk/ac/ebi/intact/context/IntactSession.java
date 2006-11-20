@@ -5,6 +5,9 @@
  */
 package uk.ac.ebi.intact.context;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,19 +27,36 @@ import java.util.Properties;
  */
 public abstract class IntactSession
 {
-    private static final String DEFAULT_PROP_FILE = "/intact.properties";
+    private static final Log log = LogFactory.getLog(IntactSession.class);
 
-    protected void readDefaultProperties()
+    private static final String DEFAULT_PROP_FILE = "intact.properties";
+    private static final String CONFIG_FILE_SYSTEM_VAR = "intact.config.file";
+
+    protected void readDefaultProperties() throws IOException
     {
+        // first read the properties for the classpath
         Properties props = readFromClasspathProperties();
+
+        // if an intact.properties file is in the filesystem (from the dir where the app is called)
+        // or a system variable intact.config.file has been defined, overwrite the properties with
+        // those from that file
+        Properties propsSystem = readFromFilesystem();
+        props.putAll(propsSystem);
+
+        // read properties supplied in the system environment (or provided with the -D parameter)
+        Properties propsEnvironment = readFromEnvironment();
+        props.putAll(propsEnvironment);
+
+        // init
         initParametersWithProperties(props);
     }
 
-    private Properties readFromClasspathProperties()
+
+    private Properties readFromClasspathProperties() throws IOException
     {
         Properties properties = new Properties();
 
-        URL intactPropertiesFilename = IntactSession.class.getResource(DEFAULT_PROP_FILE);
+        URL intactPropertiesFilename = IntactSession.class.getResource("/"+DEFAULT_PROP_FILE);
 
         if (intactPropertiesFilename != null)
         {
@@ -44,10 +64,69 @@ public abstract class IntactSession
 
             if (intactPropsFile.exists() && !intactPropsFile.isDirectory())
             {
-                try {
-                    properties.load(new FileInputStream(intactPropsFile));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                log.info("Loading properties from classpath: "+intactPropertiesFilename);
+                properties.load(new FileInputStream(intactPropsFile));
+            }
+        }
+
+        return properties;
+    }
+
+    /**
+     * Check if there is a default file in the filesystem or if the intact.config.file system property
+     * has been configured and points to a file. If any of those cases is true, read the file and
+     * return the properties
+     */
+    private Properties readFromFilesystem() throws IOException
+    {
+        Properties properties = new Properties();
+
+        File propFile = new File(DEFAULT_PROP_FILE);
+
+        if (propFile.exists() && !propFile.isDirectory())
+        {
+            log.info("Loading properties from filesystem: "+propFile);
+            properties.load(new FileInputStream(propFile));
+        }
+        else
+        {
+            String filePath = System.getProperty(CONFIG_FILE_SYSTEM_VAR);
+            propFile = new File(filePath);
+
+            if (propFile.exists() && !propFile.isDirectory())
+            {
+                log.info("Loading properties from filesystem: "+propFile);
+                properties.load(new FileInputStream(propFile));
+            }
+        }
+
+        return properties;
+    }
+
+    /**
+     * Check the system properties for IntactEnvironment properties
+     */
+    private Properties readFromEnvironment()
+    {
+        Properties properties = new Properties();
+
+        Enumeration<String> systemPropNames = (Enumeration<String>) System.getProperties().propertyNames();
+
+        while (systemPropNames.hasMoreElements())
+        {
+            String propName = systemPropNames.nextElement();
+
+            if (propName.startsWith("uk.ac.ebi.intact"))
+            {
+                for (IntactEnvironment env : IntactEnvironment.values())
+                {
+                    if (env.getFqn().equals(propName))
+                    {
+                        if (log.isDebugEnabled())
+                            log.debug("Property found in environment: "+propName+"="+System.getProperty(propName));
+                        
+                        properties.put(propName, System.getProperty(propName));
+                    }
                 }
             }
         }

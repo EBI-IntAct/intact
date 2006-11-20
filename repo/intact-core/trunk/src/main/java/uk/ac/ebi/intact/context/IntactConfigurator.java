@@ -93,9 +93,9 @@ public class IntactConfigurator
         }
 
         // load the data configs
-        if (session.containsInitParam(IntactEnvironment.DATA_CONFIG_PARAM_NAME))
+        if (session.containsInitParam(IntactEnvironment.DATA_CONFIG_PARAM_NAME.getFqn()))
         {
-            String dataConfigValue = session.getInitParam(IntactEnvironment.DATA_CONFIG_PARAM_NAME);
+            String dataConfigValue = session.getInitParam(IntactEnvironment.DATA_CONFIG_PARAM_NAME.getFqn());
 
             String[] dataConfigs = dataConfigValue.split(",");
 
@@ -118,7 +118,7 @@ public class IntactConfigurator
         }
 
         // load the default prefix for generated ACs
-        String prefix = getInitParamValue(session, IntactEnvironment.AC_PREFIX_PARAM_NAME, DEFAULT_AC_PREFIX);
+        String prefix = getInitParamValue(session, IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn(), DEFAULT_AC_PREFIX);
         config.setAcPrefix(prefix);
 
         if (prefix.equals(DEFAULT_AC_PREFIX))
@@ -129,7 +129,7 @@ public class IntactConfigurator
 
         // check the schema Version
         // read only
-        String strForceNoSchemaCheck = getInitParamValue(session, IntactEnvironment.FORCE_NO_SCHEMA_VERSION_CHECK, Boolean.FALSE.toString());
+        String strForceNoSchemaCheck = getInitParamValue(session, IntactEnvironment.FORCE_NO_SCHEMA_VERSION_CHECK.getFqn(), Boolean.FALSE.toString());
         boolean forceNoSchemaCheck = Boolean.parseBoolean(strForceNoSchemaCheck);
 
         if (!forceNoSchemaCheck)
@@ -138,13 +138,13 @@ public class IntactConfigurator
         }
 
         // read only
-        String strReadOnly = getInitParamValue(session, IntactEnvironment.READ_ONLY_APP, DEFAULT_READ_ONLY_APP);
+        String strReadOnly = getInitParamValue(session, IntactEnvironment.READ_ONLY_APP.getFqn(), DEFAULT_READ_ONLY_APP);
         boolean readOnly = Boolean.parseBoolean(strReadOnly);
         config.setReadOnlyApp(readOnly);
         log.debug("Application is read-only: "+readOnly);
 
         // synchronize search items
-        String strSynchronizeSearchItems = getInitParamValue(session, IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS, DEFAULT_SYNCHRONIZED_SEARCH_ITEMS);
+        String strSynchronizeSearchItems = getInitParamValue(session, IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS.getFqn(), DEFAULT_SYNCHRONIZED_SEARCH_ITEMS);
         boolean syncSearchItems = Boolean.parseBoolean(strSynchronizeSearchItems);
         config.setSynchronizedSearchItems(syncSearchItems);
         log.debug("Application synchronizes SearchItems: "+syncSearchItems);
@@ -153,7 +153,7 @@ public class IntactConfigurator
         loadInstitution(session);
 
         // preload the most common CvObjects
-        boolean preloadCommonCvs = Boolean.valueOf(getInitParamValue(session, IntactEnvironment.PRELOAD_COMMON_CVS_PARAM_NAME, String.valueOf(Boolean.FALSE)));
+        boolean preloadCommonCvs = Boolean.valueOf(getInitParamValue(session, IntactEnvironment.PRELOAD_COMMON_CVS_PARAM_NAME.getFqn(), String.valueOf(Boolean.FALSE)));
         if (preloadCommonCvs)
         {
             log.info("Preloading common CvObjects");
@@ -227,12 +227,12 @@ public class IntactConfigurator
 
     private static String getInitParamValue(IntactSession session, String initParamName, String defaultValue )
     {
-        return getInitParamValue(session,initParamName,defaultValue,null);
+        return getInitParamValue(session,initParamName,defaultValue,initParamName);
     }
 
     private static String getInitParamValue(IntactSession session, String initParamName, String defaultValue, String systemPropertyDefault )
     {
-        String initParamValue;
+        String initParamValue = null;
 
         if (session.containsInitParam(initParamName))
         {
@@ -245,21 +245,22 @@ public class IntactConfigurator
             {
                 log.warn("Init-Param missing in web.xml: "+initParamName);
             }
-            else
+        }
+
+        if (systemPropertyDefault != null)
+        {
+            String propValue = System.getProperty(systemPropertyDefault);
+
+            if (propValue != null)
             {
-                if (systemPropertyDefault != null)
-                {
-                    String propValue = System.getProperty(systemPropertyDefault);
-
-                    if (propValue != null)
-                    {
-                        log.debug("Found environment property for default value: "+propValue);
-                        defaultValue = propValue;
-                    }
-                }
+                log.debug("Found environment property for param: " +initParamName+"="+ propValue);
+                initParamValue = propValue;
             }
-            log.debug("Using default value for param "+initParamName+": "+defaultValue);
+        }
 
+        if (initParamValue == null)
+        {
+            log.debug("Using default value for param "+initParamName+": "+defaultValue);
             initParamValue = defaultValue;
         }
 
@@ -268,7 +269,7 @@ public class IntactConfigurator
 
     private static void loadInstitution(IntactSession session)
     {
-        String institutionLabel = getInitParamValue(session, IntactEnvironment.INSTITUTION_LABEL, null, "institution");
+        String institutionLabel = getInitParamValue(session, IntactEnvironment.INSTITUTION_LABEL.getFqn(), null, "institution");
 
         if (institutionLabel == null)
         {
@@ -305,15 +306,15 @@ public class IntactConfigurator
 
             if (institutionLabel.equalsIgnoreCase(DEFAULT_INSTITUTION_LABEL))
             {
-                fullName = getInitParamValue(session, IntactEnvironment.INSTITUTION_FULL_NAME, DEFAULT_INSTITUTION_FULL_NAME);
-                postalAddress = getInitParamValue(session, IntactEnvironment.INSTITUTION_POSTAL_ADDRESS, DEFAULT_INSTITUTION_POSTAL_ADDRESS);
-                url = getInitParamValue(session, IntactEnvironment.INSTITUTION_URL, DEFAULT_INSTITUTION_URL);
+                fullName = getInitParamValue(session, IntactEnvironment.INSTITUTION_FULL_NAME.getFqn(), DEFAULT_INSTITUTION_FULL_NAME);
+                postalAddress = getInitParamValue(session, IntactEnvironment.INSTITUTION_POSTAL_ADDRESS.getFqn(), DEFAULT_INSTITUTION_POSTAL_ADDRESS);
+                url = getInitParamValue(session, IntactEnvironment.INSTITUTION_URL.getFqn(), DEFAULT_INSTITUTION_URL);
             }
             else
             {
-                fullName = getInitParamValue(session, IntactEnvironment.INSTITUTION_FULL_NAME, "");
-                postalAddress = getInitParamValue(session, IntactEnvironment.INSTITUTION_POSTAL_ADDRESS, "");
-                url = getInitParamValue(session, IntactEnvironment.INSTITUTION_URL, "");
+                fullName = getInitParamValue(session, IntactEnvironment.INSTITUTION_FULL_NAME.getFqn(), "");
+                postalAddress = getInitParamValue(session, IntactEnvironment.INSTITUTION_POSTAL_ADDRESS.getFqn(), "");
+                url = getInitParamValue(session, IntactEnvironment.INSTITUTION_URL.getFqn(), "");
             }
 
             institution.setFullName(fullName);
