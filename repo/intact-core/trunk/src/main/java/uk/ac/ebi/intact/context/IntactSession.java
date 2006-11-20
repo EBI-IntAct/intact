@@ -91,12 +91,16 @@ public abstract class IntactSession
         else
         {
             String filePath = System.getProperty(CONFIG_FILE_SYSTEM_VAR);
-            propFile = new File(filePath);
 
-            if (propFile.exists() && !propFile.isDirectory())
+            if (filePath != null)
             {
-                log.info("Loading properties from filesystem: "+propFile);
-                properties.load(new FileInputStream(propFile));
+                propFile = new File(filePath);
+    
+                if (propFile.exists() && !propFile.isDirectory())
+                {
+                    log.info("Loading properties from filesystem: "+propFile);
+                    properties.load(new FileInputStream(propFile));
+                }
             }
         }
 
