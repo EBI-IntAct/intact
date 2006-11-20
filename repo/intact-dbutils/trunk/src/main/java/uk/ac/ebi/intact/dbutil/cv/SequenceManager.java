@@ -149,6 +149,7 @@ public class SequenceManager {
         }
         catch (SQLException e)
         {
+            log.error(e);
             throw new IntactException("Exception checking sequence", e);
         }
 
