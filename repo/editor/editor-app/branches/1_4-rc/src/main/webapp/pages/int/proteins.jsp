@@ -186,7 +186,7 @@
                     <nested:write property="spAc"/>
                 </td>
                 <td class="tableCell">
-                    <nested:write property="interactorAc"/> 
+                    <nested:write property="interactorAc"/>
                 </td>
                 <td class="tableCell">
                     <nested:write property="geneName"/>
@@ -267,9 +267,19 @@
 
                     <%-- Expressed In --%>
                     <td class="tableCell">
+                        <c:if test="${components.type == 'SmallMolecule'}">
+                            -
+                        </c:if>
+                        <c:if test="${components.type == 'Protein'}">
                         <nested:select property="expressedIn">
                             <html:options name="biosrclist_" />
                         </nested:select>
+                        </c:if>
+                        <c:if test="${components.type == 'NucleicAcid'}">
+                        <nested:select property="expressedIn">
+                            <html:options name="biosrclist_" />
+                        </nested:select>
+                        </c:if>
                     </td>
                 </c:if>
                 <td class="tableCell">
@@ -294,11 +304,23 @@
             </c:choose>
                <%-- Add feature button: common to all --%>
                 <td class="tableCell">
-                    <html:submit indexed="true" property="protCmd"
-                        onclick="setFeatureDispatch('add');"
-                        titleKey="int.proteins.button.feature.add.titleKey">
-                        <bean:message key="int.proteins.button.feature.add"/>
-                    </html:submit>
+                    <c:if test="${components.type == 'SmallMolecule'}">
+                            -
+                    </c:if>
+                    <c:if test="${components.type == 'Protein'}">
+                        <html:submit indexed="true" property="protCmd"
+                            onclick="setFeatureDispatch('add');"
+                            titleKey="int.proteins.button.feature.add.titleKey">
+                            <bean:message key="int.proteins.button.feature.add"/>
+                        </html:submit>
+                    </c:if>
+                    <c:if test="${components.type == 'NucleicAcid'}">
+                        <html:submit indexed="true" property="protCmd"
+                            onclick="setFeatureDispatch('add');"
+                            titleKey="int.proteins.button.feature.add.titleKey">
+                            <bean:message key="int.proteins.button.feature.add"/>
+                        </html:submit>
+                    </c:if>
                 </td>
 
                 <%-- Empty cell spanning many cells --%>
