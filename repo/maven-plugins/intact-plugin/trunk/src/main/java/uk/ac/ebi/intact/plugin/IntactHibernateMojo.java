@@ -36,7 +36,7 @@ import java.sql.SQLException;
 public abstract class IntactHibernateMojo extends IntactAbstractMojo
 {
     /**
-     * @parameter default-value="target/hibernate/config/hibernate.cfg.xml"
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     protected File hibernateConfig;
@@ -69,6 +69,19 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         if (initialized)
         {
             return;
+        }
+
+        if (hibernateConfig == null)
+        {
+            hibernateConfig = new File("target/hibernate/config/hibernate.cfg.xml");
+            try
+            {
+                MojoUtils.prepareFile(hibernateConfig);
+            }
+            catch (IOException e)
+            {
+                throw new MojoExecutionException("Problem creating folder for hibernate config", e);
+            }
         }
 
         getLog().info("Using hibernate cfg file: "+hibernateConfig);

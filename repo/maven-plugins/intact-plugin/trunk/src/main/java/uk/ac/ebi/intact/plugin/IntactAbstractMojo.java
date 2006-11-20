@@ -25,43 +25,6 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /**
-     * Project instance
-     *
-     * @parameter expression="${project}"
-     * @required
-     * @readonly
-     *
-    protected MavenProject project;
-
-    /**
-     * This is where build results go.
-     *
-     * @parameter expression="${project.build.directory}"
-     * @required
-     * @readonly
-     */
-    private File directory;
-
-    /**
-     * This is where compiled classes go.
-     *
-     * @parameter expression="${project.build.outputDirectory}"
-     * @required
-     * @readonly
-     */
-    private File outputDirectory;
-
-    /**
-     * This is where compiled test classes go.
-     *
-     * @parameter expression="${project.build.testOutputDirectory}"
-     * @required
-     * @readonly
-     */
-    private File testOutputDirectory;
-
-
-    /**
      * Standard output file
      *
      * @parameter  expression="${intact.outputFile}
@@ -108,7 +71,7 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     {
         if (outputWriter == null)
         {
-            MojoUtils.prepareFile(outputFile, true);
+            MojoUtils.prepareFile(getOutputFile(), true);
             MojoUtils.writeStandardHeaderToFile("Standard output", "Default error file", getProject(), outputFile);
 
             outputWriter = new FileWriter(outputFile);
@@ -120,8 +83,8 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     {
         if (errorWriter == null)
         {
-            MojoUtils.prepareFile(outputFile, true);
-            MojoUtils.writeStandardHeaderToFile("Standard error", "Default error file", getProject(), outputFile);
+            MojoUtils.prepareFile(getErrorFile(), true);
+            MojoUtils.writeStandardHeaderToFile("Standard error", "Default error file", getProject(), errorFile);
 
             errorWriter = new FileWriter(errorFile);
         }
@@ -133,27 +96,37 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     public File getOutputFile()
     {
+        if (outputFile == null)
+        {
+            outputFile = new File(getDirectory(), "output.log");
+        }
+
         return outputFile;
     }
 
     public File getErrorFile()
     {
+        if (errorFile == null)
+        {
+            errorFile = new File(getDirectory(), "error.log");
+        }
+
         return errorFile;
     }
 
 
     public File getDirectory()
     {
-        return directory;
+        return new File(getProject().getBuild().getDirectory());
     }
 
     public File getOutputDirectory()
     {
-        return outputDirectory;
+        return new File(getProject().getBuild().getOutputDirectory());
     }
 
     public File getTestOutputDirectory()
     {
-        return testOutputDirectory;
+        return new File(getProject().getBuild().getTestOutputDirectory());
     }
 }
