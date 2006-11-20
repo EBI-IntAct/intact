@@ -1061,16 +1061,13 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
     private void persistCurrentView() throws IntactException {
         // The current Interaction.
         Interaction intact = getAnnotatedObject();
-        if(intact != null && intact.getAc() != null && (!"".equals(intact.getAc())) ){
-            intact = DaoProvider.getDaoFactory().getInteractionDao().getByAc(intact.getAc());
-        }
-
         // Add experiments here. Make sure this is done after persisting the
         // Interaction first. - IMPORTANT. don't change the order.
         for (Iterator iter = getExperimentsToAdd().iterator(); iter.hasNext();) {
             ExperimentRowData row = (ExperimentRowData) iter.next();
-            Experiment exp = row.getExperiment();
-            if (exp == null) {
+            Experiment exp = null;
+            if (row.getAc() != null){
+                log.debug("row ac is " + row.getAc());
                 ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
                 exp = experimentDao.getByAc(row.getAc());
             }
