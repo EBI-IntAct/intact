@@ -1,27 +1,25 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.6</version>
+        <version>3</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>intact-plugin</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <!-- last released -->
+    <version>1.0</version>
     <name>Intact Base Plugin</name>
     <description>
         Contains common code and utilities for all intact plugins
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.0</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.0</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/tags/intact-plugin-1.0</url>
     </scm>
   
     <dependencies>
