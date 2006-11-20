@@ -11,7 +11,7 @@ function validateComment(element, evt) {
     // Allow backspace or else a user can't delete his/own text!!
     var desc = element.value;//document.forms[0].elements['newAnnotation.description'].value;
     var keyCode = evt.which ? evt.which : evt.keyCode;
-    if( keyCode != 8 ){
+    if( keyCode != 08 ){
         if (desc.charAt(desc.length - 1) == ' ' && desc.charAt(desc.length - 2) == ' ') {
             //keyCode == 32) {
             window.alert("Multiple spaces are not allowed");
@@ -34,12 +34,14 @@ function validateComment(element, evt) {
         }
 
     }
-    if( unicodeCount > 0 ) {
-        msg = "The character you entered is not allowed. Only Unicode characters from 0020";
-        msg += "(space) to 007E(~) are allowed : '"+o+"`'" ;
-        o="";
-        window.alert(msg);
-        return false;
+    if( keyCode != 08 ){
+        if( unicodeCount > 0 ) {
+            msg = "The character you entered is not allowed. Only Unicode characters from 0020";
+            msg += "(space) to 007E(~) are allowed : '"+o+"`'" ;
+            o="";
+            window.alert(msg);
+            return false;
+        }
     }
 
     return true;
