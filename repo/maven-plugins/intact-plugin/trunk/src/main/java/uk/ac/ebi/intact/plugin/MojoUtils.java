@@ -41,6 +41,17 @@ public class MojoUtils
      * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
      * If the file exists, it will be overriden
      * @param file the file to check
+     * @throws IOException
+     */
+    public static void prepareFile(File file) throws IOException
+    {
+        prepareFile(file, true, true);
+    }
+
+    /**
+     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
+     * If the file exists, it will be overriden
+     * @param file the file to check
      * @param createParentFolder if the parent of the file does not exist, it will create it
      * @throws IOException
      */
