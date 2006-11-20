@@ -59,12 +59,17 @@ public class OboExportMojo
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        if (isDryRun())
+        {
+            getLog().info("Running in dry-run mode");
+        }
+
         MojoUtils.prepareFile(exportedOboFile, true);
 
         BufferedWriter out = new BufferedWriter(new FileWriter(exportedOboFile));
 
         DownloadCVs downloadCVs = new DownloadCVs();
-        downloadCVs.download(out);
+        downloadCVs.download(out, isDryRun());
 
 
         out.flush();

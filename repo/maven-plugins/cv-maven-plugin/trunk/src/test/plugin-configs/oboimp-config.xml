@@ -4,7 +4,7 @@
             <plugin>
                 <artifactId>cv-maven-plugin</artifactId>
                 <configuration>
-                    <hibernateConfig>src/test/resources/uk/ac/ebi/intact/plugin/cv/hibernate.h2.cfg.xml</hibernateConfig>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/myOutput.log</outputFile>
 
                     <importedOboFile>src/test/resources/uk/ac/ebi/intact/plugin/cv/obo/psi-mi25-4intact.obo</importedOboFile>
