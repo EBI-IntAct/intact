@@ -37,11 +37,11 @@
         </td>
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20" name="cvForm"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
-            <html:text property="fullName" size="100" maxlength="250" name="cvForm"/>
+            <html:text property="fullName" size="100" maxlength="250" name="cvForm"onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
     <tr class="tableRowEven">

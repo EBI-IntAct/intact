@@ -61,7 +61,7 @@
                 </html:submit>
             </td>
             <td class="tableCell">
-                <html:text property="searchValue" size="20" maxlength="20"/>
+                <html:text property="searchValue" size="20" maxlength="20" onkeypress="return handleEnter(this, event)"/>
             </td>
         </tr>
     </table>

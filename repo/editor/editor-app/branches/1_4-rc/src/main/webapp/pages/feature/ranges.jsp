@@ -113,13 +113,13 @@
                 <%-- Save or Error mode --%>
                 <c:if test="${save or error}">
                     <td class="tableCell">
-                        <html:text name="ranges" size="10" property="fromRange" indexed="true"/>
+                        <html:text name="ranges" size="10" property="fromRange" indexed="true" onkeypress="return handleEnter(this, event)"/>
                         <br/><html:messages id="msg" property="edit.fromRange">
                                 <font color="red"><li><bean:write name="msg" /></li></font>
                             </html:messages>
                     </td>
                     <td class="tableCell">
-                        <html:text name="ranges" size="10" property="toRange" indexed="true"/>
+                        <html:text name="ranges" size="10" property="toRange" indexed="true" onkeypress="return handleEnter(this, event)"/>
                         <br/><html:messages id="msg" property="edit.toRange">
                              <font color="red"><li><bean:write name="msg" /></li></font>
                         </html:messages>

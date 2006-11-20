@@ -50,11 +50,11 @@
 
         <td class="tableCell">
             <html:text property="shortLabel" size="20" maxlength="20"
-                name="bsForm" styleClass="inputRequired"/>
+                name="bsForm" styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
         </td>
 
         <td class="tableCell">
-            <html:text property="fullName" size="100" maxlength="250" name="bsForm"/>
+            <html:text property="fullName" size="100" maxlength="250" name="bsForm" onkeypress="return handleEnter(this, event)"/>
         </td>
     </tr>
     <tr class="tableRowEven">
@@ -103,7 +103,7 @@
 
         <td class="tableCell">
             <html:text property="taxId" name="bsForm" size="10" maxlength="16"
-                styleClass="inputRequired"/>
+                styleClass="inputRequired" onkeypress="return handleEnter(this, event)"/>
             <html:messages id="msg" property="taxId">
                 <font color="red"><li><bean:write name="msg" /></li></font>
             </html:messages>
