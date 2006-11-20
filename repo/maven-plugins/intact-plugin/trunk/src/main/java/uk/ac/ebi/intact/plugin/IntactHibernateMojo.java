@@ -76,7 +76,10 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
             hibernateConfig = new File("target/hibernate/config/hibernate.cfg.xml");
             try
             {
-                MojoUtils.prepareFile(hibernateConfig);
+                if (!hibernateConfig.exists())
+                {
+                    MojoUtils.prepareFile(hibernateConfig);
+                }
             }
             catch (IOException e)
             {
