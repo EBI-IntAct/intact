@@ -105,9 +105,14 @@ public class DaoFactory implements Serializable
         return daoFactory;
     }
 
-    public <T extends Alias> AliasDao getAliasDao(Class<T> aliasType)
+    public AliasDao<Alias> getAliasDao()
     {
-        return new AliasDaoImpl<T>(aliasType, getCurrentSession(), intactSession);
+        return new AliasDaoImpl( Alias.class, getCurrentSession(), intactSession );
+    }
+
+    public <T extends Alias> AliasDao<T> getAliasDao(Class<T> aliasType)
+    {
+        return new AliasDaoImpl<T>( aliasType, getCurrentSession(), intactSession );
     }
 
     public AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao()
