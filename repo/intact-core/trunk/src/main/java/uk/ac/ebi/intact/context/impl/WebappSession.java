@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -39,7 +40,14 @@ public class WebappSession extends IntactSession
         this.request = request;
         overrideInitParamMap = new HashMap<String,String>();
 
-        readDefaultProperties();
+        try
+        {
+            readDefaultProperties();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public WebappSession(ServletContext servletContext, HttpSession session, HttpServletRequest request, Properties properties)

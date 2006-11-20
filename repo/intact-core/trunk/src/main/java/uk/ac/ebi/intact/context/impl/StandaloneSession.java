@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -38,7 +39,14 @@ public class StandaloneSession extends IntactSession
         this.requestMap =  new HashMap<String,Object>();
         this.initParamMap =  new HashMap<String,String>();
 
-        readDefaultProperties();
+        try
+        {
+            readDefaultProperties();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     public StandaloneSession(Properties properties)
