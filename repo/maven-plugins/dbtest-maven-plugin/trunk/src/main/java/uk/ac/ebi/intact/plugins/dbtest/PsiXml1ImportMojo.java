@@ -31,6 +31,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.EntrySetParser;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetPersister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
+import uk.ac.ebi.intact.context.IntactContext;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,6 +39,7 @@ import org.apache.maven.artifact.Artifact;
 import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.hibernate.SessionFactory;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -47,6 +49,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Set;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Import a psi xml 1 into the database
@@ -100,6 +103,13 @@ public class PsiXml1ImportMojo
             }
 
         }
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        // close the connection
+        // TODO to be replaced by  IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
+        SessionFactory sf = (SessionFactory) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getSessionFactory();
+        sf.close();
     }
 
     private void importUrl(String str) throws Exception
