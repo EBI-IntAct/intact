@@ -107,7 +107,8 @@ public abstract class UpdateProteinsI {
             }
 
         } catch ( HttpProxyManager.ProxyConfigurationNotFound proxyConfigurationNotFound ) {
-            proxyConfigurationNotFound.printStackTrace();
+            //proxyConfigurationNotFound.printStackTrace();
+            logger.warn("Proxy configuration not found: "+ proxyConfigurationNotFound.getMessage());
         }
 
         collectDefaultObject( );
