@@ -8,6 +8,7 @@
                     <outputFile>target/myOutput.log</outputFile>
 
                     <exportedFile>target/intact.fasta</exportedFile>
+                    <gzip>true</gzip>
                 </configuration>
             </plugin>
         </plugins>
