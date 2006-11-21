@@ -33,6 +33,8 @@ public abstract class DataConfig<T,C>
 
     public abstract T getSessionFactory();
 
+    public abstract void closeSessionFactory();
+
     public abstract C getConfiguration();
 
     private boolean initialized;

@@ -42,7 +42,7 @@
                 <plugin>
                     <groupId>uk.ac.ebi.intact.plugins</groupId>
                     <artifactId>dbtest-maven-plugin</artifactId>
-
+                    
                     <configuration>
                         <imports>
                             <xmlFilesets>

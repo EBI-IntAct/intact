@@ -262,6 +262,15 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         return sessionFactory;
     }
 
+
+    public void closeSessionFactory()
+    {
+        if (sessionFactory != null)
+        {
+            sessionFactory.close();
+        }
+    }
+
     @Override
     public Configuration getConfiguration()
     {

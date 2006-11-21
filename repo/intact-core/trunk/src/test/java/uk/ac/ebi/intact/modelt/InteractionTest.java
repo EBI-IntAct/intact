@@ -1,9 +1,9 @@
 package uk.ac.ebi.intact.modelt;
 
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +25,10 @@ public class InteractionTest extends TestCase {
     public void testClone() throws Exception{
         InteractionDao interactionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao();
         Interaction interaction = interactionDao.getByShortLabel("cara-7");
-        System.out.println(interaction.getAc());
+
+        if (interaction != null)
+        {
+            System.out.println(interaction.getAc());
+        }
     }
 }
