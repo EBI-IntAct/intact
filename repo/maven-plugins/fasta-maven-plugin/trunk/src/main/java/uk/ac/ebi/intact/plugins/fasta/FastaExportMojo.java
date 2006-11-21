@@ -65,11 +65,15 @@ public class FastaExportMojo
     {
         PrintStream ps = new PrintStream(getOutputFile());
 
+        getLog().info("Starting export");
         FastaExporter.exportToFastaFile(ps, exportedFile);
 
         if (gzip)
         {
             File gzippedFile = new File(exportedFile+".gz");
+
+            getLog().info("Gzipping file to: "+gzippedFile);
+
             Utilities.gzip(exportedFile, gzippedFile, true);
         }
     }
