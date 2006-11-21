@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.plugins.reactome;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.dbutil.reactome.ReactomeBean;
@@ -42,6 +43,14 @@ import java.net.MalformedURLException;
 public class ReactomeExportMojo
         extends IntactHibernateMojo
 {
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
      * @parameter default-value="${project.build.directory}/reactome.dat"
@@ -141,4 +150,8 @@ public class ReactomeExportMojo
 
     }
 
+    public MavenProject getProject()
+    {
+        return project;
+    }
 }
