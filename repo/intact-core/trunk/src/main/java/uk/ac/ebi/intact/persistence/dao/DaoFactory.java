@@ -212,6 +212,16 @@ public class DaoFactory implements Serializable
         return new MineInteractionDaoImpl(getCurrentSession(), intactSession);
     }
 
+    public PolymerDao<PolymerImpl> getPolymerDao()
+    {
+        return new PolymerDaoImpl<PolymerImpl>(PolymerImpl.class, getCurrentSession(), intactSession);
+    }
+    
+    public <T extends PolymerImpl> PolymerDao<T> getPolymerDao(Class<T> clazz)
+    {
+        return new PolymerDaoImpl<T>(clazz, getCurrentSession(), intactSession);
+    }
+
     public ProteinDao getProteinDao()
     {
         return new ProteinDaoImpl(getCurrentSession(), intactSession);

@@ -30,7 +30,7 @@ import java.util.Map;
  * @since <pre>03-May-2006</pre>
  */
 @SuppressWarnings({"unchecked"})
-public class ProteinDaoImpl extends InteractorDaoImpl<ProteinImpl> implements ProteinDao
+public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements ProteinDao
 {
 
     private static Log log = LogFactory.getLog(ProteinDaoImpl.class);
