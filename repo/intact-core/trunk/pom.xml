@@ -39,22 +39,35 @@
                     <groupId>org.apache.myfaces.tobago</groupId>
                     <artifactId>maven-apt-plugin</artifactId>
                 </plugin>
-                <!--
                 <plugin>
                     <groupId>uk.ac.ebi.intact.plugins</groupId>
                     <artifactId>dbtest-maven-plugin</artifactId>
-                    <version>1.0-SNAPSHOT</version>
+
+                    <configuration>
+                        <imports>
+                            <xmlFilesets>
+                                <xmlFileset>
+                                    <version>1</version>
+                                    <urls>
+                                        <url>
+                                            ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml
+                                        </url>
+                                    </urls>
+                                </xmlFileset>
+                            </xmlFilesets>
+                        </imports>
+                    </configuration>
 
                     <executions>
                         <execution>
                             <goals>
                                 <goal>h2-preload</goal>
+                                <goal>import-psi1</goal>
                             </goals>
                             <phase>test</phase>
                         </execution>
                     </executions>
                 </plugin>
-                -->
             </plugins>
         </build>
 
