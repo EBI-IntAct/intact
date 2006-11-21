@@ -2,4 +2,9 @@ Change to be implemented in this version of the schema
 ------------------------------------------------------
 
 1. Add on Component the possibility to define participant detection method.
+2. Add BiologicalRole on Component
+3. Add Experimental role on Component
+4. Write a script that splits the current role into Biological and Experimental
+   Curators are to define such algorithm
+
 
