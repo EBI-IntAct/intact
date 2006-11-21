@@ -17,8 +17,10 @@ package uk.ac.ebi.intact.plugins.fasta;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.dbutil.fasta.FastaExporter;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,11 +36,26 @@ import java.io.PrintStream;
 public class FastaExportMojo
         extends IntactHibernateMojo
 {
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
 
     /**
+     * Name of the fasta file to be created
      * @property default-value="${maven.build.directory}/intact.fasta"
      */
     private File exportedFile;
+
+    /**
+     * Gzip the fasta file before finishing
+     * @property default-value="${maven.build.directory}/intact.fasta"
+     */
+    private boolean gzip;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -49,6 +66,17 @@ public class FastaExportMojo
         PrintStream ps = new PrintStream(getOutputFile());
 
         FastaExporter.exportToFastaFile(ps, exportedFile);
+
+        if (gzip)
+        {
+            File gzippedFile = new File(exportedFile+".gz");
+            Utilities.gzip(exportedFile, gzippedFile, true);
+        }
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 
     public File getExportedFile()
