@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import java.io.*;
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -109,73 +110,80 @@ public class FastaExporter {
         int count = 0;
         int countExported = 0;
         int countNoSeq = 0;
+        
+        List<ProteinImpl> proteins = null;
+        int firstResult = 0;
+        int maxResults = 300;
 
-        Iterator<ProteinImpl> iterator = proteinDao.getAllIterator();
-        while ( iterator.hasNext() ) {
-            ProteinImpl protein = iterator.next();
+        do
+        {
+            proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getProteinDao().getAll(firstResult, maxResults);
 
-            if (log.isDebugEnabled())
-                log.debug(protein.getAc());
+            firstResult += maxResults;
 
-            // HACK: to avoid lazyloading exceptions, we capture the exception and rebuild de Dao again (refreshing the protein)
-            Collection<Component> activeInstances = null;
-            String sequence = null;
-            try
+
+            for (ProteinImpl protein : proteins)
             {
-                activeInstances = protein.getActiveInstances();
-                sequence = protein.getSequence();
-            }
-            catch (Throwable t)
-            {
-                // this is necessary, because the sequence cannot be loaded lazily
-               // due to the autocommits done by the iterator
-                proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-                protein = proteinDao.getByAc(protein.getAc());
-
-                activeInstances = protein.getActiveInstances();
-                sequence = protein.getSequence();
-            }
-
-            // Process the chunk of data
-            if ( ! activeInstances.isEmpty() ) {
-
-                StringBuffer sb = new StringBuffer( 512 );
-
-                // Header contains: AC, shortlabel and primaryId.
-                sb.append( '>' ).append( ' ' );
-                sb.append( protein.getAc() );
-                sb.append( '|' );
-                sb.append( protein.getShortLabel() );
-                String identity = getIdentity( protein );
-                if ( identity != null ) {
-                    sb.append( '|' );
-                    sb.append( identity );
+                if (log.isDebugEnabled())
+                {
+                    log.debug(protein.getAc());
                 }
 
-                sb.append( NEW_LINE );
-                sb.append( sequence );
+                int componentsSize = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                        .getProteinDao().countComponentsForInteractorWithAc(protein.getAc());
 
-                sb.append( NEW_LINE );
+                // Process the chunk of data
+                if (componentsSize > 0)
+                {
 
-                // write to file
-                fastaWriter.write( sb.toString() );
-                fastaWriter.flush();
+                    StringBuffer sb = new StringBuffer(512);
 
-                // stats
-                countExported++;
-                out.print( "." );
+                    // Header contains: AC, shortlabel and primaryId.
+                    sb.append('>').append(' ');
+                    sb.append(protein.getAc());
+                    sb.append('|');
+                    sb.append(protein.getShortLabel());
+                    String identity = getIdentity(protein);
+                    if (identity != null)
+                    {
+                        sb.append('|');
+                        sb.append(identity);
+                    }
 
-            } else {
-                // stats
-                countNoSeq++;
-                out.print( "X" );
+                    sb.append(NEW_LINE);
+
+                    String sequence = protein.getSequence();
+                    sb.append(sequence);
+
+                    sb.append(NEW_LINE);
+
+                    // write to file
+                    fastaWriter.write(sb.toString());
+                    fastaWriter.flush();
+
+                    // stats
+                    countExported++;
+                    out.print(".");
+
+                }
+                else
+                {
+                    // stats
+                    countNoSeq++;
+                    out.print("X");
+                }
+
+                count++;
+                if ((count % 70) == 0)
+                {
+                    out.println("   " + count);
+                }
             }
 
-            count++;
-            if ( ( count % 70 ) == 0 ) {
-                out.println( "   " + count );
-            }
-        }
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        } while (!proteins.isEmpty());
 
         out.println( "" );
         out.println( "----------------------------------------------------------------------------------" );
