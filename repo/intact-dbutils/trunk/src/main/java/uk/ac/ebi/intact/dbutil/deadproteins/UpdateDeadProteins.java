@@ -414,6 +414,7 @@ public class UpdateDeadProteins {
             String id = iterator.next();
             Collection<RemappingEntry> entries = remapping.get( id );
 
+            count++;
             log.debug( "--" + count + "/" + total + "------------------------------------------" );
             log.debug( id );
 
