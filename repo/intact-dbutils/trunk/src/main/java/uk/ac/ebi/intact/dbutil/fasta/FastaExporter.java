@@ -51,26 +51,13 @@ public class FastaExporter {
      */
     private static String getIdentity( Interactor interactor ) {
 
-        CvXrefQualifier identity = null;
-
-        try {
-            identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvXrefQualifier.class ).getByXref( CvXrefQualifier.IDENTITY_MI_REF );
-        }
-
-        if ( identity == null ) {
-            throw new IllegalStateException( "Could not find CvXrefQualifier( identity ) in the database." );
-        }
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
 
         for ( Xref xref : interactor.getXrefs() ) {
             if ( identity.equals( xref.getCvXrefQualifier() ) ) {
                 return xref.getPrimaryId();
             }
         }
-
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         return null;
     }
@@ -153,7 +140,8 @@ public class FastaExporter {
 
                     sb.append(NEW_LINE);
 
-                    String sequence = protein.getSequence();
+                    String sequence = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                            .getPolymerDao().getSequenceByPolymerAc(protein.getAc());
                     sb.append(sequence);
 
                     sb.append(NEW_LINE);
