@@ -31,7 +31,8 @@ public class SequenceChunk extends AbstractAuditable  {
      * To who belongs that chunk.
      */
     private Polymer parent;
-    //private String parentAc;
+
+    private String parentAc;
 
     /**
      * The content of the sequence chunk.
@@ -68,16 +69,6 @@ public class SequenceChunk extends AbstractAuditable  {
 
     ///////////////////////////////////////
     //access methods for attributes
-    /*
-    @Column(name = "parent_ac", insertable = false, updatable = false)
-    public String getParentAc() {
-        return parentAc;
-    }
-
-    public void setParentAc( String parentAc ) {
-        this.parentAc = parentAc;
-    }  */
-
     @ManyToOne (targetEntity = PolymerImpl.class)
     @JoinColumn(name = "parent_ac")
     public Polymer getParent() {
@@ -107,6 +98,16 @@ public class SequenceChunk extends AbstractAuditable  {
         this.sequenceIndex = sequenceIndex;
     }
 
+    @Column(name = "parent_ac", insertable = false, updatable = false)
+    public String getParentAc()
+    {
+        return parentAc;
+    }
+
+    public void setParentAc(String parentAc)
+    {
+        this.parentAc = parentAc;
+    }
 } // end Xref
 
 
