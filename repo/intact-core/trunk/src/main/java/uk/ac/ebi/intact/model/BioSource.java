@@ -98,7 +98,7 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
     ///////////////////////////////////////
     //access methods for attributes
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})
     @JoinTable(
         name="ia_biosource2annot",
         joinColumns={@JoinColumn(name="biosource_ac")},
