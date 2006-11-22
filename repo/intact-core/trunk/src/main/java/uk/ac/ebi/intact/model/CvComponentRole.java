@@ -68,6 +68,12 @@ public class CvComponentRole extends CvObject implements Editable {
     public static final String FLUROPHORE_ACCEPTOR = "acceptor fluorophore";
     public static final String FLUROPHORE_ACCEPTOR_MI_REF = "MI:0584";
 
+    public static final String ANCILLARY = "ancillary";
+    public static final String ANCILLARY_MI_REF = "MI:0684";
+
+    public static final String COFACTOR= "cofactor";
+    public static final String COFACTOR_MI_REF = "MI:0682";
+
 
     public CvComponentRole() {
         //super call sets creation time data
