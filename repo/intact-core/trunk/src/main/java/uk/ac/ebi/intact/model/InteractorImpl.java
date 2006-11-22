@@ -193,7 +193,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
         return interactorType;
     }
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})
     @JoinTable(
             name = "ia_int2annot",
             joinColumns = { @JoinColumn(name = "interactor_ac") },
@@ -225,7 +225,6 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
 
         result = "AC: " + this.getAc() + " Owner: " + this.getOwner().getShortLabel()
                  + " Label: " + this.getShortLabel() + "[";
-
         if ( null != this.getXrefs() ) {
             i = this.getXrefs().iterator();
             while ( i.hasNext() ) {
