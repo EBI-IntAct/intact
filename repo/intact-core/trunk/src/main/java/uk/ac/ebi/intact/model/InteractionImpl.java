@@ -219,7 +219,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
-    @OneToMany(mappedBy = "interaction")
+    @OneToMany(mappedBy = "interaction", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     public Collection<Component> getComponents() {
         return components;
     }
@@ -426,6 +426,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         // Not copying any experiments.
         copy.experiments = new ArrayList<Experiment>();
 
+        copy.setActiveInstances(new ArrayList<Component>());
         // New components, will contain same number of componets. Can't use
         // clone here as components are OJB list proxies if an interation
         // is loaded from the database.
@@ -437,7 +438,9 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             Component copyComp = (Component) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone( copy );
-            copyComp.setInteractorForClone( comp.getInteractor() );
+            Interactor interactor = comp.getInteractor();
+            interactor.setActiveInstances(new ArrayList<Component>());
+            copyComp.setInteractorForClone( interactor );
             copy.components.add( copyComp );
         }
         return copy;
