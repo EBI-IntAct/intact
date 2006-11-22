@@ -177,6 +177,22 @@ public abstract class Alias extends BasicObjectImpl  {
                ( cvAliasType != null ? cvAliasType.getShortLabel() : "" ) + "]";
     }
 
+    /**
+     * Returns a cloned version of the current object.
+     *
+     * @return a cloned version of the current Range. The Cv database and
+     *         xref qualifier are not cloned (shared). The parent AC is set to null.
+     * @throws CloneNotSupportedException for errors in cloning this object.
+     */
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Alias copy = (Alias) super.clone();
+        // Reset the parent ac.
+        copy.parentAc = null;
+        copy.parent = null;
+        return copy;
+    }
+
 } // end Alias
 
 
