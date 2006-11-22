@@ -265,7 +265,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.bioSourceAc = ac;
     }
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})
     @JoinTable(
             name = "ia_exp2annot",
             joinColumns = { @JoinColumn(name = "experiment_ac") },
