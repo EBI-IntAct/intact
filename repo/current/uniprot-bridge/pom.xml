@@ -4,11 +4,11 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>1.4.2</version>
+        <version>4</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>uniprot-bridge</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>UniProtKB Bridge</name>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5-SNAPSHOT</version>
+            <version>1.5.0-beta-4</version>
         </dependency>
 
         <!-- UniProt Remote API -->
@@ -42,6 +42,12 @@
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>remote-api</artifactId>
             <version>8.9</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi</groupId>
+            <artifactId>sptr</artifactId>
+            <version>(8.6,]</version>
         </dependency>
 
     </dependencies>
