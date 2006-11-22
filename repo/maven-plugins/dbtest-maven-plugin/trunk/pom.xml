@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>dbtest-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
     <name>dbtest-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/dbtest-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbtest-maven-plugin/tags/dbtest-maven-plugin-1.0.3</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbtest-maven-plugin/tags/dbtest-maven-plugin-1.0.3</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/dbtest-maven-plugin/tags/dbtest-maven-plugin-1.0.3</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbtest-maven-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbtest-maven-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/dbtest-maven-plugin/trunk/</url>
     </scm>
 
     <dependencies>
