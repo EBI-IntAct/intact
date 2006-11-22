@@ -206,7 +206,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.bindingDomains = someBindingDomain;
     }
 
-    @OneToMany(mappedBy = "component")
+    @OneToMany(mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     public Collection<Feature> getBindingDomains() {
         return bindingDomains;
     }
@@ -235,7 +235,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.cvComponentRole = cvComponentRole;
     }
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})
     @JoinTable(
         name="ia_component2annot",
         joinColumns={@JoinColumn(name="component_ac")},
@@ -332,6 +332,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         // Reset interactor and interaction.
         copy.interaction = null;
         copy.interactor = null;
+        copy.interactionAc = null;
+        copy.interactorAc = null;
 
         // Make deep copies of Features.
         copy.bindingDomains = new ArrayList<Feature>( bindingDomains.size() );
