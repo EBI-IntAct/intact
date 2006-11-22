@@ -15,16 +15,12 @@
  */
 package uk.ac.ebi.intact.plugins.dbtest;
 
-import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
-import uk.ac.ebi.intact.plugins.hibernateconfig.HibernateConfigCreatorMojo;
 import uk.ac.ebi.intact.plugins.dbtest.xmlimport.Imports;
 import uk.ac.ebi.intact.plugins.dbtest.xmlimport.XmlFileset;
-import uk.ac.ebi.intact.util.Utilities;
 import uk.ac.ebi.intact.util.protein.UpdateProteins;
 import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 import uk.ac.ebi.intact.util.protein.BioSourceFactory;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ControlledVocabularyRepository;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.EntrySetChecker;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
@@ -32,11 +28,10 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.EntrySetPars
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetPersister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactEnvironment;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.artifact.Artifact;
-import org.codehaus.plexus.util.FileUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.hibernate.SessionFactory;
@@ -47,9 +42,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 import java.net.URL;
-import java.sql.SQLException;
 
 /**
  * Import a psi xml 1 into the database
@@ -58,6 +51,13 @@ import java.sql.SQLException;
 public class PsiXml1ImportMojo
         extends IntactHibernateMojo
 {
+
+    private static String PSI1_DIR = "src/test/psi1";
+    private static String PSI2_5_DIR = "src/test/psi25";
+
+    private static String VERSION_1 = "1";
+    private static String VERSION_2_5 = "2.5";
+
     /**
      * Project instance
      *
@@ -71,12 +71,31 @@ public class PsiXml1ImportMojo
      * Files to import
      *
      * @parameter
-     * @required
      */
     private Imports imports;
 
+
+    protected void initializeHibernate() throws MojoExecutionException
+    {
+        System.setProperty(IntactEnvironment.INSTITUTION_LABEL.getFqn(), "myInstitution");
+        System.setProperty(IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn(), "TEST");
+        System.setProperty(IntactEnvironment.READ_ONLY_APP.getFqn(), Boolean.FALSE.toString());
+
+        super.initializeHibernate();
+    }
+
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
     {
+
+        if (imports == null)
+        {
+            imports = defaultImports();
+        }
+        else
+        {
+            imports.getXmlFilesets().addAll(defaultImports().getXmlFilesets());
+        }
+
         for (XmlFileset fileset : imports.getXmlFilesets())
         {
             if (fileset.getVersion() == null)
@@ -84,7 +103,7 @@ public class PsiXml1ImportMojo
                 throw new MojoExecutionException("All xmlFilesets must contain a <version> element");
             }
 
-            if (fileset.getVersion().equals("1"))
+            if (fileset.getVersion().equals(VERSION_1))
             {
                 for (String url : fileset.getUrls())
                 {
@@ -110,6 +129,57 @@ public class PsiXml1ImportMojo
         // TODO to be replaced by  IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
         SessionFactory sf = (SessionFactory) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getSessionFactory();
         sf.close();
+    }
+
+    private Imports defaultImports() throws IOException
+    {
+        Imports imports = new Imports();
+
+        File baseDir;
+        if (getProject() == null)
+        {
+            baseDir = new File(".");
+        }
+        else
+        {
+            baseDir = getProject().getBasedir();
+        }
+
+        File psi1Dir = new File(baseDir, PSI1_DIR);
+        File psi25Dir = new File(baseDir, PSI2_5_DIR);
+
+        if (psi1Dir.exists())
+        {
+            imports.getXmlFilesets().add(filesetFromDir(psi1Dir, VERSION_1));
+        }
+
+        if (psi25Dir.exists())
+        {
+            imports.getXmlFilesets().add(filesetFromDir(psi25Dir, VERSION_2_5));
+        }
+
+        return imports;
+    }
+
+    private XmlFileset filesetFromDir(File dir, String version) throws IOException
+    {
+        if (dir.exists() || !dir.isDirectory())
+        {
+            throw new IOException("File does not exist or it is not a directory: "+dir);
+        }
+
+        XmlFileset fileset = new XmlFileset();
+
+        File[] filesInDir = dir.listFiles();
+
+        for (File fileInDir : filesInDir)
+        {
+            fileset.getUrls().add(fileInDir.toURL().toString());
+        }
+
+        fileset.setVersion(version);
+
+        return fileset;
     }
 
     private void importUrl(String str) throws Exception
