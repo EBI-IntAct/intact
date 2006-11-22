@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.plugins.dbtest;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class PsiXml1ImportMojoTest extends AbstractMojoTestCase
+public class PsiXmlImportMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Throwable {
@@ -33,9 +33,9 @@ public class PsiXml1ImportMojoTest extends AbstractMojoTestCase
         mojo.execute();
 
 
-        pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/psixml1-import-config.xml" );
+        pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/psixml-import-config.xml" );
 
-        PsiXml1ImportMojo mojo2 = (PsiXml1ImportMojo) lookupMojo( "import-psi1", pluginXmlFile );
+        PsiXmlImportMojo mojo2 = (PsiXmlImportMojo) lookupMojo( "import-psi", pluginXmlFile );
         mojo2.setLog( new SystemStreamLog() );
 
         mojo2.execute();

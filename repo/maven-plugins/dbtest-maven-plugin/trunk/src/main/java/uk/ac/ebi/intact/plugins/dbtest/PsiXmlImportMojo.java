@@ -15,40 +15,42 @@
  */
 package uk.ac.ebi.intact.plugins.dbtest;
 
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.hibernate.SessionFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ControlledVocabularyRepository;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.EntrySetChecker;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.EntrySetParser;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetPersister;
+import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugins.dbtest.xmlimport.Imports;
 import uk.ac.ebi.intact.plugins.dbtest.xmlimport.XmlFileset;
+import uk.ac.ebi.intact.util.protein.BioSourceFactory;
 import uk.ac.ebi.intact.util.protein.UpdateProteins;
 import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
-import uk.ac.ebi.intact.util.protein.BioSourceFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ControlledVocabularyRepository;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.EntrySetChecker;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.EntrySetParser;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetPersister;
-import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactEnvironment;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.hibernate.SessionFactory;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.net.URL;
 
 /**
- * Import a psi xml 1 into the database
- * @goal import-psi1
+ * Import a psi xml into the database
+ * @goal import-psi
+ *
+ * @phase generate-test-resources
  */
-public class PsiXml1ImportMojo
+public class PsiXmlImportMojo
         extends IntactHibernateMojo
 {
 
@@ -107,7 +109,7 @@ public class PsiXml1ImportMojo
             {
                 for (String url : fileset.getUrls())
                 {
-                    getLog().debug("To import: "+url);
+                    getLog().debug("Importing file: "+url);
 
                     try
                     {
@@ -116,11 +118,14 @@ public class PsiXml1ImportMojo
                     catch (Exception e)
                     {
                         e.printStackTrace();
-                        throw new MojoExecutionException("Could import file: "+url, e);
+                        throw new MojoExecutionException("Could'nt import file: "+url, e);
                     }
                 }
             }
-
+            else
+            {
+                throw new MojoExecutionException("Import for version "+fileset.getVersion()+" not implemented");
+            }
         }
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -163,14 +168,20 @@ public class PsiXml1ImportMojo
 
     private XmlFileset filesetFromDir(File dir, String version) throws IOException
     {
-        if (dir.exists() || !dir.isDirectory())
+        if (!dir.exists() || !dir.isDirectory())
         {
             throw new IOException("File does not exist or it is not a directory: "+dir);
         }
 
         XmlFileset fileset = new XmlFileset();
 
-        File[] filesInDir = dir.listFiles();
+        File[] filesInDir = dir.listFiles(new FileFilter(){
+
+            public boolean accept(File pathname)
+            {
+                return pathname.getName().endsWith(".xml");
+            }
+        });
 
         for (File fileInDir : filesInDir)
         {
