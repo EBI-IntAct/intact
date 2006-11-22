@@ -19,6 +19,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
 import org.codehaus.plexus.util.FileUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
@@ -27,6 +28,7 @@ import uk.ac.ebi.intact.util.Utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -47,6 +49,13 @@ public class PreloadedH2Mojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+    * project-helper instance, used to make addition of resources
+    * simpler.
+    * @component
+    */
+    private MavenProjectHelper helper;
 
     /**
      * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
@@ -89,6 +98,19 @@ public class PreloadedH2Mojo
         hibernateMojo.setUrl("jdbc:h2:"+ dbPath);
 
         hibernateMojo.execute();
+
+        // Adding the resources
+         List includes = Collections.singletonList(hibernateConfig.getName());
+         List excludes = null;
+
+        if (scope.equalsIgnoreCase("test"))
+        {
+            // add the config only in test
+            getLog().debug("Adding hibernate config file to tests");
+
+            if (project != null)
+                helper.addTestResource(project, hibernateConfig.getParent(), includes, excludes);
+        }
 
         // 2. Unzip and put the template database in the right place
         try
