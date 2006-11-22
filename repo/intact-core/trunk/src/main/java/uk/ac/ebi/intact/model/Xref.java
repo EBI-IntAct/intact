@@ -355,6 +355,7 @@ public abstract class Xref extends BasicObjectImpl {
         Xref copy = (Xref) super.clone();
         // Reset the parent ac.
         copy.parentAc = null;
+        copy.parent = null;
         return copy;
     }
 
