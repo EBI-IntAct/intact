@@ -8,8 +8,10 @@
                     <outputFile>target/myOutput.log</outputFile>
 
                     <reactomeExportedFile>target/reactome.dat</reactomeExportedFile>
+
                     <!--
-                    <reactomeUrl>target/reactome-export.txt</reactomeUrl>
+                    <reactomeUrl><![CDATA[ http://www.reactome.org/cgi-bin/eventbrowser?DB=gk_current&ID=]]></reactomeUrl>
+
                     <invalidIntactAcsInReactomeFile>target/reactome-invalid_intact_in_reactome.txt</invalidIntactAcsInReactomeFile>
                     <invalidReactomeIdsInIntactFile>target/reactome-invalid_reactome_in_intact.txt</invalidReactomeIdsInIntactFile>
                     -->
