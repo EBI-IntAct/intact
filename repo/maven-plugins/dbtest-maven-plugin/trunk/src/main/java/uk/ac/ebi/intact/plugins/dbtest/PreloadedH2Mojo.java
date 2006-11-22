@@ -33,6 +33,8 @@ import java.util.Set;
 /**
  * Gets an existing H2 database with all the CVs loaded
  * @goal h2-preload
+ *
+ * @phase generate-test-resources
  */
 public class PreloadedH2Mojo
         extends IntactAbstractMojo
@@ -47,14 +49,14 @@ public class PreloadedH2Mojo
     private MavenProject project;
 
     /**
-     * @parameter default-value="target/hibernate/config/hibernate.cfg.xml"
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     private File hibernateConfig;
 
     /**
      * Database path
-     * @parameter default-value="${project.build.directory}/test-db
+     * @parameter expression="${project.build.directory}/test-db
      */
     private File dbPath;
 
