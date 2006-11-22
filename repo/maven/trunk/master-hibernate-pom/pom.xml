@@ -11,19 +11,16 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>5-SNAPSHOT</version>
+    <version>5</version>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-3</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-3</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-3</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-5</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-5</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-5</url>
     </scm>
 
     <properties>
-        <db.user>NOT_DEFINED</db.user>
-        <db.dialect>NOT_DEFINED</db.dialect>
-        <db.driver>NOT_DEFINED</db.driver>
         <db.hbm2ddlAuto>none</db.hbm2ddlAuto>
         <showSql>false</showSql>
         <hibernate.scope>runtime</hibernate.scope>
@@ -68,13 +65,13 @@
                 <plugin>
                     <groupId>uk.ac.ebi.intact.plugins</groupId>
                     <artifactId>dbtest-maven-plugin</artifactId>
+
                     <executions>
                         <execution>
-                            <goals>
+                             <goals>
                                 <goal>h2-preload</goal>
-                                <goal>import-psi1</goal>
+                                <goal>import-psi</goal>
                             </goals>
-                            <phase>generate-test-resources</phase>
                         </execution>
                     </executions>
                 </plugin>
@@ -95,6 +92,20 @@
 
                 <sessionFactoryName>SF_INTACT_TEST</sessionFactoryName>
             </properties>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <classifier>d003</classifier>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
         </profile>
         <profile>
             <id>ebi-prod</id>
@@ -110,6 +121,21 @@
 
                 <lucene.index.directory>/ebi/sp/pro4/intact/lucene-index/prod/current</lucene.index.directory>
             </properties>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <classifier>zpro</classifier>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+
         </profile>
         <profile>
             <id>ebi-pub</id>
@@ -125,7 +151,22 @@
 
                 <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
-        </profile>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <classifier>iweb</classifier>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+
+            </profile>
         <profile>
             <id>ebi-pub2</id>
             <properties>
@@ -140,6 +181,21 @@
 
                 <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
             </properties>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-deploy-plugin</artifactId>
+                            <configuration>
+                                <classifier>iweb2</classifier>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+
         </profile>
 
         <profile>
