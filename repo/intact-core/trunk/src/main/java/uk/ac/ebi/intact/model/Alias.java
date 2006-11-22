@@ -178,11 +178,9 @@ public abstract class Alias extends BasicObjectImpl  {
     }
 
     /**
-     * Returns a cloned version of the current object.
-     *
-     * @return a cloned version of the current Range. The Cv database and
-     *         xref qualifier are not cloned (shared). The parent AC is set to null.
-     * @throws CloneNotSupportedException for errors in cloning this object.
+     * Clone a an alias
+     * @return an alias setting it ac, parentAc and parent to null.
+     * @throws CloneNotSupportedException
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
