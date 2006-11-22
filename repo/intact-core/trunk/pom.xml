@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>3</version>
+        <version>5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -18,7 +18,7 @@
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-3</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-3</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-core/tags/intact-core-1.5.0-beta-3</url>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/tags/intact-core-1.5.0-beta-3</url>
     </scm>
                          
     <properties>
@@ -42,6 +42,7 @@
                 <plugin>
                     <groupId>uk.ac.ebi.intact.plugins</groupId>
                     <artifactId>dbtest-maven-plugin</artifactId>
+                    <version>1.0.3</version>
                     
                     <configuration>
                         <imports>
@@ -49,24 +50,12 @@
                                 <xmlFileset>
                                     <version>1</version>
                                     <urls>
-                                        <url>
-                                            ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml
-                                        </url>
+                                        <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml</url>
                                     </urls>
                                 </xmlFileset>
                             </xmlFilesets>
                         </imports>
                     </configuration>
-
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>h2-preload</goal>
-                                <goal>import-psi1</goal>
-                            </goals>
-                            <phase>generate-test-resources</phase>
-                        </execution>
-                    </executions>
                 </plugin>
             </plugins>
         </build>
@@ -94,13 +83,6 @@
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-apt</artifactId>
             <version>0.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.h2</groupId>
-            <artifactId>h2</artifactId>
-            <version>2006-07-14-beta</version>
-            <scope>test</scope>
         </dependency>
 
         <dependency>

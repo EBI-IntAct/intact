@@ -124,7 +124,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 }
                 catch (Throwable t)
                 {
-                    throw new ConfigurationException("Couldn't configure hibernate using default file");
+                    throw new ConfigurationException("Couldn't configure hibernate using default file", t);
                 }
             }
 
