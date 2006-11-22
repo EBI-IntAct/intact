@@ -53,7 +53,7 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         this.objClass = objClass;
     }
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})    
     @JoinTable(
         name="ia_cvobject2annot",
         joinColumns={@JoinColumn(name="cvobject_ac")},
