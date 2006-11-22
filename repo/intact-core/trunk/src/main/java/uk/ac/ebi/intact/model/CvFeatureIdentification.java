@@ -19,6 +19,9 @@ import javax.persistence.DiscriminatorValue;
 @DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureIdentification")
 public class CvFeatureIdentification extends CvDagObject {
 
+    public static final String DELETION_ANALYSIS = "deletion analysis";
+    public static final String DELETION_ANALYSIS_MI_REF = "MI:0033";
+
 
     public static final String X_RAY = "x-ray";
     public static final String X_RAY_MI_REF = "MI:0114";
