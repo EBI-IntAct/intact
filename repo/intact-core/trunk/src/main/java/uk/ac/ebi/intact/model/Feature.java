@@ -220,7 +220,7 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref,FeatureAlias> imple
         return super.getAliases();
     }
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})    
     @JoinTable(
             name = "ia_feature2annot",
             joinColumns = { @JoinColumn(name = "feature_ac") },
