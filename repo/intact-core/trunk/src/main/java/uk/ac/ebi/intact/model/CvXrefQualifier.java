@@ -59,6 +59,13 @@ public class CvXrefQualifier extends CvObject implements Editable {
 
     public static final String IMEX_PRIMARY = "imex-primary";
     public static final String IMEX_PRIMARY_MI_REF = "MI:0662";
+    
+    public static final String SOURCE_REFERENCE = "source reference";
+    public static final String SOURCE_REFERENCE_MI_REF = "MI:0685";
+
+    public static final String METHOD_REFERENCE = "method reference";
+    public static final String METHOD_REFERENCE_MI_REF = "MI:0357";
+    
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
