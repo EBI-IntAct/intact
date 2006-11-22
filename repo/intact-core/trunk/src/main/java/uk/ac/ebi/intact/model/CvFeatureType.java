@@ -25,6 +25,11 @@ public class CvFeatureType extends CvDagObject {
     public static final String EXPERIMENTAL_FEATURE = "experimental feature";
     public static final String EXPERIMENTAL_FEATURE_MI_REF = "MI:0505";
 
+    public static final String MUTATION_DECREASING = "mutation decreasing";
+    public static final String MUTATION_DECREASING_MI_REF = "MI:0119";
+
+    public static final String MUTATION_INCREASING = "mutation increasing";
+    public static final String MUTATION_INCREASING_MI_REF = "MI:0382";
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.
