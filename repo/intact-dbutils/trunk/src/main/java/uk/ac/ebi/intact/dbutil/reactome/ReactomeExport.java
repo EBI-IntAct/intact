@@ -68,7 +68,7 @@ public class ReactomeExport
             Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
 
             final String sql = "SELECT i.ac as interactionAC, x.primaryId as reactomeID\n" +
-                               "FROM ia_interactor i, ia_xref x, ia_annotation a, ia_int2annot i2a\n" +
+                               "FROM ia_interactor i, ia_interactor_xref x, ia_annotation a, ia_int2annot i2a\n" +
                                "WHERE i.objclass LIKE '%Interaction%' AND\n" +
                                "      i.ac = x.parent_ac AND\n" +
                                "      x.database_ac = '" + reactome.getAc() + "' AND\n" +
