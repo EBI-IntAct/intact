@@ -26,6 +26,9 @@ public class CvDatabase extends CvObject implements Editable {
     ////////////////////////////////
     // Constants
 
+    public static final String DDBG = "ddbj-embl-genbank";
+    public static final String DDBG_MI_REF = "MI:0475";
+
     public static final String CABRI = "cabri";
     public static final String CABRI_MI_REF = "MI:0246";
 
