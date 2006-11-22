@@ -336,6 +336,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
         Collection<T> xrefs = getXrefs();
 
+        Collection<A> aliases = getAliases();
+
         // Append the "-x" to the short label.
         copy.shortLabel += "-x";
 
@@ -352,10 +354,20 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
         // Make deep copies.
         for (Xref xref : getXrefs())
         {
-            copiedXrefs.add((Xref)xref.clone());
+            Xref xrefClone = (Xref) xref.clone();
+            xrefClone.setParent(copy);
+            copiedXrefs.add(xrefClone);
         }
-
+//        copy.setXrefs(null);
         copy.setXrefs(copiedXrefs);
+
+        Collection<Alias> copiedAliases = new ArrayList<Alias>(aliases.size());
+        for(Alias alias : getAliases()){
+            Alias aliasClone = (Alias) alias.clone();
+            aliasClone.setParent(copy);
+            copiedAliases.add((Alias) alias.clone());
+        }
+        copy.setAliases(copiedAliases);
 
         return copy;
     }
