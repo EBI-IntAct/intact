@@ -88,7 +88,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
     }
 
 
-    @ManyToMany
+    @ManyToMany (cascade = {CascadeType.PERSIST})    
     @JoinTable(
             name = "ia_pub2annot",
             joinColumns = { @JoinColumn(name = "publication_ac") },
