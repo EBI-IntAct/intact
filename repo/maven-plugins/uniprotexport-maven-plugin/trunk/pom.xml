@@ -9,7 +9,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.plugins</groupId>
-    <artifactId>maven-uniprotexport-plugin</artifactId>
+    <artifactId>uniprotexport-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.3-SNAPSHOT</version>
     <!-- last released 1.2.0 -->
