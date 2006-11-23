@@ -20,6 +20,8 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 
 import java.io.File;
 
+import uk.ac.ebi.intact.context.IntactContext;
+
 public class OboImportMojoTest extends AbstractMojoTestCase
 {
 
@@ -30,5 +32,7 @@ public class OboImportMojoTest extends AbstractMojoTestCase
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
+
+        IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
     }
 }
