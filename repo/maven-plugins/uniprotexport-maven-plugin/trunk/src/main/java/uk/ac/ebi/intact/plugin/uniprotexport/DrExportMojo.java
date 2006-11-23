@@ -39,11 +39,9 @@ public class DrExportMojo extends UniprotExportAbstractMojo
 
     private int exportedCount;
 
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException
     {
         getLog().info("DrExportMojo in action");
-
-        initialize();
 
         File drExportFile = getUniprotLinksFile();
 

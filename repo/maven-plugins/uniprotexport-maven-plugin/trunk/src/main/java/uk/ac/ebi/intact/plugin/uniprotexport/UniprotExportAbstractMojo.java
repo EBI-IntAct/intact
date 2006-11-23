@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -26,7 +27,7 @@ import java.sql.SQLException;
  * @version $Id$
  * @since <pre>14-Aug-2006</pre>
  */
-public abstract class UniprotExportAbstractMojo extends AbstractMojo
+public abstract class UniprotExportAbstractMojo extends IntactHibernateMojo
 {
     protected static final String NEW_LINE = System.getProperty("line.separator");
 
@@ -73,53 +74,6 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
      */
     private File uniprotLinksFile;
 
-    private boolean initialized;
-
-    protected void initialize() throws MojoExecutionException
-    {
-        if (initialized)
-        {
-            return;
-        }
-
-        getLog().info("Using hibernate cfg file: "+hibernateConfig);
-
-        if (!hibernateConfig.exists())
-        {
-            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig);
-        }
-
-        if (!targetPath.exists())
-        {
-            targetPath.mkdirs();
-        }
-
-        // configure the context
-        IntactSession session = new StandaloneSession();
-
-        if (System.getProperty("institution") == null)
-        {
-            session.setInitParam(IntactEnvironment.INSTITUTION_LABEL, "ebi");
-        }
-        
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig, session);
-        testConfig.initialize();
-        IntactContext.initContext(testConfig, session);
-
-        try
-        {
-            getLog().info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
-        }
-        catch (SQLException e)
-        {
-            throw new MojoExecutionException("Error loading database name", e);
-        }
-
-        getLog().info( "User: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
-
-        initialized = true;
-    }
-
     protected File getUniprotLinksFile()
     {
         if (uniprotLinksFile != null && uniprotLinksFile.exists())
@@ -154,5 +108,35 @@ public abstract class UniprotExportAbstractMojo extends AbstractMojo
         {
             file.getParentFile().mkdirs();
         }
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public File getTargetPath()
+    {
+        return targetPath;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
+    }
+
+    public File getSummaryFile()
+    {
+        return summaryFile;
+    }
+
+    public boolean isOverwrite()
+    {
+        return overwrite;
+    }
+
+    public String getUniprotLinksFilename()
+    {
+        return uniprotLinksFilename;
     }
 }

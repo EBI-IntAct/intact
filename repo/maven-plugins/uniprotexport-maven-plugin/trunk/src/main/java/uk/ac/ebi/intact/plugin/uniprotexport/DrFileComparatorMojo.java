@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.plugin.uniprotexport.drcomparator.DrComparatorReport;
 import uk.ac.ebi.intact.plugin.uniprotexport.drcomparator.DrComparator;
+import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 
 /**
  * Compares two DR files and reports the changes
@@ -36,10 +37,17 @@ import uk.ac.ebi.intact.plugin.uniprotexport.drcomparator.DrComparator;
  *
  * @goal compare-dr
  */
-public class DrFileComparatorMojo extends AbstractMojo
+public class DrFileComparatorMojo extends IntactAbstractMojo
 {
 
     protected static final String NEW_LINE = System.getProperty("line.separator");
+
+    /**
+    * Project instance
+    * @parameter default-value="${project}"
+    * @readonly
+    */
+    protected MavenProject project;
 
     /**
     * File 1
@@ -173,5 +181,10 @@ public class DrFileComparatorMojo extends AbstractMojo
     public void setRemovedIdsFile(File removedIdsFile)
     {
         this.removedIdsFile = removedIdsFile;
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
     }
 }
