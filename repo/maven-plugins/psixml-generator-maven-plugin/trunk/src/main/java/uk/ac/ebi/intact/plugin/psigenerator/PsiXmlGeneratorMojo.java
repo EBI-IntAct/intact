@@ -77,8 +77,10 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         return true; // default behaviour is to run the classification
     }
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException {
         getLog().info( "PsiXmlGeneratorMojo in action" );
+
+        initialize();
 
         boolean speciesEnabled = classificationEnabled( "species" );
         getLog().debug( "Species classification requested: " + speciesEnabled );

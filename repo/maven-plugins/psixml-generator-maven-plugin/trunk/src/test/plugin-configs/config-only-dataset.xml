@@ -3,7 +3,7 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-psixml-generator-plugin</artifactId>
+                <artifactId>psixml-generator-maven-plugin</artifactId>
                 <configuration>
 
                     <targetPath>target/psixml-test</targetPath>
