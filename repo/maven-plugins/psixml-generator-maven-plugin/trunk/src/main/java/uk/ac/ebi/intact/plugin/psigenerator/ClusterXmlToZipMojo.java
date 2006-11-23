@@ -26,9 +26,12 @@ public class ClusterXmlToZipMojo extends PsiXmlGeneratorAbstractMojo
 
     private static final Log log = LogFactory.getLog(ClusterXmlToZipMojo.class);
 
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException
     {
-        getLog().info("ClusterXmlToZipMojo in action"); 
+        getLog().info("ClusterXmlToZipMojo in action");
+
+        initialize();
+        
         ZipFileGenerator.clusterAllXmlFilesFromDirectory( targetPath, true );
     }
 }

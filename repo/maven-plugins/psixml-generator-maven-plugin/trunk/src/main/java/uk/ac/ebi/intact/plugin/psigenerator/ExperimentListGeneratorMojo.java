@@ -25,9 +25,11 @@ public class ExperimentListGeneratorMojo extends PsiXmlGeneratorAbstractMojo
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorMojo.class);
 
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException
     {
        log.info("ExperimentListGeneratorMojo in action");
+
+        initialize();
 
         writeClassificationBySpeciesToFile();
         writeClassificationByPublicationsToFile();

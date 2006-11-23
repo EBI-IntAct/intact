@@ -5,23 +5,19 @@
  */
 package uk.ac.ebi.intact.plugin.psigenerator;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.MojoUtils;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -31,7 +27,8 @@ import java.util.Map;
  * @version $Id:PsiXmlGeneratorAbstractMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>04/08/2006</pre>
  */
-public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
+public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
+{
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
@@ -144,12 +141,6 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
             return;
         }
 
-        getLog().debug( "Using hibernate cfg file: " + hibernateConfig );
-
-        if ( !hibernateConfig.exists() ) {
-            throw new MojoExecutionException( "No hibernate config file found: " + hibernateConfig );
-        }
-
         if ( !targetPath.exists() ) {
             targetPath.mkdirs();
         }
@@ -170,15 +161,8 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
             throw new MojoExecutionException( "Target datasets file already exist and overwrite is set to false: " + datasetsFile );
         }
 
-        // configure the context
-        IntactSession session = new StandaloneSession();
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig( "PsiXmlGeneratorMojoTest", hibernateConfig, session );
-        testConfig.initialize();
-        IntactContext.initContext( testConfig, session );
-
         experimentListGenerator = new ExperimentListGenerator( searchPattern );
         experimentListGenerator.setOnlyWithPmid( onlyWithPmid );
-
         initialized = true;
     }
 
@@ -267,10 +251,9 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
         getLog().info( "Negative experiments: " + negativeExperiments.size() );
 
         try {
-            Writer writer = new FileWriter( negativeExperimentsFile );
+            MojoUtils.writeStandardHeaderToFile("Negative experiments", "Processed experiments declared as negative", getProject(), negativeExperimentsFile);
 
-            writer.write( "# Negative experiments " + new Date() + NEW_LINE );
-            writer.write( "############################################# " + NEW_LINE + NEW_LINE );
+            Writer writer = new FileWriter( negativeExperimentsFile, true );
 
             if ( negativeExperiments.isEmpty() ) {
                 writer.write( "# No negative experiments found! " + NEW_LINE );
@@ -293,11 +276,9 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
 
 
         try {
-            Writer writer = new FileWriter( experimentErrorFile );
+            MojoUtils.writeStandardHeaderToFile("Experiments with errors", "Errors have occurred while processing these experiments", getProject(), experimentErrorFile);
 
-            writer.write( "# Experiments with errors " + new Date() + NEW_LINE );
-            writer.write( "###################################################### " + NEW_LINE + NEW_LINE );
-
+            Writer writer = new FileWriter( experimentErrorFile, true );
             if ( experimentsWithErrors.isEmpty() ) {
                 writer.write( "# No errors found! " + NEW_LINE );
             }
@@ -311,5 +292,70 @@ public abstract class PsiXmlGeneratorAbstractMojo extends AbstractMojo {
         catch ( IOException e ) {
             throw new MojoExecutionException( "Problem writing error file", e );
         }
+    }
+
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public File getTargetPath()
+    {
+        return targetPath;
+    }
+
+    public String getSpeciesFilename()
+    {
+        return speciesFilename;
+    }
+
+    public String getPublicationsFilename()
+    {
+        return publicationsFilename;
+    }
+
+    public String getDatasetsFilename()
+    {
+        return datasetsFilename;
+    }
+
+    public File getExperimentErrorFile()
+    {
+        return experimentErrorFile;
+    }
+
+    public File getNegativeExperimentsFile()
+    {
+        return negativeExperimentsFile;
+    }
+
+    public String getSearchPattern()
+    {
+        return searchPattern;
+    }
+
+    public boolean isOnlyWithPmid()
+    {
+        return onlyWithPmid;
+    }
+
+    public boolean isOverwrite()
+    {
+        return overwrite;
+    }
+
+    public boolean isZipXml()
+    {
+        return zipXml;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
+    }
+
+    public ExperimentListGenerator getExperimentListGenerator()
+    {
+        return experimentListGenerator;
     }
 }

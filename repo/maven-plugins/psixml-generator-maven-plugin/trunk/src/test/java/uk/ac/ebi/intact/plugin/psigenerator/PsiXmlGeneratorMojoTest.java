@@ -5,8 +5,10 @@
  */
 package uk.ac.ebi.intact.plugin.psigenerator;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 
 import java.io.File;
 
@@ -21,6 +23,11 @@ public class PsiXmlGeneratorMojoTest extends AbstractMojoTestCase
 {
         public void testSimpleGeneration() throws Exception
         {
+            // update target species
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+            UpdateTargetSpecies.update(System.out, false);
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
             File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
 
             PsiXmlGeneratorMojo mojo = (PsiXmlGeneratorMojo) lookupMojo( "psi", pluginXmlFile );

@@ -3,7 +3,7 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-psixml-generator-plugin</artifactId>
+                <artifactId>psixml-generator-maven-plugin</artifactId>
                 <configuration>
 
                     <targetPath>target/psixml-test</targetPath>
@@ -12,7 +12,7 @@
                     <publicationsFilename>classification_by_publications.txt</publicationsFilename>
                     <datasetsFilename>classification_by_datasets.txt</datasetsFilename>
 
-                    <searchPattern>ya%</searchPattern>
+                    <searchPattern>%</searchPattern>
 
                     <overwrite>true</overwrite>
                     <experimentErrorFile>target/psixml-test/experiment-error.log</experimentErrorFile>
