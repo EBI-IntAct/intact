@@ -57,11 +57,9 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo
      */
     protected boolean gzipGoa;
 
-    public void execute() throws MojoExecutionException, MojoFailureException
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException
     {
         getLog().info("CcAndGoaExportMojo in action");
-
-        initialize();
 
         File ccExportFile = new File(targetPath, uniprotCommentsFilename);
         File goaExportFile = new File(targetPath, goaFilename);
