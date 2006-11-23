@@ -3,7 +3,7 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-uniprotexport-plugin</artifactId>
+                <artifactId>uniprotexport-maven-plugin</artifactId>
                 <configuration>
                     <targetPath>target/uniprotexport-test</targetPath>
 
