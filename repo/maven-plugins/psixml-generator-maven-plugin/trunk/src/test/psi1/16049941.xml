@@ -1,0 +1,1098 @@
+   <entrySet level="1" version="1" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+     <entry>
+       <source releaseDate="2006-11-17">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" id="14681455"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" id="MI:0469"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="EBI-960299">
+           <names>
+             <shortLabel>cottrell-2005-1</shortLabel>
+             <fullName>A pilot proteomic study of amyloid precursor interactors in Alzheimer&apos;s disease.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16049941"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-960299" secondary="cottrell-2005-1"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human-hippocampus</shortLabel>
+               <fullName>Homo sapiens hippocampus</fullName>
+             </names>
+             <tissue>
+               <names>
+                 <shortLabel>hippocampus</shortLabel>
+                 <fullName>Hippocampus [Brain hippocampus]</fullName>
+               </names>
+               <xref>
+                 <primaryRef db="intact" id="IA:0204"/>
+               </xref>
+             </tissue>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>anti bait coip</shortLabel>
+               <fullName>anti bait coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0006"/>
+               <secondaryRef db="pubmed" id="7708014"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>participant ident</shortLabel>
+               <fullName>participant identification method</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0002"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="author-list">Cottrell BA., Galvan V., Banwait S., Gorostiza O., Lombardo CR., Williams T., Schilling B., Peel A., Gibson B., Koo EH., Link CD., Bredesen DE.</attribute>
+             <attribute name="journal">Ann. Neurol. (0364-5134)</attribute>
+             <attribute name="publication-year">2005</attribute>
+             <attribute name="contact-email">dbredesen@buckinstitute.org</attribute>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+             <attribute name="exp-modification">Immunoprecipitates were resolved in 2D gels prior to MALDI</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="EBI-960390">
+           <names>
+             <shortLabel>cottrell-2005-2</shortLabel>
+             <fullName>A pilot proteomic study of amyloid precursor interactors in Alzheimer&apos;s disease.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16049941"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-960390" secondary="cottrell-2005-2"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human-hippocampus</shortLabel>
+               <fullName>Homo sapiens hippocampus</fullName>
+             </names>
+             <tissue>
+               <names>
+                 <shortLabel>hippocampus</shortLabel>
+                 <fullName>Hippocampus [Brain hippocampus]</fullName>
+               </names>
+               <xref>
+                 <primaryRef db="intact" id="IA:0204"/>
+               </xref>
+             </tissue>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>anti bait coip</shortLabel>
+               <fullName>anti bait coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0006"/>
+               <secondaryRef db="pubmed" id="7708014"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="author-list">Cottrell BA., Galvan V., Banwait S., Gorostiza O., Lombardo CR., Williams T., Schilling B., Peel A., Gibson B., Koo EH., Link CD., Bredesen DE.</attribute>
+             <attribute name="journal">Ann. Neurol. (0364-5134)</attribute>
+             <attribute name="publication-year">2005</attribute>
+             <attribute name="contact-email">dbredesen@buckinstitute.org</attribute>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="EBI-960605">
+           <names>
+             <shortLabel>cottrell-2005-3</shortLabel>
+             <fullName>A pilot proteomic study of amyloid precursor interactors in Alzheimer&apos;s disease.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16049941"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-960605" secondary="cottrell-2005-3"/>
+             <secondaryRef db="newt" id="10090" secondary="mouse"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="10090">
+             <names>
+               <shortLabel>mouse-brain</shortLabel>
+               <fullName>Mus musculus brain [Cerebrum]</fullName>
+             </names>
+             <tissue>
+               <names>
+                 <shortLabel>brain</shortLabel>
+                 <fullName>Brain [cerebrum]</fullName>
+               </names>
+               <xref>
+                 <primaryRef db="intact" id="IA:0196"/>
+               </xref>
+             </tissue>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>colocalization-visua</shortLabel>
+               <fullName>colocalization/visualisation technologies</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0023"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>participant ident</shortLabel>
+               <fullName>participant identification method</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0002"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="author-list">Cottrell BA., Galvan V., Banwait S., Gorostiza O., Lombardo CR., Williams T., Schilling B., Peel A., Gibson B., Koo EH., Link CD., Bredesen DE.</attribute>
+             <attribute name="journal">Ann. Neurol. (0364-5134)</attribute>
+             <attribute name="publication-year">2005</attribute>
+             <attribute name="contact-email">dbredesen@buckinstitute.org</attribute>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+             <attribute name="exp-modification">Interaction observed in human APP transgenic mice that carry two familial Alzheimer&apos;s Disease-associated mutations.</attribute>
+           </attributeList>
+         </experimentDescription>
+       </experimentList>
+       <interactorList>
+         <proteinInteractor id="EBI-350338">
+           <names>
+             <shortLabel>myh9_human</shortLabel>
+             <fullName>Myosin-9</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P35579" secondary="myh9_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR000048" secondary="IQ_region"/>
+             <secondaryRef db="interpro" id="IPR001609" secondary="myosin_head"/>
+             <secondaryRef db="interpro" id="IPR004009" secondary="Myosin_N"/>
+             <secondaryRef db="interpro" id="IPR002928" secondary="Myosin_tail"/>
+             <secondaryRef db="interpro" id="IPR002017" secondary="Spectrin"/>
+             <secondaryRef db="uniprotkb" id="O60805" secondary="myh9_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR000861" secondary="REM_rpt_rho_bd"/>
+             <secondaryRef db="intact" id="EBI-350338" secondary="myh9_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>AQQAADKYLYVDKNFINNPLAQADWAAKKLVWVPSDKSGFEPASLKEEVGEEAIVELVENGKKVKVNKDDIQKMNPPKFSKVEDMAELTCLNEASVLHNLKERYYSGLIYTYSGLFCVVINPYKNLPIYSEEIVEMYKGKKRHEMPPHIYAITDTAYRSMMQDREDQSILCTGESGAGKTENTKKVIQYLAYVASSHKSKKDQGELERQLLQANPILEAFGNAKTVKNDNSSRFGKFIRINFDVNGYIVGANIETYLLEKSRAIRQAKEERTFHIFYYLLSGAGEHLKTDLLLEPYNKYRFLSNGHVTIPGQQDKDMFQETMEAMRIMGIPEEEQMGLLRVISGVLQLGNIVFKKERNTDQASMPDNTAAQKVSHLLGINVTDFTRGILTPRIKVGRDYVQKAQTKEQADFAIEALAKATYERMFRWLVLRINKALDKTKRQGASFIGILDIAGFEIFDLNSFEQLCINYTNEKLQQLFNHTMFILEQEEYQREGIEWNFIDFGLDLQPCIDLIEKPAGPPGILALLDEECWFPKATDKSFVEKVMQEQGTHPKFQKPKQLKDKADFCIIHYAGKVDYKADEWLMKNMDPLNDNIATLLHQSSDKFVSELWKDVDRIIGLDQVAGMSETALPGAFKTRKGMFRTVGQLYKEQLAKLMATLRNTNPNFVRCIIPNHEKKAGKLDPHLVLDQLRCNGVLEGIRICRQGFPNRVVFQEFRQRYEILTPNSIPKGFMDGKQACVLMIKALELDSNLYRIGQSKVFFRAGVLAHLEEERDLKITDVIIGFQACCRGYLARKAFAKRQQQLTAMKVLQRNCAAYLKLRNWQWWRLFTKVKPLLQVSRQEEEMMAKEEELVKVREKQLAAENRLTEMETLQSQLMAEKLQLQEQLQAETELCAEAEELRARLTAKKQELEEICHDLEARVEEEEERCQHLQAEKKKMQQNIQELEEQLEEEESARQKLQLEKVTTEAKLKKLEEEQIILEDQNCKLAKEKKLLEDRIAEFTTNLTEEEEKSKSLAKLKNKHEAMITDLEERLRREEKQRQELEKTRRKLEGDSTDLSDQIAELQAQIAELKMQLAKKEEELQAALARVEEEAAQKNMALKKIRELESQISELQEDLESERASRNKAEKQKRDLGEELEALKTELEDTLDSTAAQQELRSKREQEVNILKKTLEEEAKTHEAQIQEMRQKHSQAVEELAEQLEQTKRVKANLEKAKQTLENERGELANEVKVLLQGKGDSEHKRKKVEAQLQELQVKFNEGERVRTELADKVTKLQVELDNVTGLLSQSDSKSSKLTKDFSALESQLQDTQELLQEENRQKLSLSTKLKQVEDEKNSFREQLEEEEEAKHNLEKQIATLHAQVADMKKKMEDSVGCLETAEEVKRKLQKDLEGLSQRHEEKVAAYDKLEKTKTRLQQELDDLLVDLDHQRQSACNLEKKQKKFDQLLAEEKTISAKYAEERDRAEAEAREKETKALSLARALEEAMEQKAELERLNKQFRTEMEDLMSSKDDVGKSVHELEKSKRALEQQVEEMKTQLEELEDELQATEDAKLRLEVNLQAMKAQFERDLQGRDEQSEEKKKQLVRQVREMEAELEDERKQRSMAVAARKKLEMDLKDLEAHIDSANKNRDEAIKQLRKLQAQMKDCMRELDDTRASREEILAQAKENEKKLKSMEAEMIQLQEELAAAERAKRQAQQERDELADEIANSSGKGALALEEKRRLEARIAQLEEELEEEQGNTELINDRLKKANLQIDQINTDLNLERSHAQKNENARQQLERQNKELKVKLQEMEGTVKSKYKASITALEAKIAQLEEQLDNETKERQAACKQVRRTEKKLKDVLLQVDDERRNAEQYKDQADKASTRLKQLKRQLEEAEEEAQRANASRRKLQRELEDATETADAMNREVSSLKNKLRRGDLPFVVPRRMARKGAGDGSDEEVDGKADGAEAKPAE</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-975307">
+           <names>
+             <shortLabel>q86yk7_human</shortLabel>
+             <fullName>Heat shock regulated-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q86YK7" secondary="q86yk7_human" version="TrEMBL_12"/>
+             <secondaryRef db="go" id="GO:0030286" secondary="C:dynein complex"/>
+             <secondaryRef db="go" id="GO:0003777" secondary="F:microtubule motor activity"/>
+             <secondaryRef db="go" id="GO:0007018" secondary="P:microtubule-based movement"/>
+             <secondaryRef db="go" id="GO:0006457" secondary="P:protein folding"/>
+             <secondaryRef db="go" id="GO:0006986" secondary="P:response to unfolded protein"/>
+             <secondaryRef db="interpro" id="IPR004273" secondary="Dynein_heavy"/>
+             <secondaryRef db="intact" id="EBI-975307" secondary="q86yk7_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MPALETYGAQPPIELLRQWMDHGGWYDRKIIGAFKNLVDINFVCAMGPPGGGRNTVTPRLMRHFNYLSFAEMDEVSKKRIFSTILGNWLDGLLGEKSYRERVPGAPHIAHFTEPLVEATIMVYATITSQLLPTPAKSHYTFNLRDLSKVFQGMLMADPAKVEDQVQLLRLWYHENCRVFRDRLVNEEDRSWFDQLLKRCMEQWEVTFNKVCPFQPILYGDFMSPGSDVKSYELITSESKMMQVIEEYIEDYNQINTAKLKLVLFMDAMSHICRISRTLRQALGNALLLGVGGSGRSSLTRLASHMAEYECFQIELSKNYGMSEWRDDVKKVLLKAGLQNLPITFLFSDTQIKNESFLEDINNVLNSGDIPNLYTADEQDQIVSTMRPYIQEQGLQPTKANLMAAYTGRVRSNIHMVLCMSPIGEVFRARLRQFPSLVNCCTIDWFNEWPAEALKSVATVFLNEIPELESSQEEIQGLIQVCVYIHQSVSKKCIEYLAELTRHNYVTPKSYLELLHIFSILIGQKKLELKTAKNRMKSGLDKLLRTSEDVAKMQEDLESMHPLLEEAAKDTMLTMEQIKVDTAIAEETRNSVQTEEIKANEKAKKAQAIADDAQKDLDEALPALDAALASLRNLNKNDVTEVRAMQRPPPGVKLVIEAVCIMKGIKPKKVPGEKPGTKVDDYWEPGKGLLQDPGHFLESLFKFDKDNIGDVVIKAIQPYIDNEEFQPATIAKVSKACTSICQWVRAMHKYHFVAKAVEPKRQALLEAQDDLGVTQRILDEAKQRLREVEDGIATMQAKYRECITKKEELELKCEQCEQRLGRAGKVRTLLLQGLQAGPAQTGARKDQGAGGSWGGCPHPLPGNPGATVGRASPRPLAQPPRAHPTGLPLQLINGLSDEKVRWQETVENLQYMLNNISGDVLVAAGFVAYLGPFTGQYRTVLYDSWVKQLRSHNVPHTSEPTLIGTLGNPVKIRSWQIAGLPNDTLSVENGVINQFSQRWTHFIDPQSQANKWIKNMEKDNGLDVFKLSDRDFLRSMENAIRFGKPCLLENVGEELDPALEPVLLKQTYKQQGNTVLKLGDTVIPYHEDFRMYITTKLPNPHYTPEISTKLTLINFTLSPSGLEDQLLGQVVAEERPDLEEAKNQLIISNAKMRQELKDIEDQILYRLSSSEGNPVDDMELIKVLEASKMKAAEIQAKVRIAEQTEKDIDLTRMEYIPVAIRTQILFFCVSDLANVDPMYQYSLEWFLNIFLSGIANSERADNLKKRISNINRYLTYSLYSNVCRSLFEKHKLMFAFLLCVRIMMNEGKINQSEWRYLLSGGSISIMTENPAPDWLSDRAWRDILALSNLPTFSSFSSDFVKHLSEFRVIFDSLEPHREPLPGIWDQYLDQFQKLLVLRCLRGDKVTNAMQDFVATNLEPRFIEPQTANLSVVFKDSNSTTPLIFVLSPGTDPAADLYKFAEEMKFSKKLSAISLGQGQGPRAEAMMRSSIERGKWVFFQNCHLAPSWMPALERLIEHINPDKVHRDFRLWLTSLPSNKFPVSILQNGSKMTIEPPRGVRANLLKSYSSLGEDFLNSCHKVMEFKSLLLSLCLFHGNALERRKFGPLGFNIPYEFTDGDLRICISQLKMFLDEYDDIPYKVLKYTAGEINYGGRVTDDWDRRCIMNILEDFYNPDVLSPEHSYSASGIYHQIPPTYDLHGYLSYIKSLPLNDMPEIFGLHDNANITFAQNETFALLGTIIQLQPKSSSAGSQGREEIVEDVTQNILLKVPEPINLQWVMAKYPVLYEESMNTVLVQEVIRYNRLLQVITQTLQDLLKALKGLVVMSSQLELMAASLYNNTVPELWSAKAYPSLKPLSSWVMDLLQRLDFLQAWIQDGIPAVFWISGFFFPQAFLTGTLQNFARKFVISIDTISFDFKVPAGIQRPSSWLSLSPRSCTQRWPLSGSCQHPTARPRTRTFTCAPSTRH</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-350850">
+           <names>
+             <shortLabel>tbb2_human</shortLabel>
+             <fullName>Tubulin beta-2 chain</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P07437" secondary="tbb2_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0042288" secondary="F:MHC class I protein binding"/>
+             <secondaryRef db="go" id="GO:0042267" secondary="P:natural killer cell mediated"/>
+             <secondaryRef db="interpro" id="IPR002453" secondary="Beta_tubulin"/>
+             <secondaryRef db="interpro" id="IPR008280" secondary="Tub_FtsZ_C"/>
+             <secondaryRef db="interpro" id="IPR000217" secondary="Tubulin"/>
+             <secondaryRef db="interpro" id="IPR003008" secondary="Tubulin_FtsZ"/>
+             <secondaryRef db="uniprotkb" id="P05218" secondary="tbb2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q8WUC1" secondary="tbb2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q9CY33" secondary="tbb2_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR000158" secondary="FtsZ"/>
+             <secondaryRef db="intact" id="EBI-350850" secondary="tbb2_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MREIVHIQAGQCGNQIGAKFWEVISDEHGIDPTGTYHGDSDLQLDRISVYYNEATGGKYVPRAILVDLEPGTMDSVRSGPFGQIFRPDNFVFGQSGAGNNWAKGHYTEGAELVDSVLDVVRKEAESCDCLQGFQLTHSLGGGTGSGMGTLLISKIREEYPDRIMNTFSVVPSPKVSDTVVEPYNATLSVHQLVENTDETYCIDNEALYDICFRTLKLTTPTYGDLNHLVSATMSGVTTCLRFPGQLNADLRKLAVNMVPFPRLHFFMPGFAPLTSRGSQQYRALTVPELTQQVFDAKNMMAACDPRHGRYLTVAAVFRGRMSMKEVDEQMLNVQNKNSSYFVEWIPNNVKTAVCDIPPRGLKMAVTFIGNSTAIQELFKRISEQFTAMFRRKAFLHWYTGEGMDEMEFTEAESNMNDLVSEYQQYQDATAEEEEDFGEEAEEEA</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-713135">
+           <names>
+             <shortLabel>dyn1_human</shortLabel>
+             <fullName>Dynamin-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q05193" secondary="dyn1_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0003924" secondary="F:GTPase activity"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" id="GO:0006898" secondary="P:receptor mediated endocytosi"/>
+             <secondaryRef db="interpro" id="IPR001401" secondary="Dynamin"/>
+             <secondaryRef db="interpro" id="IPR000375" secondary="Dynamin_central"/>
+             <secondaryRef db="interpro" id="IPR003130" secondary="GED"/>
+             <secondaryRef db="interpro" id="IPR001849" secondary="PH"/>
+             <secondaryRef db="interpro" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="intact" id="EBI-713135" secondary="dyn1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MGNRGMEDLIPLVNRLQDAFSAIGQNADLDLPQIAVVGGQSAGKSSVLENFVGRDFLPRGSGIVTRRPLVLQLVNATTEYAEFLHCKGKKFTDFEEVRLEIEAETDRVTGTNKGISPVPINLRVYSPHVLNLTLVDLPGMTKVPVGDQPPDIEFQIRDMLMQFVTKENCLILAVSPANSDLANSDALKVAKEVDPQGQRTIGVITKLDLMDEGTDARDVLENKLLPLRRGYIGVVNRSQKDIDGKKDITAALAAERKFFLSHPSYRHLADRMGTPYLQKVLNQQLTNHIRDTLPGLRNKLQSQLLSIEKEVEEYKNFRPDDPARKTKALLQMVQQFAVDFEKRIEGSGDQIDTYELSGGARINRIFHERFPFELVKMEFDEKELRREISYAIKNIHGIRTGLFTPDMAFETIVKKQVKKIREPCLKCVDMVISELISTVRQCTKKLQQYPRLREEMERIVTTHIREREGRTKEQVMLLIDIELAYMNTNHEDFIGFANAQQRSNQMNKKKTSGNQDEILVIRKGWLTINNIGIMKGGSKEYWFVLTAENLSWYKDDEEKEKKYMLSVDNLKLRDVEKGFMSSKHIFALFNTEQRNVYKDYRQLELACETQEEVDSWKASFLRAGVYPERVGDKEKASETEENGSDSFMHSMDPQLERQVETIRNLVDSYMAIVNKTVRDLMPKTIMHLMINNTKEFIFSELLANLYSCGDQNTLMEESAEQAQRRDEMLRMYHALKEALSIIGNINTTTVSTPMPPPVDDSWLQVQSVPAGRRSPTSSPTPQRRAPAVPPARPGSRGPAPGPPPAGSALGGAPPVPSRPGASPDPFGPPPQVPSRPNRAPPGVPSRSGQASPSRPESPRPPFDL</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-712251">
+           <names>
+             <shortLabel>nsf_human</shortLabel>
+             <fullName>Vesicle-fusing ATPase</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P46459" secondary="nsf_human" version="SP_49"/>
+             <secondaryRef db="interpro" id="IPR003593" secondary="AAA_ATPase"/>
+             <secondaryRef db="interpro" id="IPR003959" secondary="AAA_ATPase_centr"/>
+             <secondaryRef db="interpro" id="IPR003960" secondary="AAA_sub"/>
+             <secondaryRef db="interpro" id="IPR003338" secondary="ATPaseVAT_N"/>
+             <secondaryRef db="interpro" id="IPR004201" secondary="Cdc48_2"/>
+             <secondaryRef db="uniprotkb" id="Q9UKZ2" secondary="nsf_human" version="SP_49"/>
+             <secondaryRef db="intact" id="EBI-712251" secondary="nsf_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MAGRSMQAARCPTDELSLTNCSVVNEKDFQSGQHVIVRTSPNHRYTFTLKTHPSVVPGSIAFSLPQRKWAGLSIGQEIEVSLYTFDKAKQCIGTMTIEIDFLQKKSNDSNPYDTDKMAAEFIQQFNNQAYSVGQQLVFSFNEKLFGLLVKDIESMDPSILKGEPATGKRQKIEVGLVVGNSQVAFEKAENSSLNLIGKAKTKENRQSIINPDWNFEKMGIGGLDKEFSDIFRRAFAFRVFPPEIVEQMGCIHVKGILLYGPPGCGKTLLARQIGKMLNAREPKVVNGPEILNKYVGESEANIRKLFADAEEEQRRLGANSGLHIIIFDEIDAICKQRGSMAGSTGVHDTVVNQLLSKIDGVEQLNNILVIGMTNRPDLIDEALLRPGRLEVKMEIGLPDEKGRLQILHIHTARMRGHQLLSADVDIKELAVETKNFSGAELEGLVRAAQSTAMNRHIKASTKVEVDMEKAESLQVTRGDFLASLENDIKPAFGTNQEDYASYIMNGIIKWGDPVTRVLDDGELLVQQTKNSDRTPLVSVLLEGPPHSGKTALAAKIAEESNFPFIKICSPDKMIGFSETAKCQAMKKIFDDAYKSQLSCVVVDDIERLLDYVPIGPRFSNLVLQALLVLLKKAPPQGRKLLIIGTTSRKDVLQEMEMLNAFSTTIHVPNIATGEQLLEALELLGNLKDKERTTIAQQVKGKKVWIGIKKLLMLIEMSLQMDPEYRVRKFLALLREEGASPLDFD</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-77613">
+           <names>
+             <shortLabel>a4_human</shortLabel>
+             <fullName>Amyloid beta A4 protein precursor</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P05067" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9BT38" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UCA9" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UCB6" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UCC8" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UCD1" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UQ58" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="reactome protein" id="P05067"/>
+             <secondaryRef db="go" id="GO:0009986" secondary="C:cell surface"/>
+             <secondaryRef db="go" id="GO:0005576" secondary="C:extracellular"/>
+             <secondaryRef db="go" id="GO:0050905" secondary="P:neuromuscular physiological"/>
+             <secondaryRef db="go" id="GO:0005887" secondary="C:integral to plasma membrane"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" id="GO:0004867" secondary="F:serine protease inhibitor ac"/>
+             <secondaryRef db="go" id="GO:0006878" secondary="P:copper ion homeostasis"/>
+             <secondaryRef db="interpro" id="IPR008155" secondary="A4_APP"/>
+             <secondaryRef db="interpro" id="IPR008154" secondary="A4_extra"/>
+             <secondaryRef db="interpro" id="IPR001255" secondary="Beta-APP"/>
+             <secondaryRef db="interpro" id="IPR002223" secondary="Kunitz_BPTI"/>
+             <secondaryRef db="uniprotkb" id="P09000" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="P78438" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q13764" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q13778" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q13793" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q16011" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q16014" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q16019" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q16020" secondary="a4_human" version="SP_49"/>
+             <secondaryRef db="intact" id="EBI-77613" secondary="a4_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MLPGLALLLLAAWTARALEVPTDGNAGLLAEPQIAMFCGRLNMHMNVQNGKWDSDPSGTKTCIDTKEGILQYCQEVYPELQITNVVEANQPVTIQNWCKRGRKQCKTHPHFVIPYRCLVGEFVSDALLVPDKCKFLHQERMDVCETHLHWHTVAKETCSEKSTNLHDYGMLLPCGIDKFRGVEFVCCPLAEESDNVDSADAEEDDSDVWWGGADTDYADGSEDKVVEVAEEEEVAEVEEEEADDDEDDEDGDEVEEEAEEPYEEATERTTSIATTTTTTTESVEEVVREVCSEQAETGPCRAMISRWYFDVTEGKCAPFFYGGCGGNRNNFDTEEYCMAVCGSAMSQSLLKTTQEPLARDPVKLPTTAASTPDAVDKYLETPGDENEHAHFQKAKERLEAKHRERMSQVMREWEEAERQAKNLPKADKKAVIQHFQEKVESLEQEAANERQQLVETHMARVEAMLNDRRRLALENYITALQAVPPRPRHVFNMLKKYVRAEQKDRQHTLKHFEHVRMVDPKKAAQIRSQVMTHLRVIYERMNQSLSLLYNVPAVAEEIQDEVDELLQKEQNYSDDVLANMISEPRISYGNDALMPSLTETKTTVELLPVNGEFSLDDLQPWHSFGADSVPANTENEVEPVDARPAADRGLTTRPGSGLTNIKTEEISEVKMDAEFRHDSGYEVHHQKLVFFAEDVGSNKGAIIGLMVGGVVIATVIVITLVMLKKKQYTSIHHGVVEVDAAVTPEERHLSKMQQNGYENPTYKFFEQMQN</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-351450">
+           <names>
+             <shortLabel>spta2_human</shortLabel>
+             <fullName>Spectrin alpha chain, brain</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q13813" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005624" secondary="C:membrane fraction"/>
+             <secondaryRef db="go" id="GO:0008091" secondary="C:spectrin"/>
+             <secondaryRef db="go" id="GO:0003779" secondary="F:actin binding"/>
+             <secondaryRef db="go" id="GO:0005200" secondary="F:structural constituent of cy"/>
+             <secondaryRef db="interpro" id="IPR002048" secondary="EF-hand"/>
+             <secondaryRef db="interpro" id="IPR001452" secondary="SH3"/>
+             <secondaryRef db="interpro" id="IPR002017" secondary="Spectrin"/>
+             <secondaryRef db="uniprotkb" id="Q13186" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q15324" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q16606" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR011992" secondary="EF-Hand_type"/>
+             <secondaryRef db="uniprotkb" id="Q7Z6M5" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q9P0V0" secondary="spta2_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-351450" secondary="spta2_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MDPSGVKVLETAEDIQERRQQVLDRYHRFKELSTLRRQKLEDSYRFQFFQRDAEELEKWIQEKLQIASDENYKDPTNLQGKLQKHQAFEAEVQANSGAIVKLDETGNLMISEGHFASETIRTRLMELHRQWELLLEKMREKGIKLLQAQKLVQYLRECEDVMDWINDKEAIVTSEELGQDLEHVEVLQKKFEEFQTDMAAHEERVNEVNQFAAKLIQEQHPEEELIKTKQDEVNAAWQRLKGLALQRQGKLFGAAEVQRFNRDVDETISWIKEKEQLMASDDFGRDLASVQALLRKHEGLERDLAALEDKVKALCAEADRLQQSHPLSATQIQVKREELITNWEQIRTLAAERHARLNDSYRLQRFLADFRDLTSWVTEMKALINADELASDVAGAEALLDRHQEHKGEIDAHEDSFKSADESGQALLAAGHYASDEVREKLTVLSEERAALLELWELRRQQYEQCMDLQLFYRDTEQVDNWMSKQEAFLLNEDLGDSLDSVEALLKKHEDFEKSLSAQEEKITALDEFATKLIQNNHYAMEDVATRRDALLSRRNALHERAMRRRAQLADSFHLQQFFRDSDELKSWVNEKMKTATDEAYKDPSNLQGKVQKHQAFEAELSANQSRIDALEKAGQKLIDVNHYAKDEVAARMNEVISLWKKLLEATELKGIKLREANQQQQFNRNVEDIELWLYEVEGHLASDDYGKDLTNVQNLQKKHALLEADVAAHQDRIDGITIQARQFQDAGHFDAENIKKKQEALVARYEALKEPMVARKQKLADSLRLQQLFRDVEDEETWIREKEPIAASTNRGKDLIGVQNLLKKHQALQAEIAGHEPRIKAVTQKGNAMVEEGHFAAEDVKAKLHELNQKWEALKAKASQRRQDLEDSLQAQQYFADANEAESWMREKEPIVGSTDYGKDEDSAEALLKKHEALMSDLSAYGSSIQALREQAQSCRQQVAPTDDETGKELVLALYDYQEKSPREVTMKKGDILTLLNSTNKDWWKVEVNDRQGFVPAAYVKKLDPAQSASRENLLEEQGSIALRQEQIDNQTRITKEAGSVSLRMKQVEELYHSLLELGEKRKGMLEKSCKKFMLFREANELQQWINEKEAALTSEEVGADLEQVEVLQKKFDDFQKDLKANESRLKDINKVAEDLESEGLMAEEVQAVQQQEVYGMMPRDETDSKTASPWKSARLMVHTVATFNSIKELNERWRSLQQLAEERSQLLGSAHEVQRFHRDADETKEWIEEKNQALNTDNYGHDLASVQALQRKHEGFERDLAALGDKVNSLGETAERLIQSHPESAEDLQEKCTELNQAWSSLGKRADQRKAKLGDSHDLQRFLSDFRDLMSWINGIRGLVSSDELAKDVTGAEALLERHQEHRTEIDARAGTFQAFEQFGQQLLAHGHYASPEIKQKLDILDQERADLEKAWVQRRMMLDQCLELQLFHRDCEQAENWMAAREAFLNTEDKGDSLDSVEALIKKHEDFDKAINVQEEKIAALQAFADQLIAAGHYAKGDISSRRNEVLDRWRRLKAQMIEKRSKLGESQTLQQFSRDVDEIEAWISEKLQTASDESYKDPTNIQSKHQKHQAFEAELHANADRIRGVIDMGNSLIERGACAGSEDAVKARLAALADQWQFLVQKSAEKSQKLKEANKQQNFNTGIKDFDFWLSEVEALLASEDYGKDLASVNNLLKKHQLLEADISAHEDRLKDLNSQADSLMTSSAFDTSQVKDKRDTINGRFQKIKSMAASRRAKLNESHRLHQFFRDMDDEESWIKEKKLLVGSEDYGRDLTGVQNLRKKHKRLEAELAAHEPAIQGVLDTGKKLSDDNTIGKEEIQQRLAQFVEHWKELKQLAAARGQRLEESLEYQQFVANVEEEEAWINEKMTLVASEDYGDTLAAIQGLLKKHEAFETDFTVHKDRVNDVCTNGQDLIKKNNHHEENISSKMKGLNGKVSDLEKAAAQRKAKLDENSAFLQFNWKADVVESWIGEKENSLKTDDYGRDLSSVQTLLTKQETFDAGLQAFQQEGIANITALKDQLLAAKHVQSKAIEARHASLMKRWSQLLANSAARKKKLLEAQSHFRKVEDLFLTFAKKASAFNSWFENAEEDLTDPVRCNSLEEIKALREAHDAFRSSLSSAQADFNQLAELDRQIKSFRVASNPYTWFTMEALEETWRNLQKIIKERELELQKEQRRQEENDKLRQEFAQHANAFHQWIQETRTYLLDGSCMVEESGTLESQLEATKRKHQEIRAMRSQLKKIEDLGAAMEEALILDNKYTEHSTVGLAQQWDQLDQLGMRMQHNLEQQIQARNTTGVTEEALKEFSMMFKHFDKDKSGRLNHQEFKSCLRSLGYDLPMVEEGEPDPEFEAILDTVDPNRDGHVSLQEYMAFMISRETENVKSSEEIESAFRALSSEGKPYVTKEELYQNLTREQADYCVSHMKPYVDGKGRELPTAFDYVEFTRSLFVN</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-960169">
+           <names>
+             <shortLabel>stxb1_human</shortLabel>
+             <fullName>Syntaxin-binding protein 1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P61764" secondary="stxb1_human" version="SP_27"/>
+             <secondaryRef db="interpro" id="IPR001619" secondary="Sec1-like"/>
+             <secondaryRef db="uniprotkb" id="Q28208" secondary="stxb1_human" version="SP_27"/>
+             <secondaryRef db="uniprotkb" id="Q62759" secondary="stxb1_human" version="SP_27"/>
+             <secondaryRef db="uniprotkb" id="Q64320" secondary="stxb1_human" version="SP_27"/>
+             <secondaryRef db="uniprotkb" id="Q96TG8" secondary="stxb1_human" version="SP_27"/>
+             <secondaryRef db="intact" id="EBI-960169" secondary="stxb1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MAPIGLKAVVGEKIMHDVIKKVKKKGEWKVLVVDQLSMRMLSSCCKMTDIMTEGITIVEDINKRREPLPSLEAVYLITPSEKSVHSLISDFKDPPTAKYRAAHVFFTDSCPDALFNELVKSRAAKVIKTLTEINIAFLPYESQVYSLDSADSFQSFYSPHKAQMKNPILERLAEQIATLCATLKEYPAVRYRGEYKDNALLAQLIQDKLDAYKADDPTMGEGPDKARSQLLILDRGFDPSSPVLHELTFQAMSYDLLPIENDVYKYETSGIGEARVKEVLLDEDDDLWIALRHKHIAEVSQEVTRSLKDFSSSKRMNTGEKTTMRDLSQMLKKMPQYQKELSKYSTHLHLAEDCMKHYQGTVDKLCRVEQDLAMGTDAEGEKIKDPMRAIVPILLDANVSTYDKIRIILLYIFLKNGITEENLNKLIQHAQIPPEDSEIITNMAHLGVPIVTDSTLRRRSKPERKERISEQTYQLSRWTPIIKDIMEDTIEDKLDTKHYPYISTRSSASFSTTAVSARYGHWHKNKAPGEYRSGPRLIIFILGGVSLNEMRCAYEVTQANGKWEVLIGSTHILTPQKLLDTLKKLNKTDEEISS</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-296047">
+           <names>
+             <shortLabel>hs90a_human</shortLabel>
+             <fullName>Heat shock protein HSP 90-alpha</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P07900" secondary="hs90a_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0005829" secondary="C:cytosol"/>
+             <secondaryRef db="go" id="GO:0005524" secondary="F:ATP binding"/>
+             <secondaryRef db="interpro" id="IPR003594" secondary="ATPbind_ATPase"/>
+             <secondaryRef db="interpro" id="IPR001404" secondary="Hsp90"/>
+             <secondaryRef db="uniprotkb" id="Q9BVQ5" secondary="hs90a_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0030235" secondary="F:nitric-oxide synthase regula"/>
+             <secondaryRef db="go" id="GO:0000166" secondary="F:nucleotide binding"/>
+             <secondaryRef db="go" id="GO:0042803" secondary="F:protein homodimerization act"/>
+             <secondaryRef db="go" id="GO:0030911" secondary="F:TPR domain binding"/>
+             <secondaryRef db="go" id="GO:0051082" secondary="F:unfolded protein binding"/>
+             <secondaryRef db="go" id="GO:0006839" secondary="P:mitochondrial transport"/>
+             <secondaryRef db="go" id="GO:0045429" secondary="P:positive regulation of nitri"/>
+             <secondaryRef db="go" id="GO:0042026" secondary="P:protein refolding"/>
+             <secondaryRef db="go" id="GO:0006986" secondary="P:response to unfolded protein"/>
+             <secondaryRef db="go" id="GO:0007165" secondary="P:signal transduction"/>
+             <secondaryRef db="intact" id="EBI-296047" secondary="hs90a_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>PEETQTQDQPMEEEEVETFAFQAEIAQLMSLIINTFYSNKEIFLRELISNSSDALDKIRYESLTDPSKLDSGKELHINLIPNKQDRTLTIVDTGIGMTKADLINNLGTIAKSGTKAFMEALQAGADISMIGQFGVGFYSAYLVAEKVTVITKHNDDEQYAWESSAGGSFTVRTDTGEPMGRGTKVILHLKEDQTEYLEERRIKEIVKKHSQFIGYPITLFVEKERDKEVSDDEAEEKEDKEEEKEKEEKESEDKPEIEDVGSDEEEEKKDGDKKKKKKIKEKYIDQEELNKTKPIWTRNPDDITNEEYGEFYKSLTNDWEDHLAVKHFSVEGQLEFRALLFVPRRAPFDLFENRKKKNNIKLYVRRVFIMDNCEELIPEYLNFIRGVVDSEDLPLNISREMLQQSKILKVIRKNLVKKCLELFTELAEDKENYKKFYEQFSKNIKLGIHEDSQNRKKLSELLRYYTSASGDEMVSLKDYCTRMKENQKHIYYITGETKDQVANSAFVERLRKHGLEVIYMIEPIDEYCVQQLKEFEGKTLVSVTKEGLELPEDEEEKKKQEEKKTKFENLCKIMKDILEKKVEKVVVSNRLVTSPCCIVTSTYGWTANMERIMKAQALRDNSTMGYMAAKKHLEINPDHSIIETLRQKAEADKNDKSVKDLVILLYETALLSSGFSLEDPQTHANRIYRMIKLGLGIDEDDPTADDTSAAVTEEMPPLEGDDDTSRMEEVD</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-739060">
+           <names>
+             <shortLabel>cryab_human</shortLabel>
+             <fullName>Alpha crystallin B chain</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P02511" secondary="cryab_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0006936" secondary="P:muscle contraction"/>
+             <secondaryRef db="go" id="GO:0006457" secondary="P:protein folding"/>
+             <secondaryRef db="go" id="GO:0007169" secondary="P:transmembrane receptor prote"/>
+             <secondaryRef db="interpro" id="IPR012273" secondary="A-crystallin_B"/>
+             <secondaryRef db="interpro" id="IPR011369" secondary="Alpha-crystallin"/>
+             <secondaryRef db="interpro" id="IPR001436" secondary="Crystallin_alpha"/>
+             <secondaryRef db="interpro" id="IPR003090" secondary="Crystallin_N"/>
+             <secondaryRef db="interpro" id="IPR002068" secondary="Hsp20"/>
+             <secondaryRef db="uniprotkb" id="O43416" secondary="cryab_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-739060" secondary="cryab_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MDIAIHHPWIRRPFFPFHSPSRLFDQFFGEHLLESDLFPTSTSLSPFYLRPPSFLRAPSWFDTGLSEMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVSGPERTIPITREEKPAVTAAPKK</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-81694">
+           <names>
+             <shortLabel>apbb1_human</shortLabel>
+             <fullName>Amyloid beta A4 precursor protein-binding family B member 1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="O00213" secondary="apbb1_human" version="SP_47"/>
+             <secondaryRef db="go" id="GO:0030426" secondary="C:growth cone"/>
+             <secondaryRef db="go" id="GO:0030027" secondary="C:lamellipodium"/>
+             <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" id="GO:0045202" secondary="C:synapse"/>
+             <secondaryRef db="go" id="GO:0001540" secondary="F:beta-amyloid binding"/>
+             <secondaryRef db="go" id="GO:0035035" secondary="F:histone acetyltransferase bi"/>
+             <secondaryRef db="go" id="GO:0008134" secondary="F:transcription factor binding"/>
+             <secondaryRef db="go" id="GO:0030048" secondary="P:actin filament-based movemen"/>
+             <secondaryRef db="go" id="GO:0007409" secondary="P:axonogenesis"/>
+             <secondaryRef db="go" id="GO:0007050" secondary="P:cell cycle arrest"/>
+             <secondaryRef db="go" id="GO:0030308" secondary="P:negative regulation of cell"/>
+             <secondaryRef db="go" id="GO:0045749" secondary="P:negative regulation of S pha"/>
+             <secondaryRef db="go" id="GO:0050760" secondary="P:negative regulation of thymi"/>
+             <secondaryRef db="go" id="GO:0050821" secondary="P:protein stabilization"/>
+             <secondaryRef db="go" id="GO:0045449" secondary="P:regulation of transcription"/>
+             <secondaryRef db="interpro" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="uniprotkb" id="Q96A93" secondary="apbb1_human" version="SP_47"/>
+             <secondaryRef db="go" id="GO:0007165" secondary="P:signal transduction"/>
+             <secondaryRef db="interpro" id="IPR006020" secondary="PTB_PID"/>
+             <secondaryRef db="interpro" id="IPR001202" secondary="WW_Rsp5_WWP"/>
+             <secondaryRef db="intact" id="EBI-81694" secondary="apbb1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MSVPSSLSQSAINANSHGGPALSLPLPLHAAHNQLLNAKLQATAVGPKDLRSAMGEGGGPEPGPANAKWLKEGQNQLRRAATAHRDQNRNVTLTLAEEASQEPEMAPLGPKGLIHLYSELELSAHNAANRGLRGPGLIISTQEQGPDEGEEKAAGEAEEEEEDDDDEEEEEDLSSPPGLPEPLESVEAPPRPQALTDGPREHSKSASLLFGMRNSAASDEDSSWATLSQGSPSYGSPEDTDSFWNPNAFETDSDLPAGWMRVQDTSGTYYWHIPTGTTQWEPPGRASPSQGSSPQEESQLTWTGFAHGEGFEDGEFWKDEPSDEAPMELGLKEPEEGTLTFPAQSLSPEPLPQEEEKLPPRNTNPGIKCFAVRSLGWVEMTEEELAPGRSSVAVNNCIRQLSYHKNNLHDPMSGGWGEGKDLLLQLEDETLKLVEPQSQALLHAQPIISIRVWGVGRDSGRERDFAYVARDKLTQMLKCHVFRCEAPAKNIATSLHEICSKIMAERRNARCLVNGLSLDHSKLVDVPFQVEFPAPKNELVQKFQVYYLGNVPVAKPVGVDVINGALESVLSSSSREQWTPSHVSVAPATLTILHQQTEAVLGECRVRFLSFLAVGRDVHTFAFIMAAGPASFCCHMFWCEPNAASLSEAVQAACMLRYQKCLDARSQASTSCLPAPPAESVARRVGWTVRRGVQSLWGSLKPKRLGAHTP</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-353944">
+           <names>
+             <shortLabel>actb_human</shortLabel>
+             <fullName>Actin, cytoplasmic 1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P60709" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0035267" secondary="C:TIP60 histone acetyltransfer"/>
+             <secondaryRef db="interpro" id="IPR004001" secondary="Actin"/>
+             <secondaryRef db="interpro" id="IPR004000" secondary="Actin_like"/>
+             <secondaryRef db="uniprotkb" id="P02570" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="P70514" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="P99021" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q11211" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q64316" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q75MN2" secondary="actb_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-353944" secondary="actb_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MDDDIAALVVDNGSGMCKAGFAGDDAPRAVFPSIVGRPRHQGVMVGMGQKDSYVGDEAQSKRGILTLKYPIEHGIVTNWDDMEKIWHHTFYNELRVAPEEHPVLLTEAPLNPKANREKMTQIMFETFNTPAMYVAIQAVLSLYASGRTTGIVMDSGDGVTHTVPIYEGYALPHAILRLDLAGRDLTDYLMKILTERGYSFTTTAEREIVRDIKEKLCYVALDFEQEMATAASSSSLEKSYELPDGQVITIGNERFRCPEALFQPSFLGMESCGIHETTFNSIMKCDVDIRKDLYANTVLSGGTTMYPGIADRMQKEITALAPSTMKIKIIAPPERKYSVWIGGSILASLSTFQQMWISKQEYDESGPSIVHRKCF</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-351896">
+           <names>
+             <shortLabel>hsp7c_human</shortLabel>
+             <fullName>Heat shock cognate 71 kDa protein</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P11142" secondary="hsp7c_human" version="SP_74"/>
+             <secondaryRef db="go" id="GO:0005622" secondary="C:intracellular"/>
+             <secondaryRef db="go" id="GO:0042623" secondary="F:ATPase activity, coupled"/>
+             <secondaryRef db="go" id="GO:0006457" secondary="P:protein folding"/>
+             <secondaryRef db="interpro" id="IPR001023" secondary="Hsp70"/>
+             <secondaryRef db="uniprotkb" id="Q9H3R6" secondary="hsp7c_human" version="SP_74"/>
+             <secondaryRef db="go" id="GO:0009986" secondary="C:cell surface"/>
+             <secondaryRef db="go" id="GO:0006986" secondary="P:response to unfolded protein"/>
+             <secondaryRef db="intact" id="EBI-351896" secondary="hsp7c_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MSKGPAVGIDLGTTYSCVGVFQHGKVEIIANDQGNRTTPSYVAFTDTERLIGDAAKNQVAMNPTNTVFDAKRLIGRRFDDAVVQSDMKHWPFMVVNDAGRPKVQVEYKGETKSFYPEEVSSMVLTKMKEIAEAYLGKTVTNAVVTVPAYFNDSQRQATKDAGTIAGLNVLRIINEPTAAAIAYGLDKKVGAERNVLIFDLGGGTFDVSILTIEDGIFEVKSTAGDTHLGGEDFDNRMVNHFIAEFKRKHKKDISENKRAVRRLRTACERAKRTLSSSTQASIEIDSLYEGIDFYTSITRARFEELNADLFRGTLDPVEKALRDAKLDKSQIHDIVLVGGSTRIPKIQKLLQDFFNGKELNKSINPDEAVAYGAAVQAAILSGDKSENVQDLLLLDVTPLSLGIETAGGVMTVLIKRNTTIPTKQTQTFTTYSDNQPGVLIQVYEGERAMTKDNNLLGKFELTGIPPAPRGVPQIEVTFDIDANGILNVSAVDKSTGKENKITITNDKGRLSKEDIERMVQEAEKYKAEDEKQRDKVSSKNSLESYAFNMKATVEDEKLQGKINDEDKQKILDKCNEIINWLDKNQTAEKEEFEHQQKELEKVCNPIITKLYQSAGGMPGGMPGGFPGGGAPPSGGASSGPTIEEVD</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-947410">
+           <names>
+             <shortLabel>mbp_human</shortLabel>
+             <fullName>Myelin basic protein</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P02686" secondary="mbp_human" version="SP_75"/>
+             <secondaryRef db="go" id="GO:0007417" secondary="P:central nervous system devel"/>
+             <secondaryRef db="go" id="GO:0006955" secondary="P:immune response"/>
+             <secondaryRef db="go" id="GO:0008366" secondary="P:nerve ensheathment"/>
+             <secondaryRef db="go" id="GO:0007268" secondary="P:synaptic transmission"/>
+             <secondaryRef db="interpro" id="IPR000548" secondary="Myelin_BP"/>
+             <secondaryRef db="uniprotkb" id="Q15337" secondary="mbp_human" version="SP_75"/>
+             <secondaryRef db="uniprotkb" id="Q15338" secondary="mbp_human" version="SP_75"/>
+             <secondaryRef db="uniprotkb" id="Q15339" secondary="mbp_human" version="SP_75"/>
+             <secondaryRef db="uniprotkb" id="Q15340" secondary="mbp_human" version="SP_75"/>
+             <secondaryRef db="intact" id="EBI-947410" secondary="mbp_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MGNHAGKRELNAEKASTNSETNRGESEKKRNLGELSRTTSEDNEVFGEADANQNNGTSSQDTAVTDSKRTADPKNAWQDAHPADPGSRPHLIRLFSRDAPGREDNTFKDRPSESDELQTIQEDSAATSESLDVMASQKRPSQRHGSKYLATASTMDHARHGFLPRHRDTGILDSIGRFFGGDRGAPKRGSGKDSHHPARTAHYGSLPQKSHGRTQDENPVVHFFKNIVTPRTPPPSQGKGRGLSLSRFSWGAEGQRPGFGYGGRASDYKSAHKGFKGVDAQGTLSKIFKLGGRDSRSGSPMARR</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-744302">
+           <names>
+             <shortLabel>gfap_human</shortLabel>
+             <fullName>Glial fibrillary acidic protein, astrocyte</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P14136" secondary="gfap_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0005882" secondary="C:intermediate filament"/>
+             <secondaryRef db="go" id="GO:0005200" secondary="F:structural constituent of cy"/>
+             <secondaryRef db="interpro" id="IPR006821" secondary="filament_DNA_bd"/>
+             <secondaryRef db="interpro" id="IPR001664" secondary="IF"/>
+             <secondaryRef db="interpro" id="IPR002957" secondary="Keratin_I"/>
+             <secondaryRef db="intact" id="EBI-744302" secondary="gfap_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MERRRITSAARRSYVSSGEMMVGGLAPGRRLGPGTRLSLARMPPPLPTRVDFSLAGALNAGFKETRASERAEMMELNDRFASYIEKVRFLEQQNKALAAELNQLRAKEPTKLADVYQAELRELRLRLDQLTANSARLEVERDNLAQDLATVRQKLQDETNLRLEAENNLAAYRQEADEATLARLDLERKIESLEEEIRFLRKIHEEEVRELQEQLARQQVHVELDVAKPDLTAALKEIRTQYEAMASSNMHEAEEWYRSKFADLTDAAARNAELLRQAKHEANDYRRQLQSLTCDLESLRGTNESLERQMREQEERHVREAASYQEALARLEEEGQSLKDEMARHLQEYQDLLNVKLALDIEIATYRKLLEGEENRITIPVQTFSNLQIRETSLDTKSVSEGHLKRNIVVKTVEMRDGEVIKESKQEHKDVM</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-475646">
+           <names>
+             <shortLabel>nfl_human</shortLabel>
+             <fullName>Neurofilament triplet L protein</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P07196" secondary="nfl_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005883" secondary="C:neurofilament"/>
+             <secondaryRef db="go" id="GO:0005200" secondary="F:structural constituent of cy"/>
+             <secondaryRef db="interpro" id="IPR006821" secondary="Filament_head"/>
+             <secondaryRef db="interpro" id="IPR001664" secondary="IF"/>
+             <secondaryRef db="uniprotkb" id="Q16154" secondary="nfl_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0030424" secondary="C:axon"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="uniprotkb" id="Q8IU72" secondary="nfl_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-475646" secondary="nfl_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>SSFSYEPYYSTSYKRRYVETPRVHISSVRSGYSTARSAYSSYSAPVSSSLSVRRSYSSSSGSLMPSLENLDLSQVAAISNDLKSIRTQEKAQLQDLNDRFASFIERVHELEQQNKVLEAELLVLRQKHSEPSRFRALYEQEIRDLRLAAEDATNEKQALQGEREGLEETLRNLQARYEEEVLSREDAEGRLMEARKGADEAALARAELEKRIDSLMDEISFLKKVHEEEIAELQAQIQYAQISVEMDVTKPDLSAALKDIRAQYEKLAAKNMQNAEEWFKSRFTVLTESAAKNTDAVRAAKDEVSESRRLLKAKTLEIEACRGMNEALEKQLQELEDKQNADISAMQDTINKLENELRTTKSEMARYLKEYQDLLNVKMALDIEIAAYRKLLEGEETRLSFTSVGSITSGYSQSSQVFGRSAYGGLQTSSYLMSTRSFPSYYTSHVQEEQIEVEETIEAAKAEEAKDEPPSEGEAEEEEKDKEEAEEEEAAEEEEAAKEESEEAKEEEEGGEGEEGEETKEAEEEEKKVEGAGEEQAAKKKD</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-476263">
+           <names>
+             <shortLabel>m3k5_human</shortLabel>
+             <fullName>Mitogen-activated protein kinase kinase kinase 5</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q99683" secondary="m3k5_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0004709" secondary="F:MAP kinase kinase kinase act"/>
+             <secondaryRef db="go" id="GO:0007257" secondary="P:activation of JUNK"/>
+             <secondaryRef db="go" id="GO:0008624" secondary="P:induction of apoptosis by ex"/>
+             <secondaryRef db="go" id="GO:0000165" secondary="P:MAPKKK cascade"/>
+             <secondaryRef db="interpro" id="IPR000719" secondary="Prot_kinase"/>
+             <secondaryRef db="interpro" id="IPR008271" secondary="Ser_thr_pkin_AS"/>
+             <secondaryRef db="interpro" id="IPR002290" secondary="Ser_thr_pkinase"/>
+             <secondaryRef db="uniprotkb" id="Q5THN3" secondary="m3k5_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0042802" secondary="F:protein self binding"/>
+             <secondaryRef db="uniprotkb" id="Q99461" secondary="m3k5_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-476263" secondary="m3k5_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MSTEADEGITFSVPPFAPSGFCTIPEGGICRRGGAAAVGEGEEHQLPPPPPGSFWNVESAAAPGIGCPAATSSSSATRGRGSSVGGGSRRTTVAYVINEASQGQLVVAESEALQSLREACETVGATLETLHFGKLDFGETTVLDRFYNADIAVVEMSDAFRQPSLFYHLGVRESFSMANNIILYCDTNSDSLQSLKEIICQKNTMCTGNYTFVPYMITPHNKVYCCDSSFMKGLTELMQPNFELLLGPICLPLVDRFIQLLKVAQASSSQYFRESILNDIRKARNLYTGKELAAELARIRQRVDNIEVLTADIVINLLLSYRDIQDYDSIVKLVETLEKLPTFDLASHHHVKFHYAFALNRRNLPGDRAKALDIMIPMVQSEGQVASDMYCLVGRIYKDMFLDSNFTDTESRDHGASWFKKAFESEPTLQSGINYAVLLLAAGHQFESSFELRKVGVKLSSLLGKKGNLEKLQSYWEVGFFLGASVLANDHMRVIQASEKLFKLKTPAWYLKSIVETILIYKHFVKLTTEQPVAKQELVDFWMDFLVEATKTDVTVVRFPVLILEPTKIYQPSYLSINNEVEEKTISIWHVLPDDKKGIHEWNFSASSVRGVSISKFEERCCFLYVLHNSDDFQIYFCTELHCKKFFEMVNTITEEKGRSTEEGDCESDLLEYDYEYDENGDRVVLGKGTYGIVYAGRDLSNQVRIAIKEIPERDSRYSQPLHEEIALHKHLKHKNIVQYLGSFSENGFIKIFMEQVPGGSLSALLRSKWGPLKDNEQTIGFYTKQILEGLKYLHDNQIVHRDIKGDNVLINTYSGVLKISDFGTSKRLAGINPCTETFTGTLQYMAPEIIDKGPRGYGKAADIWSLGCTIIEMATGKPPFYELGEPQAAMFKVGMFKVHPEIPESMSAEAKAFILKCFEPDPDKRACANDLLVDEFLKVSSKKKKTQPKLSALSAGSNEYLRSISLPVPVLVEDTSSSSEYGSVSPDTELKVDPFSFKTRAKSCGERDVKGIRTLFLGIPDENFEDHSAPPSPEEKDSGFFMLRKDSERRATLHRILTEDQDKIVRNLMESLAQGAEEPKLKWEHITTLIASLREFVRSTDRKIIATTLSKLKLELDFDSHGISQVQVVLFGFQDAVNKVLRNHNIKPHWMFALDSIIRKAVQTAITILVPELRPHFSLASESDTADQEDLDVEDDHEEQPSNQTVRRPQAVIEDAVATSGVSTLSSTVSHDSQSAHRSLNVQLGRMKIETNRLLEELVRKEKELQALLHRAIEEKDQEIKHLKLKSQPIEIPELPVFHLNSSGTNTEDSELTDWLRVNGADEDTISRFLAEDYTLLDVLYYVTRDDLKCLRLRGGMLCTLWKAIIDFRNKQT</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-437708">
+           <names>
+             <shortLabel>ppia_human</shortLabel>
+             <fullName>Peptidyl-prolyl cis-trans isomerase A</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P62937" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+             <secondaryRef db="go" id="GO:0006457" secondary="P:protein folding"/>
+             <secondaryRef db="go" id="GO:0045069" secondary="P:regulation of viral genome r"/>
+             <secondaryRef db="interpro" id="IPR002130" secondary="CSA_PPIase"/>
+             <secondaryRef db="uniprotkb" id="P05092" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q6IBU5" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q96IX3" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9BRU4" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9BTY9" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9UC61" secondary="ppia_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0016018" secondary="F:cyclosporin A binding"/>
+             <secondaryRef db="go" id="GO:0051082" secondary="F:unfolded protein binding"/>
+             <secondaryRef db="go" id="GO:0046790" secondary="F:virion binding"/>
+             <secondaryRef db="intact" id="EBI-437708" secondary="ppia_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>VNPTVFFDIAVDGEPLGRVSFELFADKVPKTAENFRALSTGEKGFGYKGSCFHRIIPGFMCQGGDFTRHNGTGGKSIYGEKFEDENFILKHTGPGILSMANAGPNTNGSQFFICTAKTEWLDGKHVVFGKVKEGMNIVEAMERFGSRNGKTSKKITIADCGQLE</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-714860">
+           <names>
+             <shortLabel>uchl1_human</shortLabel>
+             <fullName>Ubiquitin carboxyl-terminal hydrolase isozyme L1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P09936" secondary="uchl1_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+             <secondaryRef db="go" id="GO:0004197" secondary="F:cysteine-type endopeptidase "/>
+             <secondaryRef db="go" id="GO:0008242" secondary="F:omega peptidase activity"/>
+             <secondaryRef db="go" id="GO:0043130" secondary="F:ubiquitin binding"/>
+             <secondaryRef db="go" id="GO:0004221" secondary="F:ubiquitin thiolesterase acti"/>
+             <secondaryRef db="go" id="GO:0016579" secondary="P:protein deubiquitination"/>
+             <secondaryRef db="interpro" id="IPR001578" secondary="Peptidase_C12"/>
+             <secondaryRef db="uniprotkb" id="Q71UM0" secondary="uchl1_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-714860" secondary="uchl1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MQLKPMEINPEMLNKVLSRLGVAGQWRFVDVLGLEEESLGSVPAPACALLLLFPLTAQHENFRKKQIEELKGQEVSPKVYFMKQTIGNSCGTIGLIHAVANNQDKLGFEDGSVLKQFLSETEKMSPEDRAKCFEKNEAIQAAHDAVAQEGQCRVDDKVNFHFILFNNVDGHLYELDGRMPFPVNHGASSEDTLLKDAAKVCREFTEREQGEVRFSAVALCKAA</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-347088">
+           <names>
+             <shortLabel>1433z_human</shortLabel>
+             <fullName>14-3-3 protein zeta/delta</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P63104" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR000308" secondary="14-3-3"/>
+             <secondaryRef db="uniprotkb" id="P29213" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="P29312" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q6GPI2" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q6IN74" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q6NUR9" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q6P3U9" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q86V33" secondary="1433z_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-347088" secondary="1433z_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MDKNELVQKAKLAEQAERYDDMAACMKSVTEQGAELSNEERNLLSVAYKNVVGARRSSWRVVSSIEQKTEGAEKKQQMAREYREKIETELRDICNDVLSLLEKFLIPNASQAESKVFYLKMKGDYYRYLAEVAAGDDKKGIVDQSQQAYQEAFEISKKEMQPTHPIRLGLALNFSVFYYEILNSPEKACSLAKTAFDEAIAELDTLSEESYKDSTLIMQLLRDNLTLWTSDTQGDEAEAGEGGEN</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-717905">
+           <names>
+             <shortLabel>pgam1_human</shortLabel>
+             <fullName>Phosphoglycerate mutase 1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P18669" secondary="pgam1_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005829" secondary="C:cytosol"/>
+             <secondaryRef db="go" id="GO:0004082" secondary="F:bisphosphoglycerate mutase a"/>
+             <secondaryRef db="go" id="GO:0004083" secondary="F:bisphosphoglycerate phosphat"/>
+             <secondaryRef db="go" id="GO:0004619" secondary="F:phosphoglycerate mutase acti"/>
+             <secondaryRef db="go" id="GO:0006096" secondary="P:glycolysis"/>
+             <secondaryRef db="interpro" id="IPR001345" secondary="PG/BPGM_mutase"/>
+             <secondaryRef db="interpro" id="IPR005952" secondary="Phosphogly_mut1"/>
+             <secondaryRef db="reactome protein" id="P18669"/>
+             <secondaryRef db="uniprotkb" id="Q9BWC0" secondary="pgam1_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-717905" secondary="pgam1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>AAYKLVLIRHGESAWNLENRFSGWYDADLSPAGHEEAKRGGQALRDAGYEFDICFTSVQKRAIRTLWTVLDAIDQMWLPVVRTWRLNERHYGGLTGLNKAETAAKHGEAQVKIWRRSYDVPPPPMEPDHPFYSNISKDRRYADLTEDQLPSCESLKDTIARALPFWNEEIVPQIKEGKRVLIAAHGNSLRGIVKHLEGLSEEAIMELNLPTGIPIVYELDKNLKPIKPMQFLGDEETVRKAMEAVAAQGKAKK</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-299046">
+           <names>
+             <shortLabel>cryab_mouse</shortLabel>
+             <fullName>Alpha crystallin B chain</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P23927" secondary="cryab_mouse" version="SP_47"/>
+             <secondaryRef db="interpro" id="IPR001436" secondary="Crystallin_alpha"/>
+             <secondaryRef db="interpro" id="IPR003090" secondary="Crystallin_N"/>
+             <secondaryRef db="interpro" id="IPR002068" secondary="Hsp20"/>
+             <secondaryRef db="interpro" id="IPR012273" secondary="A-crystallin_B"/>
+             <secondaryRef db="uniprotkb" id="Q64325" secondary="cryab_mouse" version="SP_47"/>
+             <secondaryRef db="go" id="GO:0005626" secondary="C:insoluble fraction"/>
+             <secondaryRef db="go" id="GO:0043292" secondary="C:contractile fiber"/>
+             <secondaryRef db="go" id="GO:0005886" secondary="C:plasma membrane"/>
+             <secondaryRef db="go" id="GO:0005625" secondary="C:soluble fraction"/>
+             <secondaryRef db="go" id="GO:0030018" secondary="C:Z disc"/>
+             <secondaryRef db="go" id="GO:0005212" secondary="F:structural constituent of ey"/>
+             <secondaryRef db="go" id="GO:0001747" secondary="P:eye morphogenesis (sensu Mam"/>
+             <secondaryRef db="go" id="GO:0007517" secondary="P:muscle development"/>
+             <secondaryRef db="go" id="GO:0007169" secondary="P:transmembrane receptor prote"/>
+             <secondaryRef db="interpro" id="IPR011369" secondary="Alpha-crystallin"/>
+             <secondaryRef db="intact" id="EBI-299046" secondary="cryab_mouse"/>
+           </xref>
+           <organism ncbiTaxId="10090">
+             <names>
+               <shortLabel>mouse</shortLabel>
+               <fullName>Mus musculus</fullName>
+             </names>
+           </organism>
+           <sequence>MDIAIHHPWIRRPFFPFHSPSRLFDQFFGEHLLESDLFSTATSLSPFYLRPPSFLRAPSWIDTGLSEMRLEKDRFSVNLDVKHFSPEELKVKVLGDVIEVHGKHEERQDEHGFISREFHRKYRIPADVDPLTITSSLSSDGVLTVNGPRKQVSGPERTIPITREEKPAVAAAPKK</sequence>
+         </proteinInteractor>
+       </interactorList>
+       <interactionList>
+         <interaction>
+           <names>
+             <shortLabel>app-nsf-1</shortLabel>
+             <fullName>Interacting partners of human APP from brains samples derived from Alzheimers patients</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-960299"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-350338"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-975307"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-350850"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-713135"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-712251"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-77613"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-351450"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-960169"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-296047"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-739060"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-81694"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-353944"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-351896"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-947410"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-960166" secondary="app-nsf-1"/>
+             <secondaryRef db="omim" id="104300"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">Authors assisted with the identity of some proteins ambiguously described in the paper.</attribute>
+             <attribute name="antibodies">Proteins immunoprecipitated using CT15, whichrecognises the C-terminal 15 residues of APP.</attribute>
+             <attribute name="figure legend">Table 1</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>app-nsf-2</shortLabel>
+             <fullName>Interacting partners of human APP from brain samples derived from Alzheimers patients</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-960299"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-350850"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-975307"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-713135"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-712251"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-296047"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-739060"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-353944"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-351896"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-77613"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-744302"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-475646"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-476263"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-437708"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-714860"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-347088"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-717905"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-960318" secondary="app-nsf-2"/>
+             <secondaryRef db="omim" id="104300"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">The authors assisted with further identification of proteins ambiguously described in the paper. Uracil DNA glycosylase was also present in the immunoprecipitate but could not be assigned to an accession number.</attribute>
+             <attribute name="antibodies">Proteins immunoprecipitated using APPNeo, which recognises the neoepitope generated after cleavage of APP at Asp-647.</attribute>
+             <attribute name="figure legend">Table 1</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>app-apbb1-6</shortLabel>
+             <fullName>Interacting partners of human APP from brains samples derived from Alzheimers patients</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-960390"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-77613"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-81694"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-739060"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-960396" secondary="app-apbb1-6"/>
+             <secondaryRef db="omim" id="104300"/>
+           </xref>
+           <attributeList>
+             <attribute name="antibodies">Proteins immunoprecipitated using CT15, which recognises the C-terminal 15 residues of APP.</attribute>
+             <attribute name="figure legend">Fig. 3A</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>app-nsf-3</shortLabel>
+             <fullName>Interacting partners of human APP from brains samples derived from Alzheimers patients</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-960390"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-77613"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-347088"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-739060"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-960581" secondary="app-nsf-3"/>
+             <secondaryRef db="omim" id="104300"/>
+           </xref>
+           <attributeList>
+             <attribute name="antibodies">Proteins immunoprecipitated using APPNeo, which recognises the neoepitope generated after cleavage of APP at Asp-647.</attribute>
+             <attribute name="figure legend">Fig. 3B, 3C</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>app-cryab-1</shortLabel>
+             <fullName>Colocalisation of human APP</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-960605"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-77613"/>
+               <role>neutral</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-299046"/>
+               <role>neutral</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-960607" secondary="app-cryab-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">3D</attribute>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+       </interactionList>
+     </entry>
+   </entrySet>

@@ -1,0 +1,1338 @@
+   <entrySet level="1" version="1" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+     <entry>
+       <source releaseDate="2006-11-17">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" id="14681455"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" id="MI:0469"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="EBI-989029">
+           <names>
+             <shortLabel>raurell-2006-3</shortLabel>
+             <fullName>Presenilin-1 interacts with plakoglobin and enhances plakoglobin-Tcf-4 association. Implications for the regulation of beta-catenin/Tcf-4-dependent transcription.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16306047"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-989029" secondary="raurell-2006-3"/>
+             <secondaryRef db="newt" id="10090" secondary="mouse"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="-1">
+             <names>
+               <shortLabel>in vitro</shortLabel>
+             </names>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>pull down</shortLabel>
+               <fullName>pull down</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0096"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+             <attribute name="author-list">Raurell I., Castano J., Franci C., Garcia de Herreros A., Dunach M.</attribute>
+             <attribute name="journal">J. Biol. Chem. (0021-9258)</attribute>
+             <attribute name="publication-year">2006</attribute>
+             <attribute name="contact-email">agarcia@imim.es</attribute>
+             <attribute name="dataset">BioCreative - Critical Assessment of Information Extraction systems in Biology</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="EBI-988959">
+           <names>
+             <shortLabel>raurell-2006-1</shortLabel>
+             <fullName>Presenilin-1 interacts with plakoglobin and enhances plakoglobin-Tcf-4 association. Implications for the regulation of beta-catenin/Tcf-4-dependent transcription.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16306047"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-988959" secondary="raurell-2006-1"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human-sw480</shortLabel>
+             </names>
+             <tissue>
+               <names>
+                 <shortLabel>colon</shortLabel>
+               </names>
+               <xref>
+                 <primaryRef db="intact" id="IA:0230"/>
+               </xref>
+             </tissue>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>anti bait coip</shortLabel>
+               <fullName>anti bait coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0006"/>
+               <secondaryRef db="pubmed" id="7708014"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+             <attribute name="author-list">Raurell I., Castano J., Franci C., Garcia de Herreros A., Dunach M.</attribute>
+             <attribute name="journal">J. Biol. Chem. (0021-9258)</attribute>
+             <attribute name="publication-year">2006</attribute>
+             <attribute name="contact-email">agarcia@imim.es</attribute>
+             <attribute name="dataset">BioCreative - Critical Assessment of Information Extraction systems in Biology</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="EBI-988987">
+           <names>
+             <shortLabel>raurell-2006-2</shortLabel>
+             <fullName>Presenilin-1 interacts with plakoglobin and enhances plakoglobin-Tcf-4 association. Implications for the regulation of beta-catenin/Tcf-4-dependent transcription.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="16306047"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-988987" secondary="raurell-2006-2"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human-rwp_1</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+             <cellType>
+               <names>
+                 <shortLabel>human-rwp_1</shortLabel>
+                 <fullName>human pancreatic adenocarcinoma cell line</fullName>
+               </names>
+               <xref>
+                 <primaryRef db="pubmed" id="3884143"/>
+                 <secondaryRef db="intact" id="IA:0343"/>
+               </xref>
+             </cellType>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>coip</shortLabel>
+               <fullName>coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0019"/>
+               <secondaryRef db="pubmed" id="7708014"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="dataset">Alzheimers - Interaction dataset based on proteins with an association to Alzheimer disease</attribute>
+             <attribute name="author-list">Raurell I., Castano J., Franci C., Garcia de Herreros A., Dunach M.</attribute>
+             <attribute name="journal">J. Biol. Chem. (0021-9258)</attribute>
+             <attribute name="publication-year">2006</attribute>
+             <attribute name="contact-email">agarcia@imim.es</attribute>
+             <attribute name="dataset">BioCreative - Critical Assessment of Information Extraction systems in Biology</attribute>
+           </attributeList>
+         </experimentDescription>
+       </experimentList>
+       <interactorList>
+         <proteinInteractor id="EBI-491549">
+           <names>
+             <shortLabel>ctnb1_human</shortLabel>
+             <fullName>Beta-catenin</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P35222" secondary="ctnb1_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0005856" secondary="C:cytoskeleton"/>
+             <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" id="GO:0005886" secondary="C:plasma membrane"/>
+             <secondaryRef db="go" id="GO:0004871" secondary="F:signal transducer activity"/>
+             <secondaryRef db="interpro" id="IPR011989" secondary="ARM-like"/>
+             <secondaryRef db="interpro" id="IPR000225" secondary="Armadillo"/>
+             <secondaryRef db="uniprotkb" id="Q8NEW9" secondary="ctnb1_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q8NI94" secondary="ctnb1_human" version="SP_49"/>
+             <secondaryRef db="uniprotkb" id="Q9H391" secondary="ctnb1_human" version="SP_49"/>
+             <secondaryRef db="interpro" id="IPR000357" secondary="HEAT"/>
+             <secondaryRef db="go" id="GO:0050681" secondary="F:androgen receptor binding"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" id="GO:0003713" secondary="F:transcription coactivator ac"/>
+             <secondaryRef db="go" id="GO:0030521" secondary="P:androgen receptor signaling "/>
+             <secondaryRef db="go" id="GO:0045893" secondary="P:positive regulation of trans"/>
+             <secondaryRef db="intact" id="EBI-491549" secondary="ctnb1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MATQADLMELDMAMEPDRKAAVSHWQQQSYLDSGIHSGATTTAPSLSGKGNPEEEDVDTSQVLYEWEQGFSQSFTQEQVADIDGQYAMTRAQRVRAAMFPETLDEGMQIPSTQFDAAHPTNVQRLAEPSQMLKHAVVNLINYQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEASRHAIMRSPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGSPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITTDCLQILAYGNQESKLIILASGGPQALVNIMRTYTYEKLLWTTSRVLKVLSVCSSNKPAIVEAGGMQALGLHLTDPSQRLVQNCLWTLRNLSDAATKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLTSRHQEAEMAQNAVRLHYGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDTQRRTSMGGTQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTIPLFVQLLYSPIENIQRVAAGVLCELAQDKEAAEAIEAEGATAPLTELLHSRNEGVATYAAAVLFRMSEDKPQDYKKRLSVELTSSLFRTEPMAWNETADLGLDIGAQGEPLGYRQDDPSYRSFHSGGYGQDALGMDPMMEHEMGGHHPGADYPVDGLPDLGHAQDLMDGLPPGDSNQLAWFDTDL</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-924724">
+           <names>
+             <shortLabel>tf7l2_human</shortLabel>
+             <fullName>Transcription factor 7-like 2</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q9NQB0" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" id="GO:0003702" secondary="F:RNA polymerase II transcript"/>
+             <secondaryRef db="go" id="GO:0003700" secondary="F:transcription factor activit"/>
+             <secondaryRef db="go" id="GO:0006325" secondary="P:establishment and/or mainten"/>
+             <secondaryRef db="go" id="GO:0000074" secondary="P:regulation of progression th"/>
+             <secondaryRef db="go" id="GO:0006357" secondary="P:regulation of transcription "/>
+             <secondaryRef db="go" id="GO:0030111" secondary="P:regulation of Wnt receptor s"/>
+             <secondaryRef db="go" id="GO:0007165" secondary="P:signal transduction"/>
+             <secondaryRef db="interpro" id="IPR009071" secondary="HMG-box"/>
+             <secondaryRef db="interpro" id="IPR000910" secondary="HMG_1/2_box"/>
+             <secondaryRef db="uniprotkb" id="O00185" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB1" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB2" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB3" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB4" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB5" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB6" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9NQB7" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="uniprotkb" id="Q9ULC2" secondary="tf7l2_human" version="SP_40"/>
+             <secondaryRef db="intact" id="EBI-924724" secondary="tf7l2_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MPQLNGGGGDDLGANDELISFKDEGEQEEKSSENSSAERDLADVKSSLVNESETNQNSSSDSEAERRPPPRSESFRDKSRESLEEAAKRQDGGLFKGPPYPGYPFIMIPDLTSPYLPNGSLSPTARTLHFQSGSTHYSAYKTIEHQIAVQYLQMKWPLLDVQAGSLQSRQALKDARSPSPAHIVSNKVPVVQHPHHVHPLTPLITYSNEHFTPGNPPPHLPADVDPKTGIPRPPHPPDISPYYPLSPGTVGQIPHPLGWLVPQQGQPVYPITTGGFRHPYPTALTVNASMSRFPPHMVPPHHTLHTTGIPHPAIVTPTVKQESSQSDVGSLHSSKHQDSKKEEEKKKPHIKKPLNAFMLYMKEMRAKVVAECTLKESAAINQILGRRWHALSREEQAKYYELARKERQLHMQLYPGWSARDNYGKKKKRKRDKQPGETNEHSECFLNPCLSLPPITDLSAPKKCRARFGLDQQNNWCGPCRRKKKCVRYIQGEGSCLSPPSSDGSLLDSPPPSPNLLGSPPRDAKSQTEQTQPLSLSLKPDPLAHLSMMPPPPALLLAEATHKASALCPNGALDLPPAALQPAAPSSSIAQPSTSSLHSHSSLAGTQPQPLSLVTKSLE</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-702484">
+           <names>
+             <shortLabel>plak_human</shortLabel>
+             <fullName>Junction plakoglobin</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P14923" secondary="plak_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+             <secondaryRef db="go" id="GO:0005856" secondary="C:cytoskeleton"/>
+             <secondaryRef db="go" id="GO:0005624" secondary="C:membrane fraction"/>
+             <secondaryRef db="go" id="GO:0005625" secondary="C:soluble fraction"/>
+             <secondaryRef db="go" id="GO:0008092" secondary="F:cytoskeletal protein binding"/>
+             <secondaryRef db="go" id="GO:0007155" secondary="P:cell adhesion"/>
+             <secondaryRef db="interpro" id="IPR011989" secondary="ARM-like"/>
+             <secondaryRef db="interpro" id="IPR000225" secondary="Armadillo"/>
+             <secondaryRef db="interpro" id="IPR000357" secondary="HEAT"/>
+             <secondaryRef db="uniprotkb" id="Q9HCX9" secondary="plak_human" version="SP_48"/>
+             <secondaryRef db="intact" id="EBI-702484" secondary="plak_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>EVMNLMEQPIKVTEWQQTYTYDSGIHSGANTCVPSVSSKGIMEEDEACGRQYTLKKTTTYTQGVPPSQGDLEYQMSTTARAKRVREAMCPGVSGEGQLALLATQVEGQATNLQRLAEPSQLLKSAIVHLINYQDDAELVTRALPELTKLLNDEDPVVVTKAAMIVNQLSKKEASRRALMGSPQLVAAVVRTMQNTSDLDTARCTTSILHNLSHHREGLLAIFKSGGIPALVRMLSSPVESVLFYAITTLHNLLLYQEGAKMACAGRRAQKMVPLLNKNNPKFLAITTDCLQLLAYGNQESKLIILANGGPQALVQIMRNYSYEKLLWTTSRVLKVLSVCPSNKPAIVEAGGMQALGKHLTSNSPRLVQNCLWTLRNLSDVATKQEGLESVLKILVNQLSVDDVNVLTCATGTLSNLTCNNSKNKTLVTQNSGVEALIHAILRAGDKDDITEPAVCALRHLTSRHPEAEMAQNSVRLNYGIPAIVKLLNQPNQWPLVKATIGLIRNLALCPANHAPLQEAAVIPRLVQLLVKAHQDAQRHVAAGTQQPYTDGVRMEEIVEGCTGALHILARDPMNRMEIFRLNTIPLFVQLLYSSVENIQRVAAGVLCELAQDKEAADAIDAEGASAPLMELLHSRNEGTATYAAAVLFRISEDKNPDYRKRVSVELTNSLFKHDPAAWEAAQSMIPINEPYGDDMDATYRPMYSSDVPLDPLEMHMDMDGDYPIDTYSDGLRPPYPTADHMLA</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-297277">
+           <names>
+             <shortLabel>psn1_human</shortLabel>
+             <fullName>Presenilin-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P49768" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005639" secondary="C:integral to nuclear inner me"/>
+             <secondaryRef db="go" id="GO:0005887" secondary="C:integral to plasma membrane"/>
+             <secondaryRef db="go" id="GO:0000776" secondary="C:kinetochore"/>
+             <secondaryRef db="go" id="GO:0005624" secondary="C:membrane fraction"/>
+             <secondaryRef db="go" id="GO:0006916" secondary="P:anti-apoptosis"/>
+             <secondaryRef db="go" id="GO:0007001" secondary="P:chromosome organization and"/>
+             <secondaryRef db="go" id="GO:0007059" secondary="P:chromosome segregation"/>
+             <secondaryRef db="interpro" id="IPR001108" secondary="Peptidase_A22A"/>
+             <secondaryRef db="uniprotkb" id="O95465" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q14762" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q15719" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q15720" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q96P33" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q9UIF0" secondary="psn1_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005739" secondary="C:mitochondrion"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="interpro" id="IPR002031" secondary="Pept_A22A_PS1"/>
+             <secondaryRef db="go" id="GO:0005783" secondary="C:endoplasmic reticulum"/>
+             <secondaryRef db="go" id="GO:0005794" secondary="C:Golgi apparatus"/>
+             <secondaryRef db="go" id="GO:0042987" secondary="P:amyloid precursor protein ca"/>
+             <secondaryRef db="go" id="GO:0006509" secondary="P:membrane protein ectodomain"/>
+             <secondaryRef db="go" id="GO:0007220" secondary="P:Notch receptor processing"/>
+             <secondaryRef db="go" id="GO:0043085" secondary="P:positive regulation of enzym"/>
+             <secondaryRef db="go" id="GO:0016485" secondary="P:protein processing"/>
+             <secondaryRef db="reactome protein" id="P49768"/>
+             <secondaryRef db="intact" id="EBI-297277" secondary="psn1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MTELPAPLSYFQNAQMSEDNHLSNTVRSQNDNRERQEHNDRRSLGHPEPLSNGRPQGNSRQVVEQDEEEDEELTLKYGAKHVIMLFVPVTLCMVVVVATIKSVSFYTRKDGQLIYTPFTEDTETVGQRALHSILNAAIMISVIVVMTILLVVLYKYRCYKVIHAWLIISSLLLLFFFSFIYLGEVFKTYNVAVDYITVALLIWNFGVVGMISIHWKGPLRLQQAYLIMISALMALVFIKYLPEWTAWLILAVISVYDLVAVLCPKGPLRMLVETAQERNETLFPALIYSSTMVWLVNMAEGDPEAQRRVSKNSKYNAESTERESQDTVAENDDGGFSEEWEAQRDSHLGPHRSTPESRAAVQELSSSILAGEDPEERGVKLGLGDFIFYSVLVGKASATASGDWNTTIACFVAILIGLCLTLLLLAIFKKALPALPISITFGLVFYFATDYLVQPFMDQLAFHQFYI</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-397872">
+           <names>
+             <shortLabel>ctnb1_mouse</shortLabel>
+             <fullName>Beta-catenin</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q02248" secondary="ctnb1_mouse" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0045177" secondary="C:apical part of cell"/>
+             <secondaryRef db="go" id="GO:0016323" secondary="C:basolateral plasma membrane"/>
+             <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+             <secondaryRef db="go" id="GO:0005913" secondary="C:cell-cell adherens junction"/>
+             <secondaryRef db="go" id="GO:0016020" secondary="C:membrane"/>
+             <secondaryRef db="go" id="GO:0005624" secondary="C:membrane fraction"/>
+             <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" id="GO:0005667" secondary="C:transcription factor complex"/>
+             <secondaryRef db="go" id="GO:0045294" secondary="F:alpha-catenin binding"/>
+             <secondaryRef db="go" id="GO:0003713" secondary="F:transcription coactivator ac"/>
+             <secondaryRef db="go" id="GO:0003700" secondary="F:transcription factor activit"/>
+             <secondaryRef db="go" id="GO:0048469" secondary="P:cell maturation"/>
+             <secondaryRef db="go" id="GO:0007507" secondary="P:heart development"/>
+             <secondaryRef db="go" id="GO:0030097" secondary="P:hemopoiesis"/>
+             <secondaryRef db="go" id="GO:0030324" secondary="P:lung development"/>
+             <secondaryRef db="go" id="GO:0001569" secondary="P:patterning of blood vessels"/>
+             <secondaryRef db="go" id="GO:0009954" secondary="P:proximal/distal pattern form"/>
+             <secondaryRef db="go" id="GO:0050875" secondary="P:cellular physiological proce"/>
+             <secondaryRef db="go" id="GO:0042127" secondary="P:regulation of cell prolifera"/>
+             <secondaryRef db="go" id="GO:0016328" secondary="C:lateral plasma membrane"/>
+             <secondaryRef db="go" id="GO:0016055" secondary="P:Wnt receptor signaling pathw"/>
+             <secondaryRef db="interpro" id="IPR011989" secondary="ARM-like"/>
+             <secondaryRef db="interpro" id="IPR000225" secondary="Armadillo"/>
+             <secondaryRef db="uniprotkb" id="Q922W1" secondary="ctnb1_mouse" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q9D335" secondary="ctnb1_mouse" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0030027" secondary="C:lamellipodium"/>
+             <secondaryRef db="go" id="GO:0045296" secondary="F:cadherin binding"/>
+             <secondaryRef db="go" id="GO:0007398" secondary="P:ectoderm development"/>
+             <secondaryRef db="go" id="GO:0010003" secondary="P:gastrulation (sensu Mammalia"/>
+             <secondaryRef db="go" id="GO:0050808" secondary="P:synapse organization and bio"/>
+             <secondaryRef db="go" id="GO:0007268" secondary="P:synaptic transmission"/>
+             <secondaryRef db="go" id="GO:0048489" secondary="P:synaptic vesicle transport"/>
+             <secondaryRef db="go" id="GO:0009950" secondary="P:dorsal/ventral axis specific"/>
+             <secondaryRef db="go" id="GO:0035117" secondary="P:embryonic arm morphogenesis"/>
+             <secondaryRef db="go" id="GO:0042733" secondary="P:embryonic digit morphogenesi"/>
+             <secondaryRef db="go" id="GO:0035116" secondary="P:embryonic hindlimb morphogen"/>
+             <secondaryRef db="go" id="GO:0045453" secondary="P:bone resorption"/>
+             <secondaryRef db="interpro" id="IPR000357" secondary="HEAT"/>
+             <secondaryRef db="go" id="GO:0001709" secondary="P:cell fate determination"/>
+             <secondaryRef db="go" id="GO:0001708" secondary="P:cell fate specification"/>
+             <secondaryRef db="go" id="GO:0030900" secondary="P:forebrain development"/>
+             <secondaryRef db="go" id="GO:0045596" secondary="P:negative regulation of cell "/>
+             <secondaryRef db="go" id="GO:0045671" secondary="P:negative regulation of osteo"/>
+             <secondaryRef db="go" id="GO:0045892" secondary="P:negative regulation of trans"/>
+             <secondaryRef db="go" id="GO:0042475" secondary="P:odontogenesis (sensu Vertebr"/>
+             <secondaryRef db="go" id="GO:0030316" secondary="P:osteoclast differentiation"/>
+             <secondaryRef db="go" id="GO:0045669" secondary="P:positive regulation of osteo"/>
+             <secondaryRef db="go" id="GO:0045944" secondary="P:positive regulation of trans"/>
+             <secondaryRef db="go" id="GO:0045941" secondary="P:positive regulation of trans"/>
+             <secondaryRef db="go" id="GO:0001501" secondary="P:skeletal development"/>
+             <secondaryRef db="intact" id="EBI-397872" secondary="ctnb1_mouse"/>
+           </xref>
+           <organism ncbiTaxId="10090">
+             <names>
+               <shortLabel>mouse</shortLabel>
+               <fullName>Mus musculus</fullName>
+             </names>
+           </organism>
+           <sequence>MATQADLMELDMAMEPDRKAAVSHWQQQSYLDSGIHSGATTTAPSLSGKGNPEEEDVDTSQVLYEWEQGFSQSFTQEQVADIDGQYAMTRAQRVRAAMFPETLDEGMQIPSTQFDAAHPTNVQRLAEPSQMLKHAVVNLINYQDDAELATRAIPELTKLLNDEDQVVVNKAAVMVHQLSKKEASRHAIMRSPQMVSAIVRTMQNTNDVETARCTAGTLHNLSHHREGLLAIFKSGGIPALVKMLGSPVDSVLFYAITTLHNLLLHQEGAKMAVRLAGGLQKMVALLNKTNVKFLAITTDCLQILAYGNQESKLIILASGGPQALVNIMRTYTYEKLLWTTSRVLKVLSVCSSNKPAIVEAGGMQALGLHLTDPSQRLVQNCLWTLRNLSDAATKQEGMEGLLGTLVQLLGSDDINVVTCAAGILSNLTCNNYKNKMMVCQVGGIEALVRTVLRAGDREDITEPAICALRHLTSRHQEAEMAQNAVRLHYGLPVVVKLLHPPSHWPLIKATVGLIRNLALCPANHAPLREQGAIPRLVQLLVRAHQDTQRRTSMGGTQQQFVEGVRMEEIVEGCTGALHILARDVHNRIVIRGLNTIPLFVQLLYSPIENIQRVAAGVLCELAQDKEAAEAIEAEGATAPLTELLHSRNEGVATYAAAVLFRMSEDKPQDYKKRLSVELTSSLFRTEPMAWNETADLGLDIGAQGEALGYRQDDPSYRSFHSGGYGQDALGMDPMMEHEMGGHHPGADYPVDGLPDLGHAQDLMDGLPPGDSNQLAWFDTDL</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-990067">
+           <names>
+             <shortLabel>psn1_mouse</shortLabel>
+             <fullName>Presenilin-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P49769" secondary="psn1_mouse" version="SP_60"/>
+             <secondaryRef db="go" id="GO:0030424" secondary="C:axon"/>
+             <secondaryRef db="go" id="GO:0043025" secondary="C:cell soma"/>
+             <secondaryRef db="go" id="GO:0035253" secondary="C:ciliary rootlet"/>
+             <secondaryRef db="go" id="GO:0031410" secondary="C:cytoplasmic vesicle"/>
+             <secondaryRef db="go" id="GO:0030425" secondary="C:dendrite"/>
+             <secondaryRef db="go" id="GO:0005783" secondary="C:endoplasmic reticulum"/>
+             <secondaryRef db="go" id="GO:0005794" secondary="C:Golgi apparatus"/>
+             <secondaryRef db="go" id="GO:0005639" secondary="C:integral to nuclear inner me"/>
+             <secondaryRef db="go" id="GO:0005887" secondary="C:integral to plasma membrane"/>
+             <secondaryRef db="go" id="GO:0005622" secondary="C:intracellular"/>
+             <secondaryRef db="go" id="GO:0000776" secondary="C:kinetochore"/>
+             <secondaryRef db="go" id="GO:0016020" secondary="C:membrane"/>
+             <secondaryRef db="go" id="GO:0005624" secondary="C:membrane fraction"/>
+             <secondaryRef db="go" id="GO:0005739" secondary="C:mitochondrion"/>
+             <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+             <secondaryRef db="go" id="GO:0004175" secondary="F:endopeptidase activity"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" id="GO:0042987" secondary="P:amyloid precursor protein ca"/>
+             <secondaryRef db="go" id="GO:0042640" secondary="P:anagen"/>
+             <secondaryRef db="go" id="GO:0006916" secondary="P:anti-apoptosis"/>
+             <secondaryRef db="go" id="GO:0006915" secondary="P:apoptosis"/>
+             <secondaryRef db="go" id="GO:0001568" secondary="P:blood vessel development"/>
+             <secondaryRef db="go" id="GO:0001708" secondary="P:cell fate specification"/>
+             <secondaryRef db="go" id="GO:0007001" secondary="P:chromosome organization and "/>
+             <secondaryRef db="go" id="GO:0007059" secondary="P:chromosome segregation"/>
+             <secondaryRef db="go" id="GO:0030326" secondary="P:embryonic limb morphogenesis"/>
+             <secondaryRef db="go" id="GO:0007507" secondary="P:heart development"/>
+             <secondaryRef db="go" id="GO:0006509" secondary="P:membrane protein ectodomain "/>
+             <secondaryRef db="go" id="GO:0007613" secondary="P:memory"/>
+             <secondaryRef db="go" id="GO:0001764" secondary="P:neuron migration"/>
+             <secondaryRef db="go" id="GO:0007220" secondary="P:Notch receptor processing"/>
+             <secondaryRef db="go" id="GO:0043065" secondary="P:positive regulation of apopt"/>
+             <secondaryRef db="go" id="GO:0043085" secondary="P:positive regulation of enzym"/>
+             <secondaryRef db="go" id="GO:0045860" secondary="P:positive regulation of prote"/>
+             <secondaryRef db="go" id="GO:0016485" secondary="P:protein processing"/>
+             <secondaryRef db="go" id="GO:0051605" secondary="P:proteolysis during protein m"/>
+             <secondaryRef db="go" id="GO:0051563" secondary="P:smooth endoplasmic reticulum"/>
+             <secondaryRef db="interpro" id="IPR002031" secondary="Pept_A22A_PS1"/>
+             <secondaryRef db="interpro" id="IPR006639" secondary="Peptidase_A22"/>
+             <secondaryRef db="interpro" id="IPR001108" secondary="Peptidase_A22A"/>
+             <secondaryRef db="uniprotkb" id="Q91WK6" secondary="psn1_mouse" version="SP_60"/>
+             <secondaryRef db="uniprotkb" id="Q9JLP9" secondary="psn1_mouse" version="SP_60"/>
+             <secondaryRef db="intact" id="EBI-990067" secondary="psn1_mouse"/>
+           </xref>
+           <organism ncbiTaxId="10090">
+             <names>
+               <shortLabel>mouse</shortLabel>
+               <fullName>Mus musculus</fullName>
+             </names>
+           </organism>
+           <sequence>MTEIPAPLSYFQNAQMSEDSHSSSAIRSQNDSQERQQQHDRQRLDNPEPISNGRPQSNSRQVVEQDEEEDEELTLKYGAKHVIMLFVPVTLCMVVVVATIKSVSFYTRKDGQLIYTPFTEDTETVGQRALHSILNAAIMISVIVIMTILLVVLYKYRCYKVIHAWLIISSLLLLFFFSFIYLGEVFKTYNVAVDYVTVALLIWNFGVVGMIAIHWKGPLRLQQAYLIMISALMALVFIKYLPEWTAWLILAVISVYDLVAVLCPKGPLRMLVETAQERNETLFPALIYSSTMVWLVNMAEGDPEAQRRVPKNPKYNTQRAERETQDSGSGNDDGGFSEEWEAQRDSHLGPHRSTPESRAAVQELSGSILTSEDPEERGVKLGLGDFIFYSVLVGKASATASGDWNTTIACFVAILIGLCLTLLLLAIFKKALPALPISITFGLVFYFATDYLVQPFMDQLAFHQFYI</sequence>
+         </proteinInteractor>
+       </interactorList>
+       <interactionList>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-tcf7l2-2</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017678" secondary="ctnnb1-tcf7l2-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">The results indicate that beta-catenin and plakoglobin mediate the interaction of PS1 and Tcf-4.</attribute>
+             <attribute name="figure legend">6 B</attribute>
+             <attribute name="comment">This interaction was in the absence of PS1 and with no pre-incubation with plakoglobin; the interaction occurs whether or not there is preicubation with beta-catenin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-tcf7l2-3</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017698" secondary="ctnnb1-tcf7l2-3"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">The results indicate that beta-catenin and plakoglobin mediate the interaction of PS1 and Tcf-4.</attribute>
+             <attribute name="figure legend">6 B</attribute>
+             <attribute name="comment">This interaction was in the absence of PS1 and only occurred with preincubation with plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-tcf7l2-4</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017717" secondary="ctnnb1-tcf7l2-4"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 B</attribute>
+             <attribute name="comment">This interaction was in the absence of pre-incubation with beta-catenin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-tcf7l2-5</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017745" secondary="ctnnb1-tcf7l2-5"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">The results indicate that beta-catenin and plakoglobin mediate the interaction of PS1 and Tcf-4.</attribute>
+             <attribute name="figure legend">6 B</attribute>
+             <attribute name="comment">This interaction was in the basence of PS1 and with no pre-incubation with beta-catenin and occurred whether or not there was preincubation with plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-tcf7l2-6</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-397872"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017766" secondary="ctnnb1-tcf7l2-6"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 B</attribute>
+             <attribute name="comment">This interaction was in the absence of PS1 and occurred only with pre-incubation with beta-catenin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-6</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-990067"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017821" secondary="jup-psen1-6"/>
+             <secondaryRef db="interpro" id="IPR000225"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">9 A</attribute>
+             <attribute name="comment">The processed 20 kDa form of PS1 is present in MEFs. Binding to Tcf-4 was barely detectable for the processed PS1.</attribute>
+             <attribute name="stimulation">The preincubation of GST-Tcf-4(1-110) with beta-catenin or plakoglobin increased binding to Tcf-4(1-110).</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-2</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988959"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017836" secondary="tcf7l2-ctnnb1-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 A</attribute>
+             <attribute name="stimulation">PS1 stimulates the binding of Tcf-4 to beta-catenin and plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-3</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988987"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1017848" secondary="tcf7l2-ctnnb1-3"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 A</attribute>
+             <attribute name="stimulation">PS1 stimulates the binding of Tcf-4 to beta-catenin and plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-4</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988959"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1018277" secondary="tcf7l2-ctnnb1-4"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 C</attribute>
+             <attribute name="stimulation">PS1 stimulates the binding of Tcf-4 to beta-catenin and plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-7</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-1018704" secondary="jup-psen1-7"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 D</attribute>
+             <attribute name="caution">The Uniprot plakoglobin sequence is 745 residues but the sequence used here is 744. This is probably because the M at position 1 in the Uniprot sequence is removed.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-psen1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988959"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-988990" secondary="ctnnb1-psen1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">3</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-psen1-1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988987"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-988996" secondary="ctnnb1-psen1-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">3</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988959"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989011" secondary="jup-psen1-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">3</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988987"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989017" secondary="jup-psen1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">3</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-psen1-2</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-397872"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989376" secondary="ctnnb1-psen1-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">4 B, C, D</attribute>
+             <attribute name="comment">Note Tyr-654 is found in armadillo repeat 12.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-2</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989446" secondary="jup-psen1-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">4 B, E, F</attribute>
+             <attribute name="comment">Despite its close similarity to beta-catenin, plakoglobin interacted differently with PS1.</attribute>
+             <attribute name="caution">Note, the Uniprot entry for human plakoglobin has 745 residues and the protein used here has 744. This is probably accounted for by the Met at the start of the Uniprot sequence being removed.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988959"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989553" secondary="tcf7l2-ctnnb1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 A, C</attribute>
+             <attribute name="stimulation">PS1 stimulates the binding of Tcf-4 to beta-catenin and plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-1</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-988987"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989564" secondary="tcf7l2-ctnnb1-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 A</attribute>
+             <attribute name="stimulation">PS1 stimulates the binding of Tcf-4 to beta-catenin and plakoglobin.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-5</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-491549"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989727" secondary="tcf7l2-ctnnb1-5"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">The results indicate that beta-catenin and plakoglobin mediate the interaction of PS1 and Tcf-4.</attribute>
+             <attribute name="comment">This complex formed whether or not there was preicubation with beta-catenin or plakoglobin.</attribute>
+             <attribute name="figure legend">6 B</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>tcf7l2-ctnnb1-6</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297277"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-397872"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989742" secondary="tcf7l2-ctnnb1-6"/>
+           </xref>
+           <attributeList>
+             <attribute name="comment">Beta-catenin was only found in the complex when there was pre-incubation with beta-catenin.</attribute>
+             <attribute name="figure legend">6 B</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-tcf7l2</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-989938" secondary="jup-tcf7l2"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">6 D</attribute>
+             <attribute name="caution">The Uniprot plakoglobin sequence is 745 residues but the sequence used here is 744. This is probably because the M at position 1 in the Uniprot sequence is removed.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>ctnnb1-psen1-3</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-397872"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-990067"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-990127" secondary="ctnnb1-psen1-3"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">9 A, B</attribute>
+             <attribute name="comment">The processed 20 kDa form of PS1 is present in MEFs. This form bound to beta-catenin with 5-fold less affinity than the full form.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-4</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-990067"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-990154" secondary="jup-psen1-4"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">9 A, B</attribute>
+             <attribute name="comment">The processed 20 kDa form of PS1 is present in MEFs. This form bound to  plakoglobin with 3-fold less affinity than the full form.</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>jup-psen1-5</shortLabel>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-989029"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-990067"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-924724"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-702484"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-990166" secondary="jup-psen1-5"/>
+           </xref>
+           <attributeList>
+             <attribute name="figure legend">9 A</attribute>
+             <attribute name="comment">The processed 20 kDa form of PS1 is present in MEFs. Binding to Tcf-4 was barely detectable for the processed PS1.</attribute>
+             <attribute name="stimulation">The preincubation of GST-Tcf-4(1-110) with beta-catenin or plakoglobin increased binding to Tcf-4(1-110).</attribute>
+           </attributeList>
+         </interaction>
+       </interactionList>
+     </entry>
+   </entrySet>
