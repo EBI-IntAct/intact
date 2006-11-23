@@ -5,8 +5,6 @@
  */
 package uk.ac.ebi.intact.util.deadproteins;
 
-import uk.ac.ebi.intact.dbutil.deadproteins.RemappingEntry;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
