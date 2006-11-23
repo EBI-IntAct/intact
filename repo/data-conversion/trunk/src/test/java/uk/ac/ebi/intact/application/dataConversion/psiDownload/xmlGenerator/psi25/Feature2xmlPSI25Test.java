@@ -2,16 +2,15 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlI;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
@@ -21,15 +20,20 @@ import java.util.Collection;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id:Feature2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
+ * @version $Id:Feature2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
-public class Feature2xmlPSI2Test extends PsiDownloadTest {
+public class Feature2xmlPSI25Test extends PsiDownloadTest {
 
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Feature2xmlPSI2Test.class );
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
 

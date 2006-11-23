@@ -4,9 +4,6 @@
 
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import org.hibernate.Transaction;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
@@ -14,8 +11,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableExperiment;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Experiment2xmlI;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
@@ -25,18 +22,10 @@ import uk.ac.ebi.intact.context.IntactContext;
  */
 public class Experiment2xmlPSI2Test extends PsiDownloadTest {
 
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Experiment2xmlPSI2Test.class );
-    }
-
-    private Transaction tx;
-
     protected void setUp() throws Exception
     {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     protected void tearDown() throws Exception

@@ -2,30 +2,36 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlFactory;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Protein2xmlI;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id:Interactor2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
+ * @version $Id:Protein2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
-public class Interactor2xmlPSI25Test extends PsiDownloadTest {
+public class Protein2xmlPSI2Test extends PsiDownloadTest {
 
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Interactor2xmlPSI25Test.class );
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
     ////////////////////////
@@ -58,15 +64,15 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         Protein protein = new TestableProtein( "EBI-333333", owner, yeast, "bbc1_yeast", proteinType, sequence );
         protein.setFullName( "Myosin tail region-interacting protein MTI1" );
 
-        protein.addXref( new InteractorXref ( owner, uniprot, "P47068", null, null, identity ) );
-        protein.addXref( new InteractorXref ( owner, uniprot, "P47067", null, null, secondaryAc ) );
-        protein.addXref( new InteractorXref ( owner, uniprot, "Q8X1F4", null, null, secondaryAc ) );
-        protein.addXref( new InteractorXref ( owner, sgd, "S000003557", "BBC1", null, secondaryAc ) );
+        protein.addXref( new InteractorXref( owner,  uniprot, "P47068", null, null, identity ) );
+        protein.addXref( new InteractorXref( owner,  uniprot, "P47067", null, null, secondaryAc ) );
+        protein.addXref( new InteractorXref( owner,  uniprot, "Q8X1F4", null, null, secondaryAc ) );
+        protein.addXref( new InteractorXref( owner,  sgd, "S000003557", "BBC1", null, secondaryAc ) );
         // NOTE: the Xref.secondaryId are truncated to 30 characters
-        protein.addXref( new InteractorXref ( owner, go, "GO:0030479", "C:actin cortical patch (sensu Fungi)", null, null ) );
-        protein.addXref( new InteractorXref ( owner, go, "GO:0017024", "F:myosin I binding", null, null ) );
-        protein.addXref( new InteractorXref ( owner, go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
-        protein.addXref( new InteractorXref ( owner, go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
+        protein.addXref( new InteractorXref( owner,  go, "GO:0030479", "C:actin cortical patch (sensu Fungi)", null, null ) );
+        protein.addXref( new InteractorXref( owner,  go, "GO:0017024", "F:myosin I binding", null, null ) );
+        protein.addXref( new InteractorXref( owner,  go, "GO:0030036", "P:actin cytoskeleton organization and biogenesis", null, null ) );
+        protein.addXref( new InteractorXref( owner,  go, "GO:0007010", "P:cytoskeleton organization and biogenesis", null, null ) );
 
         protein.addAlias( new InteractorAlias( owner, protein, geneName, "BBC1" ) );
         protein.addAlias( new InteractorAlias( owner, protein, geneNameSynonym, "MTI1" ) );
@@ -82,9 +88,9 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
     ////////////////////////
     // Tests
 
-    public void testBuildProtein_nullArguments( PsiVersion version ) {
+    private void testBuildProtein_nullArguments( PsiVersion version ) {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
+        UserSessionDownload session = new UserSessionDownload( version );
 
         // create a container
         Element parent = session.createElement( "interactorList" );
@@ -92,7 +98,7 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         // call the method we are testing
         Element element = null;
 
-        Interactor2xmlPSI25 generator = Interactor2xmlPSI25.getInstance();
+        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
 
         try {
             element = generator.create( session, parent, null );
@@ -100,6 +106,7 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         } catch ( IllegalArgumentException e ) {
             // ok
         }
+
 
         assertNull( element );
 
@@ -135,28 +142,31 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildProtein_full_ok() {
+    public void testBuildProtein_PSI2_nullArguments() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion25() );
+        testBuildProtein_nullArguments( PsiVersion.getVersion2() );
+    }
+
+    public void testBuildProtein_full_PSI2_ok() {
+
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
         session.addAnnotationFilter( remark );
 
         // create a container
-        Element parent = session.createElement( "interactorList" );
+        Element parent = session.createElement( "proteinParticipant" );
 
         Protein protein = createProtein();
 
-        Interactor2xmlPSI25 generator = Interactor2xmlPSI25.getInstance();
-        // Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
+        Protein2xmlI generator = Protein2xmlFactory.getInstance( session );
 
         // generating the PSI element...
         Element element = generator.create( session, parent, protein );
 
-        // names, xref, organism, sequence, attributeList
-        assertEquals( 6, element.getChildNodes().getLength() );
-
         // starting the checks...
         assertNotNull( element );
         assertEquals( "" + session.getInteractorIdentifier( protein ), element.getAttribute( "id" ) );
+        // names, xref, organism, sequence, attributeList
+        assertEquals( 5, element.getChildNodes().getLength() );
 
         // Checking names...
         // TODO write a method that returns an Element by name coming from the direct level
@@ -164,17 +174,15 @@ public class Interactor2xmlPSI25Test extends PsiDownloadTest {
         assertNotNull( names );
         assertEquals( 6, names.getChildNodes().getLength() );
         assertHasShortlabel( names, "bbc1_yeast" );
-        assertHasFullname( names, "Myosin tail region-interacting protein MTI1" );
         // Checking Aliases
-        assertHasAlias( names, "BBC1", "gene name", "MI:0301" );
-        assertHasAlias( names, "MTI1", "gene name-synonym", "MI:0302" );
-        assertHasAlias( names, "YJL020C/YJL021C", "locus name", "MI:0305" );
-        assertHasAlias( names, "J1305/J1286", "orf name", "MI:0306" );
+        assertHasAlias( names, "BBC1" );
+        assertHasAlias( names, "MTI1" );
+        assertHasAlias( names, "YJL020C/YJL021C" );
+        assertHasAlias( names, "J1305/J1286" );
 
         // Checking xref...
         Element xref = (Element) element.getElementsByTagName( "xref" ).item( 0 );
         assertNotNull( xref );
-
         assertEquals( 9, xref.getChildNodes().getLength() );
         assertHasPrimaryRef( xref, "P47068", "uniprotkb", null, null );
         assertHasSecondaryRef( xref, "P47067", "uniprotkb", null, null );
