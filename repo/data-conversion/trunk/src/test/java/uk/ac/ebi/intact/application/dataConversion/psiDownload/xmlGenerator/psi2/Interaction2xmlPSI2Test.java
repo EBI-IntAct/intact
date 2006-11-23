@@ -2,14 +2,13 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableFeature;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestableProtein;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
@@ -25,20 +24,14 @@ import java.util.Iterator;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id:Interaction2xmlPSI1Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
+ * @version $Id:Interaction2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
-public class Interaction2xmlPSI1Test extends PsiDownloadTest {
-
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Interaction2xmlPSI1Test.class );
-    }
+public class Interaction2xmlPSI2Test extends PsiDownloadTest {
 
     protected void setUp() throws Exception
     {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     protected void tearDown() throws Exception
@@ -53,7 +46,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
     Interaction buildInteraction() {
 
         Collection experiments = new ArrayList( 1 );
-        experiments.add( Experiment2xmlPSI1Test.buildExperiment() );
+        experiments.add( Experiment2xmlPSI2Test.buildExperiment() );
 
         CvInteractionType anInteractionType = new CvInteractionType( owner, "anInteractionType" );
         anInteractionType.addXref( new CvObjectXref( owner, psi, "MI:0055", null, null, identity ) );
@@ -67,7 +60,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         interaction.addComponent( component1 );
 
         Protein protein2 = new TestableProtein( "EBI-22222", owner, yeast, "p2_yeast", proteinType, "ZZZZZZZZZZZ" );
-        Component component2 = new Component( owner, interaction, protein2, neutral );
+        Component component2 = new Component( owner, interaction, protein2, prey );
         interaction.addComponent( component2 );
         // put features on that Interaction !!
 
@@ -82,6 +75,26 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         interaction.addAnnotation( new Annotation( owner, authorConfidence, "HIGH" ) );
         interaction.addAnnotation( new Annotation( owner, authorConfidence, "0.75" ) );
         interaction.addAnnotation( new Annotation( owner, confidence_mapping, "blablabla" ) );
+
+        return interaction;
+    }
+
+
+    Interaction buildComplexInteraction() {
+
+        Interaction interaction = buildInteraction();
+        Collection components = interaction.getComponents();
+        Iterator i = components.iterator();
+
+        Component component = (Component) i.next();
+        Component component2 = (Component) i.next();
+        Feature feature1 = new TestableFeature( "EBI-f1", owner, "F1", component, formylation );
+        Feature feature2 = new TestableFeature( "EBI-f2", owner, "F2", component2, hydroxylation );
+
+        feature1.setBoundDomain( feature2 ); // that should cause an inferred interaction to be generated.
+
+        component.addBindingDomain( feature1 );
+        component2.addBindingDomain( feature2 );
 
         return interaction;
     }
@@ -132,13 +145,13 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         assertNull( element );
     }
 
-    public void testBuildInteraction_nullArguments_PSI1() {
-        testBuildInteraction_nullArguments( PsiVersion.getVersion1() );
+    public void testBuildInteraction_nullArguments_PSI2() {
+        testBuildInteraction_nullArguments( PsiVersion.getVersion2() );
     }
 
-    public void testBuildInteraction_full_ok_PSI1() {
+    public void testBuildInteraction_full_ok_PSI2() {
 
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
+        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion2() );
         session.addAnnotationFilter( remark );
 
         Interaction2xmlI i = Interaction2xmlFactory.getInstance( session );
@@ -150,7 +163,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         Element element = null;
 
         // create the IntAct object
-        Interaction interaction = buildInteraction();
+        Interaction interaction = buildComplexInteraction();
 
         // generating the PSI element...
         element = i.create( session, parent, interaction );
@@ -159,7 +172,7 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         assertNotNull( element );
 
         // names availabilityRef availabilityDescription experimentList participantList interactionType confidence xref attributeList
-        assertEquals( 7, element.getChildNodes().getLength() );
+        assertEquals( 9, element.getChildNodes().getLength() );
 
         // Checking names...
         // TODO write a method that returns an Element by name coming from the direct level
@@ -177,10 +190,13 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         assertEquals( 1, experimentListElement.getChildNodes().getLength() );
         Element experimentRefElement = (Element) experimentListElement.getElementsByTagName( "experimentRef" ).item( 0 );
         assertNotNull( experimentRefElement );
-        assertEquals( ( (Experiment) interaction.getExperiments().iterator().next() ).getAc(),
-                      experimentRefElement.getAttribute( "ref" ) );
+        long id = session.getExperimentIdentifier( (Experiment) interaction.getExperiments().iterator().next() );
+        assertEquals( id + "", experimentRefElement.getAttribute( "ref" ) );
 
         // Checking participantList...
+        Element participantList = (Element) element.getElementsByTagName( "participantList" ).item( 0 );
+        assertNotNull( participantList );
+        // TODO check that
 
         // Checking interactionType...
         Element interactionType = (Element) element.getElementsByTagName( "interactionType" ).item( 0 );
@@ -196,6 +212,9 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         assertHasPrimaryRef( xref, "MI:0055", "psi-mi", null, null );
 
         // Checking confidence...
+        Element confidence = (Element) element.getElementsByTagName( "confidence" ).item( 0 );
+        assertNotNull( confidence );
+        // TODO check that
 
         // Checking xref...
         xref = (Element) DOMUtil.getDirectElementsByTagName( element, "xref" ).iterator().next();
@@ -211,53 +230,5 @@ public class Interaction2xmlPSI1Test extends PsiDownloadTest {
         // the remark should have been filtered out.
         assertEquals( 2, attributeList.getChildNodes().getLength() );
         assertHasAttribute( attributeList, "comment", "a comment on that interaction." );
-    }
-
-    public void testBuildInteraction_single_component_ok_PSI1() {
-
-        UserSessionDownload session = new UserSessionDownload( PsiVersion.getVersion1() );
-        session.addAnnotationFilter( remark );
-
-        Interaction2xmlI i = Interaction2xmlFactory.getInstance( session );
-
-        // create a container
-        Element parent = session.createElement( "interactionList" );
-
-        // call the method we are testing
-        Element element = null;
-
-        // create the IntAct object
-        Interaction interaction = buildInteraction();
-
-        // modify the interaction, we want only one component with stoichiometry 2.
-        while ( interaction.getComponents().size() > 1 ) {
-            // remove one component.
-            Iterator iterator = interaction.getComponents().iterator();
-            if ( iterator.hasNext() ) {
-                iterator.next();
-                iterator.remove();
-            }
-        }
-        ( (Component) interaction.getComponents().iterator().next() ).setStoichiometry( 2 );
-
-        // generating the PSI element...
-        element = i.create( session, parent, interaction );
-
-        for ( Iterator iterator = session.getMessages().iterator(); iterator.hasNext(); ) {
-            String s = (String) iterator.next();
-            System.out.println( s );
-        }
-
-        // starting the checks...
-        assertNotNull( element );
-
-        // names availabilityRef availabilityDescription experimentList participantList interactionType confidence xref attributeList
-        assertEquals( 7, element.getChildNodes().getLength() );
-
-        // Everything has been tested above, just concentrate on the participant list.
-
-        // Checking participantList...
-
-
     }
 }

@@ -9,11 +9,8 @@ import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
-import uk.ac.ebi.intact.model.Experiment;
 
 import java.io.File;
-import java.util.List;
-import java.util.Set;
 
 /**
  * TODO comment this!
@@ -26,7 +23,7 @@ public class ExperimentListGeneratorTest extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorTest.class);
-
+     /*
     public void testGenerateListGavin()
     {
         ExperimentListGenerator gen = new ExperimentListGenerator("gavin%");
@@ -98,22 +95,11 @@ public class ExperimentListGeneratorTest extends TestCase
         assertEquals("pmid"+ File.separator +"2004"+ File.separator +"14605208_giot-2003-1_04.xml giot-2003-1 [6001,8000]", eliPublications.get(3).toString());
         assertEquals("pmid"+ File.separator +"2004"+ File.separator +"14605208_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliPublications.get(9).toString());
     }
-
-    public void test_Haynes()
-    {
-
-        ExperimentListGenerator gen = new ExperimentListGenerator("haynes-2006-2");
-        gen.setOnlyWithPmid(true);
-
-        List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
-        assertEquals(2, eliSpecies.size());
-
-
-    }
+     */
 
     public void testSearchPatternWithCommas() throws Exception
     {
-        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+        File reverseMappingFile = new File(ExperimentListGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
 
         CvMapping mapping = new CvMapping();
         mapping.loadFile(reverseMappingFile);
@@ -132,6 +118,7 @@ public class ExperimentListGeneratorTest extends TestCase
         assertTrue("If a search pattern containing commas is provided, the generator should fail", failed);
     }
 
+    /*
     public void testGenerate_ni1998() throws Exception
     {
         ExperimentListGenerator gen = new ExperimentListGenerator("ni-1998-2");
@@ -140,5 +127,6 @@ public class ExperimentListGeneratorTest extends TestCase
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
         assertEquals(2, eliSpecies.size());
     }
+    */
 
 }

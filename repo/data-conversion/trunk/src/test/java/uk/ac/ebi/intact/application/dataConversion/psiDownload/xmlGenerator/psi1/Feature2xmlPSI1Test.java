@@ -4,8 +4,6 @@
 
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi1;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
@@ -14,6 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownlo
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.FeatureTag;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
@@ -27,11 +26,16 @@ import java.util.Collection;
  */
 public class Feature2xmlPSI1Test extends PsiDownloadTest {
 
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Feature2xmlPSI1Test.class );
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    }
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
 

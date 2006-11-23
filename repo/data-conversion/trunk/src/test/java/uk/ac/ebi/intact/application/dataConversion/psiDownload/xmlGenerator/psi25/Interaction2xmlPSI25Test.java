@@ -2,10 +2,8 @@
 // All rights reserved. Please see the file LICENSE
 // in the root directory of this distribution.
 
-package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2;
+package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi25;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
@@ -15,8 +13,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.model.TestablePro
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DOMUtil;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,20 +24,14 @@ import java.util.Iterator;
  * TODO document this ;o)
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id:Interaction2xmlPSI2Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
+ * @version $Id:Interaction2xmlPSI25Test.java 5298 2006-07-07 09:35:05 +0000 (Fri, 07 Jul 2006) baranda $
  */
-public class Interaction2xmlPSI2Test extends PsiDownloadTest {
-
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Interaction2xmlPSI2Test.class );
-    }
+public class Interaction2xmlPSI25Test extends PsiDownloadTest {
 
     protected void setUp() throws Exception
     {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     protected void tearDown() throws Exception
@@ -54,7 +46,7 @@ public class Interaction2xmlPSI2Test extends PsiDownloadTest {
     Interaction buildInteraction() {
 
         Collection experiments = new ArrayList( 1 );
-        experiments.add( Experiment2xmlPSI2Test.buildExperiment() );
+        experiments.add( Experiment2xmlPSI25Test.buildExperiment() );
 
         CvInteractionType anInteractionType = new CvInteractionType( owner, "anInteractionType" );
         anInteractionType.addXref( new CvObjectXref( owner, psi, "MI:0055", null, null, identity ) );
@@ -198,13 +190,11 @@ public class Interaction2xmlPSI2Test extends PsiDownloadTest {
         assertEquals( 1, experimentListElement.getChildNodes().getLength() );
         Element experimentRefElement = (Element) experimentListElement.getElementsByTagName( "experimentRef" ).item( 0 );
         assertNotNull( experimentRefElement );
-        long id = session.getExperimentIdentifier( (Experiment) interaction.getExperiments().iterator().next() );
-        assertEquals( id + "", experimentRefElement.getAttribute( "ref" ) );
+        String id = "" + session.getExperimentIdentifier( (Experiment) interaction.getExperiments().iterator().next() );
+        assertEquals( id, experimentRefElement.getAttribute( "ref" ) );
 
         // Checking participantList...
-        Element participantList = (Element) element.getElementsByTagName( "participantList" ).item( 0 );
-        assertNotNull( participantList );
-        // TODO check that
+        // TODO test that
 
         // Checking interactionType...
         Element interactionType = (Element) element.getElementsByTagName( "interactionType" ).item( 0 );
@@ -220,9 +210,7 @@ public class Interaction2xmlPSI2Test extends PsiDownloadTest {
         assertHasPrimaryRef( xref, "MI:0055", "psi-mi", null, null );
 
         // Checking confidence...
-        Element confidence = (Element) element.getElementsByTagName( "confidence" ).item( 0 );
-        assertNotNull( confidence );
-        // TODO check that
+        // TODO test that
 
         // Checking xref...
         xref = (Element) DOMUtil.getDirectElementsByTagName( element, "xref" ).iterator().next();

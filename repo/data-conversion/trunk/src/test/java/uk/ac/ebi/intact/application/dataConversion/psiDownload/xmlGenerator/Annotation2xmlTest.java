@@ -4,8 +4,6 @@
 
 package uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.PsiDownloadTest;
@@ -21,16 +19,10 @@ import uk.ac.ebi.intact.model.Annotation;
  */
 public class Annotation2xmlTest extends PsiDownloadTest {
 
-    /**
-     * Returns this test suite. Reflection is used here to add all the testXXX() methods to the suite.
-     */
-    public static Test suite() {
-        return new TestSuite( Annotation2xmlTest.class );
-    }
-
     protected void setUp() throws Exception
     {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     protected void tearDown() throws Exception
