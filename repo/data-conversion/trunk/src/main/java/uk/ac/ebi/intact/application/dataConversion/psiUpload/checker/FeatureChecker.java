@@ -67,7 +67,7 @@ public class FeatureChecker {
             CvFeatureType featureType = null;
 
             try {
-                featureType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvFeatureType.class).getByXref(id);
+                featureType = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvFeatureType.class,id);
 
                 if ( featureType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureType by PSI definition: " + id ) );
@@ -97,7 +97,7 @@ public class FeatureChecker {
             CvFeatureIdentification cvFeatureIdentification = null;
 
             try {
-                cvFeatureIdentification = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvFeatureIdentification.class).getByXref(id);
+                cvFeatureIdentification = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvFeatureIdentification.class,id);
 
                 if ( cvFeatureIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvFeatureIdentification by PSI definition: " + id ) );

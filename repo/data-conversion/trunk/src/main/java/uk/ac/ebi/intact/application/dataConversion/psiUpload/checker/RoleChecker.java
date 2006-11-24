@@ -50,13 +50,13 @@ public final class RoleChecker {
                     // we may have either 'neutral' or 'neutral component' in the database ...
                     // handle it !!
 
-                    cvComponentRole = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByShortLabel(role);
+                    cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, role);
 
                     if ( cvComponentRole == null ) {
 
                         // it was not found, try the other possibility
 
-                        cvComponentRole = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByShortLabel( CvComponentRole.NEUTRAL );
+                        cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, CvComponentRole.NEUTRAL );
                         if ( cvComponentRole == null ) {
                             // neither worked, there is a problem of data integrity
                             System.out.println( "ERROR: neither " + role + " nor " + CvComponentRole.NEUTRAL +
@@ -67,7 +67,7 @@ public final class RoleChecker {
                 } else {
 
                     // any other role is search simply by shorltabel.
-                    cvComponentRole = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByShortLabel( role );
+                    cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, role );
                 }
 
                 if ( cvComponentRole != null ) {

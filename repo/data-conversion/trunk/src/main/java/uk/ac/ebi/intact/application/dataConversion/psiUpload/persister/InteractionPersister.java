@@ -207,18 +207,18 @@ public final class InteractionPersister {
                 final CvDatabase cvDatabase = XrefChecker.getCvDatabase( xrefTag.getDb() );
                 if ( cvDatabase != null ) {
                     CvXrefQualifier cvXrefQualifier = null;
-                    String secondaryId = "";
+                    String secondaryId = null;
                     if ( cvDatabase.getShortLabel().equals( CvDatabase.GO ) ) {
                         GoXrefHelper goXrefHelper = new GoXrefHelper( xrefTag.getId() );
                         if ( goXrefHelper.getQualifier() != null ) {
-                            cvXrefQualifier = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByShortLabel(goXrefHelper.getQualifier());
+                            cvXrefQualifier = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class, goXrefHelper.getQualifier());
                         }
                         if ( goXrefHelper.getSecondaryId() != null ) {
                             secondaryId = goXrefHelper.getSecondaryId();
                         }
                     }
 
-                    InteractorXref xref = new InteractorXref( institution, cvDatabase, xrefTag.getId(), secondaryId, "", cvXrefQualifier );
+                    InteractorXref xref = new InteractorXref( institution, cvDatabase, xrefTag.getId(), secondaryId, null, cvXrefQualifier );
                     interaction.addXref( xref );
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
                 }

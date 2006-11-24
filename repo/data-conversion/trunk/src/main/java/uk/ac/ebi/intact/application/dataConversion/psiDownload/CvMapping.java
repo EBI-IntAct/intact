@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion.psiDownload;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -15,9 +17,6 @@ import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Holds a Controlled Vocabulary Mapping.
@@ -354,7 +353,7 @@ public class CvMapping {
                                         Class clazz = cv.getClass();
 
                                         // there should be only one.
-                                        fromCvObject = (CvObject) IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(clazz).getByXref(fromMI );
+                                        fromCvObject = IntactContext.getCurrentInstance().getCvContext().getByMiRef(clazz, fromMI );
                                     }
                                 }
 

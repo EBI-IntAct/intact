@@ -37,7 +37,7 @@ public final class XrefChecker {
         if ( !cache.keySet().contains( db ) ) {
             CvDatabase cvDatabase = null;
             try {
-                cvDatabase = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByShortLabel( db );
+                cvDatabase = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvDatabase.class, db );
 
                 if ( cvDatabase != null ) {
                     System.out.println( "Found CvDatabase with shortlabel: " + db );

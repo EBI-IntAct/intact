@@ -82,7 +82,7 @@ public final class AnnotationChecker {
             CvTopic cvTopic = null;
 
             try {
-                cvTopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel( type );
+                cvTopic = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, type );
 
                 if ( cvTopic == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvTopic having the " +

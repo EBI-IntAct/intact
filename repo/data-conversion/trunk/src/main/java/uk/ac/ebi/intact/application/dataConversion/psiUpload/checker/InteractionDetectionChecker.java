@@ -42,7 +42,7 @@ public final class InteractionDetectionChecker {
             CvInteraction cvInteraction = null;
 
             try {
-                cvInteraction = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteraction.class).getByXref(id);
+                cvInteraction = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteraction.class,id);
 
                 if ( cvInteraction == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteraction by PSI definition: " + id ) );
