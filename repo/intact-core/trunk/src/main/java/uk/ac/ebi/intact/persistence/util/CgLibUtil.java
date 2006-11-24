@@ -5,8 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.persistence.util;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * TODO comment it.
@@ -16,42 +16,41 @@ import java.util.HashMap;
  */
 public class CgLibUtil {
 
+    public static final String DOUBLE_DOLLAR = "$$";
+
     private static Map<Class, Class> classCache = new HashMap<Class, Class>( 32 );
 
     /**
-     * Gets the correct class, removing the CGLIB enhanced part.
-     * (e.g uk.ac.ebi.intact.model.CvInteraction$$EnhancerByCGLIB$$93628752 to uk.ac.ebi.intact.model.CvInteraction)
+     * Gets the correct class, removing the CGLIB enhanced part. (e.g uk.ac.ebi.intact.model.CvInteraction$$EnhancerByCGLIB$$93628752
+     * to uk.ac.ebi.intact.model.CvInteraction)
+     *
      * @return the class
      */
-    public static Class removeCglibEnhanced(Class clazz)
-    {
-        if (clazz == null)
-        {
-            throw new IllegalArgumentException("You must give a non null Class");
-        }
-
-        // check in cache
-        Class theClass = classCache.get( clazz );
-        if( theClass != null ) {
-            return theClass;
+    public static Class removeCglibEnhanced( Class clazz ) {
+        if ( clazz == null ) {
+            throw new IllegalArgumentException( "You must give a non null Class" );
         }
 
         String className = clazz.getName();
+        int idx = className.indexOf( DOUBLE_DOLLAR );
+        if ( idx != -1 ) {
+            // This is an enhanced class
+            className = className.substring( 0, idx );
 
-        if (className.contains("$$"))
-        {
-            className = className.substring(0, className.indexOf("$$"));
-        }
+            // check in cache
+            Class theClass = classCache.get( clazz );
+            if ( theClass != null ) {
+                return theClass;
+            }
 
-        try
-        {
-            theClass = Class.forName(className);
-            classCache.put( clazz, theClass );
-            return theClass;
-        }
-        catch (ClassNotFoundException e)
-        {
-            e.printStackTrace();
+            try {
+                theClass = Class.forName( className );
+                classCache.put( clazz, theClass );
+                return theClass;
+            }
+            catch ( ClassNotFoundException e ) {
+                e.printStackTrace();
+            }
         }
 
         return clazz;
@@ -63,11 +62,9 @@ public class CgLibUtil {
      * @param obj the object for which we request the real class name.
      *
      * @return the real class name.
-     *
-
      */
     public static <T> Class<T> getRealClassName( T obj ) {
-        return removeCglibEnhanced(obj.getClass());
+        return removeCglibEnhanced( obj.getClass() );
     }
 
     /**
