@@ -102,6 +102,13 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
         getLog().debug( "Reverse mapping file: " + getReverseMapping() );
 
+        File reverseMappingOldSerFile = new File(reverseMappingFile+".ser");
+        if (reverseMappingOldSerFile.exists())
+        {
+            getLog().debug("Deleting existing: "+reverseMappingOldSerFile);
+            reverseMappingOldSerFile.delete();
+        }
+
         if ( speciesEnabled ) {
             if ( !getSpeciesFile().exists() ) {
                 getLog().info( "Classifying and writing classification by species" );
