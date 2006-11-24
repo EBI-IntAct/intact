@@ -10,23 +10,23 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>intact-plugin</artifactId>
     <packaging>jar</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1.0</version>
     <name>Intact Base Plugin</name>
     <description>
         Contains common code and utilities for all intact plugins
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.1.0</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.1.0</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/tags/intact-plugin-1.1.0</url>
     </scm>
   
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>[1.5-SNAPSHOT,1.6)</version>
+            <version>1.5.0-beta-4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
