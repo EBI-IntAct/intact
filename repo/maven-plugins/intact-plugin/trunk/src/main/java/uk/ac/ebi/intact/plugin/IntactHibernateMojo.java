@@ -19,7 +19,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
@@ -39,7 +38,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
      * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
-    protected File hibernateConfig;
+    //protected File hibernateConfig;
 
     /**
      * @parameter 
@@ -71,9 +70,19 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
             return;
         }
 
+        File hibernateConfig = getHibernateConfigFile();
+
         if (hibernateConfig == null)
         {
-            hibernateConfig = new File("target/hibernate/config/hibernate.cfg.xml");
+            if (getProject() != null)
+            {
+                hibernateConfig = new File(getDirectory(), "hibernate/config/hibernate.cfg.xml");
+            }
+            else
+            {
+                hibernateConfig = new File("target/hibernate/config/hibernate.cfg.xml");
+            }
+
             try
             {
                 if (!hibernateConfig.exists())
@@ -97,11 +106,6 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         // configure the context
         IntactSession session = new StandaloneSession();
 
-        if (System.getProperty("institution") == null)
-        {
-            session.setInitParam(IntactEnvironment.INSTITUTION_LABEL, "ebi");
-        }
-
         CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig, session);
         testConfig.initialize();
         IntactContext.initContext(testConfig, session);
@@ -119,6 +123,8 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
 
         initialized = true;
     }
+
+    public abstract File getHibernateConfigFile();
 
     public boolean isDryRun()
     {
