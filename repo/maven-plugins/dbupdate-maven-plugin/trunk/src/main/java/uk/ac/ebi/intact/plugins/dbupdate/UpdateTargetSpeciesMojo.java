@@ -19,7 +19,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpeciesReport;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 
 import java.io.File;
@@ -34,7 +33,7 @@ import java.io.PrintStream;
  * @phase process-resources
  */
 public class UpdateTargetSpeciesMojo
-        extends IntactHibernateMojo
+        extends UpdateAbstractMojo
 {
 
     /**
