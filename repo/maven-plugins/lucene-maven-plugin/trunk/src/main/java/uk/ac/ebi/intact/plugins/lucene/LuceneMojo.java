@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.plugins.lucene;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.searchengine.lucene.Indexer;
 
@@ -35,6 +36,20 @@ public class LuceneMojo
         extends IntactHibernateMojo
 {
 
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @readonly
+     */
+    private MavenProject project;
+
+    /**
+     * @parameter expression="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+
      /**
      * @property default-value="${maven.build.directory}/lucene-index"
      */
@@ -50,6 +65,15 @@ public class LuceneMojo
         super.getOutputWriter().write(logOut.toString());
     }
 
+    public MavenProject getProject()
+    {
+        return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
+    }
 
     public File getIndexFile() {
         return indexFile;
