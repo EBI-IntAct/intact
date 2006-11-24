@@ -12,9 +12,7 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-ebi-search-engine-export</artifactId>
     <packaging>jar</packaging>
-    <version>EBI Search Engine Index Export</version>
-    <name>Maven Quick Start Archetype</name>
-    <url>http://maven.apache.org</url>
+    <version>1.0-SNAPSHOT</version>
     <description>Module allowing to export IntAct data in a format that can be used by EBI External Services to index
         our database content.
     </description>
@@ -40,6 +38,8 @@
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
             <version>1.5.0-beta-4</version>
+            <!--<version>1.5.0-beta-5-SNAPSHOT</version>-->
+
         </dependency>
     </dependencies>
 
@@ -57,6 +57,8 @@
                                 <version>1</version>
                                 <urls>
                                     <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml
+                                    </url>
+                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10206341.xml
                                     </url>
                                 </urls>
                             </xmlFileset>
