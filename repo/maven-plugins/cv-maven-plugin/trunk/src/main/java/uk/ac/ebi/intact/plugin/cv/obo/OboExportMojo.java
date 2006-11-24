@@ -48,6 +48,12 @@ public class OboExportMojo
     private MavenProject project;
 
     /**
+     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+
+    /**
      * @parameter expression="${project.build.directory}/intact-exported.obo"
      * @required
      */
@@ -81,5 +87,15 @@ public class OboExportMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
+    }
+
+    public File getExportedOboFile()
+    {
+        return exportedOboFile;
     }
 }

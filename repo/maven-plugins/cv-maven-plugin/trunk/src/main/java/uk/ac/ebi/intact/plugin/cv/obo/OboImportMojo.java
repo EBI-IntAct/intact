@@ -45,6 +45,12 @@ public class OboImportMojo
      */
     private MavenProject project;
 
+     /**
+     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+
     /**
      * @parameter expression="intact.obo"
      * @required
@@ -87,5 +93,10 @@ public class OboImportMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
     }
 }
