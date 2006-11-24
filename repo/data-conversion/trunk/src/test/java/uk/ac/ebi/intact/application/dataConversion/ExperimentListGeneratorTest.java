@@ -5,12 +5,8 @@
  */
 package uk.ac.ebi.intact.application.dataConversion;
 
-import junit.framework.TestCase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
-
-import java.io.File;
 
 /**
  * TODO comment this!
@@ -19,7 +15,7 @@ import java.io.File;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class ExperimentListGeneratorTest extends TestCase
+public class ExperimentListGeneratorTest //extends TestCase
 {
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorTest.class);
@@ -95,7 +91,7 @@ public class ExperimentListGeneratorTest extends TestCase
         assertEquals("pmid"+ File.separator +"2004"+ File.separator +"14605208_giot-2003-1_04.xml giot-2003-1 [6001,8000]", eliPublications.get(3).toString());
         assertEquals("pmid"+ File.separator +"2004"+ File.separator +"14605208_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliPublications.get(9).toString());
     }
-     */
+
 
     public void testSearchPatternWithCommas() throws Exception
     {
@@ -118,7 +114,7 @@ public class ExperimentListGeneratorTest extends TestCase
         assertTrue("If a search pattern containing commas is provided, the generator should fail", failed);
     }
 
-    /*
+    
     public void testGenerate_ni1998() throws Exception
     {
         ExperimentListGenerator gen = new ExperimentListGenerator("ni-1998-2");
