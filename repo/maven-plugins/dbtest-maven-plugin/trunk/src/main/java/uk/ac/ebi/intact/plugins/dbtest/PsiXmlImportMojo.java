@@ -70,6 +70,12 @@ public class PsiXmlImportMojo
     private MavenProject project;
 
     /**
+     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+
+    /**
      * Files to import
      *
      * @parameter
@@ -241,6 +247,11 @@ public class PsiXmlImportMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
     }
 
     public Imports getImports()
