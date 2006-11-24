@@ -19,7 +19,7 @@
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/trunk/</url>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/intact-base/trunk/</url>
     </scm>
   
     <dependencies>
