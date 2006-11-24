@@ -58,7 +58,7 @@ public final class ProteinInteractorChecker {
         if ( false == interatorTypeChecked ) {
 
             // Load CvInteractorType( interaction / MI: )
-            cvProteinType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getInteractionMI());
+            cvProteinType = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteractorType.class, CvInteractorType.getInteractionMI());
             if ( cvProteinType == null ) {
                 MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractorType( interaction )." ) );
             }
@@ -789,7 +789,7 @@ public final class ProteinInteractorChecker {
             if ( protein == null ) {
 
                 // create non uniprot proteins
-                CvInteractorType proteinType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractorType.class).getByXref(CvInteractorType.getProteinMI());
+                CvInteractorType proteinType = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteractorType.class, CvInteractorType.getProteinMI());
 
                 if ( proteinType == null ) {
 

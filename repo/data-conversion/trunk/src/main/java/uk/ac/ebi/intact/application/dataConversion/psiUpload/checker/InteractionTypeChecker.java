@@ -42,7 +42,7 @@ public class InteractionTypeChecker {
             CvInteractionType cvInteractionType = null;
 
             try {
-                cvInteractionType = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractionType.class).getByXref(id);
+                cvInteractionType = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteractionType.class, id);
 
                 if ( cvInteractionType == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvInteractionType " +

@@ -7,6 +7,10 @@ package uk.ac.ebi.intact.application.dataConversion;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -15,8 +19,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class ExperimentListGeneratorTest //extends TestCase
+public class ExperimentListGeneratorTest extends DataConversionAbstractTest
 {
+    
 
     private static final Log log = LogFactory.getLog(ExperimentListGeneratorTest.class);
      /*
@@ -92,7 +97,7 @@ public class ExperimentListGeneratorTest //extends TestCase
         assertEquals("pmid"+ File.separator +"2004"+ File.separator +"14605208_giot-2003-1_10.xml giot-2003-1 [18001,20000]", eliPublications.get(9).toString());
     }
 
-
+     */
     public void testSearchPatternWithCommas() throws Exception
     {
         File reverseMappingFile = new File(ExperimentListGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
@@ -123,6 +128,6 @@ public class ExperimentListGeneratorTest //extends TestCase
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
         assertEquals(2, eliSpecies.size());
     }
-    */
+
 
 }

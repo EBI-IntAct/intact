@@ -42,7 +42,7 @@ public final class ParticipantDetectionChecker {
             CvIdentification cvIdentification = null;
 
             try {
-                cvIdentification = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvIdentification.class).getByXref(id);
+                cvIdentification = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvIdentification.class,id);
 
                 if ( cvIdentification == null ) {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvIdentification for the PSI definition: " + id ) );

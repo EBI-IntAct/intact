@@ -187,12 +187,12 @@ public class Xref2xmlPSI2 extends AbstractXref2Xml {
         element.setAttribute( XREF_ID, xref.getPrimaryId() );
 
         String sSecondary = xref.getSecondaryId();
-        if ( null != sSecondary ) {
+        if ( null != sSecondary && sSecondary.length() > 0) {
             element.setAttribute( XREF_SECONDARY, sSecondary );
         }
 
         String sVersion = xref.getDbRelease();
-        if ( null != sVersion ) {
+        if ( null != sVersion && sVersion.length() > 0) {
             element.setAttribute( XREF_VERSION, sVersion );
         }
 
