@@ -18,15 +18,67 @@ import java.io.IOException;
  */
 public interface IndexExporter<T extends AnnotatedObject> {
 
+    ////////////////////////
+    // Export methods
+
+    /**
+     * export header of the index.
+     *
+     * @throws IOException
+     */
     public void exportHeader() throws IOException;
 
+    /**
+     * Export the beginning of the list of entries;
+     *
+     * @throws IOException
+     */
     public void exportEntryListStart() throws IOException;
 
+    /**
+     * Export the given entry.
+     *
+     * @param object the entry to export.
+     *
+     * @throws IOException
+     */
     public void exportEntry( T object ) throws IOException;
 
+    /**
+     * Export all entries.
+     *
+     * @throws IOException
+     */
+    public void exportEntries() throws IOException;
+
+    /**
+     * Export the end of the list of entries of the index.
+     *
+     * @throws IOException
+     */
     public void exportEntryListEnd() throws IOException;
 
+    /**
+     * Export the footer of the index.
+     *
+     * @throws IOException
+     */
     public void exportFooter() throws IOException;
 
+    /**
+     * Builds a complete index.
+     *
+     * @throws IOException
+     */
+    public void buildIndex() throws IOException;
+
+    /////////////////////
+    // Counting
+
+    /**
+     * Returns the count of entries to be exported.
+     *
+     * @return
+     */
     public int getEntryCount();
 }

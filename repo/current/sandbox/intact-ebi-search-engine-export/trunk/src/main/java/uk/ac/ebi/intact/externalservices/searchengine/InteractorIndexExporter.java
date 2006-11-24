@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.externalservices.searchengine;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -13,9 +15,9 @@ import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 /**
  * TODO comment this
@@ -25,6 +27,11 @@ import java.util.HashSet;
  * @since <pre>23-Nov-2006</pre>
  */
 public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
+
+    /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog( InteractorIndexExporter.class );
 
     public static final int CHUNK_SIZE = 50;
 
@@ -45,11 +52,16 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         super( output, release );
     }
 
-    public void exportHeader() throws IOException {
-        super.exportHeader();
+    ////////////////////////
+    // Export
 
-        // Header specifics of that index
+    public void exportHeader() throws IOException {
+
         Writer out = getOutput();
+
+        writeXmlHeader( out );
+
+        out.write( "<database>" + NEW_LINE );
         out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
         out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
         out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
@@ -80,6 +92,11 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         return count;
     }
 
+    public void exportEntries( ) throws IOException {
+        exportSmallMolecule();
+        exportPolymer();
+    }
+
     public void exportEntry( Interactor interactor ) throws IOException {
 
         Writer out = getOutput();
@@ -98,7 +115,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         out.write( i + "<cross_references>" + NEW_LINE );
 
         if ( !interactor.getXrefs().isEmpty() ) {
-            for ( InteractorXref xref : interactor.getXrefs() ) {
+            for ( Xref xref : interactor.getXrefs() ) {
 
                 String db = xref.getCvDatabase().getShortLabel();
                 String id = xref.getPrimaryId();
@@ -138,29 +155,35 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         // TODO export respective Components' xref and aliases and annotation
 
         out.write( i + "<additional_fields>" + NEW_LINE );
-        for ( InteractorAlias alias : interactor.getAliases() ) {
+        for ( Alias alias : interactor.getAliases() ) {
             writeField( out, alias.getCvAliasType().getShortLabel(), alias.getName(), i + INDENT );
         }
+        
+        Set<CvObject> cvs = new HashSet<CvObject>();
+        for ( Component c : interactor.getActiveInstances() ) {
+            Interaction interaction = c.getInteraction();
+            cvs.add( interaction.getCvInteractionType() );
+            for ( Experiment e : interaction.getExperiments() ) {
+                cvs.add( e.getCvIdentification() );
+                cvs.add( e.getCvInteraction() );
+            }
+        }
+        for ( CvObject cv : cvs ) {
+            writeCvTerm( out, cv, i + INDENT );
+        }
+
         out.write( i + "</additional_fields>" + NEW_LINE );
 
         out.write( i + "</entry>" + NEW_LINE );
     }
 
-    public void buildIndex() throws IOException {
-        exportHeader();
-
-        exportEntryListStart();
-
-        exportSmallMolecule();
-        exportPolymer();
-
-        exportEntryListEnd();
-
-        exportFooter();
-    }
+    //////////////////////////
+    // Private methods
 
     private void exportSmallMolecule() throws IOException {
         int current = 0;
+
+        log.debug( "Starting export of " + countSmallMolecule + " small molecule(s)." );
 
         while ( current < countSmallMolecule ) {
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
@@ -168,8 +191,13 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             List<SmallMoleculeImpl> interactors = pdao.getAll( current, CHUNK_SIZE );
-            for ( Interactor interactor : interactors ) {
 
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Exporting small molecule range " + current + ".." + Math.min( countSmallMolecule, current + CHUNK_SIZE ) +
+                           " out of " + countSmallMolecule );
+            }
+
+            for ( Interactor interactor : interactors ) {
                 current++;
                 exportEntry( interactor );
             }
@@ -182,14 +210,21 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
 
         int current = 0;
 
+        log.debug( "Starting export of " + countPolymer + " polymer(s)." );
+
         while ( current < countPolymer ) {
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
             InteractorDao<PolymerImpl> pdao = daoFactory.getInteractorDao( PolymerImpl.class );
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             List<PolymerImpl> interactors = pdao.getAll( current, CHUNK_SIZE );
-            for ( Interactor interactor : interactors ) {
 
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Exporting polymer range " + current + ".." + Math.min( countPolymer, current + CHUNK_SIZE ) +
+                           " out of " + countPolymer );
+            }
+
+            for ( Interactor interactor : interactors ) {
                 current++;
                 exportEntry( interactor );
             }
