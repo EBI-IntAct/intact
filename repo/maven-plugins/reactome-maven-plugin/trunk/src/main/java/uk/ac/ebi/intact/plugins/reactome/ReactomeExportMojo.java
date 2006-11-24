@@ -18,20 +18,19 @@ package uk.ac.ebi.intact.plugins.reactome;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
-import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.dbutil.reactome.ReactomeBean;
+import uk.ac.ebi.intact.dbutil.reactome.ReactomeException;
 import uk.ac.ebi.intact.dbutil.reactome.ReactomeExport;
 import uk.ac.ebi.intact.dbutil.reactome.ReactomeValidationReport;
-import uk.ac.ebi.intact.dbutil.reactome.ReactomeException;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.MojoUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileWriter;
-import java.util.List;
-import java.util.Collection;
+import java.io.IOException;
 import java.net.URL;
-import java.net.MalformedURLException;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
@@ -51,6 +50,12 @@ public class ReactomeExportMojo
      * @readonly
      */
     private MavenProject project;
+
+    /**
+     * @parameter expression="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
 
     /**
      * @parameter default-value="${project.build.directory}/reactome.dat"
@@ -153,5 +158,30 @@ public class ReactomeExportMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
+    }
+
+    public File getReactomeExportedFile()
+    {
+        return reactomeExportedFile;
+    }
+
+    public URL getReactomeUrl()
+    {
+        return reactomeUrl;
+    }
+
+    public File getInvalidIntactAcsInReactomeFile()
+    {
+        return invalidIntactAcsInReactomeFile;
+    }
+
+    public File getInvalidReactomeIdsInIntactFile()
+    {
+        return invalidReactomeIdsInIntactFile;
     }
 }
