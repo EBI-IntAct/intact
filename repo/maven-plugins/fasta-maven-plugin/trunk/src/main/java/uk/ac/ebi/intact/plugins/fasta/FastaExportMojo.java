@@ -46,6 +46,12 @@ public class FastaExportMojo
     private MavenProject project;
 
     /**
+     * @parameter expression="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
+
+    /**
      * Name of the fasta file to be created
      * @property default-value="${maven.build.directory}/intact.fasta"
      */
@@ -81,6 +87,11 @@ public class FastaExportMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
     }
 
     public File getExportedFile()
