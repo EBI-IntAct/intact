@@ -45,6 +45,12 @@ public class MyMojo
     private MavenProject project;
 
     /**
+     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    protected File hibernateConfig;
+
+    /**
      * An example file
      *
      * @parameter default-value="${project.build.directory}/dummy.txt"
@@ -62,8 +68,19 @@ public class MyMojo
         // TODO: put your logic here
     }
 
+    /**
+     * Implementation of abstract method from superclass
+     */
     public MavenProject getProject()
     {
         return project;
+    }
+
+    /**
+     * Implementation of abstract method from superclass
+     */
+    public File getHibernateConfig()
+    {
+        return hibernateConfig;
     }
 }
