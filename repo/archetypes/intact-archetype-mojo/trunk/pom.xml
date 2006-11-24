@@ -21,7 +21,7 @@
   <groupId>uk.ac.ebi.intact.archetype</groupId>
   <artifactId>intact-archetype-mojo</artifactId>
   <name>IntAct Archetype MOJO</name>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0</version>
 
    <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -74,4 +74,10 @@
         </repository>
     </repositories>
 
+
+  <scm>
+    <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-archetype-mojo-1.0</connection>
+    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-archetype-mojo-1.0</developerConnection>
+    <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-archetype-mojo-1.0</url>
+  </scm>
 </project>
