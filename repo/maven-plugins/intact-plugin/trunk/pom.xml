@@ -10,16 +10,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>intact-plugin</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
     <name>Intact Base Plugin</name>
     <description>
         Contains common code and utilities for all intact plugins
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.1.0</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/tags/intact-plugin-1.1.0</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/tags/intact-plugin-1.1.0</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/intact-plugin/trunk</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/maven-plugins/intact-base/trunk/</url>
     </scm>
   
     <dependencies>
