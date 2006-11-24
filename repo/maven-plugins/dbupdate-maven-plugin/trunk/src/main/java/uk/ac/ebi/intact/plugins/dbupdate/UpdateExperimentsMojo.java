@@ -20,7 +20,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.dbutil.update.UpdateExperiments;
 import uk.ac.ebi.intact.dbutil.update.UpdateSingleExperimentReport;
 import uk.ac.ebi.intact.dbutil.update.UpdatedValue;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 
 import java.io.*;
@@ -37,7 +36,7 @@ import java.util.List;
  *
  * @phase process-resources
  */
-public class UpdateExperimentsMojo extends IntactHibernateMojo
+public class UpdateExperimentsMojo extends UpdateAbstractMojo
 {
     /**
      * @parameter default-value="${project.build.directory}/update-experiments-invalid.txt"

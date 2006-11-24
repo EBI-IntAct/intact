@@ -9,7 +9,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFill;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFillReport;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 
 import java.io.File;
@@ -24,7 +23,7 @@ import java.sql.SQLException;
  * @goal mine
  * @phase process-resources
  */
-public class UpdateMiNeTablesMojo extends IntactHibernateMojo {
+public class UpdateMiNeTablesMojo extends UpdateAbstractMojo {
 
     /**
      * @parameter default-value="${project.build.directory}/MiNe-excluded-interactors.txt"
