@@ -5,6 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.persistence.util;
 
+import java.util.Map;
+import java.util.HashMap;
+
 /**
  * TODO comment it.
  *
@@ -12,6 +15,8 @@ package uk.ac.ebi.intact.persistence.util;
  * @version $Id$
  */
 public class CgLibUtil {
+
+    private static Map<Class, Class> classCache = new HashMap<Class, Class>( 32 );
 
     /**
      * Gets the correct class, removing the CGLIB enhanced part.
@@ -25,6 +30,12 @@ public class CgLibUtil {
             throw new IllegalArgumentException("You must give a non null Class");
         }
 
+        // check in cache
+        Class theClass = classCache.get( clazz );
+        if( theClass != null ) {
+            return theClass;
+        }
+
         String className = clazz.getName();
 
         if (className.contains("$$"))
@@ -34,7 +45,9 @@ public class CgLibUtil {
 
         try
         {
-            return Class.forName(className);
+            theClass = Class.forName(className);
+            classCache.put( clazz, theClass );
+            return theClass;
         }
         catch (ClassNotFoundException e)
         {
@@ -65,7 +78,6 @@ public class CgLibUtil {
      * @return the classname to display in the view.
      */
     public static String getDisplayableClassName( Object obj ) {
-
         return getDisplayableClassName( getRealClassName( obj ) );
     }
 
@@ -77,7 +89,6 @@ public class CgLibUtil {
      * @return the classname to display in the view.
      */
     public static String getDisplayableClassName( Class clazz ) {
-
         return getDisplayableClassName( clazz.getName() );
     }
 
@@ -101,5 +112,4 @@ public class CgLibUtil {
 
         return name;
     }
-
 }
