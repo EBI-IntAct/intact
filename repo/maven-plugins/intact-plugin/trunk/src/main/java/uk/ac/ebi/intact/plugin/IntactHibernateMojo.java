@@ -34,11 +34,6 @@ import java.sql.SQLException;
  */
 public abstract class IntactHibernateMojo extends IntactAbstractMojo
 {
-    /**
-     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
-     * @required
-     */
-    //protected File hibernateConfig;
 
     /**
      * @parameter 
@@ -70,7 +65,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
             return;
         }
 
-        File hibernateConfig = getHibernateConfigFile();
+        File hibernateConfig = getHibernateConfig();
 
         if (hibernateConfig == null)
         {
@@ -124,7 +119,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         initialized = true;
     }
 
-    public abstract File getHibernateConfigFile();
+    public abstract File getHibernateConfig();
 
     public boolean isDryRun()
     {
