@@ -47,8 +47,7 @@ public class InteractorIndexExporterTest extends TestCase {
             f.delete();
         }
 
-        InteractorIndexExporter exporter = new InteractorIndexExporter( f, "1" );
+        IndexExporter exporter = new InteractorIndexExporter( f, "1" );
         exporter.buildIndex();
-        exporter.closeIndex();
     }
 }
