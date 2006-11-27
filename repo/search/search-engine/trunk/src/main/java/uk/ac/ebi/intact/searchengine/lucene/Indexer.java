@@ -16,8 +16,7 @@ import uk.ac.ebi.intact.searchengine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.searchengine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.util.Chrono;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -32,6 +31,11 @@ import java.util.Iterator;
  * @version $Id$
  */
 public class Indexer {
+
+    /**
+     * Cross plateform - New line
+     */
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
 
     private SearchDAO dao;
     private SearchObjectIndexer soi;
@@ -59,7 +63,7 @@ public class Indexer {
      * @throws IOException     ...
      * @throws IntactException ...
      */
-    public void createIndex( File dir ) throws IOException, IntactException {
+    public BufferedWriter createIndex( File dir,BufferedWriter logOutWriter ) throws IOException, IntactException {
         // writer to write the index on scratch disk
         IndexWriter fsWriter = null;
         // writer to store the index in RAM
@@ -91,13 +95,13 @@ public class Indexer {
             ramWriter.addDocument( doc );
 
             if ( ( countDocs % 40 ) == 0 ) {
-                System.out.print( "." );
-                System.out.flush();
+                logOutWriter.write( "." + NEW_LINE );
+                logOutWriter.flush();
 
                 if ( ( countDocs % 2400 ) == 0 ) {
                     // 60 dots per line
                     String percent = formatter.format( ( (float) countDocs / (float) documents.size() ) * 100 );
-                    System.out.println( " " + countDocs + "(" + percent + "%)" );
+                    logOutWriter.write( " " + countDocs + "(" + percent + "%)" + NEW_LINE);
                 }
             }
         }
@@ -107,6 +111,8 @@ public class Indexer {
 
         fsWriter.close();
         ramWriter.close();
+
+        return logOutWriter;
     }
 
     /**
@@ -143,6 +149,50 @@ public class Indexer {
         return documents;
     }
 
+    public static OutputStream index(File indexFile) throws IOException {
+        if (indexFile == null)
+        {
+            throw new NullPointerException("Provided indexFile file is null");
+        }
+        OutputStream logOutStream = new ByteArrayOutputStream();
+        BufferedWriter logOutWriter = new BufferedWriter(new OutputStreamWriter(logOutStream));
+        try {
+            String usage = "Usage: Indexer <Name of the index directory>";
+            
+
+            logOutWriter.write( "Start to create the Lucene index..." + NEW_LINE );
+
+            Indexer test = new Indexer( new SearchDAOImpl(), new SearchObjectIndexer() );
+            Chrono time = new Chrono();
+            time.start();
+            // create the index
+            logOutWriter = test.createIndex( indexFile,logOutWriter);
+            time.stop();
+            // print the time the indexing used
+            logOutWriter.write( "\nIndex created in " + time.toString()  + NEW_LINE );
+
+        } catch ( OutOfMemoryError aome ) {
+
+            aome.printStackTrace();
+
+            logOutWriter.write( "" + NEW_LINE  );
+            logOutWriter.write( "Indexer ran out of memory." + NEW_LINE  );
+            logOutWriter.write( "Please run it again and change the JVM configuration." + NEW_LINE  );
+            logOutWriter.write( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html"  + NEW_LINE );
+            logOutWriter.write( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum"  + NEW_LINE );
+            logOutWriter.write( "      amount of memory that the JVM is allowed to allocate." + NEW_LINE  );
+            logOutWriter.write( "      eg. java -Xms128m -Xmx512m <className>" + NEW_LINE );
+
+            System.exit( 1 );
+
+        } catch ( IntactException e ) {
+            e.printStackTrace();
+            logOutWriter.write( "" );
+            logOutWriter.write( "There went something wrong with fetching the search objects out of the database" );
+        }
+        return logOutStream;
+    }
+
     /**
      * The main method expects one argument, which defines the location where to store the index.
      *
@@ -152,45 +202,6 @@ public class Indexer {
      * @throws IntactException
      */
     public static void main( String[] args ) throws IOException, IntactException {
-        try {
-            String usage = "Usage: Indexer <Name of the index directory>";
-            System.out.println( "Start to create the Lucene index..." );
-
-            // first check the number of arguments
-            if ( args.length != 1 ) {
-                System.out.println( "Invalid numbers of argument!\n" + usage );
-                System.exit( 1 );
-            }
-            //create a file with the name of the first argument
-            File indexFile = new File( args[ 0 ] );
-
-            Indexer test = new Indexer( new SearchDAOImpl(), new SearchObjectIndexer() );
-            Chrono time = new Chrono();
-            time.start();
-            // create the index
-            test.createIndex( indexFile );
-            time.stop();
-            // print the time the indexing used
-            System.out.println( "\nIndex created in " + time.toString() );
-
-        } catch ( OutOfMemoryError aome ) {
-
-            aome.printStackTrace();
-
-            System.err.println( "" );
-            System.err.println( "Indexer ran out of memory." );
-            System.err.println( "Please run it again and change the JVM configuration." );
-            System.err.println( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" );
-            System.err.println( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" );
-            System.err.println( "      amount of memory that the JVM is allowed to allocate." );
-            System.err.println( "      eg. java -Xms128m -Xmx512m <className>" );
-
-            System.exit( 1 );
-
-        } catch ( IntactException e ) {
-            e.printStackTrace();
-            System.err.println( "" );
-            System.err.println( "There went something wrong with fetching the search objects out of the database" );
-        }
+        index( new File( "lucene-index") );
     }
 }
