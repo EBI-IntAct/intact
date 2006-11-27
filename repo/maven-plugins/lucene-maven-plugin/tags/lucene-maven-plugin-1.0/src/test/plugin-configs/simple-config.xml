@@ -1,0 +1,14 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>lucene-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <outputFile>target/myOutput.log</outputFile>
+                    <indexFile>target/lucene-index</indexFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
