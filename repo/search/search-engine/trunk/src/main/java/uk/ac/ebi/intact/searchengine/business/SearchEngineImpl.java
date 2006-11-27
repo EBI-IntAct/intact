@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.util.Chrono;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -261,9 +262,10 @@ public class SearchEngineImpl implements SearchEngine {
      * @throws IOException ...
  * @throws IntactException ...
      */
-    public void createLuceneIndex() throws IOException, IntactException {
+    public void createLuceneIndex(BufferedWriter logOutWriter) throws IOException, IntactException {
+        
         Indexer indexer = new Indexer( dao, new SearchObjectIndexer() );
-        indexer.createIndex( index );
+        indexer.createIndex( index, logOutWriter );
     }
 
     /**
