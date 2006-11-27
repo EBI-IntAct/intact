@@ -10,7 +10,7 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-engine</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
     <name>Search engine</name>
     <description>To perform IntAct searches</description>
 
