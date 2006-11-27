@@ -15,8 +15,7 @@ import uk.ac.ebi.intact.searchengine.business.dao.SearchDAOImpl;
 import uk.ac.ebi.intact.searchengine.lucene.IntactAnalyzer;
 import uk.ac.ebi.intact.util.Chrono;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * *This class indexes the Database objects. It is not really a test,
@@ -57,13 +56,15 @@ public class CreateD002IndexTest extends TestCase {
      */
     protected void setUp() throws IOException, IntactException {
         // create the index
+        OutputStream logOutStream = new ByteArrayOutputStream();
+        BufferedWriter logOutWriter = new BufferedWriter(new OutputStreamWriter(logOutStream));
 
         SearchDAO dao = new SearchDAOImpl();
         engine = new SearchEngineImpl(new IntactAnalyzer(), new File("indexD002"), dao, null);
 
         Chrono chrono = new Chrono();
         chrono.start();
-        engine.createLuceneIndex();
+        engine.createLuceneIndex(logOutWriter);
         chrono.stop();
         System.out.println("time to index was: " + chrono.toString());
 
