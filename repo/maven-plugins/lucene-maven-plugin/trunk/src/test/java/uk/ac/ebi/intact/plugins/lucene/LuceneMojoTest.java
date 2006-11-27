@@ -20,8 +20,6 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-import uk.ac.ebi.intact.plugins.lucene.LuceneMojo;
-
 public class LuceneMojoTest extends AbstractMojoTestCase
 {
 
@@ -32,6 +30,11 @@ public class LuceneMojoTest extends AbstractMojoTestCase
         LuceneMojo mojo = (LuceneMojo) lookupMojo( "build-index", indexFile );
         mojo.setLog( new SystemStreamLog() );
 
+
+        if (mojo.getIndexFile().exists()) mojo.getIndexFile().delete();
+
         mojo.execute();
+
+        assertTrue(mojo.getIndexFile().exists());
     }
 }
