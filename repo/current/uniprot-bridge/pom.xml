@@ -1,26 +1,39 @@
 <?xml version="1.0"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>4</version>
+        <version>5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>uniprot-bridge</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0-beta-1</version>
     <name>UniProtKB Bridge</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>UniProt Bridge, will allow IntAct to retreive protein objects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-bridge/trunk</connection>
-        <developerConnection>
-            scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-bridge/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/uniprot-bridge/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-bridge/tags/uniprot-bridge-1.0-beta-1</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/uniprot-bridge/tags/uniprot-bridge-1.0-beta-1</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/uniprot-bridge/tags/uniprot-bridge-1.0-beta-1</url>
     </scm>
+
+    <build>
+      <plugins>
+        <plugin>
+           <groupId>org.apache.maven.plugins</groupId>
+           <artifactId>maven-surefire-plugin</artifactId>
+           <configuration>
+             <excludes>
+               <exclude>**/UniprotRemoteServiceAdapterTest.java</exclude>
+             </excludes>
+           </configuration>
+         </plugin>
+       </plugins>
+    </build>
 
     <dependencies>
         <dependency>
@@ -34,7 +47,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-4</version>
+            <version>1.5.0-beta-5</version>
         </dependency>
 
         <!-- UniProt Remote API -->
