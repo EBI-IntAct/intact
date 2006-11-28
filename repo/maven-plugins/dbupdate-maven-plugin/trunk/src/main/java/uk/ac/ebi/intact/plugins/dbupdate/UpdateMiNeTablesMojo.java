@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFill;
 import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFillReport;
 import uk.ac.ebi.intact.plugin.MojoUtils;
@@ -57,5 +58,9 @@ public class UpdateMiNeTablesMojo extends UpdateAbstractMojo {
             writer.write(interactorAc+NEW_LINE);
         }
         writer.close();
+    }
+
+    public MavenProject getProject() {
+        return project;
     }
 }
