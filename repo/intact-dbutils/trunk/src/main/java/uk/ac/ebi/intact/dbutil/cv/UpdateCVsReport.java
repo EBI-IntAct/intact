@@ -22,7 +22,6 @@ import uk.ac.ebi.intact.model.CvObject;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Report for the UpdateCVs task
@@ -60,7 +59,7 @@ public class UpdateCVsReport implements Serializable
         return orphanTerms;
     }
 
-    public void setOrphanTerms(List<CvTerm> orphanTerms)
+    public void setOrphanTerms(Collection<CvTerm> orphanTerms)
     {
         this.orphanTerms = orphanTerms;
     }
@@ -70,7 +69,7 @@ public class UpdateCVsReport implements Serializable
         return updatedTerms;
     }
 
-    public void setUpdatedTerms(List<CvObject> updatedTerms)
+    public void setUpdatedTerms(Collection<CvObject> updatedTerms)
     {
         this.updatedTerms = updatedTerms;
     }
@@ -80,7 +79,7 @@ public class UpdateCVsReport implements Serializable
         return createdTerms;
     }
 
-    public void setCreatedTerms(List<CvObject> createdTerms)
+    public void setCreatedTerms(Collection<CvObject> createdTerms)
     {
         this.createdTerms = createdTerms;
     }
@@ -100,7 +99,7 @@ public class UpdateCVsReport implements Serializable
         return missingTerms;
     }
 
-    public void setMissingTerms(List<CvTerm> missingTerms)
+    public void setMissingTerms(Collection<CvTerm> missingTerms)
     {
         this.missingTerms = missingTerms;
     }
