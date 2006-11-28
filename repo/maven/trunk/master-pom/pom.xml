@@ -5,18 +5,19 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>4-SNAPSHOT</version>
+    <version>4</version>
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-3</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-3</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-3</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-4</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-4</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-4</url>
     </scm>
 
     <properties>
         <institution>ebi</institution>
+        <deploy.host>bark.ebi.ac.uk</deploy.host>
         <assembly.outputDirectory>target/assembly/out</assembly.outputDirectory>
     </properties>
 
@@ -142,7 +143,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <configuration>
-                        <goals>deploy assembly:assembly</goals>
+                        <goals>deploy</goals>
                     </configuration>
                 </plugin>
             </plugins>
@@ -424,14 +425,14 @@
         <repository>
             <id>ebi-repo</id>
             <name>EBI Repository</name>
-            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo</url>
+            <url>scp://${deploy.host}/homes/maven/public_html/m2repo</url>
         </repository>
 
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
             <id>ebi-repo-snapshots</id>
             <name>EBI Snapshots Repository</name>
-            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo_snapshots</url>
+            <url>scp://${deploy.host}/homes/maven/public_html/m2repo_snapshots</url>
         </snapshotRepository>
 
         <site>
