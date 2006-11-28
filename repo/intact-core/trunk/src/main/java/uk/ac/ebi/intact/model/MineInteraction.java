@@ -38,6 +38,9 @@ public class MineInteraction
     @Column(name="protein2_ac", updatable = false, insertable = false)
     private String protein2Ac;
 
+    @Column(name="interaction_ac", updatable = false, insertable = false)
+    private String interactionAc;
+
     @Column(length = 30)
     private String shortLabel1;
 
@@ -46,10 +49,6 @@ public class MineInteraction
 
     @Column(length = 30)
     private String taxid;
-
-    @ManyToOne
-    @JoinColumn(name = "interaction_ac")
-    private InteractionImpl interaction;
 
     private double weight;
 
@@ -72,9 +71,9 @@ public class MineInteraction
     }
 
 
-    public MineInteraction(ProteinImpl protein1, ProteinImpl protein2)
+    public MineInteraction(ProteinImpl protein1, ProteinImpl protein2, InteractionImpl interaction)
     {
-        this.pk = new MineInteractionPk(protein1, protein2);
+        this.pk = new MineInteractionPk(protein1, protein2, interaction);
         this.shortLabel1 = protein1.getShortLabel();
         this.shortLabel2 = protein2.getShortLabel();
     }
@@ -117,16 +116,6 @@ public class MineInteraction
     public void setTaxid(String taxid)
     {
         this.taxid = taxid;
-    }
-
-    public InteractionImpl getInteraction()
-    {
-        return interaction;
-    }
-
-    public void setInteraction(InteractionImpl interaction)
-    {
-        this.interaction = interaction;
     }
 
     public double getWeight()
@@ -199,6 +188,16 @@ public class MineInteraction
         this.protein2Ac = protein2Ac;
     }
 
+    public String getInteractionAc()
+    {
+        return interactionAc;
+    }
+
+    public void setInteractionAc(String interactionAc)
+    {
+        this.interactionAc = interactionAc;
+    }
+
     @Override
     public boolean equals(Object o)
     {
@@ -213,6 +212,10 @@ public class MineInteraction
 
         MineInteraction that = (MineInteraction) o;
 
+        if (pk != null ? !pk.equals(that.pk) : that.pk != null)
+        {
+            return false;
+        }
         if (graphId != that.graphId)
         {
             return false;
@@ -229,14 +232,7 @@ public class MineInteraction
         {
             return false;
         }
-        if (interaction != null ? !interaction.equals(that.interaction) : that.interaction != null)
-        {
-            return false;
-        }
-        if (pk != null ? !pk.equals(that.pk) : that.pk != null)
-        {
-            return false;
-        }
+
         if (pubmedId != null ? !pubmedId.equals(that.pubmedId) : that.pubmedId != null)
         {
             return false;
@@ -266,7 +262,6 @@ public class MineInteraction
         result = 31 * result + (shortLabel1 != null ? shortLabel1.hashCode() : 0);
         result = 31 * result + (shortLabel2 != null ? shortLabel2.hashCode() : 0);
         result = 31 * result + (taxid != null ? taxid.hashCode() : 0);
-        result = 31 * result + (interaction != null ? interaction.hashCode() : 0);
         temp = weight != +0.0d ? Double.doubleToLongBits(weight) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + graphId;
