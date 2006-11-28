@@ -39,7 +39,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-5</version>
+            <version>1.5.0-beta-6-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>

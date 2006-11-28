@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.dbutil.cv.model;
 
 import uk.ac.ebi.intact.model.*;
 
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -363,10 +364,10 @@ public class IntactOntology {
     /////////////////////////////////
     // Utility - Display methods
 
-    public void print() {
+    public void print(PrintStream ps) {
 
-        System.out.println( cvTerms.size() + " terms to display." );
-        System.out.println( intact2psi.size() + " CV types." );
+        ps.println( cvTerms.size() + " terms to display." );
+        ps.println( intact2psi.size() + " CV types." );
 
         for ( Iterator iterator = intact2psi.keySet().iterator(); iterator.hasNext(); ) {
             Class aClass = (Class) iterator.next();
@@ -380,29 +381,29 @@ public class IntactOntology {
                 }
             }
 
-            System.out.println( aClass + " ( " + count + " )" );
+            ps.println( aClass + " ( " + count + " )" );
             for ( Iterator iterator1 = root.iterator(); iterator1.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator1.next();
-                print( cvTerm );
+                print( cvTerm, ps);
             }
-            System.out.println( "" );
+            ps.println( "" );
         }
     }
 
-    private void print( CvTerm term, String indent ) {
+    private void print( CvTerm term, String indent, PrintStream ps ) {
 
         System.out.println( indent + term.getId() + "   " + term.getShortName() + " (" + term.getFullName() + ")" );
         for ( Iterator iterator = term.getChildren().iterator(); iterator.hasNext(); ) {
             CvTerm cvTerm = (CvTerm) iterator.next();
-            print( cvTerm, indent + "  " );
+            print( cvTerm, indent + "  ", ps );
         }
     }
 
-    public void print( CvTerm term ) {
-        print( term, "" );
+    public void print( CvTerm term, PrintStream ps) {
+        print( term, "", ps );
     }
 
-    public void print( Class clazz ) {
+    public void print( Class clazz, PrintStream ps ) {
 
         System.out.println( "------------------------------------------------" );
         System.out.println( clazz.getName() );
@@ -412,7 +413,7 @@ public class IntactOntology {
             for ( Iterator iterator = roots.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
 
-                print( cvTerm );
+                print( cvTerm, ps );
             }
         } else {
             System.err.println( "Could not find a mapping for " + clazz.getName() );
