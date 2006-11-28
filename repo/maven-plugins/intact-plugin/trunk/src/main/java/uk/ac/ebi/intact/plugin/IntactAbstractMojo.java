@@ -8,10 +8,7 @@ package uk.ac.ebi.intact.plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 
 /**
  * TODO: comment this!
@@ -114,19 +111,49 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         return errorFile;
     }
 
+    public PrintStream getOutputPrintStream() throws IOException
+    {
+        return new PrintStream(getOutputFile());
+    }
+
+    public PrintStream getErrorPrintStream() throws IOException
+    {
+        return new PrintStream(getErrorFile());
+    }
 
     public File getDirectory()
     {
-        return new File(getProject().getBuild().getDirectory());
+        if (getProject() != null)
+        {
+            return new File(getProject().getBuild().getDirectory());
+        }
+        else
+        {
+            return new File("target");
+        }
     }
 
     public File getOutputDirectory()
     {
-        return new File(getProject().getBuild().getOutputDirectory());
+        if (getProject() != null)
+        {
+            return new File(getProject().getBuild().getOutputDirectory());
+        }
+        else
+        {
+            return new File("target/classes");
+        }
     }
 
     public File getTestOutputDirectory()
     {
-        return new File(getProject().getBuild().getTestOutputDirectory());
+        if (getProject() != null)
+        {
+            return new File(getProject().getBuild().getTestOutputDirectory());
+        }
+        else
+        {
+            return new File("target/classes-test");
+        }
     }
 }
