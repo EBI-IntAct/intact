@@ -14,9 +14,12 @@
 
                     <searchPattern>%</searchPattern>
 
+                    <updateTargetSpecies>true</updateTargetSpecies>
+
                     <overwrite>true</overwrite>
                     <experimentErrorFile>target/psixml-test/experiment-error.log</experimentErrorFile>
                     <negativeExperimentsFile>target/psixml-test/negative-experiments.log</negativeExperimentsFile>
+                    <filteredExperimentsFile>target/psixml-test-dataset/filtered-experiments.log</filteredExperimentsFile>
                     <invalidFilePrefix>invalid-xmls</invalidFilePrefix>
                     <reverseMappingFile>reverseMapping.txt</reverseMappingFile>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>

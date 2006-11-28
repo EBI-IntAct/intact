@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.util.Chrono;
 import uk.ac.ebi.intact.util.MemoryMonitor;
 
 import java.io.*;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
@@ -81,6 +82,16 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         getLog().info( "PsiXmlGeneratorMojo in action" );
 
         initialize();
+
+        try
+        {
+            getLog().info("Database: "+IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName());
+            getLog().info("Username: "+IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName());
+        }
+        catch (SQLException e)
+        {
+            throw new MojoExecutionException("Problem getting DB metadata", e);
+        }
 
         boolean speciesEnabled = classificationEnabled( "species" );
         getLog().debug( "Species classification requested: " + speciesEnabled );

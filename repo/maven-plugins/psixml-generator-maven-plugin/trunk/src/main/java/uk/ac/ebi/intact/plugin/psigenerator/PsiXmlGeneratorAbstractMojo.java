@@ -9,14 +9,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
+import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.Collection;
 import java.util.Map;
 
@@ -84,6 +82,13 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     protected File negativeExperimentsFile;
 
     /**
+     * File containing the filtered experiments
+     *
+     * @parameter default-value="target/psixml/filtered-experiments.log"
+     */
+    protected File filteredExperimentsFile;
+
+    /**
      * File containing the publications
      *
      * @parameter default-value="%"
@@ -117,9 +122,17 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
      */
     protected File hibernateConfig;
 
+    /**
+     * Whether to update the target species before processing or not
+     *
+     * @parameter default-value="false"
+     */
+    private boolean updateTargetSpecies;
+
     private boolean initialized;
     private boolean reportsWritten;
     protected ExperimentListGenerator experimentListGenerator;
+    private PrintStream output;
 
     public PsiXmlGeneratorAbstractMojo() {
     }
@@ -139,6 +152,15 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     protected void initialize() throws MojoExecutionException {
         if ( initialized ) {
             return;
+        }
+
+        try
+        {
+            output = new PrintStream(getOutputFile());
+        }
+        catch (FileNotFoundException e)
+        {
+            throw new MojoExecutionException("Couldn't create PrintStream for output file", e);
         }
 
         if ( !targetPath.exists() ) {
@@ -161,9 +183,16 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
             throw new MojoExecutionException( "Target datasets file already exist and overwrite is set to false: " + datasetsFile );
         }
 
-        experimentListGenerator = new ExperimentListGenerator( searchPattern );
+        experimentListGenerator = new ExperimentListGenerator( searchPattern, output );
         experimentListGenerator.setOnlyWithPmid( onlyWithPmid );
         initialized = true;
+
+        // update targetspecies if required
+        if (updateTargetSpecies)
+        {
+            getLog().info("Updating target-species");
+            UpdateTargetSpecies.update(output, isDryRun(), searchPattern );
+        }
     }
 
     protected Collection<ExperimentListItem> generateSpeciesListItems() throws MojoExecutionException {
@@ -231,6 +260,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
         }
         initialize();
         writeNegativeExperiments();
+        writeFilteredExperiments();
         writeErrorFile();
 
         reportsWritten = true;
@@ -270,6 +300,31 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
         }
     }
 
+    private void writeFilteredExperiments() throws MojoExecutionException {
+        Collection<String> filteredExperiments = experimentListGenerator.getFilteredExperimentAcs();
+        getLog().info( "Filtered experiments: " + filteredExperiments.size() );
+
+        try {
+            MojoUtils.writeStandardHeaderToFile("Filtered experiments", "Processed experiments that have been filtered because" +
+                    "didn't have a pubmed id", getProject(), filteredExperimentsFile);
+
+            Writer writer = new FileWriter( filteredExperimentsFile, true );
+
+            if ( filteredExperiments.isEmpty() ) {
+                writer.write( "# No filtered experiments. " + NEW_LINE );
+            }
+
+            for ( String ac :  filteredExperiments ) {
+                writer.write( ac + NEW_LINE );
+            }
+
+            writer.close();
+        }
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problem writing filtered experiments file", e );
+        }
+    }
+
     private void writeErrorFile() throws MojoExecutionException {
         Map<String, String> experimentsWithErrors = experimentListGenerator.getExperimentWithErrors();
         getLog().info( "Experiments with errors: " + experimentsWithErrors.size() );
@@ -297,6 +352,16 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public File getDirectory()
+    {
+        if (project != null)
+        {
+            return new File(project.getBuild().getDirectory());
+        }
+
+        return new File("target");
     }
 
     public File getTargetPath()
@@ -357,5 +422,15 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     public ExperimentListGenerator getExperimentListGenerator()
     {
         return experimentListGenerator;
+    }
+
+    public PrintStream getOutput()
+    {
+        return output;
+    }
+
+    public boolean isUpdateTargetSpecies()
+    {
+        return updateTargetSpecies;
     }
 }
