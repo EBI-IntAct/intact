@@ -5,8 +5,6 @@
  */
 package uk.ac.ebi.intact.application.dataConversion;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.dataConversion.dao.ExperimentListGeneratorDao;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -16,7 +14,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import java.sql.SQLException;
+import java.io.PrintStream;
 import java.util.*;
 
 /**
@@ -31,8 +29,6 @@ import java.util.*;
  * @since <pre>28-Jul-2005</pre>
  */
 public class ExperimentListGenerator {
-
-    private static final Log log = LogFactory.getLog( ExperimentListGenerator.class );
 
     /**
      * Maximum count of interaction for a small scale experiment.
@@ -68,6 +64,8 @@ public class ExperimentListGenerator {
      * Pattern used to select experiment by its label
      */
     private String searchPattern;
+
+    private PrintStream output;
 
     /**
      * If true, all experiment without a PubMed ID (primary-reference) will be filtered out.
@@ -137,8 +135,17 @@ public class ExperimentListGenerator {
         this( "%" );
     }
 
+    public ExperimentListGenerator(PrintStream output) {
+        this( "%", output );
+    }
+
     public ExperimentListGenerator( String searchPattern ) {
         this.searchPattern = searchPattern;
+    }
+
+    public ExperimentListGenerator( String searchPattern, PrintStream output ) {
+        this.searchPattern = searchPattern;
+        this.output = output;
     }
 
     public List<ExperimentListItem> generateClassificationBySpecies() {
@@ -226,15 +233,6 @@ public class ExperimentListGenerator {
 
         // TODO separate classification - one method per type of classification !
 
-        if ( log.isDebugEnabled() ) {
-            try {
-                log.debug( "Database: " + getDaoFactory().getBaseDao().getDbName() );
-            }
-            catch ( SQLException e ) {
-                e.printStackTrace();
-            }
-        }
-
         // Obtain data, probably experiment by experiment, build
         // PSI data for it then write it to a file....
         Collection<Experiment> searchResults;
@@ -248,14 +246,14 @@ public class ExperimentListGenerator {
             // Split the list of experiments into species- and size-specific files
             for ( Experiment experiment : searchResults ) {
                 if ( experimentFilter.contains( experiment.getAc() ) ) {
-                    log.debug( "Skipping " + experiment.getShortLabel() );
+                    output.println( "Skipping " + experiment.getShortLabel() );
                     continue;
                 }
 
                 int interactionCount = interactionsForExperiment( experiment.getAc() );
                 // Skip empty experiments and give a warning about'em
                 if ( interactionCount == 0 ) {
-                    log.debug( "ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction." );
+                    output.println( "ERROR: experiment " + experiment.getShortLabel() + " (" + experiment.getAc() + ") has no interaction." );
                     experimentsWithErrors.put( experiment.getShortLabel(), "Experiment without interactions" );
                     continue;
                 }
@@ -264,22 +262,16 @@ public class ExperimentListGenerator {
                 //    The bioSource of the Experiment is irrelevant, as it may be an auxiliary experimental system.
                 Collection<BioSource> sources = getTargetSpecies( experiment.getAc() );
 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + ( interactionCount > 1 ? "s" : "" ) + ")" );
-                }
+                output.println( "Classifying " + experiment.getShortLabel() + " (" + interactionCount + " interaction" + ( interactionCount > 1 ? "s" : "" ) + ")" );
 
                 // 2. get the pubmedId (primary-ref)
                 String pubmedId = String.valueOf( getPubmedId( experiment.getAc() ) );
 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "\tPubmedId: " + pubmedId + "; Sources: " + sources.size() );
-                }
+                output.println( "\tPubmedId: " + pubmedId + "; Sources: " + sources.size() );
 
-                if ( log.isWarnEnabled() ) {
-                    if ( sources.isEmpty() ) {
+                if ( sources.isEmpty() ) {
                         experimentsWithErrors.put( experiment.getShortLabel(), "Experiment without biosources" );
-                        log.error( "Experiment without target-species: " + experiment.getAc() + " (" + experiment.getShortLabel() + ")" );
-                    }
+                        output.println( "ERROR: Experiment without target-species: " + experiment.getAc() + " (" + experiment.getShortLabel() + ")" );
                 }
 
                 // 3. create the classification by publication
@@ -299,7 +291,7 @@ public class ExperimentListGenerator {
                     // add the experiment to the set of experiments.
                     experimentSet.add( new SimplifiedAnnotatedObject<Experiment>( experiment ) );
                 } else {
-                    log.debug( "ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")" );
+                    output.println( "ERROR: Could not find a pubmed ID for experiment: " + experiment.getShortLabel() + "(" + experiment.getAc() + ")" );
                 }
 
                 // if multiple target-species have been found, that experiment will be associated redundantly
@@ -330,7 +322,7 @@ public class ExperimentListGenerator {
 
                         if( pubmedId == null ) {
 
-                            log.error( "PubMed id was null when classifying experiment '"+ experiment.getShortLabel() +
+                            output.println( "ERROR: PubMed id was null when classifying experiment '"+ experiment.getShortLabel() +
                                        "' by datasets '"+ dataset.getName() +"', skipping." );
 
                         } else {
@@ -361,7 +353,7 @@ public class ExperimentListGenerator {
     }
 
     private Collection<Experiment> getExperiments( int firstResult, int maxResults ) {
-        log.debug( "Retrieving data from DB store, from " + firstResult );
+        output.println( "Retrieving data from DB store, from " + firstResult );
 
         if ( searchPattern.contains( "," ) ) {
              throw new IntactException( "Lists with comma-separated experiments are not accepted anymore" );
@@ -370,7 +362,7 @@ public class ExperimentListGenerator {
         Collection<Experiment> searchResults = getDaoFactory().getExperimentDao().getByShortLabelLike( searchPattern, true, firstResult, maxResults, true );
 
         int resultSize = searchResults.size();
-        log.debug( "done (retrieved " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
+        output.println( "done (retrieved " + resultSize + " experiment" + ( resultSize > 1 ? "s" : "" ) + ")" );
 
         return searchResults;
     }
@@ -471,7 +463,7 @@ public class ExperimentListGenerator {
         if ( experiment2dataset == null ) {
             // map all exps to pmid
             experiment2dataset = ExperimentListGeneratorDao.datasetForExperiments( searchPattern );
-            log.info( "Loaded " + experiment2dataset.size() + " experiments having datasets information." );
+            output.println( "Loaded " + experiment2dataset.size() + " experiments having datasets information." );
         }
 
         Collection<SimpleDataset> datasets = experiment2dataset.get( experimentAc );
@@ -497,7 +489,7 @@ public class ExperimentListGenerator {
         negativeExperiments.addAll( ExperimentListGeneratorDao.getExpWithInteractionsContainingAnnotation( CvTopic.NEGATIVE, searchPattern ) );
         negativeExperiments.addAll( ExperimentListGeneratorDao.getContainingAnnotation( Experiment.class, CvTopic.NEGATIVE, searchPattern ) );
 
-        log.debug( negativeExperiments.size() + " negative experiment found." );
+        output.println( negativeExperiments.size() + " negative experiment found." );
     }
 
     public Set<String> getFilteredExperimentAcs() {
@@ -517,11 +509,11 @@ public class ExperimentListGenerator {
                 String ac = expAcAndLabel.getKey();
                 String shortlabel = expAcAndLabel.getValue();
 
-                log.debug( "Filter out: " + shortlabel + " (" + ac + ")" );
+                output.println( "Filter out: " + shortlabel + " (" + ac + ")" );
                 filteredExperimentAcs.add( ac );
             }
 
-            log.debug( filteredExperimentAcs.size() + " experiment filtered out." );
+            output.println( filteredExperimentAcs.size() + " experiment filtered out." );
 
         }
 
