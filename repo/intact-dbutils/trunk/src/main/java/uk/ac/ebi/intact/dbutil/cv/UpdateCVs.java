@@ -1591,7 +1591,7 @@ public class UpdateCVs {
         update( ontology, output, report );
 
         // 2.6 Update obsolete terms
-        List<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output, report );
+        Collection<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output, report );
         report.setOrphanTerms(orphanTerms);
 
         if ( annotFile != null ) {
