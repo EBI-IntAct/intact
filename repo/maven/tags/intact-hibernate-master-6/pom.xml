@@ -1,0 +1,234 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>4</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-hibernate-master</artifactId>
+    <packaging>pom</packaging>
+    <name>Master Hibernate POM</name>
+    <version>6</version>
+    <description>This is a master POM that contains the data access (hibernate) configuration</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-6</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-6</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-6</url>
+    </scm>
+
+    <properties>
+        <db.hbm2ddlAuto>none</db.hbm2ddlAuto>
+        <showSql>false</showSql>
+        <hibernate.scope>runtime</hibernate.scope>
+    </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>uk.ac.ebi.intact.plugins</groupId>
+                    <artifactId>hibernateconfig-maven-plugin</artifactId>
+                    <version>1.3.0</version>
+                    <configuration>
+                        <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
+                        <dialect>${db.dialect}</dialect>
+                        <driver>${db.driver}</driver>
+                        <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
+                        <user>${db.user}</user>
+                        <password>${db.password}</password>
+                        <showSql>${showSql}</showSql>
+                        <scope>${hibernate.scope}</scope>
+                        <hbm2ddlAuto>${db.hbm2ddlAuto}</hbm2ddlAuto>
+                        <connectionProviderClass>${db.connectionProviderClass}</connectionProviderClass>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>generate-config</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>uk.ac.ebi.intact.plugins</groupId>
+                    <artifactId>dbtest-maven-plugin</artifactId>
+
+                    <executions>
+                        <execution>
+                             <goals>
+                                <goal>h2-preload</goal>
+                                <goal>import-psi</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>oracle</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>oracle</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>Oracle</db.platform>
+                <db.driver>oracle.jdbc.OracleDriver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>oracle-thin</artifactId>
+                    <version>9.2.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>postgres</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>postgres</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.alias}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>PostgreSQL</db.platform>
+                <db.driver>org.postgresql.Driver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>postgresql://${db.host}:${db.port}</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.PostgreSQLDialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                    <version>7.4.1-jdbc3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>h2</id>
+            <activation>
+                <property>
+                    <name>db</name>
+                    <value>h2</value>
+                </property>
+            </activation>
+
+            <build>
+                <finalName>${artifactId}-${db.platform}-${version}</finalName>
+            </build>
+
+            <properties>
+                <db.platform>H2Database</db.platform>
+                <db.driver>org.h2.Driver</db.driver>
+                <db.protocol>jdbc</db.protocol>
+                <db.subprotocol>h2</db.subprotocol>
+                <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
+            </properties>
+
+            <dependencies>
+                <dependency>
+                    <groupId>org.h2</groupId>
+                    <artifactId>h2</artifactId>
+                    <version>2006-07-14-beta</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.2.0.ga</version>
+        </dependency>
+        <dependency>
+            <groupId>c3p0</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.0.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.h2</groupId>
+            <artifactId>h2</artifactId>
+            <version>2006-07-14-beta</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+         <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+     <pluginRepositories>
+        <pluginRepository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>
