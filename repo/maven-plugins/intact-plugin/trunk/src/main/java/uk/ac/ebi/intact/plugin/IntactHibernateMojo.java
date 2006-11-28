@@ -95,7 +95,9 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
 
         if (!hibernateConfig.exists())
         {
-            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig);
+            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig+". Provide a hibernate config" +
+                    " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add the <hibernateConfig> configuration element for " +
+                    "the plugin");
         }
 
         // configure the context
