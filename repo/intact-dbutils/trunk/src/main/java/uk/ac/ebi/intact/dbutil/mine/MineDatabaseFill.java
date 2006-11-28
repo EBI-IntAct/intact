@@ -12,19 +12,8 @@ import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.io.PrintStream;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.sql.*;
+import java.util.*;
 
 /**
  * The class <tt>MineDatabaseFill</tt> is a utility class to fill the database table <tt>ia_interactions</tt> which is
@@ -65,6 +54,8 @@ public class MineDatabaseFill {
 
     //////////////////////
     // Constants
+
+    private static final Integer DEFAULT_GRAPH_ID = 0;
 
     public static final String INTERACTION_TABLE = "ia_interactions";
 
@@ -108,7 +99,7 @@ public class MineDatabaseFill {
                                                + ", " + COLUMN_WEIGHT
                                                + ", " + COLUMN_GRAPH_ID
                                                + ")"
-                                               + " VALUES (?, ?, ?, ?, ?, ?,?,?,?, 1, null)";
+                                               + " VALUES (?, ?, ?, ?, ?, ?,?,?,?, 1, "+DEFAULT_GRAPH_ID+")";
 
     /**
      * SQL statement to select all interactions
@@ -179,7 +170,7 @@ public class MineDatabaseFill {
                                               + COLUMN_PROTEIN1_AC + "=? OR "
                                               + COLUMN_PROTEIN2_AC + "=?) AND " + "       "
                                               + COLUMN_TAXID + "=? AND " + "       "
-                                              + COLUMN_GRAPH_ID + " IS NULL";
+                                              + COLUMN_GRAPH_ID + " = "+DEFAULT_GRAPH_ID;
 
     /**
      * SQL statement to update the table for the minimal connecting network
@@ -189,7 +180,7 @@ public class MineDatabaseFill {
                                                  + "=? " + "WHERE (" + COLUMN_PROTEIN1_AC + "=? OR "
                                                  + COLUMN_PROTEIN2_AC + "=?) AND " + "      "
                                                  + COLUMN_TAXID + "=? AND " + "      "
-                                                 + COLUMN_GRAPH_ID + " IS NULL";
+                                                 + COLUMN_GRAPH_ID + " = "+DEFAULT_GRAPH_ID;
 
     /**
      * the graphid is initialised with 0 because with every call of the setGraphBio method graphid is increased before
