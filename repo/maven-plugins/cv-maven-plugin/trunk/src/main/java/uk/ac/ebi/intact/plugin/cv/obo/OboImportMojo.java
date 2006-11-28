@@ -52,7 +52,7 @@ public class OboImportMojo
     private File hibernateConfig;
 
     /**
-     * @parameter expression="intact.obo"
+     * @parameter expression="${intact.obo}"
      * @required
      */
     private File importedOboFile;
