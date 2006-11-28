@@ -321,6 +321,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
             writer.close();
         }
         catch ( IOException e ) {
+            e.printStackTrace();
             throw new MojoExecutionException( "Problem writing filtered experiments file", e );
         }
     }
