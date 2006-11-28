@@ -3,14 +3,14 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>5</version>
+        <version>6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-dbutils</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-alpha-2-SNAPSHOT</version>
+    <version>1.0-beta-1-SNAPSHOT</version>
     <name>Intact DB Utils</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Utilities to help with the setup of new databases with the IntAct Schema</description>
@@ -47,9 +47,9 @@
             <version>1.1.1</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.intact.app</groupId>
+            <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>data-conversion</artifactId>
-            <version>1.5.0</version>
+            <version>1.5.1</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
