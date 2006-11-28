@@ -9,8 +9,6 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 
 import java.io.File;
 
@@ -25,11 +23,6 @@ public class ExperimentListGeneratorMojoTest extends AbstractMojoTestCase
 {
         public void testSimpleGeneration() throws Exception
         {
-            // update target species
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-            UpdateTargetSpecies.update(System.out, false);
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
             File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/experiment-list-generator-config.xml" );
 
             ExperimentListGeneratorMojo mojo = (ExperimentListGeneratorMojo) lookupMojo( "classification", pluginXmlFile );

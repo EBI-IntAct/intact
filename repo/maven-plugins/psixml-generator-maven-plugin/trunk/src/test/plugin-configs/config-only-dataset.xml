@@ -17,10 +17,13 @@
                     <overwrite>true</overwrite>
                     <experimentErrorFile>target/psixml-test-dataset/experiment-error.log</experimentErrorFile>
                     <negativeExperimentsFile>target/psixml-test-dataset/negative-experiments.log</negativeExperimentsFile>
+                    <filteredExperimentsFile>target/psixml-test-dataset/filtered-experiments.log</filteredExperimentsFile>
                     <invalidFilePrefix>invalid-xmls</invalidFilePrefix>
                     <reverseMappingFile>reverseMapping.txt</reverseMappingFile>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <zipXml>false</zipXml>
+
+                    <updateTargetSpecies>true</updateTargetSpecies>
 
                     <classifications>
                         <classification>
