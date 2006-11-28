@@ -103,7 +103,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         // configure the context
         IntactSession session = new StandaloneSession();
 
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PsiXmlGeneratorTest", hibernateConfig, session);
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PluginHibernateConfig", hibernateConfig, session);
         testConfig.initialize();
         IntactContext.initContext(testConfig, session);
 
