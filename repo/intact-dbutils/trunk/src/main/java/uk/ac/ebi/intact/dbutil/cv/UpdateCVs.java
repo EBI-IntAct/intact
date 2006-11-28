@@ -538,7 +538,7 @@ public class UpdateCVs {
      */
     public static CvObject getCvObject( Class clazz,
                                         String shortlabel, PrintStream output) throws IntactException {
-        return getCvObject( clazz, shortlabel, null );
+        return getCvObject( clazz, shortlabel, null, null );
     }
 
     public static CvObject getCvObject( Class clazz,
