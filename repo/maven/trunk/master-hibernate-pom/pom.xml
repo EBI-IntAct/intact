@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>2</version>
+        <version>4</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,13 +11,13 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>6-SNAPSHOT</version>
+    <version>6</version>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-3</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-3</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-3</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-6</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-6</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-6</url>
     </scm>
 
     <properties>
@@ -80,124 +80,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>ebi-test</id>
-            <properties>
-                <db>oracle</db>
-                <db.host>bourbon.ebi.ac.uk</db.host>
-                <db.port>1521</db.port>
-                <db.alias>d003</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-
-                <sessionFactoryName>SF_INTACT_TEST</sessionFactoryName>
-            </properties>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <configuration>
-                                <classifier>d003</classifier>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>ebi-prod</id>
-            <properties>
-                <db>oracle</db>
-                <db.host>cumae.ebi.ac.uk</db.host>
-                <db.port>1531</db.port>
-                <db.alias>zpro</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-
-                <sessionFactoryName>SF_INTACT_PROD</sessionFactoryName>
-
-                <lucene.index.directory>/ebi/sp/pro4/intact/lucene-index/prod/current</lucene.index.directory>
-            </properties>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <configuration>
-                                <classifier>zpro</classifier>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-
-        </profile>
-        <profile>
-            <id>ebi-pub</id>
-            <properties>
-                <db>oracle</db>
-                <db.host>swan.ebi.ac.uk</db.host>
-                <db.port>1521</db.port>
-                <db.alias>iweb</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-
-                <sessionFactoryName>SF_INTACT_PUB</sessionFactoryName>
-
-                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
-            </properties>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <configuration>
-                                <classifier>iweb</classifier>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-
-            </profile>
-        <profile>
-            <id>ebi-pub2</id>
-            <properties>
-                <db>oracle</db>
-                <db.host>bourbon.ebi.ac.uk</db.host>
-                <db.port>1571</db.port>
-                <db.alias>iweb2</db.alias>
-                <db.user>intactweb</db.user>
-                <db.password>reading</db.password>
-
-                <sessionFactoryName>SF_INTACT_PUB2</sessionFactoryName>
-
-                <lucene.index.directory>/ebi/sp/pro4/intact/public-tomcat/lucene-index</lucene.index.directory>
-            </properties>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-deploy-plugin</artifactId>
-                            <configuration>
-                                <classifier>iweb2</classifier>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-
-        </profile>
-
         <profile>
             <id>oracle</id>
             <activation>
@@ -287,47 +169,13 @@
                 </dependency>
             </dependencies>
         </profile>
-
-        <!-- This profiles enables the tests on the src/test-db folder -->
-        <profile>
-            <id>testdb</id>
-            <activation>
-                <property>
-                    <name>intact.test</name>
-                    <value>all</value>
-                </property>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>build-helper-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>add-source</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>add-test-source</goal>
-                                </goals>
-                                <configuration>
-                                    <sources>
-                                        <source>src/test-db/java</source>
-                                        <source>src/test-db/resource</source>
-                                    </sources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
 
     <dependencies>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.2.0.cr2</version>
+            <version>3.2.0.ga</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>
