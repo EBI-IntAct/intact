@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetP
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVs;
+import uk.ac.ebi.intact.dbutil.cv.UpdateCVsReport;
 import uk.ac.ebi.intact.util.UrlUtils;
 import uk.ac.ebi.intact.util.filter.UrlFilter;
 import uk.ac.ebi.intact.util.protein.BioSourceFactory;
@@ -36,10 +37,7 @@ import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.List;
 
@@ -56,27 +54,27 @@ public class DbUtils
     /**
      * Creates or updates the CvObjects in a database from a default intact.obo file included in this package
      */
-    public static void createOrUpdateCvObjects() throws PsiLoaderException, IOException
+    public static UpdateCVsReport createOrUpdateCvObjects(PrintStream output) throws PsiLoaderException, IOException
     {
-        createOrUpdateCvObjects(DbUtils.class.getResourceAsStream("intact.obo"));
+        return createOrUpdateCvObjects(DbUtils.class.getResourceAsStream("intact.obo"), output);
     }
 
     /**
      * Creates or updates the CvObjects in a database from the url provided
      * @param oboFileUrl a URL pointing to an OBO file
      */
-    public static void createOrUpdateCvObjects(URL oboFileUrl) throws PsiLoaderException, IOException
+    public static UpdateCVsReport createOrUpdateCvObjects(URL oboFileUrl, PrintStream output) throws PsiLoaderException, IOException
     {
-        createOrUpdateCvObjects(oboFileUrl.openStream());
+        return createOrUpdateCvObjects(oboFileUrl.openStream(), output);
     }
 
     /**
      * Creates or updates the CvObjects in a database from an input stream with OBO format
      * @param inputStream
      */
-    public static void createOrUpdateCvObjects(InputStream inputStream) throws PsiLoaderException, IOException
+    public static UpdateCVsReport createOrUpdateCvObjects(InputStream inputStream, PrintStream output) throws PsiLoaderException, IOException
     {
-        UpdateCVs.load(inputStream);
+        return UpdateCVs.load(inputStream, output);
     }
 
     public static void importPsi1Xml(URL psiXmlUrl) throws SAXException, IOException
