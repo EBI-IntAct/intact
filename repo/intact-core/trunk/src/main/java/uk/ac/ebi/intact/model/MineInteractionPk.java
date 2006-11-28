@@ -39,15 +39,20 @@ public class MineInteractionPk implements Serializable
     @ManyToOne
     @JoinColumn(name="protein2_ac")
     private ProteinImpl protein2;
+
+    @ManyToOne
+    @JoinColumn(name = "interaction_ac")
+    private InteractionImpl interaction;
     
     public MineInteractionPk()
     {
     }
 
-    public MineInteractionPk(ProteinImpl protein1, ProteinImpl protein2)
+    public MineInteractionPk(ProteinImpl protein1, ProteinImpl protein2, InteractionImpl interaction)
     {
         this.protein1 = protein1;
         this.protein2 = protein2;
+        this.interaction = interaction;
     }
     public ProteinImpl getProtein1()
     {
@@ -69,7 +74,17 @@ public class MineInteractionPk implements Serializable
         this.protein2 = protein2;
     }
 
-    @Override
+    public InteractionImpl getInteraction()
+    {
+        return interaction;
+    }
+
+    public void setInteraction(InteractionImpl interaction)
+    {
+        this.interaction = interaction;
+    }
+
+
     public boolean equals(Object o)
     {
         if (this == o)
@@ -91,16 +106,30 @@ public class MineInteractionPk implements Serializable
         {
             return false;
         }
+        if (interaction != null && that.getInteraction() != null)
+        {
+            if (interaction.getAc() == null && that.getInteraction().getAc() != null)
+            {
+                if (!interaction.getAc().equals(that.getInteraction().getAc()))
+                {
+                    return false;
+                }
+            }
+        }
+        if (interaction != null ? !interaction.equals(that.interaction) : that.interaction != null)
+        {
+            return false;
+        }
 
         return true;
     }
 
-    @Override
     public int hashCode()
     {
         int result;
         result = (protein1 != null ? protein1.hashCode() : 0);
         result = 31 * result + (protein2 != null ? protein2.hashCode() : 0);
+        result = 31 * result + (interaction != null ? interaction.hashCode() : 0);
         return result;
     }
 }
