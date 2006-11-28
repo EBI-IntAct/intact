@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.dbutil.cv;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.dbutil.cv.model.*;
 import uk.ac.ebi.intact.model.*;
@@ -350,16 +351,16 @@ public class UpdateCVs {
      *
      * @throws IntactException if something goes wrong
      */
-    public static List<CvTerm> listOrphanObsoleteTerms( IntactOntology ontology, PrintStream output) throws IntactException {
+    public static Collection<CvTerm> listOrphanObsoleteTerms( IntactOntology ontology, PrintStream output, UpdateCVsReport report) throws IntactException {
 
         output.println( "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
         output.println( "Updating Obsolete Terms" );
 
-        List missingTerms = new ArrayList();
+        List<CvTerm> missingTerms = new ArrayList<CvTerm>();
 
 
             // note: we don't create term that weren't existing in IntAct before if they are already obsolete in PSI
-            Collection obsoleteTerms = ontology.getObsoleteTerms();
+            Collection<CvTerm> obsoleteTerms = ontology.getObsoleteTerms();
 
             for ( Iterator iterator = obsoleteTerms.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
@@ -392,11 +393,13 @@ public class UpdateCVs {
             output.println( "WARN: ---------------------------------------------------------------------------------------" );
             for ( Iterator iterator = missingTerms.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
-                System.out.println( cvTerm.getId() + " - " + cvTerm.getShortName() );
+                output.println( cvTerm.getId() + " - " + cvTerm.getShortName() );
             }
         }
 
-        return missingTerms;
+        report.setMissingTerms(missingTerms);
+
+        return obsoleteTerms;
     }
 
     /**
@@ -575,13 +578,12 @@ public class UpdateCVs {
         // Search by MI
         CvObject cv = null;
 
-        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
-        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
 
         // if an MI is available, search using it
         if ( mi != null ) {
             output.println("Looking up term by mi: "+mi);
-            cv = cvObjectDao.getByXref(mi);
+            cv = cvContext.getByMiRef(clazz, mi);
         }
 
         // if not found by MI, then search by shortlabel
@@ -589,7 +591,7 @@ public class UpdateCVs {
             // Search by Name
             output.println("Not found. Now, looking up term by short label: "+shortlabel);
 
-            cv = cvObjectDao.getByShortLabel(shortlabel);
+            cv = cvContext.getByLabel(clazz, shortlabel);
         }
 
         // if still not found, then create it.
@@ -602,13 +604,14 @@ public class UpdateCVs {
 
                 // create a new object using refection
                 Constructor constructor = clazz.getConstructor( new Class[]{ Institution.class, String.class } );
-                cv = (CvObject) constructor.newInstance( institution, shortlabel );
+                cv = (CvObject) constructor.newInstance( IntactContext.getCurrentInstance().getInstitution(), shortlabel );
 
                 // by default add the shortLabel as fullName
                 cv.setFullName(defaultFullName);
 
                 // persist it
-                cvObjectDao.persist( cv );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                        .getCvObjectDao(clazz).persist( cv );
                 output.println( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + cv.getShortLabel() +" - "+cv.getFullName()+" )." );
 
                 // create MI Xref if necessary
@@ -636,7 +639,7 @@ public class UpdateCVs {
                                                                   output);
                     }
 
-                    CvObjectXref xref = new CvObjectXref( institution, psi, mi, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), psi, mi, null, null, identity );
 
                     cv.addXref( xref );
                     IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
@@ -1588,7 +1591,7 @@ public class UpdateCVs {
         update( ontology, output, report );
 
         // 2.6 Update obsolete terms
-        List<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output );
+        List<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output, report );
         report.setOrphanTerms(orphanTerms);
 
         if ( annotFile != null ) {

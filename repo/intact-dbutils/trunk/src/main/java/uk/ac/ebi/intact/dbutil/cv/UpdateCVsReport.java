@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.model.CvObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -32,9 +33,10 @@ import java.util.List;
 public class UpdateCVsReport implements Serializable
 {
     private IntactOntology ontology;
-    private List<CvTerm> orphanTerms;
-    private List<CvObject> updatedTerms;
-    private List<CvObject> createdTerms;
+    private Collection<CvTerm> orphanTerms;
+    private Collection<CvTerm> missingTerms;
+    private Collection<CvObject> updatedTerms;
+    private Collection<CvObject> createdTerms;
 
     public UpdateCVsReport()
     {
@@ -53,7 +55,7 @@ public class UpdateCVsReport implements Serializable
         this.ontology = ontology;
     }
 
-    public List<CvTerm> getOrphanTerms()
+    public Collection<CvTerm> getOrphanTerms()
     {
         return orphanTerms;
     }
@@ -63,7 +65,7 @@ public class UpdateCVsReport implements Serializable
         this.orphanTerms = orphanTerms;
     }
 
-    public List<CvObject> getUpdatedTerms()
+    public Collection<CvObject> getUpdatedTerms()
     {
         return updatedTerms;
     }
@@ -73,7 +75,7 @@ public class UpdateCVsReport implements Serializable
         this.updatedTerms = updatedTerms;
     }
 
-    public List<CvObject> getCreatedTerms()
+    public Collection<CvObject> getCreatedTerms()
     {
         return createdTerms;
     }
@@ -91,5 +93,15 @@ public class UpdateCVsReport implements Serializable
     public boolean addCreatedTerm(CvObject o)
     {
         return createdTerms.add(o);
+    }
+
+    public Collection<CvTerm> getMissingTerms()
+    {
+        return missingTerms;
+    }
+
+    public void setMissingTerms(List<CvTerm> missingTerms)
+    {
+        this.missingTerms = missingTerms;
     }
 }
