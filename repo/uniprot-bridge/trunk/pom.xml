@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>uniprot-bridge</artifactId>
-    <version>1.0-beta-1</version>
+    <version>1.0-beta-2-SNAPSHOT</version>
     <name>UniProtKB Bridge</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>UniProt Bridge, will allow IntAct to retreive protein objects.</description>
