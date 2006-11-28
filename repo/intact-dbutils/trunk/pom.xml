@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-dbutils</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-alpha-1</version>
+    <version>1.0-alpha-2-SNAPSHOT</version>
     <name>Intact DB Utils</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Utilities to help with the setup of new databases with the IntAct Schema</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/tags/intact-dbutils-1.0-alpha-1</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/tags/intact-dbutils-1.0-alpha-1</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-dbutils/tags/intact-dbutils-1.0-alpha-1</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-dbutils/trunk/</url>
     </scm>
 
     <build>
