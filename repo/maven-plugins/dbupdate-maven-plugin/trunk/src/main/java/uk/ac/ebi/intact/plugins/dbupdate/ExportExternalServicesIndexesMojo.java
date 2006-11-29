@@ -25,20 +25,20 @@ import java.io.IOException;
 public class ExportExternalServicesIndexesMojo extends UpdateAbstractMojo {
 
     /**
-     * @parameter default-value="${project.build.directory}/interactions.xml"
-     * @required
+     * Output file for interactions. If not specified, no export.
+     * @parameter
      */
     private File interactionFile;
 
     /**
-     * @parameter default-value="${project.build.directory}/interactors.xml"
-     * @required
+     * Output file for interactors. If not specified, no export.
+     * @parameter
      */
     private File interactorFile;
 
     /**
-     * @parameter default-value="${project.build.directory}/experiments.xml"
-     * @required
+     * Output file for experiments. If not specified, no export.
+     * @parameter
      */
     private File experimentFile;
 
@@ -53,22 +53,36 @@ public class ExportExternalServicesIndexesMojo extends UpdateAbstractMojo {
      */
     public void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
 
-        // prepare output files
-        MojoUtils.prepareFile(experimentFile, true, true);
-        MojoUtils.prepareFile(interactionFile, true, true);
-        MojoUtils.prepareFile(interactorFile, true, true);
-
+        IndexExporter exporter = null;
 
         // export experiments
-        IndexExporter exporter = new ExperimentIndexExporter( experimentFile, releaseVersion );
-        exporter.buildIndex();
+        if ( experimentFile != null ) {
+            MojoUtils.prepareFile( experimentFile, true, true );
+            System.out.println( "Start exporting experiments..." );
+            exporter = new ExperimentIndexExporter( experimentFile, releaseVersion );
+            exporter.buildIndex();
+        } else {
+            System.out.println( "No export of experiment required." );
+        }
 
         // export interactions
-        exporter = new InteractionIndexExporter( interactionFile, releaseVersion );
-        exporter.buildIndex();
+        if ( interactionFile != null ) {
+            MojoUtils.prepareFile( interactionFile, true, true );
+            System.out.println( "Start exporting interactions..." );
+            exporter = new InteractionIndexExporter( interactionFile, releaseVersion );
+            exporter.buildIndex();
+        } else {
+            System.out.println( "No export of interaction required." );
+        }
 
         // export interactors
-        exporter = new InteractorIndexExporter( interactorFile, releaseVersion );
-        exporter.buildIndex();
+        if ( interactorFile != null ) {
+            MojoUtils.prepareFile( interactorFile, true, true );
+            System.out.println( "Start exporting interactors..." );
+            exporter = new InteractorIndexExporter( interactorFile, releaseVersion );
+            exporter.buildIndex();
+        } else {
+            System.out.println( "No export of interactor required." );
+        }
     }
 }
