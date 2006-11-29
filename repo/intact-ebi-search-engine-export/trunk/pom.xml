@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-ebi-search-engine-export</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <description>Module allowing to export IntAct data in a format that can be used by EBI External Services to index
         our database content.
     </description>
@@ -97,10 +97,4 @@
             <url>${site.remote.basedir}/intact-ebi-search-engine-export</url>
         </site>
     </distributionManagement>
-
-  <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-ebi-search-engine-export-1.0</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-ebi-search-engine-export-1.0</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-ebi-search-engine-export-1.0</url>
-  </scm>
 </project>
