@@ -38,7 +38,7 @@ public abstract class UpdateAbstractMojo extends IntactHibernateMojo
     protected MavenProject project;
 
     /**
-     * @parameter expression="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     private File hibernateConfig;
