@@ -73,8 +73,9 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
 
         out.write( i + "<entry id=\"" + interaction.getAc() + "\">" + NEW_LINE );
         out.write( i + "<name>" + interaction.getShortLabel() + "</name>" + NEW_LINE );
-        out.write( i + "<description>" + interaction.getFullName() + "</description>" + NEW_LINE );
-
+        if ( interaction.getFullName() != null ) {
+            out.write( i + "<description>" + escapeXml( interaction.getFullName() ) + "</description>" + NEW_LINE );
+        }
         out.write( i + "<dates>" + NEW_LINE );
         writeCreationDate( out, interaction.getCreated(), i + INDENT );
         writeLastUpdateDate( out, interaction.getUpdated(), i + INDENT );
@@ -129,7 +130,8 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
 
         out.write( i + "<additional_fields>" + NEW_LINE );
         for ( Alias alias : interaction.getAliases() ) {
-            writeField( out, alias.getCvAliasType().getShortLabel(), alias.getName(), i + INDENT );
+            String aliasName = escapeXml( alias.getName() );
+            writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, i + INDENT );
         }
 
         // export Controlled vocabularies

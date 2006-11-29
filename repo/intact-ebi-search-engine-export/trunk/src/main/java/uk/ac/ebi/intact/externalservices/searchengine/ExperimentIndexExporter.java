@@ -96,8 +96,9 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
 
         out.write( i + "<entry id=\"" + experiment.getAc() + "\">" + NEW_LINE );
         out.write( i + "<name>" + experiment.getShortLabel() + "</name>" + NEW_LINE );
-        out.write( i + "<description>" + experiment.getFullName() + "</description>" + NEW_LINE );
-
+        if ( experiment.getFullName() != null ) {
+            out.write( i + "<description>" + escapeXml( experiment.getFullName() ) + "</description>" + NEW_LINE );
+        }
         out.write( i + "<dates>" + NEW_LINE );
         writeCreationDate( out, experiment.getCreated(), i + INDENT );
         writeLastUpdateDate( out, experiment.getUpdated(), i + INDENT );
@@ -144,7 +145,8 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
 
         out.write( i + "<additional_fields>" + NEW_LINE );
         for ( Alias alias : experiment.getAliases() ) {
-            writeField( out, alias.getCvAliasType().getShortLabel(), alias.getName(), i + INDENT );
+            String aliasName = escapeXml( alias.getName() );
+            writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, i + INDENT );
         }
 
         writeCvTerm( out, experiment.getCvInteraction(), i + INDENT );
