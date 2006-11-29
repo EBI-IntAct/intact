@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.externalservices.searchengine;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
@@ -29,7 +30,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
     protected static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "yyyy-MMM-dd" );
 
     public static final String INDENT = "  ";
-    public static final String NEW_LINE = System.getProperty( "line.separator" );
+    public static final String NEW_LINE = "\n"; // Unix style line return.
 
     private BufferedWriter writer;
     private File output;
@@ -61,6 +62,8 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
         }
 
         this.output = output;
+
+        this.release = release;
     }
 
     ////////////////////////
@@ -138,6 +141,10 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
         return psi;
     }
 
+    protected String escapeXml(String s) {
+        return StringEscapeUtils.escapeXml( s );
+    }
+
     ///////////////////////////
     // Writer helper
 
@@ -180,7 +187,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
         }
 
         String sl = cv.getShortLabel();
-        String fn = cv.getFullName();
+        String fn = escapeXml( cv.getFullName() );
 
         writeField( out, title, sl, indent );
 

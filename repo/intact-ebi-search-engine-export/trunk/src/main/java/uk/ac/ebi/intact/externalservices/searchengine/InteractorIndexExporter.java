@@ -64,7 +64,11 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         out.write( "<database>" + NEW_LINE );
         out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
         out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
-        out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+
+        if ( release != null ) {
+            out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+        }
+
         out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
         out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
     }
@@ -105,8 +109,9 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
 
         out.write( i + "<entry id=\"" + interactor.getAc() + "\">" + NEW_LINE );
         out.write( i + "<name>" + interactor.getShortLabel() + "</name>" + NEW_LINE );
-        out.write( i + "<description>" + interactor.getFullName() + "</description>" + NEW_LINE );
-
+        if ( interactor.getFullName() != null ) {
+            out.write( i + "<description>" + escapeXml( interactor.getFullName() ) + "</description>" + NEW_LINE );
+        }
         out.write( i + "<dates>" + NEW_LINE );
         writeCreationDate( out, interactor.getCreated(), i + INDENT );
         writeLastUpdateDate( out, interactor.getUpdated(), i + INDENT );
@@ -162,7 +167,8 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
 
         out.write( i + "<additional_fields>" + NEW_LINE );
         for ( Alias alias : interactor.getAliases() ) {
-            writeField( out, alias.getCvAliasType().getShortLabel(), alias.getName(), i + INDENT );
+            String aliasName = escapeXml( alias.getName() );
+            writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, i + INDENT );
         }
 
         Set<CvObject> cvs = new HashSet<CvObject>();
