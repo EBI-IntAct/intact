@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * Exports interactors for the EBI search engine.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -92,7 +92,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         return count;
     }
 
-    public void exportEntries( ) throws IOException {
+    public void exportEntries() throws IOException {
         exportSmallMolecule();
         exportPolymer();
     }
@@ -112,43 +112,49 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         writeLastUpdateDate( out, interactor.getUpdated(), i + INDENT );
         out.write( i + "</dates>" + NEW_LINE );
 
-        out.write( i + "<cross_references>" + NEW_LINE );
 
-        if ( !interactor.getXrefs().isEmpty() ) {
-            for ( Xref xref : interactor.getXrefs() ) {
+        boolean hasXrefs = !interactor.getXrefs().isEmpty();
+        boolean hasLinks = !interactor.getActiveInstances().isEmpty();
 
-                String db = xref.getCvDatabase().getShortLabel();
-                String id = xref.getPrimaryId();
-                writeRef( out, db, id, i + INDENT );
-            }
-        }
+        if ( hasXrefs || hasLinks ) {
+            out.write( i + "<cross_references>" + NEW_LINE );
 
-        // Add refs to interactions and experiments
-        if ( !interactor.getActiveInstances().isEmpty() ) {
+            if ( hasXrefs ) {
+                for ( Xref xref : interactor.getXrefs() ) {
 
-            Set<String> interactionAcs = new HashSet<String>( );
-            Set<String> experimentAcs = new HashSet<String>( );
-
-            for ( Component c : interactor.getActiveInstances() ) {
-
-                Interaction interaction = c.getInteraction();
-                interactionAcs.add( interaction.getAc() );
-
-                for ( Experiment experiment : interaction.getExperiments() ) {
-                    experimentAcs.add( experiment.getAc() );
+                    String db = xref.getCvDatabase().getShortLabel();
+                    String id = xref.getPrimaryId();
+                    writeRef( out, db, id, i + INDENT );
                 }
             }
 
-            for ( String ac : experimentAcs ) {
-                writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, i + INDENT );
+            // Add refs to interactions and experiments
+            if ( hasLinks ) {
+
+                Set<String> interactionAcs = new HashSet<String>();
+                Set<String> experimentAcs = new HashSet<String>();
+
+                for ( Component c : interactor.getActiveInstances() ) {
+
+                    Interaction interaction = c.getInteraction();
+                    interactionAcs.add( interaction.getAc() );
+
+                    for ( Experiment experiment : interaction.getExperiments() ) {
+                        experimentAcs.add( experiment.getAc() );
+                    }
+                }
+
+                for ( String ac : experimentAcs ) {
+                    writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, i + INDENT );
+                }
+
+                for ( String ac : interactionAcs ) {
+                    writeRef( out, InteractionIndexExporter.INDEX_NAME, ac, i + INDENT );
+                }
             }
 
-            for ( String ac : interactionAcs ) {
-                writeRef( out, InteractionIndexExporter.INDEX_NAME, ac, i + INDENT );
-            }
+            out.write( i + "</cross_references>" + NEW_LINE );
         }
-
-        out.write( i + "<cross_references>" + NEW_LINE );
 
         // TODO export Annotations
 
@@ -158,7 +164,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         for ( Alias alias : interactor.getAliases() ) {
             writeField( out, alias.getCvAliasType().getShortLabel(), alias.getName(), i + INDENT );
         }
-        
+
         Set<CvObject> cvs = new HashSet<CvObject>();
         for ( Component c : interactor.getActiveInstances() ) {
             Interaction interaction = c.getInteraction();

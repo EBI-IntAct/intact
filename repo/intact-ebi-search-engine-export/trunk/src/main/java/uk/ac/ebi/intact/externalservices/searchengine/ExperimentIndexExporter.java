@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * Exports experiments for the EBI search engine.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
@@ -76,7 +76,7 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
 
             List<Experiment> experiments = edao.getAll( current, CHUNK_SIZE );
             if ( log.isDebugEnabled() ) {
-                log.debug( "Exporting experiment range " + current + ".." + Math.min( count, current + CHUNK_SIZE ) + 
+                log.debug( "Exporting experiment range " + current + ".." + Math.min( count, current + CHUNK_SIZE ) +
                            " out of " + count );
             }
             for ( Experiment experiment : experiments ) {
@@ -103,35 +103,40 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
         writeLastUpdateDate( out, experiment.getUpdated(), i + INDENT );
         out.write( i + "</dates>" + NEW_LINE );
 
-        out.write( i + "<cross_references>" + NEW_LINE );
+        boolean hasXrefs = !experiment.getXrefs().isEmpty();
+        boolean hasLinks = !experiment.getInteractions().isEmpty();
 
-        if ( !experiment.getXrefs().isEmpty() ) {
-            for ( Xref xref : experiment.getXrefs() ) {
-                String db = xref.getCvDatabase().getShortLabel();
-                String id = xref.getPrimaryId();
-                writeRef( out, db, id, i + INDENT );
-            }
-        }
+        if ( hasXrefs || hasLinks ) {
+            out.write( i + "<cross_references>" + NEW_LINE );
 
-        // Add refs to interactions and experiments
-        if ( !experiment.getInteractions().isEmpty() ) {
-
-            Set<String> interactors = new HashSet<String>();
-
-            for ( Interaction interaction : experiment.getInteractions() ) {
-
-                writeRef( out, InteractionIndexExporter.INDEX_NAME, interaction.getAc(), i + INDENT );
-                for ( Component c : interaction.getActiveInstances() ) {
-                    interactors.add( c.getInteractor().getAc() ); // Build non redundant list
+            if ( hasXrefs ) {
+                for ( Xref xref : experiment.getXrefs() ) {
+                    String db = xref.getCvDatabase().getShortLabel();
+                    String id = xref.getPrimaryId();
+                    writeRef( out, db, id, i + INDENT );
                 }
             }
 
-            for ( String ac : interactors ) {
-                writeRef( out, InteractorIndexExporter.INDEX_NAME, ac, i + INDENT );
-            }
-        }
+            // Add refs to interactions and experiments
+            if ( hasLinks ) {
 
-        out.write( i + "<cross_references>" + NEW_LINE );
+                Set<String> interactors = new HashSet<String>();
+
+                for ( Interaction interaction : experiment.getInteractions() ) {
+
+                    writeRef( out, InteractionIndexExporter.INDEX_NAME, interaction.getAc(), i + INDENT );
+                    for ( Component c : interaction.getActiveInstances() ) {
+                        interactors.add( c.getInteractor().getAc() ); // Build non redundant list
+                    }
+                }
+
+                for ( String ac : interactors ) {
+                    writeRef( out, InteractorIndexExporter.INDEX_NAME, ac, i + INDENT );
+                }
+            }
+
+            out.write( i + "</cross_references>" + NEW_LINE );
+        }
 
         // TODO export Annotations ?
 
