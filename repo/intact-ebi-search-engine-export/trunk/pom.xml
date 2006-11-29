@@ -16,6 +16,12 @@
         our database content.
     </description>
 
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</developerConnection>
+        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-ebi-search-engine-export/trunk/</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
