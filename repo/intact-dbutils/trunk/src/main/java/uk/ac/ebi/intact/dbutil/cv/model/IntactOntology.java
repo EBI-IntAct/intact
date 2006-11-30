@@ -392,7 +392,7 @@ public class IntactOntology {
 
     private void print( CvTerm term, String indent, PrintStream ps ) {
 
-        System.out.println( indent + term.getId() + "   " + term.getShortName() + " (" + term.getFullName() + ")" );
+        ps.println( indent + term.getId() + "   " + term.getShortName() + " (" + term.getFullName() + ")" );
         for ( Iterator iterator = term.getChildren().iterator(); iterator.hasNext(); ) {
             CvTerm cvTerm = (CvTerm) iterator.next();
             print( cvTerm, indent + "  ", ps );
