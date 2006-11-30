@@ -74,7 +74,7 @@ public final class CvContext implements Serializable
 
         if (cvObject == null)
         {
-            throw new IllegalArgumentException("CvObject with this AC does not exist: " + ac);
+            return null;
         }
 
         putCv(cvObject);
@@ -105,7 +105,7 @@ public final class CvContext implements Serializable
 
         if (cvObject == null)
         {
-            throw new IllegalArgumentException("CvObject with this label does not exist: " + label);
+            return null;
         }
 
         putCv(cvObject);
@@ -136,7 +136,7 @@ public final class CvContext implements Serializable
 
         if (cvObject == null)
         {
-            throw new IllegalArgumentException("CvObject with this MI does not exist: " + miRef);
+            return null;
         }
 
         putCv(cvObject);
