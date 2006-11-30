@@ -32,14 +32,15 @@ import java.util.Collection;
 public class UpdateCVsReport implements Serializable
 {
     private IntactOntology ontology;
+    private Collection<CvTerm> obsoleteTerms;
     private Collection<CvTerm> orphanTerms;
-    private Collection<CvTerm> missingTerms;
     private Collection<CvObject> updatedTerms;
     private Collection<CvObject> createdTerms;
 
     public UpdateCVsReport()
     {
         this.orphanTerms = new ArrayList<CvTerm>();
+        this.obsoleteTerms = new ArrayList<CvTerm>();
         this.updatedTerms = new ArrayList<CvObject>();
         this.createdTerms = new ArrayList<CvObject>();
     }
@@ -94,13 +95,13 @@ public class UpdateCVsReport implements Serializable
         return createdTerms.add(o);
     }
 
-    public Collection<CvTerm> getMissingTerms()
+    public Collection<CvTerm> getObsoleteTerms()
     {
-        return missingTerms;
+        return obsoleteTerms;
     }
 
-    public void setMissingTerms(Collection<CvTerm> missingTerms)
+    public void setObsoleteTerms(Collection<CvTerm> obsoleteTerms)
     {
-        this.missingTerms = missingTerms;
+        this.obsoleteTerms = obsoleteTerms;
     }
 }
