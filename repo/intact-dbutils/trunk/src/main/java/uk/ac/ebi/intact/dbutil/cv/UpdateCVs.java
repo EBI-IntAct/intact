@@ -223,7 +223,7 @@ public class UpdateCVs {
                 }
 
                 // update its content
-                updateTerm( cvObject, cvTerm, output);
+                updateTerm( cvObject, cvTerm, output, report);
 
             } // end of update of the terms' content
 
@@ -399,7 +399,7 @@ public class UpdateCVs {
 
         report.setObsoleteTerms(missingTerms);
 
-        return missingTerms;
+        return obsoleteTerms;
     }
 
     /**
@@ -540,14 +540,14 @@ public class UpdateCVs {
      * @throws IllegalArgumentException if the class given is not a concrete type of CvObject (eg. CvDatabase)
      */
     public static CvObject getCvObject( Class clazz,
-                                        String shortlabel, PrintStream output) throws IntactException {
-        return getCvObject( clazz, shortlabel, null, output );
+                                        String shortlabel, PrintStream output, UpdateCVsReport report) throws IntactException {
+        return getCvObject( clazz, shortlabel, null, output, report );
     }
 
     public static CvObject getCvObject( Class clazz,
                                         String shortlabel,
-                                        String mi, PrintStream output) throws IntactException {
-        return getCvObject( clazz, shortlabel, mi, shortlabel, output);
+                                        String mi, PrintStream output, UpdateCVsReport report) throws IntactException {
+        return getCvObject( clazz, shortlabel, mi, shortlabel, output, report);
     }
 
     /**
@@ -568,7 +568,8 @@ public class UpdateCVs {
                                         String shortlabel,
                                         String mi,
                                         String defaultFullName,
-                                        PrintStream output) throws IntactException {
+                                        PrintStream output,
+                                        UpdateCVsReport report) throws IntactException {
 
         // Check that the given class is a CvObject or one if its sub-type.
         if ( !CvObject.class.isAssignableFrom( clazz ) ) {
@@ -614,6 +615,8 @@ public class UpdateCVs {
                         .getCvObjectDao(clazz).persist( cv );
                 output.println( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + cv.getShortLabel() +" - "+cv.getFullName()+" )." );
 
+                report.addCreatedTerm(cv);
+
                 // create MI Xref if necessary
                 if ( mi != null && mi.startsWith( "MI:" ) ) {
 
@@ -625,7 +628,7 @@ public class UpdateCVs {
                                                         CvDatabase.PSI_MI,
                                                         CvDatabase.PSI_MI_MI_REF,
                                                         CvDatabase.PSI_MI,
-                                                        output);
+                                                        output, report);
                     }
 
                     CvXrefQualifier identity = null;
@@ -636,7 +639,7 @@ public class UpdateCVs {
                                                                   CvXrefQualifier.IDENTITY,
                                                                   CvXrefQualifier.IDENTITY_MI_REF,
                                                                   "identical object",
-                                                                  output);
+                                                                  output, report);
                     }
 
                     CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), psi, mi, null, null, identity );
@@ -665,11 +668,11 @@ public class UpdateCVs {
      *
      * @throws IntactException
      */
-    private static Set loadUniqueCvTopics(PrintStream output) throws IntactException {
+    private static Set loadUniqueCvTopics(PrintStream output, UpdateCVsReport report) throws IntactException {
         Set uniqueTopic = new HashSet();
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.DEFINITION, output ));
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output ) );
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.XREF_VALIDATION_REGEXP, CvTopic.XREF_VALIDATION_REGEXP_MI_REF, output ) );
+        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.DEFINITION, output, report ));
+        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report ) );
+        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.XREF_VALIDATION_REGEXP, CvTopic.XREF_VALIDATION_REGEXP_MI_REF, output, report ) );
         return uniqueTopic;
     }
 
@@ -680,10 +683,10 @@ public class UpdateCVs {
      *
      * @throws IntactException
      */
-    private static Set loadUniqueCvXrefQualifiers( PrintStream output ) throws IntactException {
+    private static Set loadUniqueCvXrefQualifiers( PrintStream output, UpdateCVsReport report ) throws IntactException {
         Set uniqueQualifier = new HashSet();
-        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, output ) );
-        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output ) );
+        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, output, report ) );
+        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report ) );
         return uniqueQualifier;
     }
 
@@ -786,7 +789,9 @@ public class UpdateCVs {
      * @throws IntactException if error occur.
      */
     private static void updateTerm( CvObject cvObject,
-                                    CvTerm cvTerm, PrintStream output ) throws IntactException {
+                                    CvTerm cvTerm,
+                                    PrintStream output,
+                                    UpdateCVsReport report ) throws IntactException {
 
         // TODO unique items: Xref( database, identity ),
         // TODO               Xref( database, primary-reference ),
@@ -861,8 +866,8 @@ public class UpdateCVs {
         // Xref psi-mi/identity
         if ( ! hasIntactTermGotPsiIdentifier && hasPsiIdentifier ) {
             // the intact term doesn't have a PSI Xref although the CvTerm has one, add missing mi Xref.
-            CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output );
-            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output );
+            CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report );
+            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report );
 
             CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
             cvObject.addXref( xref );
@@ -875,8 +880,8 @@ public class UpdateCVs {
 
             // Search for other terms having that specific IA:xxxx, if we find any, we give them an other one.
             // the IA:xxxx coming from the file has priority
-            CvDatabase intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output );
-            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output );
+            CvDatabase intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report );
+            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report );
 
             Collection conflictingTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXrefLike(intact, identity, id);
 
@@ -916,13 +921,13 @@ public class UpdateCVs {
         }
 
         // Annotations
-        updateAnnotations(cvObject, cvTerm, output );
+        updateAnnotations(cvObject, cvTerm, output, report );
 
         // Xrefs
-        updateXrefs(cvObject, cvTerm, output );
+        updateXrefs(cvObject, cvTerm, output, report );
 
         // Aliases
-        updateAliases(cvObject, cvTerm, output );
+        updateAliases(cvObject, cvTerm, output, report );
     }
 
     /**
@@ -933,7 +938,7 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateAnnotations( CvObject cvObject, CvTerm cvTerm, PrintStream output ) throws IntactException {
+    private static void updateAnnotations( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report ) throws IntactException {
 
         // build a copy of the annotation list and add obsolete and definition (if any).
         List annotations = new ArrayList( cvTerm.getAnnotations() );
@@ -953,7 +958,7 @@ public class UpdateCVs {
             annotations.add( annot );
         }
 
-        Set uniqueCvTopics = loadUniqueCvTopics( output );
+        Set uniqueCvTopics = loadUniqueCvTopics( output, report );
 
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
@@ -962,7 +967,7 @@ public class UpdateCVs {
             CvTermAnnotation annotation = (CvTermAnnotation) iterator.next();
 
             // the term will be created if it doesn't exist yet.
-            CvTopic topic = (CvTopic) getCvObject(CvTopic.class, annotation.getTopic(), output );
+            CvTopic topic = (CvTopic) getCvObject(CvTopic.class, annotation.getTopic(), output, report );
 
             if ( topic != null ) {
 
@@ -1039,7 +1044,7 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateXrefs( CvObject cvObject, CvTerm cvTerm, PrintStream output ) throws IntactException {
+    private static void updateXrefs( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report ) throws IntactException {
 
         // Database Mapping PSI to IntAct
         Map dbMapping = new HashMap();
@@ -1056,13 +1061,13 @@ public class UpdateCVs {
 //        CvXrefQualifier goDefinitionRef = (CvXrefQualifier) getCvObject(CvXrefQualifier.class,
 //                                                                         CvXrefQualifier.GO_DEFINITION_REF,
 //                                                                         CvXrefQualifier.GO_DEFINITION_REF_MI_REF, output );
-        Set uniqueQualifiers = loadUniqueCvXrefQualifiers( output );
+        Set uniqueQualifiers = loadUniqueCvXrefQualifiers( output, report );
 
         for ( Iterator iterator = cvTerm.getXrefs().iterator(); iterator.hasNext(); ) {
             CvTermXref cvTermXref = (CvTermXref) iterator.next();
 
-            CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase(), output );
-            CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier(), output );
+            CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase(), output, report );
+            CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier(), output, report );
 
             CvObjectXref newXref = new CvObjectXref( institution, database, cvTermXref.getId(), null, null, qualifier );
 
@@ -1169,10 +1174,10 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateAliases( CvObject cvObject, CvTerm cvTerm, PrintStream output) throws IntactException {
+    private static void updateAliases( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report) throws IntactException {
 
         CvAliasType defaultAliasType = (CvAliasType) getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM,
-                                                                  CvAliasType.GO_SYNONYM_MI_REF, output );
+                                                                  CvAliasType.GO_SYNONYM_MI_REF, output, report );
 
         if ( defaultAliasType == null ) {
             throw new IllegalStateException( "Could not find " + CvAliasType.GO_SYNONYM + " in the IntAct node. Abort." );
@@ -1187,7 +1192,7 @@ public class UpdateCVs {
 
             if ( synonym.hasType() ) {
                 // if the synonym has a type, we use it instead of the default go-synonym.
-                specificType = (CvAliasType) getCvObject(CvAliasType.class, synonym.getType(), output );
+                specificType = (CvAliasType) getCvObject(CvAliasType.class, synonym.getType(), output, report );
                 if ( specificType == null ) {
                     output.println("Error: Could not find or create CvAliasType( '" + synonym.getType() + "' ). skip Alias update." );
                     output.println("Error: Use '" + defaultAliasType.getShortLabel() + "' instead." );
@@ -1278,46 +1283,46 @@ public class UpdateCVs {
      * @throws uk.ac.ebi.intact.business.IntactException
      *
      */
-    public static void createNecessaryCvTerms( PrintStream output ) throws IntactException {
+    public static void createNecessaryCvTerms( PrintStream output, UpdateCVsReport report ) throws IntactException {
 
         // Note, these object are being created is they don't exist yet. They are part
         // of psi-mi so they will be updated later.
 
         // CvXrefQualifier( identity )
-        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, "identical object", output );
+        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, "identical object", output, report );
 
         // CvDatabase( psi-mi )
-        psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output );
+        psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report );
 
         // CvDatabase( psi-mi )
-        intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output );
+        intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report );
 
         // CvDatabase( pubmed )
-        getCvObject(CvDatabase.class, CvDatabase.PUBMED, CvDatabase.PUBMED_MI_REF, output );
+        getCvObject(CvDatabase.class, CvDatabase.PUBMED, CvDatabase.PUBMED_MI_REF, output, report );
 
         // CvDatabase( go )
-        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF, "gene ontology definition reference", output );
+        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF, "gene ontology definition reference", output, report );
 
         // CvDatabase( so )
-        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF, "sequence ontology", output );
+        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF, "sequence ontology", output, report );
 
         // CvDatabase( resid )
-        getCvObject(CvDatabase.class, CvDatabase.RESID, CvDatabase.RESID_MI_REF, output );
+        getCvObject(CvDatabase.class, CvDatabase.RESID, CvDatabase.RESID_MI_REF, output, report );
 
         // CvXrefQualifier( go-definition-ref )
-        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF, output );
+        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF, output, report );
 
         // CvXrefQualifier( see-also )
-        getCvObject(CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO, CvXrefQualifier.SEE_ALSO_MI_REF, output );
+        getCvObject(CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO, CvXrefQualifier.SEE_ALSO_MI_REF, output, report );
 
         // CvAliasType( go synonym )
-        getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM, CvAliasType.GO_SYNONYM_MI_REF, output );
+        getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM, CvAliasType.GO_SYNONYM_MI_REF, output, report );
 
         // CvTopic( comment )
-        getCvObject(CvTopic.class, CvTopic.COMMENT, CvTopic.COMMENT_MI_REF, output );
+        getCvObject(CvTopic.class, CvTopic.COMMENT, CvTopic.COMMENT_MI_REF, output, report );
 
         // CvTopic( obsolete )
-        getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output );
+        getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report );
       
         //IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
@@ -1585,7 +1590,7 @@ public class UpdateCVs {
 //        }
 
         // 2.4 Create required vocabulary terms
-        createNecessaryCvTerms( output );
+        createNecessaryCvTerms( output, report );
 
         // 2.5 update the CVs
         update( ontology, output, report );
