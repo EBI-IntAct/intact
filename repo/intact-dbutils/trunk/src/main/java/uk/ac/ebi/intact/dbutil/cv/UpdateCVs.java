@@ -397,9 +397,9 @@ public class UpdateCVs {
             }
         }
 
-        report.setMissingTerms(missingTerms);
+        report.setObsoleteTerms(missingTerms);
 
-        return obsoleteTerms;
+        return missingTerms;
     }
 
     /**
