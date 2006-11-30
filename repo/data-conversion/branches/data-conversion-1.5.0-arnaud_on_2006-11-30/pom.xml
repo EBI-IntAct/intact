@@ -1,0 +1,95 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>5</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.util</groupId>
+    <artifactId>data-conversion</artifactId>
+    <packaging>jar</packaging>
+    <version>1.5.2-SNAPSHOT</version>
+    <name>Data conversions</name>
+    <description>Import/Exports from/to PSI files</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk/</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.plugins</groupId>
+                <artifactId>dbtest-maven-plugin</artifactId>
+                <version>1.0.3</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.templates</groupId>
+            <artifactId>h2db-with-cv</artifactId>
+            <version>1.3-20061123</version>
+            <type>zip</type>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>1.5.0-beta-5</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.app</groupId>
+            <artifactId>app-commons</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-proteins-update</artifactId>
+            <version>0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-cdb</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-dbutils</artifactId>
+            <version>1.0-alpha-1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repo -->
+    <repositories>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
