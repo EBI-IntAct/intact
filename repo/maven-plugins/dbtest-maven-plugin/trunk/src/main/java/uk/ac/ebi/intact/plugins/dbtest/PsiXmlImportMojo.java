@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.plugins.dbtest;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.hibernate.SessionFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.checker.ControlledVocabularyRepository;
@@ -46,7 +45,10 @@ import java.net.URL;
 
 /**
  * Import a psi xml into the database
+ * 
  * @goal import-psi
+ *
+ * @requiresDependencyResolution test
  *
  * @phase generate-test-resources
  */
@@ -70,7 +72,7 @@ public class PsiXmlImportMojo
     private MavenProject project;
 
     /**
-     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @parameter default-value="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     private File hibernateConfig;
@@ -137,9 +139,7 @@ public class PsiXmlImportMojo
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         // close the connection
-        // TODO to be replaced by  IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
-        SessionFactory sf = (SessionFactory) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getSessionFactory();
-        sf.close();
+        IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
     }
 
     private Imports defaultImports() throws IOException

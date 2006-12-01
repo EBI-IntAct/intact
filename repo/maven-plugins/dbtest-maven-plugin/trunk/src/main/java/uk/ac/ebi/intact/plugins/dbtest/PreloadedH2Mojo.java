@@ -36,6 +36,8 @@ import java.util.Set;
  * Gets an existing H2 database with all the CVs loaded
  * @goal h2-preload
  *
+ * @requiresDependencyResolution test
+ *
  * @phase generate-test-resources
  */
 public class PreloadedH2Mojo
@@ -75,6 +77,13 @@ public class PreloadedH2Mojo
      * @parameter default-value="test"
      */
     private String scope;
+
+    /**
+     * If true, don't preload the H2
+     * @parameter expression="${intact.h2preload.skip}" default-value="false"
+     */
+    private boolean skipPreload;
+
     private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 
 
@@ -110,6 +119,11 @@ public class PreloadedH2Mojo
 
             if (project != null)
                 helper.addTestResource(project, hibernateConfig.getParent(), includes, excludes);
+        }
+
+        if (skipPreload)
+        {
+            return;
         }
 
         // 2. Unzip and put the template database in the right place
@@ -163,7 +177,7 @@ public class PreloadedH2Mojo
                 "   <dependency>\n" +
                 "      <groupId>uk.ac.ebi.intact.templates</groupId>\n" +
                 "      <artifactId>h2db-with-cv</artifactId>\n" +
-                "      <version>20061115</version>\n" +
+                "      <version>1.3-20061130</version> (or newer)\n" +
                 "      <type>zip</type>\n" +
                 "   <dependency>\n\n");
     }
