@@ -33,6 +33,7 @@ public abstract class UpdateProteinsI {
     private static final Log logger = LogFactory.getLog(UpdateProteinsI.class);
 
     private final static String CV_TOPIC_SEARCH_URL_ASCII = "search-url-ascii";
+    private final static String CV_TOPIC_SEARCH_URL = "search-url";
 
     public static class UpdateException extends RuntimeException {
 
@@ -178,7 +179,8 @@ public abstract class UpdateProteinsI {
                 Annotation searchedAnnotation = null;
                 for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
                     Annotation annotation = iterator.next();
-                    if ( CV_TOPIC_SEARCH_URL_ASCII.equals( annotation.getCvTopic().getShortLabel() ) ) {
+                    String annotCvTopicLabel = annotation.getCvTopic().getShortLabel();
+                    if ( CV_TOPIC_SEARCH_URL.equals( annotCvTopicLabel ) || CV_TOPIC_SEARCH_URL_ASCII.equals( annotCvTopicLabel ) ) {
                         searchedAnnotation = annotation;
                     }
                 }
@@ -189,7 +191,7 @@ public abstract class UpdateProteinsI {
                         logger.info( "Found UniProt URL in the Uniprot CvDatabase: " + srsUrl );
                     }
                 } else {
-                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
+                    String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL + " or " + CV_TOPIC_SEARCH_URL_ASCII +
                                  " in the UNIPROT database";
                     if ( logger != null ) {
                         logger.error( msg );
@@ -335,7 +337,7 @@ public abstract class UpdateProteinsI {
      * @param current the object to which we add a new Xref
      * @param alias   the Alias to add to the AnnotatedObject
      */
-    public abstract boolean addNewAlias( AnnotatedObject current, final Alias alias );
+    public abstract boolean addNewAlias( AnnotatedObject current, final InteractorAlias alias );
 
     /**
      * Gives the count of created protein
