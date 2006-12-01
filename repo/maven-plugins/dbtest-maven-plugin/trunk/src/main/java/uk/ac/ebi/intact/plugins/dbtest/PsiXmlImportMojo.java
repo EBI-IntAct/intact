@@ -84,6 +84,12 @@ public class PsiXmlImportMojo
      */
     private Imports imports;
 
+     /**
+     * If true, don't preload the H2
+     * @parameter expression="${intact.h2preload.skip}" default-value="false"
+     */
+    private boolean skipPreload;
+
 
     protected void initializeHibernate() throws MojoExecutionException
     {
@@ -96,6 +102,10 @@ public class PsiXmlImportMojo
 
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
     {
+        if (skipPreload)
+        {
+            getLog().info("Skiping H2 Import");
+        }
 
         if (imports == null)
         {
