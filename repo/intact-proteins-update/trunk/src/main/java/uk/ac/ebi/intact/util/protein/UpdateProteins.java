@@ -22,10 +22,10 @@ import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.FeatureException;
+import uk.ac.ebi.interfaces.sptr.*;
 import uk.ac.ebi.sptr.flatfile.yasp.EntryIterator;
 import uk.ac.ebi.sptr.flatfile.yasp.YASP;
 import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
-import uk.ac.ebi.interfaces.sptr.*;
 
 import java.io.*;
 import java.net.URL;
@@ -1108,7 +1108,7 @@ public class UpdateProteins extends UpdateProteinsI {
     }
 
     @Override
-    public boolean addNewAlias( AnnotatedObject current, Alias alias ) {
+    public boolean addNewAlias( AnnotatedObject current, InteractorAlias alias ) {
         // Make sure the alias does not yet exist in the object
         Collection aliases = current.getAliases();
         for ( Iterator iterator = aliases.iterator(); iterator.hasNext(); ) {
@@ -1476,14 +1476,14 @@ public class UpdateProteins extends UpdateProteinsI {
         boolean updated = false;
         Collection currentAliases = protein.getAliases();
 
-        Collection<Alias> toDelete = CollectionUtils.subtract( currentAliases, newAliases ); // current minus new
-        Collection<Alias> toCreate = CollectionUtils.subtract( newAliases, currentAliases );
+        Collection<InteractorAlias> toDelete = CollectionUtils.subtract( currentAliases, newAliases ); // current minus new
+        Collection<InteractorAlias> toCreate = CollectionUtils.subtract( newAliases, currentAliases );
 
         Iterator toDeleteIterator = toDelete.iterator();
-        for ( Alias alias : toCreate ) {
+        for ( InteractorAlias alias : toCreate ) {
             if ( toDeleteIterator.hasNext() ) {
                 // in order to avoid wasting ACs, we overwrite attributes of an outdated xref.
-                Alias recycledAlias = (Alias) toDeleteIterator.next();
+                InteractorAlias recycledAlias = (InteractorAlias) toDeleteIterator.next();
 
                 // note: parent_ac was already set before as the object was persistent
                 recycledAlias.setName( alias.getName() );
@@ -2053,7 +2053,7 @@ public class UpdateProteins extends UpdateProteinsI {
         String[] isoSynonyms = isoform.getSynonyms();
         for ( int i = 0; i < isoSynonyms.length; i++ ) {
             String isoSynonym = isoSynonyms[ i ];
-            Alias alias = new InteractorAlias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
+            InteractorAlias alias = new InteractorAlias( myInstitution, spliceVariant, isoformSynonym, isoSynonym );
             addNewAlias( spliceVariant, alias );
         }
 

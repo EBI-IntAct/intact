@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.dbutil.deadproteins;
+package uk.ac.ebi.intact.util.deadproteins;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
