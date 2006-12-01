@@ -40,6 +40,13 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
      */
     private boolean dryRun;
 
+    /**
+     * Close the session factory after executing the plugin
+     *
+     * @parameter default-value="true"
+     */
+    private boolean closeSessionFactory;
+
     private boolean initialized;
 
     public void execute() throws MojoExecutionException, MojoFailureException
@@ -53,6 +60,14 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         catch (IOException e)
         {
             throw new MojoExecutionException("Problems executing Mojo", e);
+        }
+
+        IntactContext context = IntactContext.getCurrentInstance();
+        context.getDataContext().commitAllActiveTransactions();
+
+        if (closeSessionFactory)
+        {
+            context.getConfig().getDefaultDataConfig().closeSessionFactory();
         }
     }
 
