@@ -18,8 +18,12 @@ package uk.ac.ebi.intact.plugin.cv.obo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.h2.tools.Csv;
 
 import java.io.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
@@ -28,7 +32,11 @@ import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVsReport;
 import uk.ac.ebi.intact.dbutil.cv.model.CvTerm;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.CvContext;
 
 /**
  * Export an OBO file from the provided database in the hibernateConfig file
@@ -56,40 +64,48 @@ public class OboImportMojo
     private File hibernateConfig;
 
     /**
+     * Contains the CVs to upload in OBO format
      * @parameter expression="${intact.obo}"
      * @required
      */
     private File importedOboFile;
 
     /**
+     * Use this CSV formatted file to upload additional CVs.
+     * The file should follow the format "class","shortlabel","fullname"
+     * @parameter expression="${intact.additional}
+     */
+    private File additionalCsvFile;
+
+    /**
      * @parameter expression="${project.build.directory}/updatedTerms.txt"
-     * @required
      */
     private File updatedTermsFile;
 
     /**
      * @parameter expression="${project.build.directory}/createdTerms.txt"
-     * @required
      */
     private File createdTermsFile;
 
     /**
      * @parameter expression="${project.build.directory}/obsoleteTerms.txt"
-     * @required
      */
     private File obsoleteTermsFile;
 
     /**
      * @parameter expression="${project.build.directory}/orphanTerms.txt"
-     * @required
      */
     private File orphanTermsFile;
 
     /**
      * @parameter expression="${project.build.directory}/ontology.txt"
-     * @required
      */
     private File ontologyFile;
+
+    /**
+     * @parameter expression="${project.build.directory}/created-additional.txt"
+     */
+    private File additionalCreatedFile;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -101,6 +117,8 @@ public class OboImportMojo
         {
             throw new MojoExecutionException("OBO file to import does not exist: "+importedOboFile);
         }
+
+        getLog().info("Importing CVs from OBO: "+importedOboFile);
 
         UpdateCVsReport report = null;
 
@@ -122,6 +140,102 @@ public class OboImportMojo
         writeObsoleteTermsFile(report);
         writeOrphanTermsFile(report);
         writeOntologyFile(report);
+
+        if (additionalCsvFile != null)
+        {
+            getLog().info("Reading additional CVs from file: "+additionalCsvFile);
+
+            try
+            {
+                importAdditionalCVs();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                throw new MojoExecutionException("Exception importing additional CVs", e);
+            }
+        }
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+    }
+
+    private void importAdditionalCVs() throws IOException, SQLException
+    {
+        MojoUtils.prepareFile(additionalCreatedFile);
+        MojoUtils.writeStandardHeaderToFile("Additional terms created", "Terms created from CSV file: "+additionalCsvFile,
+                getProject(), additionalCreatedFile);
+        FileWriter writer = new FileWriter(additionalCreatedFile, true);
+
+        int created = 0;
+
+        ResultSet rs = Csv.read(additionalCsvFile.toString(), null, "utf-8");
+
+        List<CvObject> allCvs = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getCvObjectDao().getAll();
+
+        CvXrefQualifier identityXrefQual = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        CvDatabase intactDb = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
+
+        while (rs.next())
+        {
+            String objclass = rs.getString(1);
+            String shortLabel = rs.getString(2);
+            String fullName = rs.getString(3);
+
+            if (!containsCv(allCvs, objclass, shortLabel))
+            {
+                CvObject cv = null;
+                try
+                {
+                    cv = (CvObject) Class.forName(objclass).newInstance();
+                }
+                catch (Exception e)
+                {
+                    getLog().error("Couldn't create an instance of: "+objclass+ ", with label '"+shortLabel+"'");
+                    continue;
+                }
+
+                cv.setShortLabel(shortLabel);
+                cv.setFullName(fullName);
+                cv.setOwner(IntactContext.getCurrentInstance().getConfig().getInstitution());
+
+                CvObjectXref xref = new CvObjectXref(IntactContext.getCurrentInstance().getConfig().getInstitution(),
+                                                     intactDb,
+                                                     "IAX:"+System.currentTimeMillis(),
+                                                      identityXrefQual);
+
+                cv.addXref(xref);
+
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                        .getCvObjectDao().persist(cv);
+
+                writer.write("[CREATED]\t"+objclass+"\t"+shortLabel+NEW_LINE);
+                created++;
+            }
+            else
+            {
+                writer.write("[IGNORED]\t"+objclass+"\t"+shortLabel+NEW_LINE);
+            }
+        }
+
+        writer.write(NEW_LINE);
+        writer.write("# Total created: "+created+NEW_LINE);
+        writer.close();
+
+    }
+
+    private boolean containsCv(List<CvObject> cvList, String objclass, String shortlabel)
+    {
+        for (CvObject existingCv : cvList)
+        {
+            if (objclass.equals(existingCv.getObjClass())
+                    && shortlabel.equals(existingCv.getShortLabel()))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void writeUpdatedTermsFile(UpdateCVsReport report) throws IOException
