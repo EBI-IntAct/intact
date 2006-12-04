@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>dbupdate-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0-beta-1</version>
+    <version>1.0-beta-2-SNAPSHOT</version>
     <name>dbupdate-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/dbupdate-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbupdate-maven-plugin/tags/dbupdate-maven-plugin-1.0-beta-1</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbupdate-maven-plugin/tags/dbupdate-maven-plugin-1.0-beta-1</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/intact/repo/maven-plugins/dbupdate-maven-plugin/tags/dbupdate-maven-plugin-1.0-beta-1</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbupdate-maven-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/dbupdate-maven-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/intact/repo/maven-plugins/dbupdate-maven-plugin/trunk</url>
     </scm>
 
     <build>
