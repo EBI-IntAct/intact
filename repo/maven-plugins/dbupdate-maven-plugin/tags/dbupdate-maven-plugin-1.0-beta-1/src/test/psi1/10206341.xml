@@ -1,0 +1,489 @@
+   <entrySet level="1" version="1" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+     <entry>
+       <source releaseDate="2006-11-24">
+         <names>
+           <shortLabel>European Bioinformatics Institute</shortLabel>
+         </names>
+         <bibref>
+           <xref>
+             <primaryRef db="pubmed" id="14681455"/>
+           </xref>
+         </bibref>
+         <xref>
+           <primaryRef db="psi-mi" id="MI:0469"/>
+         </xref>
+         <attributeList>
+           <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+           <attribute name="url">http://www.ebi.ac.uk</attribute>
+         </attributeList>
+       </source>
+       <experimentList>
+         <experimentDescription id="EBI-922844">
+           <names>
+             <shortLabel>wunderlich-1999-1</shortLabel>
+             <fullName>Characterization of interactions of Nck with Sos and dynamin.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="10206341"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-922844" secondary="wunderlich-1999-1"/>
+             <secondaryRef db="newt" id="10116" secondary="rat"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="-1">
+             <names>
+               <shortLabel>in vitro</shortLabel>
+             </names>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>pull down</shortLabel>
+               <fullName>pull down</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0096"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="author-list">Wunderlich L., Farago A., Buday L.</attribute>
+             <attribute name="publication-year">1999</attribute>
+             <attribute name="contact-email">budai@puskin.sote.hu</attribute>
+             <attribute name="figure legend">fig 2, 4, 5</attribute>
+             <attribute name="journal">Cell. Signal. (0898-6568)</attribute>
+           </attributeList>
+         </experimentDescription>
+         <experimentDescription id="EBI-922975">
+           <names>
+             <shortLabel>wunderlich-1999-2</shortLabel>
+             <fullName>Characterization of interactions of Nck with Sos and dynamin.</fullName>
+           </names>
+           <bibref>
+             <xref>
+               <primaryRef db="pubmed" id="10206341"/>
+             </xref>
+           </bibref>
+           <xref>
+             <primaryRef db="intact" id="EBI-922975" secondary="wunderlich-1999-2"/>
+             <secondaryRef db="newt" id="9606" secondary="human"/>
+           </xref>
+           <hostOrganism ncbiTaxId="-1">
+             <names>
+               <shortLabel>in vitro</shortLabel>
+             </names>
+           </hostOrganism>
+           <interactionDetection>
+             <names>
+               <shortLabel>anti bait coip</shortLabel>
+               <fullName>anti bait coimmunoprecipitation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0006"/>
+               <secondaryRef db="pubmed" id="7708014"/>
+             </xref>
+           </interactionDetection>
+           <participantDetection>
+             <names>
+               <shortLabel>western blot</shortLabel>
+               <fullName>western blot</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0113"/>
+               <secondaryRef db="pubmed" id="14755292"/>
+             </xref>
+           </participantDetection>
+           <attributeList>
+             <attribute name="author-list">Wunderlich L., Farago A., Buday L.</attribute>
+             <attribute name="publication-year">1999</attribute>
+             <attribute name="contact-email">budai@puskin.sote.hu</attribute>
+             <attribute name="figure legend">fig 6</attribute>
+             <attribute name="journal">Cell. Signal. (0898-6568)</attribute>
+           </attributeList>
+         </experimentDescription>
+       </experimentList>
+       <interactorList>
+         <proteinInteractor id="EBI-389883">
+           <names>
+             <shortLabel>nck1_human</shortLabel>
+             <fullName>Cytoplasmic protein NCK1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P16333" secondary="nck1_human" version="SP_47"/>
+             <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+             <secondaryRef db="go" id="GO:0008093" secondary="F:cytoskeletal adaptor activit"/>
+             <secondaryRef db="go" id="GO:0005102" secondary="F:receptor binding"/>
+             <secondaryRef db="go" id="GO:0030159" secondary="F:receptor signaling complex s"/>
+             <secondaryRef db="go" id="GO:0030838" secondary="P:positive regulation of actin"/>
+             <secondaryRef db="go" id="GO:0042102" secondary="P:positive regulation of T-cel"/>
+             <secondaryRef db="go" id="GO:0007172" secondary="P:signal complex formation"/>
+             <secondaryRef db="go" id="GO:0042110" secondary="P:T-cell activation"/>
+             <secondaryRef db="interpro" id="IPR000980" secondary="SH2"/>
+             <secondaryRef db="interpro" id="IPR001452" secondary="SH3"/>
+             <secondaryRef db="interpro" id="IPR000108" secondary="Neu_cyt_fact_2"/>
+             <secondaryRef db="intact" id="EBI-389883" secondary="nck1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MAEEVVVVAKFDYVAQQEQELDIKKNERLWLLDDSKSWWRVRNSMNKTGFVPSNYVERKNSARKASIVKNLKDTLGIGKVKRKPSVPDSASPADDSFVDPGERLYDLNMPAYVKFNYMAEREDELSLIKGTKVIVMEKCSDGWWRGSYNGQVGWFPSNYVTEEGDSPLGDHVGSLSEKLAAVVNNLNTGQVLHVVQALYPFSSSNDEELNFEKGDVMDVIEKPENDPEWWKCRKINGMVGLVPKNYVTVMQNNPLTSGLEPSPPQCDYIRPSLTGKFAGNPWYYGKVTRHQAEMALNERGHEGDFLIRDSESSPNDFSVSLKAQGKNKHFKVQLKETVYCIGQRKFSTMEELVEHYKKAPIFTSEQGEKLYLVKHLS</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-297487">
+           <names>
+             <shortLabel>sos1_human</shortLabel>
+             <fullName>Son of sevenless protein homolog 1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q07889" secondary="sos1_human" version="SP_47"/>
+             <secondaryRef db="go" id="GO:0005088" secondary="F:Ras guanyl-nucleotide exchan"/>
+             <secondaryRef db="go" id="GO:0005100" secondary="F:Rho GTPase activator activit"/>
+             <secondaryRef db="go" id="GO:0005089" secondary="F:Rho guanyl-nucleotide exchan"/>
+             <secondaryRef db="go" id="GO:0007265" secondary="P:RAS protein signal transduct"/>
+             <secondaryRef db="interpro" id="IPR001331" secondary="GDS_CDC24"/>
+             <secondaryRef db="interpro" id="IPR007124" secondary="Hist_TAF"/>
+             <secondaryRef db="interpro" id="IPR001849" secondary="PH"/>
+             <secondaryRef db="interpro" id="IPR007125" secondary="Histone_core_D"/>
+             <secondaryRef db="interpro" id="IPR000651" secondary="RasGEFN"/>
+             <secondaryRef db="interpro" id="IPR001895" secondary="RasGRF_CDC25"/>
+             <secondaryRef db="interpro" id="IPR000219" secondary="RhoGEF"/>
+             <secondaryRef db="interpro" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="go" id="GO:0007165" secondary="P:signal transduction"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="reactome protein" id="Q07889"/>
+             <secondaryRef db="intact" id="EBI-297487" secondary="sos1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MQAQQLPYEFFSEENAPKWRGLLVPALKKVQGQVHPTLESNDDALQYVEELILQLLNMLCQAQPRSASDVEERVQKSFPHPIDKWAIADAQSAIEKRKRRNPLSLPVEKIHPLLKEVLGYKIDHQVSVYIVAVLEYISADILKLVGNYVRNIRHYEITKQDIKVAMCADKVLMDMFHQDVEDINILSLTDEEPSTSGEQTYYDLVKAFMAEIRQYIRELNLIIKVFREPFVSNSKLFSANDVENIFSRIVDIHELSVKLLGHIEDTVEMTDEGSPHPLVGSCFEDLAEELAFDPYESYARDILRPGFHDRFLSQLSKPGAALYLQSIGEGFKEAVQYVLPRLLLAPVYHCLHYFELLKQLEEKSEDQEDKECLKQAITALLNVQSGMEKICSKSLAKRRLSESACRFYSQQMKGKQLAIKKMNEIQKNIDGWEGKDIGQCCNEFIMEGTLTRVGAKHERHIFLFDGLMICCKSNHGQPRLPGASNAEYRLKEKFFMRKVQINDKDDTNEYKHAFEIILKDENSVIFSAKSAEEKNNWMAALISLQYRSTLERMLDVTMLQEEKEEQMRLPSADVYRFAEPDSEENIIFEENMQPKAGIPIIKAGTVIKLIERLTYHMYADPNFVRTFLTTYRSFCKPQELLSLIIERFEIPEPEPTEADRIAIENGDQPLSAELKRFRKEYIQPVQLRVLNVCRHWVEHHFYDFERDAYLLQRMEEFIGTVRGKAMKKWVESITKIIQRKKIARDNGPGHNITFQSSPPTVEWHISRPGHIETFDLLTLHPIEIARQLTLLESDLYRAVQPSELVGSVWTKEDKEINSPNLLKMIRHTTNLTLWFEKCIVETENLEERVAVVSRIIEILQVFQELNNFNGVLEVVSAMNSSPVYRLDHTFEQIPSRQKKILEEAHELSEDHYKKYLAKLRSINPPCVPFFGIYLTNILKTEEGNPEVLKRHGKELINFSKRRKVAEITGEIQQYQNQPYCLRVESDIKRFFENLNPMGNSMEKEFTDYLFNKSLEIEPRNPKPLPRFPKKYSYPLKSPGVRPSNPRPGTMRHPTPLQQEPRKISYSRIPESETESTASAPNSPRTPLTPPPASGASSTTDVCSVFDSDHSSPFHSSNDTVFIQVTLPHGPRSASVSSISLTKGTDEVPVPPPVPPRRRPESAPAESSPSKIMSKHLDSPPAIPPRQPTSKAYSPRYSISDRTSISDPPESPPLLPPREPVRTPDVFSSSPLHLQPPPLGKKSDHGNAFFPNSPSPFTPPPPQTPSPHGTRRHLPSPPLTQEVDLHSIAGPPVPPRQSTSQHIPKLPPKTYKREHTHPSMHRDGPPLLENAHSS</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-922895">
+           <names>
+             <shortLabel>q497a5_rat</shortLabel>
+             <fullName>Sos1 protein</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q497A5" secondary="q497a5_rat" version="TrEMBL_7"/>
+             <secondaryRef db="go" id="GO:0005085" secondary="F:guanyl-nucleotide exchange f"/>
+             <secondaryRef db="go" id="GO:0007264" secondary="P:small GTPase mediated signal"/>
+             <secondaryRef db="interpro" id="IPR001849" secondary="PH"/>
+             <secondaryRef db="interpro" id="IPR000651" secondary="RasGef_N"/>
+             <secondaryRef db="interpro" id="IPR001895" secondary="RasGRF_CDC25"/>
+             <secondaryRef db="intact" id="EBI-922895" secondary="q497a5_rat"/>
+           </xref>
+           <organism ncbiTaxId="10116">
+             <names>
+               <shortLabel>rat</shortLabel>
+               <fullName>Rattus norvegicus</fullName>
+             </names>
+           </organism>
+           <sequence>AFSQSAIKPGAALYLQSIGEGFKEAVQYVLPRLLLAPVYHCLHYFELLKQLEEKSEDQEDKECMKQAITALLNVQSGMEKICSKNLAKRRLSESACRFYSQQMKGKQLAIKKMNEIQKNIDGWEGKDIGQCCNEFIMEGTLTRVGAKHERHIFLFDGLMICCKSNHGQPRLPGASNAEYRLKEKFFMRKVQINDKDDTSEYKHAFEIILKDGNSVIFSAKSAEEKNNWMAALISLQYRSTLERMLDVTMLQEEKEEHMRLPSADVYRFAEPDSEENILFEENVQPKAGIPIIKAGTVVKLIERLTYHMYADPNFVRTFLTTYRSFCKPQELLNLLIERFEIPEPEPTEADRIAIENGDQPLSAELKRFRKEYIQPVQLRVLNVCRHWVEHHFYDFERDVDLLQRMEEFIGTVRGKAMKKWVESITKIIQRKKIARDNGPGHNITFQNSPPTVEWHISRPGHIETFDLLTLHPIEIARQLTLLESDLYRAVQPSELVGSVWTKEDKEINSPNLLKMIRHTTNLTLWFEKCIVETENLEERVAVVSRIIEILQVFQELNNFNGVLEVVSAMNSSPVYRLDHTFEQIPSRQKKKK</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-713135">
+           <names>
+             <shortLabel>dyn1_human</shortLabel>
+             <fullName>Dynamin-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="Q05193" secondary="dyn1_human" version="SP_49"/>
+             <secondaryRef db="go" id="GO:0003924" secondary="F:GTPase activity"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="go" id="GO:0006898" secondary="P:receptor mediated endocytosi"/>
+             <secondaryRef db="interpro" id="IPR001401" secondary="Dynamin"/>
+             <secondaryRef db="interpro" id="IPR000375" secondary="Dynamin_central"/>
+             <secondaryRef db="interpro" id="IPR003130" secondary="GED"/>
+             <secondaryRef db="interpro" id="IPR001849" secondary="PH"/>
+             <secondaryRef db="interpro" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="intact" id="EBI-713135" secondary="dyn1_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MGNRGMEDLIPLVNRLQDAFSAIGQNADLDLPQIAVVGGQSAGKSSVLENFVGRDFLPRGSGIVTRRPLVLQLVNATTEYAEFLHCKGKKFTDFEEVRLEIEAETDRVTGTNKGISPVPINLRVYSPHVLNLTLVDLPGMTKVPVGDQPPDIEFQIRDMLMQFVTKENCLILAVSPANSDLANSDALKVAKEVDPQGQRTIGVITKLDLMDEGTDARDVLENKLLPLRRGYIGVVNRSQKDIDGKKDITAALAAERKFFLSHPSYRHLADRMGTPYLQKVLNQQLTNHIRDTLPGLRNKLQSQLLSIEKEVEEYKNFRPDDPARKTKALLQMVQQFAVDFEKRIEGSGDQIDTYELSGGARINRIFHERFPFELVKMEFDEKELRREISYAIKNIHGIRTGLFTPDMAFETIVKKQVKKIREPCLKCVDMVISELISTVRQCTKKLQQYPRLREEMERIVTTHIREREGRTKEQVMLLIDIELAYMNTNHEDFIGFANAQQRSNQMNKKKTSGNQDEILVIRKGWLTINNIGIMKGGSKEYWFVLTAENLSWYKDDEEKEKKYMLSVDNLKLRDVEKGFMSSKHIFALFNTEQRNVYKDYRQLELACETQEEVDSWKASFLRAGVYPERVGDKEKASETEENGSDSFMHSMDPQLERQVETIRNLVDSYMAIVNKTVRDLMPKTIMHLMINNTKEFIFSELLANLYSCGDQNTLMEESAEQAQRRDEMLRMYHALKEALSIIGNINTTTVSTPMPPPVDDSWLQVQSVPAGRRSPTSSPTPQRRAPAVPPARPGSRGPAPGPPPAGSALGGAPPVPSRPGASPDPFGPPPQVPSRPNRAPPGVPSRSGQASPSRPESPRPPFDL</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-80070">
+           <names>
+             <shortLabel>dyn1_rat</shortLabel>
+             <fullName>Dynamin-1</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P21575" secondary="dyn1_rat" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR011993" secondary="PH_type"/>
+             <secondaryRef db="go" id="GO:0006898" secondary="P:receptor mediated endocytosi"/>
+             <secondaryRef db="go" id="GO:0042802" secondary="F:protein self binding"/>
+             <secondaryRef db="interpro" id="IPR001401" secondary="Dynamin"/>
+             <secondaryRef db="interpro" id="IPR000375" secondary="Dynamin_central"/>
+             <secondaryRef db="interpro" id="IPR003130" secondary="GED"/>
+             <secondaryRef db="interpro" id="IPR001849" secondary="PH"/>
+             <secondaryRef db="intact" id="EBI-80070" secondary="dyn1_rat"/>
+           </xref>
+           <organism ncbiTaxId="10116">
+             <names>
+               <shortLabel>rat</shortLabel>
+               <fullName>Rattus norvegicus</fullName>
+             </names>
+           </organism>
+           <sequence>MGNRGMEDLIPLVNRLQDAFSAIGQNADLDLPQIAVVGGQSAGKSSVLENFVGRDFLPRGSGIVTRRPLVLQLVNSTTEYAEFLHCKGKKFTDFEEVRLEIEAETDRVTGTNKGISPVPINLRVYSPHVLNLTLVDLPGMTKVPVGDQPPDIEFQIRDMLMQFVTKENCLILAVSPANSDLANSDALKIAKEVDPQGQRTIGVITKLDLMDEGTDARDVLENKLLPLRRGYIGVVNRSQKDIDGKKDITAALAAERKFFLSHPSYRHLADRMGTPYLQKVLNQQLTNHIRDTLPGLRNKLQSQLLSIEKEVDEYKNFRPDDPARKTKALLQMVQQFAVDFEKRIEGSGDQIDTYELSGGARINRIFHERFPFELVKMEFDEKELRREISYAIKNIHGIRTGLFTPDLAFEATVKKQVQKLKEPSIKCVDMVVSELTSTIRKCSEKLQQYPRLREEMERIVTTHIREREGRTKEQVMLLIDIELAYMNTNHEDFIGFANAQQRSNQMNKKKTSGNQDEILVIRKGWLTINNIGIMKGGSKEYWFVLTAENLSWYKDDEEKEKKYMLSVDNLKLRDVEKGFMSSKHIFALFNTEQRNVYKDYRQLELACETQEEVDSWKASFLRAGVYPERVGDKEKASETEENGSDSFMHSMDPQLERQVETIRNLVDSYMAIVNKTVRDLMPKTIMHLMINNTKEFIFSELLANLYSCGDQNTLMEESAEQAQRRDEMLRMYHALKEALSIIGDINTTTVSTPMPPPVDDSWLQVQSVPAGRRSPTSSPTPQRRAPAVPPARPGSRGPAPGPPPAGSALGGAPPVPSRPGASPDPFGPPPQVPSRPNRAPPGVPRITISDP</sequence>
+         </proteinInteractor>
+         <proteinInteractor id="EBI-401755">
+           <names>
+             <shortLabel>grb2_human</shortLabel>
+             <fullName>Growth factor receptor-bound protein 2</fullName>
+           </names>
+           <xref>
+             <primaryRef db="uniprotkb" id="P62993" secondary="grb2_human" version="SP_48"/>
+             <secondaryRef db="interpro" id="IPR000108" secondary="Neu_cyt_fact_2"/>
+             <secondaryRef db="interpro" id="IPR000980" secondary="SH2"/>
+             <secondaryRef db="interpro" id="IPR001452" secondary="SH3"/>
+             <secondaryRef db="reactome protein" id="P62993"/>
+             <secondaryRef db="uniprotkb" id="P29354" secondary="grb2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q14450" secondary="grb2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q63057" secondary="grb2_human" version="SP_48"/>
+             <secondaryRef db="uniprotkb" id="Q63059" secondary="grb2_human" version="SP_48"/>
+             <secondaryRef db="go" id="GO:0005154" secondary="F:epidermal growth factor rece"/>
+             <secondaryRef db="go" id="GO:0005070" secondary="F:SH3/SH2 adaptor activity"/>
+             <secondaryRef db="go" id="GO:0007267" secondary="P:cell-cell signaling"/>
+             <secondaryRef db="go" id="GO:0007173" secondary="P:epidermal growth factor rece"/>
+             <secondaryRef db="go" id="GO:0007265" secondary="P:Ras protein signal transduct"/>
+             <secondaryRef db="go" id="GO:0005829" secondary="C:cytosol"/>
+             <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+             <secondaryRef db="intact" id="EBI-401755" secondary="grb2_human"/>
+           </xref>
+           <organism ncbiTaxId="9606">
+             <names>
+               <shortLabel>human</shortLabel>
+               <fullName>Homo sapiens</fullName>
+             </names>
+           </organism>
+           <sequence>MEAIAKYDFKATADDELSFKRGDILKVLNEECDQNWYKAELNGKDGFIPKNYIEMKPHPWFFGKIPRAKAEEMLSKQRHDGAFLIRESESAPGDFSLSVKFGNDVQHFKVLRDGAGKYFLWVVKFNSLNELVDYHRSTSVSRNQQIFLRDIEQVPQQPTYVQALFDFDPQEDGELGFRRGDFIHVMDNSDPNWWKGACHGQTGMFPRNYVTPVNRNV</sequence>
+         </proteinInteractor>
+       </interactorList>
+       <interactionList>
+         <interaction>
+           <names>
+             <shortLabel>nck-sos1-1</shortLabel>
+             <fullName>Pull-down in a leukemia cell line: bait = nck SH3 domain 3, prey= sos1</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922844"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-389883"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-297487"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-922883" secondary="nck-sos1-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>nck-sos1-2</shortLabel>
+             <fullName>Pull-down in rat brain lysate : bait = human Nck SH3 domain 3, prey= rat sos1</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922844"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-389883"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-922895"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-922904" secondary="nck-sos1-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>nck-dnm1-2</shortLabel>
+             <fullName>Pull-down in a leukemia cell line: bait = nck SH3 domain 3, prey= dynamin</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922844"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-389883"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-713135"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-922956" secondary="nck-dnm1-2"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>nck-dnm1-1</shortLabel>
+             <fullName>Pull-down in rat brain lysate: bait = nck SH3 domain 3, prey= dynamin</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922844"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-80070"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-389883"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-922964" secondary="nck-dnm1-1"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>nck-dnm1-3</shortLabel>
+             <fullName>Co-IP in a leukemia cell line: bait = Nck , prey= dynamin</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922975"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-389883"/>
+               <role>bait</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-713135"/>
+               <role>prey</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-922977" secondary="nck-dnm1-3"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+         <interaction>
+           <names>
+             <shortLabel>grb2-dnm1-4</shortLabel>
+             <fullName>Pull-down in a leukemia cell line: bait = GRB2, prey= dynamin</fullName>
+           </names>
+           <experimentList>
+             <experimentRef ref="EBI-922844"/>
+           </experimentList>
+           <participantList>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-713135"/>
+               <role>prey</role>
+             </proteinParticipant>
+             <proteinParticipant>
+               <proteinInteractorRef ref="EBI-401755"/>
+               <role>bait</role>
+             </proteinParticipant>
+           </participantList>
+           <interactionType>
+             <names>
+               <shortLabel>aggregation</shortLabel>
+               <fullName>aggregation</fullName>
+             </names>
+             <xref>
+               <primaryRef db="psi-mi" id="MI:0191"/>
+             </xref>
+           </interactionType>
+           <xref>
+             <primaryRef db="intact" id="EBI-923033" secondary="grb2-dnm1-4"/>
+           </xref>
+           <attributeList>
+             <attribute name="kd">0.0</attribute>
+           </attributeList>
+         </interaction>
+       </interactionList>
+     </entry>
+   </entrySet>
