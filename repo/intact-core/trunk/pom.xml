@@ -42,20 +42,7 @@
                 <plugin>
                     <groupId>uk.ac.ebi.intact.plugins</groupId>
                     <artifactId>dbtest-maven-plugin</artifactId>
-                    <version>1.1.0</version>
-                    
-                    <configuration>
-                        <imports>
-                            <xmlFilesets>
-                                <xmlFileset>
-                                    <version>1</version>
-                                    <urls>
-                                        <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml</url>
-                                    </urls>
-                                </xmlFileset>
-                            </xmlFilesets>
-                        </imports>
-                    </configuration>
+                    <version>1.1.1</version>
                 </plugin>
             </plugins>
         </build>
