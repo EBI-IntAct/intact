@@ -31,12 +31,11 @@ import uk.ac.ebi.intact.dbutil.cv.UpdateCVs;
 import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVsReport;
 import uk.ac.ebi.intact.dbutil.cv.model.CvTerm;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvObjectXref;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.CvContext;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.ook.model.implementation.TermBean;
 
 /**
  * Export an OBO file from the provided database in the hibernateConfig file
@@ -93,6 +92,11 @@ public class OboImportMojo
     private File obsoleteTermsFile;
 
     /**
+     * @parameter expression="${project.build.directory}/invalidTerms.txt"
+     */
+    private File invalidTermsFile;
+
+    /**
      * @parameter expression="${project.build.directory}/orphanTerms.txt"
      */
     private File orphanTermsFile;
@@ -103,9 +107,16 @@ public class OboImportMojo
     private File ontologyFile;
 
     /**
+     * File with additional CVs, in CSV format (objclass,shortlabel,fullname)
      * @parameter expression="${project.build.directory}/created-additional.txt"
      */
     private File additionalCreatedFile;
+
+    /**
+     * File with additional annotations, in CSV format (objclass,shortlabel,topic_shortlabel,description)
+     * @parameter expression="${intact.additional.annotations}"
+     */
+    private File additionalAnnotationsCsvFile;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -140,6 +151,7 @@ public class OboImportMojo
         writeObsoleteTermsFile(report);
         writeOrphanTermsFile(report);
         writeOntologyFile(report);
+        writeInvalidTermsFile(report);
 
         if (additionalCsvFile != null)
         {
@@ -153,6 +165,25 @@ public class OboImportMojo
             {
                 e.printStackTrace();
                 throw new MojoExecutionException("Exception importing additional CVs", e);
+            }
+        }
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        if (additionalAnnotationsCsvFile != null)
+        {
+             getLog().info("Reading additional annotations from file: "+additionalAnnotationsCsvFile);
+
+            try
+            {
+                importAdditionalAnnotations();
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                throw new MojoExecutionException("Exception importing additional annotations", e);
             }
         }
 
@@ -224,6 +255,52 @@ public class OboImportMojo
 
     }
 
+    private void importAdditionalAnnotations() throws IOException, SQLException
+    {
+        ResultSet rs = Csv.read(additionalAnnotationsCsvFile.toString(), null, "utf-8");
+
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
+
+        while (rs.next())
+        {
+            String objclass = rs.getString(1);
+            String shortLabel = rs.getString(2);
+            String topicLabel = rs.getString(3);
+            String description = rs.getString(4);
+
+            Class cvType = null;
+            try
+            {
+                cvType = Class.forName(objclass);
+            }
+            catch (Exception e)
+            {
+                getLog().error("Couldn't find: " + objclass + " in classpath");
+                continue;
+            }
+
+            CvObject cv = cvContext.getByLabel(cvType, shortLabel);
+
+            if (cv == null)
+            {
+                getLog().error("CVObject not found: " + objclass + ", with label '" + cvType + "'");
+                continue;
+            }
+
+            CvTopic cvTopic = cvContext.getByLabel(CvTopic.class, topicLabel);
+
+            Annotation annot = new Annotation(IntactContext.getCurrentInstance().getConfig().getInstitution(),
+                                            cvTopic, description);
+
+            cv.addAnnotation(annot);
+
+            DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+
+            daoFactory.getAnnotationDao().persist(annot);
+            daoFactory.getCvObjectDao().update(cv);
+        }
+    }
+
     private boolean containsCv(List<CvObject> cvList, String objclass, String shortlabel)
     {
         for (CvObject existingCv : cvList)
@@ -285,6 +362,23 @@ public class OboImportMojo
         for (CvTerm cv : report.getObsoleteTerms())
         {
             writer.write(cv.getId()+"\t"+cv.getShortName()+NEW_LINE);
+        }
+
+        writer.close();
+    }
+
+    private void writeInvalidTermsFile(UpdateCVsReport report) throws IOException
+    {
+        MojoUtils.prepareFile(invalidTermsFile);
+        MojoUtils.writeStandardHeaderToFile("Invalid terms", "Invalid terms\"", getProject(), invalidTermsFile);
+
+        Writer writer = new FileWriter(invalidTermsFile, true);
+
+        writer.write("# Terms: "+report.getOntology().getInvalidTerms().size()+NEW_LINE+NEW_LINE);
+
+        for (TermBean term : report.getOntology().getInvalidTerms())
+        {
+            writer.write(term.getIdentifier()+"\t"+term.getName()+NEW_LINE);
         }
 
         writer.close();
@@ -363,5 +457,35 @@ public class OboImportMojo
     public File getOntologyFile()
     {
         return ontologyFile;
+    }
+
+    public File getAdditionalCsvFile()
+    {
+        return additionalCsvFile;
+    }
+
+    public void setAdditionalCsvFile(File additionalCsvFile)
+    {
+        this.additionalCsvFile = additionalCsvFile;
+    }
+
+    public File getInvalidTermsFile()
+    {
+        return invalidTermsFile;
+    }
+
+    public void setInvalidTermsFile(File invalidTermsFile)
+    {
+        this.invalidTermsFile = invalidTermsFile;
+    }
+
+    public File getAdditionalCreatedFile()
+    {
+        return additionalCreatedFile;
+    }
+
+    public void setAdditionalCreatedFile(File additionalCreatedFile)
+    {
+        this.additionalCreatedFile = additionalCreatedFile;
     }
 }
