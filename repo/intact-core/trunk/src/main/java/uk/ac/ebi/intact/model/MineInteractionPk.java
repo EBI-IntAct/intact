@@ -21,8 +21,7 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 /**
- * Primary key for the searchItem entity. With the same fields as SearchItem as all fields are part
- * of the composite pk
+ * Primary key for the mineInteraction entity
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

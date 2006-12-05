@@ -115,7 +115,7 @@ public final class CvContext implements Serializable
 
     public <T extends CvObject> T getByMiRef(Class<T> cvType, String miRef)
     {
-        return (T) getByMiRef(cvType, miRef, false);
+        return getByMiRef(cvType, miRef, false);
     }
 
     public <T extends CvObject> T getByMiRef(Class<T> cvType, String miRef, boolean forceReload)
