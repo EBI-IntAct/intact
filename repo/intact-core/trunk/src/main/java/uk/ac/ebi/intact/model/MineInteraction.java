@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /**
  * Interactions for MiNe
@@ -27,7 +28,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table (name = "ia_interactions")
-public class MineInteraction
+public class MineInteraction implements Serializable
 {
     @EmbeddedId
     private MineInteractionPk pk;
