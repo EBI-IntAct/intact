@@ -75,21 +75,21 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
 
         Date now = new Date();
 
-        IntactObject intactObject = (IntactObject) preUpdateEvent.getEntity();
-        intactObject.setUpdated(now);
+        Auditable auditable = (Auditable) preUpdateEvent.getEntity();
+        auditable.setUpdated(now);
 
         String currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId().toUpperCase();
-        intactObject.setUpdator(currentUser);
+        auditable.setUpdator(currentUser);
 
         // there are cases where and object is created and updated within the same session
         // in those cases, when update the value of creator is lost and we put it again here
         // if that happens
-        boolean updateCreationInfo = intactObject.getCreator() == null;
+        boolean updateCreationInfo = auditable.getCreator() == null;
 
         if (updateCreationInfo)
         {
-            intactObject.setCreated(now);
-            intactObject.setUpdated(now);
+            auditable.setCreated(now);
+            auditable.setUpdated(now);
 
             if (log.isWarnEnabled())
             {
@@ -116,14 +116,14 @@ public class IntactObjectEventListener implements PreInsertEventListener, PreUpd
             if (names[i].equals("creator"))
             {
                 if(values[i] == null){
-                    values[i] = intactObject.getCreator();
+                    values[i] = auditable.getCreator();
                 }
                 continue;
             }
              if (names[i].equals("created"))
             {
                 if(values[i] == null){
-                    values[i] = intactObject.getCreated();
+                    values[i] = auditable.getCreated();
                 }
             }
         }
