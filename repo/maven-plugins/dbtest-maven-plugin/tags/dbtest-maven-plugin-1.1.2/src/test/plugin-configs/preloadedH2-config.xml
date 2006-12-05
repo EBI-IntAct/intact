@@ -1,0 +1,14 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>dbtest-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <dbPath>target/test-db/mydb</dbPath>
+                    <scope>test</scope>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
