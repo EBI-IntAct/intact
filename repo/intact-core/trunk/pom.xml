@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-core</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.0-beta-8-SNAPSHOT</version>
+    <version>1.5.0-beta-8</version>
     <name>Intact Core</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Core, which contains the base classes for all intact artifacts</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-8</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-core/tags/intact-core-1.5.0-beta-8</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/tags/intact-core-1.5.0-beta-8</url>
     </scm>
                          
     <properties>
