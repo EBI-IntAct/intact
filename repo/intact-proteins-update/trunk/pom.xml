@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-proteins-update</artifactId>
     <packaging>jar</packaging>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <name>intact-proteins-update Module</name>
     <description>Module for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-proteins-update</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-proteins-update/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-proteins-update/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-proteins-update/trunk</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-proteins-update/tags/intact-proteins-update-1.1.1</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-proteins-update/tags/intact-proteins-update-1.1.1</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-proteins-update/tags/intact-proteins-update-1.1.1</url>
     </scm>
 
     <properties>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-8-SNAPSHOT</version>
+            <version>1.5.0-beta-8</version>
         </dependency>
         <!--
         <dependency>
