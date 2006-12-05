@@ -44,6 +44,8 @@ public abstract class DataConversionAbstractTest extends TestCase
     {
         super.setUp();
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         if (!prepared)
         {
             // update target species

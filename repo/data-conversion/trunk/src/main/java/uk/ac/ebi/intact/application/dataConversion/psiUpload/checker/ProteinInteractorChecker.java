@@ -185,9 +185,8 @@ public final class ProteinInteractorChecker {
             System.out.println( "\ngetIntactObject(" + id + ", " + taxid + ")" );
         }
 
-        // TODO search by MI reference
-        CvDatabase uniprot = XrefChecker.getCvDatabase( CvDatabase.UNIPROT );
-        CvXrefQualifier identity = ControlledVocabularyRepository.getIdentityQualifier();
+        CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
 
         if ( isSpliceVariant( id ) ) {
             if ( DEBUG ) {

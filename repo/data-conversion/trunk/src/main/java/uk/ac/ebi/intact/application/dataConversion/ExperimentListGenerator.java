@@ -132,7 +132,7 @@ public class ExperimentListGenerator {
     private Map<String, String> experimentsWithErrors = new HashMap<String, String>();
 
     public ExperimentListGenerator() {
-        this( "%" );
+        this( "%", System.out );
     }
 
     public ExperimentListGenerator(PrintStream output) {
@@ -140,7 +140,7 @@ public class ExperimentListGenerator {
     }
 
     public ExperimentListGenerator( String searchPattern ) {
-        this.searchPattern = searchPattern;
+        this(searchPattern, System.out);
     }
 
     public ExperimentListGenerator( String searchPattern, PrintStream output ) {
