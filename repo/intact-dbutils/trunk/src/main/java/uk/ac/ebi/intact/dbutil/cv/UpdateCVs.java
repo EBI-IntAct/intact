@@ -128,15 +128,19 @@ public class UpdateCVs {
 
             ///////////////////////////////////////////////////////
             // 1. Indexing of the IntAct terms by MI number
-            Map intactIndex = new HashMap( intactTerms.size() );
+
+        output.println("\nIndexing of the IntAct terms by MI number");
+
+            List<Mi2Cv> intactIndex = new ArrayList<Mi2Cv>( intactTerms.size() );
             for ( CvObject cvObject : intactTerms ) {
                 String psi = getPsiId( cvObject );
 
                 // Bear in mind that only CV that already exists are indexed here, newly created ones will be indexed later.
                 if ( psi != null ) {
-                    intactIndex.put( psi, cvObject );
+                    intactIndex.add( new Mi2Cv(psi, cvObject));
+                    output.println("\tIndexed: "+psi+"\t"+cvObject.getShortLabel());
                 } else {
-                    output.println( "WARN: Could not index ( '" + cvObject.getShortLabel() + "' doesn't have an MI ID)." );
+                    output.println( "\tWARN: Could not index ( '" + cvObject.getShortLabel() + "' doesn't have an MI ID)." );
 
                     // search for an IntAct id
                     String ia = getIntactId( cvObject );
@@ -148,14 +152,14 @@ public class UpdateCVs {
                         //      It would be better to update all terms after the file has been loaded.
 
                         // add an IA:xxxx
-                        output.println( "WARN: Could not find an IntAct id (IA:xxxx), add a new one." );
+                        output.println( "\tWARN: Could not find an IntAct id (IA:xxxx), add a new one." );
                         try {
                             ia = SequenceManager.getNextId( );
 
                             CvObjectXref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
                             cvObject.addXref( xref );
                             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-                            output.println( "Added: " + xref + " to " );
+                            output.println( "\tAdded: " + xref + " to " );
                             output.println( "\t\t Created Xref( " + intact.getShortLabel() + ", " +
                                                 identity.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvObject.getShortLabel() + ")" );
 
@@ -169,61 +173,72 @@ public class UpdateCVs {
 
             ////////////////////////////////////////
             // 2. update of the terms' content
+        output.println("\nupdate of the terms' content");
+
             Collection oboTerms = ontology.getCvTerms( cvObjectClass );
-            output.println( "\t " + oboTerms.size() + " term(s) loaded from definition file." );
+            output.println( "\t " + oboTerms.size() + " term(s) for "+cvObjectClass+" loaded from definition file." );
             for ( Iterator iterator = oboTerms.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
-                CvObject cvObject = (CvObject) intactIndex.get( cvTerm.getId() );
 
-                output.println( "----------------------------------------------------------------------------------" );
-                if ( cvObject == null ) {
+                CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId() );
 
-                    CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
-
-                    String shortLabelName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
-
-                    if (!shortLabelName.equals(cvTerm.getShortName()))
+                    output.println("----------------------------------------------------------------------------------");
+                    if (cvObject == null)
                     {
-                        output.println( "WARN: Cv Term name trimmed: "+cvTerm.getShortName()+" - to "+shortLabelName);
-                    }
 
-                    // search by shortlabel
-                    cvObject = cvObjectDao.getByShortLabel(shortLabelName);
+                        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
 
-                    if ( cvObject == null ) {
-                        // could not find it, hence create it.
-                        try {
-                            // create a new object using reflection
-                            Constructor constructor =
-                                    cvObjectClass.getConstructor( new Class[]{ Institution.class, String.class } );
+                        String shortLabelName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
 
-                            cvObject = (CvObject)
-                                    constructor.newInstance( new Object[]{ institution, shortLabelName } );
-                            cvObject.setFullName(cvTerm.getFullName());
-                        } catch ( Exception e ) {
-                            e.printStackTrace();
-                            continue;
+                        if (!shortLabelName.equals(cvTerm.getShortName()))
+                        {
+                            output.println("WARN: Cv Term name trimmed: " + cvTerm.getShortName() + " - to " + shortLabelName);
                         }
 
-                        // persist it
-                        cvObjectDao.persist( cvObject );
-                        String className = getShortClassName( cvObject.getClass() );
-                        output.println( "\t Creating " + className + "( " + shortLabelName + " )" );
+                        // search by shortlabel
+                        cvObject = IntactContext.getCurrentInstance().getCvContext()
+                                    .getByLabel(cvObjectClass, shortLabelName);
 
-                        report.addCreatedTerm(cvObject);
+                        if (cvObject == null)
+                        {
+                            // could not find it, hence create it.
+                            try
+                            {
+                                // create a new object using reflection
+                                Constructor constructor =
+                                        cvObjectClass.getConstructor(new Class[]{Institution.class, String.class});
 
-                        // add that new term in the index
-                        intactIndex.put( cvTerm.getId(), cvObject );
+                                cvObject = (CvObject)
+                                        constructor.newInstance(new Object[]{institution, shortLabelName});
+                                cvObject.setFullName(cvTerm.getFullName());
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                                continue;
+                            }
+
+                            // persist it
+                            cvObjectDao.persist(cvObject);
+                            String className = getShortClassName(cvObject.getClass());
+                            output.println("\t Creating " + className + "( " + shortLabelName + " )");
+
+                            report.addCreatedTerm(cvObject);
+
+                            // add that new term in the index
+                            intactIndex.add(new Mi2Cv(cvTerm.getId(), cvObject));
+                        }
                     }
-                } else {
-                    String className = getShortClassName( cvObject.getClass() );
-                    output.println( "\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )" );
+                    else
+                    {
+                        String className = getShortClassName(cvObject.getClass());
+                        output.println("\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )");
 
-                    report.addUpdatedTerm(cvObject);
-                }
+                        report.addUpdatedTerm(cvObject);
+                    }
 
-                // update its content
-                updateTerm( cvObject, cvTerm, output, report);
+                    // update its content
+                    updateTerm(cvObject, cvTerm, output, report);
 
             } // end of update of the terms' content
 
@@ -236,66 +251,75 @@ public class UpdateCVs {
                 CvTerm cvTerm = (CvTerm) iterator.next();
 
                 // Get the IntAct equivalent from the index (it should have been either created or updated)
-                CvObject cvObject = (CvObject) intactIndex.get( cvTerm.getId() );
+                CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId());
 
-                if ( cvObject == null ) {
+                if (cvObject == null)
+                {
                     // that should never happen !! Exception
-                    output.println( "ERROR: Could not find " + cvTerm.getId() + " - " + cvTerm.getShortName() + ". skipping term." );
+                    output.println("ERROR: Could not find " + cvTerm.getId() + " - " + cvTerm.getShortName() + ". skipping term.");
                     continue;
                 }
 
                 // check that the term is a DAG (ie. CvDagObject), if not, skip the hierarchy update.
                 CvDagObject dagObject = null;
-                if ( cvObject instanceof CvDagObject ) {
+                if (cvObject instanceof CvDagObject)
+                {
                     dagObject = (CvDagObject) cvObject;
-                } else {
+                }
+                else
+                {
                     // we do not have heterogeneous collection here, we can stop the hierarchy update here.
-                    output.println( "ERROR: "+cvObject.getClass().getName() + " is not a DAG, skip hierarchy update." );
+                    output.println("ERROR: " + cvObject.getClass().getName() + " is not a DAG, skip hierarchy update.");
                     stopUpdate = true;
                     continue;
                 }
 
                 // keep in that collection the term that haven't been read yet from the obo definition
-                Collection allChildren = new ArrayList( dagObject.getChildren() );
+                Collection allChildren = new ArrayList(dagObject.getChildren());
 
                 // browse all direct children of the current term
-                for ( Iterator iterator2 = cvTerm.getChildren().iterator(); iterator2.hasNext(); ) {
+                for (Iterator iterator2 = cvTerm.getChildren().iterator(); iterator2.hasNext();)
+                {
                     CvTerm child = (CvTerm) iterator2.next();
 
                     // get corresponding IntAct child
-                    CvDagObject intactChild = (CvDagObject) intactIndex.get( child.getId() );
+                    CvDagObject intactChild = (CvDagObject) getCVWithMi(intactIndex, cvObjectClass, child.getId());
 
-                    if ( intactChild == null ) {
-                        output.println( "ERROR: Could not find Child term of " + cvTerm.getShortName() + "(" +
-                                            cvTerm.getId() + ") in the index (" + child.getId() + ")." );
+                    if (intactChild == null)
+                    {
+                        output.println("ERROR: Could not find Child term of " + cvTerm.getShortName() + "(" +
+                                cvTerm.getId() + ") in the index (" + child.getId() + ").");
                         continue;
                     }
 
                     // if the relationship doesn't exists, create it
-                    if ( ! dagObject.getChildren().contains( intactChild ) ) {
+                    if (!dagObject.getChildren().contains(intactChild))
+                    {
                         // add that relation
-                        dagObject.addChild( intactChild );
+                        dagObject.addChild(intactChild);
 
-                        output.println( "\t\t Adding Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
-                                            " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]" );
+                        output.println("\t\t Adding Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
+                                " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]");
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( dagObject );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist( intactChild );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(dagObject);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(intactChild);
                     }
 
-                    allChildren.remove( intactChild );
+                    allChildren.remove(intactChild);
                 }
 
                 // delete all relationships that were not described in the OBO file.
-                for ( Iterator iterator2 = allChildren.iterator(); iterator2.hasNext(); ) {
+                for (Iterator iterator2 = allChildren.iterator(); iterator2.hasNext();)
+                {
                     CvDagObject child = (CvDagObject) iterator2.next();
 
-                    try {
+                    try
+                    {
                         Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
                         Statement statement = connection.createStatement();
-                        statement.execute( "DELETE FROM ia_cv2cv " +
-                                           "WHERE parent_ac = '" + dagObject.getAc() + "' AND " +
-                                           "      child_ac = '" + child.getAc() + "'" );
+                        statement.execute("DELETE FROM ia_cv2cv " +
+                                "WHERE parent_ac = '" + dagObject.getAc() + "' AND " +
+                                "      child_ac = '" + child.getAc() + "'");
                         statement.close();
 
                         // BUG: when a CvFeatureType is used in the data, and we try to delete some relationship,
@@ -307,10 +331,12 @@ public class UpdateCVs {
 //                    helper.update( dagObject );
 //                    helper.update( child );
 
-                        output.println( "\t\t Removing Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
-                                            " ---child---> (" + child.getAc() + ") " + child.getShortLabel() + "]" );
+                        output.println("\t\t Removing Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
+                                " ---child---> (" + child.getAc() + ") " + child.getShortLabel() + "]");
 
-                    } catch ( SQLException e ) {
+                    }
+                    catch (SQLException e)
+                    {
                         e.printStackTrace();
                     }
                 }
@@ -329,12 +355,15 @@ public class UpdateCVs {
                     CvTerm rootTerm = (CvTerm) iterator.next();
 
                     // get the intact term
-                    CvObject root = (CvObject) intactIndex.get( rootTerm.getId() );
+                    CvObject root = getCVWithMi(intactIndex, cvObjectClass, rootTerm.getId());
 
-                    if ( root == null ) {
-                        output.println( "ERROR: the term " + rootTerm.getId() + " should have been found in IntAct." );
-                    } else {
-                        addUniqueAnnotation( root, hidden, "Root term deprecated during manual curation as too unspecific.", output);
+                    if (root == null)
+                    {
+                        output.println("ERROR: the term " + rootTerm.getId() + " should have been found in IntAct.");
+                    }
+                    else
+                    {
+                        addUniqueAnnotation(root, hidden, "Root term deprecated during manual curation as too unspecific.", output);
                     }
                 }
             }
@@ -1570,9 +1599,10 @@ public class UpdateCVs {
 
         /////////////////
         // 1. Parsing
+        output.println("Parsing OBO File...\n");
 
-        PSILoader psi = new PSILoader();
-        IntactOntology ontology = psi.parseOboFile( oboFile );
+        PSILoader psi = new PSILoader(output);
+        IntactOntology ontology = psi.parseOboFile( oboFile, output );
 
         report.setOntology(ontology);
 
@@ -1590,12 +1620,15 @@ public class UpdateCVs {
 //        }
 
         // 2.4 Create required vocabulary terms
+        output.println("\nCreating necessary vocabulary terms...\n");
         createNecessaryCvTerms( output, report );
 
         // 2.5 update the CVs
+        output.println("\nUpdating CVs...\n");
         update( ontology, output, report );
 
         // 2.6 Update obsolete terms
+        output.println("\nUpdating Obsolete terms...\n");
         Collection<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output, report );
         report.setOrphanTerms(orphanTerms);
 
@@ -1609,5 +1642,73 @@ public class UpdateCVs {
         }
 
         return report;
+    }
+
+    private static CvObject getCVWithMi(List<Mi2Cv> cvList, Class cvType, String mi)
+    {
+        for (Mi2Cv mi2cv : cvList)
+        {
+            if (mi2cv.getMi().equals(mi) && cvType.equals(mi2cv.getCv().getClass()))
+            {
+                return mi2cv.getCv();
+            }
+        }
+
+        return null;
+    }
+
+    private static class Mi2Cv
+    {
+        private String mi;
+        private CvObject cv;
+
+        public Mi2Cv(String mi, CvObject cv)
+        {
+            this.mi = mi;
+            this.cv = cv;
+        }
+
+        public String getMi()
+        {
+            return mi;
+        }
+
+        public CvObject getCv()
+        {
+            return cv;
+        }
+
+        public boolean equals(Object o)
+        {
+            if (this == o)
+            {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass())
+            {
+                return false;
+            }
+
+            Mi2Cv mi2Cv = (Mi2Cv) o;
+
+            if (cv != null ? !cv.equals(mi2Cv.cv) : mi2Cv.cv != null)
+            {
+                return false;
+            }
+            if (mi != null ? !mi.equals(mi2Cv.mi) : mi2Cv.mi != null)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public int hashCode()
+        {
+            int result;
+            result = (mi != null ? mi.hashCode() : 0);
+            result = 31 * result + (cv != null ? cv.hashCode() : 0);
+            return result;
+        }
     }
 }
