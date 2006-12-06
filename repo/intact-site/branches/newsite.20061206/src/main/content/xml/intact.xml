@@ -1,0 +1,2351 @@
+<!-- version: $Id$ -->
+
+<page zone="IntAct" title="User Manual" format="column">
+
+    <section title="Contents" name="cont">
+
+        <auto-index index="main"/>
+
+    </section>
+
+    <division name="main" style="numbered">
+
+
+        <section title="Introduction" name="intro">
+
+            <blockquote>
+                IntAct is a protein interaction database and analysis system. It provides a query interface and modules
+                to analyse interaction data. This manual describes the IntAct data structure and the components of the
+                IntAct system.
+            </blockquote>
+
+        </section>
+
+        <section title="Recent changes" name="new">
+
+            <blockquote>
+                <u>Changes up to July 18, 2006</u> :
+                <ul>
+                    <li>IntAct now contains over 110.000 interactions.</li>
+                    <li>All data is now available in both version <a href="http://psidev.sf.net/mi/xml/doc/user/">1.0</a>
+                        and <a href="http://psidev.sourceforge.net/mi/rel25/">2.5</a> of PSI-MI XML format.</li>
+                    <li>As always, all data can be downloaded from the
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current">IntAct FTP site</a>.
+                        <br/>
+                        In addition, all publications can be downloaded independently in either PSI-MI
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1">1.0</a> and
+                        <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">2.5</a>.
+                    </li>
+                    <li>IntAct controlled vocabularies are now available in <a href="http://obo.sourceforge.net/">OBO format</a>.
+                        You can find the <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/intact.obo">latest version here</a>.
+                    </li>
+                </ul>
+            </blockquote>
+            <blockquote>
+                <u>Changes up to February 28, 2006</u> :
+                <ul>
+                    <li>New <a href="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">Advanced search</a> added.
+                    </li>
+                    <li>New <a href="#interpro.search">InterPro search</a> added.</li>
+                    <li>In addition to the user manual, a dedicated
+                        <a href="http://www.ebi.ac.uk/intact/doc/html/curation/IntActAnnotationRules.pdf">curation
+                            manual</a> has been released.
+                    </li>
+                </ul>
+            </blockquote>
+            <blockquote>
+                <u>Changes up to January 01, 2005</u> :
+                <ul>
+                    <li>New <a href="http://www.ebi.ac.uk/intact/search">Search</a> user interface available. </li>
+                    <li>New IntAct <a href="../misc/tutorial/index.html">API tutorial.</a> </li>
+                    <li>Integration of data including features (eg.
+                        <a href="http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=EBI-474155&amp;searchClass=Experiment&amp;source=simple">
+                            Goehler et al.</a> ). </li>
+                    <li>Integration of IntAct data into <a href="http://www.ebi.uniprot.org/">UniProt</a> </li>
+                    <li>IntAct takes part in the <a href="http://imex.sourceforge.net/">IMEx consortium</a> </li>
+                    <li>New application ( <a href="http://www.ebi.ac.uk/intact/mine">MiNe</a> ) allowing to find the
+                        minimal connecting network given a set of proteins.
+                    </li>
+                    <li>New application (<a href="http://www.ebi.ac.uk/intact/targets">Targets</a> ) to predict targets
+                        for pull-down experiments.
+                    </li>
+                </ul>
+            </blockquote>
+            <blockquote>
+                <u>Changes up to February 01, 2004</u> :
+                <ul>
+                    <li>IntAct release 1: IntAct data is now available in
+                        <a href="http://psidev.sf.net/mi/xml/doc/user/">PSI-MI XML format version 1.0</a> , see the
+                        <a href="#download">download</a> section.
+                        <br/>
+                        Controlled vocabularies are available in GO DAG format.
+                    </li>
+                    <li>20672 interactions have been imported from Giot et al, 2003. The dataset contains extensive
+                        crosslinking to UniProt, GO, InterPro, and FlyBase.
+                    </li>
+                </ul>
+            </blockquote>
+        </section>
+
+        <section name="data" title="Data">
+
+            <section name="download" title="Download">
+                <blockquote>
+                    Each IntAct release is split into multiple XML files organised in two sections, each of which is
+                    available in both PSI-MI
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1">version 1.0</a> and
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25">version 2.5</a>:
+                    <ul>
+                        <li>Organisms: the split is done according to the pattern <i>Species_name-[small|exeriment-name].xml</i>.
+                            <br/>
+                            For example, s-cerevisiae_small.xml contains data on all small-scale experiments in
+                            S.cerevisiae stored in IntAct, s-cerevisiae_ho-2002.xml contains the data from the Ho et al,
+                            2002 experiment.
+                        </li>
+                        <li>Publications: each publication can be downloaded as a single file. Files are names according
+                            to the following pattern: <i>pubmedId[-experiment-name].xml</i>.
+                            <br/>
+                            Large scale publications can be splited into multiple files, consequently, a ZIP archive is
+                            also available so one can download a complete publication at once.
+                            <br/>
+                            For example: Lacount et al. published in 2006 A protein interaction network of the malaria
+                            parasite Plasmodium falciparum. That publication has been split into 2 files:
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556_lacount-2005-1_01.xml">16267556_lacount-2005-1_01.xml</a>
+                            and
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556_lacount-2005-1_02.xml">16267556_lacount-2005-1_02.xml</a>
+                            which can be both downloaded from a single ZIP archive
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/16267556.zip">16267556.zip</a>.
+                        </li>
+                    </ul>
+
+                </blockquote>
+            </section>
+            <!-- end download -->
+
+            <section name="CVS" title="Controlled Vocabularies">
+                <blockquote>
+                    To ensure data consistency, IntAct makes intensive use of controlled vocabularies.
+                    All controlled vocabularies are available in <a href="http://obo.sourceforge.net/">OBO format</a>.
+                    For an overview and download of IntAct controlled vocabularies, see
+                    <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/">
+                        ftp://ftp.ebi.ac.uk/pub/databases/intact/current/cv/</a>.
+                </blockquote>
+            </section>
+            <!-- end CVS -->
+
+            <section name="statistics" title="Statistics">
+                Please see separate
+                <a href="statistics/index.html">statistics section</a>.
+            </section>
+            <!-- end statistics -->
+
+        </section>
+        <!-- end data -->
+
+        <section title="IntAct data representation" name="core">
+
+            <section title="Common elements" name="CommonElements">
+
+                <blockquote>
+                    All main IntAct objects have the following attributes:
+                </blockquote>
+
+                <section title="ac" name="BasicObject.ac">
+
+                    <blockquote>
+                        The accession number. This is a unique, stable identifier for an object.
+                        The same accession number will always be associated with the same object.
+                        To reference IntAct objects from outside, accession numbers should be used.
+                        The format of the accession number is one or more uppercase letters, followed by a dash,
+                        followed by a number.
+                        <br/>
+                        In regular expression syntax: [A-Z0-9]+\-[0-9]+
+                        <br/>
+                        Example: EBI-15
+                    </blockquote>
+
+                </section>
+
+                <section title="shortlabel" name="AnnotatedObject.shortLabel">
+
+                    <blockquote>
+                        The name is a short, concise name to identify an object.
+                        Names for proteins are usually UniProt IDs,
+                        names for experiments are usually:
+                        <b>author-year-number</b>
+                        .
+                        <br/>
+                        <b>author</b>
+                        being the name of the first author of the associated publication.
+                        That author name can be truncated if too long.
+                        <br/>
+                        <b>year</b>
+                        being the year of the publication.
+                        <br/>
+                        <b>number</b>
+                        maybe be used in case we create multiple experiments related to one publication.
+                        <br/>
+                        names for interactions are usually the name of gene1 'hyphen' name of gene2.
+                        <br/>
+                        Names will normally be stable, but they may change, e.g. when the gene name of a protein is
+                        changed
+                        by the relevant nomenclature body, e.g. HUGO. Names are not guaranteed to be unique,
+                        e.g. if two proteins have the same primary gene name. They are guaranteed to be unique for
+                        controlled vocabulary terms within each controlled vocabulary. All names are in lowercase.
+                        <br/>
+                        Example for a protein: got2_yeast.
+                    </blockquote>
+
+                </section>
+
+                <section title="fullName" name="AnnotatedObject.fullName">
+
+                    <blockquote>
+                        The full name of the object.
+                        <br/>
+                        Example: Aspartate aminotransferase.
+                    </blockquote>
+
+                </section>
+
+                <section title="Xref" name="AnnotatedObject.Xref">
+
+                    <blockquote>
+                        Crossreferences to other databases. A crossreference has the following attributes:
+                        <ul>
+                            <li>
+                                <b>Name</b> :The name of the external database.
+                            </li>
+                            <li>
+                                <b>Primary id</b>
+                                : The primary id or accession number of the object in the external database.
+                            </li>
+                            <li>
+                                <b>Secondary id</b> : The secondary id of the object in the external database.
+                            </li>
+                            <li>
+                                <a name="Xref.cvXrefType"></a>
+                                <b>Crossreference type</b> : The type of crossreference.
+                            </li>
+                        </ul>
+                    </blockquote>
+
+                </section>
+
+                <section title="Annotation" name="AnnotatedObject.Annotation">
+
+                    <blockquote>
+                        Each object may have one or more annotations associated with it. Each annotation has a topic,
+                        which broadly classifies the annotation, and the annotation text.
+                    </blockquote>
+
+                </section>
+
+                <section title="created" name="BasicObject.created">
+
+                    <blockquote>
+                        The date the object has been created.
+                    </blockquote>
+
+                </section>
+
+                <section title="updated" name="BasicObject.updated">
+
+                    <blockquote>
+                        The date the object has been updated last.
+                    </blockquote>
+
+                </section>
+
+            </section>
+            <!-- Common elements -->
+
+
+            <section title="Main objects" name="mainObject">
+
+                <blockquote>
+                    IntAct has the following main objects:
+                    <ul>
+                        <li>
+                            <a href="#Experiment">Experiment</a>
+                        </li>
+                        <li>
+                            <a href="#Interaction">Interaction</a>
+                        </li>
+                        <li>
+                            <a href="#Interactor">Interactor</a>
+                        </li>
+                    </ul>
+
+                    <br/>
+
+                    <a name="mainObjectsExample"></a>
+                    Example (simplified): Representation of the Interleukin 2 receptor binding:
+                    One interaction object represents the complex of the alpha, beta, and gamma chains which form the
+                    receptor. This interaction object is then used in the second interaction object, in which the
+                    binding
+                    of Interleukin 2 to the receptor is represented. Both Interaction objects are linked to an
+                    experiment,
+                    in which the Interaction has been determined.
+                    <img align="left" src="../images/core/intactMainObjects2.jpg" height="108" width="214"/>
+                    <img align="right" src="../images/core/intactMainObjects.jpg" height="160" width="344"/>
+                    <br clear="all"/>
+                    The following section describes the main objects in detail.
+                </blockquote>
+
+                <section title="Experiment" name="Experiment">
+
+                    <blockquote>
+                        An Experiment object describes an experiment which has been performed to generate one or more
+                        interactions. It indicates the conditions in which the experiment has been performed.
+                        The description broadly classifies the experiment, it does not aim at providing all the
+                        necessary data to repeat the experiment. The attributes of the Experiment are the
+                        <dl>
+                            <dt>
+                                <a href="#BioSource">BioSource</a>
+                            </dt>
+                            <dd>The biological system in which the interaction took place in the experiment.</dd>
+
+                            <dt>
+                                <a name="Experiment.cvIdentification"></a>
+                                identificationMethod
+                            </dt>
+                            <dd>The experimental method by which the molecules participating in the interaction have
+                                been detected.
+                                <br/>
+                                Example: Mass spectrometry.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0002&amp;termName=participant%20identification%20method">Ontology Lookup Service</a>.
+                            </dd>
+
+                            <dt>
+                                <a name="Experiment.cvInteraction"></a>
+                                interactionMethod
+                            </dt>
+                            <dd>The experimental method by which the interaction has been detected.
+                                <br/>
+                                Example: yeast two hybrid.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0001&amp;termName=interaction%20detection%20method">Ontology Lookup Service</a>.
+                            </dd>
+                        </dl>
+                        Each Experiment provides a list of one or more
+                        <a href="#Interaction">Interactions</a>
+                        which have been determined by this Experiment. One Experiment might contain a single
+                        Interaction, or many hundreds for large scale experiments.
+                    </blockquote>
+
+                </section>
+                <!-- Experiment -->
+
+
+                <section title="Interaction" name="Interaction">
+
+                    <blockquote>
+                        The Interaction object describes the interaction of two or more
+                        <a href="#Interactor">Interactors</a>. As the number of Interactors in an Interaction
+                        is not limited, an Interaction can describe both binary interactions, which are the result of
+                        for example yeast two hybrid experiments, and interactions with more than two Interactors, for
+                        example determined by "TAP" experiments. The attributes of an Interaction are
+                        <dl>
+                            <dt>CvInteractionType</dt>
+                            <dd>A description of the type of interaction.
+                                <br/>
+                                Example: association.
+                                <br/>
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0190&amp;termName=interaction%20type">Ontology Lookup Service</a>.
+                            </dd>
+                            <dt>kD</dt>
+                            <dd>The dissociation constant.</dd>
+                        </dl>
+                    </blockquote>
+
+                </section>
+                <!-- Interaction -->
+
+
+                <section title="Interactor" name="Interactor">
+
+                    <blockquote>
+                        A molecule or complex participating in an Interaction. The
+                        direct attributes of an Interactor are
+                        <dl>
+                            <dt>
+                                CvInteractorType
+                            </dt>
+                            <dd>A description of the type of interactor as defined in the PSI-MI ontology.
+                                For example: protein, DNA, small molecules...
+                                The hierarchy of terms can be viewed in the
+                                <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&amp;termId=MI%3A0313&amp;termName=interactor%20type">Ontology Lookup Service</a>.
+                            </dd>
+                        </dl>
+                        <dl>
+                            <dt>
+                                <a href="#BioSource">BioSource</a>
+                            </dt>
+                            <dd>The biological system in which the interactor normally is found. For a human protein,
+                                the BioSource would be "Human", even if it has been expressed in E.coli in a particular
+                                experiment.
+                            </dd>
+                        </dl>
+                        If the Interactor is a Polymer, it additionally has the attributes
+                        <dl>
+                            <dt>sequence</dt>
+                            <dd>The amino acid sequence of the protein.</dd>
+                            <dt>crc64</dt>
+                            <dd>The CRC64 checksum for the amino acid sequence. This checksum is used to quickly detect
+                                if the amino acid sequence has changed, for example during an update process. It is also
+                                used to check if the amino acid sequence has potentially been corrupted.
+                                <br/>
+                                The algorithm to compute the CRC64 is described in the ISO 3309 standard.
+                                The generator polynomial is x64 + x4 + x3 + x + 1.
+                                <br/>
+                                Reference: Press W.H., Flannery B.P., Teukolsky S.A. and Vetterling W.T. "Numerical
+                                recipes in C", 2nd ed., pp896-902, Cambridge University Press (1993). (See
+                                http://www.ulib.org/webRoot/Books/Numerical_Recipes/bookcpdf/c20-3.pdf)
+                                It should be noted that while, in theory, two different sequences could have the
+                                same CRC64 value, the likelihood that this would happen is extremely low.
+                            </dd>
+                        </dl>
+                        An Interactor describes an "abstract" form of e.g. a protein,
+                        similar to a description in a protein sequence database. One
+                        protein can participate in many interactions. To describe the
+                        specific conditions in which an Interactor participates in an
+                        Interaction, the following additional attributes are used:
+                        <dl>
+                            <dt>stoichiometry</dt>
+                            <dd>The number of units of this interactor which participate in the interaction. The default
+                                is one.
+                            </dd>
+                            <dt>expressedIn</dt>
+                            <dd>A
+                                <a href="#BioSource">BioSource</a>
+                                object which describes the biological system in
+                                which the protein has been expressed.
+                                <br/>
+                                Example: If a human protein has been expresed in E.coli, expressedIn would refer to
+                                E.coli.
+                            </dd>
+                            <dt>Role</dt>
+                            <dd>The role of the Interactor in the Interaction. In a yeast two hybrid experiment,
+                                each Interaction would usually have an Interactor which has the role "bait" and another
+                                one which has the role "prey".
+                            </dd>
+                            <dt>Features</dt>
+                            <dd>The Features record the properties of the molecule that is involved in the interaction.
+                            </dd>
+                        </dl>
+
+                        An Interactor is normally a protein. However, to model hierarchical assemblies of complexes
+                        from subcomplexes, an Interactor can also be an Interaction.
+                        <br/>
+                        Example: To model a receptor-ligand interaction, the receptor could be modeled by an interaction
+                        which describes the composition of the receptor from its component proteins. Then, in another
+                        Interaction, the association of receptor and ligand would be described. See the
+                        <a href="#mainObjectsExample">IL-2 example</a>
+                        .
+                        <br/>
+                    </blockquote>
+
+                </section>
+                <!-- Interactor -->
+
+            </section>
+            <!-- Main objects -->
+
+
+            <section title="Auxiliary objects" name="AuxiliaryObjects">
+
+                <blockquote>
+                    The following objects are auxiliary objects, often used in several different main classes.
+                </blockquote>
+
+
+                <section title="BioSource" name="BioSource">
+
+                    <blockquote>
+                        <dd/>
+                        The BioSource object describes a biological system, usually a species. The attributes of a
+                        BioSource are
+                        <dl>
+                            <dt>taxId</dt>
+                            <dd>The NCBI tax id, see the
+                                <a href="http://www.ncbi.nlm.nih.gov/Taxonomy/">NCBI taxonomy server</a>
+                                or the
+                                <a href="http://www.ebi.ac.uk/newt">NEWT taxonomy server</a>
+                                .
+                                <br/>
+                                <u>Technical note</u>
+                                : We are using a programatical access to the Newt server to create on-the-fly
+                                new BioSources in IntAct.
+                            </dd>
+                            <dt>shortLabel</dt>
+                            <dd>The shortLabel is the UniProt OS code, where available.</dd>
+                            <dt>fullName</dt>
+                            <dd>The full name is the scientific name of the species.</dd>
+                            <dt>tissue
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The tissue is the tissue type used in the experiment.</dd>
+                            <dt>compartment
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The compartment is the cellular compartment in which the interaction has been shown to
+                                occur.</dd>
+                            <dt>cell type
+                                <font color="gray">(optional)</font>
+                            </dt>
+                            <dd>The cell type is the cell line in which the interaction is shown to occur.</dd>
+                        </dl>
+                    </blockquote>
+
+                </section>
+                <!-- BioSource -->
+
+                <section title="CvObject" name="CvObject">
+
+                    <blockquote>
+                        IntAct makes intensive use of controlled vocabularies. Where possible, data attributes are
+                        controlled vocabularies, the terms are selected from a defined list instead of being free
+                        text. For each attribute which is selected from a controlled vocabulary, a specific CvXXXXX
+                        class exists, for example CvInteractionType. Each term in a controlled vocabulary has a
+                        definition, usually has crossreferences, and may have additional comments.
+                        <br/>
+                        Most controlled vocabularies in IntAct originate from the PSI-MI ontology. They are updated
+                        from the <a href="http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo">PSI-MI web site</a>
+                        on a regular basis. The PSI-MI ontology can be viewed via the
+                        <a href="http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI">Ontology Lookup Service</a>.
+                    </blockquote>
+
+                </section>
+                <!-- CvObject -->
+
+                <!-- TODO name to be updated -->
+                <section title="Features" name="FEATURES_HELP_SECTION">
+
+                    <blockquote>
+                        The attributes of the individual protein molecules involved in the
+                        interaction are recorded as features of the proteins. This includes
+                        information such as the range of amino acids involved in the interaction,
+                        tagging of the protein molecule, mutations in the sequence etc.
+                        <br/>
+                        Controlled
+                        vocabulary is used for determining the feature type and feature
+                        identification method. The features are then displayed in search as an
+                        autogenerated sentence. Additional crossreferences in the features also
+                        give information about the structure and domains in the proteins.
+                    </blockquote>
+
+                </section>
+                <!-- CvObject -->
+
+            </section>
+            <!-- Auxiliary objects -->
+
+        </section>
+        <!-- IntAct data representation -->
+
+
+        <section title="IntAct applications" name="IntAct-applications">
+
+            IntAct provides a number of applications. Depending on the installation you are using, some modules
+            described here may not be available, or additional modules not described in this manual might be available.
+
+            <section title="Search" name="search">
+
+                <section title="Availability" name="search.availability">
+
+                    <blockquote>
+                    </blockquote>
+
+                </section>
+
+                <section title="External linking to IntAct" name="external.linking">
+
+                    <ul>
+                        <li>
+                            <b>general search</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?searchString=
+                                <b>
+                                    <font color="blue">&lt;query.string&gt;</font>
+                                </b>
+                                <!--[&searchClass=<b><font color="red">&lt;object.name&gt;</font></b>]-->
+                            </p>
+                            <b>
+                                <font color="blue">&lt;query.string&gt;</font>
+                            </b>
+                            is the user query that the searched object should match.
+                            <br/>
+                            Wildcards are supported.
+                            <br/>
+                            it can be either:
+                            <ul>
+                                <li>AC</li>
+                                <li>shortlabel</li>
+                                <li>fullname</li>
+                                <li>Xref (UniProt, GO, FlyBase, SGD, Interpro...)</li>
+                                <li>Alias (gene name, locus, orf ...)</li>
+                            </ul>
+                            <br/>
+
+                        </li>
+
+                        <li>
+                            <b>Known partners of a protein</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?searchString=
+                                <b>
+                                    <font color="blue">&lt;protein&gt;</font>
+                                </b>
+                            </p>
+                            <b>
+                                <font color="blue">&lt;protein&gt;</font>
+                            </b>
+                            should be either the AC, shortlabel,
+                            alias or Xref (eg. UniProt ID) of a Protein.
+                            <br/>
+                            Wildcards are supported.
+                            <br/>
+                            <br/>
+                        </li>
+
+                        <li>
+                            <b>Binary interactions</b>
+                            <br/>
+                            <p>
+                                http://www.ebi.ac.uk/intact/search/do/search?binary=
+                                <b>
+                                    <font color="red">&lt;protein1&gt;</font>
+                                </b>
+                                ,
+                                <b>
+                                    <font color="blue">&lt;protein2&gt;</font>
+                                </b>
+                            </p>
+                            This URL will give you all the binary interactions for two given proteins contained within
+                            IntAct.
+                            There are cases when
+                            <b>
+                                <font color="red">&lt;protein1&gt;</font>
+                            </b>
+                            and
+                            <b>
+                                <font color="blue">&lt;protein2&gt;</font>
+                            </b>
+                            will be the same, for example in the case of a homodimer or when an interaction is
+                            demonstrated between different modified forms of the same protein (e.g. Flag-tagged and
+                            wild-type).
+                            <br/>
+                            <b>
+                                <font color="red">&lt;protein1&gt;</font>
+                            </b>
+                            and
+                            <b>
+                                <font color="blue">&lt;protein2&gt;</font>
+                            </b>
+                            should be either the AC, shortlabel, alias or Xref (eg. UniProt ID) of a Protein.
+                            <br/>
+                            Wildcards are supported but we encourage you to give a specific protein descriptor.
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <section title="Basic Overview" name="search.Overview">
+
+                    <blockquote>
+                        The search application currently allows a text-based search by entering
+                        a text string into the search text box. It is possible to obtain information
+                        on experiments, protein interactions, the proteins themselves and the controlled vocabulary
+                        , with various views used to display the data. Intact uses the concept of
+                        <a href="#AnnotatedObject.shortLabel">shortlabel</a>
+                        which is intended to provide a way
+                        of 'more memorable identification' compared to an
+                        <a href="#BasicObject.ac">accession number (ac)</a>
+                        , although searches by ac are
+                        obviously allowed. For example a particular Experiment may have an ac of
+                        EBI-12, but its name is 'gavin-2002' indicating a more meaningful reference
+                        to the physical experiment which the entry represents. Basic points on
+                        usage:
+
+                        <ul>
+                            <ul>
+                                <li>
+                                    Wildcard searching is supported - for example matches will be retrieved
+                                    for strings such as EBI*, *BI-14, E*4, etc etc. Though if too many result
+                                    match your expression, you will be given some statistics about how many
+                                    objects have matched your query and you will be asked to refine your query.
+                                    cf.
+                                    <a href="#too.many.results">screenshot</a>
+                                    .
+                                </li>
+
+                                <li>
+                                    upper or lower case strings are acceptable (but not mixed case) and will be matched
+                                    if they exist. The exception to this is a search by alias (ie gene name, as defined
+                                    in UniProt) - currently these are stored as lower case and are searched for as such.
+                                    This will become more sophisticated as the project matures.
+                                </li>
+
+                                <li>
+                                    currently searches are looking for four main types of objects: experiment,
+                                    interaction,
+                                    protein, and controlled vocabulary term (that has many sub types).
+                                    <br/>
+                                    A search doesn't progress in a certain order as it used to be, we perform a global
+                                    search on all mentionned types and if several of them match your query, a summary
+                                    page will be displayd to give you an overview. That way, you can select the object
+                                    you want to see amongst many types. cf
+                                    <a href="#multi.types.result">screenshot</a>
+                                    .
+                                </li>
+
+                                <li>
+                                    At a lower level, specific attributes are searched by
+                                    <a href="#BasicObject.ac">AC</a>
+                                    ,
+                                    <a href="#AnnotatedObject.shortLabel">shortlabel</a>
+                                    ,
+                                    <a href="#AnnotatedObject.fullname">fullname</a>
+                                    <a href="#AnnotatedObject.Xref">Xref</a>
+                                    (Uniprot AC, GO, SGD, FlyBase, Interpro...),
+                                    and finally
+                                    <a href="#AnnotatedObject.Annotation">alias</a>
+                                    (gene, locus and orf name).
+                                </li>
+
+                                <li>
+                                    Note that whilst controlled vocabulary term (also called CvObject) details can be
+                                    displayed via the click of a link, currently it is not possible to search for
+                                    CvObjects via the text box search entry point.
+                                </li>
+                            </ul>
+                        </ul>
+                    </blockquote>
+
+                </section>
+                <!--  -->
+
+                <section title="Structure of Search Results" name="search.TableLayout">
+
+                    <blockquote>
+                        The basic layout of the main results page follows the structure below:
+
+                        <br/>
+
+                        <p>
+                            <a NAME="experiment.single.view"></a>
+                            An example result screen when searching for an Experiment
+                            is shown below:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/exp.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="experiment.single.chunked"></a>
+                            An other example result screen when searching for
+                            an Experiment, this time there are too many interactions to display it in one go.
+                            So, the Experiment is splited in several pages that you can reach using the index above
+                            the Experiment.
+                            <br/>
+                            This is shown below:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/exp-chunked.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="interaction.single.view"></a>
+                            An example result screen when searching for an Interaction is shown below, as you can see
+                            the interaction is shown in the context of its experiment:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/int_single.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="too.many.results"></a>
+                            An example result screen when submiting a query that matches too many results, we show some
+                            basic statistics:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/too_many_results.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="multi.types.result"></a>
+                            An example result screen when submiting a query that matches different types of objects,
+                            if there are not too many of them, we show simpler version of them to allow the user to
+                            choose:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/query_multi_obj.png" border="0"/>
+                        </p>
+
+                        <p>
+                            <a NAME="binary.view"></a>
+                            Protein views can be of various types. Searching for a protein will result in a so-called
+                            'binary view'. This view shows the list of proteins which are in a pairwise interaction
+                            with the searched-for protein.
+                            <a NAME="number.interactions"></a>
+                            <p>
+                                The column "number of interactions" indicates:
+                                <br/>
+                                a) for the query protein (first row), in how many distinct interactions it has been
+                                observed.
+                                <br/>
+                                b) for all interactors of the query protein (subsequent rows), in how many interactions
+                                the
+                                current protein (current row) and the query protein (first row) interact.
+                            </p>
+
+                            An example result screen for this view is shown below:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/binary.png" border="0"/>
+                        </p>
+                        <p>
+                            <a NAME="interaction.details.view"></a>
+                            Viewing the interactions involved for a particular (couple of) protein can also be done
+                            from the binary view by clicking on the interaction count.
+                        </p>
+                        <p>
+                            <a NAME="protein.single.view"></a>
+                            The details for an individual protein are displayed as below:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/protein_single.png" border="0"/>
+                        </p>
+                        <br/>
+
+                        <p>
+                            <a NAME="single.view"></a>
+                            If for example in the above screen you click on 'UniProt', this will display the controlled
+                            vocabulary information for the database identified with a name of 'UniProt'. The screen
+                            looks
+                            like this:
+                        </p>
+                        <p>
+                            <img SRC="../images/search/uniprot.png" border="0"/>
+                        </p>
+                        <p>
+                            <u>Note</u>
+                            : You can see on that view that the CvDatabase called UniProt has been annotated
+                            using Xref, some of them have a special role in the IntAct framework:
+                            <ul>
+                                <li>
+                                    <b>search-url</b>
+                                    : is used to forward to the original source of the object.
+                                    In the case of 'UniProt', if a protein has such a Uniprot Xref attached, the search
+                                    application would automatically generate a link to allow you to view that same
+                                    protein on the UniProt web site.
+                                    <br/>
+                                    <u>eg</u>
+                                    . Let
+                                    <b>search-url</b>
+                                    of the CvDatabase 'UniProt' be
+                                    <b>http://www.ebi.uniprot.org/entry/${ac}</b>
+                                    <br/>
+                                    Let the primaryId of that Xref be
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    , the search
+                                    interface would replace ${ac} by
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    and the URL
+                                    in the search application would show up as:
+                                    http://www.ebi.uniprot.org/entry/
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    <br/>
+                                </li>
+
+                                <li>
+                                    <b>search-url-ascii</b>
+                                    : is used for programatical access to that database.
+                                    In the case of UniProt, if a protein has such a Uniprot Xref attached, we can then
+                                    get
+                                    the UniProt FlatFile content correcponding to that protein.
+                                    <br/>
+                                    <u>eg</u>
+                                    . Let
+                                    <b>search-url-ascii</b>
+                                    of the CvDatabase 'UniProt' be
+                                    <b>http://www.ebi.uniprot.org/entry/${ac}?format=text&amp;ascii</b>
+                                    <br/>
+                                    Let the primaryId of that Xref be
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    , the search
+                                    interface would replace ${ac} by
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    and the URL
+                                    in the search application would show up as: http://www.ebi.uniprot.org/entry/
+                                    <b>
+                                        <font color="red">P12345</font>
+                                    </b>
+                                    ?format=text&amp;ascii
+                                </li>
+                            </ul>
+                        </p>
+                        <br/>
+                        <p>
+                            <a name="ShortLabelHelp"></a>
+                            Protein names are links you can click to get a view of the protein details. Also each
+                            protein name has a term in superscript which denotes the role that the protein plays in the
+                            interaction. These terms have tooltips associated with them to display the role name, and
+                            also the term is a clickable link from which you can view the full details of the controlled
+                            vocabulary term which presents the controlled vocabulary information for that term (eg the
+                            details held to define the meaning of the term 'bait').
+                        </p>
+                        <p>
+                            Since the items displayed for a search result include many items not actually queried for,
+                            the items that matched the original search string are
+                            <b>
+                                <font color="red">highlighted in
+                                    red</font>
+                            </b>
+                            . Specifically the *names* of the matching items are
+                            highlighted, since these are always displayed in every view.
+                        </p>
+                        <p>
+                            Where a protein (for example) might actually occur more than once in an experiment, the
+                            display is rationalised to avoid multiple presentations of the same experiment - therefore
+                            all occurrences within an experiment are gathered together into one experiment view.</p>
+                        <p>
+                            <a NAME="ButtonDefinition"></a>
+                            At the bottom of the page are a number of buttons:
+                        </p>
+                        <ul>
+                            <ul>
+
+                                <li>
+                                    a
+                                    <b>Graph</b>
+                                    button to display a graph of any selected proteins or interactions,
+                                    which can be chosen by clicking the appropriate checkboxes.
+                                </li>
+
+                                <li>
+                                    a
+                                    <b>Path</b>
+                                    button to compute the minimal connecting network (using
+                                    <a href="#mine">MiNe</a>
+                                    ) of the set of protein you have selected using the tickboxes.
+                                    It then displays a graph (using
+                                    <a href="#hierarchView">hierarchView</a>
+                                    ) showing
+                                    the computed path. The computed path is highlighted by coloring the interaction in
+                                    red along the path.
+                                </li>
+
+                                <li>a
+                                    <b>Interpro</b>
+                                    button to show the InterPro domain architecture for selected Proteins (using
+                                    <a href="#interpro.search">InterProSearch</a>
+                                    ).
+                                </li>
+
+
+                                <li>a
+                                    <b>Select all</b>
+                                    button to check all tickboxes.
+                                </li>
+
+                                <li>a
+                                    <b>Clear all</b>
+                                    button to uncheck all tickboxes.
+                                </li>
+
+
+                            </ul>
+                        </ul>
+
+                    </blockquote>
+
+                </section>
+                <!-- Basic Overview -->
+
+                <section title="Advanced Search" name="advancedSearch">
+                    <section title="Access" name="advancedSearch.access">
+                        <blockquote>
+                            The URL to access the editor is dependent upon the server where the editor is installed.
+                            The general format to access the editor takes the form of:
+                            http://server/intact/search/do/initAdvSearch.
+                        </blockquote>
+                    </section>
+
+                    <section title="Basic overview" name="advancedSearch.basicOverview">
+                        <blockquote>
+                            <p>
+                                Before going into any further details you should notice that the AdvancedSearch page is
+                                vertically
+                                split within two parts. On the left hand side there is the real advancedSearch where you
+                                can define
+                                your request. On the right hand side there is a relevant example to help you using the
+                                advancedSearch :
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch1.png" title=""/>
+                                <br/>
+                            </p>
+                            <p>
+                                The advanced Search permits you to search for a specific object thus to choose what you
+                                want to
+                                see in your result page. Here are the objects you can ask for :
+                                <ul>
+                                    <li>Controlled Vocabulary Term</li>
+                                    <li>Experiment</li>
+                                    <li>Interaction</li>
+                                    <li>Protein</li>
+                                </ul>
+                                You can also search for any object.
+                            </p>
+                            <p>
+                                After selecting which object you are searching for, you define the creterii which will
+                                be used for
+                                the request. Depending on the object you choosed to display and on your desire, you can
+                                define 1 or
+                                several of the following fields :
+                                <ul>
+                                    <li>The Accession Number</li>
+                                    <li>The Short Label</li>
+                                    <li>The Description</li>
+                                    <li>A crossresference to an other database</li>
+                                    <li>An annotation topic</li>
+                                    <li>The method used to determine the interaction (Interaction detection, for
+                                        Experiment only)</li>
+                                    <li>The method used to determine the participants in the interaction (Participant
+                                        detection, for Experiment only)</li>
+                                    <li>The interaction type (for Interaction only)</li>
+                                </ul>
+                            </p>
+                            <p>
+                                <a NAME="advancedSearch.basicOverview.criteriaCombination"></a>
+                                If you decide to define several of the fields (ex : Accession Number and Description)
+                                you can tell
+                                the advanced Search whether you want the objects to match all the define fields or only
+                                one of the
+                                fields in selecting either &quot;all of the above (and)&quot; box or &quot;any of the
+                                above (or)&quot; box.
+                            </p>
+                        </blockquote>
+                    </section>
+
+                    <section title="Structure of Advanced Search result" name="advancedSearch.result">
+                        <blockquote>
+                            <p>
+                                If you choose to display any object you will obtain the same page then if you were doing
+                                a normal search :
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch2.png" title=""/>
+                                <br/>
+                            </p>
+
+                            <p>
+                                If you choosed to display Controlled Vocabularies Term, the result page will follow the
+                                structure below:
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch3.png" title=""/>
+                                <br/>
+                            </p>
+
+                            <p>
+                                If you choosed to display Experiments, the result page will follow the structure below:
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch4.png" title=""/>
+                            </p>
+
+                            <p>
+                                <br/>
+                                If you choosed to display Interactions, the result page will follow the structure below:
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch5.png" title=""/>
+                                <br/>
+                            </p>
+
+                            <p>
+                                If you choosed to display Proteins, the result page will follow the structure below:
+                                <br/>
+                                <br/>
+                                <img src="../images/search/advancedSearch6.png" title=""/>
+                                <br/>
+                            </p>
+                        </blockquote>
+                    </section>
+                </section>
+                <!-- Advanced Search -->
+
+                <section title="InterPro Search" name="interpro.search">
+                    <section title="Basic Overview" name="interpro.search.basic.overview">
+                        <blockquote>
+                            The following paragraph explains how to link from IntAct to InterPro to visualise
+                            the protein domain architecture of IntAct proteins.
+                            <br/>
+                            Within the IntAct search interface, proteins and interactions can be selected by clicking
+                            the relevant tickbox.
+                            <br/>
+                            If an interaction is selected, all participating proteins will be considered selected.
+                            Once a protein set has been selected, the "InterPro" button on the top or bottom of
+                            the page can be clicked.
+                        </blockquote>
+
+                    </section>
+                    <!-- Basic Overview -->
+                    <section title="Example of Use" name="interpro.search.example.of.use">
+                        <blockquote>
+                            The IntAct Search Page with red circles around a tickbox and the InterPro button.
+                            <br/>
+                            <br/>
+                            <img src="../images/search/intact_red.png" title=""/>
+                            <br/>
+                            <br/>
+
+                            After a short waiting time,
+                            <br/>
+                            <br/>
+                            <img src="../images/search/interpro1.png" title=""/>
+                            <br/>
+                            <br/>
+
+                            you will then be forwarded to the InterPro page showing the domain architecture
+                            for the selected proteins.
+
+                            <br/>
+                            <br/>
+                            <img src="../images/search/interpro2.png" title=""/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <img src="../images/search/interpro3.png" title=""/>
+                            <br/>
+                            <br/>
+
+                        </blockquote>
+                    </section>
+                    <!-- Example of Use -->
+                </section>
+                <!-- InterPro Search -->
+            </section>
+            <!-- Search -->
+
+
+            <section title="Editor" name="editor">
+
+
+                <section title="Overview" name="editor.overview">
+
+                    <blockquote>
+                        The editor is a web based tool to edit objects in the IntAct database.
+                    </blockquote>
+
+                </section>
+                <!-- Overview -->
+
+
+                <section title="Availability" name="editor.availability">
+
+                    <blockquote>
+                        The application to edit IntAct database is only available for
+                        users with
+                        <b>write</b>
+                        access to it.
+                    </blockquote>
+
+                </section>
+
+
+                <section title="Access" name="editor.access">
+
+                    <blockquote>
+                        The URL to access the editor is dependent upon the server where the
+                        editor is installed. The general format to access the editor takes the
+                        form of:
+                        <br/>
+                        http://server/intact[test|prod]/editor, where the server part may contain a port
+                        depending upon the configuration of the web server. For example,
+                        http://www.ebi.ac.uk/interpro/internal-tools/intacttest/editor
+                        is the URL to access the internal EBI test editor. The purpose of the test version
+                        is for testing and is shown in different color scheme to distinguish
+                        it from the production version. All the figures in this document refers to the
+                        color scheme of the production editor.
+                        <br/>
+                        <br/>
+                        To use the editor, you must have a valid account to access the Intact
+                        database. The user is presented with a login screen as shown below:
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/login.png" title="" alt="Login Screen"/>
+                        <br/>
+                        <br/>
+                        <br/>
+                        Failure to login with a valid account results in the following error
+                        display:
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/login-error.png" title="" alt="Login error"/>
+                        <br/>
+                        <br/>
+                        The user is presented with the following screen after a successful login:
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/login-success.png" title="" alt="Login Success"/>
+                        <br/>
+                        <br/>
+                        In the bottom left corner of the above screen, shows the login name (smudali)
+                        and the database (zpro) the editor is using. The footer shows the last modified
+                        date (usually, the build date).
+                    </blockquote>
+
+                </section>
+                <!-- Access -->
+
+
+                <section title="IntAct Types" name="editor.intact.types">
+
+                    <blockquote>
+                        This list defines the types available for edit. Before proceeding with
+                        any action (search or create), you must select an appropriate type
+                        first.
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/types.png" title="" alt="IntAct Types"/>
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                        The IntAct type list defaults to the first item (i.e., Experiment) if a type wasn't selected.
+                        <br/>
+                        <br/>
+                    </blockquote>
+
+                </section>
+                <!-- IntAct Types -->
+
+
+                <section title="Search" name="editor.search">
+
+                    <blockquote>
+                        The user must select the type to edit from the drop down list.
+                        The input field next to the Search button accepts the search criteria.
+                        <br/>
+                        The search is performed in the following order:
+                        <ol>
+                            <li>accession number (ac)</li>
+                            <li>short label</li>
+                            <!--                            <li>primary id</li>-->
+                            <!--                            <li>full name</li>-->
+                        </ol>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                        So, it is faster to search by an accession number than by a shortlabel.
+                        <br/>
+                        <br/>
+                        You can accept the default search value (*) by simply clicking on the
+                        search button. This pratice is discouraged
+                        <b>strongly</b>
+                        as it may retrieve a large number
+                        of records from the database for some types (i.e., Interaction). Instead, you should
+                        use more restrictive filtering such as EBI-3* to retrieve a subset of
+                        records.
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                        Fo faster response, always prefer a restrictive search criteria.
+                        <br/>
+                        <br/>
+                        <br/>
+                        An example for a successful search:
+                        <br/>
+                        <img src="../images/editor/results.png" title="" alt="Results page"/>
+                        <br/>
+                        The 'AC link' (see above) links the editor with the search application. The following
+                        figure shows the result of clicking on EBI-448286 link.
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/search-link.png" title="Result of clicking on EBI-39 link"
+                             alt="Search Link"/>
+                        <br/>
+                        <br/>
+                        The 'shortlabel link', takes you to the appropriate edit screen. In this example,
+                        'go' entry will be opened in the CV editor (see below, Cv Editors, for more on CV editor).
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                        Alternatively, you can go to the edit screen by searching for EBI-39 or 'go' alone.
+                        <br/>
+                        <br/>
+                        A message will be displayed if a search fails to find any matching records.
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/search-error.png" title="" alt="No Match"/>
+                        <br/>
+                        <br/>
+                    </blockquote>
+
+                </section>
+                <!-- Search -->
+
+
+                <section title="Cv Editors" name="editor.cv.editors">
+
+                    <blockquote>
+                        The create button creates a record for the selected IntAct type. As
+                        with the search, it is important to select the appropriate type before
+                        clicking on the create button. The following screen shows the result of
+                        creating a new CvDatabase record.
+                        <br/>
+                        <br/>
+                        <img src="../images/editor/new-cv.png" title="" alt="New CvDatabase"/>
+                        <br/>
+                        <br/>
+                    </blockquote>
+
+                    <section title="Names" name="editor.short.labels">
+
+                        <blockquote>
+                            The current edit type is appended to the main heading (CvDatabase) as
+                            shown above. All the drop down list items (topic, database and
+                            reference qualifier) are shown in their shortlabels. Except for the
+                            shortlabel, all other fields are optional. To distinguish between
+                            required and optional fields, required fields are shown in a different
+                            background colour. These fields are validated when the user selects
+                            a button (i.e., Add Annotation, Save etc) on the page.
+                            <br/>
+                            All shortlabels should be one to
+                            twenty characters from the character set blank, 0..9, a-z, : ',' (colon), '_' (underscore)
+                            and
+                            '-' (hyphen). A dialog box similar to the following will appear for a
+                            failure to adhere to this syntax. Short labels are unique for all the editors apart for
+                            the Feature editor. The editor by default computes a unique shortlabel from a given
+                            value. For example, if 'abc' arleay exists on the database, giving 'abc' as
+                            a short label defaults to abc-1.
+                            <b>ADD THE link to the curation manual</b>
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/shortlabel-client-error.png" title="" alt="Incorrect shortlabel"/>
+                            <br/>
+                            <br/>
+                            Submitting the form without entering a syntactically valid name
+                            could result in a server side validation if JavaScript is disabled in the client
+                            browser. The error response from the server
+                            is shown under the shortlabel (Note: this error only
+                            appears if Javascript is disabled in the browser).
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/shortlabel-server-error.png" title=""
+                                 alt="Shortlabel server validation"/>
+                            <br/>
+                            <br/>
+                            Although both validations are similar in nature, they serve two
+                            different purposes. The first validation is performed on the client side
+                            (browser) and hence faster of the two. However, the browser must be
+                            enabled to accept Javascript for it to work (no dialog window if
+                            Javascript is not enabled). This is the preferred validation as it saves
+                            extra step in communicating with the server. Alternatively, the other
+                            validation is not dependent on Javascript and hence works on
+                            any browser.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                            However, some editor components such as Experiment and
+                            Interaction editors rely on Javascript and they wouldn't work correctly
+                            if Javascript is disabled. You will have then to enable Javascript in order to get
+                            the Editor to work correctly.
+                            <br/>
+                            <br/>
+                        </blockquote>
+
+                    </section>
+                    <!-- Names -->
+
+
+                    <section title="Annotations" name="editor.annotations">
+
+                        <blockquote>
+                            Annotations are added by clicking on the Add Annotation button in the Annotation
+                            section. Associated with each Annotation is a topic which is one of
+                            CvTopics available in the database. An error message is displayed when
+                            adding an annotation without selecting a type from
+                            the drop down list first.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/annotation-error.png" title="" alt="Annotation error"/>
+                            <br/>
+                            <br/>
+                            The editing of an annotation is similar to adding a new Annotation except
+                            for topic and description are already set to their existing values. The
+                            annotations in the editing mode are shown in a different color to distinguish
+                            them from non editing annotations.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/edit-annotation.png" title="" alt="Editing an Annotation"/>
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                            You cannot save the form if an annotation is in 'edit' mode. In this case, you
+                            must either save or delete it first.
+                            <br/>
+                            <br/>
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                            Edit one annotation at a time as there is no way to save a group of
+                            annotations in a single button click.
+                            <br/>
+                            <br/>
+                        </blockquote>
+
+                    </section>
+                    <!-- Annotations -->
+
+
+                    <section title="Crossreferences" name="editor.xrefs">
+
+                        <blockquote>
+                            Similar to Annotations, Crossreferences are added by clicking on the
+                            Add Crossreference button in the Crossreference section. The database drop list
+                            consists of names for CvDatabase items from the IntAct database and
+                            the reference qualifier consists of names for CvXrefQualifier.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/add-xref.png" title="Adding a new Xref" alt="New Xref"/>
+                            <br/>
+                            <br/>
+                            As with annotations, the values from drop down lists must be selected
+                            prior to adding a crossreference. Editing an existing Crossreference
+                            is similar to adding a new one except for existing values are shown instead
+                            of empty values.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                            Any changes to the form are not saved until the form is submitted. So
+                            for a new IntAct type, a record is not created on the database until the
+                            Submit or Save &amp; Continue button is clicked and the server reports no errors.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                            Save your work periodically by selecting Save &amp; Continue. This avoids the
+                            danger of loosing your data due to an extended period of inactivity (session
+                            timing out).
+                            <br/>
+                            <br/>
+                            Editing an existing record is similar to the above except the form is
+                            populated with existing data. As shown below, the name and full
+                            name already have their existing values.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/edit-cv.png" title="Editing an existing entry"
+                                 alt="Editing an existing CV object"/>
+                            <br/>
+                            <br/>
+                        </blockquote>
+
+                    </section>
+                    <!-- Crossreferences -->
+
+                </section>
+                <!-- Cv Editors -->
+
+
+                <section title="Other Editors" name="editor.other.editors">
+
+                    <blockquote>
+                        Since Cv editor layout is common to all the other editors, only the
+                        differences are shown for them.
+                    </blockquote>
+
+                    <section title="BioSource" name="editor.biosource">
+
+                        <blockquote>
+                            The biosource editor uses the Newt server to auto-complete the short
+                            label and the full name from a given NCBI taxid.
+                            <br/>
+                            <br/>
+                            <img src="../images/editor/new-biosrc.png" title="New BioSource"
+                                 alt="Biosource editor"/>
+                        </blockquote>
+
+                    </section>
+                    <!-- BioSource -->
+
+
+                    <section title="Experiment" name="editor.experiment">
+
+                        <blockquote>
+                            <img src="../images/editor/new-exp.png" title=""
+                                 alt="New Experiment"/>
+                            <br/>
+                            <br/>
+                            The Host Organism is the organism the experiment has been performed in. Example: If the
+                            interaction of Human proteins expressed in E.coli has been studied in Yeast, the Host
+                            Organism would be Yeast.
+                            The Interaction Detection describes the method which has been used to detect the
+                            interaction, e.g. yeast two hybrid.
+                            The Participant Detection describes the method which has been used to detect the
+                            participants (proteins) involved in the interaction, e.g. peptide mass fingerprinting.
+                        </blockquote>
+                        <blockquote>
+                            <img src="../images/editor/exp-autocomp.png" title=""
+                                 alt="Experiment Auto-completion"/>
+                            <br/>
+                            <br/>
+                            As lots of information on the Editor - Experiment are coming from the article (the shortlabel
+                            , the fullname, the xref to pubmed...) we use the Citation webservice to automatically
+                            complete part of the Editor - Experiment page. To use this service, do as shown on the
+                            previous image : enter the pubmed id in the text field and press on the auto-completion button.
+                        </blockquote>
+
+                    </section>
+                    <!-- Experiment -->
+
+
+                    <section title="Interaction" name="editor.interaction">
+
+                        <blockquote>
+                            <img src="../images/editor/interaction.jpg" title="Interaction Editor"
+                                 alt="Interaction Editor"/>
+                        </blockquote>
+
+                        <section title="Experiments" name="editor.int.experiments">
+
+                            <blockquote>
+                                This section describes Experiments already part of the current
+                                Interaction. The area below holds experiments not yet added to the
+                                Interaction as shown below.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/int-exp.png" title="" alt="Experiments not yet added"/>
+                                <br/>
+                                <br/>
+                                Select Add button to add an experiment or Hide to remove from the
+                                collection. Duplicate experiments are not allowed.
+                            </blockquote>
+
+                        </section>
+                        <!-- Experiments -->
+
+                        <section titles="Interactors" name="editor.int.proteins">
+
+                            <blockquote>
+                                This section lists all the Interactors participating in the current
+                                Interaction. An Interactor can be a Protein, a Nucleic Acid (DNA, RNA...) or
+                                a Small Molecule.
+                                For a new Interaction, this section is empty. To add an Interactor you must search for
+                                it.
+                                In the case of a Protein, you must search for it by providing
+                                appropriate values for search fields. Only the most specific value
+                                is taken into consideration if multiple values are provided for search.
+                                Since IntAct AC is the most specific, other search values are ignored
+                                if a value was specified for IntAct AC.
+                                If a search is performed by UniProt accession number (SP AC),
+                                and no matching protein is found, the editor will access an external server
+                                (by default the EBI SRS server), to retrieve the corresponding protein.
+                                <br/>
+                                In the case of a Nucleic Acid or a Small Molecule you have to provide the Intact
+                                shortlabel or ac.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/int-protein.png" title="" alt="Adding Proteins"/>
+                                <br/>
+                                <br/>
+                                The orange colour bar on the left identfies new Proteins not
+                                yet added to the Interaction. The first Protein is already part of the
+                                Interaction and hence for absence of the color bar next to it. These
+                                'color coded' Proteins do not form part of the current Interaction until
+                                the user save them either by selecting 'Save' or 'Save &amp; Continue' button.
+                                <br/>
+                                <br/>
+                                Any errors in adding Proteins are shown red colour as shown below.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/int-protein-error.png" title=""
+                                     alt="Error in adding Proteins"/>
+                                <br/>
+                                <br/>
+
+                                This section lists all the Features participating in the current
+                                Interaction. A Feature can be added or edited by selecting 'Add Feature'
+                                and 'Edit Feature' button respectively. The 'Edit Feature' only appears
+                                if there is a Feature attached to the Protein.
+                                <br/>
+                                <img src="../images/editor/int-feature.png" title="" alt="Adding Features"/>
+                                <br/>
+                                <br/>
+                            </blockquote>
+
+                        </section>
+                        <!-- Proteins -->
+
+                        <section title="Features" name="editor.int.features">
+
+                            <blockquote>
+                                <img src="../images/editor/new-feature.png" title="Feature Editor"
+                                     alt="Feature Editor"/>
+                            </blockquote>
+
+                            <blockquote>
+                                A Feature must contain at least a single Range and hence Ranges section is shown
+                                in 'required field' colour. The following figure shows a Feature with
+                                multiple Ranges.
+                                <br/>
+                                <img src="../images/editor/add-ranges.png" title="" alt="Adding Ranges"/>
+                                <br/>
+                                <br/>
+                                The 'Create Undefined Feature' button provides an easier way to create a Feature
+                                with an undefined range. The following figure shows the result of selecting this
+                                button.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/feature-undefined.png" title="Undefined Feature"
+                                     alt="Undefined Feature"/>
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                                However, you still need to select the CvFeatureType before submitting the form.
+                                <br/>
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/feature-type-error.png" title="" alt="Missing CvFeatureType"/>
+                                <br/>
+                                <br/>
+                                The 'Mutation' button switches the current view between Mutation/Normal
+                                Feature editor.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/mutation-button.png" title="" alt="Mutation Button"/>
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                                You can switch back to the Normal Feature editor at anytime (or vice versa) but you
+                                will lose data entered in the form.
+                                <br/>
+                                <br/>
+                                <br/>
+                                The mutation editor as a result of switching from Normal to Mutation mode.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/hotspot-editor.png" title="" alt="Hotspot Editor"/>
+                                <br/>
+                                <br/>
+                                See the curation manual for the format of hotspots. Any errors in adding hotspot entries
+                                are shown in red with an error message.
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/hotspot-error.png" title="" alt="Hotspot Error"/>
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/warning.gif" title="" alt="" align="left"/>
+                                There is no 'Save &amp; Continue' button. You need to save the data by selecting the
+                                'Submit' button.
+                                <br/>
+                                <br/>
+                                <br/>
+                                <img src="../images/editor/idea.gif" title="" alt="" align="left"/>
+                                The CvFeatureType defaults to hotspot. Ensure that the entire entry for hotspot
+                                is complete before you select the 'Submit' button.
+                                <br/>
+                                <br/>
+                            </blockquote>
+
+                        </section>
+                        <!-- Proteins -->
+
+                    </section>
+                    <!-- Interaction -->
+
+                </section>
+                <!-- Other Editors -->
+
+                <section title="FAQ" name="editor.faq">
+
+                    <blockquote>
+                        <b>What browsers Editor supports?
+                            <br/>
+                        </b>
+                        It has been tested using Mozilla (1.4 or above), Explorer (6.0),
+                        Konqueror (2.1.1 or above) and firefox (1.0 or above). With the Konqueror it has been
+                        noted that pop up windows do not get the focus (need to bring them manually). Also,
+                        the footer is almost at the top when a page does not contain much
+                        information.
+                        <br/>
+                        <br/>
+
+                        <b>Do I need a JRE installed to run the Editor?</b>
+                        <br/>
+                        No, you don't need Java Runtime to run the Editor as it is designed to
+                        run on thin clients (see the next question about JavaScript).
+                        <br/>
+                        <br/>
+
+                        <b>Do I need JavaScript to run the Editor?</b>
+                        <br/>
+                        Yes. Some editors such as Experiment or Interaction wouldn't work if
+                        Javascript is disabled. Links to search application wouldn't
+                        work as well.
+                        <br/>
+                        <br/>
+
+                        <b>I get a strange error with dispatchXXX not found?</b>
+                        <br/>
+                        This happens if you have disabled Javascript. Some forms use Javascript
+                        to store values for the server to check. When Javascript is disabled, the server
+                        throws an error as it can't find the parameter dispatchXXX.
+                        <br/>
+                        <br/>
+
+                        <b>Do I need to logout when I am finished?</b>
+                        <br/>
+                        There is no need to logout because your session will timeout if it has
+                        been inactive for 30 or more minutes. However, by explicitly logging out
+                        you are releasing the resources (good thing to do). So, we recommend
+                        explicit logouts.
+                        <br/>
+                        <br/>
+
+                        <b>Can I connect to my last session when my session expires?</b>
+                        <br/>
+                        No. Once your session expires you need to login again and this in turn
+                        will start a new session.
+                        <br/>
+                        <br/>
+
+
+                        <b>Sometimes I get an error when Enter key is pressed for a search string in the sidebar.
+                            <br/>
+                        </b>
+                        This behaviour was observed with Explorer and Konqueror but not
+                        with Mozilla. The simple solution is to click on Search button instead.
+                        <br/>
+                        <br/>
+
+                        <b>It hangs for a tax id in BioSource editor.</b>
+                        <br/>
+                        Either Newt server is not accessible or down. There is no way to get
+                        around this problem; you need to access the Newt server to do the auto-completion.
+                        <br/>
+                        Currenlty, you
+                        <u>have to</u>
+                        go through Newt to get your taxid validated as well as the
+                        shortlabel and the fullname set to the BioSource.
+
+                        <br/>
+                        <br/>
+
+                        <b>The parameter to search for Proteins given as name is ignored when a value is provided for
+                            Intact Ac in the Interaction editor.</b>
+                        <br/>
+                        By default, IntAct AC is the most specific and it is followed by SP AC
+                        and finally the shortlabel. Given two values for name and
+                        IntAct AC, the latter is always given the priority.
+                        <br/>
+                        <br/>
+
+                        <b>In the interaction form, is there a way to save or delete all Proteins in one single
+                            click?</b>
+                        <br/>
+                        Not at the moment. We may add this behaviour later.
+                        <br/>
+                        <br/>
+
+                        <b>The focus seems to be lost (can't enter or select an item in the editor).</b>
+                        <br/>
+                        This is most likely due to the search popup having the focus. Close the search
+                        popup window to regain the focus.
+                    </blockquote>
+
+                </section>
+                <!-- FAQ -->
+
+            </section>
+            <!-- Editor -->
+
+
+            <section title="hierarchView" name="hierarchView">
+
+                <blockquote>
+                    HierarchView is a web based application which allow to visualise interaction networks contained in
+                    IntAct.
+                    <br/>
+                    <br/>
+                    This includes :
+                    <ul>
+                        <li>Query interface: to select the set of Interactors from which the interaction network is
+                            built,</li>
+                        <li>Visualising an interaction network as a two dimensional graph,</li>
+                        <li>Visualisation of a protein's context (using the
+                            <a href="#search">Search application</a>
+                            ),
+                        </li>
+                        <li>Performing action by clicking on a protein of the displayed network, to</li>
+                        <ul>
+                            <li>Center the view,</li>
+                            <li>Extend the view,</li>
+                        </ul>
+                        <li>Displaying GO terms of all proteins from which the interaction network is built,</li>
+                        <li>Displaying the GO hierarchy of a selected GO term</li>
+                        <li>Highlighting all proteins annotated by a specific GO term (selected by the user)</li>
+                    </ul>
+                </blockquote>
+
+
+                <section title="Graphical user interface" name="hierarchView.GUI">
+
+                    <blockquote>
+                        The graphical user interface integrates:
+                        <p>
+                            <u>a sidebar</u>
+                            <blockquote>
+                                <p>
+                                    <u>the basic sidebar</u>
+                                    :
+                                </p>
+                                <p>
+                                    Some components of the sidebar are always visible whatever the state of the
+                                    application.
+                                </p>
+                                <p>
+                                    This includes:
+                                    <ul>
+                                        <li>on the top, the query interface.</li>
+                                        <li>on the bottom, a set of IntAct related links.</li>
+                                    </ul>
+                                </p>
+                                <p>
+                                    <u>the advanced sidebar</u>
+                                    :
+                                    After loading a first interaction network, more features are available in the
+                                    sidebar :
+                                    <ul>
+                                        <li>below the query interface, the
+                                            <i>Graph</i>
+                                            menu which allows to expand and
+                                            contract the current interaction network,
+                                        </li>
+                                        <li>above the link section, the mouse-click behaviour section which allows the
+                                            user to
+                                            switch the mouse-click behaviour either to center the view or add a new
+                                            network.</li>
+                                    </ul>
+                                </p>
+                            </blockquote>
+                        </p>
+
+                        <p>
+                            <u>a content frame</u>
+                            <blockquote>
+                                <p>
+                                    <u>header</u>
+                                    : specifies from which protein(s) the current interaction network is built
+                                    as well as the number of nodes and edges. If needed, the selected GO term used for
+                                    the
+                                    highlight is displayed.
+                                </p>
+                                <p>
+                                    <u>protein interaction network</u>
+                                    : a clickable image representing the requested interaction network.
+                                </p>
+                                <p>
+                                    <u>highlight top panel</u>
+                                    : a list of all GO terms associated with proteins in the currently displayed
+                                    interaction network.
+                                </p>
+                                <p>
+                                    <u>highlight bottom panel</u>
+                                    : After selecting one of the GO term displayed in the top right frame,
+                                    the related GO hierarchy is displayed, allowing the user to perform a highlight by
+                                    selecting the GO term of the hierarchy.
+                                </p>
+                            </blockquote>
+                        </p>
+
+                        <center>
+                            <table border="0">
+                                <tr>
+                                    <td>
+                                        <a href="../images/hierarchView/PPIN.png" target="_blank">
+                                            <img src="../images/hierarchView/PPIN-small.png" border="0" width="300"
+                                                 height="197"></img>
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>click the image to enlarge</td>
+                                </tr>
+                            </table>
+                        </center>
+                    </blockquote>
+
+                </section>
+                <!-- GUI -->
+
+
+                <section title="What is an interaction network ?" name="hierarchView.PPIN">
+
+                    <blockquote>
+                        It is a graphical way of representing a protein protein interaction network as
+                        a two dimensional graph structure. Within that graph, the nodes represent proteins
+                        and the edges represent interactions.
+                        <br/>
+                        <br/>
+                        The entry point of an interaction network is an
+                        <b>Interactor</b>
+                        (either
+                        <b>Protein</b>
+                        or
+                        <b>Interaction</b>
+                        ) around which we will look for all Interactors within a specified
+                        threshold called depth. A depth 1 would be all direct Interactors of the selected protein.
+                    </blockquote>
+
+                </section>
+                <!-- What is an interaction network ? -->
+
+
+                <section title="How to display an interaction network ?" name="hierarchView.display">
+
+                    <blockquote>
+                        Type in the
+                        <i>Interactor</i>
+                        form either a protein name or accession number and
+                        click the
+                        <i>search</i>
+                        button to display the related interaction network. You are free
+                        to type a comma separated list of proteins in order to display all of them in one go.
+                        <br/>
+                        <br/>
+                        The visualization systems shows all specified proteins with a bold font. As soon as the
+                        interaction network is displayed, the user interface is changing slightly to offer more
+                        interactivity.
+                        <br/>
+                        <br/>
+                        When querying IntAct to display an interaction network, if the query is ambiguous (e.g.
+                        the query
+                        <i>snu*</i>
+                        could describes several proteins such as snu66, snu13...),
+                        you will be automatically forwarded to the search application where you will be able to
+                        select the targeted protein(s).
+                    </blockquote>
+
+                </section>
+                <!-- How to display an interaction network ? -->
+
+
+                <section title="How to interact with the interaction network ?" name="hierarchView.PPIN.interact">
+
+                    <section title="Add a further interaction network" name="hierarchView.PPIN.add">
+
+                        <blockquote>
+                            When adding an interaction network, a new one is generated according to the user's wishes
+                            and then merged with the current one.
+                            <br/>
+                            <br/>
+                            There are two ways of adding additional interactors to the displayed interaction network:
+                            <ul>
+                                <li>
+                                    Type in the
+                                    <i>Interactor</i>
+                                    form either a protein name or AC and click
+                                    the
+                                    <i>add</i>
+                                    button. You are free to type a comma separated list of
+                                    protein in order to display all of them in one go.
+                                </li>
+
+                                <li>
+                                    If the protein of interest is available in the current interaction network, you
+                                    can switch the mouse-click (sidebar) behaviour to
+                                    <i>add a network</i>
+                                    then click
+                                    on the wanted protein.
+                                </li>
+                            </ul>
+                        </blockquote>
+
+                    </section>
+                    <!-- Add a further interaction network -->
+
+
+                    <section title="Center the view" name="hierarchView.PPIN.center">
+
+                        <blockquote>
+                            In order to navigate in the interaction network, you can decide to change the current
+                            central protein. To do so, switch the mouse-click (sidebar) behaviour to
+                            <i>center the view</i>
+                            , then, click on the wanted protein. The current interaction
+                            network will be reloaded as the interaction network of the selected protein.
+                            <br/>
+                            <br/>
+                            Bear in mind that it would have had the same effect to type the name or accession
+                            number of the protein in the
+                            <i>Interactor</i>
+                            form and click on the
+                            <i>search</i>
+                            button.
+                        </blockquote>
+
+                    </section>
+                    <!-- Center the view -->
+
+
+                    <section title="Expand the current interaction network" name="hierarchView.PPIN.expand">
+
+                        <blockquote>
+                            In order to improve the readability and the loading time, the default depth of an
+                            interaction network has been set relatively low. Nevertheless you can increase that
+                            parameter in order to expand the current interaction network by clicking the
+                            <i>expand</i>
+                            button in the sidebar. Bear in mind that there is a minimum and maximum depth, this
+                            implies the
+                            <i>expand</i>
+                            (
+                            <i>contract</i>
+                            ) button disappears when the maximum (minimum)
+                            depth is reached.
+                        </blockquote>
+
+                    </section>
+                    <!-- Expand the current interaction network -->
+
+
+                    <section title="Highlight the interaction network" name="hierarchView.PPIN.highlight">
+                        <blockquote>
+                            After loading an interaction network, a list of GO terms specific to the set of selected
+                            proteins is displayed in the top right frame of hierarchView. By clicking on one of them,
+                            the related GO hierarchy appears in the bottom right frame (powered by
+                            <a href="http://www.ebi.ac.uk/ego" target="_blank">QuickGo</a>
+                            ).
+                            If a single GO term is found, the hierarchy is displayed automatically.
+                            Now you can select one of the displayed GO terms of the hierarchy in order to highlight
+                            in the interaction network all proteins annotated with that GO term in IntAct.
+                            These proteins will appear with a differently colored label.
+                            <br/>
+                            <br/>
+                            In the displayed hierarchy, the lower GO term is the more specific, and the higher you go,
+                            the more generic the GO terms become. Bear in mind that when selecting a GO term in the
+                            displayed hierarchy the highlight is done with a set of GO terms including the selected one
+                            and all its children (i.e. until the most specific).
+                            <br/>
+                            <br/>
+                            <center>
+                                <table border="0">
+                                    <tr>
+                                        <td>
+                                            <a href="../images/hierarchView/highlight.png" target="_blank">
+                                                <img src="../images/hierarchView/highlight-small.png" border="0"
+                                                     width="299" height="197"></img>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>click the image to enlarge</td>
+                                    </tr>
+                                </table>
+                            </center>
+                        </blockquote>
+
+                    </section>
+                    <!-- Highlight the interaction network -->
+
+
+                    <section title="Retreive the interaction network in PSI MI XML format"
+                             name="hierarchView.PPIN.download">
+                        <blockquote>
+                            After loading an interaction network, you can request to download its representation in
+                            PSI MI XML format. To do so, you have to click on the
+                            <i>Download</i>
+                            button of the
+                            <i>PSI-XML</i>
+                            section and a new window will appear in which the XML content will be
+                            displayed. After the data are fully loaded you can save that content on your hard disk.
+                            <br/>
+                            <u>Note to Netscape's users</u>
+                            : You may have to right-click and select
+                            <b>view source</b>
+                            in order to display the XML code.
+                            <br/>
+                            <br/>
+                            You can then, for instance, load the downloaded data in an external tool for further
+                            analysis.
+                            <br/>
+                            You can find a list of the tools supporting the PSI MI XML format
+                            <a href="http://psidev.sourceforge.net/mi/xml/doc/user" target="_blank">here</a>
+                            in the
+                            <i>Tools</i>
+                            section.
+                        </blockquote>
+
+                    </section>
+                    <!-- interaction network download -->
+
+                </section>
+                <!-- How to interact -->
+
+            </section>
+            <!-- hierarchView -->
+
+
+            <section name="mine" title="MiNe - Minimal connecting network">
+                <blockquote>
+                    MiNe is a web based application which computes the minimal connecting network for a given
+                    set of proteins if possible.
+                    <br/>
+                    A minimal network is a sub network of an interaction network which has to fulfill the following
+                    points:
+                    <ul>
+                        <li>it has to contain all wanted proteins</li>
+                        <li>the sum of the weight of the edges has to be minimal.
+                            <br/>
+                            The weight of the edges can be either different or identical (e.g. weight 1) -
+                            then the minimal connecting network is actually the network with the minimal number of nodes
+                        </li>
+                    </ul>
+                    <br/>
+                    This includes :
+                    <ul>
+                        <li>Query interface: to select the set of
+                            <i>Interactors</i>
+                            from which the minimal network is computed,
+                        </li>
+                        <li>Computation of the minimal connecting network,</li>
+                        <li>Forwarding to HierarchView to visualise the network</li>
+                    </ul>
+                </blockquote>
+
+                <section name="mine.search" title="How to search for a minimal connecting network ?">
+                    <blockquote>
+                        Type in the
+                        <i>Interactor</i>
+                        form either a protein name or accession number and
+                        click the
+                        <i>Find network</i>
+                        button to get the related minimal connecting network.
+                        You are free to type a comma separated list of proteins in order to display all of them in one
+                        go.
+                        <br/>
+                        <br/>
+                        As search phrases can be used:
+                        <ol>
+                            <li>IntAct Ac: EBI-44444</li>
+                            <li>Gene names: lsm7</li>
+                            <li>UniProtKB Ac: Q08162</li>
+                            <li>UniProtKB Id: rr44_yeast</li>
+                            <li>InterPro Ac: IPR001900</li>
+                            <li>GO Id: GO:0000176</li>
+                        </ol>
+                    </blockquote>
+                </section>
+
+                <section name="mine.ambiguous.result" title="What is an ambiguous result ?">
+                    <blockquote>
+                        If your search returns an ambiguous result all found proteins for every search phrase
+                        are shown on this page.
+                        <br/>
+                        An ambiguous result occurs when you search for either an
+                        <i>Interaction</i>
+                        or an
+                        <i>Experiment</i>
+                        or at least one search phrase returns more than one protein.
+                        <br/>
+                        To proceed you have to select the proteins from which you want to compute the minimal connecting
+                        network by activating the checkboxes related to the proteins.
+                    </blockquote>
+                </section>
+
+                <section name="mine.ambiguous.additional" title="What are additional search phrases ?">
+                    <blockquote>
+                        In this textbox you can enter an additional search query that will be used to complement the set
+                        of proteins currently shown on the page.
+                        <br/>
+                        If you want to add search phrases to your selection type a protein or an accession
+                        number or a comma seperated list into this field
+                        <br/>
+                        If you want to search for the phrases instead of the selection make sure to deselect
+                        all proteins found by the previous search.
+                        <br/>
+                        <br/>
+                        Please be aware of the search limit of seven proteins !
+                    </blockquote>
+                </section>
+            </section>
+
+
+            <section name="graph2mif" title="Graph2MIF -  Export IntAct to PSI Molecular Interaction Format">
+                <section name="graph2mif.overview" title="Overview">
+                    <blockquote>
+                        This application exports a graph as PSI MI Format (MIF).
+                        The user can access this using the SOAP protocol as a WebService, Servlet or direct.
+                    </blockquote>
+                </section>
+
+
+                <section name="graph2mif.access" title="Access">
+                    <blockquote>
+                        The URL to access the web service is the following:
+                        <pre>http://server.domain[:port]/intact/graph2mif</pre>
+                        <br/>
+                        You can replace
+                        <code>server.domain[:port]</code>
+                        by
+                        <code>www.ebi.ac.uk</code>
+                        <br/>
+                        <br/>
+                        For validation: Just call the URL above within a browser.
+                        It should displays a basic web form which allows to fill in the parameters of your query.
+                        <br/>
+                        There are two ways to request a MIF:
+                        <ul>
+                            <li>Soap: Using a SOAPClient. The only method you have to call is
+                                <code>http://server.domain:port/intact/graph2mif/soap/getMIF(ac,depth,striftmif)</code>
+                                .
+                            </li>
+
+                            <li>Direct URL call:
+                                <code>http://server.domain:port/intact/graph2mif/getXML?ac=
+                                    <i>Ac</i>
+                                    &amp;depth=
+                                    <i>Integer</i>
+                                    &amp;strict=
+                                    <i>(true|false)</i>
+                                </code>
+
+                            </li>
+                        </ul>
+                    </blockquote>
+                </section>
+
+
+                <section name="graph2mif.usage" title="Usage">
+                    <blockquote>
+                        Depending on the way you would like to access the data you call the soap-method
+                        <pre>getMIF()</pre>
+                        or directly the URL like mentioned above.
+                        Both of them have three Arguments
+                        <pre>ac, depth, strictmif</pre>
+                        A graph will be retrieved (representing a protein protein interaction network)
+                        starting with an interactor of
+                        <pre>ac</pre>
+                        and expanded to depth of
+                        <pre>depth</pre>
+                        <pre>striftmif</pre>
+                        is a Boolean. When set to true, a graph in PSI MI XML format will only be generated if the data
+                        allows to provide all required PSI MI attributes. Otherwise a exception is thrown.
+                        When set to false, the generated graph will still be in PSI MI format, but might lack some
+                        mandatory elements.
+                        <br/>
+                        The resulting graph will be returned in PSI MI XML as a formated XML-String.
+                        <br/>
+                    </blockquote>
+
+
+                    <section name="graph2mif.usage.wsclient" title="Example webservice client">
+                        <blockquote>
+                            The example java webservice client
+                            <i>Graph2MIFWSClient</i>
+                            is also included in this package.
+                            <br/>
+                            The client must know where to access the WebService, so go to the source code and change the
+                            Line with
+                            <code>URL url = new URL("...")</code>
+                            to your system. Afterwards you can compile it using
+                            <i>ant client"</i>
+                            .
+                            <br/>
+                            Just call:
+                            <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFWSClient
+                                <i>ac</i>
+                                <i>depth</i>
+                                <i>(true|false)</i>
+                            </code>
+                            to get a graph of IntAct as MIF. The result will be printed to
+                            <i>STDOUT</i>
+                            .
+                            Have a look at the simple source code for getting an impression of how to write your own
+                            client.
+                        </blockquote>
+                    </section>
+
+
+                    <section name="graph2mif.usage.console" title="Example console client">
+                        <blockquote>
+                            This client does not implement a WebService, it directly accesses the IntAct Database.
+                            The rest is mainly the same:
+                            <code>java uk.ac.ebi.intact.application.graph2MIF.Graph2MIFClient
+                                <i>ac</i>
+                                <i>depth</i>
+                                <i>(true|false)</i>
+                            </code>
+                            to get a graph in PSI MI XML format. The result will be printed to
+                            <i>STDOUT</i>
+                            .
+                            Have also a look at the simple source code for getting an impression of how to write your
+                            own client.
+                        </blockquote>
+                    </section>
+                </section>
+                <section name="graph2mif.references" title="PSI Molecular Interaction Format">
+                    <blockquote>
+                            For details about MIF hava a look at the homepage of the PSI project:
+                            <a href="http://psidev.sourceforge.net/">Proteomics Standards Initiative</a>
+                    </blockquote>
+                </section>
+            </section>
+            <!-- end graph2MIF -->
+
+
+            <section name="proviz" title="ProViz - Standalone Interaction Visualization System">
+                <blockquote>
+                    ProViz is a high-performance, standalone visualization system for molecular interactions. For a
+                    detailed description,
+                    please see the
+                    <a href="../misc/proviz/proviz.html">ProViz user manual</a>
+                    .
+                </blockquote>
+            </section>
+            <!-- end ProViz -->
+
+            <section name="targets" title="Targets - prediction of promising targets for pull-down experiments">
+                <blockquote>
+                    Uncovering the interactome is one of the primary challenges in the post-genomic era. The topology
+                    information gained from the coverage of interaction space can shed light on the likely function and
+                    structure of proteins within the network (Vitkup et al, 2001). Here we present a list of the 'best
+                    baits' which give the highest return on experimental effort - i.e. those proteins which form 'hubs'
+                    in the interaction network. These lists are generated using the Pay-As-You-Go strategy (Lappe, M.
+                    Holm, L.(2004) Nature Biotechnology 22, pp 98 - 103) which detects and prioritises those proteins
+                    which have the highest likelihood of being hubs based on the current data within IntAct for various
+                    species. To illustrate the experimental effort which could be saved by using the strategy
+                    recommended here, take the Human interactome as an example. It is estimated that 50,000 experiments
+                    would be required to cover the entire human interactome following a purely random strategy for the
+                    selection of targets. The information gain here is close to linear for each experiment. This could
+                    be drastically reduced to less than 10,000 for 90% coverage of the entire human interactome by using
+                    the proteins listed here as baits. This would save years of experimental effort. This of course
+                    relies on the timely deposition of experimental data into the IntAct database in order that the
+                    Pay-As-You-Go algorithm should be fully uptodate and effective.
+                </blockquote>
+            </section>
+            <!-- end targets -->
+        </section>
+        <!-- applications -->
+
+    </division>
+
+</page>
