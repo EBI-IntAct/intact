@@ -10,15 +10,15 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>data-conversion</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
     <name>Data conversions</name>
     <description>Import/Exports from/to PSI files</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.2</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.2</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/tags/data-conversion-1.5.2</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk</url>
     </scm>
 
     <build>
