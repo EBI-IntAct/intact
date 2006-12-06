@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.dbutil.cv;
 import uk.ac.ebi.intact.dbutil.cv.model.CvTerm;
 import uk.ac.ebi.intact.dbutil.cv.model.IntactOntology;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.ook.model.implementation.TermBean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class UpdateCVsReport implements Serializable
     private Collection<CvTerm> orphanTerms;
     private Collection<CvObject> updatedTerms;
     private Collection<CvObject> createdTerms;
+    private Collection<TermBean> invalidTerms;
 
     public UpdateCVsReport()
     {
@@ -43,6 +45,7 @@ public class UpdateCVsReport implements Serializable
         this.obsoleteTerms = new ArrayList<CvTerm>();
         this.updatedTerms = new ArrayList<CvObject>();
         this.createdTerms = new ArrayList<CvObject>();
+        this.invalidTerms = new ArrayList<TermBean>();
     }
 
     public IntactOntology getOntology()
@@ -103,5 +106,15 @@ public class UpdateCVsReport implements Serializable
     public void setObsoleteTerms(Collection<CvTerm> obsoleteTerms)
     {
         this.obsoleteTerms = obsoleteTerms;
+    }
+
+    public Collection<TermBean> getInvalidTerms()
+    {
+        return invalidTerms;
+    }
+
+    public void setInvalidTerms(Collection<TermBean> invalidTerms)
+    {
+        this.invalidTerms = invalidTerms;
     }
 }

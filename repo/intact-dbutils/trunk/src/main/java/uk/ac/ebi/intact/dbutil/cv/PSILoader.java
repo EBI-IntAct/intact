@@ -37,7 +37,17 @@ import java.util.regex.Pattern;
  */
 public class PSILoader extends AbstractLoader {
 
-    private static final Log log = LogFactory.getLog(PSILoader.class);
+    private PrintStream output;
+
+    public PSILoader()
+    {
+        this(System.out);
+    }
+
+    public PSILoader(PrintStream output)
+    {
+        this.output = output;
+    }
 
     /////////////////////////////
     // AbstractLoader's methods
@@ -162,7 +172,7 @@ public class PSILoader extends AbstractLoader {
         return StringEscapeUtils.unescapeXml( input );
     }
 
-    private IntactOntology buildIntactOntology() throws PsiLoaderException {
+    private IntactOntology buildIntactOntology(PrintStream output) throws PsiLoaderException {
 
         IntactOntology ontology = new IntactOntology();
 
@@ -174,6 +184,7 @@ public class PSILoader extends AbstractLoader {
 
             if ( ! isIdentifierValid( term ) ) {
                 // Skip any term that is not MI:xxxx of IA:xxxx
+                ontology.getInvalidTerms().add(term);
                 continue;
             }
 
@@ -182,7 +193,7 @@ public class PSILoader extends AbstractLoader {
             if ( shortlabel == null ) {
                 shortlabel = escapeXMLTags( term.getName() );
                 if ( shortlabel != null && shortlabel.length() > 20 ) {
-                    System.out.println( "NOTE: term " + id +
+                    output.println( "NOTE: term " + id +
                                         " has its name longer than 20 chars. it should have an exact_synonym." );
                 }
             }
@@ -202,9 +213,7 @@ public class PSILoader extends AbstractLoader {
                 cvTerm.setDefinition( definition );
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("Term: "+id+" ("+shortlabel+")");
-            }
+            output.println("Term: "+id+" ("+shortlabel+")");
 
             // check for Xrefs: pubmed, resid...
             if ( term.getXrefs() != null ) {
@@ -223,9 +232,7 @@ public class PSILoader extends AbstractLoader {
                     String accession = escapeXMLTags( dbXref.getAccession() );
                     String desc = escapeXMLTags( dbXref.getDescription() );
 
-                    if (log.isDebugEnabled()) {
-                        log.debug("\tType: "+type+"; Accession: "+accession+"; Desc: "+desc+"; Xref type: "+dbXref.getXrefType());
-                    }
+                    output.println("\tType: "+type+"; Accession: "+accession+"; Desc: "+desc+"; Xref type: "+dbXref.getXrefType());
 
                     switch ( dbXref.getXrefType() ) {
 
@@ -462,6 +469,17 @@ public class PSILoader extends AbstractLoader {
      * @return a non null IntactOntology.
      */
     public IntactOntology parseOboFile( File file ) throws PsiLoaderException, IOException {
+        return parseOboFile(new FileInputStream(file), System.out);
+    }
+
+     /**
+     * Parse the given OBO file and build a representation of the DAG into an IntactOntology.
+     *
+     * @param file the input file. It has to exist and to be readable, otherwise it will break.
+     *
+     * @return a non null IntactOntology.
+     */
+    public IntactOntology parseOboFile( File file, PrintStream output ) throws PsiLoaderException, IOException {
 
         if ( !file.exists() ) {
             throw new IllegalArgumentException( file.getAbsolutePath() + " doesn't exist." );
@@ -471,8 +489,7 @@ public class PSILoader extends AbstractLoader {
             throw new IllegalArgumentException( file.getAbsolutePath() + " could not be read." );
         }
 
-
-        return parseOboFile(new FileInputStream(file));
+        return parseOboFile(new FileInputStream(file), output);
     }
 
     /**
@@ -483,6 +500,17 @@ public class PSILoader extends AbstractLoader {
      * @return a non null IntactOntology.
      */
     public IntactOntology parseOboFile( InputStream stream ) throws PsiLoaderException, IOException {
+        return parseOboFile(stream, output);
+    }
+
+    /**
+     * Parse the given OBO file and build a representation of the DAG into an IntactOntology.
+     *
+     * @param stream the input file. It has to exist and to be readable, otherwise it will break.
+     *
+     * @return a non null IntactOntology.
+     */
+    public IntactOntology parseOboFile( InputStream stream, PrintStream output ) throws PsiLoaderException, IOException {
 
         File file = File.createTempFile("oboFile_", String.valueOf(System.currentTimeMillis()));
         file.deleteOnExit();
@@ -502,13 +530,13 @@ public class PSILoader extends AbstractLoader {
         configure();
 
         //parse obo file
-        System.out.println( "Reading " + file.getAbsolutePath() );
+        output.println( "Reading " + file.getAbsolutePath() );
 
         parse( file.getAbsolutePath() );
 
         //process into relations
         process();
 
-        return buildIntactOntology();
+        return buildIntactOntology(output);
     }
 }

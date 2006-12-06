@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.dbutil.cv.model;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.ook.model.implementation.TermBean;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -94,6 +95,10 @@ public class IntactOntology {
      * Maps IntAct CV Class to Ontology Terms. node One IntAct CV can have multiple roots.
      */
     private Map intact2psi = new HashMap();
+
+    private Collection<TermBean> invalidTerms = new ArrayList<TermBean>();
+
+
 
     //////////////////////////////
     // Private methods
@@ -335,6 +340,17 @@ public class IntactOntology {
     public Collection getOrphanTerms() {
 
         return orphanTerms;
+    }
+
+
+    public Collection<TermBean> getInvalidTerms()
+    {
+        return invalidTerms;
+    }
+
+    public void setInvalidTerms(Collection<TermBean> invalidTerms)
+    {
+        this.invalidTerms = invalidTerms;
     }
 
     /**
