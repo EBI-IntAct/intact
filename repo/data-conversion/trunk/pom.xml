@@ -16,9 +16,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/data-conversion/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.2</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/data-conversion/tags/data-conversion-1.5.2</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/data-conversion/tags/data-conversion-1.5.2</url>
     </scm>
 
     <build>
@@ -26,17 +26,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
-                <version>1.1.2-SNAPSHOT</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/PsiFileGeneratorTest.java</exclude>
-                    </excludes>
-                </configuration>
+                <version>1.1.2</version>
             </plugin>
         </plugins>
     </build>
@@ -45,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20061205-2</version>
+            <version>1.3-20061206</version>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
@@ -53,7 +43,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-8-SNAPSHOT</version>
+            <version>1.5.0-beta-8</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.app</groupId>
@@ -63,7 +53,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>intact-proteins-update</artifactId>
-            <version>1.1.0-SNAPSHOT</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
@@ -74,7 +64,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>intact-dbutils</artifactId>
-            <version>1.0-beta-1</version>
+            <version>1.0-beta-2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
