@@ -22,6 +22,11 @@
         <managed-bean-class>uk.ac.ebi.intact.site.webapp.DataSetsBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>newsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.webapp.NewsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
 
 
     <navigation-rule>
