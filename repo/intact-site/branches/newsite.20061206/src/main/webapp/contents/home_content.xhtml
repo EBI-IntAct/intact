@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+  <body>
+
+  <f:view>
+
+      <ui:composition>
+
+          <h1>IntAct Home</h1>
+
+          <h2>Introduction</h2>
+
+          IntAct provides a freely available, open source database system and analysis tools for protein interaction
+          data. All interactions are derived from literature curation or direct user submissions and are freely
+          available.
+
+          <c:if test="#{dataSetsBean.dataSetOfTheMonth != null}">
+
+              <h2>Dataset of the month: #{dataSetsBean.dataSetOfTheMonth.month}</h2>
+
+
+
+              <ul>
+                <li>
+                    <strong>#{dataSetsBean.dataSetOfTheMonth.title}</strong>
+
+                    <h:dataTable var="pubmed" value="#{dataSetsBean.dataSetOfTheMonth.pubmed}">
+                        <h:column>
+                            <h:outputText value="#{pubmed.author}"/>
+                        </h:column>
+                        <h:column>
+                            <h:outputText value="  "/>
+                        </h:column>
+                        <h:column>
+                            <a href="http://www.ebi.ac.uk/intact/search/do/search?searchString=#{pubmed.id}">
+                                <img alt="IntAct" src="http://www.ebi.ac.uk/intact/images/logo_intact.gif"
+                                     border="0" width="40"/></a>
+                        </h:column>
+                        <h:column>
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/pmid/#{(pubmed.year == null)? dataSetsBean.dataSetOfTheMonth.year : pubmed.year}/#{pubmed.id}.zip">
+                                <img alt="PSI 2.5" src="http://www.ebi.ac.uk/intact/images/psi25.png"
+                                     border="0"/></a><br/>
+                            <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/#{(pubmed.year == null)? dataSetsBean.dataSetOfTheMonth.year : pubmed.year}/#{pubmed.id}.zip">
+                                <img alt="PSI 1.0" src="http://www.ebi.ac.uk/intact/images/psi10.png"
+                                     border="0"/></a>
+                        </h:column>
+                    </h:dataTable>
+                    
+                </li>
+              </ul>
+
+          </c:if>
+
+          <h2>Acknowledgements</h2>
+
+          <table cellspacing="5" border="0">
+              <tr>
+                  <td align="right" valign="top">
+                      <a href="http://www.cordis.lu/life/">
+                          <img src="http://www.ebi.ac.uk/Information/images/logo_eu_small.gif" width="75" height="50"
+                          alt="Fundings"
+                          border="0"/></a>
+                  </td>
+                  <td align="left">
+                <span class="text">
+                    IntAct is funded by the European Commission under FELICS, contract number 021902 (RII3) within
+                    the Research Infrastructure Action of the FP6 "Structuring the European Research Area" Programme.
+                    <br/>
+                    Formerly IntAct was funded by EU grant number QLRI-CT-2001-00015 under the RTD programme
+                    "Quality of Life and Management of Living Resources".
+                </span>
+                  </td>
+              </tr>
+              <tr>
+                  <td align="right">
+                      <a href="http://www.ebi.ac.uk/proteomics/">
+                          <img src="http://www.ebi.ac.uk/Groups/images/logo_proteomics_small.gif"
+                               width="75" height="50" alt="Proteomics Services Team" border="0"/></a>
+                  </td>
+                  <td align="left">
+                      <span class="text">Part of the Proteomics Services Team.</span>
+                  </td>
+              </tr>
+              <tr>
+                  <td align="right">
+                      <a href="http://sourceforge.net/">
+                          <img src="http://sourceforge.net/sflogo.php?group_id=62732&amp;type=5"
+                               alt="SourceForge" border="1" width="100"/>
+                      </a>
+                  </td>
+                  <td align="left">
+                      <span class="text">Hosted by Sourceforge.net.</span>
+                  </td>
+              </tr>
+              <tr>
+                  <td align="right">
+                      <a href="http://www.jetbrains.com/idea/" target="_blank"><img border="0"
+                                                                                    alt="Developed with IntelliJ IDEA"
+                                                                                    title="Developed with IntelliJ IDEA"
+                                                                                    src="http://www.jetbrains.com/img/linklogos/idea125x37_1.gif"/></a>
+                  </td>
+                  <td align="left">
+                      <span class="text">Developed with IntelliJ IDEA</span>
+                  </td>
+              </tr>
+              <tr>
+                  <td align="right">
+                      <a href="http://www.yourkit.com"><img src="images/yourkit.gif"
+                                                            alt="YourKit" width="100" border="0" height="36"/>
+                      </a>
+                  </td>
+                  <td align="left">
+                      <span class="text">Profiled by YourKit Java Profiler.</span>
+                  </td>
+              </tr>
+              <tr>
+                  <td align="right">
+                      <a href="http://www.cenqua.com/clover/"><img src="images/clover_logo.gif"
+                                                                   alt="Clover" width="100" border="0"/></a>
+                  </td>
+                  <td align="left">
+                      <span class="text">Test coverage by Clover.</span>
+                  </td>
+              </tr>
+          </table>
+
+      </ui:composition>
+
+  </f:view>
+
+  </body>
+</html>

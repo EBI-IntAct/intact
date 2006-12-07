@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+  <head>
+    <title></title>
+  </head>
+  <body>
+
+  <f:view>
+      <h:form>
+
+          <ui:composition>
+
+              <c:if test="#{initiallyExpandSearchBox == null}">
+                  <ui:param name="initiallyExpandSearchBox" value="true"/>
+              </c:if>
+
+              <!-- The following 2 divs add an Icon Box to your Menu -->
+              <div class="iconboxheading" onclick="intact_toggleVisibility('searchBoxPanel')">
+                  <a href="#">Search IntAct</a>
+              </div>
+
+              <div id="searchBoxPanel"
+                   class="iconboxcontents"
+               style="visibility: #{initiallyExpandSearchBox? 'visible': 'hidden'}">
+
+              <h:inputText value="#{searchBean.searchQuery}" size="12"/>
+              <h:commandButton value="Search" action="#{searchBean.doSearch}"/>
+          </div>
+
+          </ui:composition>
+      </h:form>
+  </f:view>
+
+  </body>
+</html>

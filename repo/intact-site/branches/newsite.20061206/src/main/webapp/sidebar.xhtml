@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+  <head>
+    <title></title>
+  </head>
+  <body>
+
+  <f:view>
+
+      <ui:composition>
+
+          <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif"/>
+
+          <ui:define name="searchbox">
+              <ui:include src="sidebar/searchbox.xhtml"/>
+          </ui:define>
+
+          <ui:define name="menu">
+              <ui:include src="sidebar/menu.xhtml"/>
+          </ui:define>
+
+          <ui:define name="news">
+              <ui:include src="sidebar/news.xhtml"/>
+          </ui:define>
+
+          <!-- end left menu here -->
+
+
+          <!-- InstanceEndEditable -->
+          <script type="text/javascript" src="http://www.ebi.ac.uk/inc/js/sidebars.js"></script>
+          <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
+
+      </ui:composition>
+
+  </f:view>
+
+  </body>
+</html>

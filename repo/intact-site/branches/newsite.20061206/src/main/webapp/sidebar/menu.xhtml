@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+
+  <body>
+
+  <f:view>
+      <ui:composition>
+
+
+  <ul id="sidemenuid" class="sidemenu">
+      <li class="leftmenudivider"></li>
+
+      <li>
+          <h:commandLink value="IntAct Home" action="home"/>
+      </li>
+      <li>
+          <h:outputLink value="http://www.ebi.ac.uk/intact/search/do/initAdvSearch">
+              <h:outputText value="Advanced Search"/>
+          </h:outputLink>
+      </li>
+      <li>
+          <h:commandLink value="Tools" action="tools"/>
+      </li>
+      <li>
+          <h:commandLink value="Data Submission" action="data_submission"/>
+      </li>
+      <li>
+          <h:commandLink value="Downloads" action="downloads"/>
+      </li>
+      <li class="clickmeopen"><a href="#">Documentation</a>
+          <ul>
+              <li>
+                  <h:commandLink value="FAQ" action="faq"/>
+              </li>
+              <li>
+                  <h:commandLink value="User manual" action="user_manual"/>
+              </li>
+              <li>
+                  <h:commandLink value="Annotation manual" action="annot_manual"/>
+              </li>
+              <li>
+                  <h:commandLink value="Publications" action="publications"/>
+              </li>
+              <li>
+                  <h:outputLink value="http://www.ebi.ac.uk/intact/statisticView" target="stats">
+                      <h:outputText value="Statistics"/>
+                  </h:outputLink>
+              </li>
+          </ul>
+      </li>
+
+      <li class="clickmeopen"><a href="#">Developer Resources</a>
+
+          <ul>
+              <li>
+                  <h:outputLink value="http://www.ebi.ac.uk/~intact/devsite" target="devsite">
+                      <h:outputText value="Development Site"/>
+                  </h:outputLink>
+              </li>
+          </ul>
+      </li>
+      <li>
+          <h:commandLink value="Contact IntAct" action="contact"/>
+      </li>
+
+      <!-- class clickmeopen forces menu to be open by default
+      <li class="clickmeopen"><a href="#">Developer Resources</a>
+
+          <ul>
+              <li><a href="#">level two menu</a></li>
+              <li><a href="#">level two menu</a></li>
+          </ul>
+      </li>
+       -->
+
+      <li class="leftmenudivider"></li>
+  </ul>
+
+      </ui:composition>
+  </f:view>
+
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<datasets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:noNamespaceSchemaLocation="http://www.ebi.ac.uk/~intact/site/dotm/dotm-1_0.xsd">
+    <dataset month="December" year="2006"
+             title="Role of SMC protiens  in chromatin modulation">
+        <pubmed>
+            <id>15148393</id>
+            <author>Chen ES et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>9285594</id>
+            <author>Sutani T et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>11914278</id>
+            <author>Hagstrom KA et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>12773391</id>
+            <author>Sakai A et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>12966087</id>
+            <author>McDonald WH et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>15148393</id>
+            <author>Chen ES et al.</author>
+        </pubmed>
+    </dataset>
+    <dataset month="November" year="2006"
+             title="Large-scale identification of protein-protein interaction of Escherichia coli K-12">
+        <pubmed>
+            <id>16606699</id>
+            <author>Arifuzzaman et al.</author>
+        </pubmed>
+    </dataset>
+    <dataset month="September" year="2006"
+             title="Mapping the murine cardiac 26S proteasome complexes">
+        <pubmed>
+            <id>16857966</id>
+            <author>Gomes AV et al.</author>
+        </pubmed>
+    </dataset>
+</datasets>
+
