@@ -6,7 +6,10 @@
       xmlns:jsp="http://java.sun.com/JSP/Page"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 <body>
 
 <f:view>
@@ -20,8 +23,25 @@
 
             <h1>Datasets of the month - Archive</h1>
 
-            
-
+            <!--
+            <t:dataList var="dataSet" value="#{dataSetsBean.dataSets}">
+                      <ui:define name="dotm">
+                        <ui:param name="dataSet" value="#{dataSet}"/>
+                        <ui:include src="dotm_template.xhtml.xhtml"/>
+                    </ui:define>
+            </t:dataList>
+            -->
+            <ul>
+                <c:forEach var="dataSet" items="#{dataSetsBean.dataSets}">
+                    <li>
+                        <ui:define name="dotm">
+                            <ui:param name="dataSet" value="#{dataSet}"/>
+                            <ui:param name="includeDate" value="true"/> 
+                            <ui:include src="dotm_template.xhtml.xhtml"/>
+                        </ui:define>
+                    </li>
+                </c:forEach>
+            </ul>
 
         </ui:define>
 

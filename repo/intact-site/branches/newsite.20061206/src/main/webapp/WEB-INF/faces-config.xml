@@ -30,20 +30,20 @@
             <to-view-id>/index.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>downloads</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
+            <from-outcome>tools</from-outcome>
+            <to-view-id>/contents/tools.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
-            <from-outcome>faq</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
+            <from-outcome>data_submission</from-outcome>
+            <to-view-id>/contents/data_submission.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>downloads</from-outcome>
+            <to-view-id>/contents/downloads.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>user_manual</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
-        </navigation-case>
-        <navigation-case>
-            <from-outcome>annot_manual</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
+            <to-view-id>/contents/doc_user_manual.xhtml</to-view-id>
         </navigation-case>
         <navigation-case>
             <from-outcome>publications</from-outcome>
@@ -51,7 +51,11 @@
         </navigation-case>
         <navigation-case>
             <from-outcome>contact</from-outcome>
-            <to-view-id>/index.xhtml</to-view-id>
+            <to-view-id>/contents/contact.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>dotm_archive</from-outcome>
+            <to-view-id>/contents/dotm_archive.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

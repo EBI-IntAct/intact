@@ -27,6 +27,7 @@ import java.io.Serializable;
  */
 public class SearchBean implements Serializable
 {
+    private static final String SEARCH_QUERY_URL = "uk.ac.ebi.intact.SEARCH_QUERY_URL";
 
     private String searchQuery;
 
@@ -39,11 +40,13 @@ public class SearchBean implements Serializable
     {
         FacesContext context = FacesContext.getCurrentInstance();
 
+        String searchQueryUrl = context.getExternalContext().getInitParameter(SEARCH_QUERY_URL);
+
         // short-circuit the cycle to redirect to a external page
         try
         {
             context.responseComplete();
-            context.getExternalContext().redirect("http://www.ebi.ac.uk/intact/search/do/search?searchString="+searchQuery);
+            context.getExternalContext().redirect(searchQueryUrl+searchQuery);
         }
         catch (IOException e)
         {

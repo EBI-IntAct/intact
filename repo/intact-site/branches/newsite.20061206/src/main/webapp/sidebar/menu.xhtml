@@ -38,13 +38,18 @@
       <li class="clickmeopen"><a href="#">Documentation</a>
           <ul>
               <li>
-                  <h:commandLink value="FAQ" action="faq"/>
+                  <h:outputLink value="http://www.ebi.ac.uk/intact/faq/" target="doc">
+                      <h:outputText value="FAQ"/>
+                  </h:outputLink>
+
               </li>
               <li>
                   <h:commandLink value="User manual" action="user_manual"/>
               </li>
               <li>
-                  <h:commandLink value="Annotation manual" action="annot_manual"/>
+                  <h:outputLink value="#{initParam['uk.ac.ebi.intact.ANNOTATION_MANUAL']}" target="doc">
+                      <h:outputText value="Annotation manual"/>
+                  </h:outputLink>
               </li>
               <li>
                   <h:commandLink value="Publications" action="publications"/>

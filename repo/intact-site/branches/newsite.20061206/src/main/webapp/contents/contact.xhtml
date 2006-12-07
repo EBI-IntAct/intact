@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<f:view>
+
+    <ui:composition template="../main-template.xhtml">
+
+        <!-- Mandatorty params -->
+        <ui:param name="sectionTitle" value="Contact"/>
+
+        <ui:define name="contents">
+
+            <h1>Contact</h1>
+
+            <h2>Mailing lists, bug reports:</h2>
+            
+            The following mailing lists have been set up:
+            <ul>
+                <li>intact-announce@lists.sourceforge.net <br/>
+                    General IntAct announcements. Low traffic.
+                    <a href="http://lists.sourceforge.net/lists/listinfo/intact-announce">Subscribe/unsubscribe</a>
+                    here.<br/>
+                </li>
+                <li>
+                    You might also want to submit a <a href="http://sourceforge.net/tracker/?group_id=62732">feature
+                    request or bug report</a>. <br/>
+                </li>
+            </ul>
+
+
+        </ui:define>
+
+    </ui:composition>
+
+
+</f:view>
+
+</body>
+
+</html>

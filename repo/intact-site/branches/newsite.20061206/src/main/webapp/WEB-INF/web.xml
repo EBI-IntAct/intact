@@ -11,8 +11,35 @@
 
     <!-- intact specific params -->
     <context-param>
+        <description>
+            Where to find the Dataset of the Month XML file
+        </description>
         <param-name>uk.ac.ebi.intact.DATASET_OF_THE_MONTH_URL</param-name>
         <param-value>http://www.ebi.ac.uk/~intact/site/dotm/dotm.xml</param-value>
+    </context-param>
+
+    <context-param>
+        <description>
+            URL to do a search query
+        </description>
+        <param-name>uk.ac.ebi.intact.SEARCH_QUERY_URL</param-name>
+        <param-value>http://www.ebi.ac.uk/intact/search/do/search?searchString=</param-value>
+    </context-param>
+
+    <context-param>
+        <description>
+            URL to the annotation manual
+        </description>
+        <param-name>uk.ac.ebi.intact.ANNOTATION_MANUAL</param-name>
+        <param-value>http://www.ebi.ac.uk/~intact/site/doc/IntActAnnotationRules.pdf</param-value>
+    </context-param>
+
+    <context-param>
+        <description>
+            Current FTP
+        </description>
+        <param-name>uk.ac.ebi.intact.FTP_CURRENT</param-name>
+        <param-value>ftp://ftp.ebi.ac.uk/pub/databases/intact/current</param-value>
     </context-param>
 
     <!-- other params, jsf, facelets... -->
