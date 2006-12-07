@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<f:view>
+
+    <ui:composition template="../main-template.xhtml">
+
+        <!-- Mandatorty params -->
+        <ui:param name="sectionTitle" value="Tools"/>
+
+        <ui:define name="contents">
+
+            <h1>IntAct Tools</h1>
+
+            IntAct is an open source project hosted on SourceForge. You can access
+            the <a href="http://sf.net/projects/intact/">IntAct group page</a>,
+            the <a href="http://intact.sourceforge.net">IntAct home page</a>, or <a
+                href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/intact/intactCore/">browse</a>
+            the <a href="http://sourceforge.net/svn/?group_id=62732">SVN repository</a>.
+            <p>Additional software developed within the IntAct project: </p>
+            <ul>
+                <li><a href="http://cbi.labri.fr/eng/proviz.htm ">ProViz</a> graph visualisation system.</li>
+                <li><a href="http://www.ebi.ac.uk/intact/targets/">Targets</a> application to predict targets for
+                    pull-down experiments
+                </li>
+                <li><a href="http://www.ebi.ac.uk/intact/mine/">MiNe</a> application computes minimal connecting network
+                    for protein sets.<br/>
+                    Example: <a
+                        href="http://www.ebi.ac.uk/intact/mine/display.jsp?AC=EBI-1389,EBI-1765">Q12277 and
+                    Q08491</a>.
+                </li>
+            </ul>
+
+
+        </ui:define>
+
+    </ui:composition>
+
+
+</f:view>
+
+</body>
+
+</html>

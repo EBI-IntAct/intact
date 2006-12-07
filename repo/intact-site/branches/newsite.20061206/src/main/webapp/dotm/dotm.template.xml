@@ -27,6 +27,7 @@
             <author>Chen ES et al.</author>
         </pubmed>
     </dataset>
+    
     <dataset month="November" year="2006"
              title="Large-scale identification of protein-protein interaction of Escherichia coli K-12">
         <pubmed>
@@ -34,12 +35,109 @@
             <author>Arifuzzaman et al.</author>
         </pubmed>
     </dataset>
+
     <dataset month="September" year="2006"
              title="Mapping the murine cardiac 26S proteasome complexes">
         <pubmed>
             <id>16857966</id>
             <author>Gomes AV et al.</author>
         </pubmed>
+        <pubmed>
+            <id>16857963</id>
+            <author>Zong C et al.</author>
+        </pubmed>
     </dataset>
+
+    <dataset month="August" year="2006"
+             title="Chl12 (Ctf18) forms a novel replication factor C-related complex and functions redundantly with Rad24 in the DNA replication checkpoint pathway">
+        <pubmed>
+            <id>11486023</id>
+            <author>Naiki et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="July" year="2006"
+             title="More than 750 interactions of human proteins with a potential role in
+                        ataxia, the neurodegenerative condition caused by cerebellar Purkinje cell
+                        degeneration">
+        <pubmed>
+            <id>16713569</id>
+            <author>Lim et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="June" year="2006"
+             title="Landscape of the hnRNP K protein-protein interactome">
+        <pubmed>
+            <id>16518874</id>
+            <author>Mikula et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="May" year="2006"
+             title="Stable isotope labeling by amino acids in cell culture (SILAC) to identify proteins that interact with GLUT4 in an insulin-regulated manner">
+        <pubmed>
+            <id>16396496</id>
+            <author>Foster et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="April" year="2006"
+             title="Biochemical niche of C. elegans DCR-1 in small-RNA-mediated pathways">
+        <pubmed>
+            <id>16439208</id>
+            <author>Duchaine et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="March" year="2006"
+             title="A protein interaction network of the malaria parasite Plasmodium falciparum">
+        <pubmed>
+            <id>16267556</id>
+            <author>LaCount et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="February" year="2006"
+             title="Genome-wide screen for complexes in yeast: purifications and computed complexes">
+        <pubmed>
+            <id>16429126</id>
+            <author>Gavin et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="January" year="2006"
+             title="Proteomic characterization of the components and multiprotein complexes of the mouse brain PSD">
+        <pubmed>
+            <id>16236029</id>
+            <author>Collins et al.</author>
+        </pubmed>
+    </dataset>
+
+    <dataset month="December" year="2005"
+             title="Extending the human and yeast protein interaction network: more than 6200  new interactions in IntAct!">
+        <pubmed>
+            <id>16169070</id>
+            <author>Stelzl et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>16189514</id>
+            <author>Rual et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>16263121</id>
+            <author>Falsone et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>16273344</id>
+            <author>Hu et al.</author>
+        </pubmed>
+        <pubmed>
+            <id>15766533</id>
+            <author>Zhao et al.</author>
+        </pubmed>
+    </dataset>
+
+
 </datasets>
 

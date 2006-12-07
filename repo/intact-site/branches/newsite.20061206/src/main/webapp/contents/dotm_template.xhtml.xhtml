@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+  <head>
+    <title></title>
+  </head>
+  <body>
+
+  <f:view>
+      <ui:composition>
+
+          <a id="#{dataSet.title}"/>
+
+          <strong>#{dataSet.title}.</strong>
+
+          <c:if test="#{includeDate}">
+              <h:outputText value=" [#{dataSet.month}, #{dataSet.year}]"/>
+          </c:if>
+
+          <h:dataTable var="pubmed" value="#{dataSet.pubmed}">
+              <h:column>
+                  <h:outputText value="#{pubmed.author}"/>
+              </h:column>
+              <h:column>
+                  <h:outputText value="  "/>
+              </h:column>
+              <h:column>
+                  <a href="http://www.ebi.ac.uk/intact/search/do/search?searchString=#{pubmed.id}">
+                      <img alt="IntAct" src="http://www.ebi.ac.uk/intact/images/logo_intact.gif"
+                           border="0" width="40"/></a>
+              </h:column>
+              <h:column>
+                  <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25/pmid/#{(pubmed.year == null)? dataSet.year : pubmed.year}/#{pubmed.id}.zip">
+                      <img alt="PSI 2.5" src="http://www.ebi.ac.uk/intact/images/psi25.png"
+                           border="0"/></a><br/>
+                  <a href="ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/#{(pubmed.year == null)? dataSet.year : pubmed.year}/#{pubmed.id}.zip">
+                      <img alt="PSI 1.0" src="http://www.ebi.ac.uk/intact/images/psi10.png"
+                           border="0"/></a>
+              </h:column>
+          </h:dataTable>
+
+      </ui:composition>
+  </f:view>
+
+  </body>
+</html>
