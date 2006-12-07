@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd" >
+
+<faces-config>
+
+    <application>
+        <!-- tell JSF to use Facelets -->
+        <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+    </application>
+
+
+    <managed-bean>
+        <managed-bean-name>searchBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.webapp.SearchBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>dataSetsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.webapp.DataSetsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>downloads</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>faq</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>user_manual</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>annot_manual</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>publications</from-outcome>
+            <to-view-id>/contents/publications.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>contact</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>
