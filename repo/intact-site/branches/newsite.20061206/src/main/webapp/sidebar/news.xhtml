@@ -6,18 +6,38 @@
       xmlns:jsp="http://java.sun.com/JSP/Page"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
   <body>
 
   <f:view>
       <ui:composition>
 
-          <div class="iconboxheading">
+          <div class="iconboxheading" onclick="intact_toggleVisibility('newsPanel')">
               <a href="#">News</a>
           </div>
-          <div class="iconboxcontents">
-              <p>No news at this moment.</p>
+          <div id="newsPanel" class="iconboxcontents">
+
+              <c:forEach var="pieceOfNews" items="#{newsBean.lastNews}">
+                   <strong>#{pieceOfNews.date} #{pieceOfNews.title}</strong>
+                  <p>
+                      #{pieceOfNews.description}
+
+                      <c:if test="#{pieceOfNews.moreLink != null}">
+                          &nbsp;
+                          <h:outputLink value="#{pieceOfNews.moreLink}">
+                              <h:outputText value="[more]"/>
+                          </h:outputLink>
+                      </c:if>
+
+                  </p>
+                  <br/>
+
+              </c:forEach>
+
           </div>
 
       </ui:composition>

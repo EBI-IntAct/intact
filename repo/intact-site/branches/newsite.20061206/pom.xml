@@ -70,7 +70,7 @@
                 <groupId>com.sun.tools.xjc.maven2</groupId>
                 <artifactId>maven-jaxb-plugin</artifactId>
                 <configuration>
-                    <generatePackage>uk.ac.ebi.intact.site.dataset</generatePackage>
+                    <generatePackage>uk.ac.ebi.intact.site.items</generatePackage>
                 </configuration>
                 <executions>
                     <execution>
@@ -198,6 +198,11 @@
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>0.8</version>
         </dependency>
 
     </dependencies>

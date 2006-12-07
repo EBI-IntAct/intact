@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.site.webapp;
 
-import uk.ac.ebi.intact.site.dataset.Datasets;
-import static uk.ac.ebi.intact.site.dataset.Datasets.Dataset;
+import uk.ac.ebi.intact.site.items.Datasets;
+import static uk.ac.ebi.intact.site.items.Datasets.Dataset;
 
 import javax.faces.context.FacesContext;
 import javax.xml.bind.JAXBContext;
@@ -67,7 +67,7 @@ public class DataSetsBean implements Serializable {
 
     private static Datasets readDatasetsXml(InputStream is) throws JAXBException
     {
-        JAXBContext jc = JAXBContext.newInstance("uk.ac.ebi.intact.site.dataset");
+        JAXBContext jc = JAXBContext.newInstance(Datasets.class.getPackage().getName());
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         return (Datasets)
                 unmarshaller.unmarshal(is);
