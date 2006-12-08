@@ -9,20 +9,34 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
-      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:is="http://www.ebi.ac.uk/intact/jsf/site">
 
   <body>
 
   <f:view>
       <ui:composition>
 
-          <div class="iconboxheading" onclick="intact_toggleVisibility('newsPanel')">
-              <a href="#">News</a>
+          <div class="iconboxheading">
+              <a href="#" onclick="intact_toggleVisibility('newsPanel')">News</a>
+              <h:outputText value="  "/>
+              <h:outputLink value="feed">
+                  <h:graphicImage alt="RSS" url="images/xml_rss2.gif" style="border:0"/>
+              </h:outputLink>
           </div>
           <div id="newsPanel" class="iconboxcontents">
 
               <c:forEach var="pieceOfNews" items="#{newsBean.lastNews}">
-                   <strong>#{pieceOfNews.date} #{pieceOfNews.title}</strong>
+
+                  <strong>
+                      <h:outputText value="#{is:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
+                          <f:convertDateTime/>
+                      </h:outputText>
+
+                      <br/>
+
+                      #{pieceOfNews.title}</strong>
+
                   <p>
                       #{pieceOfNews.description}
 
@@ -36,7 +50,11 @@
                   </p>
                   <br/>
 
+
               </c:forEach>
+
+              <h:outputText value="More news in the "/>
+              <h:commandLink value="Archive" action="news_archive"/>
 
           </div>
 
