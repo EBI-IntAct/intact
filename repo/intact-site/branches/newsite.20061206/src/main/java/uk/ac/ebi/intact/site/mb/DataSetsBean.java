@@ -13,19 +13,13 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.site.webapp;
+package uk.ac.ebi.intact.site.mb;
 
-import uk.ac.ebi.intact.site.items.Datasets;
 import static uk.ac.ebi.intact.site.items.Datasets.Dataset;
+import uk.ac.ebi.intact.site.util.SiteUtils;
 
 import javax.faces.context.FacesContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,41 +30,21 @@ import java.util.List;
  */
 public class DataSetsBean implements Serializable {
 
-    private static final String DATASET_OF_THE_MONTH_URL = "uk.ac.ebi.intact.DATASET_OF_THE_MONTH_URL";
+    public static final String DATASET_OF_THE_MONTH_URL = "uk.ac.ebi.intact.DATASET_OF_THE_MONTH_URL";
 
     private List<Dataset> dataSets;
     private Dataset dataSetOfTheMonth;
 
     public DataSetsBean()
     {
-       // read datasets from XML
         String datasetsXml = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(DATASET_OF_THE_MONTH_URL);
 
-        Datasets datasets = null;
-        try {
-            URL datasetsUrl = new URL(datasetsXml);
-            datasets = readDatasetsXml(datasetsUrl.openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        dataSets = SiteUtils.readDatasets(datasetsXml);
 
-        if (datasets != null)
+        if (!dataSets.isEmpty())
         {
-            dataSets = datasets.getDataset();
             dataSetOfTheMonth = dataSets.iterator().next();
         }
-        else
-        {
-            dataSets = new ArrayList<Dataset>();
-        }
-    }
-
-    private static Datasets readDatasetsXml(InputStream is) throws JAXBException
-    {
-        JAXBContext jc = JAXBContext.newInstance(Datasets.class.getPackage().getName());
-        Unmarshaller unmarshaller = jc.createUnmarshaller();
-        return (Datasets)
-                unmarshaller.unmarshal(is);
     }
 
     public List<Dataset> getDataSets()

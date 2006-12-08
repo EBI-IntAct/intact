@@ -14,17 +14,17 @@
 
     <managed-bean>
         <managed-bean-name>searchBean</managed-bean-name>
-        <managed-bean-class>uk.ac.ebi.intact.site.webapp.SearchBean</managed-bean-class>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.SearchBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>dataSetsBean</managed-bean-name>
-        <managed-bean-class>uk.ac.ebi.intact.site.webapp.DataSetsBean</managed-bean-class>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.DataSetsBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>newsBean</managed-bean-name>
-        <managed-bean-class>uk.ac.ebi.intact.site.webapp.NewsBean</managed-bean-class>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.NewsBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
 
@@ -61,6 +61,10 @@
         <navigation-case>
             <from-outcome>dotm_archive</from-outcome>
             <to-view-id>/contents/dotm_archive.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>news_archive</from-outcome>
+            <to-view-id>/contents/news_archive.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

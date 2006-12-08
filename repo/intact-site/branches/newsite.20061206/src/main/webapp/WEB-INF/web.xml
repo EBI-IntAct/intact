@@ -53,7 +53,7 @@
         <param-value>2</param-value>
     </context-param>
 
-    <!-- other params, jsf, facelets... -->
+    <!-- JSF (MyFaces) Params... -->
 
     <!--
     <context-param>
@@ -151,6 +151,15 @@
         <param-value>true</param-value>
     </context-param>
 
+    <!-- Facelets -->
+    <context-param>
+        <param-name>facelets.LIBRARIES</param-name>
+        <param-value>
+            /WEB-INF/facelets/tags/intact-site.taglib.xml
+        </param-value>
+    </context-param>
+
+
     <!-- ajax4jsf -->
 
     <context-param>
@@ -163,6 +172,7 @@
         <filter-name>ajax4jsf</filter-name>
         <filter-class>org.ajax4jsf.Filter</filter-class>
     </filter>
+
     <filter-mapping>
         <filter-name>ajax4jsf</filter-name>
         <servlet-name>Faces Servlet</servlet-name>
@@ -220,6 +230,17 @@
         <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
+
+    <!-- Feed Servlet -->
+    <servlet>
+        <servlet-name>FeedServlet</servlet-name>
+        <servlet-class>uk.ac.ebi.intact.site.webapp.FeedServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+         <servlet-name>FeedServlet</servlet-name>
+         <url-pattern>/feed</url-pattern>
+    </servlet-mapping>
 
     <!-- Faces Servlet Mapping -->
     <servlet-mapping>
