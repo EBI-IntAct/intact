@@ -320,7 +320,9 @@ public class Feature extends AnnotatedObjectImpl<FeatureXref,FeatureAlias> imple
         // Make deep copies of range.
         for (Range range : ranges)
         {
-            copy.ranges.add((Range)range.clone());
+            Range copyRange = (Range)range.clone();
+            copyRange.setFeature(copy);
+            copy.ranges.add(copyRange);
         }
 
         // Need to do more here.
