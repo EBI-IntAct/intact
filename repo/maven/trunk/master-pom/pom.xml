@@ -10,9 +10,9 @@
         that is common to all projects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-3</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-3</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-3</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
     </scm>
 
     <properties>
@@ -113,7 +113,6 @@
                     <configuration>
                         <jdkLevel>1.5</jdkLevel>
                         <downloadSources>true</downloadSources>
-                        <downloadJavadocs>true</downloadJavadocs>
                         <useClassifiers>true</useClassifiers>
                         <linkModules>true</linkModules>
                         <exclude>target</exclude>
