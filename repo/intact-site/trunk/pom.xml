@@ -175,6 +175,16 @@
             <version>1.1.12</version>
         </dependency>
         <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>el-api</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.el</groupId>
+            <artifactId>el-ri</artifactId>
+            <version>1.2</version>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
             <version>1.1.2</version>
@@ -248,6 +258,11 @@
             <id>apache.snapshots</id>
             <name>Apache Snapshot Repository</name>
             <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+        </repository>
+        <repository>
+            <id>javax.el</id>
+            <name>Javax EL</name>
+            <url>http://delo.dcs.fmph.uniba.sk/sioux/maven2</url>
         </repository>
     </repositories>
 
