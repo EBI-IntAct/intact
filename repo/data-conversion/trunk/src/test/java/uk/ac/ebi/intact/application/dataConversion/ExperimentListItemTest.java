@@ -42,7 +42,6 @@ public class ExperimentListItemTest extends TestCase {
 
         mockWithOneLabel = new ExperimentListItem(labels, "onelabel", "species", true, null, null);
         mockWithOneLabelLarge = new ExperimentListItem(labels, "onelabellarge", "pmid"+File.separator+"2006", false, 2, 2000);
-
         List<String> labels2 = new ArrayList<String>();
         labels2.add(LABEL_1);
         labels2.add(LABEL_2);
@@ -53,6 +52,13 @@ public class ExperimentListItemTest extends TestCase {
     public void tearDown() throws Exception {
         super.tearDown();
     }
+
+    public void testStaticParseString() throws Exception {
+        ExperimentListItem experimentListItem = ExperimentListItem.parseString("species/humt-_small.xml kanamori-2003-4");
+        System.out.println("experimentListItem.getFilename() = " + experimentListItem.getFilename());
+        assertEquals("species/\\humt-_small.xml",experimentListItem.getFilename());
+    }
+
 
     public void testGetFilename() throws Exception {
         assertEquals("species"+ File.separator +"onelabel_negative.xml", mockWithOneLabel.getFilename());
