@@ -31,7 +31,7 @@ public class ExperimentListItem
      * Note: file path can contain / or \ indifferently
      */
     private static final Pattern PATTERN =
-            Pattern.compile("((?:\\w+(?:/|\\\\))*)(\\w+(?:-1)?-?+(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
+            Pattern.compile("((?:\\w+(?:/|\\\\))*)(\\w+(?:-\\d+)?-?+(?:_small)?)(?:_\\w+-\\d{4}-\\d+)?(?:-|_)?(\\d{1,2})?_?(negative)?\\.xml\\s(\\S+(?:,\\S)*)+(?:\\s\\[(\\d+),(\\d+)\\])?");
 
     private Collection<String> experimentLabels;
 
