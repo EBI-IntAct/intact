@@ -163,7 +163,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             // Add to the view.
             myComponents.add(cb);
             // The componen needs to be updated as well.
-            myComponentsToUpdate.add(cb);
+//            myComponentsToUpdate.add(cb);
         }
     }
 
@@ -172,55 +172,28 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
     public void persistOthers(EditUserI user) throws IntactException {
         // First transaction for
         try {
-            // Begin the transaction.
-//            user.startTransaction();
-
             // persist the view.
             persistCurrentView();
-
-            // Commit the transaction.
-//            user.commit();
             user.rollback(); //to end editing
-
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-//            try {
-                user.rollback();
-//            }
-//            catch (IntactException ie2) {
-//                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
-//                // Oops! Problems with rollback; ignore this as this
-//                // error is reported via the main exception (ie1).
-//            }
+            user.rollback();
             // Rethrow the exception to be logged.
             throw ie1;
         }
         // Need another transaction to delete features.
         try {
-            // Begin the transaction.
-//            user.startTransaction();
 
             // persist the view in a second transaction
             persistCurrentView2();
 
-            // Commit the transaction.
-//            user.commit();
             user.rollback(); //to end editing
 
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-//            try {
-                user.rollback();
-//            }
-//            catch (IntactException ie2) {
-//                 Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
-//
-//                // Oops! Problems with rollback; ignore this as this
-//                // error is reported via the main exception (ie1).
-//            }
-            // Rethrow the exception to be logged.
+            user.rollback();
             throw ie1;
         }
     }
@@ -626,8 +599,12 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         // Find the component bean this feature bean belongs to.
         for (ComponentBean cb : myComponents)
         {
+            if(cb == null){
+                continue;
+            }
             if (cb.getAc().equals(compAc))
             {
+                log.debug("Cb found");
                 compBean = cb;
                 break;
             }
@@ -1061,9 +1038,6 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
     private void persistCurrentView() throws IntactException {
         // The current Interaction.
         Interaction intact = getAnnotatedObject();
-        if(intact != null && intact.getAc() != null && (!"".equals(intact.getAc())) ){
-            intact = DaoProvider.getDaoFactory().getInteractionDao().getByAc(intact.getAc());
-        }
 
         // Add experiments here. Make sure this is done after persisting the
         // Interaction first. - IMPORTANT. don't change the order.
@@ -1232,17 +1206,27 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             Component comp = cb.getComponent(true);
             // No need to delete from persistent storage if the link to this
             // Protein is not persisted.
-            if ((comp == null) || (comp.getAc() == null))
-            {
+            if ((comp == null) || (comp.getAc() == null)) {
+                Collection<Component> components = getCorrespondingComponent(intact,cb);
+                for(Component componentToDelete : components){
+                    intact.removeComponent(componentToDelete);
+                    componentToDelete.setInteraction(null);
+                }
                 continue;
             }
             // Disconnect any links between features in the component.
             disconnectLinkedFeatures(cb);
             ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
-            componentDao.delete(comp);
             intact.removeComponent(comp);
+
+            comp.setInteraction(null);
+            componentDao.delete(comp);
+
+            InteractionDao intDao = DaoProvider.getDaoFactory().getInteractionDao();
+            intDao.saveOrUpdate((InteractionImpl) intact);
         }
     }
+
 
     /**
      * Updates Components.
@@ -1264,39 +1248,35 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             disconnectLinkedFeatures(cb);
 
             Component comp = cb.getComponent(true);
+            log.debug("newRole before update" + comp.getCvComponentRole().getShortLabel() );
+            componentDao.saveOrUpdate(comp);
+            log.debug("newRole after update " + comp.getCvComponentRole().getShortLabel() );
 
             // Add features
             for (FeatureBean featureBean : cb.getFeaturesToAdd())
             {
                 Feature feature = featureBean.getUpdatedFeature();
+                feature.setComponent(comp);
+
                 // Feature AC is null for a cloned interaction.
-                if (feature.getAc() == null)
-                {
+                if (feature.getAc() == null) {
                     // Create a new Feature.
                     featureDao.persist(feature);
-//                    helper.create(feature);
-
                     // Create ranges for the feature.
-                    for (Range range : feature.getRanges())
-                    {
-                        rangeDao.persist(range);
-//                        helper.create(range);
+                    for (Range range : feature.getRanges()) {
+                        range.setFeature(feature);
                     }
                 }
                 // Add to the component.
+                for (Range range : feature.getRanges()) {
+                    range.setFeature(feature);
+                }
                 comp.addBindingDomain(feature);
+                comp.setInteraction(intact);
             }
             intact.addComponent(comp);
 
-//            if (helper.isPersistent(comp))
-//            {
-                componentDao.saveOrUpdate(comp);
-//                helper.update(comp);
-//            }
-//            else
-//            {
-//                helper.create(comp);
-//            }
+            componentDao.saveOrUpdate(comp);
         }
     }
 
@@ -1343,10 +1323,12 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             Feature feature = ((FeatureBean) iter.next()).getFeature();
 
             // Set the bound domain to null.
-            feature.setBoundDomain(null);
+            if(feature != null){
+                feature.setBoundDomain(null);
+                // Update features.
+                set.add(feature);
+            }
 
-            // Update features.
-            set.add(feature);
         }
     }
 
@@ -1373,7 +1355,9 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
                 }
                 // Disconnect the links between two features.
                 toFeature.setBoundDomain(null);
+                feature.setBoundDomain(null);
                 FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
+                featureDao.update(feature);
                 featureDao.update(toFeature);
             }
         }

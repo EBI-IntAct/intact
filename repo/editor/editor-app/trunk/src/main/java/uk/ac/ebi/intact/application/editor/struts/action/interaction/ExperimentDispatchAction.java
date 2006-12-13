@@ -109,7 +109,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
         if (searchValue != null){
              searchValue = searchValue.replaceAll("\\*", "%");
          }
-          if (searchValue.length() == 0) {
+          if (searchValue.length() == 0 ) {
             ActionMessages errors = new ActionMessages();
             errors.add("int.exp.search",
             new ActionMessage("error.int.exp.search.input"));
@@ -117,7 +117,7 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
             setAnchor(request, intform);
             return mapping.getInputForward();
         }
-
+                                                                      
         // The maximum interactions allowed.
         int max = getService().getInteger("exp.search.limit");
 
@@ -158,7 +158,6 @@ public class ExperimentDispatchAction extends AbstractEditorDispatchAction {
             ExperimentRowData expRow = new ExperimentRowData(rrd.getAc(),
                     rrd.getShortLabel(), rrd.getFullName(), rrd.getCreator(),
                     rrd.getUpdator(), rrd.getCreated(), rrd.getUpdated());
-//            Query query = qf.getQualifierXrefQuery(ac, expRow.getAc());
             Xref xref =  qf.getQualifierXrefQuery(ac, expRow.getAc());//(Xref) helper.getObjectByQuery(query);
             // Xref is null if no primary reference found for the experiment.
             if (xref != null) {

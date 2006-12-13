@@ -20,7 +20,9 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 public class DaoProvider {
 
     public static AnnotatedObjectDao getDaoFactory(Class clazz){
-        if(Protein.class.isAssignableFrom(clazz)){
+        if(Feature.class.isAssignableFrom(clazz)){
+            return DaoProvider.getDaoFactory().getFeatureDao();
+        }else if(Protein.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getProteinDao();
         }else if (BioSource.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getBioSourceDao();
@@ -74,11 +76,11 @@ public class DaoProvider {
         }else if (Interaction.class.isAssignableFrom(clazz)){
             return DaoProvider.getDaoFactory().getInteractionDao();
         }else if (NucleicAcid.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao(NucleicAcidImpl.class);
         }else if (Protein.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getProteinDao();
         }else if(SmallMolecule.class.isAssignableFrom(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
+            return DaoProvider.getDaoFactory().getInteractorDao(SmallMoleculeImpl.class);
         }
         else throw new IntactException("Class " + clazz.getName() + " is not a searchable object");
     }

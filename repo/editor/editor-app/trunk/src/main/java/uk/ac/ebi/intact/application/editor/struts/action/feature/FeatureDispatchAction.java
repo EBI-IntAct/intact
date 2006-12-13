@@ -127,7 +127,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         }
         else {
             // Update the feature in the interaction view (only for non mutation mode)
-            intView.saveFeature((Feature) view.getAnnotatedObject());
+            intView.saveFeature(view.getAnnotatedObject());
         }
         // Turn off mutation mode (or else you will get mutation screen again)
         view.turnOffMutationMode();
@@ -157,8 +157,6 @@ public class FeatureDispatchAction extends CommonDispatchAction {
 
         // The owner for new Features.
         Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
-
-        // Cache CV objects.
 
         // CvFeature types.
         CvObjectDao<CvFeatureType> cvFeatureDao = DaoProvider.getDaoFactory().getCvObjectDao(CvFeatureType.class) ;
@@ -200,41 +198,22 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             catch (IntactException ie) {
                 // Log the stack trace.
                 LOGGER.error("", ie);
-//                try {
-//                    DaoProvider.getDaoFactory()..
-//                    helper.undoTransaction();
-//                }
-//                catch (IntactException ie1) {
-//                    LOGGER.error("Problem trying to do the rollback", ie);
-                    // Oops! Problems with rollback.
-//                }
                 throw ie;
             }
             // Feature is persisted, add it to the list.
             features.add(feature);
 
             try {
-//                user.startTransaction();
                 for (Iterator iter = rangesToCreate(token, owner, sequence); iter.hasNext(); ) {
                     Range range = (Range) iter.next();
                     rangeDao.persist(range);
-//                    helper.create(range);
                     feature.addRange(range);
                 }
                 featureDao.saveOrUpdate(feature);
-//                helper.update(feature);
-//                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 // Log the stack trace.
                 LOGGER.error("", ie);
-//                try {
-//                    helper.undoTransaction();
-//                }
-//                catch (IntactException ie1) {
-//                    LOGGER.error("Problem trying to do the rollback", ie);
-//                    // Oops! Problems with rollback.
-//                }
 //                // Rethrow it again for logging the exception.
                 throw ie;
             }

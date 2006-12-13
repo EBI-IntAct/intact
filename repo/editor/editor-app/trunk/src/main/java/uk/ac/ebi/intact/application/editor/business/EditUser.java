@@ -27,10 +27,10 @@ import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.SearchHelper;
 import uk.ac.ebi.intact.searchengine.SearchHelperI;
-import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
-import uk.ac.ebi.intact.util.UpdateProteins;
-import uk.ac.ebi.intact.util.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
+import uk.ac.ebi.intact.util.protein.UpdateProteins;
+import uk.ac.ebi.intact.util.go.GoServerProxy;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -260,7 +260,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
     public EditUser(String user, String password) throws AuthenticateException {
        myUserName = user;
         myPassword = password;
-//        try {
         try {
             myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
         } catch (Exception e) {
@@ -423,13 +422,14 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         myEditView.loadMenus();
     }
 
-    public void setClonedView(AnnotatedObject obj) throws IntactException {
+    public void setClonedView(AnnotatedObject obj, String originalAc) throws IntactException {
         startEditing();
         // Return the view back to the pool.
         releaseView();
         myEditView = EditViewBeanFactory.getInstance().borrowObject(
                 CgLibUtil.getRealClassName(obj), 0);
         myEditView.resetClonedObject(obj, this);
+        myEditView.setOriginalAc(originalAc);
         // Load menus after setting the annotated object.
         myEditView.loadMenus();
     }
@@ -634,43 +634,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         return true;
     }
 
-    public AnnotatedObjectDao getAnnotatedObjectDao(Class clazz){
-        if(Experiment.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getExperimentDao();
-        }else if (BioSource.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getBioSourceDao();
-        }else if (CvAliasType.class.equals(clazz) ){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvAliasType.class);
-        }else if (CvCellType.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvCellType.class);
-        }else if(CvComponentRole.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
-        }else if(CvDatabase.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvDatabase.class);
-        }else if(CvFuzzyType.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvFuzzyType.class);
-        }else if(CvTissue.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvTissue.class);
-        }else if(CvTopic.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
-        }else if(CvXrefQualifier.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
-        }else if (Interaction.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getInteractionDao();
-        }else if (NucleicAcid.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
-        }else if (Protein.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
-        }else if(SmallMolecule.class.equals(clazz)){
-            return DaoProvider.getDaoFactory().getInteractorDao();
-        }
-
-        log.error(new IntactException("Unknown edit class : " + clazz + "."));
-        throw new IntactException("Unknown edit class : " + clazz + ".");
-
-
-    }
-
     public AnnotatedObject getAnnotatedObjectWithIdenticalShortlabel (String shortlabel, Class editClass){
         AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(editClass);
 
@@ -827,7 +790,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // AT this point: no success with incrementing the branch number.
 
         // Get all the short labels with the prefix.
-
         results = getAnnotatedObjectsByShortlabelLike(prefix + "-"+"%",clazz);
         if (results.isEmpty()) {
             // No matches found for the longest match. The first clone entry.
