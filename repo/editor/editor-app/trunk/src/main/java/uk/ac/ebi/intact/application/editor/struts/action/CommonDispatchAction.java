@@ -177,7 +177,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         getLockManager().release(view.getAc());
 
         // Now, set the view as the cloned object.
-        user.setClonedView(copy);
+        user.setClonedView(copy, orig.getAc());
 
         // Redisplay the cloned object.
         return mapping.findForward(RELOAD);
@@ -205,7 +205,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
-        String userName = user.getUserName();
 
         ResourceBundle rb = ResourceBundle.getBundle("uk.ac.ebi.intact.application.editor.MessageResources");
 
@@ -414,6 +413,11 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
             // Any other objects to persist in their own transaction.
             view.persistOthers(user);
+            // We reset the view with the saved interaction so that the ac are reset as well.
+            // !!!!BE CAREFULL !!!! when you reset the view all the isSelected boolean are reset to false, so you won't know anymore
+            // if something has been selected.
+            AnnotatedObject annotatedObject = view.getAnnotatedObject();
+            view.reset(annotatedObject);
         }
         catch (IntactException ie) {
             // Log the stack trace.
@@ -465,23 +469,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         formlabel += formlabel.endsWith("-") ? "x" : "-x";
         return user.getNextAvailableShortLabel(editClass, formlabel);
     }
-
-//    /**
-//     * Returns the query to get gene names for a Protein
-//     * @param shortlabel the Shortlabel of the Experiment.
-//     * @return the query to extract the gene name for given protein AC
-//     */
-//    public Query getCuratorNameQuery(String shortlabel) {
-//        Criteria crit = new Criteria();
-//        // Need all records for given alias AC.
-//        crit.addEqualTo("shortlabel", shortlabel);
-//
-//        ReportQueryByCriteria query = QueryFactory.newReportQuery(Experiment.class, crit);
-//
-//        // Limit to userstamp
-//        query.setAttributes(new String[] {"userstamp"});
-//        return query;
-//    }
 
     public ActionForward acceptOrReview(ActionMapping mapping,
                                         ActionForm form,

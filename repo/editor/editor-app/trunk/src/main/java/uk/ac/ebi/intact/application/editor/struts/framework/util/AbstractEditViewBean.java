@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
+import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import uk.ac.ebi.intact.application.commons.util.AnnotationSection;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
@@ -18,6 +20,7 @@ import uk.ac.ebi.intact.application.editor.exception.validation.ValidationExcept
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.CommentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 
@@ -25,6 +28,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 
 import java.io.Serializable;
 import java.util.*;
@@ -41,6 +45,14 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 
     private static final Logger logger = Logger.getLogger(EditorConstants.LOGGER);
 
+
+    // Ac of the object from which the clone was created. (this should be null when myAnnotObject is persistent and
+    // not a clone).
+    private String originalAc;
+
+    // AnnotatedObject from which the clone was created, this should be null if myAnnotObject is persistent and
+    // not a clone).
+    private AnnotatedObjectImpl myOriginal;
     /**
      * The Annotated object to wrap this bean around.
      */
@@ -240,6 +252,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         setUpdator(null);
         setCreated(null);
         setUpdated(null);
+        setOriginalAc(null);
 
         // editclass is not set to null because passivateObject (EditViewBeanFactory)
         // method relies on this value (key in the object pool).
@@ -330,41 +343,104 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     }
 
     /**
+     * this method returns the hibernate Session  object that is attached to this request.
+     * @return the Hibernate Session
+     */
+     private Session getSession(){
+        AbstractHibernateDataConfig abstractHibernateDataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
+        Session session = factory.getCurrentSession();
+        return session;
+    }
+
+    /**
+     * The hibernate Session is open and closed after each request. In order to avoid Lazy loading Exception from
+     * hibernate, myAnnotObject has to be loaded by the session that is attached to the request beeing handled.
+     * Then there are particular cases if myAnnotObject is a clone. In this case myAnnotObject is not a persisted object
+     * so it's not contained in the session but it contains some object that should be reloaded. For exemple, an Inter-
+     * action clone will have a collection of Components that will be linked to a Interactor which are persited and
+     * should be reloaded. In that case we reload the original annot object and reclone it into myAnnotObject, but we
+     * make sure that we reload the clone only once within the request.
+     *
+     *
      * Returns the Annotated object. Could be null if the object is not persisted.
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public final T getAnnotatedObject() {
-        if(myAnnotObject != null && myAnnotObject.getAc() != null){
-            log.debug("myAnnotObject not null and got an ac");
-            String ac = myAnnotObject.getAc();
-//                AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory().getAnnotatedObjectDao();
-//                myAnnotObject = (T) annotatedObjectDao.getByAc(ac);
-                if(myAnnotObject instanceof Experiment){
-                    log.debug("myAnnotObject is instanceof Experiment");
-                    ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
-                    myAnnotObject = (T) experimentDao.getByAc(ac);
-                }else if(myAnnotObject instanceof Interactor){
-                    log.debug("myAnnotObject is instanceof Interactor");
-                    InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
-                    myAnnotObject = (T)interactorDao.getByAc(ac);
-                }else if(myAnnotObject instanceof Feature){
-                    log.debug("myAnnotObject is instanceof Feature");
-                    FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
-                    myAnnotObject = (T)featureDao.getByAc(ac);
-                }else if(myAnnotObject instanceof CvObject){
-                    log.debug("myAnnotObject is instanceof CvObject");
-                    CvObjectDao<CvObject> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
-                    myAnnotObject = (T)cvObjectDao.getByAc(ac);
-                }else if(  myAnnotObject instanceof BioSource){
-                    log.debug("myAnnotObject is instanceof BioSource");
-                    BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
-                    myAnnotObject = (T)bioSourceDao.getByAc(ac);
-                }//myAnnotObject = annotatedObjectDao.getByAc(myAnnotObject.getAc());
-            log.debug("myAnnotObject is instanceof " + myAnnotObject.getClass().getName());
+        // If myAnnotObject is contained in the session, we don't reload it but return it directly, otherwise continue.
+        if(getSession().isOpen() && getSession().getTransaction().isActive() && getSession().contains(myAnnotObject)){
+            if((myAnnotObject != null
+                && myAnnotObject.getAc() != null
+                && (! "".equals(myAnnotObject.getAc()) ))){
+                log.debug("object is contained in the session already, it has an ac : " +  myAnnotObject.getAc());
+                return myAnnotObject;
+            }
+         }
+
+        // If this part of the code is riched it means that myAnnotObject was not contained in the Session. It if has an
+        // an ac, we reload it. If it has no ac, it means that myAnnotObject is a clone we go to the next "if" statement
+        log.debug("object not contained in the session already, reload it");
+        if(myAnnotObject != null
+                && myAnnotObject.getAc() != null
+                && (! "".equals(myAnnotObject.getAc()) )){
+
+            AnnotatedObjectDao<AnnotatedObjectImpl> annotObjectDao = DaoProvider.getDaoFactory(myAnnotObject.getClass());
+            myAnnotObject = (T)annotObjectDao.getByAc(myAnnotObject.getAc());
+
+             log.debug("myAnnotObject is instanceof " + myAnnotObject.getClass().getName());
+            return myAnnotObject;
+        }
+
+        if (getOriginalAc() != null && myAnnotObject != null && myAnnotObject.getAc()==null){
+            if(!(getSession().isOpen() && getSession().getTransaction().isActive() && getSession().contains(myOriginal))){
+                log.debug("Recloning object");
+                AnnotatedObjectDao<AnnotatedObjectImpl> annotatedObjectDao = DaoProvider.getDaoFactory(myAnnotObject.getClass());
+                myOriginal = annotatedObjectDao.getByAc(getOriginalAc());
+                try {
+                    AnnotatedObjectImpl copy = (AnnotatedObjectImpl) myOriginal.clone();
+                    myAnnotObject = (T) copy;
+                } catch (CloneNotSupportedException e) {
+                    log.debug("Exception while cloning" + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }else{
+                log.debug("The annotated object attached is an already reloaded clone") ;
+            }
 
         }
-        log.debug("my annot object is null or has no ac");
+
         return myAnnotObject;
+    }
+
+    /**
+     * 
+     * @param interaction
+     * @param cb
+     * @return
+     */
+    public Collection<Component> getCorrespondingComponent(Interaction interaction, ComponentBean cb){
+
+        Collection<Component> potentialComps = new ArrayList<Component>();
+        for(Component component : interaction.getComponents()){
+            if(!component.getInteractor().getAc().equals(cb.getInteractorAc())){
+                continue;
+            }
+            if(!component.getCvComponentRole().getShortLabel().equals(cb.getRole())){
+                continue;
+            }
+            if(component.getBindingDomains().size() != cb.getFeatures().size()){
+                continue;
+            }
+            potentialComps.add(component);
+        }
+
+        if(potentialComps.size() == 0){
+            log.debug("No corresponding component found.");
+        }
+        if(potentialComps.size()>1){
+            log.debug("Several coresponding component found");
+        }
+
+        return potentialComps;
     }
 
     /**
@@ -476,6 +552,22 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      */
     public void setUpdated(Date updated) {
         this.myUpdated = updated;
+    }
+
+    /**
+     * OriginalAc getter
+     * @return the original ac
+     */
+    public String getOriginalAc() {
+        return originalAc;
+    }
+
+    /**
+     * Setter of the orginalAc
+     * @param originalAc string
+     */
+    public void setOriginalAc(String originalAc) {
+        this.originalAc = originalAc;
     }
 
     /**
@@ -613,7 +705,13 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      */
     public void addXref(XreferenceBean xb) {
         // Xref to add.
-        myXrefsToAdd.add(xb);
+
+//        Xref xref = getCorrespondingXref(getAnnotatedObject(), xb.getXref(getAnnotatedObject()));
+//        if(xref == null){
+            myXrefsToAdd.add(xb);
+//        }else{
+//            myXrefsToUpdate.add(xb);
+//        }
         // Add to the view as well.
         myXrefs.add(xb);
     }
@@ -707,26 +805,11 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      */
     public void persist(EditUserI user) throws IntactException {
         try {
-            // Begin the transaction.
-//            user.startTransaction();
-
-            // Persiste the current view.
             persistCurrentView();
-
-            // Commit the transaction.
-//            user.commit();
             user.rollback(); //to end editing
         }
         catch (IntactException ie1) {
-//            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
-//            try {
-                user.rollback();
-//            }
-//            catch (IntactException ie2) {
-//                Logger.getLogger(EditorConstants.LOGGER).error("Problem trying to rollback", ie2);
-//                // Oops! Problems with rollback; ignore this as this
-//                // error is reported via the main exception (ie1).
-//            }
+            user.rollback();
             // Rethrow the exception to be logged.
             throw ie1;
         }
@@ -1078,9 +1161,10 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      */
     private Collection<CommentBean> getAnnotationsToDel() {
         // Annotations common to both add and delete.
-        Collection<CommentBean> common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
-        // All the annotations only found in annotations to delete collection.
-        return CollectionUtils.subtract(myAnnotsToDel, common);
+//        Collection<CommentBean> common = CollectionUtils.intersection(myAnnotsToAdd, myAnnotsToDel);
+//        // All the annotations only found in annotations to delete collection.
+//        return CollectionUtils.subtract(myAnnotsToDel, common);
+        return myAnnotsToDel;
     }
 
     /**
@@ -1122,10 +1206,11 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * </pre>
      */
     private Collection<XreferenceBean> getXrefsToDel() {
+        return myXrefsToDel;
         // Xrefs common to both add and delete.
-        Collection<XreferenceBean> common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
-        // All the xrefs only found in xrefs to delete collection.
-        return CollectionUtils.subtract(myXrefsToDel, common);
+//        Collection<XreferenceBean> common = CollectionUtils.intersection(myXrefsToAdd, myXrefsToDel);
+//        // All the xrefs only found in xrefs to delete collection.
+//        return CollectionUtils.subtract(myXrefsToDel, common);
     }
 
     /**
@@ -1186,18 +1271,12 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         updateAnnotatedObject();
 
         // Update the short label and full name as they are common to all.
-        myAnnotObject.setShortLabel(getShortLabel());
-        myAnnotObject.setFullName(getFullName());
+        getAnnotatedObject().setShortLabel(getShortLabel());
+        getAnnotatedObject().setFullName(getFullName());
 
         persistAnnotatedObject();
-        
 
         log.debug("As I have persisted myAnnotObject ac is " + myAnnotObject.getAc());
-
-        // Save the annotation size for comparision.
-        int initSize = myAnnotObject.getAnnotations().size();
-        // Flag to track whether the annotations are changed or not.
-        boolean changed = false;
 
         // Don't care whether annotated object exists or not because we don't
         // need an AC in the annotation table.
@@ -1207,110 +1286,203 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         for (CommentBean commentBean : getAnnotationsToUpdate())
         {
             Annotation annot = commentBean.getAnnotation();
-            if(annotateOtherObject(annot)){
-               LOGGER.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
-                //delAnnotation(commentBean);
-                myAnnotObject.removeAnnotation(annot);
-                Annotation newAnnot = createAnnotation(annot);
-                CommentBean newCb = new CommentBean(newAnnot);
-                addAnnotation(newCb);
-            }else{
-                annotationDao.saveOrUpdate(annot);
+            Annotation correspondingAnnotation = getCorrespondingAnnotation(getAnnotatedObject(), annot);
+            if(correspondingAnnotation == null){
+                if(annotateOtherObject(annot)){
+                    LOGGER.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
+                    //delAnnotation(commentBean);
+                    getAnnotatedObject().removeAnnotation(annot);
+                    Annotation newAnnot = createAnnotation(annot);
+                    annotationDao.persist(newAnnot);
+                    getAnnotatedObject().addAnnotation(newAnnot);
+                    CommentBean newCb = new CommentBean(newAnnot);
+                    addAnnotation(newCb);
+                }else{
+                    annotationDao.saveOrUpdate(annot);
+                }
             }
-            changed = true;
         }
 
         // Delete annotations and remove them from CV object.
+        log.debug("Size of the annotations to del : " + getAnnotationsToDel().size());
         for (CommentBean commentBean : getAnnotationsToDel())
         {
             Annotation annot = commentBean.getAnnotation();
             if(annotateOtherObject(annot)){
-                LOGGER.info("We are going to unlink, the shared annotation "+ annot.getAc() + " from this annotated object.");
-                myAnnotObject.removeAnnotation(annot);
+                log.info("We are going to unlink, the shared annotation "+ annot.getAc() + " from this annotated object.");
+                getAnnotatedObject().removeAnnotation(annot);
             }else{
-                LOGGER.error("Not shared annotation, we delete it.");
+                log.error("Not shared annotation, we delete it.");
                 annotationDao.delete(annot);
-                myAnnotObject.removeAnnotation(annot);
+                getAnnotatedObject().removeAnnotation(annot);
             }
-            changed = true;
+
+            Annotation correspondingAnnotation = getCorrespondingAnnotation(myAnnotObject, annot);
+            if(correspondingAnnotation != null){
+                log.debug("deleting annot");
+                myAnnotObject.removeAnnotation(correspondingAnnotation);
+            }
         }
 
         // Create annotations and add them to CV object.
         for (CommentBean commentBean : getAnnotationsToAdd())
         {
             Annotation annot = commentBean.getAnnotation();
-            LOGGER.error("Add annot " +  annot.getAnnotationText());
-            // Need this to generate the PK for the indirection table.
-            annotationDao.persist(annot);
-            myAnnotObject.addAnnotation(annot);
-            changed = true;
+            Annotation correspondingAnnotation = getCorrespondingAnnotation(myAnnotObject, annot);
+
+            if(correspondingAnnotation == null){
+                LOGGER.error("Add annot " +  annot.getAnnotationText());
+                // Need this to generate the PK for the indirection table.
+                annotationDao.persist(annot);
+                getAnnotatedObject().addAnnotation(annot);
+            }
         }
         // Xref has a parent_ac column which is not a foreign key. So, the parent needs
         // to be persistent before we can create the Xrefs.
         persistAnnotatedObject();
-//        if (!helper.isPersistent(myAnnotObject)) {
-//            helper.create(myAnnotObject);
-//        }
         // Create xrefs and add them to CV object.
         XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
         Collection<XreferenceBean> xrefBeans = getXrefsToAdd();
         log.debug("The size of the xrefBeans to add is " + xrefBeans.size());
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
         {
-            Xref xref = xreferenceBean.getXref(myAnnotObject);
-            if(xref == null){
-                log.debug ( "xref is null");
+            Xref xref = xreferenceBean.getXref(getAnnotatedObject());
+            Xref correspondingXref = getCorrespondingXref(getAnnotatedObject(),xref);
+            if(correspondingXref == null){
+                if(xref == null){
+                    log.debug ( "xref is null");
+                }
+                xrefDao.saveOrUpdate(xref);
+                getAnnotatedObject().addXref(xref);
             }
-            xrefDao.saveOrUpdate(xref);
-            myAnnotObject.addXref(xref);
         }
         // Delete xrefs and remove them from CV object.
         for (XreferenceBean xreferenceBean : getXrefsToDel())
         {
-            Xref xref = xreferenceBean.getXref(myAnnotObject);
-            xrefDao.delete(xref);
-            myAnnotObject.removeXref(xref);
+            Xref xref = xreferenceBean.getXref(getAnnotatedObject());
+
+            Xref correspondingXref = getCorrespondingXref(getAnnotatedObject(),xref);
+            if(correspondingXref != null){
+                xref = null;
+                correspondingXref.setParent(null);
+                getAnnotatedObject().removeXref(correspondingXref);
+                xrefDao.delete(correspondingXref);
+            }
         }
         // Update xrefs; see the comments for annotation update above.
-        for (XreferenceBean xreferenceBean : getXrefsToUpdate())
-        {
-            Xref xref = xreferenceBean.getXref(myAnnotObject);
-            xrefDao.saveOrUpdate(xref);
-        }
-        // Update the cv object only for an object already persisted.
-
-//        if (helper.isPersistent(myAnnotObject)) {
-            // If collection sizes are same but modified; force update. Need
-            // this OJB update strategy doesn't mark the object as dirty.
-//            helper.forceUpdate(myAnnotObject);
-
-            persistAnnotatedObject();
-            // update the cvObject in the cvContext (application scope)
-            if (myAnnotObject instanceof CvObject)
-            {
-                 /*boolean cvObjectUpdated = */IntactContext.getCurrentInstance().getCvContext().updateCvObject((CvObject)getAnnotatedObject());
-
-                logger.info("CvObject updated: "+myAnnotObject);
+        for (XreferenceBean xreferenceBean : getXrefsToUpdate()) {
+            Xref xref = xreferenceBean.getXref(getAnnotatedObject());
+            Xref correspondingXref = getCorrespondingXref(getAnnotatedObject(),xref);
+            if(correspondingXref == null){
+                xrefDao.saveOrUpdate(xref);
             }
-//        }
+        }
+        persistAnnotatedObject();
+        // update the cvObject in the cvContext (application scope)
+        if (getAnnotatedObject() instanceof CvObject) {
+            IntactContext.getCurrentInstance().getCvContext().updateCvObject((CvObject)getAnnotatedObject());
+            logger.info("CvObject updated: "+myAnnotObject);
+        }
     }
 
+
+
+    
+    /**
+     *
+     * @param annotatedObject
+     * @param searchedAnnot
+     * @return false if "annotatedObject" is null or if "searchedAnnot" is null or if  the annot is not already contained in the
+     * collection of annotations of the "annotatedObject"
+     *         true if the "annotatedObjec" has an annotation that as the same cv and the same description than "searchedAnnot"
+     */
+    public Annotation getCorrespondingAnnotation(AnnotatedObject annotatedObject, Annotation searchedAnnot){
+        if(annotatedObject == null || searchedAnnot == null){
+            return null;
+        }
+        Annotation correspondingAnnotation = null;
+        Collection<Annotation> annotations = annotatedObject.getAnnotations();
+        for(Annotation annotation : annotations){
+            if(! annotation.getCvTopic().getAc().equals(searchedAnnot.getCvTopic().getAc())){
+                continue;
+            }else if (! ((annotation.getAnnotationText() == null && searchedAnnot.getAnnotationText() == null) ||
+                    (annotation.getAnnotationText() != null && annotation.getAnnotationText().equals(searchedAnnot.getAnnotationText())))){
+                continue;
+            } else {
+                correspondingAnnotation = annotation;
+                break;
+            }
+        }
+        return correspondingAnnotation;
+    }
+
+    /**
+     * It returns the annotatedObject xref corresponding to the searchedXref :
+     *      ** if the searched xref has an ac, it will search for the xref having the same ac, if found, the ac will
+     *      xref will set with the value of the searchedXref
+     *      ** if the searched xref has no ac, it will try to find if the annotatedObject has an xref with the same value
+     *      as the searchedXref (same primaryId, same secondaryId, same cvDatabase and same cvXrefQualifier)
+     * If nothing is found it returns null.
+     * It will also return null if the annotatedObject of the searchedXref is null.
+     * @param annotatedObject an AnnotatedObject
+     * @param searchedXref an Xref
+     * @return and xref of null
+     */
+    public Xref getCorrespondingXref(AnnotatedObject annotatedObject, Xref searchedXref){
+        if(annotatedObject == null || searchedXref == null){
+            return null;
+        }
+
+        Xref correspondingXref = null;
+        Collection<Xref> xrefs =  annotatedObject.getXrefs();
+        String searchedAc = searchedXref.getAc();
+        for( Xref xref : xrefs){
+            if(xref.getAc().equals(searchedAc)){
+                log.debug("We found an xref with the same ac");
+                xref.setPrimaryId(searchedXref.getPrimaryId());
+                xref.setSecondaryId(searchedXref.getSecondaryId());
+                xref.setCvDatabase(searchedXref.getCvDatabase());
+                xref.setCvXrefQualifier(searchedXref.getCvXrefQualifier());
+                return xref;
+            }
+
+        }
+
+        for( Xref xref : xrefs){
+            if( !((xref.getPrimaryId() == null && searchedXref.getPrimaryId() == null) ||
+                    (xref.getPrimaryId()!= null && xref.getPrimaryId().equals(searchedXref.getPrimaryId()))) ) {
+                continue;
+            } else if( !((xref.getSecondaryId() == null && searchedXref.getSecondaryId() == null) ||
+                    (xref.getSecondaryId()!= null && xref.getSecondaryId().equals(searchedXref.getSecondaryId()))) ) {
+                continue;
+            }else if( !((xref.getCvDatabase() == null && searchedXref.getCvDatabase() == null) ||
+                    (xref.getCvDatabase()!= null && xref.getCvDatabase().getAc().equals(searchedXref.getCvDatabase().getAc()))) ) {
+                continue;
+            } else if( !((xref.getCvXrefQualifier() == null && searchedXref.getCvXrefQualifier() == null) ||
+                    (xref.getCvXrefQualifier()!= null && xref.getCvXrefQualifier().getAc().equals(searchedXref.getCvXrefQualifier().getAc()))) ) {
+                continue;
+            }else{
+                correspondingXref = xref;
+                break;
+            }
+        }
+        return correspondingXref;
+    }
+
+    /**
+     * Persist myAnnotObject in the database if it does not have an ac, update it if it has an ac.
+     */
     public void persistAnnotatedObject(){
-        if(myAnnotObject instanceof Experiment){
-            ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
-            experimentDao.saveOrUpdate((Experiment) myAnnotObject);
-        }else if (myAnnotObject instanceof Feature){
-            FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
-            featureDao.saveOrUpdate((Feature) myAnnotObject);
-        }else if (myAnnotObject instanceof Interactor){
-            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
-            interactorDao.saveOrUpdate((InteractorImpl) myAnnotObject);
-        }else if (myAnnotObject instanceof CvObject){
-            CvObjectDao cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao();
-            cvObjectDao.saveOrUpdate(myAnnotObject);
-        }   else if (myAnnotObject instanceof BioSource){
-            BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
-            bioSourceDao.saveOrUpdate((BioSource) myAnnotObject);
+        boolean isPersisted =  false;
+        getAnnotatedObject();
+        if( getAnnotatedObject() != null && getAnnotatedObject().getAc() != null && (!"".equals(getAnnotatedObject().getAc().trim()))){
+            isPersisted = true;
+        }
+        AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(getAnnotatedObject().getClass());
+        if( isPersisted ){
+            annotatedObjectDao.saveOrUpdate(getAnnotatedObject());
+        }else{
+            annotatedObjectDao.persist(getAnnotatedObject());
         }
     }
 

@@ -85,7 +85,7 @@ public class LoginCheckFilter implements Filter {
         }
         else {
             // Got a session; check the URI.
-            if (uri.indexOf("/editor/do/secure/edit") == -1) {
+            if (uri.indexOf("editor/do/secure/edit") == -1) {
                 // Trying to access non secure part of the editor. Lets Struts take
                 // care of it.
                 ourLog.debug("Allow access to non secure area, lets Struts to handle this URL");

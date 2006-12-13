@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.interaction;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -21,6 +23,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.ComponentDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,6 +37,7 @@ import java.util.List;
  */
 public class ComponentBean extends AbstractEditKeyBean {
 
+    protected static Log log = LogFactory.getLog(ComponentBean.class);
 
     static final String PROTEIN = "Protein";
     static final String NUCLEIC_ACID = "Nucleic Acid";
@@ -152,7 +156,6 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     public ComponentBean(SmallMolecule smallMolecule){
         myInteractor = smallMolecule;
-//        setOrganism();
         setEditState(SAVE_NEW);
         setType(SMALL_MOLECULE);
     }
@@ -163,15 +166,6 @@ public class ComponentBean extends AbstractEditKeyBean {
      */
     public ComponentBean(Component component) {
         initialize(component);
-        if(component.getInteractor() instanceof Protein){
-            setType(PROTEIN);
-        }
-        else if (component.getInteractor() instanceof NucleicAcid ){
-            setType(NUCLEIC_ACID);
-        } else if (component.getInteractor() instanceof SmallMolecule){
-            setType(SMALL_MOLECULE);
-        }
-
         // Set the feature for this bean.
         for (Feature feature : myComponent.getBindingDomains())
         {
@@ -201,25 +195,23 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     public Component getComponent(boolean create) throws IntactException {
         CvComponentRole newrole = getCvRole();
-
-
         // Must have a non null role and interaction for a valid component
         if ((newrole == null) || (myInteraction == null)) {
             return null;
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
-            myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(), myInteraction,
+            myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(),    myInteraction,
                     myInteractor, newrole);
         }else if (myComponent.getAc() != null){
             ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
-        }
-
-        else {
             myComponent.setCvComponentRole(newrole);
         }
+        
         myComponent.setStoichiometry(getStoichiometry());
+
+        myComponent.setCvComponentRole(newrole);
 
         // The expressed in to set in the component.
         BioSource expressedIn = null;
@@ -297,15 +289,6 @@ public class ComponentBean extends AbstractEditKeyBean {
     public String getGeneName() {
         return myGeneNames;
     }
-
-//    public void setSelect(String value) {
-//        System.out.println("Value: " + value);
-//        mySelected = true;
-//    }
-//
-//    public void unselect() {
-//        mySelected = false;
-//    }
 
     /**
      * Sets the interaction for this bean. This is necessary for a newly created
@@ -441,6 +424,15 @@ public class ComponentBean extends AbstractEditKeyBean {
         mySPAc = getSPAc();
         myRole = component.getCvComponentRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
+        if(component.getInteractor() instanceof Protein){
+            setType(PROTEIN);
+        }
+        else if (component.getInteractor() instanceof NucleicAcid ){
+            setType(NUCLEIC_ACID);
+        } else if (component.getInteractor() instanceof SmallMolecule){
+            setType(SMALL_MOLECULE);
+        }
+       
         setOrganism();
         setExpressedIn();
         try {
@@ -470,8 +462,6 @@ public class ComponentBean extends AbstractEditKeyBean {
         boolean first = true;
 
         // Run through the query result set.
-//        for (Iterator iter = aliases.iterator()/*helper.getIteratorByReportQuery(query)*/;
-//             iter.hasNext(); ) {
          for( InteractorAlias alias : aliases ){
 
             String name = alias.getName();

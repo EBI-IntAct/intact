@@ -10,6 +10,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
@@ -17,8 +19,10 @@ import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
@@ -26,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Collection;
 
 /**
  * The action class to handle events related to add/edit a
@@ -46,6 +51,7 @@ import java.util.Map;
  *      path="/do/feature/fill/form"
  */
 public class FeatureDispatchAction extends CommonDispatchAction {
+    private static final Log log = LogFactory.getLog(FeatureDispatchAction.class);
 
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
@@ -62,23 +68,24 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                               HttpServletRequest request,
                               HttpServletResponse response)
             throws Exception {
+        // I have to get the selected feature now. As after the super.save() the view is reset with the saved
+        // annotatedObject, and during this reset the isSelected boolean got set to false.
+        // So : make sure the getSelectedFeature is call before super.save().
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+        // The feature we are about to edit.
+        FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
+
         // Save the interaction first.
         ActionForward forward = super.save(mapping, form, request, response);
-
         // Don not proceed if the inteaction wasn't saved successfully first.
         if (!forward.equals(mapping.findForward(SUCCESS))) {
             return forward;
         }
         // Linking to the feature editor starts from here.
-
-        // Handler to the Intact User.
-        EditUserI user = getIntactUser(request);
-
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
-        // The feature we are about to edit.
-        FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
 
         FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
         Feature feature = fb.getFeature();
@@ -110,6 +117,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
+        InteractionViewBean interactionViewBean = (InteractionViewBean) user.getView();
+
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
@@ -123,10 +132,17 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         InteractionActionForm intform = (InteractionActionForm) form;
 
         // The selected component from the form.
-        ComponentBean selectedComp = intform.getSelectedComponent();
 
-        // The component for the feature.
-        featureView.setComponent(selectedComp.getComponent());
+        ComponentBean selectedComp = intform.getSelectedComponent();
+        Collection<Component> comps = featureView.getCorrespondingComponent(interactionViewBean.getAnnotatedObject(), selectedComp);
+        if(comps.size() != 0){
+            for(Component comp : comps){
+                featureView.setComponent(comp);
+            }
+        } else {
+            // The component for the feature.
+            featureView.setComponent(selectedComp.getComponent());
+        }
         return mapping.findForward(SUCCESS);
     }
 }

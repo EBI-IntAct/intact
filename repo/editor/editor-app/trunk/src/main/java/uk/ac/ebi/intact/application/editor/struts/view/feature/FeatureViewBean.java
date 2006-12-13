@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.feature;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
@@ -18,9 +20,7 @@ import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.ComponentDao;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.RangeDao;
+import uk.ac.ebi.intact.persistence.dao.*;
 
 import java.util.*;
 
@@ -32,6 +32,7 @@ import java.util.*;
  */
 public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     // Class Data
+    private static final Log log = LogFactory.getLog(FeatureViewBean.class);
 
     /**
      * The menu items for the boolean list.
@@ -339,28 +340,14 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
     @Override
     public void persistOthers(EditUserI user) throws IntactException {
         try {
-            // Begin the transaction.
-//            user.startTransaction();
-
             // persist the view.
             persistCurrentView();
-
-            // Commit the transaction.
-//            user.commit();
             user.rollback(); //to end editing
-
         }
         catch (IntactException ie1) {
             Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
             ie1.printStackTrace();
-//            try {
-                user.rollback();
-//            }
-//            catch (IntactException ie2) {
-//                Logger.getLogger(EditorConstants.LOGGER).error("", ie2);
-//                // Oops! Problems with rollback; ignore this as this
-//                // error is reported via the main exception (ie1).
-//            }
+            user.rollback();
             // Rethrow the exception to be logged.
             throw ie1;
         }
@@ -533,44 +520,61 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
      */
     private Collection<RangeBean> getRangesToDel() {
         // Ranges common to both add and delete.
-        Collection<RangeBean> common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
-        // All the ranges only found in 'ranges to delete' collection.
-        return CollectionUtils.subtract(myRangesToDel, common);
+//        Collection<RangeBean> common = CollectionUtils.intersection(myRangesToAdd, myRangesToDel);
+//        // All the ranges only found in 'ranges to delete' collection.
+//        return CollectionUtils.subtract(myRangesToDel, common);
+        return myRangesToDel;
     }
     
     private void persistCurrentView() throws IntactException {
         // The helper to access persistence API.
+        FeatureDao featureDao = (FeatureDao) DaoProvider.getDaoFactory(Feature.class);
         RangeDao rangeDao = DaoProvider.getDaoFactory().getRangeDao();
         // The current feature.
         Feature feature =  getAnnotatedObject();
 
         // The sequence to set in Ranges.
-        String sequence = ((Polymer) getComponent().getInteractor()).getSequence();
+        Polymer polymer = (Polymer) getComponent().getInteractor();
+        if(polymer != null && polymer.getAc()!= null && (!"".equals(polymer.getAc()))){
+            InteractorDao interactorDao = (InteractorDao) DaoProvider.getDaoFactory(polymer.getClass());
+            polymer = (Polymer) interactorDao.getByAc(polymer.getAc());
+        }
+        String sequence = polymer.getSequence();
 
         // Add new ranges.
+        log.debug("getRangesToAdd.size()" + getRangesToAdd().size());
         for (RangeBean rangeBean : getRangesToAdd())
         {
             // Create the updated range.
             Range range = rangeBean.getUpdatedRange();
+            //From the sequence of the protein, taking into account the caracteristics of the protein (cvFuzzyType,
+            //from interval start... the prepareSequence prepare and return the sequence that should be the range sequen-
+            //ce
+            sequence = range.prepareSequence(sequence);
             // Set the sequence for the range.
             range.setSequence(sequence);
-            // Avoid creating duplicate Ranges.
-            if (feature.getRanges().contains(range))
-            {
+
+            if(getCorrespondingRange(feature, range) != null){
                 continue;
             }
+            range.setFeature(feature);
             rangeDao.persist(range);
-//            helper.create(range);
             feature.addRange(range);
+            featureDao.saveOrUpdate(feature);
         }
-        
+        setAnnotatedObject(feature);
+         
         // Delete ranges.
         for (RangeBean rangeBean : getRangesToDel())
         {
             Range range = rangeBean.getRange();
-            rangeDao.delete(range);
-//            helper.delete(range);
-            feature.removeRange(range);
+            Range correspondingRange = getCorrespondingRange(getAnnotatedObject(),range);
+            if(correspondingRange != null){
+               feature.removeRange(correspondingRange);
+               range.setFeature(null);
+               rangeDao.delete(correspondingRange);
+               featureDao.saveOrUpdate(feature);
+            }
         }
 
         // Update existing ranges.
@@ -578,14 +582,81 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
         {
             // Update the 'updated' range.
             Range range = myRangeToUpdate.getUpdatedRange();
-            range.setSequence(sequence);
-            rangeDao.update(range);
-//            helper.update(range);
+            Range correspondingRange = getCorrespondingRange(getAnnotatedObject(),range);
+            if(correspondingRange == null){
+                range.setSequence(sequence);
+                rangeDao.update(range);
+            }
         }
+        setAnnotatedObject(feature);
         // No need to test whether this 'feature' persistent or not because we
         // know it has been already persisted by persist() call.
         // Looks like we can do without this method call.
 //        user.update(feature);
+    }
+
+    /**
+     * Return the feature range corresponding to the searchedRange
+     *      ** if the searchedRange has an ac, it will return the feature range having the same ac after having set it's
+     *         different property with the property of the searchedRange.
+     *      ** if the searchedRange has no ac, it will return the feature range having the same property then the
+     *         searchedRange (same fromCvFuzzyType, same toCvFuzzyTYpe, same fromIntervalStart, same fromIntervalEnd,
+     *         same toIntervalStart, same toIntervalEnd, same sequence, same isUndetermined, same isLinked.
+     * If no corresponding range is found or if feature or range is null, it returns null.
+     * @param feature
+     * @param searchedRange
+     * @return
+     */
+    public Range getCorrespondingRange(Feature feature, Range searchedRange){
+        if(feature == null || searchedRange == null){
+            return null;
+        }
+        Range correspondingRange = null;
+        for(Range range : feature.getRanges()){
+            if(range.getAc().equals(searchedRange.getAc())){
+                range.setFromCvFuzzyType(searchedRange.getFromCvFuzzyType());
+                range.setToCvFuzzyType(searchedRange.getToCvFuzzyType());
+
+                range.setFromIntervalEnd(searchedRange.getFromIntervalEnd());
+                range.setFromIntervalStart(searchedRange.getFromIntervalStart());
+                range.setToIntervalEnd(searchedRange.getToIntervalEnd());
+                range.setToIntervalStart(searchedRange.getToIntervalStart());
+
+                range.setLinked(searchedRange.isLinked());
+                range.setUndetermined(searchedRange.isUndetermined());
+                range.setSequence(range.getSequence());
+                return range;
+
+            } else {
+                if(range == null){
+                    continue;
+                }
+                if( !((range.getFromCvFuzzyType() == null && range.getFromCvFuzzyType() == null) ||
+                    (range.getFromCvFuzzyType()!= null  && searchedRange.getFromCvFuzzyType() != null && range.getFromCvFuzzyType().getAc().equals(searchedRange.getFromCvFuzzyType().getAc()))) ){
+                    continue;
+                }else if(!((range.getToCvFuzzyType() == null && searchedRange.getToCvFuzzyType() == null) ||
+                    (range.getToCvFuzzyType()!= null && searchedRange.getToCvFuzzyType() != null && range.getToCvFuzzyType().getAc().equals(searchedRange.getToCvFuzzyType().getAc())))){
+                    continue;
+                }else if( range.getFromIntervalEnd() != searchedRange.getFromIntervalEnd()){
+                    continue;
+                }else if( range.getFromIntervalStart() != searchedRange.getFromIntervalEnd()){
+                    continue;
+                }else if( range.getToIntervalEnd() != searchedRange.getFromIntervalEnd()){
+                    continue;
+                }else if( range.getToIntervalStart() != searchedRange.getFromIntervalEnd()){
+                    continue;
+                }else if( range.isLinked() != searchedRange.isLinked()){
+                    continue;
+                }else if( range.isUndetermined() != searchedRange.isUndetermined()){
+                    continue;
+                }else{
+                    correspondingRange = range;
+                    break;
+                }
+
+            }
+        }
+        return correspondingRange;
     }
 
     private void turnOnMutationMode() {

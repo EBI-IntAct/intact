@@ -14,8 +14,8 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
 import uk.ac.ebi.intact.searchengine.business.IntactUserI;
-import uk.ac.ebi.intact.util.GoServerProxy;
 import uk.ac.ebi.intact.util.NewtServerProxy;
+import uk.ac.ebi.intact.util.go.GoServerProxy;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -48,9 +48,6 @@ public interface EditUserI extends IntactUserI, Serializable {
     public void startEditing();
 
     // Transaction Methods
-
-//    public void startTransaction() throws IntactException;
-//    public void commit() throws IntactException;
     public void rollback() throws IntactException;
 
     // Persistent Methods
@@ -128,7 +125,7 @@ public interface EditUserI extends IntactUserI, Serializable {
      * correctly (these annotations need to be created first).
      * @param obj the cloned object.
      */
-    public void setClonedView(AnnotatedObject obj) throws IntactException;
+    public void setClonedView(AnnotatedObject obj, String originalAc) throws IntactException;
 
     /**
      * Restores the previously stored on the stack. This is a convenient method

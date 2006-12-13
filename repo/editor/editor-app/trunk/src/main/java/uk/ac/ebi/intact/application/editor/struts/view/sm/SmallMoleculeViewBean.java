@@ -7,9 +7,12 @@ package uk.ac.ebi.intact.application.editor.struts.view.sm;
 
 import org.apache.log4j.Logger;
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
+import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractorType;
@@ -32,6 +35,7 @@ import java.util.Map;
  */
 public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  {
     protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+    private static final Log log = LogFactory.getLog(SmallMoleculeViewBean.class);
 
     /**
      * The map of menus for this view.
@@ -48,7 +52,11 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
         return myMenus;
     }
 
+    public void persistOthers(EditUserI user) throws IntactException {
+
+    }
     // --------------------- Protected Methods ---------------------------------
+
 
     // Implements abstract methods
     @Override
@@ -63,51 +71,53 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
                 CvInteractorType smInteractorType = getSmallMoleculeInteractorType();
                 if( smInteractorType == null){
 
-                    Logger.getLogger(EditorConstants.LOGGER).error("Could not find the cvInteractorType "
-                        + CvInteractorType.SMALL_MOLECULE + " using it's psi-mi id : "
-                        + CvInteractorType.SMALL_MOLECULE_MI_REF );
-                        throw new IntactException("Could not find the cvInteractorType " + CvInteractorType.SMALL_MOLECULE
-                        + " using it's psi-mi id : " + CvInteractorType.SMALL_MOLECULE_MI_REF );
+                    log.error("Could not find the cvInteractorType "
+                            + CvInteractorType.SMALL_MOLECULE + " using it's psi-mi id : "
+                            + CvInteractorType.SMALL_MOLECULE_MI_REF );
+                    throw new IntactException("Could not find the cvInteractorType " + CvInteractorType.SMALL_MOLECULE
+                            + " using it's psi-mi id : " + CvInteractorType.SMALL_MOLECULE_MI_REF );
 
                 }
-                Constructor ctr = getEditClass().getDeclaredConstructor(
-                        String.class, Institution.class, CvInteractorType.class);
+                Constructor ctr = getEditClass().getDeclaredConstructor(String.class, Institution.class, CvInteractorType.class);
                 sm = (SmallMoleculeImpl) ctr.newInstance(
-                        getShortLabel(), IntactContext.getCurrentInstance().getConfig().getInstitution(), smInteractorType );
+                        getShortLabel(),
+                        IntactContext.getCurrentInstance().getConfig().getInstitution(),
+                        smInteractorType );
+                setAnnotatedObject(sm);
             }
             catch (NoSuchMethodException ne) {
                 // Shouldn't happen.
-                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(ne.getMessage()));
+                log.error("", new IntactException(ne.getMessage()));
                 throw new IntactException(ne.getMessage());
             }
             catch (SecurityException se) {
-                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(se.getMessage()) );
+                log.error("", new IntactException(se.getMessage()) );
                 throw new IntactException(se.getMessage());
             }
             catch (InstantiationException ie) {
-                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(ie.getMessage()) );
+                log.error("", new IntactException(ie.getMessage()) );
                 throw new IntactException(ie.getMessage());
             }
             catch (IllegalAccessException le) {
-                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(le.getMessage()) );
+                log.error("", new IntactException(le.getMessage()) );
                 throw new IntactException(le.getMessage());
             }
             catch (InvocationTargetException te) {
-                Logger.getLogger(EditorConstants.LOGGER).error("", new IntactException(te.getMessage()) );
+                log.error("", new IntactException(te.getMessage()) );
                 throw new IntactException(te.getMessage());
             }
+        }else{
             CvInteractorType smInteractorType = getSmallMoleculeInteractorType();
             if( smInteractorType != null){
                 sm.setCvInteractorType(smInteractorType);
             }else{
-                Logger.getLogger(EditorConstants.LOGGER).error("Could not find the cvInteractorType "
+                log.error("Could not find the cvInteractorType "
                         + CvInteractorType.SMALL_MOLECULE + " using it's psi-mi id : "
                         + CvInteractorType.SMALL_MOLECULE_MI_REF );
                 throw new IntactException("Could not find the cvInteractorType " + CvInteractorType.SMALL_MOLECULE
                         + " using it's psi-mi id : " + CvInteractorType.SMALL_MOLECULE_MI_REF );
 
             }
-            setAnnotatedObject(sm);
         }
     }
 

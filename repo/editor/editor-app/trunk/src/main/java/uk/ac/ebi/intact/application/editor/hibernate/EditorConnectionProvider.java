@@ -79,7 +79,7 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public void closeConnection(Connection connection) throws SQLException
     {
-        log.debug("Closing connection for user: "+currentUser); 
+//        log.debug("Closing connection for user: "+IntactContext.getCurrentInstance().getUserContext().getUserId());
         connection.close();
     }
 

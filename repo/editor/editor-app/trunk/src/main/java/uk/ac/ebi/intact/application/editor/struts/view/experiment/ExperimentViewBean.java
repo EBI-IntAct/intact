@@ -479,32 +479,18 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
         BioSource biosource = bsDao.getByShortLabel(myOrganism);
 
         CvObjectDao<CvInteraction> cvInteractionDao = DaoProvider.getDaoFactory().getCvObjectDao(CvInteraction.class);
-        CvInteraction interaction =  (CvInteraction) cvInteractionDao.getByShortLabel(myInter);
-        log.debug("MyInter : " + myInter);
-        if(interaction != null){
-            log.debug("Searching for myInter " + myInter + " I found " + interaction.getShortLabel() );
-        }
-        if(interaction != null){
-            log.debug("CvInteraction type is : " + interaction.getShortLabel());
-        }else{
-            log.debug("No CvInteraction found with shorlabel : " + myInter);
-        }
+        CvInteraction interaction = cvInteractionDao.getByShortLabel(myInter);
+
         CvObjectDao<CvIdentification> cvIdentificationDao = DaoProvider.getDaoFactory().getCvObjectDao(CvIdentification.class);
-        CvIdentification ident = (CvIdentification) cvIdentificationDao.getByShortLabel(myIdent);
+        CvIdentification ident = cvIdentificationDao.getByShortLabel(myIdent);
         if(ident != null){
             log.debug("CvInteraction type is : " + ident.getShortLabel());
         }else{
             log.debug("No CvInteraction found with shorlabel : " + myIdent);
         }
         // The current experiment.
-        Experiment exp = (Experiment) getAnnotatedObject();
-//        ExperimentDao expDao = DaoProvider.getDaoFactory().getExperimentDao();
+        Experiment exp = getAnnotatedObject();
 
-//        if(exp !=  null && null != exp.getAc()){
-//            log.debug("Exp was not null and ac not null");
-//            exp = expDao.getByAc(exp.getAc());
-//            log.debug("Exp owner " + exp.getOwner().getAc());
-//        }
         // Have we set the annotated object for the view?
         if (exp == null) {
             // Can't read from the persistent system. Create a new Experiment.
@@ -547,6 +533,7 @@ public class ExperimentViewBean extends AbstractEditViewBean<Experiment> {
                 }else{
                     inter = interactionDao.getByAc(inter.getAc());
                 }
+                inter.addExperiment(exp);
                 exp.addInteraction(inter);
             }
             // --------------------------------------------------------------------

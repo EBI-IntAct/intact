@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.*;
 
@@ -164,7 +165,7 @@ public class EditorMenuFactory {
             cvHelper = new CvHelper();
 
             // Get the interactor type menu list for the NucleicAcid - Editor
-            CvInteractorType nucleicAcid = cvHelper.getNucleicAcid();
+            CvInteractorType nucleicAcid = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteractorType.class, CvInteractorType.NUCLEIC_ACID_MI_REF);
             ourNucleicAcidMiRefs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
             ourNucleicAcidMiRefs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
 

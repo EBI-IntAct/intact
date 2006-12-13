@@ -12,11 +12,13 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Feature bean.
@@ -25,6 +27,8 @@ import java.util.List;
  * @version $Id$
  */
 public class FeatureBean extends AbstractEditKeyBean {
+    protected static Log log = LogFactory.getLog(FeatureViewBean.class);
+
 
     // Instance Data
 
@@ -223,6 +227,7 @@ public class FeatureBean extends AbstractEditKeyBean {
         if(myFeature != null && myFeature.getAc()!= null && (!"".equals(myFeature.getAc()))){
             FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
             myFeature = featureDao.getByAc(myFeature.getAc());
+            log.debug("myFeature was null, we reloaded it");
         }
         // Need to update the short label because cloning an interaction also
         // clones a Feature (changes it shortlabel).

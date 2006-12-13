@@ -16,7 +16,7 @@ import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.util.GoServerProxy;
+import uk.ac.ebi.intact.util.go.GoServerProxy;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -431,7 +431,6 @@ public class XreferenceBean extends AbstractEditKeyBean {
             if (myGoErrors == null) {
                 myGoErrors = new ActionMessages();
             }
-//            myGoErrors.add(ActionMessages.GLOBAL_MESSAGE, error);
             myGoErrors.add(property, error);
         }
     }

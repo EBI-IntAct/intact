@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.sequence;
 
 import org.apache.struts.tiles.ComponentContext;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
@@ -17,6 +19,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.model.Polymer;
+import uk.ac.ebi.intact.model.SequenceChunk;
 import uk.ac.ebi.intact.model.util.PolymerFactory;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
@@ -34,6 +37,8 @@ import java.util.Map;
  * @version $Id$
  */
 public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
+
+    private static final Log log = LogFactory.getLog(SequenceViewBean.class);
 
     /**
      * The sequence
@@ -116,24 +121,14 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
         return mySequence;
     }
 
+    /**
+     * Nothing need to be saved as Hibernate is saving everything (annotation, xref, sequence...)
+     *  thanks to the cascade when you save the Polymer.
+     * @param user
+     * @throws IntactException
+     */
     @Override
     public void persistOthers(EditUserI user) throws IntactException {
-        // Set the sequence here, so it will create sequence records.
-        if (getSequence().length() > 0) {
-            // The current protein.
-            Polymer polymer = getAnnotatedObject();
-            // Only set the sequence for when we have a seq.
-            List emptyChunks = polymer.setSequence(getSequence());
-
-            // This is to replace the following commented lines.
-            InteractorDao interactorDao = DaoProvider.getDaoFactory().getInteractorDao();
-            interactorDao.update(polymer);
-
-
-//            if (!emptyChunks.isEmpty()) {
-//                user.getIntactHelper().deleteAllElements(emptyChunks);
-//            }
-        }
     }
 
     // --------------------- Protected Methods ---------------------------------
@@ -177,15 +172,16 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
             setAnnotatedObject(polymer);
         }
         else {
-            polymer.setCvInteractorType(intType);
-            polymer.setBioSource(biosrc);
+            getAnnotatedObject().setBioSource(biosrc);
+            getAnnotatedObject().setCvInteractorType(intType);
         }
         // Set the sequence in the persistOthers method we can safely delete
         // unused sequences.
         
         if (getSequence().length() > 0) {
-            polymer.setSequence(getSequence());
-            polymer.setCrc64(Crc64.getCrc64(getSequence()));
+            getAnnotatedObject().setSequence(getSequence());
+            getAnnotatedObject().setCrc64(Crc64.getCrc64(getSequence()));
+
         }
     }
 

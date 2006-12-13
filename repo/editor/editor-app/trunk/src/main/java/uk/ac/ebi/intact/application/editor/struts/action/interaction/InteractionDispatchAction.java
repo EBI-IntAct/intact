@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -108,8 +109,15 @@ public class InteractionDispatchAction extends CommonDispatchAction {
         // Handler to the user.
         EditUserI user = getIntactUser(request);
 
+//        Interaction interaction = (Interaction) user.getView().getAnnotatedObject();
+//        // We reset the view with the saved interaction so that the ac are reset as well.
+//        // !!!!BE CAREFULL !!!! when you reset the view all the isSelected boolean are reset to false, so you won't know anymore
+//        // if something has been selected.
+//        user.getView().reset(interaction);
+
         // Do we have to return to the experiment editor?
         if (user.hasPreviousView()) {
+
             // The experiment we will be going back to.
             ExperimentViewBean expView = (ExperimentViewBean) user.peekPreviousView();
 
