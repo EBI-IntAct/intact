@@ -67,7 +67,7 @@
         </td>
         <td class="tableCell" align="left" valign="top">
             <html:textarea property="newAnnotation.description" rows="3" cols="70"
-               onkeypress="return validateComment(this, event)"/>
+               onkeypress="return validateComment(this, event);" />
         </td>
 
         <%-- <td class="tableCell" align="left" valign="top">
