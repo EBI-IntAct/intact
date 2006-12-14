@@ -1,0 +1,3 @@
+SELECT PROC_SPLIT_ALIAS();
+
+

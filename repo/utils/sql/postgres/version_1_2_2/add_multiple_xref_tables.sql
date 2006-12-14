@@ -11,7 +11,7 @@ CREATE TABLE IA_BioSource_Xref
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_BioSourceXref_qualifier REFERENCES IA_ControlledVocab(ac)
      ,  database_ac        VARCHAR (30)    CONSTRAINT fk_BioSourceXref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_BioSourceXref_biosource  REFERENCES IA_BioSource(ac)
      ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_BioSourceXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
@@ -62,10 +62,10 @@ CREATE TABLE IA_Experiment_Xref
      ,  updated            TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp          TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
-     ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_Xref_qualifier REFERENCES IA_ControlledVocab(ac)
-     ,  database_ac        VARCHAR (30)    CONSTRAINT fk_Xref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
-     ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_Xref_owner REFERENCES IA_Institution(ac)
+     ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_ExperimentXref_qualifier REFERENCES IA_ControlledVocab(ac)
+     ,  database_ac        VARCHAR (30)    CONSTRAINT fk_ExperimentXref_database  REFERENCES IA_ControlledVocab(ac)
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_ExperimentXref_experiment  REFERENCES IA_Experiment(ac)
+     ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_ExperimentXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
      ,  dbRelease          VARCHAR (10)
@@ -114,10 +114,10 @@ COMMENT ON COLUMN IA_Experiment_Xref.userstamp IS
      ,  updated            TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  timestamp          TIMESTAMP       DEFAULT  now()   NOT NULL
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
-     ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_Xref_qualifier REFERENCES IA_ControlledVocab(ac)
-     ,  database_ac        VARCHAR (30)    CONSTRAINT fk_Xref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
-     ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_Xref_owner REFERENCES IA_Institution(ac)
+     ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_ControlledVocabXref_qualifier REFERENCES IA_ControlledVocab(ac)
+     ,  database_ac        VARCHAR (30)    CONSTRAINT fk_ControlledVocabXref_database  REFERENCES IA_ControlledVocab(ac)
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_ControlledVocabXref_ControlledVocab  REFERENCES IA_ControlledVocab(ac)
+     ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_ControlledVocabXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
      ,  dbRelease          VARCHAR (10)
@@ -168,7 +168,7 @@ CREATE TABLE IA_Feature_Xref
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_FeatureXref_qualifier REFERENCES IA_ControlledVocab(ac)
      ,  database_ac        VARCHAR (30)    CONSTRAINT fk_FeatureXref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_FeatureXref_Feature  REFERENCES IA_Feature(ac)
      ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_FeatureXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
@@ -220,7 +220,7 @@ CREATE TABLE IA_Interactor_Xref
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_InteractorXref_qualifier REFERENCES IA_ControlledVocab(ac)
      ,  database_ac        VARCHAR (30)    CONSTRAINT fk_InteractorXref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_InteractorXref_Interactor  REFERENCES IA_Interactor(ac)
      ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_InteractorXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
@@ -273,7 +273,7 @@ CREATE TABLE IA_Publication_Xref
      ,  userstamp          VARCHAR (30)    DEFAULT  USER    NOT NULL
      ,  qualifier_ac       VARCHAR (30)    CONSTRAINT fk_PublicationXref_qualifier REFERENCES IA_ControlledVocab(ac)
      ,  database_ac        VARCHAR (30)    CONSTRAINT fk_PublicationXref_database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac          VARCHAR (30)    -- checked via trigger
+     ,  parent_ac          VARCHAR (30)    CONSTRAINT fk_PublicationXref_Publication  REFERENCES IA_Publication(ac)
      ,  owner_ac           VARCHAR (30)    CONSTRAINT fk_PublicationXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId          VARCHAR (30)
      ,  secondaryId        VARCHAR (30)
