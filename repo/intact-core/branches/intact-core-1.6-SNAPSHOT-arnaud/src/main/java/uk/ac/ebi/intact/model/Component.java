@@ -5,12 +5,22 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The specific instance of an interactor which participates in an interaction.
@@ -68,10 +78,25 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
      */
     private Collection<Feature> bindingDomains = new ArrayList<Feature>();
 
-    /**
-     * TODO comments
-     */
-    private CvComponentRole cvComponentRole;
+//    /**
+//     * TODO comments
+//     */
+//    private CvComponentRole cvComponentRole;
+
+	/**
+	 * TODO comments
+	 */
+	private CvIdentification cvIdentification;
+
+	/**
+	 * TODO comments
+	 */
+	private CvComponentRole cvExperimentalRole;
+
+	/**
+	 * TODO comments
+	 */
+	private CvComponentRole cvBiologicalRole;
 
     public Component() {
         //super call sets creation time data
@@ -124,7 +149,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
     public Component( Institution owner, String shortLabel, Interaction interaction,
-                      Interactor interactor, CvComponentRole role ) {
+                      Interactor interactor, CvComponentRole experimentalRole ) {
 
         //super call sets creation time data
         super( shortLabel, owner );
@@ -134,14 +159,14 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         if ( interactor == null ) {
             throw new NullPointerException( "valid Component must have an Interactor (eg Protein) set!" );
         }
-        if ( role == null ) {
+        if ( experimentalRole == null ) {
             throw new NullPointerException( "valid Component must have a role set (ie a CvComponentRole)!" );
         }
 
         this.interaction = interaction;
         this.interactor = interactor;
 
-        this.cvComponentRole = role;
+        this.cvExperimentalRole = experimentalRole;
     }
 
     ///////////////////////////////////////
@@ -225,15 +250,15 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         }
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role")
-    public CvComponentRole getCvComponentRole() {
-        return cvComponentRole;
-    }
-
-    public void setCvComponentRole( CvComponentRole cvComponentRole ) {
-        this.cvComponentRole = cvComponentRole;
-    }
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "role")
+//    public CvComponentRole getCvComponentRole() {
+//        return cvComponentRole;
+//    }
+//
+//    public void setCvComponentRole( CvComponentRole cvComponentRole ) {
+//        this.cvComponentRole = cvComponentRole;
+//    }
 
     @ManyToMany
     @JoinTable(
@@ -288,7 +313,10 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         // so "==" can be used instead of "equals".
         return this.interactor == component.getInteractor() &&
                this.interaction == component.getInteraction() &&
-               this.cvComponentRole == component.cvComponentRole;
+               this.cvExperimentalRole == component.cvExperimentalRole &&
+               this.cvBiologicalRole == component.cvBiologicalRole &&
+               this.cvIdentification == component.cvIdentification; 
+        
     }
 
     /**
@@ -299,7 +327,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     @Override
     public int hashCode() {
         /* TODO: Take features into account when they are implemented. */
-        int code = 29;
+        int code = super.hashCode();
 
         //need these checks because we still have a no-arg
         //constructor at the moment.....
@@ -310,8 +338,14 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         if ( interaction != null ) {
             code = code * 29 + interaction.hashCode();
         }
-        if ( cvComponentRole != null ) {
-            code = code * 29 + cvComponentRole.hashCode();
+        if ( cvExperimentalRole != null ) {
+            code = code * 29 + cvExperimentalRole.hashCode();
+        }
+        if ( cvBiologicalRole != null ) {
+            code = code * 29 + cvBiologicalRole.hashCode();
+        }
+        if ( cvIdentification != null ) {
+            code = code * 29 + cvIdentification.hashCode();
         }
 
         return code;
@@ -400,6 +434,39 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     protected void setInteractorForClone( Interactor interactor ) {
         this.interactor = interactor;
     }
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "identmethod_ac")
+	public CvIdentification getCvIdentification() {
+	    return cvIdentification;
+	}
+
+	public void setCvIdentification( CvIdentification cvIdentification ) {
+	    this.cvIdentification = cvIdentification;
+	}
+
+
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "experimentalrole_ac")
+	public CvComponentRole getCvExperimentalRole() {
+	    return cvExperimentalRole;
+	}
+
+	public void setCvExperimentalRole( CvComponentRole cvExperimentalRole ) {
+	    this.cvExperimentalRole = cvExperimentalRole;
+	}
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "biologicalrole_ac")
+	public CvComponentRole getCvBiologicalRole() {
+	    return cvBiologicalRole;
+	}
+
+	public void setCvBiologicalRole( CvComponentRole cvBiologicalRole ) {
+	    this.cvBiologicalRole = cvBiologicalRole;
+	}
+
 } // end Component
 
 

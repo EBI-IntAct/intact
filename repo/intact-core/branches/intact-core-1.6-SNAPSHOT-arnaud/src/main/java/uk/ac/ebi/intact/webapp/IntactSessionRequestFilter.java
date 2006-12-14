@@ -85,11 +85,12 @@ public class IntactSessionRequestFilter implements Filter {
             try
             {
                 context.getDataContext().commitAllActiveTransactions();
+                log.debug("Committed");
             }
             catch (Exception e)
             {
 //                e.printStackTrace();
-            	log.error("intact session: ", e);
+            	log.error("intact session in finally block: ", e);
             }
         }
 
