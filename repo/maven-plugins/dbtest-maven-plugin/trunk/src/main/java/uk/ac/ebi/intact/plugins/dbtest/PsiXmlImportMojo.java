@@ -90,6 +90,12 @@ public class PsiXmlImportMojo
      */
     private boolean skipPreload;
 
+    /**
+     * If true, run if offline mode
+     * @parameter expression="${intact.offline}" default-value="false"
+     */
+    private boolean offlineMode;
+
 
     protected void initializeHibernate() throws MojoExecutionException
     {
@@ -225,7 +231,7 @@ public class PsiXmlImportMojo
         EntrySetParser entrySetParser = new EntrySetParser();
         EntrySetTag entrySet = entrySetParser.process( rootElement );
 
-        UpdateProteinsI proteinFactory = new UpdateProteins();
+        UpdateProteinsI proteinFactory = new UpdateProteins(offlineMode, false);
         BioSourceFactory bioSourceFactory = new BioSourceFactory();
 
         ControlledVocabularyRepository.check( );
