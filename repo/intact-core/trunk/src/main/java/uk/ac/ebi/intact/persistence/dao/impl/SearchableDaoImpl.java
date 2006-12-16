@@ -24,7 +24,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
 import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 
 import java.util.*;
 

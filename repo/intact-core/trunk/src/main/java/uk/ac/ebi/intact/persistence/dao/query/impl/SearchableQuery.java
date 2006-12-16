@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.persistence.dao.query;
+package uk.ac.ebi.intact.persistence.dao.query.impl;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
+import java.beans.PropertyDescriptor;
 
 /**
  * Class to be used as query value for searches. It is used
@@ -30,17 +34,17 @@ import java.io.Serializable;
  */
 public class SearchableQuery implements Serializable
 {
-    private String ac;
-    private String shortLabel;
-    private String description;
-    private String fullText;
-    private String xref;
-    private String cvDatabaseLabel;
-    private String annotationText;
-    private String cvTopicLabel;
-    private String cvIdentificationLabel;
-    private String cvInteractionLabel;
-    private String cvInteractionTypeLabel;
+    private QueryPhrase ac;
+    private QueryPhrase shortLabel;
+    private QueryPhrase description;
+    private QueryPhrase fullText;
+    private QueryPhrase xref;
+    private QueryPhrase cvDatabaseLabel;
+    private QueryPhrase annotationText;
+    private QueryPhrase cvTopicLabel;
+    private QueryPhrase cvIdentificationLabel;
+    private QueryPhrase cvInteractionLabel;
+    private QueryPhrase cvInteractionTypeLabel;
     private boolean includeCvInteractionChildren;
     private boolean includeCvIdentificationChildren;
     private boolean includeCvInteractionTypeChildren;
@@ -50,112 +54,112 @@ public class SearchableQuery implements Serializable
     {
     }
 
-    public String getAc()
+    public QueryPhrase getAc()
     {
         return ac;
     }
 
-    public void setAc(String ac)
+    public void setAc(QueryPhrase ac)
     {
         this.ac = ac;
     }
 
-    public String getShortLabel()
+    public QueryPhrase getShortLabel()
     {
         return shortLabel;
     }
 
-    public void setShortLabel(String shortLabel)
+    public void setShortLabel(QueryPhrase shortLabel)
     {
         this.shortLabel = shortLabel;
     }
 
-    public String getDescription()
+    public QueryPhrase getDescription()
     {
         return description;
     }
 
-    public void setDescription(String description)
+    public void setDescription(QueryPhrase description)
     {
         this.description = description;
     }
 
-    public String getFullText()
+    public QueryPhrase getFullText()
     {
         return fullText;
     }
 
-    public void setFullText(String fullText)
+    public void setFullText(QueryPhrase fullText)
     {
         this.fullText = fullText;
     }
 
-    public String getXref()
+    public QueryPhrase getXref()
     {
         return xref;
     }
 
-    public void setXref(String xref)
+    public void setXref(QueryPhrase xref)
     {
         this.xref = xref;
     }
 
-    public String getCvDatabaseLabel()
+    public QueryPhrase getCvDatabaseLabel()
     {
         return cvDatabaseLabel;
     }
 
-    public void setCvDatabaseLabel(String cvDatabaseLabel)
+    public void setCvDatabaseLabel(QueryPhrase cvDatabaseLabel)
     {
         this.cvDatabaseLabel = cvDatabaseLabel;
     }
 
-    public String getAnnotationText()
+    public QueryPhrase getAnnotationText()
     {
         return annotationText;
     }
 
-    public void setAnnotationText(String annotationText)
+    public void setAnnotationText(QueryPhrase annotationText)
     {
         this.annotationText = annotationText;
     }
 
-    public String getCvTopicLabel()
+    public QueryPhrase getCvTopicLabel()
     {
         return cvTopicLabel;
     }
 
-    public void setCvTopicLabel(String cvTopicLabel)
+    public void setCvTopicLabel(QueryPhrase cvTopicLabel)
     {
         this.cvTopicLabel = cvTopicLabel;
     }
 
-    public String getCvIdentificationLabel()
+    public QueryPhrase getCvIdentificationLabel()
     {
         return cvIdentificationLabel;
     }
 
-    public void setCvIdentificationLabel(String cvIdentificationLabel)
+    public void setCvIdentificationLabel(QueryPhrase cvIdentificationLabel)
     {
         this.cvIdentificationLabel = cvIdentificationLabel;
     }
 
-    public String getCvInteractionLabel()
+    public QueryPhrase getCvInteractionLabel()
     {
         return cvInteractionLabel;
     }
 
-    public void setCvInteractionLabel(String cvInteractionLabel)
+    public void setCvInteractionLabel(QueryPhrase cvInteractionLabel)
     {
         this.cvInteractionLabel = cvInteractionLabel;
     }
 
-    public String getCvInteractionTypeLabel()
+    public QueryPhrase getCvInteractionTypeLabel()
     {
         return cvInteractionTypeLabel;
     }
 
-    public void setCvInteractionTypeLabel(String cvInteractionTypeLabel)
+    public void setCvInteractionTypeLabel(QueryPhrase cvInteractionTypeLabel)
     {
         this.cvInteractionTypeLabel = cvInteractionTypeLabel;
     }
@@ -206,17 +210,19 @@ public class SearchableQuery implements Serializable
         StringBuffer sb = new StringBuffer(256);
         sb.append("{");
 
-        appendValueToStringBuffer(sb, "ac", ac);
-        appendValueToStringBuffer(sb, "shortLabel", shortLabel);
-        appendValueToStringBuffer(sb, "description", description);
-        appendValueToStringBuffer(sb, "fullText", fullText);
-        appendValueToStringBuffer(sb, "xref", xref);
-        appendValueToStringBuffer(sb, "cvDatabaseLabel", cvDatabaseLabel);
-        appendValueToStringBuffer(sb, "annotationText", annotationText);
-        appendValueToStringBuffer(sb, "cvTopicLabel", cvTopicLabel);
-        appendValueToStringBuffer(sb, "cvIdentificationLabel", cvIdentificationLabel);
-        appendValueToStringBuffer(sb, "cvInteractionLabel", cvInteractionLabel);
-        appendValueToStringBuffer(sb, "cvInteractionTypeLabel", cvInteractionTypeLabel);
+        StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
+
+        appendValueToStringBuffer(sb, "ac", converter.phraseToObject(ac));
+        appendValueToStringBuffer(sb, "shortLabel", converter.phraseToObject(shortLabel));
+        appendValueToStringBuffer(sb, "description", converter.phraseToObject(description));
+        appendValueToStringBuffer(sb, "fullText", converter.phraseToObject(fullText));
+        appendValueToStringBuffer(sb, "xref", converter.phraseToObject(xref));
+        appendValueToStringBuffer(sb, "cvDatabaseLabel", converter.phraseToObject(cvDatabaseLabel));
+        appendValueToStringBuffer(sb, "annotationText", converter.phraseToObject(annotationText));
+        appendValueToStringBuffer(sb, "cvTopicLabel", converter.phraseToObject(cvTopicLabel));
+        appendValueToStringBuffer(sb, "cvIdentificationLabel", converter.phraseToObject(cvIdentificationLabel));
+        appendValueToStringBuffer(sb, "cvInteractionLabel", converter.phraseToObject(cvInteractionLabel));
+        appendValueToStringBuffer(sb, "cvInteractionTypeLabel", converter.phraseToObject(cvInteractionTypeLabel));
 
         if (includeCvInteractionChildren)
             appendValueToStringBuffer(sb, "includeCvInteractionChildren", includeCvInteractionChildren);
@@ -245,81 +251,34 @@ public class SearchableQuery implements Serializable
         }
     }
 
-
     @Override
     public boolean equals(Object o)
     {
-        if (this == o)
-        {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass())
-        {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
         SearchableQuery that = (SearchableQuery) o;
 
-        if (disjunction != that.disjunction)
-        {
-            return false;
-        }
-        if (includeCvIdentificationChildren != that.includeCvIdentificationChildren)
-        {
-            return false;
-        }
-        if (includeCvInteractionChildren != that.includeCvInteractionChildren)
-        {
-            return false;
-        }
-        if (includeCvInteractionTypeChildren != that.includeCvInteractionTypeChildren)
-        {
-            return false;
-        }
-        if (ac != null ? !ac.equals(that.ac) : that.ac != null)
-        {
-            return false;
-        }
+        if (disjunction != that.disjunction) return false;
+        if (includeCvIdentificationChildren != that.includeCvIdentificationChildren) return false;
+        if (includeCvInteractionChildren != that.includeCvInteractionChildren) return false;
+        if (includeCvInteractionTypeChildren != that.includeCvInteractionTypeChildren) return false;
+        if (ac != null ? !ac.equals(that.ac) : that.ac != null) return false;
         if (annotationText != null ? !annotationText.equals(that.annotationText) : that.annotationText != null)
-        {
             return false;
-        }
         if (cvDatabaseLabel != null ? !cvDatabaseLabel.equals(that.cvDatabaseLabel) : that.cvDatabaseLabel != null)
-        {
             return false;
-        }
         if (cvIdentificationLabel != null ? !cvIdentificationLabel.equals(that.cvIdentificationLabel) : that.cvIdentificationLabel != null)
-        {
             return false;
-        }
         if (cvInteractionLabel != null ? !cvInteractionLabel.equals(that.cvInteractionLabel) : that.cvInteractionLabel != null)
-        {
             return false;
-        }
         if (cvInteractionTypeLabel != null ? !cvInteractionTypeLabel.equals(that.cvInteractionTypeLabel) : that.cvInteractionTypeLabel != null)
-        {
             return false;
-        }
-        if (cvTopicLabel != null ? !cvTopicLabel.equals(that.cvTopicLabel) : that.cvTopicLabel != null)
-        {
-            return false;
-        }
-        if (description != null ? !description.equals(that.description) : that.description != null)
-        {
-            return false;
-        }
-        if (fullText != null ? !fullText.equals(that.fullText) : that.fullText != null)
-        {
-            return false;
-        }
-        if (shortLabel != null ? !shortLabel.equals(that.shortLabel) : that.shortLabel != null)
-        {
-            return false;
-        }
-        if (xref != null ? !xref.equals(that.xref) : that.xref != null)
-        {
-            return false;
-        }
+        if (cvTopicLabel != null ? !cvTopicLabel.equals(that.cvTopicLabel) : that.cvTopicLabel != null) return false;
+        if (description != null ? !description.equals(that.description) : that.description != null) return false;
+        if (fullText != null ? !fullText.equals(that.fullText) : that.fullText != null) return false;
+        if (shortLabel != null ? !shortLabel.equals(that.shortLabel) : that.shortLabel != null) return false;
+        if (xref != null ? !xref.equals(that.xref) : that.xref != null) return false;
 
         return true;
     }
@@ -345,7 +304,6 @@ public class SearchableQuery implements Serializable
         result = 31 * result + (disjunction ? 1 : 0);
         return result;
     }
-
 
     /**
      * Create a <code>SearchableQuery</code> from a String. Using a regex pattern, gets the properties
@@ -378,31 +336,41 @@ public class SearchableQuery implements Serializable
                 propValue = propValue.substring(1,propValue.length()-1);
             }
 
-             // check if the value is a boolean
             try
             {
-                if (propValue.equals(Boolean.TRUE.toString()) || propValue.equals(Boolean.FALSE.toString()))
-                {
-                    addPropertyWithReflection(query, propName, Boolean.valueOf(propValue));
-                }
-                else
-                {
-                    addPropertyWithReflection(query, propName, propValue);
-                }
+                addPropertyWithReflection(query, propName, propValue);
             }
             catch (Exception e)
             {
-                throw new IntactException("Exception parsing SearchQuery from String: "+searchableQueryStr);
+                throw new IntactException("Exception parsing "+propName+"="+propValue+" in SearchQuery from String: "+searchableQueryStr, e);
             }
         }
 
         return query;
     }
 
-    private static void addPropertyWithReflection(SearchableQuery query, String propName, Object value)
+    private static void addPropertyWithReflection(SearchableQuery query, String propName, String propValue)
             throws Exception
     {
-        BeanUtils.setProperty(query, propName, value);
+        Method getter = PropertyUtils.getReadMethod(new PropertyDescriptor(propName, query.getClass()));
+        Class returnType = getter.getReturnType();
+
+        Object objPhrase;
+
+        if (returnType.equals(QueryPhrase.class))
+        {
+            objPhrase = new StandardQueryPhraseConverter().objectToPhrase(propValue);
+        }
+        else if (returnType.getName().equals("boolean"))
+        {
+            objPhrase = Boolean.valueOf(propValue).booleanValue();
+        }
+        else
+        {
+            throw new IntactException("Unexpected type "+returnType.getName()+" for property name: "+propName);
+        }
+
+        BeanUtils.setProperty(query, propName, objPhrase);
     }
 
     public static boolean isSearchableQuery(String searchableQueryStr)

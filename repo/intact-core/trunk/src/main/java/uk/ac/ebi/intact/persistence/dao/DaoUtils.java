@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.persistence.dao.query.AutoAddWildcardConverter;
-import uk.ac.ebi.intact.persistence.dao.query.StandardAutoAddWildcardConverter;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.AutoAddWildcardConverter;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardAutoAddWildcardConverter;
 
 /**
  * General DAO utilities

@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.persistence.dao.query;
 
 import java.util.Collection;
+import java.util.ArrayList;
 
 /**
  * A phrase represent a group of terms
@@ -30,6 +31,7 @@ public class QueryPhrase
 
     public QueryPhrase()
     {
+        this.terms = new ArrayList<QueryTerm>();
     }
 
     public QueryPhrase(Collection<QueryTerm> terms)

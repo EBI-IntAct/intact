@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.persistence.dao.query;
+package uk.ac.ebi.intact.persistence.dao.query.impl;
+
+import uk.ac.ebi.intact.persistence.dao.query.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class StandardQueryPhraseConverter implements QueryPhraseConverter<String
             strTerm = replacedToValue(strTerm);
             strTerm = removeQuotesIfNecessary(strTerm);
 
-            QueryTerm term = termConverter.objectToTerm(strTerm);
+            QueryTerm term = termConverter.stringToTerm(strTerm);
             terms.add(term);
         }
 
@@ -68,6 +70,8 @@ public class StandardQueryPhraseConverter implements QueryPhraseConverter<String
 
     public String phraseToObject(QueryPhrase phrase) throws QueryPhraseException
     {
+        if (phrase == null) return null;
+
         StringBuffer sb = new StringBuffer(phrase.getTerms().size() * 8);
 
         StandardQueryTermConverter termConverter = new StandardQueryTermConverter();
@@ -79,7 +83,7 @@ public class StandardQueryPhraseConverter implements QueryPhraseConverter<String
             {
                 sb.append(",");
             }
-            sb.append(termConverter.termToObject(term));
+            sb.append(termConverter.termToString(term));
             i++;
         }
 

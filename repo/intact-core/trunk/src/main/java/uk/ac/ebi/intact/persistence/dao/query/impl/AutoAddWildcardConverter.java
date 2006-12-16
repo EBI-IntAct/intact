@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.persistence.dao.query;
+package uk.ac.ebi.intact.persistence.dao.query.impl;
 
 /**
  * Converter to add wildcards to a searchable query

@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.persistence.dao.query;
 
 import java.util.regex.Pattern;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * TODO comment this!
@@ -84,7 +84,11 @@ public enum QueryModifier
         Character[] allSymbols = new Character[synonyms.length+1];
 
         allSymbols[0] = symbol;
-        System.arraycopy(synonyms, 1, allSymbols, 1, allSymbols.length);
+
+        for (int i=0; i<synonyms.length; i++)
+        {
+            allSymbols[i+1] = synonyms[i];
+        }
 
         return allSymbols;
     }
@@ -93,4 +97,42 @@ public enum QueryModifier
     {
         return position;
     }
+
+    public static QueryModifier[] identifyModifiers(String value)
+    {
+        Set<QueryModifier> modifiers = new HashSet<QueryModifier>();
+
+        for (QueryModifier modifier : QueryModifier.values())
+        {
+            switch (modifier.getPosition())
+            {
+                case BEFORE_TERM:
+                    for (Character c : modifier.allPossibleSymbols())
+                    {
+                        if (value.startsWith(String.valueOf(c)))
+                        {
+                            modifiers.add(modifier);
+                        }
+                    }
+                    break;
+                case AFTER_TERM:
+                    for (Character c : modifier.allPossibleSymbols())
+                    {
+                        if (value.endsWith(String.valueOf(c)))
+                        {
+                            modifiers.add(modifier);
+                        }
+                    }
+                    break;
+            }
+        }
+        return modifiers.toArray(new QueryModifier[modifiers.size()]);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "mod{"+symbol+" - "+position+"}";
+    }
+    
 }

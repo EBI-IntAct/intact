@@ -23,13 +23,14 @@ import org.hibernate.criterion.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.DaoUtils;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.*;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryTermConverter;
 
 import java.util.*;
 
 /**
- * Allows to create a criteria from an {@link uk.ac.ebi.intact.persistence.dao.query.SearchableQuery}
+ * Allows to create a criteria from an {@link uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery}
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -48,26 +49,27 @@ public class SearchableCriteriaBuilder
     private static final String PRIMARY_ID_PROPERTY = "primaryId";
     private static final String CV_OBJCLASS_PROPERTY = "objClass";
 
-    private SearchValueConverter searchValueConverter;
+    private StandardQueryTermConverter queryTermConverter;
 
     public SearchableCriteriaBuilder(SearchableQuery query)
     {
         this.query = query;
         aliasesCreated = new HashSet<String>();
-        this.searchValueConverter = new StandardSearchValueConverter();
+        this.queryTermConverter = new StandardQueryTermConverter();
     }
 
-    public SearchableCriteriaBuilder(SearchableQuery query, SearchValueConverter searchValueConverter)
+    public SearchableCriteriaBuilder(SearchableQuery query, StandardQueryTermConverter queryTermConverter)
     {
         this.query = query;
         aliasesCreated = new HashSet<String>();
-        this.searchValueConverter = searchValueConverter;
+        this.queryTermConverter = queryTermConverter;
     }
 
     /**
      * Completes a provided criteria with the necessary restrictions.
+     *
      * @param searchableClass the class to search
-     * @param session a hibernate session
+     * @param session         a hibernate session
      * @return
      */
     public Criteria createCriteria(Class<? extends Searchable> searchableClass, Session session)
@@ -79,7 +81,7 @@ public class SearchableCriteriaBuilder
 
         if (log.isDebugEnabled())
         {
-            log.debug("Search for: "+searchableClass+", with query: "+query);
+            log.debug("Search for: " + searchableClass + ", with query: " + query);
         }
 
         Criteria criteria = session.createCriteria(searchableClass);
@@ -108,8 +110,8 @@ public class SearchableCriteriaBuilder
         addFullTextRestriction(searchableClass, criteria, query.getFullText(), true);
 
         // xref - database
-        String xrefPrimaryId = query.getXref();
-        String xrefDb = query.getCvDatabaseLabel();
+        QueryPhrase xrefPrimaryId = query.getXref();
+        QueryPhrase xrefDb = query.getCvDatabaseLabel();
 
         Junction jXref = Restrictions.conjunction();
 
@@ -127,8 +129,8 @@ public class SearchableCriteriaBuilder
         }
 
         // annotation
-        String annotText = query.getAnnotationText();
-        String annotTopic = query.getCvTopicLabel();
+        QueryPhrase annotText = query.getAnnotationText();
+        QueryPhrase annotTopic = query.getCvTopicLabel();
 
         Junction jAnnot = Restrictions.conjunction();
 
@@ -153,7 +155,7 @@ public class SearchableCriteriaBuilder
             {
                 Conjunction objAndLabelConj = Restrictions.conjunction();
 
-                addRestriction(objAndLabelConj, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionTypeLabel(), true);
+                addRestriction(objAndLabelConj, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionTypeLabel());
                 objAndLabelConj.add(Restrictions.eq(cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY), CvInteractionType.class.getName()));
 
                 if (query.isIncludeCvInteractionTypeChildren())
@@ -172,7 +174,7 @@ public class SearchableCriteriaBuilder
                     }
                     else
                     {
-                         junction.add(objAndLabelConj);
+                        junction.add(objAndLabelConj);
                     }
                 }
                 else
@@ -191,7 +193,7 @@ public class SearchableCriteriaBuilder
                 Conjunction objAndLabelConj = Restrictions.conjunction();
                 objAndLabelConj.add(Restrictions.eq(cvIdentificationProperty(criteria, CV_OBJCLASS_PROPERTY), CvIdentification.class.getName()));
 
-                addRestriction(objAndLabelConj, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvIdentificationLabel(), true);
+                addRestriction(objAndLabelConj, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvIdentificationLabel());
 
                 if (query.isIncludeCvIdentificationChildren())
                 {
@@ -209,7 +211,7 @@ public class SearchableCriteriaBuilder
                     }
                     else
                     {
-                         junction.add(objAndLabelConj);
+                        junction.add(objAndLabelConj);
                     }
                 }
                 else
@@ -224,7 +226,7 @@ public class SearchableCriteriaBuilder
                 Conjunction objAndLabelConj = Restrictions.conjunction();
                 objAndLabelConj.add(Restrictions.eq(cvInteractionProperty(criteria, CV_OBJCLASS_PROPERTY), CvInteraction.class.getName()));
 
-                addRestriction(objAndLabelConj, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionLabel(), true);
+                addRestriction(objAndLabelConj, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), query.getCvInteractionLabel());
 
                 if (query.isIncludeCvInteractionChildren())
                 {
@@ -258,46 +260,67 @@ public class SearchableCriteriaBuilder
         return criteria;
     }
 
-    private void addRestriction(Junction junction, String property, String value, boolean allValueIsPhrase)
+    private void addRestriction(Junction junction, String property, QueryPhrase value)
     {
         if (isValueValid(value))
         {
-            if (allValueIsPhrase)
-            {
-                if (!value.startsWith("\""))
-                {
-                    value = "\""+value;
-                }
+            Junction termJunct;
 
-                if (!value.endsWith("\""))
-                {
-                    value = value+"\"";
-                }
+            if (value.getTerms().size() <= 1)
+            {
+                termJunct = junction;
+            }
+            else
+            {
+                termJunct = Restrictions.disjunction();
+                junction.add(termJunct);
             }
 
-            Criterion criterion = searchValueConverter.valueToCriterion(property, value);
-            junction.add(criterion);
+            for (QueryTerm term : value.getTerms())
+            {
+                String val = term.getValue();
+
+                if (isLikeQuery(term))
+                {
+                    termJunct.add(Restrictions.like(property, val));
+                }
+                else
+                {
+                    termJunct.add(Restrictions.eq(property, val));
+                }
+            }
         }
     }
 
-    private void addRestriction(Junction junction, String property, String value)
+    private void addRestriction(Junction junction, String property, String value, boolean isLike)
     {
-        if (isValueValid(value))
+        if (isLike)
         {
-            Criterion criterion = searchValueConverter.valueToCriterion(property, value);
-            junction.add(criterion);
+            junction.add(Restrictions.like(property, value));
+        }
+        else
+        {
+            junction.add(Restrictions.eq(property, value));
         }
     }
 
-    private void addFullTextRestriction(Class<? extends Searchable> searchableClass, Criteria criteria, String value, boolean autoAddWildcards)
+    private boolean isLikeQuery(QueryTerm term)
+    {
+        for (QueryModifier mod : term.getModifiers())
+        {
+            if (mod == QueryModifier.WILDCARD_END || mod == QueryModifier.WILDCARD_START)
+            {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    private void addFullTextRestriction(Class<? extends Searchable> searchableClass, Criteria criteria, QueryPhrase value, boolean autoAddWildcards)
     {
         if (isValueValid(value))
         {
-            if (autoAddWildcards)
-            {
-                value = DaoUtils.addPercents(value);
-            }
-
             Junction disj = Restrictions.disjunction();
 
             addRestriction(disj, AC_PROPERTY, value);
@@ -323,59 +346,63 @@ public class SearchableCriteriaBuilder
         }
     }
 
-    private Junction getChildrenDisjunctionForCv(Criteria criteria, String shortLabelProperty, String objClassProperty, Class<? extends CvObject> cvType, String cvShortLabel)
+    private Junction getChildrenDisjunctionForCv(Criteria criteria, String shortLabelProperty, String objClassProperty, Class<? extends CvObject> cvType, QueryPhrase cvShortLabelPhrase)
     {
-        log.debug("\tGetting children for: " + cvShortLabel);
-
-        if (cvShortLabel == null)
+        if (cvShortLabelPhrase == null)
         {
             return null;
-        }
-
-        CvDagObject cvDagObject = (CvDagObject) IntactContext.getCurrentInstance().getCvContext()
-                .getByLabel(cvType, cvShortLabel);
-
-        if (cvDagObject == null)
-        {
-            throw new IntactException("No CvDagObject with label '" + cvShortLabel + "' and type '"+cvType+"' could be found");
         }
 
         Disjunction mainDisjunction = Restrictions.disjunction();
 
-        Map<Class<? extends CvObject>,Set<String>> classifiedChildren = getChildrenCvClassified(cvDagObject);
-
-        if (classifiedChildren.isEmpty())
+        for (QueryTerm term : cvShortLabelPhrase.getTerms())
         {
-            return null;
-        }
+            String cvShortLabel = (String)term.getValue();
+            CvDagObject cvDagObject = (CvDagObject) IntactContext.getCurrentInstance().getCvContext()
+                    .getByLabel(cvType, cvShortLabel);
 
-        for (Map.Entry<Class<? extends CvObject>,Set<String>> childEntry : classifiedChildren.entrySet())
-        {
-            Junction entryConjunction = Restrictions.conjunction()
-                    .add(Restrictions.eq(objClassProperty, childEntry.getKey().getName()));
+            log.debug("\tGetting children for: " + term.getValue());
 
-            Disjunction disj  = Restrictions.disjunction();
-
-            for (String label : childEntry.getValue())
+            if (cvDagObject == null)
             {
-                addRestriction(disj, shortLabelProperty, label, true);
+                throw new IntactException("No CvDagObject with label '" + cvShortLabel + "' and type '" + cvType + "' could be found");
             }
 
-            entryConjunction.add(disj);
-            mainDisjunction.add(entryConjunction);
+            Map<Class<? extends CvObject>, Set<String>> classifiedChildren = getChildrenCvClassified(cvDagObject);
+
+            if (classifiedChildren.isEmpty())
+            {
+                return null;
+            }
+
+            for (Map.Entry<Class<? extends CvObject>, Set<String>> childEntry : classifiedChildren.entrySet())
+            {
+                Junction entryConjunction = Restrictions.conjunction()
+                        .add(Restrictions.eq(objClassProperty, childEntry.getKey().getName()));
+
+                Disjunction disj = Restrictions.disjunction();
+
+                for (String label : childEntry.getValue())
+                {
+                    addRestriction(disj, shortLabelProperty, label, true);
+                }
+
+                entryConjunction.add(disj);
+                mainDisjunction.add(entryConjunction);
+            }
         }
 
         return mainDisjunction;
     }
 
-    private Map<Class<? extends CvObject>,Set<String>> getChildrenCvClassified(CvDagObject parentCv)
+    private Map<Class<? extends CvObject>, Set<String>> getChildrenCvClassified(CvDagObject parentCv)
     {
         if (parentCv == null)
         {
             throw new IntactException("CvDagObject is null");
         }
 
-        Map<Class<? extends CvObject>,Set<String>> cvsMap = new HashMap<Class<? extends CvObject>,Set<String>>();
+        Map<Class<? extends CvObject>, Set<String>> cvsMap = new HashMap<Class<? extends CvObject>, Set<String>>();
 
         List<CvDagObject> children = new ArrayList<CvDagObject>();
         fillChildrenRecursively(parentCv, children);
@@ -506,9 +533,9 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
-    private static boolean isValueValid(String value)
+    private static boolean isValueValid(Object value)
     {
-        return value != null && value.trim().length() > 0;
+        return value != null;
     }
 
 
