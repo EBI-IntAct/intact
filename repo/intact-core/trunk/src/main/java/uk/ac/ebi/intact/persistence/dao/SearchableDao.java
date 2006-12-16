@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import org.hibernate.Session;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 
 import java.util.List;
 import java.util.Map;

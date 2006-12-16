@@ -20,7 +20,7 @@ package uk.ac.ebi.intact.persistence.dao.query;
  * @version $Id$
  * @since 1.2
  */
-public class QueryPhraseException extends Exception
+public class QueryPhraseException extends RuntimeException
 {
 
     public QueryPhraseException()

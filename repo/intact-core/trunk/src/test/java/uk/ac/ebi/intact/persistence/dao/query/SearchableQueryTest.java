@@ -10,6 +10,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.util.List;
+
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+
 /**
  * Test for <code>SearchableQueryTest</code>
  *
@@ -48,8 +52,9 @@ public class SearchableQueryTest extends TestCase {
             if (sq == null) fail("Could parse SearchableQuery from String: "+str);
         }
 
-        assertEquals("EBI-12345", sq.getAc());
-        assertEquals("ab%,hola", sq.getShortLabel());
+        assertEquals("EBI-12345", sq.getAc().getTerms().iterator().next().getValue());
+        assertEquals("ab%", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(0).getValue());
+        assertEquals("hola", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(1).getValue());
         assertTrue(sq.isIncludeCvIdentificationChildren());
     }
 
@@ -71,8 +76,9 @@ public class SearchableQueryTest extends TestCase {
             if (sq == null) fail("Could parse SearchableQuery from String: "+str);
         }
 
-        assertEquals("EBI-12345", sq.getAc());
-        assertEquals("ab%,hola", sq.getShortLabel());
+        assertEquals("EBI-12345", sq.getAc().getTerms().iterator().next().getValue());
+        assertEquals("ab%", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(0).getValue());
+        assertEquals("hola", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(1).getValue());
         assertTrue(sq.isIncludeCvIdentificationChildren());
     }
 

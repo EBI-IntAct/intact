@@ -24,6 +24,7 @@ package uk.ac.ebi.intact.persistence.dao.query;
  */
 public class QueryTerm
 {
+
     private String value;
     private QueryModifier[] modifiers;
 
@@ -55,6 +56,10 @@ public class QueryTerm
 
     public QueryModifier[] getModifiers()
     {
+        if (modifiers == null)
+        {
+            modifiers = new QueryModifier[0];
+        }
         return modifiers;
     }
 
