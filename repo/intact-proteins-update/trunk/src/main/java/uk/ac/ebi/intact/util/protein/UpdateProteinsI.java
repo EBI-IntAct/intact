@@ -83,6 +83,8 @@ public abstract class UpdateProteinsI {
 
     protected BioSourceFactory bioSourceFactory;
 
+    protected boolean offlineMode;
+
     /**
      * If true, each protein is updated in a distinct transaction. If localTransactionControl is false, no local
      * transactions are initiated, control is left with the calling class. This can be used e.g. to have transactions
@@ -97,8 +99,10 @@ public abstract class UpdateProteinsI {
     //////////////////////////////////
     // Constructors
 
-    public UpdateProteinsI( boolean setOutputOn )
+    public UpdateProteinsI( boolean offlineMode, boolean setOutputOn )
     {
+        this.offlineMode = offlineMode;
+
         try {
             if ( setOutputOn ) {
                 HttpProxyManager.setup();
@@ -113,7 +117,7 @@ public abstract class UpdateProteinsI {
 
         collectDefaultObject( );
 
-        bioSourceFactory = new BioSourceFactory(  myInstitution );
+        bioSourceFactory = new BioSourceFactory(  );
     }
 
     /**
@@ -121,12 +125,13 @@ public abstract class UpdateProteinsI {
      *
      * @throws UpdateException
      */
-    public UpdateProteinsI(  int cacheSize ) throws UpdateException {
-        this( true );
+    public UpdateProteinsI(  int cacheSize, boolean offlineMode ) throws UpdateException {
+        this( offlineMode, true );
 
 
-        bioSourceFactory = new BioSourceFactory( myInstitution, cacheSize );
+        bioSourceFactory = new BioSourceFactory( myInstitution, cacheSize, offlineMode );
     }
+
 
     /**
      * Default constructor which initialize the bioSource cache to default.
@@ -134,14 +139,15 @@ public abstract class UpdateProteinsI {
      * @throws UpdateException
      */
     public UpdateProteinsI( ) throws UpdateException {
-        this( true);
+        this(false, true);
     }
 
 
     //////////////////////////////////
     // Methods
 
-    private void collectDefaultObject( ) {
+    private void collectDefaultObject()
+    {
 
         try
         {
@@ -151,83 +157,88 @@ public abstract class UpdateProteinsI {
         {
             e.printStackTrace();
         }
-        // Sugath: I commented out this code because getInstitution() shouldn't return
-            // a null instutition. It may throw an IntactException which should be captured
-            // by the try block. 
-//            if( myInstitution == null ) {
-//                String msg = "Unable to find the Institution: check your Institution configuration file";
-//                if( logger != null ) {
-//                    logger.error( msg );
-//                }
-//                throw new UpdateException( msg );
-//            }
 
-            CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
 
-            /**
-             * Load CVs
-             */
+        /**
+         * Load CVs
+         */
 
-            sgdDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.SGD_MI_REF ); // sgd
-            uniprotDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.UNIPROT_MI_REF ); // uniprot
+        sgdDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.SGD_MI_REF); // sgd
+        uniprotDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF); // uniprot
 
-            // search for the SRS link.
+        // search for the SRS link.
+        if (!offlineMode)
+        {
+
             Collection<Annotation> annotations = uniprotDatabase.getAnnotations();
-            if ( annotations != null ) {
+            if (annotations != null)
+            {
                 // find the CvTopic search-url-ascii
                 Annotation searchedAnnotation = null;
-                for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null; ) {
+                for (Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext() && searchedAnnotation == null;)
+                {
                     Annotation annotation = iterator.next();
                     String annotCvTopicLabel = annotation.getCvTopic().getShortLabel();
-                    if ( CV_TOPIC_SEARCH_URL_ASCII.equals( annotCvTopicLabel ) ) {
+                    if (CV_TOPIC_SEARCH_URL_ASCII.equals(annotCvTopicLabel))
+                    {
                         searchedAnnotation = annotation;
                     }
                 }
 
-                if ( searchedAnnotation != null ) {
+                if (searchedAnnotation != null)
+                {
                     srsUrl = searchedAnnotation.getAnnotationText();
-                    if ( logger != null ) {
-                        logger.info( "Found UniProt URL in the Uniprot CvDatabase: " + srsUrl );
+                    if (logger != null)
+                    {
+                        logger.info("Found UniProt URL in the Uniprot CvDatabase: " + srsUrl);
                     }
-                } else {
+                }
+                else
+                {
                     String msg = "Unable to find an annotation having a CvTopic: " + CV_TOPIC_SEARCH_URL_ASCII +
-                                 " in the UNIPROT database";
-                    if ( logger != null ) {
-                        logger.error( msg );
+                            " in the UNIPROT database";
+                    if (logger != null)
+                    {
+                        logger.error(msg);
                     }
-                    throw new UpdateException( msg );
+                    throw new UpdateException(msg);
                 }
-            } else {
-                String msg = "No Annotation in the UNIPROT database, could not get the UniProt URL.";
-                if ( logger != null ) {
-                    logger.error( msg );
-                }
-                throw new UpdateException( msg );
             }
+            else
+            {
+                String msg = "No Annotation in the UNIPROT database, could not get the UniProt URL.";
+                if (logger != null)
+                {
+                    logger.error(msg);
+                }
+                throw new UpdateException(msg);
+            }
+        }
 
-            intactDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.INTACT_MI_REF );
-            goDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.GO_MI_REF );
-            interproDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.INTERPRO_MI_REF );
-            flybaseDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.FLYBASE_MI_REF );
-            reactomeDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF );
-            hugeDatabase = cvContext.getByMiRef( CvDatabase.class, CvDatabase.HUGE_MI_REF );
+        intactDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
+        goDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.GO_MI_REF);
+        interproDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.INTERPRO_MI_REF);
+        flybaseDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.FLYBASE_MI_REF);
+        reactomeDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.REACTOME_PROTEIN_PSI_REF);
+        hugeDatabase = cvContext.getByMiRef(CvDatabase.class, CvDatabase.HUGE_MI_REF);
 
-            identityXrefQualifier =  cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
-            secondaryXrefQualifier = cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF );
-            isoFormParentXrefQualifier = cvContext.getByMiRef( CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF );
+        identityXrefQualifier = cvContext.getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        secondaryXrefQualifier = cvContext.getByMiRef(CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF);
+        isoFormParentXrefQualifier = cvContext.getByMiRef(CvXrefQualifier.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF);
 
-            // only one search by shortlabel as it still doesn't have MI number.
-            isoformComment = cvContext.getByLabel( CvTopic.class, CvTopic.ISOFORM_COMMENT );
-            noUniprotUpdate = cvContext.getByLabel( CvTopic.class, CvTopic.NON_UNIPROT);
+        // only one search by shortlabel as it still doesn't have MI number.
+        isoformComment = cvContext.getByLabel(CvTopic.class, CvTopic.ISOFORM_COMMENT);
+        noUniprotUpdate = cvContext.getByLabel(CvTopic.class, CvTopic.NON_UNIPROT);
 
 
-            geneNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.GENE_NAME_MI_REF );
-            geneNameSynonymAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF );
-            isoformSynonym = cvContext.getByMiRef( CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF );
-            locusNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF );
-            orfNameAliasType = cvContext.getByMiRef( CvAliasType.class, CvAliasType.ORF_NAME_MI_REF );
+        geneNameAliasType = cvContext.getByMiRef(CvAliasType.class, CvAliasType.GENE_NAME_MI_REF);
+        geneNameSynonymAliasType = cvContext.getByMiRef(CvAliasType.class, CvAliasType.GENE_NAME_SYNONYM_MI_REF);
+        isoformSynonym = cvContext.getByMiRef(CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF);
+        locusNameAliasType = cvContext.getByMiRef(CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF);
+        orfNameAliasType = cvContext.getByMiRef(CvAliasType.class, CvAliasType.ORF_NAME_MI_REF);
 
-            proteinType = (CvInteractorType) cvContext.getByMiRef( CvInteractorType.class, CvInteractorType.getProteinMI() );
+        proteinType = (CvInteractorType) cvContext.getByMiRef(CvInteractorType.class, CvInteractorType.getProteinMI());
 
 
     }
