@@ -220,8 +220,8 @@ public class UpdateProteins extends UpdateProteinsI {
         super();
     }
 
-    public UpdateProteins(  boolean setOutput ) throws UpdateException {
-        super( setOutput );
+    public UpdateProteins(  boolean offlineMode, boolean setOutput ) throws UpdateException {
+        super( offlineMode, setOutput );
     }
 
     @Override
@@ -2356,6 +2356,10 @@ public class UpdateProteins extends UpdateProteinsI {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
         }
 
+        if (offlineMode) {
+            return Collections.EMPTY_LIST;
+        }
+
         String url = getUrl( proteinAc );
         int i = insertSPTrProteinsFromURL( url, null, true );
         if ( debugOnScreen ) {
@@ -2401,6 +2405,10 @@ public class UpdateProteins extends UpdateProteinsI {
 
         if ( proteinAc == null || proteinAc.trim().equals( "" ) ) {
             throw new IllegalArgumentException( "The protein AC MUST not be null or empty." );
+        }
+
+        if (offlineMode) {
+            return Collections.EMPTY_LIST;
         }
 
         String url = getUrl( proteinAc );

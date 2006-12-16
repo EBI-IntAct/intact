@@ -44,6 +44,8 @@ public class BioSourceFactory {
     private static LRUMap bioSourceCache;
     private final static int DEFAULT_CACHE_SIZE = 200;
 
+    private boolean offlineMode;
+
     /**
      * To retreive up to date biosource data
      */
@@ -51,20 +53,21 @@ public class BioSourceFactory {
     private static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
 
     public BioSourceFactory( ) throws IntactException {
-        this( IntactContext.getCurrentInstance().getInstitution(), DEFAULT_CACHE_SIZE );
+        this( IntactContext.getCurrentInstance().getInstitution(), DEFAULT_CACHE_SIZE, false );
     }
 
-    public BioSourceFactory( Institution institution ) {
-        this( institution, DEFAULT_CACHE_SIZE );
+    public BioSourceFactory( boolean offlineMode ) throws IntactException {
+        this( IntactContext.getCurrentInstance().getInstitution(), DEFAULT_CACHE_SIZE, offlineMode );
     }
 
-    public BioSourceFactory( Institution institution, int cacheSize ) {
+    public BioSourceFactory( Institution institution, int cacheSize, boolean offlineMode ) {
 
         if ( institution == null ) {
             throw new RuntimeException( "The institution must not be null!" );
         }
 
         this.institution = institution;
+        this.offlineMode = offlineMode;
 
         URL url = null;
         try {
@@ -115,7 +118,7 @@ public class BioSourceFactory {
      * @throws IntactException
      */
     private CvDatabase getNewt() throws IntactException {
-        CvDatabase newt = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref(CvDatabase.NEWT_MI_REF);
+        CvDatabase newt = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
         if ( newt == null ) {
             throw new IllegalStateException( "Could not find newt in the Database. Please update your controlled vocabularies." );
         }
@@ -123,7 +126,7 @@ public class BioSourceFactory {
     }
 
     private CvXrefQualifier getIdentity() throws IntactException {
-        CvXrefQualifier identity = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.IDENTITY_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
         if ( identity == null ) {
             throw new IllegalStateException( "Could not find the qualifier(identity) in the Database. Please update your controlled vocabularies." );
         }
@@ -367,24 +370,48 @@ public class BioSourceFactory {
         log.info( "Try to get BioSource data from Newt" );
         NewtServerProxy.NewtResponse response = null;
 
-        try {
-            response = newtProxy.query( Integer.parseInt( taxid ) );
-        } catch ( IOException e ) {
-            log.error( "Could not access the Newt web server.", e );
-            return null;
-        } catch ( NumberFormatException e ) {
-            log.error( "invalid taxid: " + taxid, e );
-            return null;
-        } catch ( NewtServerProxy.TaxIdNotFoundException e ) {
-            log.error( "taxId not found from Newt: " + taxid, e );
-            return null;
+        String shortLabel;
+        String fullName;
+
+        if (!offlineMode)
+        {
+            try
+            {
+                response = newtProxy.query(Integer.parseInt(taxid));
+            }
+            catch (IOException e)
+            {
+                log.error("Could not access the Newt web server.", e);
+                return null;
+            }
+            catch (NumberFormatException e)
+            {
+                log.error("invalid taxid: " + taxid, e);
+                return null;
+            }
+            catch (NewtServerProxy.TaxIdNotFoundException e)
+            {
+                log.error("taxId not found from Newt: " + taxid, e);
+                return null;
+            }
+
+            shortLabel = response.getShortLabel();
+            fullName = response.getFullName();
+        }
+        else
+        {
+            log.warn("Running in offline mode. No access to Newt attempted.");
+
+            String offlineName = "unknown-"+System.currentTimeMillis();
+            shortLabel = offlineName;
+            fullName = "Offline name: "+offlineName;
         }
 
         // the taxId can be different in obsoleteness case.
         BioSource bioSource = new BioSource( institution,
-                                             response.getShortLabel().toLowerCase(),
-                                             "" + response.getTaxId() );
-        bioSource.setFullName( response.getFullName() );
+                                             shortLabel,
+                                             "" + taxid );
+        bioSource.setFullName( fullName );
 
         // add xref to it !
 
@@ -393,7 +420,7 @@ public class BioSourceFactory {
         CvXrefQualifier identity = getIdentity();
 
         // create identity Newt Xref
-        BioSourceXref xref = new BioSourceXref( institution, newt, "" + response.getTaxId(), null, null, identity );
+        BioSourceXref xref = new BioSourceXref( institution, newt, "" + taxid, null, null, identity );
         bioSource.addXref( xref );
 
         // Note: We do not persist that Xref as it will be used for checking against IntAct data.
