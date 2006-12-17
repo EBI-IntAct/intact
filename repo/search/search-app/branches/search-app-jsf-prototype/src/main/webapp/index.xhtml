@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<f:view>
+
+    <ui:composition template="main-template.xhtml">
+        
+        <ui:param name="sectionTitle" value="IntAct Search Home"/>
+        <ui:param name="initiallyExpandSearchBox" value="true"/>
+
+        <ui:define name="contents">
+            <ui:include src="contents/home_content.xhtml"/>
+        </ui:define>
+
+    </ui:composition>
+
+
+</f:view>
+
+</body>
+
+</html>

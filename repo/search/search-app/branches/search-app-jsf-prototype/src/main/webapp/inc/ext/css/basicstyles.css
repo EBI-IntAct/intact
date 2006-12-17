@@ -1,0 +1,436 @@
+
+
+/* start default text style */
+
+body, td { 
+	font-size: 12px;
+	font-family: helvetica, "trebuchet MS", arial, sans-serif;
+}
+/* end default text style */
+
+/* start breadcrumb styles */
+
+
+
+
+.breadcrumbs{
+	list-style: none;
+	margin: 0;
+	padding-left: 2px;
+	padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-size: 8pt;
+	color: #999999;
+	display: inline;
+	clear: both;
+	background-color: #ffffff;
+}
+
+div.breadcrumbs a:link, div.breadcrumbs  a:visited, div.breadcrumbs span.nolink {
+	color: #999999;
+	text-decoration: none;
+	padding-left:12px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;		
+	background: #ffffff url(http://www.ebi.ac.uk/inc/images/bread_arrow2.gif) top left no-repeat;	
+}
+
+.contents .breadcrumbs a:hover, .contents .breadcrumbs a:active {
+	color: #e33e3e;
+	text-decoration: underline;
+	padding-left:12px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;		
+	background: #ffffff url(http://www.ebi.ac.uk/inc/images/bread_arrow2.gif) top left no-repeat;	
+}
+
+.breadcrumbs a.firstbreadcrumb:link, .breadcrumbs a.firstbreadcrumb:visited {
+	color: #999999;
+	text-decoration: none;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;		
+	background: #ffffff;	
+}
+
+div.breadcrumbs a.firstbreadcrumb:hover, div.breadcrumbs a.firstbreadcrumb:active {
+	color: #e33e3e;
+	text-decoration: underline;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;	
+	background: #ffffff;	
+}
+
+
+
+.rightbreadcrumbs{
+	list-style: none;
+	margin: 0;
+	padding-left: 2px;
+	padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	font-size: 8pt;
+	color: #006666;
+	width: 150px;
+	text-align: right;
+	display: inline;
+	float: right;
+	margin-top: -14px;
+	font-size: 8px;
+	vertical-align: top;
+}
+
+.breadcrumbs a.rightbreadcrumbslink:link,    .breadcrumbs a.rightbreadcrumbslink:visited{
+	color: #006666;
+	text-decoration: none;
+	padding-left:10px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;
+	background:  url(http://www.ebi.ac.uk/inc/images/pipe.gif) top left no-repeat;
+	font-size: 8pt;
+}
+
+.breadcrumbs a.rightbreadcrumbslink:hover, .breadcrumbs a.rightbreadcrumbslink:active{
+	color: #e33e3e;
+	text-decoration: underline;
+	padding-left:10px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;
+	background: url(http://www.ebi.ac.uk/inc/images/pipe.gif) top left no-repeat;
+	font-size: 8pt;
+}
+
+.breadcrumbs a.rightbreadcrumbsfirstlink:link,    .breadcrumbs a.rightbreadcrumbsfirstlink:visited{
+	color: #006666;
+	text-decoration: none;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;
+	background:  url(http://www.ebi.ac.uk/inc/images/spacer.gif) top left no-repeat;
+	font-size: 8pt;
+}
+
+.breadcrumbs a.rightbreadcrumbsfirstlink:hover, .breadcrumbs a.rightbreadcrumbsfirstlink:active{
+	color: #e33e3e;
+	text-decoration: underline;
+	padding-left:0px;
+	padding-right:0px;
+	padding-top:2px;
+	padding-bottom:0px;			
+	margin:0px;
+	height: 14px;	
+	text-align: left;
+	background: url(http://www.ebi.ac.uk/inc/images/spacer.gif) top left no-repeat;
+	font-size: 8pt;
+}
+
+
+
+/* end breadcrumb styles */
+
+
+/* start group logo in top right of pages */
+
+.contents td img.grouplogo {
+	border:0;
+	width: 113px;
+	height:75px;
+	padding: 0;
+	margin: 4px 0px 6px 6px;
+	float: right;
+}
+/* end group logo in top right of pages */
+
+/* start bordered boxes and other custom textural boxes or elements */
+
+.contents td .commentsbox {
+	font-family: "Courier New", Courier, mono ;
+	font-size: 9pt;
+	font-weight: bold;
+	color: #000000;
+	padding: 12px;
+	background: #edf5ea;
+	border: 1px solid #d9dadc;
+	margin: 0;
+}
+
+.normaltextcommentsbox {
+	font-size: 9pt;
+	font-weight: bold;
+	color: #000000;
+	padding: 12px;
+	background: #edf5ea;
+	border: 1px solid #d9dadc;
+	margin: 0;
+}
+
+.contents td .insidecommentsbox {
+	font-family: "Courier New", Courier, mono;
+	font-size: 9pt;
+	color: #e33e3e;
+	font-weight: normal;
+	padding: 0;
+	border: 0;
+	margin: 0;
+}
+
+
+.code {
+	text-align: left;
+	font-family: "Courier New", Courier, mono ;
+    color: #616161; 
+	padding: 12px;
+	background: #edf5ea;
+	border: 1px solid #d9dadc;
+	margin: 0;
+}
+
+.codesmall {
+	text-align: left;
+	font-family: "Courier New", Courier, mono ;
+    color: #616161; 
+	padding: 12px;
+	background: #edf5ea;
+	border: 1px solid #d9dadc;
+	width:545px;
+	margin: 0;
+}
+
+
+/* style of a pre-formatted element*/
+
+.contents td .pre {
+	font-family: "Courier New", Courier, mono;
+	font-size: 9pt;
+	color: #000000;
+}
+
+.contents td .cssinfobox {
+	font-family: "Courier New", Courier, mono;
+	font-size: 8pt;
+	font-weight: normal;
+	color: #000000;
+	padding: 12px 30px 12px 30px;
+	background: #ffffff;
+	border: 1px solid #d9dadc;
+	margin: 0px 20px 10px 30px;
+}
+
+.contents td .examplebox {
+	padding: 12px;
+	border: 1px solid #d9dadc;
+	margin: 0;
+}
+
+hr, div.rule {
+    border-top: 1px solid #bfbfbf;
+    border-right: 0px;
+    border-left: 0px;
+    border-bottom: 0px; 
+	width: 100%;
+	height: 1px;
+	/* I.E. doesnt support bg image attribute for <hr> */
+/*	background: #ffffff url(http://www.ebi.ac.uk/inc/images/line.jpg) repeat scroll center;*/
+ 	text-align: left;
+	margin: 10px 0px 10px 0px; /* top right bottom left*/
+	clear: both;
+}
+
+
+
+/* end bordered boxes and other custom textural boxes or elements */
+
+
+
+/* start tables for infomation pages... */
+
+.contenttable_max {
+	width: 100%;
+}
+
+.contenttable {
+	width: 769px;
+}
+
+.contenttable_lmenu{
+	width: 585px;
+}
+
+.summarytable{
+	width: 100%;
+}	
+
+.contenttable, .contenttable_lmenu, .summarytable, .contenttable_max{
+	padding: 0;
+	text-align: center;
+	border: 1px solid #adadaf;
+	border-collapse: collapse;
+	background-color: #edf6f5;
+	color: #000000;
+	margin-left: 1px;
+}
+
+.contenttable_max input, .contenttable_max select, .contenttable_max textarea, .contenttable input, .contenttable select, .contenttable textarea, .contenttable_lmenu input, .contenttable_lmenu select, .contenttable_lmenu textarea, .contenttable radio, .contenttable checkbox, .contenttable_lmenu radio, .contenttable_lmenu checkbox {
+	font-size: 8pt;
+}
+
+
+.smalltable{
+	padding: 0;
+	border-collapse: collapse;
+	border: 0;
+}
+
+.smalltable th, .smalltable td, .smalltable input, .smalltable select, .smalltable textarea, .smalltable radio, .smalltable checkbox {
+	font-size: 8pt;
+}
+
+.contenttable_max th, .contenttable th, .contenttable_lmenu th, .summarytable th{
+	background-color: #5e9e9e;
+	color: #000000;
+	border: 1px solid #adadaf;
+	padding: 3px;
+	vertical-align: top;
+	font-size: 9pt;
+	color: #ffffff;
+}
+
+.contenttable_max th a, .contenttable th a, .contenttable_lmenu th a{
+	color: #ffffff;
+}
+
+.contenttable_max td, .contenttable td, .contenttable_lmenu td{
+	text-align: left;
+	border: 1px solid #adadaf;
+	vertical-align: top;
+	padding: 3px;
+	font-size: 8pt;
+}
+
+.contenttable_max td input, contenttable_max  td select, contenttable_max  td textarea, .contenttable td input, contenttable td select, contenttable td textarea, .contenttable_lmenu td input, contenttable_lmenu td select, contenttable_lmenu td textarea{
+	font-size: 8pt;
+}
+
+.contenttable_lmenu_input , .contenttable_lmenu_input_sm {width: 402px;} 
+.contenttable_lmenu_select, .contenttable_lmenu_select_sm {width: 405px;} 
+.contenttable_lmenu_input_sm, .contenttable_lmenu_select_sm {font-size: 8pt; }
+
+.contenttable_max td.leftsubheading, .contenttable td.leftsubheading, .contenttable th.leftsubheading, .contenttable_lmenu td.leftsubheading, .contenttable_lmenu th.leftsubheading{
+	/*background-color: #fbe6e6;*/
+	color: #404040;
+	border: 1px solid #adadaf;
+	padding: 3px;
+	vertical-align: top;
+	text-align: left;
+	font-weight: bold;
+	width: 165px;
+}
+.contenttable_max td.subheading, .contenttable td.subheading, .contenttable_lmenu td.subheading  {
+	color: #404040;
+	border: 1px solid #adadaf;
+	padding: 3px;
+	vertical-align: top;
+	text-align: center;
+	font-weight: bold;
+	background-color: #bdd7d7;
+}
+
+/* no border version....*/
+td.leftsubheading{
+	color: #404040;
+	border: 0;
+	padding: 3px;
+	vertical-align: top;
+	text-align: left;
+	font-weight: bold;
+	width: 140px;
+}
+
+/* Alternate Row Colour */
+.alternaterowcolour{
+	background-color: #ffffff;
+}
+
+
+/* end tables for info pages... */
+
+
+
+/* revert back to normal text style */
+.normal {
+	color: #000000;
+	font-size: 12pt;
+	font-family: helvetica, "trebuchet MS", arial, sans-serif;
+	font-weight: normal;
+}
+
+/* legend under a figure text style */
+.figure {
+	color: #000000;
+	font-size: 8pt;
+	font-family: helvetica, "trebuchet MS", arial, sans-serif;
+	font-weight: normal;
+	font-style: italic;
+}
+
+
+/* add a double break to list items */
+ul.lidoublebreak li{
+	margin-bottom: 10px
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
