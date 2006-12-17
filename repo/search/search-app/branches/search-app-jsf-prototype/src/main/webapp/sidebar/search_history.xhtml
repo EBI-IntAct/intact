@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:search="http://www.ebi.ac.uk/intact/jsf/search">
+
+  <body>
+
+  <f:view>
+      <ui:composition>
+
+          <h:panelGroup rendered="#{!empty userHistoryBean.allMySearches}">
+
+              <div class="iconboxheading">
+                  <a href="#" onclick="intact_toggleVisibility('searchHistoryPanel')">Previous Searches</a>
+              </div>
+              <div id="searchHistoryPanel" class="iconboxcontents">
+
+                  <h:dataTable var="search" value="#{userHistoryBean.myLastSearches}">
+                      <h:column>
+                          <h:commandLink value="#{search:readableQuery(search)}"
+                                         actionListener="#{searchBean.executePreviousSearch}"
+                                         action="results">
+                              <f:param name="previousQuery" value="#{search:readableQuery(search)}"/>
+                          </h:commandLink>
+                      </h:column>
+                  </h:dataTable>
+              </div>
+
+          </h:panelGroup>
+
+      </ui:composition>
+  </f:view>
+
+  </body>
+</html>

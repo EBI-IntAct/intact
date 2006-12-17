@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+
+  <body>
+
+  <f:view>
+      <ui:composition>
+
+
+  <ul id="sidemenuid" class="sidemenu">
+      <li class="leftmenudivider"></li>
+
+      <li>
+          <h:commandLink value="Advanced Search" action="advSearch"/>
+      </li>
+      <li class="leftmenudivider"></li>
+      <li>
+          <h:outputLink value="http://www.ebi.ac.uk/intact/site">
+              <h:outputText value="IntAct Home"/>
+          </h:outputLink>
+      </li>
+
+
+      <!-- class clickmeopen forces menu to be open by default
+      <li class="clickmeopen"><a href="#">Developer Resources</a>
+
+          <ul>
+              <li><a href="#">level two menu</a></li>
+              <li><a href="#">level two menu</a></li>
+          </ul>
+      </li>
+       -->
+
+      <li class="leftmenudivider"></li>
+  </ul>
+
+      </ui:composition>
+  </f:view>
+
+  </body>
+</html>

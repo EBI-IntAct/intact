@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<f:view>
+
+    <ui:composition template="../main-template.xhtml">
+
+        <!-- Mandatorty params -->
+        <ui:param name="sectionTitle" value="Search Results"/>
+
+        <ui:define name="contents">
+
+            <h1>#{sectionTitle}</h1>
+
+            <h:outputText value="Results for: #{searchBean.searchableQuery}"/>
+
+            <h:dataTable var="resultCount" value="#{searchBean.currentResults}">
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Type"/>
+                    </f:facet>
+                    <h:commandLink value="#{resultCount.label}"
+                                   action="experiments"
+                                   rendered="#{resultCount.objClass == 'uk.ac.ebi.intact.model.Experiment'}"/>
+                    <h:outputText value="#{resultCount.label}"
+                        rendered="#{resultCount.objClass != 'uk.ac.ebi.intact.model.Experiment'}"/>
+                </h:column>
+                <h:column>
+                    <f:facet name="header">
+                        <h:outputText value="Results"/>
+                    </f:facet>
+                    <h:outputText value="#{resultCount.count}"/>
+                </h:column>
+            </h:dataTable>
+
+        </ui:define>
+
+    </ui:composition>
+
+
+</f:view>
+
+</body>
+
+</html>
