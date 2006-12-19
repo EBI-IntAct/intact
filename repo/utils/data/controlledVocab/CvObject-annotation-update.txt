@@ -4,133 +4,64 @@ bind	 bind	uk.ac.ebi.intact.model.CvDatabase	MI:0462	hidden	Term currently not u
 biological role	 biological role	uk.ac.ebi.intact.model.CvComponentRole	MI:0500	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 biopolymer	 biopolymer	uk.ac.ebi.intact.model.CvInteractorType	MI:0383	hidden	Term currently not used during manual curation as they are automatically assigned.	FALSE	root term-1			update type( CV interactor type )
 cdd	 cdd	uk.ac.ebi.intact.model.CvDatabase	MI:0450	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-cdna library	 cdna library	CV experimental preparation - CV sample process	MI:0343	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-cell lysate	 cell lysate	CV experimental preparation - CV sample process	MI:0344	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-chebi	 chebi	uk.ac.ebi.intact.model.CvDatabase	MI:0474	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 complex	 complex	uk.ac.ebi.intact.model.CvInteractorType	MI:0314	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
 database citation	 database citation	uk.ac.ebi.intact.model.CvDatabase	MI:0444	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-delivery method	 delivery method	CV experimental preparation - CV delivery method	MI:0307	not loaded	Root term deprecated during manual curation as too unspecific. 	TRUE	root term-2			This is not yet stored in IntAct
 ecocyc	 ecocyc	uk.ac.ebi.intact.model.CvDatabase	MI:0466	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-electroporation	 electroporation	CV experimental preparation - CV delivery method	MI:0308	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-endogenous level	 endogenous level	CV experimental preparation - CV expression level	MI:0222	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-engineered	 engineered	CV experimental preparation - CV molecular source	MI:0331	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 entrezgene/locuslink	 entrez gene/locuslink	uk.ac.ebi.intact.model.CvDatabase	MI:0477	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 experiment xref	 experiment database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0445	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-experimental prep	 experimental preparation	CV experimental preparation - root	MI:0346	not loaded	Root term deprecated during manual curation as too unspecific. 	TRUE	root term-1			This is not yet stored in IntAct
 experimental role	 experimental role	uk.ac.ebi.intact.model.CvComponentRole	MI:0495	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-expression level	 expression level	CV experimental preparation - CV expression level	MI:0221	not loaded	Root term deprecated during manual curation as too unspecific. 	TRUE	root term-2			This is not yet stored in IntAct
 feature range status	 feature range status	uk.ac.ebi.intact.model.CvFuzzyType	MI:0333	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 feature xref	 feature database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0447	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-fixed cell	 fixed cell	CV experimental preparation - CV sample process	MI:0348	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-genomic tagging	 genomic tagging	CV experimental preparation - CV delivery method	MI:0309	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 grid	 grid	uk.ac.ebi.intact.model.CvDatabase	MI:0463	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-homogeneous	 homogeneous	CV experimental preparation - CV sample process	MI:0351	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 hprd	 hprd	uk.ac.ebi.intact.model.CvDatabase	MI:0468	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-in silico	 in silico	CV experiment condition	MI:0491	not loaded	OBSOLETE as a full host organisms description is recommended using tax id == -1 as convention to refer to 'in vitro' interaction.	TRUE	obsolete not loaded in IntAct			This is not yet stored in IntAct
-in situ	 in situ	CV experiment condition	MI:0494	not loaded	OBSOLETE as a full host organisms description is recommended using tax id == -1 as convention to refer to 'in vitro' interaction.	TRUE	obsolete not loaded in IntAct			This is not yet stored in IntAct
-in vitro	 in vitro	CV experiment condition	MI:0492	not loaded	OBSOLETE as a full host organisms description is recommended using tax id == -1 as convention to refer to 'in vitro' interaction.	TRUE	obsolete not loaded in IntAct			This is not yet stored in IntAct
-in vivo	 in vivo	CV experiment condition	MI:0493	not loaded	OBSOLETE as a full host organisms description is recommended using tax id == -1 as convention to refer to 'in vitro' interaction.	TRUE	obsolete not loaded in IntAct			This is not yet stored in IntAct
-infection	 infection	CV experimental preparation - CV delivery method	MI:0310	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 interaction xref	 interaction database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0461	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 interactor type	 interactor type	uk.ac.ebi.intact.model.CvInteractorType	MI:0313	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			update type( CV interactor type )
 kegg	 kegg	uk.ac.ebi.intact.model.CvDatabase	MI:0470	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-living cell	 living cell	CV experimental preparation - CV sample process	MI:0349	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 mgd/mgi	 mgd/mgi	uk.ac.ebi.intact.model.CvDatabase	MI:0479	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 mmdb	 mmdb	uk.ac.ebi.intact.model.CvDatabase	MI:0459	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-molecular source	 molecular source	CV experimental preparation - CV molecular source	MI:0330	not loaded	Root term deprecated during manual curation as too unspecific. 	TRUE	root term-2			This is not yet stored in IntAct
 msd	 msd	uk.ac.ebi.intact.model.CvDatabase	MI:0472	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-naturally occurring	 naturally occurring	CV experimental preparation - CV molecular source	MI:0332	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-over-expressed	 over-expressed level	CV experimental preparation - CV expression level	MI:0506	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-partially purified	 partially purified	CV experimental preparation - CV sample process	MI:0352	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 participant xref	 participant database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0473	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 pfam	 pfam	uk.ac.ebi.intact.model.CvDatabase	MI:0451	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 pirsf	 pirsf	uk.ac.ebi.intact.model.CvDatabase	MI:0452	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 prints	 prints	uk.ac.ebi.intact.model.CvDatabase	MI:0453	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 prodom	 prodom	uk.ac.ebi.intact.model.CvDatabase	MI:0454	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-purified	 purified	CV experimental preparation - CV sample process	MI:0350	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 reactome	 reactome	uk.ac.ebi.intact.model.CvDatabase	MI:0467	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-refseq	 refseq	uk.ac.ebi.intact.model.CvDatabase	MI:0481	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 rfam	 rfam	uk.ac.ebi.intact.model.CvDatabase	MI:0482	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-rgd	 rgd	uk.ac.ebi.intact.model.CvDatabase	MI:0483	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-sample process	 sample process	CV experimental preparation - CV sample process	MI:0342	not loaded	Root term deprecated during manual curation as too unspecific. 	TRUE	root term-2			This is not yet stored in IntAct
 scop superfamily	 scop superfamily	uk.ac.ebi.intact.model.CvDatabase	MI:0456	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 smart	 smart	uk.ac.ebi.intact.model.CvDatabase	MI:0457	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 source database xref	 source database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0489	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-subcellular prep	 subcellular preparation	CV experimental preparation - CV sample process	MI:0372	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 tigrfams	 tigrfams	uk.ac.ebi.intact.model.CvDatabase	MI:0458	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-transfection	transfection	CV experimental preparation - CV delivery method	MI:0312	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-under-expressed	 under-expressed level	CV experimental preparation - CV expression level	MI:0223	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
 unknown participant	 unknown participant	uk.ac.ebi.intact.model.CvInteractorType	MI:0329	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
-wormbase	 wormbase	uk.ac.ebi.intact.model.CvDatabase	MI:0487	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-aggregation	aggregation	uk.ac.ebi.intact.model.CvInteractionType	MI:0191	obsolete term	OBSOLETE - since too non-specific. Consider using  ôphysical interactionö (MI:0218 )instead.	FALSE	Terms already updated as obsolete in IntAct			
-coloc immunostaining	colocalization by immunostaining	uk.ac.ebi.intact.model.CvInteraction	MI:0022	obsolete term	OBSOLETE since combination of Interaction Detection Method and Interaction Type. Consider using the Interaction Detection Method ôimaging techniquesö  (MI:0428) coupled with Interaction Type ôcolocalisationö (MI:0401) and  Participant detection ôimmunostainingö (MI:0402) instead	FALSE	Terms already updated as obsolete in IntAct			
-coloc visual technol	colocalization/visualisation technologies	uk.ac.ebi.intact.model.CvInteraction	MI:0023	obsolete term	OBSOLETE. Consider using ôimaging techniquesö MI:0428 as interaction detection method coupled with MI:0401 ôcolocalisationö as interaction type and MI:0396 ôpredeterminedö as participant detection.	FALSE	Terms already updated as obsolete in IntAct			
-copurification	copurification	uk.ac.ebi.intact.model.CvInteraction	MI:0025	obsolete term	OBSOLETE since too non-specific. Consider use of ôcosedimentationö (MI:0027) or ôcomigration in non denaturing gel electrophoresis ô (MI:0404) or ôaffinity chromatography technologies ô (MI:0004) or ômolecular sievingö  (MI:0071) or for unspecific cases ôbiochemicalö (MI:0401).	FALSE	Terms already updated as obsolete in IntAct			
 correlated mutations	correlated mutations	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0026	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-covalent interaction	covalent interaction	uk.ac.ebi.intact.model.CvInteractionType	MI:0196	obsolete term	OBSOLETE use ôcovalent bindingö (MI:0195) instead	FALSE	Terms already updated as obsolete in IntAct			
 cv att name	controlled vocabulary attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0667	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 degeranylation	degeranylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0200	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
 demyristoylation	demyristoylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0201	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-disaggregation	disaggregation	uk.ac.ebi.intact.model.CvInteractionType	MI:0205	obsolete term	OBSOLETE because considered misleading.	FALSE	Terms already updated as obsolete in IntAct			
 docking	docking	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0035	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
 domain profile pairs	domain profile pairs	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0037	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-ec50	ec50	CV parameter type	MI:0642	not loaded		TRUE	not implemented			
 experiment att name	experiment attibute name	uk.ac.ebi.intact.model.CvTopic	MI:0665	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-experiment condition	experiment condition	CV experiment condition	MI:0490	not loaded	OBSOLETE as a full host organisms description is recommended using tax id == -1 as convention to refer to 'in vitro' interaction.	TRUE	root term-1			This is not yet stored in IntAct
 feature att name	feature attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0668	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 feature detection	feature detection	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0003	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 feature type	feature type	uk.ac.ebi.intact.model.CvFeatureType	MI:0116	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-fentomolar	fentomolar	CV parameter unit	MI:0654	not loaded		TRUE	not implemented			
-flag tag coip	flag tag coimmunoprecipitation 	uk.ac.ebi.intact.model.CvInteraction	MI:0050	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôflag-taggedö (MI:0518) and Interaction detection method: ôanti tag coimmunoprecipitationö (MI:0007).	FALSE	Terms already updated as obsolete in IntAct			
 gene	gene	uk.ac.ebi.intact.model.CvInteractorType	MI:0250	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
-genetic	genetic	uk.ac.ebi.intact.model.CvInteraction	MI:0418	obsolete term	OBSOLETE as too unspecific use Genetic interference instead MI:0254.	FALSE	Terms to be updated as obsolete in IntAct			
 genetic interaction	genetic interaction	uk.ac.ebi.intact.model.CvInteractionType	MI:0208	hidden	Term currently not used  in IntAct as genetic interactions are not curated.	TRUE	genetic interaction and all its children			
-gst pull down 	gst pull down 	uk.ac.ebi.intact.model.CvInteraction	MI:0059	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôgst-taggedö (MI:0519) and Interaction detection method: ôpull downö  (MI:0096).	FALSE	Terms already updated as obsolete in IntAct			
-ha tag coip	ha tag coimmunoprecipitation 	uk.ac.ebi.intact.model.CvInteraction	MI:0060	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôha-taggedö (MI:0520) and Interaction detection method: ôanti tag coimmunoprecipitationö  (MI:0007).	FALSE	Terms already updated as obsolete in IntAct			
-his pull down	his pull down	uk.ac.ebi.intact.model.CvInteraction	MI:0061	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôhis-taggedö (MI:0521) and Interaction detection method: ôpull downö  (MI:0096).	FALSE	Terms already updated as obsolete in IntAct			
-his tag coip	his tag coimmunoprecipitation	uk.ac.ebi.intact.model.CvInteraction	MI:0062	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôhis-taggedö (MI:0521) and Interaction detection method: ôanti tag coimmunoprecipitationö (MI:0007).	FALSE	Terms already updated as obsolete in IntAct			
-ic50	ic50	CV parameter type	MI:0641	not loaded		TRUE	not implemented			
-in vitro translated	in vitro translated protein	CV experimental preparation - CV sample process	MI:0589	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-inhibitor antibodies	inhibitor antibodies	uk.ac.ebi.intact.model.CvInteraction	MI:0258	obsolete term	OBSOLETE as such method can be described using the biological role inhibitor MI:0586.	FALSE	Terms to be updated as obsolete in IntAct			
-inhibitor small mol	inhibitor small molecules	uk.ac.ebi.intact.model.CvInteraction	MI:0260	obsolete term	OBSOLETE as such method can be described using the biological role inhibitor MI:0586.	FALSE	Terms to be updated as obsolete in IntAct			
 interaction att name	interaction attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0664	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 interaction detectio	interaction detection	uk.ac.ebi.intact.model.CvInteraction	MI:0001	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 interaction type	interaction type	uk.ac.ebi.intact.model.CvInteractionType	MI:0190	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 interface predictor	neural network on interface properties	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0076	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-kcat	kcat	CV parameter type	MI:0645	not loaded		TRUE	not implemented			
-kd	kd	CV parameter type	MI:0646	not loaded		TRUE	not implemented			
-ki	ki	CV parameter type	MI:0643	not loaded		TRUE	not implemented			
-km	km	CV parameter type	MI:0644	not loaded		TRUE	not implemented			
-mi	molecular interactions	obo file root	MI:0000	not loaded	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-0			This is not yet stored in IntAct
-microinjection	microinjection	CV experimental preparation - CV delivery method	MI:0311	not loaded	Term currently not used in IntAct as the appropriate fields are not yet implemented.	TRUE	not implemented			This is not yet stored in IntAct
-micromolar	micromolar	CV parameter unit	MI:0651	not loaded		TRUE	not implemented			
-millimolar	millimolar	CV parameter unit	MI:0650	not loaded		TRUE	not implemented			
 Mint	Mint	uk.ac.ebi.intact.model.CvDatabase	MI:0471	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-molar	molar	CV parameter unit	MI:0648	not loaded		TRUE	not implemented			
-myc tag coip	myc tag coimmunoprecipitation 	uk.ac.ebi.intact.model.CvInteraction	MI:0075	obsolete term	OBSOLETE redundant term. Map to Experimental form: ômyc-taggedö (MI:0522) and Interaction detection method: ôanti tag coimmunoprecipitationö  (MI:0007).	FALSE	Terms already updated as obsolete in IntAct			
-nanomolar	nanomolar	CV parameter unit	MI:0652	not loaded		TRUE	not implemented			
-non covalent inter	non covalent interaction 	uk.ac.ebi.intact.model.CvInteractionType	MI:0215	obsolete term	OBSOLETE use ôphysical interactionö (MI:0218) instead.	FALSE	Terms already updated as obsolete in IntAct			
 organism att name	organism attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0669	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-other biochemic tech	other biochemical technologies 	uk.ac.ebi.intact.model.CvInteraction	MI:0079	obsolete term	OBSOLETE use ôbiochemicalö (MI:0401) instead.	FALSE	Terms already updated as obsolete in IntAct			
-parameter type	parameter type	CV parameter type	MI:0640	not loaded		TRUE	not implemented			
-parameter unit	parameter unit	CV parameter unit	MI:0647	not loaded		TRUE	not implemented			
 participant att name	participant attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0666	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 participant identif	participant identification method	uk.ac.ebi.intact.model.CvIdentification	MI:0002	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-perturbagens pep	perturbagens peptides	uk.ac.ebi.intact.model.CvInteraction	MI:0259	obsolete term	OBSOLETE as such method can be described using the biological role inhibitor MI:0586.	FALSE	Terms to be updated as obsolete in IntAct			
-picomolar	picomolar	CV parameter unit	MI:0653	not loaded		TRUE	not implemented			
 prediction	prediction	uk.ac.ebi.intact.model.CvInteraction	MI:0063	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-second	second	CV parameter unit	MI:0649	not loaded		TRUE	not implemented			
 surface patches	surface patches	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0106	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-tap tag coip	tap tag coimmunoprecipitation	uk.ac.ebi.intact.model.CvInteraction	MI:0109	obsolete term	OBSOLETE redundant term. Map to Experimental form: ôtap-taggedö (MI:0524) and Interaction detection method: ôanti tag coimmunoprecipitationö (MI:0007).	FALSE	Terms already updated as obsolete in IntAct			
-ubiquitin binding	 ubiquitin binding	uk.ac.ebi.intact.model.CvInteractionType	MI:0443	obsolete term	"OBSOLETE remap to ""ubiquitination reaction"" (MI:0220) or describe ubiquitine as a participant on the interaction using ""physical interaction"" or ""covalent binding"" as interaction type."	FALSE	obsolete to be loaded in IntAct			This is not yet stored in IntAct
 suppressed gene	suppressed gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0582	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
 suppressor gene	suppressor gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0581	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-expression interfer	post transcriptional interference	uk.ac.ebi.intact.model.CvInteraction	MI:0255	hidden	Term currently not used in IntAct.	TRUE	root term-2
-genetic interference	genetic interference	uk.ac.ebi.intact.model.CvInteraction	MI:0254	hidden	Term currently not used in IntAct.	TRUE	root term-2
-feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+expression interfer	post transcriptional interference	uk.ac.ebi.intact.model.CvInteraction	MI:0255	hidden	Term currently not used in IntAct.	TRUE	root term-2			
+genetic interference	genetic interference	uk.ac.ebi.intact.model.CvInteraction	MI:0073	hidden	Term currently not used in IntAct.	TRUE	root term-2			
+feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
 attribute name	attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0590	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 experimental form de	experimental form description	uk.ac.ebi.intact.model.CvTopic	MI:0596	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0574	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
@@ -141,26 +72,8 @@ prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	
 sequence database	sequence database	uk.ac.ebi.intact.model.CvDatabase	MI:0683	hidden	Term currently not used in IntAct.	FALSE	root term-2
 panther	panther	uk.ac.ebi.intact.model.CvDatabase	MI:0702	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gene3d	gene3d	uk.ac.ebi.intact.model.CvDatabase	MI:0703	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-experimental feature detection	experimental feature detection	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0659 	hidden	Term currently not used in IntAct.	FALSE	root term-2
-nucleic acid transformation by treatment with divalent cation	nucleic acid transformation by treatment with divalent cation	CV experimental preparation - CV delivery method	MI:0710	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid electroporation	nucleic acid electroporation	CV experimental preparation - CV delivery method	MI:0711	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid microinjection	nucleic acid microinjection	CV experimental preparation - CV delivery method	MI:0712	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid passive uptake	nucleic acid passive uptake	CV experimental preparation - CV delivery method	MI:0713	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid transduction	nucleic acid transduction	CV experimental preparation - CV delivery method	MI:0714	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid conjugation	nucleic acid conjugation	CV experimental preparation - CV delivery method	MI:0715	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-passive uptake	passive uptake	CV experimental preparation - CV delivery method	MI:0716	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid transfection with liposome	nucleic acid transfection with liposome	CV experimental preparation - CV delivery method	MI:0717	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid transfection by treatment	nucleic acid transfection by treatment	CV experimental preparation - CV delivery method	MI:0718	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-calcium phosphate nucleic acid transfection	calcium phosphate nucleic acid transfection	CV experimental preparation - CV delivery method	MI:0719	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-nucleic acid delivery by infection	nucleic acid delivery by infection	CV experimental preparation - CV delivery method	MI:0720	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein delivery	protein delivery	CV experimental preparation - CV delivery method	MI:0721	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein electroporation	protein electroporation	CV experimental preparation - CV delivery method	MI:0722	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein microinjection	protein microinjection	CV experimental preparation - CV delivery method	MI:0723	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein delivery with cationic lipid	protein delivery with cationic lipid	CV experimental preparation - CV delivery method	MI:0724	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein delivery by infection	protein delivery by infection	CV experimental preparation - CV delivery method	MI:0725	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 3d repertoire	3d repertoire	uk.ac.ebi.intact.model.CvDatabase	MI:0731	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-protein passive uptake	protein passive uptake	CV experimental preparation - CV delivery method	MI:0736	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 peptide sequence database	peptide sequence database	uk.ac.ebi.intact.model.CvDatabase	MI:0737	hidden	Term currently not used in IntAct.	TRUE	root term-2
 pride	pride	uk.ac.ebi.intact.model.CvDatabase	MI:0738	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
@@ -172,3 +85,9 @@ vp16 activation domain	vp16 activation domain	uk.ac.ebi.intact.model.CvFeatureTy
 b42 activation domain	b42 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0692	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gal4 dna binding domain	gal4 dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0693	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 lexa dna binding domain	lexa dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0694	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+mrna display	mrna display	uk.ac.ebi.intact.model.CvInteraction	MI:0254	hidden	Term currently not used in IntAct.	FALSE	Term currently not used in IntAct.
+function	function	uk.ac.ebi.intact.model.CvTopic	MI:0613	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
+wwpdb	wwpdb	uk.ac.ebi.intact.model.CvDatabase	MI:0805	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
+pdbj	pdbj	uk.ac.ebi.intact.model.CvDatabase	MI:0806	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+predetermined feature	predetermined feature	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0823	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+polyprotein fragment	polyprotein fragment	uk.ac.ebi.intact.model.CvFeatureType	MI:0828	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
