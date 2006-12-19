@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-wsclient</artifactId>
     <packaging>jar</packaging>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.3.0-SNAPSHOT</version>
     <!-- last released 1.2.0 -->
     <name>Search WS Client</name>
     <description>Client for the Search Web Services</description>
