@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.search.ws;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -14,13 +15,10 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebServiceSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,13 +38,6 @@ public class Search
 
     private static final Log log = LogFactory.getLog(Search.class);
 
-    //private static final String SEARCH_SESSION_ATT_NAME = Search.class+".ATT";
-
-    //private DaoFactory daoFactory;
-    
-    //@Resource
-    private WebServiceContext wsContext;
-
 
     public Search()
     {
@@ -54,17 +45,6 @@ public class Search
 
         IntactSession intactSession = new WebServiceSession();
         IntactConfigurator.initIntact(intactSession);
-        //daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-    }
-
-    private Search getCurrentSearch()
-    {
-        MessageContext mc = wsContext.getMessageContext();
-        HttpSession session = ((HttpServletRequest)mc.get(MessageContext.SERVLET_REQUEST)).getSession();
-
-        //Search search
-
-        return null;
     }
     
     @WebMethod()
@@ -196,7 +176,111 @@ public class Search
 
         return results.toArray(new PartnerResult[results.size()]);
     }
-     
+
+    @WebMethod
+    public int countExperimentsUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(Experiment.class, query);
+    }
+
+    @WebMethod
+    public int countInteractorsUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(InteractorImpl.class, query);
+    }
+
+    @WebMethod
+    public int countInteractionsUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(InteractionImpl.class, query);
+    }
+
+    @WebMethod
+    public int countCvObjectsUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(CvObject.class, query);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchExperimentsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {Experiment.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchInteractorsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {InteractorImpl.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchInteractionsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {InteractionImpl.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchCvObjectsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {CvObject.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchUsingQuery(String query, String[] searchableTypes, Integer firstResult, Integer maxResults)
+    {
+        Class<? extends Searchable>[] searchables = new Class[searchableTypes.length];
+
+        for (int i=0; i<searchableTypes.length; i++)
+        {
+            try
+            {
+                searchables[i] = (Class<? extends Searchable>) Class.forName(searchableTypes[i]);
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new IntactException(e);
+            }
+        }
+
+        return searchUsingQuery(query, searchables, firstResult, maxResults);
+    }
+
+    private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable>[] searchables, Integer firstResult, Integer maxResults)
+    {
+        List<SimpleResult> results = new ArrayList<SimpleResult>();
+        if (firstResult == null) firstResult = 0;
+        if (maxResults == null) maxResults = Integer.MAX_VALUE;
+
+        int currentResultsNum = 0;
+
+        for (Class<? extends Searchable> searchable : searchables)
+        {
+            results.addAll(searchUsingQuery(query, searchable, firstResult, maxResults-currentResultsNum));
+            currentResultsNum = currentResultsNum + results.size();
+
+            if (currentResultsNum == maxResults)
+            {
+                break;
+            }
+        }
+
+        return results;
+    }
+
+    private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable> searchable, Integer firstResult, Integer maxResults) 
+    {
+        List<SimpleResult> results = new ArrayList<SimpleResult>();
+
+        List res = new SimpleSearchService().search(searchable, query, firstResult, maxResults);
+
+        for (Object result : res)
+        {
+            AnnotatedObject ao = (AnnotatedObject) result;
+            results.add(new SimpleResult(ao.getAc(), ao.getShortLabel(), ao.getFullName(), ao.getClass().getName()));
+        }
+
+        return results;
+    }
 
     @WebMethod()
     public String getVersion()

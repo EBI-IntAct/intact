@@ -31,6 +31,7 @@ public class SearchTest extends TestCase
 
     private static final Log log = LogFactory.getLog(SearchTest.class);
 
+    private Search search;
 
     public SearchTest()
     {
@@ -41,27 +42,55 @@ public class SearchTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
+        search = new Search();
     }
 
     @Override
     protected void tearDown() throws Exception
     {
         super.tearDown();
+        search = null;
     }
 
-    public void testSearchDefault()
+    public void testFindPartnersUsingUniprotIds()
     {
-        Search search = new Search();
-        PartnerResult[] results = search.findPartnersUsingUniprotIds(new String[] {"P38398"});
+        PartnerResult[] results = search.findPartnersUsingUniprotIds(new String[] {"P29452"});
 
-        for (PartnerResult result : results)
+        assertEquals(1, results.length);
+        assertEquals(1, results[0].getPartnerUniprotAcs().length);
+        assertEquals("Q56134", results[0].getPartnerUniprotAcs()[0]);
+    }
+
+    public void testCountExperimentsUsingIntactQuery()
+    {
+        assertEquals(2, search.countExperimentsUsingIntactQuery("*"));
+    }
+
+    public void testCountInteractionsUsingIntactQuery()
+    {
+        assertEquals(1, search.countInteractionsUsingIntactQuery("*"));
+    }
+
+    public void testCountInteractorsUsingIntactQuery()
+    {
+        assertEquals(1, search.countInteractorsUsingIntactQuery("*"));
+    }
+
+    public void testCountCvObjectsUsingIntactQuery()
+    {
+        assertEquals(756, search.countCvObjectsUsingIntactQuery("*"));
+    }
+
+    public void testSearchExperimentsUsingIntactQuery()
+    {
+        assertEquals(2, search.searchExperimentsUsingQuery("*", null, null).size());
+    }
+
+    public void testSearchInteractorsUsingIntactQuery()
+    {
+        for (SimpleResult result : search.searchInteractorsUsingQuery("*", null, null))
         {
-            System.out.println(result.getUniprotAc());
-
-            for (String partner : result.getPartnerUniprotAcs())
-            {
-                System.out.println("\t"+partner);
-            }
+            System.out.println(result.getAc());
         }
     }
 }

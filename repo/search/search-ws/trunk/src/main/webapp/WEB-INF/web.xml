@@ -7,7 +7,7 @@
 
 
     <display-name>IntAct Search WS</display-name>
-
+ 
     <!-- This listener controls the initialization of the application (e.g. reading init params, etc)
     The listener should be started automatically from intact-core, but if you don't declare it here again
     if fails on redeploy  -->
