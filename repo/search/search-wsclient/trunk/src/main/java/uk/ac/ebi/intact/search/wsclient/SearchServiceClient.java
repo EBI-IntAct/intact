@@ -150,6 +150,11 @@ public class SearchServiceClient
         return search.getVersion();
     }
 
+    public Search getSearchPort()
+    {
+        return search;
+    }
+
     public static void main(String[] args) throws Exception
     {
         System.out.println("IntAct Search Web Service Client\nWS Version: "+new SearchServiceClient().getServiceVersion());
