@@ -41,6 +41,7 @@ public class FeedServlet extends HttpServlet {
 
         try
         {
+            response.setContentType(SiteUtils.XML_MIME_TYPE);
             SiteUtils.writeFeed(feed, FeedType.DEFAULT, response.getWriter());
         }
         catch (Throwable e)

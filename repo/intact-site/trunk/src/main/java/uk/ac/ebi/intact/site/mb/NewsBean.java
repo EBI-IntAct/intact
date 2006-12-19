@@ -53,7 +53,7 @@ public class NewsBean implements Serializable
 
         if (!news.isEmpty())
         {
-            lastNews = news.subList(0, newsNum);
+            lastNews = news.subList(0, Math.min(newsNum, news.size()));
         }
         else
         {

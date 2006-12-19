@@ -12,3 +12,11 @@ function intact_toggleVisibility(panelId)
         panel.style.visibility = 'hidden';
     }
 }
+
+function intact_clearAndFocusField(fieldId)
+{
+    var field = document.getElementById(fieldId);
+
+    field.value = '';
+    field.focus();
+}

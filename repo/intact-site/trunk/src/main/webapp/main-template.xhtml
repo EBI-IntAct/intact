@@ -6,7 +6,10 @@
       xmlns:jsp="http://java.sun.com/JSP/Page"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
 
 <head>
 
@@ -52,8 +55,6 @@
 </div>
 
 <f:view>
-    <h:form>
-
         <div class="contents" id="contents">
             <table class="contentspane" id="contentspane" summary="The main content pane of the page"
                    style="width: 100%">
@@ -61,17 +62,26 @@
                     <td class="leftmargin">
                         <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
                     </td>
-                    <td class="leftmenucell" id="leftmenucell">
-                        <div class="leftmenu" id="leftmenu" style="width: 145px; visibility: visible; display: block;">
-                            <!-- InstanceBeginEditable name="leftnav" -->
 
-                            <!-- start left menu here  -->
-                            <ui:include src="sidebar.xhtml"/>
+                    <c:if test="#{!hideSidebar}">
+                        <td class="leftmenucell" id="leftmenucell">
+                            <div class="leftmenu" id="leftmenu"
+                                 style="width: 145px; visibility: visible; display: block;">
+                                <!-- InstanceBeginEditable name="leftnav" -->
 
-                        </div>
-                    </td>
+                                <!-- start left menu here  -->
+                                <h:form id="sideForm">
+                                    <ui:include src="sidebar.xhtml"/>
+                                </h:form>
+
+                            </div>
+                        </td>
+                    </c:if>
+
                     <td class="contentsarea" id="contentsarea">
                         <!-- InstanceBeginEditable name="contents" -->
+
+                        <h:form id="mainForm">
 
                         <!-- breadcrumbs -->
                         <div class="breadcrumbs"><a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a><a
@@ -83,7 +93,10 @@
                         </div>
 
                         <!-- start contents here -->
-                        <ui:insert name="contents"/>
+
+                            <ui:insert name="contents"/>
+                            
+                        </h:form>
 
 
                     </td>
@@ -117,8 +130,6 @@
             </script>
 
         </div>
-
-    </h:form>
 </f:view>
 
 </body>

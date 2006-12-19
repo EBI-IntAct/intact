@@ -43,7 +43,7 @@ import java.util.List;
 public class SiteUtils
 {
     
-    private static final String MIME_TYPE = "application/xml; charset=UTF-8";
+    public static final String XML_MIME_TYPE = "application/xml; charset=UTF-8";
 
     private SiteUtils(){}
 
@@ -163,7 +163,7 @@ public class SiteUtils
     {
         HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
 
-        response.setContentType(MIME_TYPE);
+        response.setContentType(XML_MIME_TYPE);
         writeFeed(feed, feedType, response.getWriter());
     }
 }

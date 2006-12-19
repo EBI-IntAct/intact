@@ -12,12 +12,24 @@
 <f:view>
 
     <ui:composition template="../main-template.xhtml">
-
-        <!-- Mandatorty params -->
-        <ui:param name="sectionTitle" value="Data Submission"/>
+        <ui:param name="hideSidebar" value="true"/>
 
         <ui:define name="contents">
-            <ui:include src="data_submission_content.xhtml"/>
+            <p>
+                <ui:include src="home_content.xhtml"/>
+            </p>
+            <p>
+                <ui:include src="tools_content.xhtml"/>
+            </p>
+            <p>
+                <ui:include src="data_submission_content.xhtml"/>
+            </p>
+            <p>
+                <ui:include src="downloads_content.xhtml"/>
+            </p>
+            <p>
+                <ui:include src="publications_content.xhtml"/>
+            </p>
         </ui:define>
 
     </ui:composition>

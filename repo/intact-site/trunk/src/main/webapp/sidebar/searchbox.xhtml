@@ -31,11 +31,15 @@
 
               <div id="searchBoxPanel"
                    class="iconboxcontents"
-               style="visibility: #{initiallyExpandSearchBox? 'visible': 'hidden'}">
+                   style="visibility: #{initiallyExpandSearchBox? 'visible': 'hidden'}">
 
-              <h:inputText value="#{searchBean.searchQuery}" size="12"/>
-              <h:commandButton value="Search" action="#{searchBean.doSearch}"/>
-          </div>
+                  <h:inputText id="search" value="#{searchBean.searchQuery}" size="12"/>
+
+                  <h:panelGrid columns="2">
+                       <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
+                      <a href="#" onclick="intact_clearAndFocusField('sideForm:search')">Clear</a>
+                  </h:panelGrid>
+              </div>
 
           </ui:composition>
       </h:form>

@@ -17,32 +17,7 @@
         <ui:param name="sectionTitle" value="Downloads"/>
 
         <ui:define name="contents">
-
-            <h1>Downloads</h1>
-
-            <ui:param name="ftp" value="#{initParam['uk.ac.ebi.intact.FTP_CURRENT']}"/>
-
-            <ul>
-                <li>
-                    IntAct is released weekly. All IntAct data and software is freely available to all users,
-                    academic or commercial, under the terms of the Apache License, Version 2.0, from
-                    <a href="#{ftp}" target="_blank">#{ftp}</a>
-                </li>
-                <li>Contents of the IntAct FTP directory:
-                    <ul>
-                        <li><a href="#{ftp}/all.zip" target="_blank">all.zip</a>: entire contents of this directory, compressed.</li>
-                        <li><a href="#{ftp}/cv" target="_blank">cv</a>: controlled vocabularies.</li>
-                        <li><a href="#{ftp}/psi1" target="_blank">psi1</a>: IntAct data in PSI MI 1.0 format.
-                            See the <a href="http://psidev.sourceforge.net/mi/xml/doc/MIF.html" target="_blank">PSI website</a> for a detailed format description.
-                        This format is now superseeded by the PSI 2.5 format.</li>
-                        <li><a href="#{ftp}/psi25" target="_blank">psi25</a>: IntAct data in PSI MI 2.5 format.
-                            See the <a href="http://psidev.sourceforge.net/mi/rel25" target="_blank">PSI website</a> for a detailed format description.</li>
-                        <li><a href="#{ftp}/various" target="_blank">various</a>: Data subsets for exchange with collaborating databases.</li>
-                    </ul>
-                </li>
-
-            </ul>
-
+            <ui:include src="downloads_content.xhtml"/>
         </ui:define>
 
     </ui:composition>
