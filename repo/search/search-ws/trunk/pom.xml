@@ -33,7 +33,9 @@
     </scm>
 
     <properties>
-        <jaxws.ri.version>2.1-EA3</jaxws.ri.version>
+        <db.dialect>NOT_SPECIFIED</db.dialect>
+        <db.user>NOT_SPECIFIED</db.user>
+        <db.driver>NOT_SPECIFIED</db.driver>
     </properties>
 
     <build>
