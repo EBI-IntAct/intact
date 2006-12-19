@@ -1,0 +1,50 @@
+new terms from PSI-MI entered in intact
+
+MI:0810	feature detection	substitution analysis
+MI:0811	feature detection	insertion analysis
+MI:0823	feature detection	predetermined feature
+MI:0812	feature type	calmodulin binding protein tag
+MI:0807	interaction method	comigration in gel electrophoresis
+MI:0808	interaction method	comigration in sds page
+MI:0809	interaction method	bimolecular fluorescence complementation
+MI:0813	interaction method	proximity enzyme linked immunosorbent assay
+MI:0814	interaction method	protease accessibility laddering
+MI:0824	interaction method	x-ray powder diffraction
+MI:0825	interaction method	x-ray fiber diffraction
+MI:0826	interaction method	x ray scattering
+MI:0827	interaction method	x-ray tomography
+MI:0815	participant detection	identification by weight
+MI:0816	participant detection	molecular weight estimation by staining
+MI:0817	participant detection	molecular weight estimation by silver staining
+MI:0818	participant detection	molecular weight estimation by coomasie staining
+MI:0819	participant detection	molecular weight estimation by bromide staining
+MI:0820	participant detection	molecular weight estimation by sybr staining
+MI:0821	participant detection	molecular weight estimation by autoradiography
+MI:0822	participant detection	molecular weight estimation by hoechst staining
+
+new terms from PSI-MI entered in intact as hidden term
+MI:0741	database	peptide atlas	hidden 
+MI:0742	database	gpm	hidden
+MI:0805	database	wwpdb	hidden
+MI:0806	database	pdbj	hidden
+MI:0828	feature type	polyprotein fragment	hidden
+MI:0794	genetic interaction	synthetic interaction	hidden
+MI:0795	genetic interaction	asynthetic interaction	hidden
+MI:0796	genetic interaction	suppressive interaction	hidden
+MI:0797	genetic interaction	epistatic interaction	hidden
+MI:0798	genetic interaction	conditional interaction	hidden
+MI:0799	genetic interaction	additive interaction	hidden
+MI:0800	genetic interaction	single nonmonotonic interaction	hidden
+MI:0801	genetic interaction	double nonmonotonic interaction	hidden
+MI:0802	genetic interaction	enhancement interaction	hidden
+MI:0803	genetic interaction	expression level alteration	hidden
+
+new terms from PSI-MI NOT entered in intact
+MI:0787	genetic experimental form	genetic experimental form
+MI:0788	genetic experimental form	knock out
+MI:0789	genetic experimental form	knock down
+MI:0790	genetic experimental form	hypermorph
+MI:0791	genetic experimental form	hypomorph
+MI:0792	genetic experimental form	antimorph
+MI:0793	genetic experimental form	amorph
+MI:0804	genetic experimental form	mutated gene
