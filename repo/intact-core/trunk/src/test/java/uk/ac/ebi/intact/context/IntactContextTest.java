@@ -38,11 +38,11 @@ public class IntactContextTest extends TestCase {
         IntactContext ctx = IntactContext.getCurrentInstance();
 
         assertNotNull(ctx.getInstitution());
-        assertEquals("EBI", ctx.getConfig().getAcPrefix());
+        assertEquals("TEST", ctx.getConfig().getAcPrefix());
 
         assertNotNull(ctx.getDataContext());
 
-        assertTrue("By default, an application is readOnly", ctx.getDataContext().isReadOnly());
+        assertFalse("App not read-only", ctx.getDataContext().isReadOnly());
     }
 
     public static Test suite()

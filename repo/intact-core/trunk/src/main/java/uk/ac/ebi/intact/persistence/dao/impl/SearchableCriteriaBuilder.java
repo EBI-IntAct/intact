@@ -23,7 +23,9 @@ import org.hibernate.criterion.*;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.query.*;
+import uk.ac.ebi.intact.persistence.dao.query.QueryModifier;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryTermConverter;
 
@@ -365,7 +367,9 @@ public class SearchableCriteriaBuilder
 
             if (cvDagObject == null)
             {
-                throw new IntactException("No CvDagObject with label '" + cvShortLabel + "' and type '" + cvType + "' could be found");
+                //throw new IntactException("No CvDagObject with label '" + cvShortLabel + "' and type '" + cvType + "' could be found");
+                log.debug("No CvDagObject with label '" + cvShortLabel + "' and type '" + cvType + "' could be found");
+                continue;
             }
 
             Map<Class<? extends CvObject>, Set<String>> classifiedChildren = getChildrenCvClassified(cvDagObject);

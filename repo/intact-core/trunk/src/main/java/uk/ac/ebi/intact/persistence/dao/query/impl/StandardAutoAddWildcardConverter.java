@@ -15,8 +15,11 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query.impl;
 
-import uk.ac.ebi.intact.persistence.dao.DaoUtils;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.persistence.dao.DaoUtils;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
 
 /**
  * Standard implementation of the AutoAddWildCardConverter
@@ -30,9 +33,31 @@ public class StandardAutoAddWildcardConverter implements AutoAddWildcardConverte
 
     public SearchableQuery autoAddWildCards(SearchableQuery query)
     {
-        // TODO: implement this
+        query.setAc(addAutomaticWildcardsToPhrase(query.getAc()));
+        query.setShortLabel(addAutomaticWildcardsToPhrase(query.getShortLabel()));
+        query.setDescription(addAutomaticWildcardsToPhrase(query.getDescription()));
+        query.setAnnotationText(addAutomaticWildcardsToPhrase(query.getAnnotationText()));
+        query.setFullText(addAutomaticWildcardsToPhrase(query.getFullText()));
+        query.setXref(addAutomaticWildcardsToPhrase(query.getXref()));
 
-        throw new UnsupportedOperationException("To be implemented");
+        return query;
+    }
+
+    private QueryPhrase addAutomaticWildcardsToPhrase(QueryPhrase originalPhrase)
+    {
+        if (originalPhrase == null) return null;
+        
+        QueryPhrase phrase = new QueryPhrase();
+        QueryTermConverter termConverter = new StandardQueryTermConverter();
+
+        for (QueryTerm term : originalPhrase.getTerms())
+        {
+            String originalValue = termConverter.termToString(term);
+            String valWithPercents = addStartAndEndPercentIfNecessary(originalValue);
+            phrase.getTerms().add(termConverter.stringToTerm(valWithPercents));
+        }
+
+        return phrase;
     }
 
     /**
@@ -45,6 +70,27 @@ public class StandardAutoAddWildcardConverter implements AutoAddWildcardConverte
         value = DaoUtils.replaceWildcardsByPercent(value);
 
         String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+
+        if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
+                && !value.startsWith("\"") && !value.endsWith("\""))
+        {
+            value = value+"%";
+        }
+
+        return value;
+    }
+
+     private static String addStartAndEndPercentIfNecessary(String value)
+    {
+        value = DaoUtils.replaceWildcardsByPercent(value);
+
+        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+
+        if (!value.startsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
+                && !value.startsWith("\"") && !value.endsWith("\""))
+        {
+            value = "%"+value+"%";
+        }
 
         if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
                 && !value.startsWith("\"") && !value.endsWith("\""))
