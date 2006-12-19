@@ -111,6 +111,7 @@ public class PsiXmlImportMojo
         if (skipPreload)
         {
             getLog().info("Skiping H2 Import");
+            return;
         }
 
         if (imports == null)
