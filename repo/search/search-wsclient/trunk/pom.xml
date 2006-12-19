@@ -34,7 +34,6 @@
 
     <properties>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
-        <jaxws.ri.version>2.1-EA3</jaxws.ri.version>
     </properties>
 
     <build>
