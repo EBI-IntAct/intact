@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.site.util.SiteUtils;
 import javax.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.List;
+import java.util.ArrayList;
 
 /**
  * TODO comment this!

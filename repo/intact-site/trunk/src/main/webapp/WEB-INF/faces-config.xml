@@ -27,6 +27,11 @@
         <managed-bean-class>uk.ac.ebi.intact.site.mb.NewsBean</managed-bean-class>
         <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>statisticsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.StatisticsBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
 
 
     <navigation-rule>
@@ -61,6 +66,10 @@
         <navigation-case>
             <from-outcome>news_archive</from-outcome>
             <to-view-id>/contents/news_archive.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>printerFriendly</from-outcome>
+            <to-view-id>/contents/all_printerfriendly.xhtml</to-view-id>
         </navigation-case>
     </navigation-rule>
 </faces-config>

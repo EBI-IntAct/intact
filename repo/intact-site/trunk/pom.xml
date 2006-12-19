@@ -79,6 +79,19 @@
                         </goals>
                     </execution>
                 </executions>
+
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>2.1-SNAPSHOT</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
@@ -110,6 +123,11 @@
             </build>
 
             <dependencies>
+                <dependency>
+                    <groupId>com.sun.xml.bind</groupId>
+                    <artifactId>jaxb-impl</artifactId>
+                    <version>2.1-SNAPSHOT</version>
+                </dependency>
                 <dependency>
                     <groupId>javax.servlet</groupId>
                     <artifactId>jsp-api</artifactId>
@@ -151,6 +169,12 @@
     <!-- Project dependencies -->
     <dependencies>
         <dependency>
+            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <artifactId>search-wsclient</artifactId>
+            <version>1.3.0-SNAPSHOT</version>
+        </dependency>
+        
+        <dependency>
             <groupId>org.apache.myfaces.core</groupId>
             <artifactId>myfaces-api</artifactId>
             <version>1.1.5-SNAPSHOT</version>
@@ -178,11 +202,13 @@
             <groupId>javax.el</groupId>
             <artifactId>el-api</artifactId>
             <version>1.2</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.sun.el</groupId>
             <artifactId>el-ri</artifactId>
             <version>1.2</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -233,6 +259,30 @@
     </dependencies>
 
     <repositories>
+        <!-- EBI repositories -->
+       <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+
         <repository>
             <snapshots>
                 <enabled>false</enabled>
@@ -259,11 +309,21 @@
             <name>Apache Snapshot Repository</name>
             <url>http://people.apache.org/repo/m2-snapshot-repository</url>
         </repository>
+
+        <!-- temporary only (el-ri) -->
         <repository>
             <id>javax.el</id>
             <name>Javax EL</name>
             <url>http://delo.dcs.fmph.uniba.sk/sioux/maven2</url>
         </repository>
+
+        <!-- temporary only (jaxb)-->
+        <repository>
+            <id>java.net</id>
+            <url>http://maven1.glassfishwiki.org</url>
+            <layout>legacy</layout>
+        </repository>
+
     </repositories>
 
     <pluginRepositories>
