@@ -10,7 +10,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvTopic;
 
 /**
  * Test for <code>CvContextTest</code>
@@ -42,19 +41,11 @@ public class CvContextTest extends TestCase {
         assertNotNull(cvContext);
     }
 
-    public void testGetByAc() throws Exception {
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByAc("EBI-31").getShortLabel());
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByAc("EBI-31").getShortLabel());
-    }
-
     public void testGetByLabel() throws Exception {
-        assertEquals("EBI-375443", cvContext.getByLabel(CvTopic.class, CvTopic.CC_NOTE).getAc());
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.class, CvDatabase.UNIPROT).getShortLabel());
         assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.class, CvDatabase.UNIPROT).getShortLabel());
     }
 
     public void testGetByMiRef() throws Exception {
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF).getShortLabel());
         assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF).getShortLabel());
     }
 
