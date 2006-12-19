@@ -20,6 +20,9 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.svc.SearchService;
+import uk.ac.ebi.intact.util.DebugUtil;
+
+import java.util.List;
 
 /**
  * Test for <code>SearchableDaoImplTest</code>
@@ -30,11 +33,6 @@ import uk.ac.ebi.intact.persistence.svc.SearchService;
  */
 public class SimpleSearchServiceTest extends TestCase
 {
-    public SimpleSearchServiceTest(String name)
-    {
-        super(name);
-    }
-
     private SearchService searchService;
 
     public void setUp() throws Exception
@@ -59,7 +57,7 @@ public class SimpleSearchServiceTest extends TestCase
     public void testCount_interaction_cara() throws Exception
     {
         int count = searchService.count(InteractionImpl.class, "cara");
-        assertEquals(2, count);
+        assertEquals(1, count);
     }
 
 }

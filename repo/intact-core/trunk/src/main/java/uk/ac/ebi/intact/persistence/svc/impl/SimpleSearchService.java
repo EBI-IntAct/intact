@@ -89,7 +89,7 @@ public class SimpleSearchService implements SearchService
         SearchableQuery sq = new SearchableQuery();
         sq.setAc(phrase);
         sq.setShortLabel(phrase);
-        sq.setFullText(phrase);
+        sq.setDescription(phrase);
         sq.setAnnotationText(phrase);
         sq.setXref(phrase);
         sq.setDisjunction(true);
