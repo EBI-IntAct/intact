@@ -7,8 +7,8 @@ import fileinput, string
 # obsolete and url are extracted from definition and report them as xref analog annotation of type obsolete and url
 # xref qualifier are specified for each xref
 
-input= open('D:/luisa/ebi-luisa/PSI-IMEX/master_cv_copy/psi-mi25.obo','r')
-output= open('D:/luisa/ebi-luisa/PSI-IMEX/master_cv_copy/psi-mi25-4intact.obo','w')
+input= open('D:/psi/mi/rel25/data/psi-mi25.obo','r')
+output= open('D:/controlledVocab/psi-mi25-4intact.obo','w')
 inputt=input.readlines()
 printFlag=1
 for k in range(0,len(inputt)) :
