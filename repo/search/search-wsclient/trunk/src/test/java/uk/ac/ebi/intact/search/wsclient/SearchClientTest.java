@@ -11,9 +11,22 @@ public class SearchClientTest extends TestCase
 
     private static final String LOCALHOST_URL = "http://localhost:8081/search-ws/search?wsdl";
 
+    private SearchServiceClient client;
+
+    protected void tearDown() throws Exception
+    {
+        super.tearDown();
+        client = null;
+    }
+
+    protected void setUp() throws Exception
+    {
+        super.setUp();
+        client = new SearchServiceClient(LOCALHOST_URL);
+    }
+
     public void testFindPartnersUsingUniprotIds() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient(LOCALHOST_URL);
         List<String> uniprotIds = client.findPartnersUsingUniprotIds("P52292");
 
         for (String id : uniprotIds)
@@ -24,7 +37,6 @@ public class SearchClientTest extends TestCase
 
     public void testGetInteractionInfoUsingIntactIds() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient(LOCALHOST_URL);
         List<InteractionInfo> interInfos = client.getInteractionInfoUsingIntactIds("EBI-1004115","EBI-710997");
 
         for (InteractionInfo interInfo : interInfos)
@@ -36,7 +48,6 @@ public class SearchClientTest extends TestCase
 
     public void testGetInteractionInfoUsingUniprotIds() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient();
         List<InteractionInfo> interInfos = client.getInteractionInfoUsingUniprotIds("Q15691","P54274");
 
         for (InteractionInfo interInfo : interInfos)
@@ -49,7 +60,11 @@ public class SearchClientTest extends TestCase
 
     public void testServiceVersion() throws Exception
     {
-        SearchServiceClient client = new SearchServiceClient();
         System.out.println(client.getServiceVersion());
+    }
+
+    public void testCountExperiments() throws Exception
+    {
+        System.out.println(client.getSearchPort().countExperimentsUsingIntactQuery("*"));
     }
 }
