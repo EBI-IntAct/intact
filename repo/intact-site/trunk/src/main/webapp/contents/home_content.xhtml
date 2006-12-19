@@ -9,7 +9,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
-      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
   <body>
 
   <f:view>
@@ -20,8 +21,25 @@
 
           <h2>Search IntAct</h2>
 
+          <a4j:poll interval="5000" reRender="statsPanel" ajaxSingle="true" limittolist="true" actionListener="#{statisticsBean.prepare}" rendered="#{!statisticBean.loaded}" />
+
+          <!--
+          <t:div id="statsPanel" style="float:right;">
+              <div class="iconboxheading tocHeader"  id="statsHeader">
+                  Statistics
+              </div>
+              <div class="iconboxcontents tocContent" id="statsPanel">
+                  <h:outputText value="Interactions: #{statisticsBean.interactionCount}"/>
+                  <h:outputText value="Interactors: #{statisticsBean.interactorCount}"/>
+                  <h:outputText value="Experiments: #{statisticsBean.experimentCount}"/>
+                  <h:outputText value="Controlled Vocabularies: #{statisticsBean.cvObjectCount}"/>
+              </div>
+          </t:div>
+          -->
+
+
           <h:inputText value="#{searchBean.searchQuery}"/>
-          <h:commandButton value="Search" action="#{searchBean.doSearch}"/>
+          <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
           <br/>
           Examples:
           <ul>
@@ -47,7 +65,7 @@
                 <li>
                     <ui:define name="dotm">
                         <ui:param name="dataSet" value="#{dataSetsBean.dataSetOfTheMonth}"/>
-                        <ui:include src="dotm_template.xhtml.xhtml"/>
+                        <ui:include src="dotm_template.xhtml"/>
                     </ui:define>
 
                 </li>
