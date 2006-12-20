@@ -7,6 +7,15 @@
 
 
     <display-name>IntAct Search WS</display-name>
+
+    <context-param>
+        <description>
+            The label of the institution, used to retrieve the Institution object
+            if it already exists, or to create a new institution
+        </description>
+        <param-name>uk.ac.ebi.intact.INSTITUTION_LABEL</param-name>
+        <param-value>ebi</param-value>
+    </context-param>
  
     <!-- This listener controls the initialization of the application (e.g. reading init params, etc)
     The listener should be started automatically from intact-core, but if you don't declare it here again
