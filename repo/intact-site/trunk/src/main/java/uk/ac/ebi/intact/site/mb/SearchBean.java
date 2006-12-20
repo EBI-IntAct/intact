@@ -15,9 +15,15 @@
  */
 package uk.ac.ebi.intact.site.mb;
 
+import uk.ac.ebi.intact.search.wsclient.SearchServiceClient;
+
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * TODO comment this!
@@ -28,6 +34,7 @@ import java.io.Serializable;
 public class SearchBean implements Serializable
 {
     private static final String SEARCH_QUERY_URL = "uk.ac.ebi.intact.SEARCH_QUERY_URL";
+    private static final String SEARCH_WS_URL = "uk.ac.ebi.intact.SEARCH_WS_URL";
 
     private String searchQuery;
 

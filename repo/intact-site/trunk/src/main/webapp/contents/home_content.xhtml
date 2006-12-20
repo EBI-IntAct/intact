@@ -8,6 +8,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:s="http://myfaces.apache.org/sandbox"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
       xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
@@ -21,35 +22,62 @@
 
           <h2>Search IntAct</h2>
 
-          <a4j:poll interval="5000" reRender="statsPanel" ajaxSingle="true" limittolist="true" actionListener="#{statisticsBean.prepare}" rendered="#{!statisticBean.loaded}" />
+          <a4j:poll interval="1000"
+                    reRender="statsPanel"
+                    ajaxSingle="true" limittolist="true"
+                    actionListener="#{statisticsBean.prepare}"
+                    rendered="#{!statisticsBean.loaded}" />
+          
+          <div style="float:right;">
+              <h:panelGroup id="statsPanel" style="visibility: #{statisticsBean.loaded? 'visible' : 'hidden'}">
 
-          <!--
-          <t:div id="statsPanel" style="float:right;">
-              <div class="iconboxheading tocHeader"  id="statsHeader">
-                  Statistics
-              </div>
-              <div class="iconboxcontents tocContent" id="statsPanel">
-                  <h:outputText value="Interactions: #{statisticsBean.interactionCount}"/>
-                  <h:outputText value="Interactors: #{statisticsBean.interactorCount}"/>
-                  <h:outputText value="Experiments: #{statisticsBean.experimentCount}"/>
-                  <h:outputText value="Controlled Vocabularies: #{statisticsBean.cvObjectCount}"/>
-              </div>
-          </t:div>
-          -->
+                  <div class="iconboxheading">
+                      Statistics
+                  </div>
+                  <div class="iconboxcontents">
+                      <h:panelGrid columns="2">
+                          <h:outputText value="Interactions:"/>
+                          <h:outputText id="interactionCount" value="#{statisticsBean.interactionCount}"
+                                        styleClass="bold"/>
 
 
-          <h:inputText value="#{searchBean.searchQuery}"/>
-          <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
-          <br/>
-          Examples:
-          <ul>
-              <li>Gene name: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}BRCA2" target="searchWin">BRCA2</a> </li>
-              <li>UniProtKB Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}Q06609" target="searchWin">Q06609</a> </li>
-              <li>UniProtKB Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}dmc1_arath" target="searchWin">dmc1_arath</a> </li>
-              <li>GO Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}GO:0030182" target="searchWin">GO:0030182</a> </li>
-              <li>Pubmed Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}10831611" target="searchWin">10831611</a> </li>
-              <li>InterPro Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}IPR001900" target="searchWin">IPR001900</a> </li>
-          </ul>
+                          <h:outputText value="Interactors:"/>
+                          <h:outputText id="interactorCount" value="#{statisticsBean.interactorCount}"
+                                        styleClass="bold"/>
+
+                          <h:outputText value="Experiments:"/>
+                          <h:outputText id="experimentCount" value="#{statisticsBean.experimentCount}"
+                                        styleClass="bold"/>
+
+                          <h:outputText value="Controlled Vocabularies:"/>
+                          <h:outputText id="cvCount" value="#{statisticsBean.cvObjectCount}"
+                                        styleClass="bold"/>
+                      </h:panelGrid>
+
+                  </div>
+
+              </h:panelGroup>
+          </div>
+
+
+
+          <div>
+
+
+              <h:inputText value="#{searchBean.searchQuery}"/>
+              
+              <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
+              <br/>
+              Examples:
+              <ul>
+                  <li>Gene name: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}BRCA2" target="searchWin">BRCA2</a> </li>
+                  <li>UniProtKB Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}Q06609" target="searchWin">Q06609</a> </li>
+                  <li>UniProtKB Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}dmc1_arath" target="searchWin">dmc1_arath</a> </li>
+                  <li>GO Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}GO:0030182" target="searchWin">GO:0030182</a> </li>
+                  <li>Pubmed Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}10831611" target="searchWin">10831611</a> </li>
+                  <li>InterPro Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}IPR001900" target="searchWin">IPR001900</a> </li>
+              </ul>
+          </div>
 
           <h2>Introduction</h2>
 
