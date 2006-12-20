@@ -40,15 +40,17 @@ public class StatisticsBean implements Serializable
     private int interactorCount;
     private int cvObjectCount;
 
+    private int fadeDuration;
+
     public StatisticsBean()
     {
     }
 
-    public void prepare(ActionEvent evt)
+    public synchronized void prepare(ActionEvent evt)
     {
         String wsdl = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(SEARCH_WS_URL);
 
-        if (loaded)
+        if (!loaded)
         {
             try
             {
@@ -62,10 +64,6 @@ public class StatisticsBean implements Serializable
             {
                 e.printStackTrace();
             }
-
-        }
-        else
-        {
             loaded = true;
         }
     }
@@ -118,5 +116,13 @@ public class StatisticsBean implements Serializable
     public void setCvObjectCount(int cvObjectCount)
     {
         this.cvObjectCount = cvObjectCount;
+    }
+
+    public int getFadeDuration() {
+        return fadeDuration;
+    }
+
+    public void setFadeDuration(int fadeDuration) {
+        this.fadeDuration = fadeDuration;
     }
 }

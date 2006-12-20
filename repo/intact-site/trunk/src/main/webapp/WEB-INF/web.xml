@@ -57,7 +57,7 @@
             WSDL URL for the Search WS
         </description>
         <param-name>uk.ac.ebi.intact.SEARCH_WS_URL</param-name>
-        <param-value>http://bark.ebi.ac.uk:8081/search-ws/search?wsdl</param-value>
+        <param-value>http://localhost:8081/search-ws/search?wsdl</param-value>
     </context-param>
 
     <!-- JSF (MyFaces) Params... -->
@@ -84,7 +84,7 @@
         <description>State saving method: "client" or "server" (= default)
             See JSF Specification 2.5.3</description>
         <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-        <param-value>client</param-value>
+        <param-value>server</param-value>
     </context-param>
     <context-param>
         <description>Only applicable if state saving method is "server" (= default).
@@ -162,13 +162,13 @@
     <context-param>
         <param-name>facelets.LIBRARIES</param-name>
         <param-value>
-            /WEB-INF/facelets/tags/intact-site.taglib.xml
+            /WEB-INF/facelets/tags/intact-site.taglib.xml;
+            /WEB-INF/facelets/tags/tomahawk.taglib.xml;
+            /WEB-INF/facelets/tags/tomahawk-sandbox.taglib.xml
         </param-value>
     </context-param>
 
-
-    <!-- ajax4jsf -->
-
+    <!-- ajax4jsf
     <context-param>
       <param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
       <param-value>com.sun.facelets.FaceletViewHandler</param-value>
@@ -187,9 +187,9 @@
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
+    -->
 
-
-    <!-- Extensions Filter
+    <!-- Extensions Filter -->
     <filter>
         <filter-name>extensionsFilter</filter-name>
         <filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
@@ -224,7 +224,27 @@
         <filter-name>extensionsFilter</filter-name>
         <url-pattern>/faces/*</url-pattern>
     </filter-mapping>
-    -->
+
+    <!-- ajax4jsf -->
+    <context-param>
+      <param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
+      <param-value>com.sun.facelets.FaceletViewHandler</param-value>
+    </context-param>
+
+    <filter>
+        <display-name>Ajax4jsf Filter</display-name>
+        <filter-name>ajax4jsf</filter-name>
+        <filter-class>org.ajax4jsf.Filter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ajax4jsf</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    
 
     <!-- Listener, to allow Jetty serving MyFaces apps -->
     <listener>
