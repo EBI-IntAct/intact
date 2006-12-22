@@ -91,3 +91,4 @@ wwpdb	wwpdb	uk.ac.ebi.intact.model.CvDatabase	MI:0805	hidden	Term currently not 
 pdbj	pdbj	uk.ac.ebi.intact.model.CvDatabase	MI:0806	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 predetermined feature	predetermined feature	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0823	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 polyprotein fragment	polyprotein fragment	uk.ac.ebi.intact.model.CvFeatureType	MI:0828	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+
