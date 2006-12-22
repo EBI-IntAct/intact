@@ -1,4 +1,4 @@
-new terms from PSI-MI entered in intact		
+new terms from PSI-MI entered in intact
 
 MI:0810	substitution analysis	feature detection
 MI:0811	insertion analysis	feature detection
@@ -14,38 +14,38 @@ MI:0825	x-ray fiber diffraction	interaction method
 MI:0826	x ray scattering	interaction method
 MI:0827	x-ray tomography	interaction method
 MI:0815	identification by weight	participant detection
-MI:0816	molecular weight estimation by staining	participant detection																																																																																																																																																																																																																																																													
-MI:0817	molecular weight estimation by silver staining	participant detection																																																																																																																																																																																																																																																													
-MI:0818	molecular weight estimation by coomasie staining	participant detection																																																																																																																																																																																																																																																													
-MI:0819	molecular weight estimation by bromide staining	participant detection																																																																																																																																																																																																																																																													
-MI:0820	molecular weight estimation by sybr staining	participant detection																																																																																																																																																																																																																																																													
-MI:0821	molecular weight estimation by autoradiography	participant detection																																																																																																																																																																																																																																																													
-MI:0822	molecular weight estimation by hoechst staining	participant detection																																																																																																																																																																																																																																																													
-MI:0829	multiple parent reference	XrefType																																																																																																																																																																																																																																																													
-MI:0830	tissue list	database citation																																																																																																																																																																																																																																																													
-MI:0831	cell ontology	database citation																																																																																																																																																																																																																																																													
-MI:0832	half cystine	feature type																																																																																																																																																																																																																																																													
-MI:0833	autoradiography	feature detection																																																																																																																																																																																																																																																													
-MI:0840	stimulator	biological role																																																																																																																																																																																																																																																													
-MI:0841	phosphotransfer assay	interaction method																																																																																																																																																																																																																																																													
-MI:0842	phospho donor	biological role																																																																																																																																																																																																																																																													
-MI:0843	phospho acceptor	biological role																																																																																																																																																																																																																																																													
-MI:0844	phosphotransfer reaction	interaction type																																																																																																																																																																																																																																																													
-MI:0845	spin label	feature type																																																																																																																																																																																																																																																													
-MI:0846	r1 spin label	feature type																																																																																																																																																																																																																																																													
-MI:0847	dansyl tag	feature type																																																																																																																																																																																																																																																													
-MI:0848	125i radiolabel	feature type																																																																																																																																																																																																																																																													
+MI:0816	molecular weight estimation by staining	participant detection	
+MI:0817	molecular weight estimation by silver staining	participant detection	
+MI:0818	molecular weight estimation by coomasie staining	participant detection	
+MI:0819	molecular weight estimation by bromide staining	participant detection	
+MI:0820	molecular weight estimation by sybr staining	participant detection	
+MI:0821	molecular weight estimation by autoradiography	participant detection	
+MI:0822	molecular weight estimation by hoechst staining	participant detection	
+MI:0829	multiple parent reference	XrefType	
+MI:0830	tissue list	database citation	
+MI:0831	cell ontology	database citation	
+MI:0832	half cystine	feature type	
+MI:0833	autoradiography	feature detection	
+MI:0840	stimulator	biological role	
+MI:0841	phosphotransfer assay	interaction method	
+MI:0842	phospho donor	biological role	
+MI:0843	phospho acceptor	biological role	
+MI:0844	phosphotransfer reaction	interaction type	
+MI:0845	spin label	feature type	
+MI:0846	r1 spin label	feature type	
+MI:0847	dansyl tag	feature type	
+MI:0848	125i radiolabel	feature type	
 
-new terms from PSI-MI entered in intact as hidden term																																																																																																																																																																																																																																																															
-MI:0741	peptide atlas	database																																																																																																																																																																																																																																																													
-MI:0742	gpm	database																																																																																																																																																																																																																																																													
-MI:0805	wwpdb	database																																																																																																																																																																																																																																																													
-MI:0806	pdbj	database																																																																																																																																																																																																																																																													
-MI:0828	polyprotein fragment	feature type																																																																																																																																																																																																																																																													
-MI:0794	synthetic interaction	genetic interaction																																																																																																																																																																																																																																																													
-MI:0795	asynthetic interaction	genetic interaction																																																																																																																																																																																																																																																													
-MI:0796	suppressive interaction	genetic interaction																																																																																																																																																																																																																																																													
-MI:0797	epistatic interaction	genetic interaction																																																																																																																																																																																																																																																													
+new terms from PSI-MI entered in intact as hidden term	
+MI:0741	peptide atlas	database	
+MI:0742	gpm	database	
+MI:0805	wwpdb	database	
+MI:0806	pdbj	database	
+MI:0828	polyprotein fragment	feature type	
+MI:0794	synthetic interaction	genetic interaction	
+MI:0795	asynthetic interaction	genetic interaction	
+MI:0796	suppressive interaction	genetic interaction	
+MI:0797	epistatic interaction	genetic interaction	
 MI:0798	conditional interaction	genetic interaction
 MI:0799	additive interaction	genetic interaction
 MI:0800	single nonmonotonic interaction	genetic interaction
@@ -53,7 +53,7 @@ MI:0801	double nonmonotonic interaction	genetic interaction
 MI:0802	enhancement interaction	genetic interaction
 MI:0803	expression level alteration	genetic interaction
 
-new terms from PSI-MI NOT entered in intact		
+new terms from PSI-MI NOT entered in intact
 MI:0787	genetic experimental form	genetic experimental form
 MI:0788	knock out	genetic experimental form
 MI:0789	knock down	genetic experimental form
@@ -62,9 +62,9 @@ MI:0791	hypomorph	genetic experimental form
 MI:0792	antimorph	genetic experimental form
 MI:0793	amorph	genetic experimental form
 MI:0804	mutated gene	genetic experimental form
-MI:0834	ka	parameter type																																																																																																																																																																																																																																																													
-MI:0835	kd	parameter type																																																																																																																																																																																																																																																													
-MI:0836	temperature of interaction	parameter type																																																																																																																																																																																																																																																													
-MI:0837	pH of interaction	parameter type																																																																																																																																																																																																																																																													
-MI:0838	kelvin	parameter unit																																																																																																																																																																																																																																																													
-MI:0839	mole per second	parameter unit																																																																																																																																																																																																																																																													
+MI:0834	ka	parameter type	
+MI:0835	kd	parameter type	
+MI:0836	temperature of interaction	parameter type	
+MI:0837	pH of interaction	parameter type	
+MI:0838	kelvin	parameter unit	
+MI:0839	mole per second	parameter unit	
