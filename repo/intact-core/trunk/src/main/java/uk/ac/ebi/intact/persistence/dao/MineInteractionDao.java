@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import uk.ac.ebi.intact.model.MineInteraction;
 
+import java.util.List;
+
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -28,5 +30,11 @@ public interface MineInteractionDao
 
     int deleteAll();
 
-    MineInteraction get(String proteinAc1, String proteinAc2);
+    MineInteraction get(String proteinIntactAc1, String proteinIntactAc2);
+
+    int countAll();
+
+    int countByProteinIntactAc(String proteinIntactAc);
+
+    List<MineInteraction> getByProteinIntactAc(String proteinIntactAc, Integer firstResult, Integer maxResults);
 }

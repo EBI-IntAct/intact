@@ -15,11 +15,15 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.MineInteraction;
 import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
+
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -28,6 +32,7 @@ import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
  * @version $Id$
  * @since 1.5
  */
+@SuppressWarnings("unchecked")
 public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction>
         implements MineInteractionDao
 {
@@ -47,18 +52,52 @@ public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction
         return getSession().createQuery("DELETE MineInteraction").executeUpdate();
     }
 
-    public MineInteraction get(String proteinAc1, String proteinAc2)
+    public MineInteraction get(String proteinIntactAc1, String proteinIntactAc2)
     {
         return (MineInteraction) getSession().createCriteria(getEntityClass())
                 .add(Restrictions.or(
                         Restrictions.and(
-                                Restrictions.eq("protein1Ac", proteinAc1),
-                                Restrictions.eq("protein2Ac", proteinAc2)
+                                Restrictions.eq("protein1Ac", proteinIntactAc1),
+                                Restrictions.eq("protein2Ac", proteinIntactAc2)
                         ),
                         Restrictions.and(
-                                Restrictions.eq("protein2Ac", proteinAc1),
-                                Restrictions.eq("protein1Ac", proteinAc2)
+                                Restrictions.eq("protein2Ac", proteinIntactAc1),
+                                Restrictions.eq("protein1Ac", proteinIntactAc2)
                         )
                 )).uniqueResult();
+    }
+
+    public int countAll()
+    {
+        return (Integer) getSession().createCriteria(getEntityClass())
+                .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+    public int countByProteinIntactAc(String proteinIntactAc)
+    {
+        return (Integer) getSession().createCriteria(getEntityClass())
+                .add(Restrictions.or(
+                        Restrictions.eq("protein1Ac", proteinIntactAc),
+                        Restrictions.eq("protein2Ac", proteinIntactAc)))
+                .setProjection(Projections.rowCount()).uniqueResult();
+    }
+
+    public List<MineInteraction> getByProteinIntactAc(String proteinIntactAc, Integer firstResult, Integer maxResults)
+    {
+       Criteria crit = getSession().createCriteria(getEntityClass())
+                .add(Restrictions.or(
+                        Restrictions.eq("protein1Ac", proteinIntactAc),
+                        Restrictions.eq("protein2Ac", proteinIntactAc)));
+
+        if (firstResult != null && firstResult > 0)
+        {
+            crit.setFirstResult(firstResult);
+        }
+        if (maxResults != null && maxResults > 0)
+        {
+            crit.setMaxResults(maxResults);
+        }
+
+        return crit.list();
     }
 }

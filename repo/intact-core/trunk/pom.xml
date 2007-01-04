@@ -26,26 +26,44 @@
         <hibernate.scope>test</hibernate.scope>
     </properties>
 
-        <build>
-            <resources>
-                <resource>
-                    <directory>src/main/resources</directory>
-                    <filtering>true</filtering>
-                </resource>
-            </resources>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
 
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.myfaces.tobago</groupId>
-                    <artifactId>maven-apt-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.plugins</groupId>
-                    <artifactId>dbtest-maven-plugin</artifactId>
-                    <version>1.1.2</version>
-                </plugin>
-            </plugins>
-        </build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.myfaces.tobago</groupId>
+                <artifactId>maven-apt-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- This profile is used when running the tests. If
+        maven.test.skip property is true, don't import the H2 test db -->
+        <profile>
+            <id>test</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>false</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>uk.ac.ebi.intact.plugins</groupId>
+                        <artifactId>dbtest-maven-plugin</artifactId>
+                        <version>1.1.2</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
