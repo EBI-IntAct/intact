@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+  <head>
+    <title></title>
+  </head>
+  <body>
+
+  <f:view>
+      <ui:composition>
+
+          <a4j:poll interval="2000"
+                    reRender="stats"
+                    ajaxSingle="true"
+                    limittolist="true"
+                    actionListener="#{statisticsBean.prepare}"
+                    rendered="#{!statisticsBean.loaded}"/>
+
+          <h:panelGroup id="stats">
+              <div style="float:right;">
+                  <div class="iconboxheading" onclick="intact_toggleVisibility('statsContent')">
+                      IntAct Basic Statistics
+                  </div>
+                  <div class="iconboxcontents" id="statsContent">
+                      <p>The IntAct Database contains:</p>
+                      <ul>
+                          <li>
+                              <h:outputText value="Counting"
+                                            rendered="#{!statisticsBean.loaded}"
+                                            styleClass="intact_loading"/>
+                              <h:outputText value="#{statisticsBean.interactionCount}"
+                                            rendered="#{statisticsBean.loaded}">
+                                  <f:convertNumber pattern="#,###"/>
+                              </h:outputText>
+                              <h:outputText value=" binary interactions."
+                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
+                          </li>
+                          <li>
+                              <h:outputText value="Counting"
+                                            rendered="#{!statisticsBean.loaded}"
+                                            styleClass="intact_loading"/>
+                              <h:outputText value="#{statisticsBean.interactorCount}"
+                                            rendered="#{statisticsBean.loaded}">
+                                  <f:convertNumber pattern="#,###"/>
+                              </h:outputText>
+                              <h:outputText value=" interactors."
+                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
+                          </li>
+                          <li>
+                              <h:outputText value="Counting"
+                                            rendered="#{!statisticsBean.loaded}"
+                                            styleClass="intact_loading"/>
+                              <h:outputText value="#{statisticsBean.experimentCount}"
+                                            rendered="#{statisticsBean.loaded}">
+                                  <f:convertNumber pattern="#,###"/>
+                              </h:outputText>
+                              <h:outputText value=" experiments."
+                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
+                          </li>
+                          <li>
+                              <h:outputText value="Counting"
+                                            rendered="#{!statisticsBean.loaded}"
+                                            styleClass="intact_loading"/>
+                              <h:outputText value="#{statisticsBean.cvObjectCount}"
+                                            rendered="#{statisticsBean.loaded}">
+                                  <f:convertNumber pattern="#,###"/>
+                              </h:outputText>
+                              <h:outputText value=" controlled vocabularies."
+                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </h:panelGroup>
+
+      </ui:composition>
+  </f:view>
+
+  </body>
+</html>
