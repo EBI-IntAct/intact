@@ -17,11 +17,9 @@ package uk.ac.ebi.intact.site.mb;
 
 import uk.ac.ebi.intact.search.wsclient.SearchServiceClient;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import java.io.Serializable;
-import java.io.IOException;
-import java.util.Random;
 
 /**
  * TODO comment this!
@@ -39,8 +37,6 @@ public class StatisticsBean implements Serializable
     private int interactionCount;
     private int interactorCount;
     private int cvObjectCount;
-
-    private int fadeDuration;
 
     public StatisticsBean()
     {
@@ -116,13 +112,5 @@ public class StatisticsBean implements Serializable
     public void setCvObjectCount(int cvObjectCount)
     {
         this.cvObjectCount = cvObjectCount;
-    }
-
-    public int getFadeDuration() {
-        return fadeDuration;
-    }
-
-    public void setFadeDuration(int fadeDuration) {
-        this.fadeDuration = fadeDuration;
     }
 }
