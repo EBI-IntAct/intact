@@ -29,17 +29,15 @@ public class UpdateProteinTest extends TestCase {
     }
 
     public void testInsertSPTrProteins() throws Exception{
-        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-        List<ProteinImpl> proteins = proteinDao.getByUniprotId("P60304");
-        if(proteins.isEmpty()){
-            UpdateProteins updateProteins = new UpdateProteins();
-            String sourceUrl = "http://www.ebi.uniprot.org/entry/P60304?format=text&ascii";
-            URL url = new URL( sourceUrl );
-            InputStream is = url.openStream();
-
-            int number = updateProteins.insertSPTrProteinsFromURL(sourceUrl, "8656" , true );
-
-            assertEquals(1,number);
+        // Open the Hibernate session
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        UpdateProteins updateProteins = new UpdateProteins();
+        String sourceUrl = "http://www.ebi.uniprot.org/entry/P12345?format=text&ascii";
+        //Update the sp ac P12345, parsing the sourceUrl
+        int number = updateProteins.insertSPTrProteinsFromURL(sourceUrl, null , true );
+        // The number of protein updated should at least be equal to 1. 
+        if(number < 1){
+            fail("No protein updated");
         }
     }
 }
