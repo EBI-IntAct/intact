@@ -25,7 +25,7 @@
         <hibernate.scope>test</hibernate.scope>
 
         <!-- Tests are skipped -->
-        <maven.test.skip>true</maven.test.skip>
+        <maven.test.skip>false</maven.test.skip>
     </properties>
 
     <build>
