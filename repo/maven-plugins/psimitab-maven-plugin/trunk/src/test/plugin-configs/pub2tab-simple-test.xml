@@ -1,0 +1,15 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psimitab-maven-plugin</artifactId>
+
+                <configuration>
+
+                    <directoryPath>C:\2006-10-31\pmidMIF25\pmid\2003</directoryPath>
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
