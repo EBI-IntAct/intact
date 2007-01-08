@@ -107,7 +107,7 @@ public class SearchableDaoImplTest extends TestCase
 
         List<InteractorImpl> results = dao.getByQuery(InteractorImpl.class, query, 0, 50);
 
-        assertEquals(2, results.size());
+        assertEquals(4, results.size());
     }
 
     public void testGetByQuery_description() throws Exception
