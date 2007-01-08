@@ -185,9 +185,21 @@ public class Search
     }
 
     @WebMethod
-    public int countInteractorsUsingIntactQuery(String query)
+    public int countProteinsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(InteractorImpl.class, query);
+        return new SimpleSearchService().count(ProteinImpl.class, query);
+    }
+
+    @WebMethod
+    public int countNucleicAcidsUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(NucleicAcidImpl.class, query);
+    }
+
+    @WebMethod
+    public int countSmallMoleculesUsingIntactQuery(String query)
+    {
+        return new SimpleSearchService().count(SmallMoleculeImpl.class, query);
     }
 
     @WebMethod
@@ -216,9 +228,21 @@ public class Search
     }
 
     @WebMethod
-    public List<SimpleResult> searchInteractorsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    public List<SimpleResult> searchProteinsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {InteractorImpl.class}, firstResult, maxResults);
+        return searchUsingQuery(query, new Class[] {ProteinImpl.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchNucleicAcidsUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {NucleicAcidImpl.class}, firstResult, maxResults);
+    }
+
+    @WebMethod
+    public List<SimpleResult> searchSmallMoleculesUsingQuery(String query, Integer firstResult, Integer maxResults)
+    {
+        return searchUsingQuery(query, new Class[] {SmallMoleculeImpl.class}, firstResult, maxResults);
     }
 
     @WebMethod
