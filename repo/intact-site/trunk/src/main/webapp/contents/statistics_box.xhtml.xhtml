@@ -32,53 +32,40 @@
                       IntAct Basic Statistics
                   </div>
                   <div class="iconboxcontents" id="statsContent">
-                      <p>The IntAct Database contains:</p>
-                      <ul>
-                          <li>
-                              <h:outputText value="Counting"
-                                            rendered="#{!statisticsBean.loaded}"
-                                            styleClass="intact_loading"/>
-                              <h:outputText value="#{statisticsBean.interactionCount}"
-                                            rendered="#{statisticsBean.loaded}">
-                                  <f:convertNumber pattern="#,###"/>
-                              </h:outputText>
-                              <h:outputText value=" binary interactions."
-                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
-                          </li>
-                          <li>
-                              <h:outputText value="Counting"
-                                            rendered="#{!statisticsBean.loaded}"
-                                            styleClass="intact_loading"/>
-                              <h:outputText value="#{statisticsBean.interactorCount}"
-                                            rendered="#{statisticsBean.loaded}">
-                                  <f:convertNumber pattern="#,###"/>
-                              </h:outputText>
-                              <h:outputText value=" interactors."
-                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
-                          </li>
-                          <li>
-                              <h:outputText value="Counting"
-                                            rendered="#{!statisticsBean.loaded}"
-                                            styleClass="intact_loading"/>
-                              <h:outputText value="#{statisticsBean.experimentCount}"
-                                            rendered="#{statisticsBean.loaded}">
-                                  <f:convertNumber pattern="#,###"/>
-                              </h:outputText>
-                              <h:outputText value=" experiments."
-                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
-                          </li>
-                          <li>
-                              <h:outputText value="Counting"
-                                            rendered="#{!statisticsBean.loaded}"
-                                            styleClass="intact_loading"/>
-                              <h:outputText value="#{statisticsBean.cvObjectCount}"
-                                            rendered="#{statisticsBean.loaded}">
-                                  <f:convertNumber pattern="#,###"/>
-                              </h:outputText>
-                              <h:outputText value=" controlled vocabularies."
-                                            styleClass="#{statisticsBean.loaded? '' : 'intact_loading'}"/>
-                          </li>
-                      </ul>
+                      <h:panelGroup rendered="#{!statisticsBean.loaded}">
+                          <h:graphicImage url="#{appConfigBean.absoluteContextPath}/images/wait_red_indicator.gif"
+                                          style="vertical-align: middle"/>
+                          <h:outputText styleClass="intact_loading" value="  Loading statistics..."/>
+                      </h:panelGroup>
+                      <h:panelGroup rendered="#{statisticsBean.loaded}">
+                          <p>The IntAct Database contains:</p>
+                          <ul>
+                              <li>
+                                  <h:outputText value="#{statisticsBean.interactionCount}">
+                                      <f:convertNumber pattern="#,###"/>
+                                  </h:outputText>
+                                  <h:outputText value=" binary interactions."/>
+                              </li>
+                              <li>
+                                  <h:outputText value="#{statisticsBean.proteinCount}">
+                                      <f:convertNumber pattern="#,###"/>
+                                  </h:outputText>
+                                  <h:outputText value=" proteins."/>
+                              </li>
+                              <li>
+                                  <h:outputText value="#{statisticsBean.experimentCount}">
+                                      <f:convertNumber pattern="#,###"/>
+                                  </h:outputText>
+                                  <h:outputText value=" experiments."/>
+                              </li>
+                              <li>
+                                  <h:outputText value="#{statisticsBean.cvObjectCount}">
+                                      <f:convertNumber pattern="#,###"/>
+                                  </h:outputText>
+                                  <h:outputText value=" controlled vocabularies."/>
+                              </li>
+                          </ul>
+                      </h:panelGroup>
                   </div>
               </div>
           </h:panelGroup>

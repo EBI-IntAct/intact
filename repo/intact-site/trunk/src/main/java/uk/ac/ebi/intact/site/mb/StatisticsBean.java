@@ -35,7 +35,7 @@ public class StatisticsBean implements Serializable
 
     private int experimentCount;
     private int interactionCount;
-    private int interactorCount;
+    private int proteinCount;
     private int cvObjectCount;
 
     public StatisticsBean()
@@ -52,8 +52,8 @@ public class StatisticsBean implements Serializable
             {
                 SearchServiceClient client = new SearchServiceClient(wsdl);
                 experimentCount = client.getSearchPort().countExperimentsUsingIntactQuery("*");
-                interactionCount = client.getSearchPort().countInteractionsUsingIntactQuery("*");
-                interactorCount = client.getSearchPort().countInteractorsUsingIntactQuery("*");
+                interactionCount = client.getSearchPort().countAllBinaryInteractions();
+                proteinCount = client.getSearchPort().countProteinsUsingIntactQuery("*");
                 cvObjectCount = client.getSearchPort().countCvObjectsUsingIntactQuery("*");
             }
             catch (Exception e)
@@ -94,14 +94,14 @@ public class StatisticsBean implements Serializable
         this.interactionCount = interactionCount;
     }
 
-    public int getInteractorCount()
+    public int getProteinCount()
     {
-        return interactorCount;
+        return proteinCount;
     }
 
-    public void setInteractorCount(int interactorCount)
+    public void setProteinCount(int proteinCount)
     {
-        this.interactorCount = interactorCount;
+        this.proteinCount = proteinCount;
     }
 
     public int getCvObjectCount()
