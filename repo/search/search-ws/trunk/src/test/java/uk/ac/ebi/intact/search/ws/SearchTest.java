@@ -78,7 +78,7 @@ public class SearchTest extends TestCase
 
     public void testCountAllBinaryInteractions()
     {
-        assertEquals(0, search.countAllBinaryInteractions());
+        assertEquals(2, search.countAllBinaryInteractions());
     }
 
     public void testSearchExperimentsUsingIntactQuery()
