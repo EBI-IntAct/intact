@@ -71,9 +71,9 @@ public class SearchTest extends TestCase
         assertEquals(2, search.countInteractionsUsingIntactQuery("*"));
     }
 
-    public void testCountInteractorsUsingIntactQuery()
+    public void testCountProteinsUsingIntactQuery()
     {
-        assertEquals(4, search.countInteractorsUsingIntactQuery("*"));
+        assertEquals(2, search.countProteinsUsingIntactQuery("*"));
     }
 
     public void testCountAllBinaryInteractions()
@@ -86,9 +86,9 @@ public class SearchTest extends TestCase
         assertEquals(2, search.searchExperimentsUsingQuery("*", null, null).size());
     }
 
-    public void testSearchInteractorsUsingIntactQuery()
+    public void testSearchProteinsUsingIntactQuery()
     {
-        for (SimpleResult result : search.searchInteractorsUsingQuery("*", null, null))
+        for (SimpleResult result : search.searchProteinsUsingQuery("*", null, null))
         {
             System.out.println(result.getAc());
         }
