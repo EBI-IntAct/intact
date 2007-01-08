@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebServiceSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
 import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 
 import javax.jws.WebMethod;
@@ -217,8 +216,11 @@ public class Search
     @WebMethod
     public int countAllBinaryInteractions()
     {
-        MineInteractionDao binInteractionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getMineInteractionDao();
-        return binInteractionDao.countAll();
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        int componentCount = daoFactory.getComponentDao().countAll();
+        int interactionCount = daoFactory.getInteractionDao().countAll();
+
+        return (componentCount - interactionCount);
     }
 
     @WebMethod
