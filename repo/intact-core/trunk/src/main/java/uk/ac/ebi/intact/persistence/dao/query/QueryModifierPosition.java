@@ -26,5 +26,6 @@ public enum QueryModifierPosition
 {
     BEFORE_TERM,
     AFTER_TERM,
-    BEFORE_AFTER_TERM
+    BEFORE_AFTER_TERM,
+    ALL_TERM;
 }

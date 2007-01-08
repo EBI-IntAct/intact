@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.persistence.dao.query;
 
 import java.util.Collection;
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * A phrase represent a group of terms
@@ -31,7 +31,7 @@ public class QueryPhrase
 
     public QueryPhrase()
     {
-        this.terms = new ArrayList<QueryTerm>();
+        this.terms = new HashSet<QueryTerm>();
     }
 
     public QueryPhrase(Collection<QueryTerm> terms)
@@ -48,5 +48,14 @@ public class QueryPhrase
     public void setTerms(Collection<QueryTerm> terms)
     {
         this.terms = terms;
+    }
+
+    public boolean isOnlyWildcard()
+    {
+        if (terms != null && terms.size() == 1)
+        {
+            return terms.iterator().next().isOnlyWildcard();
+        }
+        return false;
     }
 }

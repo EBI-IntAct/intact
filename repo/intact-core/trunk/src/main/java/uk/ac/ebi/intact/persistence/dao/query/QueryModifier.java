@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query;
 
-import java.util.regex.Pattern;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * TODO comment this!
@@ -37,6 +37,11 @@ public enum QueryModifier
      * Match anything after the term
      */
     WILDCARD_END('%', new Character[] {'*'}, QueryModifierPosition.AFTER_TERM),
+
+    /**
+     * The value is just a wildcard
+     */
+    WILDCARD_VALUE('%', new Character[] {'*'}, QueryModifierPosition.ALL_TERM),
 
     /**
      * Include the term (AND conjunction)
@@ -102,28 +107,59 @@ public enum QueryModifier
     {
         Set<QueryModifier> modifiers = new HashSet<QueryModifier>();
 
-        for (QueryModifier modifier : QueryModifier.values())
+        // first check for "all-value" wildcads (the value is just a wildcard)
+        boolean valueIsJustAWildcard = false;
+        if (value.length() == 1)
         {
-            switch (modifier.getPosition())
+            for (Character c : QueryModifier.WILDCARD_VALUE.allPossibleSymbols())
             {
-                case BEFORE_TERM:
-                    for (Character c : modifier.allPossibleSymbols())
-                    {
-                        if (value.startsWith(String.valueOf(c)))
-                        {
-                            modifiers.add(modifier);
-                        }
-                    }
+                if (value.equals(c.toString()))
+                {
+                    valueIsJustAWildcard = true;
+                    modifiers.add(QueryModifier.WILDCARD_VALUE);
                     break;
-                case AFTER_TERM:
-                    for (Character c : modifier.allPossibleSymbols())
-                    {
-                        if (value.endsWith(String.valueOf(c)))
+                }
+            }
+        }
+
+        // if the value is not just a wildcard, identify the modifiers
+        if (!valueIsJustAWildcard)
+        {
+            for (QueryModifier modifier : QueryModifier.values())
+            {
+                switch (modifier.getPosition())
+                {
+                    case ALL_TERM:
+                        for (Character c : modifier.allPossibleSymbols())
                         {
-                            modifiers.add(modifier);
+                            if (value.length() == 1)
+                            {
+                                if (value.equals(c.toString()))
+                                {
+                                    modifiers.add(modifier);
+                                }
+                            }
                         }
-                    }
-                    break;
+                        break;
+                    case BEFORE_TERM:
+                        for (Character c : modifier.allPossibleSymbols())
+                        {
+                            if (value.startsWith(String.valueOf(c)))
+                            {
+                                modifiers.add(modifier);
+                            }
+                        }
+                        break;
+                    case AFTER_TERM:
+                        for (Character c : modifier.allPossibleSymbols())
+                        {
+                            if (value.endsWith(String.valueOf(c)))
+                            {
+                                modifiers.add(modifier);
+                            }
+                        }
+                        break;
+                }
             }
         }
         return modifiers.toArray(new QueryModifier[modifiers.size()]);

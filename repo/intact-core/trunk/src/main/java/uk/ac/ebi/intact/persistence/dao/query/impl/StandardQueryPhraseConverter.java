@@ -17,8 +17,8 @@ package uk.ac.ebi.intact.persistence.dao.query.impl;
 
 import uk.ac.ebi.intact.persistence.dao.query.*;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Standard builder of phrases from Strings
