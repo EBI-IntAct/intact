@@ -133,10 +133,12 @@
             </section>
             <!-- end CVS -->
 
+            <!--  No statistics section?
             <section name="statistics" title="Statistics">
                 Please see separate
                 <a href="statistics/index.html">statistics section</a>.
             </section>
+            -->
             <!-- end statistics -->
 
         </section>

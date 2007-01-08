@@ -57,7 +57,7 @@
             WSDL URL for the Search WS
         </description>
         <param-name>uk.ac.ebi.intact.SEARCH_WS_URL</param-name>
-        <param-value>http://bark.ebi.ac.uk:8081/search-ws/search?wsdl</param-value>
+        <param-value>http://www.ebi.ac.uk/intact/search-ws/search?wsdl</param-value>
     </context-param>
 
     <!-- JSF (MyFaces) Params... -->
