@@ -87,12 +87,16 @@ public class SimpleSearchService implements SearchService
         QueryPhrase phrase = new StandardQueryPhraseConverter().objectToPhrase(query);
 
         SearchableQuery sq = new SearchableQuery();
-        sq.setAc(phrase);
-        sq.setShortLabel(phrase);
-        sq.setDescription(phrase);
-        sq.setAnnotationText(phrase);
-        sq.setXref(phrase);
-        sq.setDisjunction(true);
+
+        if (!phrase.isOnlyWildcard())
+        {
+            sq.setAc(phrase);
+            sq.setShortLabel(phrase);
+            sq.setDescription(phrase);
+            sq.setAnnotationText(phrase);
+            sq.setXref(phrase);
+            sq.setDisjunction(true);
+        }
 
         return sq;
     }

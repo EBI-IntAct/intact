@@ -451,7 +451,7 @@ public class SearchableCriteriaBuilder
 
         if (!aliasesCreated.contains(aliasName))
         {
-            criteria.createAlias("annotations", aliasName);
+            criteria.createAlias("annotations", aliasName, CriteriaSpecification.LEFT_JOIN);
             aliasesCreated.add(aliasName);
         }
 

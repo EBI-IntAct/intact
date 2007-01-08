@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query;
 
+import java.util.Arrays;
+
 /**
  * Represents a term in a query
  *
@@ -27,7 +29,6 @@ public class QueryTerm
 
     private String value;
     private QueryModifier[] modifiers;
-
 
     public QueryTerm()
     {
@@ -66,5 +67,37 @@ public class QueryTerm
     public void setModifiers(QueryModifier[] modifiers)
     {
         this.modifiers = modifiers;
+    }
+
+    public boolean isOnlyWildcard()
+    {
+        if (modifiers.length == 1)
+        {
+            return (modifiers[0] == QueryModifier.WILDCARD_VALUE);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        QueryTerm queryTerm = (QueryTerm) o;
+
+        if (!Arrays.equals(modifiers, queryTerm.modifiers)) return false;
+        if (value != null ? !value.equals(queryTerm.value) : queryTerm.value != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result;
+        result = (value != null ? value.hashCode() : 0);
+        result = 31 * result + (modifiers != null ? Arrays.hashCode(modifiers) : 0);
+        return result;
     }
 }

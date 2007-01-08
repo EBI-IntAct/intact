@@ -17,12 +17,10 @@ package uk.ac.ebi.intact.persistence.svc.impl;
 
 import junit.framework.TestCase;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.svc.SearchService;
-import uk.ac.ebi.intact.util.DebugUtil;
-
-import java.util.List;
 
 /**
  * Test for <code>SearchableDaoImplTest</code>
@@ -52,6 +50,12 @@ public class SimpleSearchServiceTest extends TestCase
     {
         int count = searchService.count(Experiment.class, "*");
         assertEquals(1, count);
+    }
+
+    public void testCount_cvobjects_all() throws Exception
+    {
+        int count = searchService.count(CvObject.class, "*");
+        System.out.println(count);
     }
 
     public void testCount_interaction_cara() throws Exception
