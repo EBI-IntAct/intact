@@ -72,7 +72,7 @@ BEGIN
         -- if it's close enough from the current date, generate the stat line at SYSDATE.
         -- eg. if v_date - SYSDATE < 2 days ?
 
-        EXIT WHEN v_date > SYSDATE;
+        -- The loop is exited at the end
 
         DBMS_OUTPUT.PUT_LINE( 'LOOP: ' || to_char( v_date ) );
 
@@ -132,6 +132,9 @@ BEGIN
             (v_date, v_interaction_number, v_binary_interactions, v_protein_number, v_complex_interactions, v_experiment_number, v_term_number );
 
         END IF; -- case where the line as to be created
+
+        -- check if the date is bigger than the sysdate and exit the loop in that case
+        EXIT WHEN v_date > SYSDATE;
 
         -- next date
         v_date := v_date + v_num_day;
