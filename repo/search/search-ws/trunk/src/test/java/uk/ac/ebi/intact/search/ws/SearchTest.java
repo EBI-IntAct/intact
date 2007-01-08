@@ -68,17 +68,17 @@ public class SearchTest extends TestCase
 
     public void testCountInteractionsUsingIntactQuery()
     {
-        assertEquals(1, search.countInteractionsUsingIntactQuery("*"));
+        assertEquals(2, search.countInteractionsUsingIntactQuery("*"));
     }
 
     public void testCountInteractorsUsingIntactQuery()
     {
-        assertEquals(1, search.countInteractorsUsingIntactQuery("*"));
+        assertEquals(4, search.countInteractorsUsingIntactQuery("*"));
     }
 
-    public void testCountCvObjectsUsingIntactQuery()
+    public void testCountAllBinaryInteractions()
     {
-        assertEquals(756, search.countCvObjectsUsingIntactQuery("*"));
+        assertEquals(0, search.countAllBinaryInteractions());
     }
 
     public void testSearchExperimentsUsingIntactQuery()

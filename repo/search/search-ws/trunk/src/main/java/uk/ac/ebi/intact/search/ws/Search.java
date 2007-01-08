@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebServiceSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
 import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 
 import javax.jws.WebMethod;
@@ -199,6 +200,13 @@ public class Search
     public int countCvObjectsUsingIntactQuery(String query)
     {
         return new SimpleSearchService().count(CvObject.class, query);
+    }
+
+    @WebMethod
+    public int countAllBinaryInteractions()
+    {
+        MineInteractionDao binInteractionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getMineInteractionDao();
+        return binInteractionDao.countAll();
     }
 
     @WebMethod
