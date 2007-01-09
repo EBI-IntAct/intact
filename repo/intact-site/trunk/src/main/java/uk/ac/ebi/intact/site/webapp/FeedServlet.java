@@ -19,6 +19,7 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import uk.ac.ebi.intact.site.mb.NewsBean;
 import uk.ac.ebi.intact.site.util.FeedType;
 import uk.ac.ebi.intact.site.util.SiteUtils;
+import uk.ac.ebi.intact.site.util.DataLoadingException;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -37,12 +38,23 @@ public class FeedServlet extends HttpServlet {
 
         String newsXml = request.getSession().getServletContext().getInitParameter(NewsBean.NEWS_URL);
 
-        SyndFeed feed = SiteUtils.createNewsFeed(SiteUtils.readNews(newsXml));
+        SyndFeed feed = null;
+        try
+        {
+            feed = SiteUtils.createNewsFeed(SiteUtils.readNews(newsXml));
+        }
+        catch (DataLoadingException e)
+        {
+            e.printStackTrace();
+        }
 
         try
         {
-            response.setContentType(SiteUtils.XML_MIME_TYPE);
-            SiteUtils.writeFeed(feed, FeedType.DEFAULT, response.getWriter());
+            if (feed != null)
+            {
+                response.setContentType(SiteUtils.XML_MIME_TYPE);
+                SiteUtils.writeFeed(feed, FeedType.DEFAULT, response.getWriter());
+            }
         }
         catch (Throwable e)
         {

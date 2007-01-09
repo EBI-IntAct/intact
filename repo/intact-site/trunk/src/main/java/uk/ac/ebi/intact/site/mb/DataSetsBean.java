@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.site.mb;
 
 import static uk.ac.ebi.intact.site.items.Datasets.Dataset;
 import uk.ac.ebi.intact.site.util.SiteUtils;
+import uk.ac.ebi.intact.site.util.DataLoadingException;
 
 import javax.faces.context.FacesContext;
 import java.io.Serializable;
@@ -40,7 +41,15 @@ public class DataSetsBean implements Serializable {
     {
         String datasetsXml = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(DATASET_OF_THE_MONTH_URL);
 
-        dataSets = SiteUtils.readDatasets(datasetsXml);
+        try
+        {
+            dataSets = SiteUtils.readDatasets(datasetsXml);
+        }
+        catch (DataLoadingException e)
+        {
+            e.printStackTrace();
+            dataSets = new ArrayList<Dataset>();
+        }
 
         if (!dataSets.isEmpty())
         {

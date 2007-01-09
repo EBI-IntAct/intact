@@ -47,7 +47,7 @@ public class SiteUtils
 
     private SiteUtils(){}
 
-    public static List<News.PieceOfNews> readNews(String newsXml)
+    public static List<News.PieceOfNews> readNews(String newsXml) throws DataLoadingException
     {
         List<News.PieceOfNews> news;
 
@@ -55,8 +55,8 @@ public class SiteUtils
         try {
             URL datasetsUrl = new URL(newsXml);
             objNews = (News) readDatasetsXml(datasetsUrl.openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            throw new DataLoadingException(e);
         }
 
         if (objNews != null)
@@ -115,7 +115,7 @@ public class SiteUtils
         return entry;
     }
 
-    public static List<Datasets.Dataset> readDatasets(String datasetsXml)
+    public static List<Datasets.Dataset> readDatasets(String datasetsXml) throws DataLoadingException
     {
         List<Datasets.Dataset> dataSets;
 
@@ -123,8 +123,8 @@ public class SiteUtils
         try {
             URL datasetsUrl = new URL(datasetsXml);
             datasets = (Datasets) readDatasetsXml(datasetsUrl.openStream());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Throwable e) {
+            throw new DataLoadingException(e);
         }
 
         if (datasets != null)

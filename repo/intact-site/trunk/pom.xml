@@ -114,6 +114,7 @@
                     <plugin>
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>maven-jetty-plugin</artifactId>
+                        <version>6.1.0rc3</version>
                         <configuration>
                             <scanIntervalSeconds>10</scanIntervalSeconds>
                             <contextPath>${build.finalName}</contextPath>
@@ -229,7 +230,7 @@
         <dependency>
             <groupId>org.ajax4jsf</groupId>
             <artifactId>ajax4jsf</artifactId>
-            <version>1.0.4</version>
+            <version>1.0.5</version>
         </dependency>
         <dependency>
             <groupId>opensymphony</groupId>

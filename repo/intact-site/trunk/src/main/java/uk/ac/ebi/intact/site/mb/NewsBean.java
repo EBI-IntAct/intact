@@ -20,6 +20,7 @@ import com.sun.syndication.io.FeedException;
 import uk.ac.ebi.intact.site.items.News;
 import uk.ac.ebi.intact.site.util.FeedType;
 import uk.ac.ebi.intact.site.util.SiteUtils;
+import uk.ac.ebi.intact.site.util.DataLoadingException;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -49,7 +50,15 @@ public class NewsBean implements Serializable
 
         int newsNum = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getInitParameter(NEWS_SHOWN_NUM));
 
-        news = SiteUtils.readNews(newsXml);
+        try
+        {
+            news = SiteUtils.readNews(newsXml);
+        }
+        catch (DataLoadingException e)
+        {
+            e.printStackTrace();
+            news = new ArrayList<News.PieceOfNews>();
+        }
 
         if (!news.isEmpty())
         {

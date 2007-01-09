@@ -24,7 +24,7 @@
                     ajaxSingle="true"
                     limittolist="true"
                     actionListener="#{statisticsBean.prepare}"
-                    rendered="#{!statisticsBean.loaded}"/>
+                    rendered="#{!statisticsBean.loaded and !statisticsBean.failed}"/>
 
           <h:panelGroup id="stats">
               <div style="float:right;">
@@ -32,10 +32,13 @@
                       IntAct Basic Statistics
                   </div>
                   <div class="iconboxcontents" id="statsContent">
-                      <h:panelGroup rendered="#{!statisticsBean.loaded}">
+                      <h:panelGroup rendered="#{!statisticsBean.loaded and !statisticsBean.failed}">
                           <h:graphicImage url="#{appConfigBean.absoluteContextPath}/images/wait_red_indicator.gif"
                                           style="vertical-align: middle"/>
                           <h:outputText styleClass="intact_loading" value="  Loading statistics..."/>
+                      </h:panelGroup>
+                      <h:panelGroup rendered="#{statisticsBean.failed}">
+                          <h:outputText styleClass="intact_loading" value="Unexpected exception loading statistics"/>
                       </h:panelGroup>
                       <h:panelGroup rendered="#{statisticsBean.loaded}">
                           <p>The IntAct Database contains:</p>
