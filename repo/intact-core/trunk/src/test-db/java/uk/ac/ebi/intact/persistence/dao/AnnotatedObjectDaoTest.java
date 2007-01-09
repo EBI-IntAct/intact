@@ -11,6 +11,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvDatabase;
 
 import java.util.List;
 
@@ -65,4 +67,20 @@ public class AnnotatedObjectDaoTest extends TestCase {
         List annotatedObjects = annotatedObjectDao.getByShortlabelOrAcLike("butkevich-2004-%");
         assertEquals(annotatedObjects.size(),4);
     }
+
+    public void testGetByXref(){
+        AnnotatedObjectDao<Experiment> annotatedObjectDao = daoFactory.getAnnotatedObjectDao(Experiment.class);
+        Experiment experiment = annotatedObjectDao.getByXref("10029528");
+        assertNotNull(experiment);
+    }
+
+    public void testGetByXrefLike()
+    {
+        CvXrefQualifier qualifier = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+        CvDatabase pubmed = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.PUBMED_MI_REF);
+        AnnotatedObjectDao<Experiment> annotatedObjectDao = daoFactory.getAnnotatedObjectDao(Experiment.class);
+        List annotatedObjects = annotatedObjectDao.getByXrefLike(pubmed, qualifier, "10029528" );
+        assertEquals(annotatedObjects.size(),1);
+    }
+      
 }
