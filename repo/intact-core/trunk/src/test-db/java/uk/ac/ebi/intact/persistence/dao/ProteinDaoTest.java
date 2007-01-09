@@ -10,8 +10,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 import java.util.List;
+import java.util.Collection;
 
 /**
  * TODO comment this!
@@ -75,6 +79,22 @@ public class ProteinDaoTest extends TestCase
         assertEquals("EBI-100018", prot.getAc());
 
     }
+
+    public void testGetIdentityXrefByProteinAc(){
+        List<ProteinImpl> proteins = proteinDao.getByUniprotId("P0A6F1");
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        for(Protein protein : proteins){
+            Collection<InteractorXref> xrefs = protein.getXrefs();
+            for(InteractorXref xref : xrefs){
+                if("P0A6F1".equals(xref.getPrimaryId()) && identity.equals(xref.getCvXrefQualifier())){
+                    String xrefAc = proteinDao.getIdentityXrefByProteinAc(protein.getAc());
+                    assertEquals(xref.getAc(),xrefAc);
+                }
+            }
+        }
+    }
+
+    
 
     public void testGetByUniprotId_3Primary_1Secondary()
     {
