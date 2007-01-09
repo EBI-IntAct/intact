@@ -7,8 +7,13 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Hibernate;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -62,19 +67,25 @@ public class DataContext implements Serializable
         return getDaoFactory(dataConfigName).isTransactionActive();
     }
 
-    public void commitTransaction()
-    {
-         commitTransaction(getDefaultDataConfig().getName());
+    public void commitTransaction() throws IntactTransactionException {
+        try{
+            commitTransaction(getDefaultDataConfig().getName());
+        }catch (Exception e){
+            throw new IntactTransactionException(e);
+        }
     }
 
-    public void commitTransaction(String dataConfigName)
-    {
+    public void commitTransaction(String dataConfigName) throws IntactTransactionException {
         DaoFactory daoFactory = getDaoFactory(dataConfigName);
 
         if (daoFactory.isTransactionActive())
         {
-            daoFactory.getCurrentTransaction().commit();
-
+            try{
+                daoFactory.getCurrentTransaction().commit();
+            }catch(IntactTransactionException e){
+                log.debug("An Exception occured commiting" + e.getMessage());
+                throw new IntactTransactionException(e);
+            }
             if (log.isDebugEnabled())
             {
                 log.debug("Committed transaction: "+dataConfigName);
@@ -84,8 +95,14 @@ public class DataContext implements Serializable
         assert (daoFactory.isTransactionActive() == false);
     }
 
-    public void commitAllActiveTransactions()
-    {
+    private Session getSession(){
+        AbstractHibernateDataConfig abstractHibernateDataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
+        Session session = factory.getCurrentSession();
+        return session;
+    }
+
+    public void commitAllActiveTransactions() throws IntactTransactionException {
         Collection<DataConfig> dataConfigs = RuntimeConfig.getCurrentInstance(session).getDataConfigs();
 
         for (DataConfig dataConfig : dataConfigs)
@@ -110,6 +127,7 @@ public class DataContext implements Serializable
         DataConfig dataConfig = RuntimeConfig.getCurrentInstance(session).getDataConfig(dataConfigName);
         return getDaoFactory(dataConfig);
     }
+
 
     public boolean isReadOnly()
     {
