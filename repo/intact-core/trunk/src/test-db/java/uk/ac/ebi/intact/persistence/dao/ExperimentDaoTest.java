@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -77,4 +78,19 @@ public class ExperimentDaoTest extends TestCase
         }
 
     }
+
+    public void testCountInteractionsForExperimentWithAc(){
+        Experiment exp = experimentDao.getByShortLabel("thoden-1999-1");
+        String ac = exp.getAc();
+        int interactionsCount = experimentDao.countInteractionsForExperimentWithAc(ac);
+        assertEquals(2,interactionsCount);
+    }
+
+    public void testGetInteractionsForExperimentWithAc(){
+        Experiment exp = experimentDao.getByShortLabel("thoden-1999-1");
+        String ac = exp.getAc();
+        List<Interaction> interactions = experimentDao.getInteractionsForExperimentWithAc(ac,0,50);
+        assertEquals(2, interactions.size());
+    }
+
 }
