@@ -10,6 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.CvObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,5 +54,26 @@ public class CvObjectDaoTest  extends TestCase {
 
         List cvObjects = cvObjectDao.getByPsiMiRefCollection(psiMiRefs);
         assertEquals(cvObjects.size(),3);
+    }
+
+    public void testGetByObjClass (){
+        Class[] classes = {CvTopic.class, CvXrefQualifier.class};
+        CvObjectDao<CvObject> cvObjectDao = daoFactory.getCvObjectDao(CvObject.class);
+        List cvObjects = cvObjectDao.getByObjClass(classes);
+        int cvTopicCount = 0;
+        int cvXrefQualifierCount = 0;
+        for (int i = 0; i < cvObjects.size(); i++) {
+            Object o =  cvObjects.get(i);
+            if(o instanceof CvTopic){
+                cvTopicCount++;
+            }else if(o instanceof CvXrefQualifier){
+                cvXrefQualifierCount++;
+            } else {
+                fail("Was excpecting an object of class CvObject or CvXrefQualifier but got a " + o.getClass().getName());
+            }
+        }
+
+        assertEquals(73,cvTopicCount);
+        assertEquals(21,cvXrefQualifierCount);
     }
 }
