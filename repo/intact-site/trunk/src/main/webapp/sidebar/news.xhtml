@@ -17,46 +17,50 @@
   <f:view>
       <ui:composition>
 
-          <div class="iconboxheading">
-              <a href="#" onclick="intact_toggleVisibility('newsPanel')">News</a>
-              <h:outputText value="  "/>
-              <h:outputLink value="feed">
-                  <h:graphicImage alt="RSS" url="http://www.ebi.ac.uk/intact/site/images/xml_rss2.gif" style="border:0"/>
-              </h:outputLink>
-          </div>
-          <div id="newsPanel" class="iconboxcontents">
+          <h:panelGroup rendered="#{not empty newsBean.news}">
 
-              <c:forEach var="pieceOfNews" items="#{newsBean.lastNews}">
+              <div class="iconboxheading">
+                  <a href="#" onclick="intact_toggleVisibility('newsPanel')">News</a>
+                  <h:outputText value="  "/>
+                  <h:outputLink value="feed">
+                      <h:graphicImage alt="RSS" url="http://www.ebi.ac.uk/intact/site/images/xml_rss2.gif" style="border:0"/>
+                  </h:outputLink>
+              </div>
+              <div id="newsPanel" class="iconboxcontents">
 
-                  <strong>
-                      <h:outputText value="#{is:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
-                          <f:convertDateTime/>
-                      </h:outputText>
+                  <c:forEach var="pieceOfNews" items="#{newsBean.lastNews}">
 
+                      <strong>
+                          <h:outputText value="#{is:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
+                              <f:convertDateTime/>
+                          </h:outputText>
+
+                          <br/>
+
+                          #{pieceOfNews.title}</strong>
+
+                      <p>
+                          #{pieceOfNews.description}
+
+                          <c:if test="#{pieceOfNews.moreLink != null}">
+                              &nbsp;
+                              <h:outputLink value="#{pieceOfNews.moreLink}">
+                                  <h:outputText value="[more]"/>
+                              </h:outputLink>
+                          </c:if>
+
+                      </p>
                       <br/>
 
-                      #{pieceOfNews.title}</strong>
 
-                  <p>
-                      #{pieceOfNews.description}
+                  </c:forEach>
 
-                      <c:if test="#{pieceOfNews.moreLink != null}">
-                          &nbsp;
-                          <h:outputLink value="#{pieceOfNews.moreLink}">
-                              <h:outputText value="[more]"/>
-                          </h:outputLink>
-                      </c:if>
+                  <h:outputText value="More news in the "/>
+                  <h:commandLink value="Archive" action="news_archive"/>
 
-                  </p>
-                  <br/>
+              </div>
 
-
-              </c:forEach>
-
-              <h:outputText value="More news in the "/>
-              <h:commandLink value="Archive" action="news_archive"/>
-
-          </div>
+          </h:panelGroup>
 
       </ui:composition>
   </f:view>

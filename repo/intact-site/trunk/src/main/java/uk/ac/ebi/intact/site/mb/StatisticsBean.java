@@ -32,6 +32,7 @@ public class StatisticsBean implements Serializable
     private static final String SEARCH_WS_URL = "uk.ac.ebi.intact.SEARCH_WS_URL";
 
     private boolean loaded;
+    private boolean failed;
 
     private int experimentCount;
     private int interactionCount;
@@ -46,7 +47,7 @@ public class StatisticsBean implements Serializable
     {
         String wsdl = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(SEARCH_WS_URL);
 
-        if (!loaded)
+        if (!loaded && !failed)
         {
             try
             {
@@ -55,12 +56,14 @@ public class StatisticsBean implements Serializable
                 interactionCount = client.getSearchPort().countAllBinaryInteractions();
                 proteinCount = client.getSearchPort().countProteinsUsingIntactQuery("*");
                 cvObjectCount = client.getSearchPort().countCvObjectsUsingIntactQuery("*");
+
+                loaded = true;
             }
-            catch (Exception e)
+            catch (Throwable e)
             {
                 e.printStackTrace();
+                failed = true;
             }
-            loaded = true;
         }
     }
 
@@ -72,6 +75,16 @@ public class StatisticsBean implements Serializable
     public void setLoaded(boolean loaded)
     {
         this.loaded = loaded;
+    }
+
+    public boolean isFailed()
+    {
+        return failed;
+    }
+
+    public void setFailed(boolean failed)
+    {
+        this.failed = failed;
     }
 
     public int getExperimentCount()
