@@ -395,3 +395,6 @@
 <html:messages id="msg" property="int.unsaved.prot">
     <font color="red"><li><bean:write name="msg" /></li></font>
 </html:messages>
+<html:messages id="msg" property="int.unsaved.clone">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
