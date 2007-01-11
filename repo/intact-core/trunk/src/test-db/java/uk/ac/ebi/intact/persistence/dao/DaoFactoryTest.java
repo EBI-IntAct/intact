@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 /**
  * TODO comment this!
@@ -33,8 +34,7 @@ public class DaoFactoryTest extends TestCase
         super.tearDown();
     }
 
-    public void testBeginTransactionWithConnection()
-    {
+    public void testBeginTransactionWithConnection() throws IntactTransactionException {
 
         Protein p = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().getByAc("EBI-493");
         assertNotNull(p);
