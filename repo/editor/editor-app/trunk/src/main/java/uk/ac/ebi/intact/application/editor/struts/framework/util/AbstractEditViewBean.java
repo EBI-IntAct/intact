@@ -321,8 +321,6 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
                                                        copy.getShortLabel());
         setShortLabel(newSL);
 
-        // Reset the cloned object with values given by parameter.
-        resetAnnotatedObject(copy);
 
         // Add the annotations in the cloned as new annotations to add.
         Collection<Annotation> annotations = copy.getAnnotations();
@@ -333,6 +331,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // xrefs. Annotations need to be cleared or else deleting an annotation
         // after cloning causes persistence problems. see bug: 1011416
         copy.getAnnotations().clear();
+        copy.setAnnotations(Collections.EMPTY_LIST);
 
         // Add the xrefs in the cloned as new xrefs to add.
         Collection<Xref> xrefs = copy.getXrefs();
@@ -340,6 +339,10 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             addXref(new XreferenceBean(xref));
         }
         copy.getXrefs().clear();
+
+        // Reset the cloned object with values given by parameter.
+        resetAnnotatedObject(copy);
+
     }
 
     /**
@@ -398,6 +401,8 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
                 myOriginal = annotatedObjectDao.getByAc(getOriginalAc());
                 try {
                     AnnotatedObjectImpl copy = (AnnotatedObjectImpl) myOriginal.clone();
+                    copy.getXrefs().clear();
+                    copy.getAnnotations().clear();
                     myAnnotObject = (T) copy;
                 } catch (CloneNotSupportedException e) {
                     log.debug("Exception while cloning" + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
