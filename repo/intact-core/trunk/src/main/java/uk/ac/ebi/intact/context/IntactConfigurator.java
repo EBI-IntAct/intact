@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.context;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.SchemaVersion;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
@@ -159,7 +160,16 @@ public class IntactConfigurator
             log.info("Preloading common CvObjects");
             IntactTransaction tx = DaoFactory.getCurrentInstance(session, RuntimeConfig.getCurrentInstance(session).getDefaultDataConfig()).beginTransaction();
             CvContext.getCurrentInstance(session).loadCommonCvObjects();
-            tx.commit();
+            try{
+                tx.commit();
+            }catch(IntactTransactionException ie){
+                log.error("Exception commiting " + ie);
+                try{
+                    tx.rollback();
+                }catch(IntactTransactionException i){
+                    log.error("Exception rolling back " + ie);
+                }
+            }
         }
 
         setInitialized(session, true);
@@ -196,8 +206,11 @@ public class IntactConfigurator
 
         IntactTransaction tx = daoFactory.beginTransaction();
         DbInfo dbInfoSchemaVersion = daoFactory.getDbInfoDao().get(DbInfo.SCHEMA_VERSION);
-        tx.commit();
-
+        try{
+            tx.commit();
+        }catch(IntactTransactionException e){
+            log.error("Exception commiting " + e);
+        }
         SchemaVersion schemaVersion;
 
         if (dbInfoSchemaVersion == null)
@@ -293,7 +306,12 @@ public class IntactConfigurator
         IntactTransaction tx = daoFactory.beginTransaction();
         Institution institution = daoFactory
                 .getInstitutionDao().getByShortLabel( institutionLabel );
-        tx.commit();
+        try{
+            tx.commit();
+        }catch(IntactTransactionException e){
+            log.error("Exception commiting " + e);
+        }
+
 
         if (institution == null)
         {
@@ -351,7 +369,11 @@ public class IntactConfigurator
             IntactTransaction tx = daoFactory.beginTransaction();
             daoFactory.getInstitutionDao().persist( institution );
             //context.getDataContext().commitTransaction();
-            tx.commit();
+            try{
+                tx.commit();
+            }catch(IntactTransactionException e){
+                log.error("Exception commiting " + e);
+            }
 
             session.setApplicationAttribute(INSTITUTION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }
@@ -380,8 +402,12 @@ public class IntactConfigurator
             IntactTransaction tx = daoFactory.beginTransaction();
             daoFactory.getDbInfoDao().persist( dbInfo );
             //context.getDataContext().commitTransaction();
-            tx.commit();
-
+            try{
+                tx.commit();
+            }catch(IntactTransactionException e){
+                log.error("Exception commiting " + e);
+            }
+            
             session.setApplicationAttribute(SCHEMA_VERSION_TO_BE_PERSISTED_FLAG, Boolean.FALSE);
         }
     }
