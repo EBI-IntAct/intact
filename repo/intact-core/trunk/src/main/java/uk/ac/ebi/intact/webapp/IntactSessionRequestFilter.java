@@ -42,7 +42,8 @@ public class IntactSessionRequestFilter implements Filter {
 
     private static final String FILTERED_PARAM_NAME = "uk.ac.ebi.intact.filter.EXCLUDED_EXTENSIONS";
 
-    private static final String[] DEFAULT_EXCLUDED_EXTENSIONS = new String[] { ".js" };
+    private static final String[] DEFAULT_EXCLUDED_EXTENSIONS = new String[] { ".js","logout" };
+
 
     private List<String> excludedExtensions;
 
@@ -55,7 +56,7 @@ public class IntactSessionRequestFilter implements Filter {
         HttpSession session = req.getSession();
 
         String requestUrl = req.getRequestURL().toString();
-
+        log.debug("Request send is : " + requestUrl);
         // if the the url end matches with a filtered extensions do not start IntactContext
         for (String ext : excludedExtensions){
             if (requestUrl.toLowerCase().endsWith(ext.toLowerCase())){
