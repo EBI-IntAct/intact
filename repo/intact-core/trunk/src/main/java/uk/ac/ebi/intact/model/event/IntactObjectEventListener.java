@@ -13,7 +13,6 @@ import org.hibernate.event.PreUpdateEvent;
 import org.hibernate.event.PreUpdateEventListener;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Auditable;
-import uk.ac.ebi.intact.model.IntactObject;
 
 import java.util.Date;
 
