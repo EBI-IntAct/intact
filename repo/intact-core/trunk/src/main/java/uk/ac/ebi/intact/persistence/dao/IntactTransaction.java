@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 /**
  * It is a wrapper for Transactions
@@ -40,7 +41,7 @@ public class IntactTransaction
         }   */
     }
 
-    public void commit() throws IntactException
+    public void commit() throws IntactTransactionException
     {
         log.debug("Committing transaction");
 
@@ -50,7 +51,7 @@ public class IntactTransaction
         }
         catch (HibernateException e)
         {
-            throw new IntactException("Commit exception", e);
+            throw new IntactTransactionException("Commit exception", e);
         }
 
         assert (wasCommitted());
@@ -58,7 +59,7 @@ public class IntactTransaction
         log.debug("Transaction committed");
     }
 
-    public void rollback() throws IntactException
+    public void rollback() throws IntactTransactionException
     {
         log.debug("Rolling-back transaction");
 
@@ -68,7 +69,7 @@ public class IntactTransaction
         }
         catch (HibernateException e)
         {
-            throw new IntactException("Rollback exception", e);
+            throw new IntactTransactionException("Rollback exception", e);
         }
     }
 
