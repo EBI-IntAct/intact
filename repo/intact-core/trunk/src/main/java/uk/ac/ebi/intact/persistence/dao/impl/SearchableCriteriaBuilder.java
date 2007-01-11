@@ -110,11 +110,14 @@ public class SearchableCriteriaBuilder
             addRestriction(disjAcOrXref, AC_PROPERTY, acOrId);
 
 
-            // TODO add here only search for primaryId of the xref
+            // TODO add here only search for primaryId of the xref and wualifier is identity
 
-
-            addRestriction(disjAcOrXref, xrefProperty(criteria, PRIMARY_ID_PROPERTY), acOrId);
+            Conjunction primaryIdentityConj = Restrictions.conjunction();
+            disjAcOrXref.add(primaryIdentityConj);
             junction.add(disjAcOrXref);
+
+            addRestriction(primaryIdentityConj, xrefProperty(criteria, PRIMARY_ID_PROPERTY), acOrId);
+            primaryIdentityConj.add(Restrictions.eq(xrefCvXrefQualifierXrefProperty(criteria, "primaryId"), CvXrefQualifier.IDENTITY_MI_REF));
         }
 
         // shortLabel
@@ -504,6 +507,34 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
+    private String xrefCvXrefQualifierProperty(Criteria criteria, String property)
+    {
+        String aliasName = "cvXrefQualifier";
+
+        if (!aliasesCreated.contains(aliasName))
+        {
+            criteria.createAlias(xrefProperty(criteria, "cvXrefQualifier"), aliasName, CriteriaSpecification.LEFT_JOIN);
+
+            aliasesCreated.add(aliasName);
+        }
+
+        return aliasName + "." + property;
+    }
+
+    private String xrefCvXrefQualifierXrefProperty(Criteria criteria, String property)
+    {
+        String aliasName = "cvXrefQualifierXrefs";
+
+        if (!aliasesCreated.contains(aliasName))
+        {
+            criteria.createAlias(xrefCvXrefQualifierProperty(criteria, "xrefs"), aliasName, CriteriaSpecification.LEFT_JOIN);
+
+            aliasesCreated.add(aliasName);
+        }
+
+        return aliasName + "." + property;
+    }
+
     private String annotationCvTopicProperty(Criteria criteria, String property)
     {
         String aliasName = "annotCvTopic";
@@ -572,11 +603,6 @@ public class SearchableCriteriaBuilder
     private static boolean isValueValid(QueryPhrase value)
     {
         return value != null && !value.isOnlyWildcard();
-    }
-
-    private static boolean isValueValid(String value)
-    {
-        return value != null;
     }
 
 
