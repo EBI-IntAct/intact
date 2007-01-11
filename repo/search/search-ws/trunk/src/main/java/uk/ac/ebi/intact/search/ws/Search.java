@@ -180,37 +180,61 @@ public class Search
     @WebMethod
     public int countExperimentsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(Experiment.class, query);
+        int count = new SimpleSearchService().count(Experiment.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public int countProteinsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(ProteinImpl.class, query);
+        int count = new SimpleSearchService().count(ProteinImpl.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public int countNucleicAcidsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(NucleicAcidImpl.class, query);
+        int count = new SimpleSearchService().count(NucleicAcidImpl.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public int countSmallMoleculesUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(SmallMoleculeImpl.class, query);
+        int count = new SimpleSearchService().count(SmallMoleculeImpl.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public int countInteractionsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(InteractionImpl.class, query);
+        int count = new SimpleSearchService().count(InteractionImpl.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public int countCvObjectsUsingIntactQuery(String query)
     {
-        return new SimpleSearchService().count(CvObject.class, query);
+        int count = new SimpleSearchService().count(CvObject.class, query);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
@@ -220,43 +244,71 @@ public class Search
         int componentCount = daoFactory.getComponentDao().countAll();
         int interactionCount = daoFactory.getInteractionDao().countAll();
 
-        return (componentCount - interactionCount);
+        int count = (componentCount - interactionCount);
+
+        getDataContext().commitTransaction();
+
+        return count;
     }
 
     @WebMethod
     public List<SimpleResult> searchExperimentsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {Experiment.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {Experiment.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
     public List<SimpleResult> searchProteinsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {ProteinImpl.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {ProteinImpl.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
     public List<SimpleResult> searchNucleicAcidsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {NucleicAcidImpl.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {NucleicAcidImpl.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
     public List<SimpleResult> searchSmallMoleculesUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {SmallMoleculeImpl.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {SmallMoleculeImpl.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
     public List<SimpleResult> searchInteractionsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {InteractionImpl.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {InteractionImpl.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
     public List<SimpleResult> searchCvObjectsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        return searchUsingQuery(query, new Class[] {CvObject.class}, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, new Class[] {CvObject.class}, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     @WebMethod
@@ -276,7 +328,11 @@ public class Search
             }
         }
 
-        return searchUsingQuery(query, searchables, firstResult, maxResults);
+        List<SimpleResult> results = searchUsingQuery(query, searchables, firstResult, maxResults);
+
+        getDataContext().commitTransaction();
+
+        return results;
     }
 
     private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable>[] searchables, Integer firstResult, Integer maxResults)
@@ -298,6 +354,8 @@ public class Search
             }
         }
 
+        getDataContext().commitTransaction();
+
         return results;
     }
 
@@ -312,6 +370,8 @@ public class Search
             AnnotatedObject ao = (AnnotatedObject) result;
             results.add(new SimpleResult(ao.getAc(), ao.getShortLabel(), ao.getFullName(), ao.getClass().getName()));
         }
+
+        getDataContext().commitTransaction();
 
         return results;
     }
