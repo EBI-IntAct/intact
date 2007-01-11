@@ -222,19 +222,16 @@ public class CvHelper {
 
     public static void main(String[] args) throws IntactException {
 
-//        Collection<String> miRefs = new ArrayList();
-//        miRefs = cvsTest.getChildrenMiRefs(cvsTest.getNucleicAcid(), miRefs);
-//        System.out.println("miRefs.size() = " + miRefs.size());
-//        for(String miRef : miRefs){
-//            System.out.println("miRef = " + miRef);
-//        }
-
         IntactTransaction tx = DaoProvider.getDaoFactory().beginTransaction();
 
         CvInteractorType newt = CvHelper.getNucleicAcid();//.getNewt();
                 System.out.println("newt.getShortLabel() = " + newt.getShortLabel());
 
-        tx.commit();
+        try{
+            tx.commit();
+        } catch(Exception e){
+            System.out.println("Exception commiting " + e);    
+        }
 
     }
 
