@@ -16,9 +16,11 @@
 package uk.ac.ebi.intact.persistence.svc;
 
 import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * TODO comment this!
@@ -29,11 +31,21 @@ import java.util.List;
  */
 public interface SearchService
 {
+    static final Class<? extends Searchable>[] STANDARD_SEARCHABLES = SearchableDao.STANDARD_SEARCHABLES;
+
     int count(Class<? extends Searchable> searchable, String query);
 
     int count(Class<? extends Searchable> searchable, SearchableQuery query);
 
+    Map<Class<? extends Searchable>,Integer> count(Class<? extends Searchable>[] searchables, String query);
+
+    Map<Class<? extends Searchable>,Integer> count(Class<? extends Searchable>[] searchables, SearchableQuery query);
+    
     <S extends Searchable> List<S> search(Class<S> searchable, String query, Integer firstResult, Integer maxResults);
 
     <S extends Searchable> List<S> search(Class<S> searchable, SearchableQuery query, Integer firstResult, Integer maxResults);
+
+    List<? extends Searchable> search(Class<? extends Searchable>[] searchables, String query, Integer firstResult, Integer maxResults);
+
+    List<? extends Searchable> search(Class<? extends Searchable>[] searchables, SearchableQuery query, Integer firstResult, Integer maxResults);
 }

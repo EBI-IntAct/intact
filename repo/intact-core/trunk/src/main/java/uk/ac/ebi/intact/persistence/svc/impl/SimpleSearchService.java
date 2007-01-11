@@ -25,6 +25,7 @@ import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
 import uk.ac.ebi.intact.persistence.svc.SearchService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Search behaviour: first search using the exact query provided. If no results are returned
@@ -57,6 +58,30 @@ public class SimpleSearchService implements SearchService
         return getDao().countByQuery(searchable, createSimpleQueryWithWildcards(query));
     }
 
+    public Map<Class<? extends Searchable>, Integer> count(Class<? extends Searchable>[] searchables, String query)
+    {
+        return getDao().countByQuery(searchables, createSimpleQuery(query));
+    }
+
+    public Map<Class<? extends Searchable>, Integer> count(Class<? extends Searchable>[] searchables, SearchableQuery query)
+    {
+        Map<Class<? extends Searchable>, Integer> count = getDao().countByQuery(searchables, query);
+
+        int total = 0;
+
+        for (int c : count.values())
+        {
+            total =+ c;
+        }
+
+        if (total > 0)
+        {
+            return count;
+        }
+
+        return getDao().countByQuery(searchables, createSimpleQueryWithWildcards(query));
+    }
+
     public <S extends Searchable> List<S> search(Class<S> searchable, String query, Integer firstResult, Integer maxResults)
     {
         return search(searchable, createSimpleQuery(query), firstResult, maxResults);
@@ -64,17 +89,27 @@ public class SimpleSearchService implements SearchService
 
     public <S extends Searchable> List<S> search(Class<S> searchable, SearchableQuery query, Integer firstResult, Integer maxResults)
     {
+        return (List<S>) search(new Class[] {searchable}, query, firstResult, maxResults);
+    }
+
+    public List<? extends Searchable> search(Class<? extends Searchable>[] searchables, String query, Integer firstResult, Integer maxResults)
+    {
+        return search(searchables, createSimpleQuery(query), firstResult, maxResults);
+    }
+
+    public List<? extends Searchable> search(Class<? extends Searchable>[] searchables, SearchableQuery query, Integer firstResult, Integer maxResults)
+    {
         if (firstResult == null) firstResult = 0;
         if (maxResults == null) maxResults = Integer.MAX_VALUE;
 
-        List<S> results = getDao().getByQuery(searchable, query, firstResult, maxResults);
+        List<? extends Searchable> results = getDao().getByQuery(searchables, query, firstResult, maxResults);
 
         if (results.size() > 0)
         {
             return results;
         }
 
-        return getDao().getByQuery(searchable, createSimpleQueryWithWildcards(query), firstResult, maxResults);
+        return getDao().getByQuery(searchables, createSimpleQueryWithWildcards(query), firstResult, maxResults);
     }
 
     private SearchableDao getDao()

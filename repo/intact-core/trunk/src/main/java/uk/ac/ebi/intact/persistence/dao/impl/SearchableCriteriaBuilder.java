@@ -87,7 +87,7 @@ public class SearchableCriteriaBuilder
         }
 
         Criteria criteria = session.createCriteria(searchableClass);
-
+        
         Junction junction;
 
         if (query.isDisjunction())
@@ -101,6 +101,21 @@ public class SearchableCriteriaBuilder
 
         // ac
         addRestriction(junction, AC_PROPERTY, query.getAc());
+
+        // ac or xref id
+        QueryPhrase acOrId = query.getAcOrId();
+        if (isValueValid(acOrId))
+        {
+            Disjunction disjAcOrXref = Restrictions.disjunction();
+            addRestriction(disjAcOrXref, AC_PROPERTY, acOrId);
+
+
+            // TODO add here only search for primaryId of the xref
+
+
+            addRestriction(disjAcOrXref, xrefProperty(criteria, PRIMARY_ID_PROPERTY), acOrId);
+            junction.add(disjAcOrXref);
+        }
 
         // shortLabel
         addRestriction(junction, SHORT_LABEL_PROPERTY, query.getShortLabel());
@@ -284,7 +299,7 @@ public class SearchableCriteriaBuilder
 
                 if (isLikeQuery(term))
                 {
-                    termJunct.add(Restrictions.like(property, val));
+                    termJunct.add(Restrictions.like(property, val, mathModeForTerm(term)));
                 }
                 else
                 {
@@ -317,6 +332,23 @@ public class SearchableCriteriaBuilder
         }
         
         return false;
+    }
+
+    private MatchMode mathModeForTerm(QueryTerm term)
+    {
+        if (term.hasModifier(QueryModifier.WILDCARD_START) && term.hasModifier(QueryModifier.WILDCARD_END))
+        {
+            return MatchMode.ANYWHERE;
+        }
+        else if (term.hasModifier(QueryModifier.WILDCARD_START))
+        {
+            return MatchMode.START;
+        }
+        else if (term.hasModifier(QueryModifier.WILDCARD_END))
+        {
+            return MatchMode.END;
+        }
+        return MatchMode.EXACT;
     }
 
     private void addFullTextRestriction(Class<? extends Searchable> searchableClass, Criteria criteria, QueryPhrase value, boolean autoAddWildcards)
@@ -537,7 +569,12 @@ public class SearchableCriteriaBuilder
         return aliasName + "." + property;
     }
 
-    private static boolean isValueValid(Object value)
+    private static boolean isValueValid(QueryPhrase value)
+    {
+        return value != null && !value.isOnlyWildcard();
+    }
+
+    private static boolean isValueValid(String value)
     {
         return value != null;
     }

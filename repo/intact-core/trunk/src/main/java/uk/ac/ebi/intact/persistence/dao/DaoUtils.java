@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.AutoAddWildcardConverter;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.StandardAutoAddWildcardConverter;
 
 /**
@@ -64,55 +64,6 @@ public class DaoUtils
         String replacedValue = replaceWildcardsByPercent(value);
 
         return (replacedValue.startsWith("%") || replacedValue.endsWith("%"));
-    }
-
-    /**
-     * Adds a percent symbol (%) to the start and end of the value
-     * so it can be used in like queries
-     * @param value the value to use. If it already contains percents, no new
-     * percents will be added
-     * @return the value with percents
-     */
-    public static String addPercents(String value)
-    {
-        value = addStartPercent(value);
-        value = addEndPercent(value);
-
-        return value;
-    }
-
-    public static String addEndPercent(String value)
-    {
-        if (value == null)
-        {
-            throw new NullPointerException("value");
-        }
-
-        value = replaceWildcardsByPercent(value);
-
-        if (!value.endsWith("%"))
-        {
-            value = value+"%";
-        }
-
-        return value;
-    }
-
-    public static String addStartPercent(String value)
-    {
-        if (value == null)
-        {
-            throw new NullPointerException("value");
-        }
-
-        value = replaceWildcardsByPercent(value);
-
-        if (!value.startsWith("%"))
-        {
-            value = "%"+value;
-        }
-
-        return value;
     }
 
     /**

@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
+import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,16 @@ public class SearchableDaoImplTest extends TestCase
         assertEquals(1, count);
     }
 
-     public void testCountByQuery_2ac() throws Exception
+    public void testMy() throws Exception
+    {
+        SearchableQuery query = new SearchableQuery();
+        query.setDescription(converter.objectToPhrase("Breast cancer type 2 susceptibility protein"));
+
+        int count = new SimpleSearchService().count(InteractorImpl.class, query);
+        System.out.println(count);
+    }
+
+    public void testCountByQuery_2ac() throws Exception
     {
         SearchableQuery query = new SearchableQuery();
         query.setAc(converter.objectToPhrase("TEST-5153,TEST-5169"));

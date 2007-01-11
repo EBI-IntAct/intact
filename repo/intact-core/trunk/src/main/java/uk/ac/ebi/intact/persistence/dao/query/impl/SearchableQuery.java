@@ -20,9 +20,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 
+import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.beans.PropertyDescriptor;
 
 /**
  * Class to be used as query value for searches. It is used
@@ -35,6 +35,7 @@ import java.beans.PropertyDescriptor;
 public class SearchableQuery implements Serializable
 {
     private QueryPhrase ac;
+    private QueryPhrase acOrId;
     private QueryPhrase shortLabel;
     private QueryPhrase description;
     private QueryPhrase fullText;
@@ -62,6 +63,16 @@ public class SearchableQuery implements Serializable
     public void setAc(QueryPhrase ac)
     {
         this.ac = ac;
+    }
+
+    public QueryPhrase getAcOrId()
+    {
+        return acOrId;
+    }
+
+    public void setAcOrId(QueryPhrase acOrId)
+    {
+        this.acOrId = acOrId;
     }
 
     public QueryPhrase getShortLabel()
@@ -213,6 +224,7 @@ public class SearchableQuery implements Serializable
         StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
 
         appendValueToStringBuffer(sb, "ac", converter.phraseToObject(ac));
+        appendValueToStringBuffer(sb, "acOrId", converter.phraseToObject(acOrId));
         appendValueToStringBuffer(sb, "shortLabel", converter.phraseToObject(shortLabel));
         appendValueToStringBuffer(sb, "description", converter.phraseToObject(description));
         appendValueToStringBuffer(sb, "fullText", converter.phraseToObject(fullText));
@@ -278,6 +290,7 @@ public class SearchableQuery implements Serializable
         if (description != null ? !description.equals(that.description) : that.description != null) return false;
         if (fullText != null ? !fullText.equals(that.fullText) : that.fullText != null) return false;
         if (shortLabel != null ? !shortLabel.equals(that.shortLabel) : that.shortLabel != null) return false;
+        if (acOrId != null ? !acOrId.equals(that.acOrId) : that.acOrId != null) return false;
         if (xref != null ? !xref.equals(that.xref) : that.xref != null) return false;
 
         return true;
@@ -288,6 +301,7 @@ public class SearchableQuery implements Serializable
     {
         int result;
         result = (ac != null ? ac.hashCode() : 0);
+        result = 31 * result + (acOrId != null ? acOrId.hashCode() : 0);
         result = 31 * result + (shortLabel != null ? shortLabel.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (fullText != null ? fullText.hashCode() : 0);

@@ -15,7 +15,10 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Represents a term in a query
@@ -28,7 +31,7 @@ public class QueryTerm
 {
 
     private String value;
-    private QueryModifier[] modifiers;
+    private List<QueryModifier> modifiers;
 
     public QueryTerm()
     {
@@ -37,12 +40,19 @@ public class QueryTerm
     public QueryTerm(String value)
     {
         this.value = value;
+        this.modifiers = new ArrayList<QueryModifier>();
     }
 
     public QueryTerm (String value, QueryModifier ... modifiers)
     {
+        this(value, Arrays.asList(modifiers));
+    }
+
+    public QueryTerm (String value, Collection<QueryModifier> modifiers)
+    {
         this.value = value;
-        this.modifiers = modifiers;
+        this.modifiers = new ArrayList<QueryModifier>(modifiers);
+        modifiers.addAll(modifiers);
     }
 
     public String getValue()
@@ -59,24 +69,52 @@ public class QueryTerm
     {
         if (modifiers == null)
         {
-            modifiers = new QueryModifier[0];
+            modifiers = new ArrayList<QueryModifier>();
         }
-        return modifiers;
+        return modifiers.toArray(new QueryModifier[modifiers.size()]);
     }
 
     public void setModifiers(QueryModifier[] modifiers)
     {
-        this.modifiers = modifiers;
+        this.modifiers = new ArrayList<QueryModifier>(Arrays.asList(modifiers));
     }
 
     public boolean isOnlyWildcard()
     {
-        if (modifiers.length == 1)
+        if (modifiers.size() == 1)
         {
-            return (modifiers[0] == QueryModifier.WILDCARD_VALUE);
+            return (modifiers.get(0) == QueryModifier.WILDCARD_VALUE);
         }
         return false;
     }
+
+    public boolean startsWith(String prefix)
+    {
+        return value.startsWith(prefix);
+    }
+
+    public boolean endsWith(String suffix)
+    {
+        return value.endsWith(suffix);
+    }
+
+    public boolean hasModifier(QueryModifier modifier)
+    {
+        for (QueryModifier mod : getModifiers())
+        {
+            if (mod == modifier)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean addModifier(QueryModifier modifier)
+    {
+        return modifiers.add(modifier);
+    }
+
 
     @Override
     public boolean equals(Object o)
@@ -86,7 +124,7 @@ public class QueryTerm
 
         QueryTerm queryTerm = (QueryTerm) o;
 
-        if (!Arrays.equals(modifiers, queryTerm.modifiers)) return false;
+        if (modifiers != null ? !modifiers.equals(queryTerm.modifiers) : queryTerm.modifiers != null) return false;
         if (value != null ? !value.equals(queryTerm.value) : queryTerm.value != null) return false;
 
         return true;
@@ -97,7 +135,7 @@ public class QueryTerm
     {
         int result;
         result = (value != null ? value.hashCode() : 0);
-        result = 31 * result + (modifiers != null ? Arrays.hashCode(modifiers) : 0);
+        result = 31 * result + (modifiers != null ? modifiers.hashCode() : 0);
         return result;
     }
 }
