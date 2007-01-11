@@ -163,7 +163,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             // Add to the view.
             myComponents.add(cb);
             // The componen needs to be updated as well.
-//            myComponentsToUpdate.add(cb);
+            myComponentsToUpdate.add(cb);
         }
     }
 
