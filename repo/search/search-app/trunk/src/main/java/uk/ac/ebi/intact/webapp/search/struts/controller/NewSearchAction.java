@@ -86,6 +86,11 @@ public class NewSearchAction extends SearchActionBase
 
         if (searchClassName == null)
         {
+            searchClassName = (String) getRequest().getAttribute("searchClass");
+        }
+
+        if (searchClassName == null)
+        {
             return DEFAULT_SEARCHABLE_TYPES;
         }
 

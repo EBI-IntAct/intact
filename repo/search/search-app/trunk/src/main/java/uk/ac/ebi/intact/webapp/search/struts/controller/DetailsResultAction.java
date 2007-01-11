@@ -23,7 +23,7 @@ import java.util.Collection;
  * This Action can be called in case of a Experiement or an Interaction
  *
  * @author Michael Kleen
- * @version $Id$
+ * @version $Id:DetailsResultAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class DetailsResultAction extends AbstractResultAction {
 
@@ -81,7 +81,7 @@ public class DetailsResultAction extends AbstractResultAction {
 
             // We store the MainDetailView in the request, and it will be accessed from the jsp page
             request.setAttribute( SearchConstants.VIEW_BEAN, view );
-            request.getParameterMap().put("searchClass", SearchClass.EXPERIMENT.getShortName());
+            request.setAttribute("searchClass", SearchClass.EXPERIMENT.getShortName());
 
              //send to the detail view JSP
             logger.info( "detailsAction: forwarding to 'details' JSP.." );

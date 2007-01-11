@@ -124,7 +124,9 @@ public abstract class SearchActionBase extends IntactSearchAction
         webappContext.setCurrentSearchQuery(getSearchableQuery());
         webappContext.setCurrentSearchTypes(getSearchableTypes());
 
-        boolean explicitSearch = request.getParameter("searchClass") != null;
+
+
+        boolean explicitSearch = (request.getParameter("searchClass") != null) || (request.getAttribute("searchClass") != null);
 
         // if the query is not paginated, count the results
         if (!explicitSearch)

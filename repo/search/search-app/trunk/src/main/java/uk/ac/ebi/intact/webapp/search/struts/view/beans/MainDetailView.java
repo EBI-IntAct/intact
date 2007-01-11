@@ -13,7 +13,9 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.DaoUtils;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryTermConverter;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
@@ -83,9 +85,9 @@ public class MainDetailView  extends AbstractView
 
             if (query != null && !query.getAc().getTerms().isEmpty())
             {
-                // FIXME query.getAc() does not necessarily return an ac, as it can be anytype of query.
-                // Now, if another thing is used, the interaction won't be placed prominently
-                String ac = query.getAc().getTerms().iterator().next().toString();
+                QueryTermConverter converter = new StandardQueryTermConverter();
+
+                String ac = converter.termToString(query.getAc().getTerms().iterator().next());
                 if (ac != null && ac.trim().length() > 0)
                 {
                     priorInteractionAcs = new String[]  { ac };

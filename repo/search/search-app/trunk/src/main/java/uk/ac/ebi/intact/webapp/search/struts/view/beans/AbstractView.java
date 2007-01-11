@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:AbstractView.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  * @since <pre>31-May-2006</pre>
  */
 public abstract class AbstractView
@@ -39,7 +39,12 @@ public abstract class AbstractView
     public int getCurrentPage(){
         int currentPage = 0;
 
-        String strPage = request.getParameter("page");
+        String strPage = (String) request.getAttribute("page");
+
+        if (strPage == null)
+        {
+            strPage = request.getParameter("page");
+        }
 
         if (strPage != null && strPage.length() != 0)
         {
@@ -50,7 +55,7 @@ public abstract class AbstractView
     }
 
     public void setCurrentPage(int page){
-        request.getParameterMap().put("page", page);
+        request.setAttribute("page", page);
     }
 
     public int getItemsPerPage() {
