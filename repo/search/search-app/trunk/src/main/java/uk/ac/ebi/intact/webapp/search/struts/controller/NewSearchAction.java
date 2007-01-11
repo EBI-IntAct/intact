@@ -15,17 +15,16 @@
  */
 package uk.ac.ebi.intact.webapp.search.struts.controller;
 
-import org.apache.struts.action.DynaActionForm;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import org.apache.struts.action.DynaActionForm;
+import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
 import uk.ac.ebi.intact.searchengine.SearchClass;
 
-import java.util.Arrays;
-import java.net.URLEncoder;
 import java.net.URLDecoder;
-import java.io.UnsupportedEncodingException;
 
 /**
  * Execute simple searches
@@ -64,12 +63,15 @@ public class NewSearchAction extends SearchActionBase
         }
         else
         {
-            query = new SearchableQuery();
+            StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
+            QueryPhrase phrase = converter.objectToPhrase(searchValue);
+
+                    query = new SearchableQuery();
             query.setDisjunction(true);
-            query.setAc(searchValue);
-            query.setShortLabel(searchValue);
-            query.setDescription(searchValue);
-            query.setXref(searchValue);
+            query.setAc(phrase);
+            query.setShortLabel(phrase);
+            query.setDescription(phrase);
+            query.setXref(phrase);
         }
 
         return query;
@@ -100,6 +102,11 @@ public class NewSearchAction extends SearchActionBase
     private String getParameterFromUrl(String paramName)
     {
         String url = getRequest().getQueryString();
+
+        if (url == null)
+        {
+            return null;
+        }
 
         String[] params = url.split("&");
 

@@ -20,8 +20,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.persistence.dao.DaoUtils;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
 import uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.business.CvLists;
 import uk.ac.ebi.intact.webapp.search.struts.controller.SearchActionBase;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
@@ -84,39 +85,28 @@ public class AdvancedSearchAction extends SearchActionBase
         cvDB = cvDB.trim();
         cvTopic = cvTopic.trim();
 
-        // add automatic wildcards to the description
-        if (description != null && description.length() > 0)
-        {
-            description = DaoUtils.addPercents(description);
-        }
-
-        if (annotation != null && annotation.length() > 0)
-        {
-            annotation = DaoUtils.addPercents(annotation);
-        }
-
         // create the searchable query object
         SearchableQuery searchableQuery = new SearchableQuery();
 
-        searchableQuery.setAc(ac);
-        searchableQuery.setShortLabel(shortlabel);
+        searchableQuery.setAcOrId(toPhrase(ac));
+        searchableQuery.setShortLabel(toPhrase(shortlabel));
         //searchableQuery.setFullText(fulltext);
-        searchableQuery.setDescription(description);
-        searchableQuery.setAnnotationText(annotation);
-        searchableQuery.setXref(xref);
+        searchableQuery.setDescription(toPhrase(description));
+        searchableQuery.setAnnotationText(toPhrase(annotation));
+        searchableQuery.setXref(toPhrase(xref));
 
         if (!cvTopic.equalsIgnoreCase(CvLists.ALL_TOPICS_SELECTED))
         {
-            searchableQuery.setCvTopicLabel(cvTopic);
+            searchableQuery.setCvTopicLabel(toPhrase(cvTopic));
         }
 
         if (!cvDB.equalsIgnoreCase(CvLists.ALL_DATABASES_SELECTED)) {
-            searchableQuery.setCvDatabaseLabel(cvDB);
+            searchableQuery.setCvDatabaseLabel(toPhrase(cvDB));
         }
 
         if (!cvInteraction.equalsIgnoreCase(CvLists.NO_CV_INTERACTION_SELECTED))
         {
-            searchableQuery.setCvInteractionLabel(cvInteraction);
+            searchableQuery.setCvInteractionLabel(toPhrase(cvInteraction, true));
 
             if (cvIdentificationIncludeChildren != null)
                 searchableQuery.setIncludeCvInteractionChildren(cvInteractionIncludeChildren);
@@ -124,7 +114,7 @@ public class AdvancedSearchAction extends SearchActionBase
 
         if (!cvInteractionType.equalsIgnoreCase(CvLists.NO_CV_INTERACTION_TYPE_SELECTED))
         {
-            searchableQuery.setCvInteractionTypeLabel(cvInteractionType);
+            searchableQuery.setCvInteractionTypeLabel(toPhrase(cvInteractionType, true));
 
             if (cvInteractionTypeIncludeChildren != null)
                 searchableQuery.setIncludeCvInteractionTypeChildren(cvInteractionTypeIncludeChildren);
@@ -132,12 +122,37 @@ public class AdvancedSearchAction extends SearchActionBase
 
         if (!cvIdentification.equalsIgnoreCase(CvLists.NO_CV_IDENTIFICATION_SELECTED))
         {
-            searchableQuery.setCvIdentificationLabel(cvIdentification);
+            searchableQuery.setCvIdentificationLabel(toPhrase(cvIdentification, true));
 
             if (cvIdentificationIncludeChildren != null)
                 searchableQuery.setIncludeCvIdentificationChildren(cvIdentificationIncludeChildren);
         }
 
         return searchableQuery;
+    }
+
+    private static QueryPhrase toPhrase(String value)
+    {
+        if (value.trim().length() == 0)
+        {
+            return null;
+        }
+
+        return new StandardQueryPhraseConverter().objectToPhrase(value);
+    }
+
+    private static QueryPhrase toPhrase(String value, boolean oneTermPhrase)
+    {
+        if (value.trim().length() == 0)
+        {
+            return null;
+        }
+
+        if (oneTermPhrase)
+        {
+            value = "\""+value+"\"";
+        }
+
+        return new StandardQueryPhraseConverter().objectToPhrase(value);
     }
 }

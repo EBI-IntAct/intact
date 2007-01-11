@@ -23,8 +23,11 @@ import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.SearchableDao;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
+import uk.ac.ebi.intact.persistence.svc.SearchService;
+import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
@@ -54,6 +57,8 @@ public abstract class SearchActionBase extends IntactSearchAction
     private HttpServletRequest request;
     private HttpServletResponse response;
 
+    private SimpleSearchService searchService;
+
     protected static Class<? extends Searchable>[] DEFAULT_SEARCHABLE_TYPES
             = new Class[] {
                             Experiment.class,
@@ -74,6 +79,8 @@ public abstract class SearchActionBase extends IntactSearchAction
         this.form = form;
         this.request = request;
         this.response = response;
+
+        this.searchService = new SimpleSearchService();
 
         // redirect to the dispatcher if the binary view is required
         String binaryView = request.getParameter("binary");
@@ -185,16 +192,13 @@ public abstract class SearchActionBase extends IntactSearchAction
             if (log.isDebugEnabled())
                 log.debug("No results found in the application scope, from previous searches. Counting from db.");
 
-            SearchableDao dao = getIntactContext().getDataContext()
-                    .getDaoFactory().getSearchableDao();
-
             if (getSearchableTypes() != null)
             {
-                resultInfo = dao.countByQuery(getSearchableTypes(), getSearchableQuery());
+                resultInfo = searchService.count(getSearchableTypes(), getSearchableQuery());
             }
             else
             {
-                resultInfo = dao.countByQuery(getSearchableQuery());
+                resultInfo = searchService.count(SearchService.STANDARD_SEARCHABLES, getSearchableQuery());
             }
         }
         else
@@ -284,19 +288,16 @@ public abstract class SearchActionBase extends IntactSearchAction
                     + " firstResult=" + firstResult + " maxResults=" + maxResults+" totalResults: "
                     + SearchWebappContext.getCurrentInstance().getTotalResults());
         }
-        
-        SearchableDao dao = IntactContext.getCurrentInstance().getDataContext()
-                .getDaoFactory().getSearchableDao();
 
         List<? extends Searchable> results;
 
         if (getSearchableTypes() != null)
         {
-            results = dao.getByQuery(getSearchableTypes(), getSearchableQuery(), firstResult, maxResults);
+            results = searchService.search(getSearchableTypes(), getSearchableQuery(), firstResult, maxResults);
         }
         else
         {
-            results = dao.getByQuery(getSearchableQuery(), firstResult, maxResults);
+            results = searchService.search(SearchService.STANDARD_SEARCHABLES, getSearchableQuery(), firstResult, maxResults);
         }
 
         if (results.isEmpty())
@@ -416,8 +417,11 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     private ActionForward prepareBinaryView(String binaryValue)
     {
+        StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
+        QueryPhrase phrase = converter.objectToPhrase(binaryValue);
+
         SearchableQuery query = new SearchableQuery();
-        query.setAc(binaryValue);
+        query.setAc(phrase);
 
         log.debug("Executing query "+query+" for searchable type: InteractorImpl");
 

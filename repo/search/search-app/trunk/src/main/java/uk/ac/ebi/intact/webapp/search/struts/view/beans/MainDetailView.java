@@ -13,14 +13,14 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.DaoUtils;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
+import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -81,14 +81,14 @@ public class MainDetailView  extends AbstractView
         {
             SearchableQuery query = webappContext.getCurrentSearchQuery();
 
-            if (query != null)
+            if (query != null && !query.getAc().getTerms().isEmpty())
             {
                 // FIXME query.getAc() does not necessarily return an ac, as it can be anytype of query.
                 // Now, if another thing is used, the interaction won't be placed prominently
-                String ac = query.getAc();
+                String ac = query.getAc().getTerms().iterator().next().toString();
                 if (ac != null && ac.trim().length() > 0)
                 {
-                    priorInteractionAcs = new String[]  { query.getAc() };
+                    priorInteractionAcs = new String[]  { ac };
                 }
             }
 
