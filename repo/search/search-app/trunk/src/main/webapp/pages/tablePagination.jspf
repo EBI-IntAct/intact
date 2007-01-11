@@ -1,4 +1,5 @@
 <%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <!--
 Renders a pagination table for the data shown. The attribute SearchConstants.TOTAL_RESULTS_ATT_NAME
 has to be already in request scope, so the paginator knows which is the total results and can
@@ -75,69 +76,70 @@ calculate the pages to render. The results per page is determined by SearchConst
         }
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags
-        request.getParameterMap().put("page", currentPage);
 
-        request.getParameterMap().put("resultsPerPage", resultsPerPage);
-        request.getParameterMap().put("totalResults", totalResults);
+        request.setAttribute("page", currentPage);
 
-        request.getParameterMap().put("pageCount", pageCount);
-        request.getParameterMap().put("urlWithoutPage", urlWithoutPage);
+        request.setAttribute("resultsPerPage", resultsPerPage);
+        request.setAttribute("totalResults", totalResults);
+
+        request.setAttribute("pageCount", pageCount);
+        request.setAttribute("urlWithoutPage", urlWithoutPage);
     }
 %>
 
-<c:if test="${param.page > 0}">
+<c:if test="${page > 0}">
 
     <table style="width:100%;">
         <tr>
-          <c:if test="${param.page-1 > 0}">
+          <c:if test="${page-1 > 0}">
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&page=1'><b>&lt;&lt;First</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${urlWithoutPage}&page=1'><b>&lt;&lt;First</b></a>" escapeXml="false"/>
               </td>
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.page-1}'><b>&lt;Previous</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${urlWithoutPage}&page=${page-1}'><b>&lt;Previous</b></a>" escapeXml="false"/>
               </td>
           </c:if>
 
-           <c:forEach var="i" begin="1" end="${param.pageCount}" step="1">
-               <c:if test="${i <= 5 || i >= param.pageCount-5 || (i >= param.page-6 && i <= param.page+6)}">
+           <c:forEach var="i" begin="1" end="${pageCount}" step="1">
+               <c:if test="${i <= 5 || i >= pageCount-5 || (i >= page-6 && i <= page+6)}">
                     <td>
                         <c:choose>
-                            <c:when test="${i == param.page}">
+                            <c:when test="${i == page}">
                                 <span style="color: red">
                                     <c:out value="${i}" />
                                 </span>
                             </c:when>
                             <c:otherwise>
-                                <c:out value="<a href='search?${param.urlWithoutPage}&page=${i}'>${i}</a>" escapeXml="false"/>
+                                <c:out value="<a href='search?${urlWithoutPage}&page=${i}'>${i}</a>" escapeXml="false"/>
                             </c:otherwise>
                         </c:choose>
                      </td>
                  </c:if>
-                 <c:if test="${(i == param.page-6-1 && param.page-6-1 > 5) || (i == param.page+6 && param.page+6 < param.pageCount-5)}">
+                 <c:if test="${(i == page-6-1 && page-6-1 > 5) || (i == page+6 && page+6 < pageCount-5)}">
                      <td>...</td>
                  </c:if>
             </c:forEach>
 
-            <c:if test="${param.page+1 <= param.pageCount}">
+            <c:if test="${page+1 <= pageCount}">
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.page+1}'><b>Next&gt;</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${urlWithoutPage}&page=${page+1}'><b>Next&gt;</b></a>" escapeXml="false"/>
               </td>
               <td>
-                  <c:out value="<a href='search?${param.urlWithoutPage}&page=${param.pageCount}'><b>Last&gt;&gt;</b></a>" escapeXml="false"/>
+                  <c:out value="<a href='search?${urlWithoutPage}&page=${pageCount}'><b>Last&gt;&gt;</b></a>" escapeXml="false"/>
               </td>
           </c:if>
 
             <td class="data" style="width: 100%; text-align: right; vertical-align: bottom; white-space: nowrap;">
-                <c:out value="&nbsp;&nbsp;Results from <b>${((param.page-1)*param.resultsPerPage)+1}</b>" escapeXml="false"/>
+                <c:out value="&nbsp;&nbsp;Results from <b>${((page-1)*resultsPerPage)+1}</b>" escapeXml="false"/>
                 <c:choose>
-                    <c:when test="${param.page*param.resultsPerPage < param.totalResults}">
-                        <c:out value="to <b>${param.page*param.resultsPerPage}</b>." escapeXml="false"/>
+                    <c:when test="${page*resultsPerPage < totalResults}">
+                        <c:out value="to <b>${page*resultsPerPage}</b>." escapeXml="false"/>
                     </c:when>
                     <c:otherwise>
-                        <c:out value="to <b>${param.totalResults}</b>." escapeXml="false"/>
+                        <c:out value="to <b>${totalResults}</b>." escapeXml="false"/>
                     </c:otherwise>
                 </c:choose>
-                <c:out value="&nbsp;Total: <b>${param.totalResults}</b>" escapeXml="false"/>
+                <c:out value="&nbsp;Total: <b>${totalResults}</b>" escapeXml="false"/>
             </td>
 
          </tr>
@@ -145,7 +147,7 @@ calculate the pages to render. The results per page is determined by SearchConst
 </c:if>
 
 <%-- If no pagination is rendered, render a BR tag--%>
-<c:if test="${param.page == 0}">
+<c:if test="${page == 0}">
   <br>
 </c:if>
 

@@ -36,10 +36,12 @@ to identify the source page of the request to the Action classes.
                  uk.ac.ebi.intact.model.Interaction,
                  uk.ac.ebi.intact.model.Interactor,
                  uk.ac.ebi.intact.searchengine.SearchClass,
-                 java.util.*"%>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
+                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants"%>
 <%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.SimpleViewBean" %>
-<%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.util.StringTokenizer" %>
 
 <%-- Standard Java classes --%>
 
@@ -60,7 +62,6 @@ to identify the source page of the request to the Action classes.
     //The List of view beans used to provide the data for this JSP. This is in fact
     //a List of sublists, partitioned by result type.
     List<List<SimpleViewBean>> partitionList = (List<List<SimpleViewBean>>) request.getAttribute(SearchConstants.VIEW_BEAN_LIST);
-
 %>
 <%-- The javascript for the button bars.... --%>
 <%@ include file="jscript.html" %>

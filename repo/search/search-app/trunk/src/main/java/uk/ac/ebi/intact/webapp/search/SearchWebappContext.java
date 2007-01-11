@@ -15,17 +15,19 @@
  */
 package uk.ac.ebi.intact.webapp.search;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.collections.map.LRUMap;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
-import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 import uk.ac.ebi.intact.model.Searchable;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
+import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Convenience class to access all stored variables in a clear way
@@ -86,6 +88,17 @@ public class SearchWebappContext
             return null;
         }
     };
+
+    public String getAbsolutePathWithContext()
+    {
+        HttpServletRequest request = ((WebappSession)session).getRequest();
+
+        if (request == null) return null;
+
+        String port = (request.getServerPort() == 80)? "" : ":"+request.getServerPort();
+
+        return request.getProtocol()+"://"+request.getServerName()+port+request.getContextPath();
+    }
 
     public SearchableQuery getCurrentSearchQuery()
     {

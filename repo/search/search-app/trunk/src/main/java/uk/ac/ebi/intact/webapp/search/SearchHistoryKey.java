@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.webapp.search;
 
 import uk.ac.ebi.intact.model.Searchable;
-import uk.ac.ebi.intact.persistence.dao.query.SearchableQuery;
+import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 
 import java.io.Serializable;
 import java.util.Arrays;
