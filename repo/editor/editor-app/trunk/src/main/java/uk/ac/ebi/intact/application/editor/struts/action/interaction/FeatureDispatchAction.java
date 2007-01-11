@@ -6,9 +6,7 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.*;
 import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -23,6 +21,7 @@ import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditVie
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
@@ -75,6 +74,23 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         EditUserI user = getIntactUser(request);
         // The feature we are about to edit.
         FeatureBean fb = ((InteractionViewBean) user.getView()).getSelectedFeature();
+        Feature feature = fb.getFeature();
+
+        //If the feature, has no ac, it means that the interaction has been saved and not yet cloned. In that case, the
+        //user should first Save And Continue before trying to edit a feature. So we just send a message to the user in 
+        //that sens.
+        if(feature.getAc() == null){
+            InteractionActionForm intform = (InteractionActionForm) form;
+            ActionMessages errors = new ActionMessages();
+            errors.add("int.unsaved.clone", new ActionMessage("error.clone.unsaved"));
+            // Save the errors to display later
+            saveErrors(request, errors);
+            // Set the anchor
+            setAnchor(request, intform);
+            // Back to the edit form
+            return mapping.getInputForward();
+            
+        }
 
         // Save the interaction first.
         ActionForward forward = super.save(mapping, form, request, response);
@@ -86,9 +102,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // Set the selected topic as other operation use it for various tasks.
         user.setSelectedTopic("Feature");
 
-
         FeatureDao featureDao = DaoProvider.getDaoFactory().getFeatureDao();
-        Feature feature = fb.getFeature();
         feature = featureDao.getByAc(feature.getAc());
 
         // Set the new object as the current edit object, don't release the pre view
