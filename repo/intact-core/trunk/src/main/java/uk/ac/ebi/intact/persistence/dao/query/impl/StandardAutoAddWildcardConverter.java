@@ -16,10 +16,9 @@
 package uk.ac.ebi.intact.persistence.dao.query.impl;
 
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.persistence.dao.DaoUtils;
+import uk.ac.ebi.intact.persistence.dao.query.QueryModifier;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
-import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
 
 /**
  * Standard implementation of the AutoAddWildCardConverter
@@ -48,56 +47,34 @@ public class StandardAutoAddWildcardConverter implements AutoAddWildcardConverte
         if (originalPhrase == null) return null;
         
         QueryPhrase phrase = new QueryPhrase();
-        QueryTermConverter termConverter = new StandardQueryTermConverter();
 
         for (QueryTerm term : originalPhrase.getTerms())
         {
-            String originalValue = termConverter.termToString(term);
-            String valWithPercents = addStartAndEndPercentIfNecessary(originalValue);
-            phrase.getTerms().add(termConverter.stringToTerm(valWithPercents));
+            addStartAndEndPercentIfNecessary(term);
+            phrase.getTerms().add(term);
         }
 
         return phrase;
     }
 
-    /**
-     * Feature Request #1485467 : Add a wildcard at the end of the value, when necessary
-     * @param value the value to change
-     * @return a String with the wildcard added, if necessary
-     */
-    private static String addEndPercentIfNecessary(String value)
-    {
-        value = DaoUtils.replaceWildcardsByPercent(value);
+     private static void addStartAndEndPercentIfNecessary(QueryTerm term)
+     {
+         if (term.hasModifier(QueryModifier.PHRASE_DELIM))
+         {
+             return;
+         }
 
-        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+         String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
 
-        if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
-                && !value.startsWith("\"") && !value.endsWith("\""))
-        {
-            value = value+"%";
-        }
+         if (!term.startsWith(acPrefix) && !term.hasModifier(QueryModifier.WILDCARD_START))
+         {
+             term.addModifier(QueryModifier.WILDCARD_START);
+         }
 
-        return value;
-    }
+         if (!term.startsWith(acPrefix) && !term.hasModifier(QueryModifier.WILDCARD_END))
+         {
+             term.addModifier(QueryModifier.WILDCARD_END);
+         }
+     }
 
-     private static String addStartAndEndPercentIfNecessary(String value)
-    {
-        value = DaoUtils.replaceWildcardsByPercent(value);
-
-        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
-
-        if (!value.startsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
-                && !value.startsWith("\"") && !value.endsWith("\""))
-        {
-            value = "%"+value+"%";
-        }
-
-        if (!value.endsWith("%") && !value.toLowerCase().startsWith(acPrefix.toLowerCase())
-                && !value.startsWith("\"") && !value.endsWith("\""))
-        {
-            value = value+"%";
-        }
-
-        return value;
-    }
 }

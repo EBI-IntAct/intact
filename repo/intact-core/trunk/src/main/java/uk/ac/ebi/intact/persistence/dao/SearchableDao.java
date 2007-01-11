@@ -30,7 +30,7 @@ import java.util.Map;
 public interface SearchableDao extends BaseDao<Session>
 {
     static final Class<? extends Searchable>[] STANDARD_SEARCHABLES = new Class[] { Experiment.class, InteractionImpl.class, ProteinImpl.class, NucleicAcidImpl.class, CvObject.class };
-
+    
     Integer countByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query);
 
     Map<Class<? extends Searchable>, Integer> countByQuery(SearchableQuery query);

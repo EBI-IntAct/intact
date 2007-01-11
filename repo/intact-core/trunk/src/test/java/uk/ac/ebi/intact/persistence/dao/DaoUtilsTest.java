@@ -40,34 +40,4 @@ public class DaoUtilsTest extends TestCase
         String value2 = "this-is*-a-test*";
         assertEquals("this-is*-a-test%", DaoUtils.replaceWildcardsByPercent(value2));
     }
-
-    public void testAddPercents()
-    {
-        String value1 = "*this-is*-a-test*";
-        assertEquals("%this-is*-a-test%", DaoUtils.addPercents(value1));
-
-        String value2 = "*this-is*-a-test";
-        assertEquals("%this-is*-a-test%", DaoUtils.addPercents(value2));
-
-        String value3 = "this-is*-a-test";
-        assertEquals("%this-is*-a-test%", DaoUtils.addPercents(value3));
-    }
-
-    public void testAddEndPercent()
-    {
-        String value1 = "this-is*-a-test*";
-        assertEquals("this-is*-a-test%", DaoUtils.addEndPercent(value1));
-
-        String value2 = "this-is*-a-test";
-        assertEquals("this-is*-a-test%", DaoUtils.addEndPercent(value2));
-    }
-
-    public void testAddStartPercent()
-    {
-        String value1 = "this-is*-a-test*";
-        assertEquals("%this-is*-a-test%", DaoUtils.addStartPercent(value1));
-
-        String value2 = "this-is*-a-test";
-        assertEquals("%this-is*-a-test", DaoUtils.addStartPercent(value2));
-    }
 }
