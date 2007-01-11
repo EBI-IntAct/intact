@@ -125,6 +125,13 @@
         <put name="sidebar" value="search.sidebar.layout"/>
     </definition>
 
+    <!-- General error layout -->
+        <definition name="error.commit.layout" extends="login.layout">
+            <put name="content" value="/pages/errorCommit.jsp"/>
+            <put name="sidebar" value="search.sidebar.layout"/>
+        </definition>
+
+
 
     <!-- Super layout for editor pages  -->
 <!--    <definition name="editor.layout" path="/layouts/editorLayout.jsp">-->
