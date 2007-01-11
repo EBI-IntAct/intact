@@ -17,14 +17,14 @@
 
 <!-- Intact classes needed -->
 <%@ page import="uk.ac.ebi.intact.searchengine.SearchClass,
-                 uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersViewBean,
-                 java.util.Collection"%>
+                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersView"%>
 
 <!-- Standard Java classes -->
-<%@ page import="java.util.Iterator"%>
-<%@ page import="java.util.List"%>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersView" %>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.PartnersViewBean"%>
+<%@ page import="java.util.Collection"%>
+<%@ page import="java.util.Iterator" %>
+<%@ page import="java.util.List" %>
 
 <!-- may make use of these later to tidy up the JSP a little -->
 <%@ taglib uri="http://jakarta.apache.org/struts/tags-html" prefix="html"%>
@@ -49,7 +49,7 @@
     // Used for pagination purposes
     if (request.getParameter("searchClass") == null)
     {
-        request.getParameterMap().put("searchClass", SearchClass.PROTEIN.getShortName());
+        request.setAttribute("searchClass", SearchClass.PROTEIN.getShortName());
     }
 %>
 

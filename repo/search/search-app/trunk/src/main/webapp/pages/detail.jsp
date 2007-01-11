@@ -26,11 +26,11 @@
 
 <%-- Intact classes needed --%>
 <%@ page import="uk.ac.ebi.intact.model.*,
-                 uk.ac.ebi.intact.persistence.dao.query.SearchableQuery,
+                 uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery,
+                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailView,
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailViewBean,
                  java.util.*" %>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants" %>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailView" %>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailViewBean" %>
 
 <%-- Standard Java classes --%>
 
@@ -127,7 +127,7 @@
 <!-- the main form for the page -->
 <form name="viewForm">
 
-<!-- button bar for the table -->
+<%-- button bar for the table --%>
 <%@ include file="buttonBar.html" %>
 
 
@@ -135,7 +135,7 @@
     if (detailView.getTotalItems() > detailView.getItemsPerPage())
     {
 %>
-
+<%-- table pagination --%>
 <%@include file="tablePagination.jspf"%>
 
 <%
@@ -302,7 +302,8 @@
     Collection xrefs = bean.getXrefs();
     int rowCount = 0;
 
-    if ( annotations.size() > 0 ) {
+    if (annotations.size() > 0)
+    {
 %>
 <tr>
 
@@ -987,7 +988,7 @@
     if (detailView.getTotalItems() > detailView.getItemsPerPage())
     {
 %>
-
+<%-- table pagination --%>
 <%@include file="tablePagination.jspf"%>
 
 <%
@@ -1000,7 +1001,7 @@
     }
 %>
 
-<!-- button bar for the table -->
+<%-- button bar for the table --%>
 <%@ include file="buttonBar.html" %>
 
 
