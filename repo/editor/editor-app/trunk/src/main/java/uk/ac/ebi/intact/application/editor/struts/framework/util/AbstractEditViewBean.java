@@ -370,6 +370,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public final T getAnnotatedObject() {
+        log.debug("This is the new recompiled editor");
         // If myAnnotObject is contained in the session, we don't reload it but return it directly, otherwise continue.
         if(getSession().isOpen() && getSession().getTransaction().isActive() && getSession().contains(myAnnotObject)){
             if((myAnnotObject != null
@@ -403,6 +404,18 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
                     AnnotatedObjectImpl copy = (AnnotatedObjectImpl) myOriginal.clone();
                     copy.getXrefs().clear();
                     copy.getAnnotations().clear();
+                    if(InteractionImpl.class.isAssignableFrom(copy.getClass())){
+                        Interaction interaction = (Interaction) copy;
+                        interaction.getComponents().clear();
+                        log.debug("This was a cloned interaction we removed it's components");
+
+                    }else{
+                        log.debug("The annObj was not an interaction it was : " + copy.getClass().getName());
+                    }
+                    if(InteractionImpl.class.isAssignableFrom(copy.getClass())){
+                        Interaction interaction = (Interaction) copy;
+                        log.debug("The size of the components is : " + interaction.getComponents().size());
+                    }
                     myAnnotObject = (T) copy;
                 } catch (CloneNotSupportedException e) {
                     log.debug("Exception while cloning" + e.getMessage());  //To change body of catch statement use File | Settings | File Templates.
