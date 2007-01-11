@@ -226,7 +226,8 @@ public class CvHelper {
 
         CvInteractorType newt = CvHelper.getNucleicAcid();//.getNewt();
                 System.out.println("newt.getShortLabel() = " + newt.getShortLabel());
-
+        //We should normally do a close session after that as in the IntactRequestSessionFilter but, as this 
+        // main is just to show how the cvHelper works I haven't added the getSession() method and the close session...
         try{
             tx.commit();
         } catch(Exception e){
