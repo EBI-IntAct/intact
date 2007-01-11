@@ -495,16 +495,6 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
             return;
         }
 
-        Collection annotations = annobj.getAnnotations();
-        AnnotationDao annotationDao = DaoProvider.getDaoFactory().getAnnotationDao();
-        annotationDao.deleteAll(annotations);
-        annobj.getAnnotations().clear();
-
-        Collection xrefs = annobj.getXrefs();
-        XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
-        xrefDao.deleteAll(xrefs);
-        annobj.getXrefs().clear();
-
         if(annobj instanceof Experiment){
             log.debug("myAnnotObject is instanceof Experiment");
             ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
