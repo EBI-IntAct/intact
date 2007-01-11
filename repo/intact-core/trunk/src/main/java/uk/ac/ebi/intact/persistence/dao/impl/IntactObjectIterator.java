@@ -18,9 +18,14 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
+import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
+import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 
 import java.util.Iterator;
 import java.util.List;
@@ -131,8 +136,23 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         }
 
         if ( chunkIterator == null ) {
+            IntactTransaction tx =  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentTransaction();
+            try{
+                tx.commit();
+            }catch(IntactTransactionException ie){
+                log.error("Exception commiting " + ie);
+                try{
+                    tx.rollback();
+                }catch(IntactTransactionException i){
+                    log.error("Exception rolling back " + ie);
+                }
+            }finally{
+                Session hibernateSession = getSession();
+                if(hibernateSession.isOpen()){
+                    hibernateSession.close();
+                }
+            }
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
             //if (log.isTraceEnabled()) log.trace( "Retreiving " + batchSize + " objects." );
 
@@ -145,6 +165,13 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         }
 
         return chunkIterator.hasNext();
+    }
+
+    private Session getSession(){
+        AbstractHibernateDataConfig abstractHibernateDataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
+        Session session = factory.getCurrentSession();
+        return session;
     }
 
     public T next() {
