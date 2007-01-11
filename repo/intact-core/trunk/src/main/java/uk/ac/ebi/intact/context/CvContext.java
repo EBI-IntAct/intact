@@ -173,7 +173,7 @@ public final class CvContext implements Serializable
         getByMiRef(CvAliasType.class, CvAliasType.ISOFORM_SYNONYM_MI_REF);
         getByMiRef(CvAliasType.class, CvAliasType.LOCUS_NAME_MI_REF);
         getByMiRef(CvAliasType.class, CvAliasType.ORF_NAME_MI_REF);
-        getByMiRef(CvAliasType.class, CvInteractorType.getProteinMI());
+        getByMiRef(CvInteractorType.class, CvInteractorType.getProteinMI());
     }
 
     public CvComponentRole getBait() throws IntactException
