@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -25,7 +26,7 @@ import java.util.HashSet;
  * @version $Id$
  * @since 1.5
  */
-public class QueryPhrase
+public class QueryPhrase implements Serializable
 {
     private Collection<QueryTerm> terms;
 
