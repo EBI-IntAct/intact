@@ -131,6 +131,11 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/pages/errorCommiting.jsp</location>
+    </error-page>
+
     <!-- The Welcome File List -->
     <welcome-file-list>
         <welcome-file>welcome.jsp</welcome-file>
