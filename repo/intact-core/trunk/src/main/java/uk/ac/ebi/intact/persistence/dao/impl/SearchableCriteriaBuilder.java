@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.query.QueryModifier;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryTermConverter;
 
@@ -51,7 +52,7 @@ public class SearchableCriteriaBuilder
     private static final String PRIMARY_ID_PROPERTY = "primaryId";
     private static final String CV_OBJCLASS_PROPERTY = "objClass";
 
-    private StandardQueryTermConverter queryTermConverter;
+    private QueryTermConverter queryTermConverter;
 
     public SearchableCriteriaBuilder(SearchableQuery query)
     {
@@ -60,7 +61,7 @@ public class SearchableCriteriaBuilder
         this.queryTermConverter = new StandardQueryTermConverter();
     }
 
-    public SearchableCriteriaBuilder(SearchableQuery query, StandardQueryTermConverter queryTermConverter)
+    public SearchableCriteriaBuilder(SearchableQuery query, QueryTermConverter queryTermConverter)
     {
         this.query = query;
         aliasesCreated = new HashSet<String>();
@@ -282,34 +283,84 @@ public class SearchableCriteriaBuilder
 
     private void addRestriction(Junction junction, String property, QueryPhrase value)
     {
-        if (isValueValid(value))
+         if (isValueValid(value))
         {
-            Junction termJunct;
-
-            if (value.getTerms().size() <= 1)
-            {
-                termJunct = junction;
-            }
-            else
-            {
-                termJunct = Restrictions.disjunction();
-                junction.add(termJunct);
-            }
+            // classify the terms of the phrase in excluded / included
+            List<QueryTerm> exclusionTerms = new ArrayList<QueryTerm>();
+            List<QueryTerm> inclusionTerms = new ArrayList<QueryTerm>();
 
             for (QueryTerm term : value.getTerms())
             {
-                String val = term.getValue();
-
-                if (isLikeQuery(term))
+                if (term.hasModifier(QueryModifier.EXCLUDE))
                 {
-                    termJunct.add(Restrictions.like(property, val, mathModeForTerm(term)));
+                    exclusionTerms.add(term);
                 }
                 else
                 {
-                    termJunct.add(Restrictions.eq(property, val));
+                    inclusionTerms.add(term);
                 }
             }
+
+            Junction propertyCriterion;
+
+            if (inclusionTerms.isEmpty() || exclusionTerms.isEmpty())
+            {
+                propertyCriterion = Restrictions.conjunction();
+            }
+            else
+            {
+                propertyCriterion = Restrictions.conjunction();
+            }
+
+            junction.add(propertyCriterion);
+
+            if (!inclusionTerms.isEmpty())
+            {
+                Criterion inclusionCriterion = termDisjunction(property, inclusionTerms);
+                propertyCriterion.add(inclusionCriterion);
+            }
+
+            if (!exclusionTerms.isEmpty())
+            {
+                Criterion exclusionCriterion = Restrictions.not(termDisjunction(property, exclusionTerms));
+                propertyCriterion.add(exclusionCriterion);
+            }
+
         }
+    }
+
+    private Criterion termDisjunction(String property, List<QueryTerm> terms)
+    {
+        Criterion criterion = null;
+
+        if (terms.size() == 1)
+        {
+            criterion = termToCriterion(property, terms.get(0));
+        }
+        else if (terms.size() > 1)
+        {
+            Disjunction disj = Restrictions.disjunction();
+            for (QueryTerm term : terms)
+            {
+                disj.add(termToCriterion(property, term));
+            }
+            criterion = disj;
+        }
+
+        return criterion;
+    }
+
+    private Criterion termToCriterion(String property, QueryTerm term)
+    {
+        String val = term.getValue();
+
+        if (isLikeQuery(term))
+        {
+            return Restrictions.like(property, val, mathModeForTerm(term));
+        }
+
+        return Restrictions.eq(property, val);
+
     }
 
     private void addRestriction(Junction junction, String property, String value, boolean isLike)
