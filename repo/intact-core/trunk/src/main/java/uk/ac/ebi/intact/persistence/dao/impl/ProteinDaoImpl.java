@@ -74,7 +74,7 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
      * Obtains the template of the url to be used in search.
      * Uses the uniprot Xref and then get hold of its annotation 'search-url'
      */
-    public String getUniprotUrlTemplateByProteinAc(String proteinAc)
+    public List<String> getUniprotUrlTemplateByProteinAc(String proteinAc)
     {
         if (proteinAc == null)
         {
@@ -92,7 +92,7 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
                 .add(Restrictions.eq("cvTopic.shortLabel", CvTopic.SEARCH_URL ))
                 .setProjection(Projections.property("annot.annotationText"));
 
-        return (String) crit.uniqueResult();
+        return crit.list();
     }
 
     public Map<String,Integer> getPartnersCountingInteractionsByProteinAc(String proteinAc)
