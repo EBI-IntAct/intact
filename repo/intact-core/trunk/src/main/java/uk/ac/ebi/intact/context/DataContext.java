@@ -42,6 +42,7 @@ public class DataContext implements Serializable
         beginTransaction(getDefaultDataConfig().getName());
     }
 
+
     public void beginTransaction(String dataConfigName)
     {
         DaoFactory daoFactory = getDaoFactory(dataConfigName);
@@ -95,7 +96,7 @@ public class DataContext implements Serializable
         assert (daoFactory.isTransactionActive() == false);
     }
 
-    private Session getSession(){
+    public Session getSession(){
         AbstractHibernateDataConfig abstractHibernateDataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
         SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
         Session session = factory.getCurrentSession();
