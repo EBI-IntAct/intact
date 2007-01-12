@@ -15,10 +15,10 @@
  */
 package uk.ac.ebi.intact.persistence.dao.query.impl;
 
-import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
-import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
-import uk.ac.ebi.intact.persistence.dao.query.QueryPhraseException;
 import uk.ac.ebi.intact.persistence.dao.query.QueryModifier;
+import uk.ac.ebi.intact.persistence.dao.query.QueryPhraseException;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
+import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
 
 /**
  * Convert a string to a term and viceversa
@@ -101,6 +101,12 @@ public class StandardQueryTermConverter implements QueryTermConverter
                 break;
             case INCLUDE:
                 valueWithoutModifier = value.substring(1);
+                break;
+            case WILDCARD_START:
+                valueWithoutModifier = value.substring(1);
+                break;
+            case WILDCARD_END:
+                valueWithoutModifier = value.substring(0, value.length()-1);
                 break;
             case PHRASE_DELIM:
                 valueWithoutModifier = value.substring(1, value.length()-1);

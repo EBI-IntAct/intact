@@ -127,9 +127,6 @@ public class SearchableCriteriaBuilder
         // description
         addRestriction(junction, FULL_NAME_PROPERTY, query.getDescription());
 
-        // full-text
-        addFullTextRestriction(searchableClass, criteria, query.getFullText(), true);
-
         // xref - database
         QueryPhrase xrefPrimaryId = query.getXref();
         QueryPhrase xrefDb = query.getCvDatabaseLabel();
@@ -388,7 +385,7 @@ public class SearchableCriteriaBuilder
         return false;
     }
 
-    private MatchMode mathModeForTerm(QueryTerm term)
+    protected MatchMode mathModeForTerm(QueryTerm term)
     {
         if (term.hasModifier(QueryModifier.WILDCARD_START) && term.hasModifier(QueryModifier.WILDCARD_END))
         {
@@ -396,43 +393,15 @@ public class SearchableCriteriaBuilder
         }
         else if (term.hasModifier(QueryModifier.WILDCARD_START))
         {
-            return MatchMode.START;
+            return MatchMode.END;
         }
         else if (term.hasModifier(QueryModifier.WILDCARD_END))
         {
-            return MatchMode.END;
+            return MatchMode.START;
         }
         return MatchMode.EXACT;
     }
 
-    private void addFullTextRestriction(Class<? extends Searchable> searchableClass, Criteria criteria, QueryPhrase value, boolean autoAddWildcards)
-    {
-        if (isValueValid(value))
-        {
-            Junction disj = Restrictions.disjunction();
-
-            addRestriction(disj, AC_PROPERTY, value);
-            addRestriction(disj, SHORT_LABEL_PROPERTY, value);
-            addRestriction(disj, FULL_NAME_PROPERTY, value);
-            addRestriction(disj, xrefProperty(criteria, PRIMARY_ID_PROPERTY), value);
-            addRestriction(disj, xrefCvDatabaseProperty(criteria, SHORT_LABEL_PROPERTY), value);
-            addRestriction(disj, annotationProperty(criteria, "annotationText"), value);
-            addRestriction(disj, annotationCvTopicProperty(criteria, SHORT_LABEL_PROPERTY), value);
-
-            if (searchableClass.isAssignableFrom(Interactor.class))
-            {
-                addRestriction(disj, cvInteractionTypeProperty(criteria, SHORT_LABEL_PROPERTY), value);
-            }
-
-            if (searchableClass.isAssignableFrom(Experiment.class))
-            {
-                addRestriction(disj, cvIdentificationProperty(criteria, SHORT_LABEL_PROPERTY), value);
-                addRestriction(disj, cvInteractionProperty(criteria, SHORT_LABEL_PROPERTY), value);
-            }
-
-            criteria.add(disj);
-        }
-    }
 
     private Junction getChildrenDisjunctionForCv(Criteria criteria, String shortLabelProperty, String objClassProperty, Class<? extends CvObject> cvType, QueryPhrase cvShortLabelPhrase)
     {

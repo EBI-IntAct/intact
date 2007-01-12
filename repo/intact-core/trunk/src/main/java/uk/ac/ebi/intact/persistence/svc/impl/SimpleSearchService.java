@@ -71,7 +71,7 @@ public class SimpleSearchService implements SearchService
 
         for (int c : count.values())
         {
-            total =+ c;
+            total += c;
         }
 
         if (total > 0)
