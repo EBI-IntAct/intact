@@ -10,7 +10,7 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-dbutils</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-beta-3</version>
+    <version>1.0-beta-4</version>
     <name>Intact DB Utils</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Utilities to help with the setup of new databases with the IntAct Schema</description>
