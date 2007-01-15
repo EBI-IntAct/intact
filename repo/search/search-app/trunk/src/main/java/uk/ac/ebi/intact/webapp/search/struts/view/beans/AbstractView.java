@@ -37,25 +37,11 @@ public abstract class AbstractView
     }
 
     public int getCurrentPage(){
-        int currentPage = 0;
-
-        String strPage = (String) request.getAttribute("page");
-
-        if (strPage == null)
-        {
-            strPage = request.getParameter("page");
-        }
-
-        if (strPage != null && strPage.length() != 0)
-        {
-            currentPage = Integer.valueOf(strPage);
-        }
-
-        return currentPage;
+        return SearchWebappContext.getCurrentInstance().getCurrentPage();
     }
 
     public void setCurrentPage(int page){
-        request.setAttribute("page", page);
+        SearchWebappContext.getCurrentInstance().setCurrentPage(page);
     }
 
     public int getItemsPerPage() {

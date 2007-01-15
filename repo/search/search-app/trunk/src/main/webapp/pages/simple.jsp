@@ -1,3 +1,4 @@
+<!-- simple.jsp -->
 <%--
     Page to display a 'simple' initial table view of search results. Current
     specification is as per the mockups June 2004. This will be the first page a user sees
@@ -35,9 +36,8 @@ to identify the source page of the request to the Action classes.
 <%@ page import="uk.ac.ebi.intact.model.Experiment,
                  uk.ac.ebi.intact.model.Interaction,
                  uk.ac.ebi.intact.model.Interactor,
-                 uk.ac.ebi.intact.searchengine.SearchClass,
-                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants"%>
-<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.SimpleViewBean" %>
+                 uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.SimpleViewBean"%>
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Iterator" %>
 <%@ page import="java.util.List" %>

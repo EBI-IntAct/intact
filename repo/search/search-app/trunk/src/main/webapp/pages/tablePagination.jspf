@@ -1,3 +1,4 @@
+<%@ page import="uk.ac.ebi.intact.searchengine.SearchClass" %>
 <%@ page import="uk.ac.ebi.intact.webapp.search.SearchWebappContext" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 <!--
@@ -60,19 +61,32 @@ calculate the pages to render. The results per page is determined by SearchConst
             urlWithoutPage = urlWithoutPage + "&searchString=" + request.getParameter("searchString");
         }
 
+        SearchClass searchClass = null;
+
         if (!urlWithoutPage.contains("searchClass="))
         {
+            String searchClassName = (String) request.getAttribute("searchClass");
+
             if (request.getAttribute("searchClass") != null)
             {
-                urlWithoutPage = urlWithoutPage + "&searchClass=" + request.getAttribute("searchClass");
+                searchClass = SearchClass.valueOfShortName(searchClassName);
+                urlWithoutPage = urlWithoutPage + "&searchClass=" + searchClassName;
             }
             else
             {
                 if (request.getParameter("searchClass") != null)
                 {
-                    urlWithoutPage = urlWithoutPage + "&searchClass=" + request.getParameter("searchClass");
+                    searchClass = SearchClass.valueOfShortName(searchClassName);
+                    urlWithoutPage = urlWithoutPage + "&searchClass=" + searchClassName;
                 }
             }
+        }
+
+        // special case. When clicking on a page after looking a experiment, the search
+        // should be for interactions (event the search class is experiment)
+        if (searchClass != null && searchClass == SearchClass.EXPERIMENT && request.getAttribute("currentAc") != null)
+        {
+            urlWithoutPage = urlWithoutPage + "&view=intraExp";
         }
 
         // the variables are put in the request scope so we will be able to use them with the jstl tags

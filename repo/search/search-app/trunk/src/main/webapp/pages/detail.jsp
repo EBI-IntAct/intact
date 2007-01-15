@@ -121,7 +121,7 @@
      */
     MainDetailViewBean bean = detailView.getMainDetailViewBean();
 
-
+    request.setAttribute("currentAc", bean.getObjAc());
 %>
 
 <!-- the main form for the page -->

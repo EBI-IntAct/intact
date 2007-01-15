@@ -26,7 +26,7 @@ import java.util.*;
  * The view contains PartnersViewBean to represent each of the entries.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:PartnersView.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  * @since <pre>04-May-2006</pre>
  */
 public class PartnersView extends AbstractView
@@ -60,7 +60,12 @@ public class PartnersView extends AbstractView
         ProteinDao proteinDao = getDaoFactory().getProteinDao();
 
         // Using the ac, we retrieve the uniprot url template (by using the identity "Xref")
-        uniprotUrlTemplate = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc());
+        List<String> templates = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc());
+        uniprotUrlTemplate = "";
+        if (!templates.isEmpty())
+        {
+            uniprotUrlTemplate = proteinDao.getUniprotUrlTemplateByProteinAc(interactor.getAc()).get(0);
+        }
 
         // pagination preparation here
         int totalItems = getTotalItems();
