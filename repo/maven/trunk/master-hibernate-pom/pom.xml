@@ -44,7 +44,7 @@
                         <sessionFactoryName>${sessionFactoryName}</sessionFactoryName>
                         <dialect>${db.dialect}</dialect>
                         <driver>${db.driver}</driver>
-                        <url>${db.protocol}:${db.subprotocol}:${db.alias}</url>
+                        <url>${db.protocol}:${db.subprotocol}${db.separator}${db.alias}</url>
                         <user>${db.user}</user>
                         <password>${db.password}</password>
                         <showSql>${showSql}</showSql>
@@ -99,6 +99,7 @@
                 <db.protocol>jdbc</db.protocol>
                 <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
                 <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
+                <db.separator>:</db.separator>
             </properties>
 
             <dependencies>
@@ -129,6 +130,7 @@
                 <db.protocol>jdbc</db.protocol>
                 <db.subprotocol>postgresql://${db.host}:${db.port}</db.subprotocol>
                 <db.dialect>org.hibernate.dialect.PostgreSQLDialect</db.dialect>
+                <db.separator>/</db.separator>
             </properties>
 
             <dependencies>
