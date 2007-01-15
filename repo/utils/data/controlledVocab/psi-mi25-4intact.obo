@@ -2089,7 +2089,7 @@ name: reactome complex
 def: "Collection of functional complexes within Reactome - a knowledgebase of biological processes." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.reactome.org/ "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.reactome.org/cgi-bin/eventbrowser?ID=${ac "ANNOTATION"
+xref_analog: search-url: http://www.reactome.org/cgi-bin/eventbrowser?ID=${ac} "ANNOTATION"
 is_a: MI:0467 ! reactome
 
 [Term]
@@ -2098,7 +2098,7 @@ name: reactome protein
 def: "Collection of protein within the Reactome database - a knowledgebase of biological processes." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.reactome.org/ "ANNOTATION"
 xref_analog: id-validation-regexp:\"[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]|[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]-[0-9\]+|[A-Z\]\{3}[0-9\]\{5}|[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]-PRO_[0-9\]\{10}\" "ANNOTATION"
-xref_analog: search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac "ANNOTATION"
+xref_analog: search-url: http://www.reactome.org/cgi-bin/search?SUBMIT=1&QUERY_CLASS=DatabaseIdentifier&QUERY=SWALL:${ac} "ANNOTATION"
 is_a: MI:0467 ! reactome
 
 [Term]
@@ -2107,7 +2107,7 @@ name: cabri
 def: "CABRI cell lines catalogue available at." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.cabri.org/ "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+|ACC\\s[A-Z0-9\]+|ECACC\\s[A-Z0-9\]+|LMBP\\s[A-Z0-9\]+|ICLC\\s[A-Z0-9\]+|CIP-[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+- "ANNOTATION"
+xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e "ANNOTATION"
 is_a: MI:0473 ! participant database
 
 [Term]
@@ -2116,7 +2116,7 @@ name: newt
 def: "New EBI Web Taxonomy." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.ebi.ac.uk/newt "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/newt/display?search=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/newt/display?search=${ac} "ANNOTATION"
 is_a: MI:0473 ! participant database
 
 [Term]
@@ -2125,7 +2125,7 @@ name: resid
 def: "The RESID Database of Protein Modifications is a comprehensive collection of annotations and structures for protein modifications including amino-terminal, carboxyl-terminal and peptide chain cross-link post-translational modifications." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.ebi.ac.uk/RESID/index.html "ANNOTATION"
 xref_analog: id-validation-regexp:\"AA[0-9\]\{4}\" "ANNOTATION"
-xref_analog: search-url: http://srs.ebi.ac.uk/cgi-bin/wgetz?[resid-id:${ac}]+- "ANNOTATION"
+xref_analog: search-url: http://srs.ebi.ac.uk/cgi-bin/wgetz?[resid-id:${ac}]+-e "ANNOTATION"
 is_a: MI:0447 ! feature database
 is_a: MI:0473 ! participant database
 
@@ -2135,7 +2135,7 @@ name: huge
 def: "A Database of Human Unidentified Gene-Encoded Large Proteins Analyzed by Kazusa Human cDNA Project." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.kazusa.or.jp/huge/ "ANNOTATION"
 xref_analog: id-validation-regexp:\"KIAA[0-9\]\{4}[A-Z\]\{0,1}\" "ANNOTATION"
-xref_analog: search-url: http://www.kazusa.or.jp/huge/gfpage/${ac "ANNOTATION"
+xref_analog: search-url: http://www.kazusa.or.jp/huge/gfpage/${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3336,7 +3336,7 @@ name: pubmed
 def: "PubMed is designed to provide access to citations from biomedical literature." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.ncbi.nlm.nih.gov/entrez/query.fcgi "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstrac "ANNOTATION"
+xref_analog: search-url: http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&db=PubMed&list_uids=${ac}&dopt=Abstract "ANNOTATION"
 is_a: MI:0445 ! experiment database
 
 [Term]
@@ -3363,7 +3363,7 @@ def: "InterPro combines a number of databases (referred to as member databases) 
 xref_analog: url:http://www.ebi.ac.uk/interpro/ "ANNOTATION"
 related_synonym: "InterPro" []
 xref_analog: id-validation-regexp:\"IPR[0-9\]\{6}\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/interpro/DisplayIproEntry?ac=${ac} "ANNOTATION"
 is_a: MI:0447 ! feature database
 
 [Term]
@@ -3464,7 +3464,7 @@ def: "The RCSB PDB provides a variety of tools and resources for studying the st
 xref_analog: url:http://www.pdb.org/ "ANNOTATION"
 related_synonym: "PDB" []
 xref_analog: id-validation-regexp:\"[0-9\][a-zA-Z0-9\]\{3}\" "ANNOTATION"
-xref_analog: search-url: http://www.pdb.org/pdb/explore/explore.do?structureId=${ac "ANNOTATION"
+xref_analog: search-url: http://www.pdb.org/pdb/explore/explore.do?structureId=${ac} "ANNOTATION"
 is_a: MI:0805 ! wwpdb
 
 [Term]
@@ -3551,7 +3551,7 @@ def: "INTerAction datanase (IntAct) provides an open source database and toolkit
 xref_analog: url:http://www.ebi.ac.uk/intact "ANNOTATION"
 related_synonym: "IntAct" []
 xref_analog: id-validation-regexp:\"EBI-[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/intact/search/do/hvWelcome?searchString=${ac} "ANNOTATION"
 is_a: MI:0461 ! interaction database
 is_a: MI:0489 ! source database
 
@@ -3583,7 +3583,7 @@ xref_analog: url:http://www.ebi.ac.uk/msd/ "ANNOTATION"
 related_synonym: "e-MSD" []
 related_synonym: "PQS" []
 xref_analog: id-validation-regexp:\"[0-9\][a-zA-Z0-9\]\{3}\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/msd-srv/atlas?id=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/msd-srv/atlas?id=${ac} "ANNOTATION"
 is_a: MI:0805 ! wwpdb
 
 [Term]
@@ -3612,7 +3612,7 @@ related_synonym: "DDBJ/EMBL/GenBank" []
 related_synonym: "EMBL" []
 related_synonym: "GenBank" []
 xref_analog: id-validation-regexp:\"[0-9\]+|[A-Z\]\{1,2}[0-9\]+\\.[0-9\]+ \" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBLSVA&id=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/cgi-bin/dbfetch?db=EMBLSVA&id=${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3641,7 +3641,7 @@ def: "FlyBase is a comprehensive database for information on the genetics and mo
 xref_analog: url:http://fbserver.gen.cam.ac.uk:7081/ "ANNOTATION"
 related_synonym: "FlyBase" []
 xref_analog: id-validation-regexp:\"FBgn[0-9\]\{7}\" "ANNOTATION"
-xref_analog: search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac "ANNOTATION"
+xref_analog: search-url: http://flybase.net/cgi-bin/fbannq.html?acc=${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3660,7 +3660,7 @@ def: "Online Mendelian Inheritance in Man (OMIM) is a catalogue of human genes a
 xref_analog: url:http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=OMIM "ANNOTATION"
 related_synonym: "OMIM" []
 xref_analog: id-validation-regexp:\"[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ncbi.nlm.nih.gov/entrez/dispomim.cgi?id=${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3697,7 +3697,7 @@ def: "SGD is a scientific database of the molecular biology and genetics of the 
 xref_analog: url:http://www.yeastgenome.org/ "ANNOTATION"
 related_synonym: "SGD" []
 xref_analog: id-validation-regexp:\"S[0-9\]\{9}\" "ANNOTATION"
-xref_analog: search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac "ANNOTATION"
+xref_analog: search-url: http://genome-www4.stanford.edu/cgi-bin/SGD/locus.pl?locus=${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3707,7 +3707,7 @@ def: "UniProt Archive (UniParc) is part of UniProt project. It is a non-redundan
 xref_analog: url:http://www.ebi.ac.uk/uniparc/ "ANNOTATION"
 related_synonym: "UniParc" []
 xref_analog: id-validation-regexp:\"UPI[A-F0-9\]\{10}\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.uniprot.org/entry/${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.uniprot.org/entry/${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3718,7 +3718,7 @@ xref_analog: url:http://www.expasy.uniprot.org/ "ANNOTATION"
 related_synonym: "UniProt" []
 exact_synonym: "uniprotkb" []
 xref_analog: id-validation-regexp:\"[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]|[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]-[0-9\]+|[A-Z\]\{3}[0-9\]\{5}|[OPQ\][0-9\][A-Z0-9\]\{3}[0-9\]-PRO_[0-9\]\{10}\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.uniprot.org/entry/${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.uniprot.org/entry/${ac} "ANNOTATION"
 is_a: MI:0683 ! sequence database
 
 [Term]
@@ -3736,7 +3736,7 @@ name: psi-mi
 def: "PSI-MI." [pubmed:14755292 "primary-reference"]
 related_synonym: "PSI-MI" []
 xref_analog: id-validation-regexp:\"MI\:[0-9\]\{4}\" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/ontology-lookup/?termId=${ac "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/ontology-lookup/?termId=${ac} "ANNOTATION"
 is_a: MI:0444 ! database citation
 
 [Term]
@@ -4387,7 +4387,7 @@ xref_analog: url:http://www.signaling-gateway.org "ANNOTATION"
 related_synonym: "AfCS" []
 exact_synonym: "afcs" []
 xref_analog: id-validation-regexp:\"[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://www.signaling-gateway.org/data/Y2H/cgi-bin/y2h_int.cgi?id=${ac "ANNOTATION"
+xref_analog: search-url: http://www.signaling-gateway.org/data/Y2H/cgi-bin/y2h_int.cgi?id=${ac} "ANNOTATION"
 is_a: MI:0461 ! interaction database
 is_a: MI:0489 ! source database
 
@@ -4455,7 +4455,7 @@ name: intenz
 def: "IntEnz is the name for the Integrated relational Enzyme database and is the official version of the Enzyme Nomenclature. The Enzyme Nomenclature comprises recommendations of the Nomenclature Committee of the International Union of Bio chemistry and Molecular Biology (NC-IUBMB) on the nomenclature and classification of enzyme-catalysed reactions. IntEnz is supported by NC-IUBMB and contains enzyme data curated and approved by this committee. The database IntEnz is available at." [pubmed:14681451 "primary-reference"]
 xref_analog: url:http://www.ebi.ac.uk/intenz "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-6\]\{1}\\.[0-9\]+\\.[0-9\]+\\.[0-9\]+ \" "ANNOTATION"
-xref_analog: search-url: http://www.ebi.ac.uk/intenz/query?cmd=Search&q=${ac}&t=exact&fields=e "ANNOTATION"
+xref_analog: search-url: http://www.ebi.ac.uk/intenz/query?cmd=Search&q=${ac}&t=exact&fields=ec "ANNOTATION"
 is_a: MI:0461 ! interaction database
 
 [Term]
@@ -5716,7 +5716,7 @@ def: "PDBj(Protein Data Bank Japan) maintains the database for the protein struc
 xref_analog: url:http://www.pdbj.org/ "ANNOTATION"
 related_synonym: "PDBj" []
 xref_analog: id-validation-regexp:\"[0-9\][a-zA-Z0-9\]\{3}\" "ANNOTATION"
-xref_analog: search-url: http://pdbjs3.protein.osaka-u.ac.jp/xPSSS/DetailServlet?PDBID=${ac}&PAGEID=Summar "ANNOTATION"
+xref_analog: search-url: http://pdbjs3.protein.osaka-u.ac.jp/xPSSS/DetailServlet?PDBID=${ac}&PAGEID=Summary "ANNOTATION"
 is_a: MI:0805 ! wwpdb
 
 [Term]
@@ -5892,7 +5892,7 @@ name: tissue list
 def: "List of tissue used as  topic in UniProt RC line." [pubmed:14755292 "primary-reference"]
 xref_analog: url:http://www.expasy.org/cgi-bin/lists?tisslist.txt "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+|ACC\\s[A-Z0-9\]+|ECACC\\s[A-Z0-9\]+|LMBP\\s[A-Z0-9\]+|ICLC\\s[A-Z0-9\]+|CIP-[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+- "ANNOTATION"
+xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e "ANNOTATION"
 is_a: MI:0473 ! participant database
 
 [Term]
@@ -5901,13 +5901,13 @@ name: cell ontology
 def: "Ontology of cell types." [pubmed:16381901 "primary-reference"]
 xref_analog: url:http://obo.sourceforge.net/cgi-bin/detail.cgi?cell "ANNOTATION"
 xref_analog: id-validation-regexp:\"[0-9\]+|ACC\\s[A-Z0-9\]+|ECACC\\s[A-Z0-9\]+|LMBP\\s[A-Z0-9\]+|ICLC\\s[A-Z0-9\]+|CIP-[0-9\]+\" "ANNOTATION"
-xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+- "ANNOTATION"
+xref_analog: search-url: http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?[libs%3d{dsmz_mutz%20ecacc_cell%20iclc%20CABI_BACT%20CIP_BACT%20CABI_YEAST%20DSMZ_PLANT_CELL}-id:${ac}]+-e "ANNOTATION"
 is_a: MI:0473 ! participant database
 
 [Term]
 id: MI:0832
 name: half cystine
-def: "A protein modification that is effectively either one half of a cystine cross-link, or a cysteine residue with one hydrogen atom or proton removed" [, resid:AA0025 "identity"]
+def: "A protein modification that is effectively either one half of a cystine cross-link, or a cysteine residue with one hydrogen atom or proton removed" [resid:AA0025 "identity"]
 related_synonym: "Half of a disulfide bridge" []
 is_a: MI:0179 ! other modification
 
