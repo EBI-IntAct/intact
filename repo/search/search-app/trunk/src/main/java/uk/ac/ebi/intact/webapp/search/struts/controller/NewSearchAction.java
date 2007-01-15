@@ -39,9 +39,7 @@ public class NewSearchAction extends SearchActionBase
 
     public SearchableQuery createSearchableQuery()
     {
-        String searchValue;
-
-        searchValue = getParameterFromUrl("searchString");
+        String searchValue = getParameterFromUrl("searchString");
 
         if (searchValue == null)
         {
@@ -55,6 +53,8 @@ public class NewSearchAction extends SearchActionBase
             if (log.isDebugEnabled()) log.debug("Getting 'searchString' from parameter: "+searchValue);
         }
 
+        boolean filteredAc = (getParameterFromUrl("filter") != null);
+
         SearchableQuery query;
 
         if (SearchableQuery.isSearchableQuery(searchValue))
@@ -66,12 +66,16 @@ public class NewSearchAction extends SearchActionBase
             StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
             QueryPhrase phrase = converter.objectToPhrase(searchValue);
 
-                    query = new SearchableQuery();
-            query.setDisjunction(true);
+            query = new SearchableQuery();
             query.setAc(phrase);
-            query.setShortLabel(phrase);
-            query.setDescription(phrase);
-            query.setXref(phrase);
+
+            if (!filteredAc)
+            {
+                query.setShortLabel(phrase);
+                query.setDescription(phrase);
+                query.setXref(phrase);
+                query.setDisjunction(true);
+            }
         }
 
         return query;

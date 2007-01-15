@@ -82,19 +82,20 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         this.searchService = new SimpleSearchService();
 
+        log.info( "in SearchActionBase");
+
+        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(intactContext);
+
+        // Clear any previous errors.
+        super.clearErrors();
+
         // redirect to the dispatcher if the binary view is required
         String binaryView = request.getParameter("binary");
         if (binaryView != null && binaryView.length() > 0)
         {
              log.debug("Request URL contains the binary parameter. Preparing the binary view...");
              return prepareBinaryView(binaryView);
-        }
-
-        SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(intactContext);
-
-        log.info( "in SearchActionBase");
-        // Clear any previous errors.
-        super.clearErrors();
+        }        
 
         //clear the error message
         getIntactContext().getSession().setAttribute(SearchConstants.ERROR_MESSAGE, "");
@@ -124,8 +125,7 @@ public abstract class SearchActionBase extends IntactSearchAction
         webappContext.setCurrentSearchQuery(getSearchableQuery());
         webappContext.setCurrentSearchTypes(getSearchableTypes());
 
-
-
+        
         boolean explicitSearch = (request.getParameter("searchClass") != null) || (request.getAttribute("searchClass") != null);
 
         // if the query is not paginated, count the results
@@ -273,7 +273,7 @@ public abstract class SearchActionBase extends IntactSearchAction
         // view where the pagination is for the children of the element found in the results,
         // this is why when going to a page different than 1, I have to retrieve the first
         // result (the view will then get the corresponding children using the page)
-        if (isGoingToParnerView())
+        if (isGoingToParnerView() || isGoingToExperimentInteractionsPage())
         {
             firstResult = 0;
         }
@@ -445,6 +445,20 @@ public abstract class SearchActionBase extends IntactSearchAction
         if (view != null)
         {
             return view.equals("partner");
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private boolean isGoingToExperimentInteractionsPage()
+    {
+        String view = request.getParameter("view");
+
+        if (view != null)
+        {
+            return view.equals("intraExp");
         }
         else
         {
