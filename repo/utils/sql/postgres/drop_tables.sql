@@ -67,6 +67,17 @@ drop table ia_interactor_xref cascade ;
 drop table ia_publication_xref cascade ;
 drop table ia_controlledvocab_xref cascade ;
 
+drop table ia_pubmed cascade ;
+drop table ia_db_info cascade ;
+
+drop table ia_biosource_alias cascade ;
+drop table ia_controlledvocab_alias cascade ;
+drop table ia_component_alias cascade ;
+drop table ia_experiment_alias cascade ;
+drop table ia_feature_alias cascade ;
+drop table ia_interactor_alias cascade ;
+drop table ia_publication_alias cascade ;
+
 
 drop table ia_alias cascade ;
 --  drop table ia_alias_audit ;
