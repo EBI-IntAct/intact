@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.plugins;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import psidev.psi.mi.tab.expansion.SpokeExpansion;
+import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.File;
@@ -25,25 +25,50 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
     public static final String EXCEL_FILE_EXTENSION = ".xls";
 
     /**
-     * Directory to be processed.
+     * Source directory to be processed.
      *
      * @parameter
      * @required
      */
-    private String directoryPath;
+    private String sourceDirectoryPath;
+
+    /**
+     * Target directory to be filled.
+     *
+     * @parameter
+     * @required
+     */
+    private String targetDirectoryPath;
 
     public void execute() throws MojoExecutionException {
 
-        System.out.println( "parameter 'directoryPath' = " + directoryPath );
+        File srcDir = new File( sourceDirectoryPath );
+        if( ! srcDir.exists() ) {
+            throw new MojoExecutionException( "Source directory does not exist: " + sourceDirectoryPath );
+        }
+        if( ! srcDir.canRead() ) {
+            throw new MojoExecutionException( "Source directory cannot be read: " + sourceDirectoryPath );
+        }
+
+        File trgDir = new File( targetDirectoryPath );
+        if( trgDir.exists() && ! trgDir.canWrite() ) {
+            throw new MojoExecutionException( "Target directory exists but cannot be written: " + targetDirectoryPath );
+        }
+
+        // Build the target directory
+        trgDir.mkdirs();
+
+        System.out.println( "parameter 'sourceDirectoryPath' = " + sourceDirectoryPath );
+        System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
 
         // Prepare publication clustering
-        PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( directoryPath ) );
+        PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
         Map<Integer, Collection<File>> map = builder.build();
 
         // Prepare XML to TAB converter
         ConvertXml2Tab converter = new ConvertXml2Tab();
         converter.setOverwriteOutputFile( true );
-        converter.setExpansionStrategy( new SpokeExpansion() );
+        converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairCluctering( true );
 
         // Process datasets
@@ -51,15 +76,35 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
             Integer pmid = entry.getKey();
             Collection<File> xmlFiles = entry.getValue();
 
-            // all files should be from a same directory, pick the first one and get the parent directory.
+            // all files should be from a same directory, pick the first one and get the parent src directory.
             File file = xmlFiles.iterator().next();
-            File rootDirectory = file.getParentFile();
+            File fileRootDir = file.getParentFile();
 
-            File outputFile = new File( rootDirectory.getAbsolutePath() + File.separator + pmid + EXCEL_FILE_EXTENSION );
+//            System.out.println( "file = " + file.getAbsolutePath() );
+
+            // extract sub structure
+            int idx = fileRootDir.getAbsolutePath().indexOf( srcDir.getAbsolutePath() );
+            if( idx == -1 ) {
+                throw new IllegalStateException( "\""+ fileRootDir.getAbsolutePath() + "\".indexOf(\""+ srcDir.getAbsolutePath() +"\") returned -1 !!" );
+            }
+            idx += sourceDirectoryPath.length();
+//            System.out.println( "idx = " + idx );
+            int len = fileRootDir.getAbsolutePath().length();
+//            System.out.println( "len = " + len );
+            File targetDir = new File( trgDir, fileRootDir.getAbsolutePath().substring( idx, len ) );
+//            System.out.println( "targetDir = " + targetDir.getAbsolutePath() );
+
+            // build potential missing sub-directory
+            targetDir.mkdirs();
+
+            File outputFile = new File( targetDir, pmid + EXCEL_FILE_EXTENSION );
+            System.out.println( "Creating " + outputFile.getAbsolutePath() + " ...");
 
             // local config
             converter.setXmlFilesToConvert( xmlFiles );
             converter.setOutputFile( outputFile );
+
+            // TODO do not write empty files on disk.
 
             // run it
             try {
