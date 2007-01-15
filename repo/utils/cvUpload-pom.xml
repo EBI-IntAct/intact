@@ -30,7 +30,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>cv-maven-plugin</artifactId>
-                <version>1.0-beta-3</version>
+                <version>1.0-beta-4</version>
 
                 <configuration>
                     <outputFile>${artifactId}.log</outputFile>
