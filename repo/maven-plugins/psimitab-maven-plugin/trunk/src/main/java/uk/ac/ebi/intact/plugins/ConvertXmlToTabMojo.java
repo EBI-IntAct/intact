@@ -18,7 +18,7 @@ package uk.ac.ebi.intact.plugins;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import psidev.psi.mi.tab.expansion.SpokeExpansion;
+import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.File;
@@ -57,7 +57,7 @@ public class ConvertXmlToTabMojo extends AbstractMojo {
 
         // config
         converter.setOverwriteOutputFile( true );
-        converter.setExpansionStrategy(new SpokeExpansion());
+        converter.setExpansionStrategy(new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairCluctering(true);
 
         Collection<File> inputFiles = new ArrayList<File>();
