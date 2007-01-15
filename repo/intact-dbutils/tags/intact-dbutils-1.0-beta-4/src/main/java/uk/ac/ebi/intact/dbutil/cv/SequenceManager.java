@@ -73,7 +73,7 @@ public class SequenceManager {
             {
                 String seqName = rs.getString(1);
 
-                if (seqName.equals(sequenceName))
+                if (seqName.toLowerCase().equals(sequenceName.toLowerCase()))
                 {
                     exists = true;
                     break;
