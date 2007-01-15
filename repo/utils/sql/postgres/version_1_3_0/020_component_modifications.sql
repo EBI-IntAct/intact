@@ -23,10 +23,10 @@ CREATE TABLE IA_Component_Xref
      ,  created                 TIMESTAMP            DEFAULT  now() NOT NULL
      ,  updated                 TIMESTAMP            DEFAULT  now() NOT NULL
      ,  userstamp               VARCHAR(30)    DEFAULT  USER    NOT NULL
-     ,  qualifier_ac            VARCHAR(30)    CONSTRAINT fk_ComponentXref$qualifier REFERENCES IA_ControlledVocab(ac)
-     ,  database_ac             VARCHAR(30)    CONSTRAINT fk_ComponentXref$database  REFERENCES IA_ControlledVocab(ac)
-     ,  parent_ac               VARCHAR(30)    CONSTRAINT fk_ComponentXref$component  REFERENCES IA_Component(ac)
-     ,  owner_ac                VARCHAR(30)    CONSTRAINT fk_ComponentXref$owner REFERENCES IA_Institution(ac)
+     ,  qualifier_ac            VARCHAR(30)    CONSTRAINT fk_ComponentXref_qualifier REFERENCES IA_ControlledVocab(ac)
+     ,  database_ac             VARCHAR(30)    CONSTRAINT fk_ComponentXref_database  REFERENCES IA_ControlledVocab(ac)
+     ,  parent_ac               VARCHAR(30)    CONSTRAINT fk_ComponentXref_component  REFERENCES IA_Component(ac)
+     ,  owner_ac                VARCHAR(30)    CONSTRAINT fk_ComponentXref_owner REFERENCES IA_Institution(ac)
      ,  primaryId               VARCHAR(30)
      ,  secondaryId             VARCHAR(30)
      ,  dbRelease               VARCHAR(10)
@@ -34,9 +34,9 @@ CREATE TABLE IA_Component_Xref
 )
 ;
 
-CREATE index i_ComponentXref$parent_ac on IA_Component_Xref(parent_ac) ;
-CREATE INDEX i_ComponentXref$database_ac ON IA_Component_Xref(database_ac) ;
-CREATE INDEX i_ComponentXref$primaryid   ON IA_Component_Xref(primaryid)   ;
+CREATE index i_ComponentXref_parent_ac on IA_Component_Xref(parent_ac) ;
+CREATE INDEX i_ComponentXref_database_ac ON IA_Component_Xref(database_ac) ;
+CREATE INDEX i_ComponentXref_primaryid   ON IA_Component_Xref(primaryid)   ;
 
 
     COMMENT ON TABLE IA_Component_Xref IS
@@ -68,8 +68,8 @@ CREATE INDEX i_ComponentXref$primaryid   ON IA_Component_Xref(primaryid)   ;
 
 
 CREATE TABLE IA_Component2Annot
-(       component_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_Component2Annot$feature REFERENCES IA_Component(ac) ON DELETE CASCADE
-     ,  annotation_ac           VARCHAR(30)    NOT NULL CONSTRAINT fk_Component2Annot$annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
+(       component_ac            VARCHAR(30)    NOT NULL CONSTRAINT fk_Component2Annot_feature REFERENCES IA_Component(ac) ON DELETE CASCADE
+     ,  annotation_ac           VARCHAR(30)    NOT NULL CONSTRAINT fk_Component2Annot_annotation REFERENCES IA_Annotation(ac) ON DELETE CASCADE
 )
 
 ;
