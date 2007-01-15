@@ -426,7 +426,7 @@ public class UpdateCVs {
             }
         }
 
-        report.setObsoleteTerms(missingTerms);
+        report.getObsoleteTerms().addAll(missingTerms);
 
         return obsoleteTerms;
     }
@@ -975,7 +975,10 @@ public class UpdateCVs {
         if ( ! cvTerm.getId().equals( CvTopic.OBSOLETE_MI_REF ) ) {
             // the Obsolete term is not Obsolete in IntAct.
             if ( cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null ) {
+                output.println("\t\t Marking as obsolete, adding the annotation 'obsolete' to term: "+cvTerm.getShortName());
                 annotations.add( new CvTermAnnotation( CvTopic.OBSOLETE, cvTerm.getObsoleteMessage() ) );
+
+                report.getObsoleteTerms().add(cvTerm);
             }
         }
 
