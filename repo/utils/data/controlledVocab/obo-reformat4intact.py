@@ -99,7 +99,7 @@ for k in range(0,len(inputt)) :
     elif line[0:34] == 'xref_analog: id-validation-regexp:' :
         output.write('xref_analog: id-validation-regexp:'+line[34:-1]+ '" "ANNOTATION"'+'\n')
     elif line[0:25] == 'xref_analog: search-url: ' :
-        output.write('xref_analog: search-url: '+line[26:-2]+ ' "ANNOTATION"'+'\n')
+        output.write('xref_analog: search-url: '+line[26:-1]+ ' "ANNOTATION"'+'\n')
     elif line[0:9] == '[Typedef]':  # end of obo file definition of relationship 'part_of' should not be modified
         for j in range(k,len(inputt)) :
             output.write(inputt[j])
