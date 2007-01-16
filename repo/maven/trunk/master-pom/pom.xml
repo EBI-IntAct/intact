@@ -69,13 +69,6 @@
             <organization>EBI</organization>
             <timezone>0</timezone>
         </developer>
-        <developer>
-            <id>baranda</id>
-            <name>Arnaud Ceol</name>
-            <email>baranda@ebi.ac.uk</email>
-            <organization>EBI</organization>
-            <timezone>0</timezone>
-        </developer>
     </developers>
 
     <contributors>
