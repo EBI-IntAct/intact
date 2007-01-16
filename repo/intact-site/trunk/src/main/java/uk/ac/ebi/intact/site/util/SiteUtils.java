@@ -109,7 +109,7 @@ public class SiteUtils
 
         description = new SyndContentImpl();
         description.setType("text/plain");
-        description.setValue(pieceOfNews.getDescription());
+        description.setValue(pieceOfNews.getDescription().getValue());
         entry.setDescription(description);
 
         return entry;
