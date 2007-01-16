@@ -52,10 +52,10 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
 
         File srcDir = new File( sourceDirectoryPath );
-        if ( !srcDir.exists() ) {
+        if ( ! srcDir.exists() ) {
             throw new MojoExecutionException( "Source directory does not exist: " + sourceDirectoryPath );
         }
-        if ( !srcDir.canRead() ) {
+        if ( ! srcDir.canRead() ) {
             throw new MojoExecutionException( "Source directory cannot be read: " + sourceDirectoryPath );
         }
 
@@ -68,7 +68,6 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         Writer logWriter = null;
         if ( logFilePath != null ) {
             logFile = new File( logFilePath );
-            logFile.getParentFile().mkdirs();
 
             // initialize the writer
             try {
