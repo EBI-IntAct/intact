@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -188,13 +188,5 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/${artifactId}</url>
-        </site>
-    </distributionManagement>
 
 </project>
