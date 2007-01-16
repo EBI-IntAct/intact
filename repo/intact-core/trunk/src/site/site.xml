@@ -1,23 +1,11 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Intact Core">
-    <bannerLeft>
-        <name>Intact Core</name>
-    </bannerLeft>
-    <!--
-    <bannerRight>
-        <name>IntAct</name>
-        <src>images/logo_intact.gif</src>
-        <href>http://www.ebi.ac.uk/intact</href>
-    </bannerRight>
-    -->
-
-    <!--
-  <skin>
-      <groupId>uk.ac.ebi.maven.skins</groupId>
-      <artifactId>seqdbg-skin</artifactId>
-      <version>1.0-SNAPSHOT</version>
-  </skin>
-  -->
+     
+    <skin>
+        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+        <version>1.0</version>
+    </skin>
 
     <body>
         <links>
