@@ -4,6 +4,11 @@
         <name>intact-go</name>
     </bannerLeft>
 
+    <skin>
+        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+    </skin>
+
     <body>
         <links>
             <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
