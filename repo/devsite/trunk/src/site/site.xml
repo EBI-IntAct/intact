@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="IntAct">
+<project name="Development Site">
 
     <skin>
         <groupId>uk.ac.ebi.intact.skins</groupId>
         <artifactId>ebi-skin</artifactId>
-        <version>1.0</version>
     </skin>
 
     <body>
+        
+        <breadcrumbs>
+            <item name="Databases" href="http://www.ebi.ac.uk/Databases/" />
+            <item name="Proteomic Databases" href="http://www.ebi.ac.uk/Databases/proteomic.html" />
+            <item name="IntAct" href="http://www.ebi.ac.uk/intact/site/" />
+        </breadcrumbs>
+
         <menu name="IntAct">
             <item name="Overview" href="overview.html"/>
             <item name="General Installation" href="general_install.html"/>
@@ -76,4 +82,9 @@
         ${reports}
     
   </body>
+
+    <custom>
+        <test name="TEST">test</test>
+    </custom>
+
 </project>
