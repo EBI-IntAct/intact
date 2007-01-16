@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="IntAct">
-    <body>
 
+    <skin>
+        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+        <version>1.0</version>
+    </skin>
+
+    <body>
         <menu name="IntAct">
             <item name="Overview" href="overview.html"/>
             <item name="General Installation" href="general_install.html"/>
@@ -11,15 +17,18 @@
         </menu>
 
         <menu name="Modules">
-            <item name="Libraries">
+            <item name="Libraries" href="modules/libraries.html">
+                <!--
                 <item name="Intact Core" href="intact-core/index.html"/>
                 <item name="App Commons" href="app-commons/index.html"/>
                 <item name="Search Engine" href="search-engine/index.html"/>
                 <item name="Data Conversion" href="data-conversion/index.html"/>
                 <item name="Sanity Checker" href="sanity-checker/index.html"/>
+                -->
             </item>
 
-            <item name="Web Applications">
+            <item name="Web Applications" href="modules/webapps.html">
+                <!--
                 <item name="Search" href="search-app/index.html"/>
                 <item name="Editor" href="editor-app/index.html"/>
                 <item name="Graph2MIF" href="graph2mif-server/index.html"/>
@@ -27,9 +36,11 @@
                 <item name="Mine" href="mine-app/index.html"/>
                 <item name="Predict" href="predict-app/index.html"/>
                 <item name="StatisticView" href="statistic-view/index.html"/>
+                -->
             </item>
 
-            <item name="Web Services">
+            <item name="Web Services" href="modules/ws.html">
+                <!--
                 <item name="Search Web Service">
                     <item name="Service" href="search-ws/index.html"/>
                     <item name="Client" href="search-wsclient/index.html"/>
@@ -39,9 +50,11 @@
                     <item name="Service" href="tulip-ws/index.html"/>
                     <item name="Client" href="tulip-client/index.html"/>
                 </item>
+                -->
             </item>
 
-            <item name="Maven Plugins">
+            <item name="Maven Plugins" href="modules/maven-plugins.html">
+                <!--
                 <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
                 <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
                 <item name="Uniprot Line Export" href="maven-plugins/maven-uniprotexport-plugin/index.html"/>
@@ -50,6 +63,7 @@
                 <item name="Internal">
                     <item name="Sanity Checker" href="maven-plugins/maven-sanitychecker-plugin/index.html"/>
                 </item>
+                -->
             </item>
         </menu>
 

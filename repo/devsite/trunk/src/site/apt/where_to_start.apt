@@ -14,13 +14,14 @@ Developing new modules based on IntAct
 
  Should you be willing to write your own IntAct module, you will have to insert it in the existing hierarchy of dependencies.
  You will have to choose between three possible parent module:
- *--------------------*-------------------------------------------------------------------------------*
- intact-master        | if you application doesn't require a database access.
- *--------------------*-------------------------------------------------------------------------------*
- intact-hibernate     | if your application requires access to a database but IS NOT a web application.
- *--------------------*-------------------------------------------------------------------------------*
- intact-webapp-master | if your application requires access to a database and IS not a web application.
- *--------------------*-------------------------------------------------------------------------------*
+
+*--------------------*-------------------------------------------------------------------------------*
+| intact-master       | if you application doesn't require a database access.                        |
+*--------------------*-------------------------------------------------------------------------------*
+| intact-hibernate    | if your application requires access to a database but IS NOT a web application. |
+*--------------------*-------------------------------------------------------------------------------*
+| intact-webapp-master| if your application requires access to a database and IS not a web application. |
+*--------------------*-------------------------------------------------------------------------------*
 
  If using a database outside the EBI, you will have to setup the database first, following the {{{general_install.html}instructions}} provided.
 
