@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.skins</groupId>
     <artifactId>ebi-skin</artifactId>
-    <version>1.0</version>
+    <version>1.1</version>
     <name>EBI Skin</name>
     <description>EBI Skin</description>
 
@@ -11,9 +11,9 @@
     </properties>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/tags/ebi-skin-1.0</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/tags/ebi-skin-1.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/skins/tags/ebi-skin-1.0</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/tags/ebi-skin-1.1</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/tags/ebi-skin-1.1</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/skins/tags/ebi-skin-1.1</url>
     </scm>
 
     <build>
