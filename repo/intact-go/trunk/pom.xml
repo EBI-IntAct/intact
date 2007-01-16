@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>1.4.2</version>
+        <version>7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -16,7 +16,7 @@
     <!-- previous released: 0.1 -->
     <name>intact-go Module</name>
     <description>Module for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-go</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-go/trunk</connection>
@@ -48,7 +48,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5-SNAPSHOT</version>
+            <version>1.5.0-beta-9</version>
         </dependency>
     </dependencies>
 
@@ -77,13 +77,5 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-go</url>
-        </site>
-    </distributionManagement>
 
 </project>
