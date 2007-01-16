@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>2</version>
+        <version>5</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -13,12 +13,12 @@
     <version>1.1-SNAPSHOT</version>
     <name>intact-cdb Module</name>
     <description>Module for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-cdb</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</developerConnection>
-        <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-cdb/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-cdb/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-cdb/trunk/</url>
     </scm>
 
     <properties>
@@ -79,13 +79,5 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-cdb</url>
-        </site>
-    </distributionManagement>
 
 </project>

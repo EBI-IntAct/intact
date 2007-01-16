@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Intact Core">
-    <bannerLeft>
-        <name>intact-cdb</name>
-    </bannerLeft>
+    
+    <skin>
+        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+    </skin>
 
     <body>
         <links>
