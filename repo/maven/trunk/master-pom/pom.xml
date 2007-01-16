@@ -5,20 +5,21 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>5-SNAPSHOT</version>
+    <version>5</version>
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-5</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-5</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-5</url>
     </scm>
 
     <properties>
         <institution>ebi</institution>
         <deploy.host>bark.ebi.ac.uk</deploy.host>
         <assembly.outputDirectory>target/assembly/out</assembly.outputDirectory>
+        <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
     </properties>
 
     <ciManagement>
@@ -68,7 +69,21 @@
             <organization>EBI</organization>
             <timezone>0</timezone>
         </developer>
+        <developer>
+            <id>baranda</id>
+            <name>Arnaud Ceol</name>
+            <email>baranda@ebi.ac.uk</email>
+            <organization>EBI</organization>
+            <timezone>0</timezone>
+        </developer>
     </developers>
+
+    <contributors>
+        <contributor>
+            <name>Arnaud</name>
+            <timezone>+1</timezone>
+        </contributor>
+    </contributors>
 
     <licenses>
         <license>
@@ -85,6 +100,14 @@
 
     <build>
         <defaultGoal>install</defaultGoal>
+
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-ssh-external</artifactId>
+                <version>1.0-alpha-5</version>
+            </extension>
+        </extensions>
 
         <pluginManagement>
             <plugins>
