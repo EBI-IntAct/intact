@@ -75,6 +75,9 @@ Installing IntAct Web Applications
 *-----+------------------------------+-------------+--------+--------+
 | uk.ac.ebi.intact.READ_ONLY_APP | optional | true |  1.4.0 | If read-only, an application cannot persist data in the database |
 *-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.SYNCHRONIZED_SEARCH_ITEMS | optional | false |  1.5.0 | If true, the IA_SEARCH table is maintained by hibernate in a syncronized way. When an AnnotatedObject is modified, the SearchItems are modified accordingly |
+*-----+------------------------------+-------------+--------+--------+
+
 
  (*) if uk.ac.ebi.intact.INSTITUTION_LABEL is 'ebi', the full name, postal address and url will be set to the EBI default values.
 

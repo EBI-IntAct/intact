@@ -1,7 +1,11 @@
 Module Overview
 ~~~~~~~~~~~~~~
 
- This is the list of modules, by type:
+ The IntAct Module Universe:
+
+[images/intact-modules.png] Module Universe
+
+ List of modules, by type:
 
  <<Libraries>> (each module is a *.jar file):
 

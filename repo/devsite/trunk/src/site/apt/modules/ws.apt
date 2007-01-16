@@ -1,0 +1,18 @@
+Web Services
+~~~~~~~~~~~~~~
+
+  <<Web Services & Clients>> (if you want to use a service, you only need the client):
+
+*-----+------------------------------------------------------------------+
+| {{{search-ws/index.html}search-ws}} | the search web service |
+*-----+------------------------------------------------------------------+
+| {{{search-wsclient/index.html}search-wsclient}} | the client for the search web service |
+*-----+------------------------------------------------------------------+
+| {{{graph2mif-server/index.html}graph2mif-server}} | web application and web service to retrieve IntAct data in PSI XML format |
+*-----+------------------------------------------------------------------+
+| {{{graph2mif-client/index.html}graph2mif-client}} | client for the graph2mif web service |
+*-----+------------------------------------------------------------------+
+| {{{tulip-ws/index.html}tulip-ws}} | the tulip web service, that returns a set of coordinates used by the hierarchView |
+*-----+------------------------------------------------------------------+
+| {{{tulip-client}tulip-client/index.html}} | client for the tulip web service |
+*-----+------------------------------------------------------------------+

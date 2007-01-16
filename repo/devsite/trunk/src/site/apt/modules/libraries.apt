@@ -1,0 +1,20 @@
+Libraries
+~~~~~~~~~~~~~~
+
+ <<Libraries>> (each module is a *.jar file):
+
+*-----+------------------------------------------------------------------+
+| {{{intact-core/index.html}intact-core}} | core java sources and data model |
+*-----+------------------------------------------------------------------+
+| {{{app-commons/index.html}app-commons}} | common java sources and utilities for the web applications |
+*-----+------------------------------------------------------------------+
+| {{{sanity-checker/index.html}sanity-checker}} | classes to check if the data is not corrupted |
+*-----+------------------------------------------------------------------+
+| {{{search-engine/index.html}search-engine}} | classes which objective is to perform searches in the database |
+*-----+------------------------------------------------------------------+
+| {{{data-conversion/index.html}data-conversion}} | classes to convert the data to/from PSI XML files |
+*-----+------------------------------------------------------------------+
+| {{{confidence-score/index.html}confidence-score}} | package to generate a confidence score for IntAct |
+*-----+------------------------------------------------------------------+
+
+ 
