@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>6</version>
+        <version>7</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,8 +17,8 @@
     </description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</developerConnection>
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-ebi-search-engine-export/trunk/</url>
     </scm>
 
@@ -49,7 +49,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
-                <version>1.0.3</version>
+                <version>1.1.2</version>
 
                 <configuration>
                     <imports>
@@ -96,11 +96,4 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-ebi-search-engine-export</url>
-        </site>
-    </distributionManagement>
 </project>
