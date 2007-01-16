@@ -10,7 +10,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
-import java.io.File;
+import java.io.*;
 import java.util.Collection;
 import java.util.Map;
 
@@ -40,19 +40,43 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
      */
     private String targetDirectoryPath;
 
+    /**
+     * Log file for reporting potential problems.
+     *
+     * @parameter
+     * @required
+     */
+    private String logFilePath;
+
+
     public void execute() throws MojoExecutionException {
 
         File srcDir = new File( sourceDirectoryPath );
-        if( ! srcDir.exists() ) {
+        if ( !srcDir.exists() ) {
             throw new MojoExecutionException( "Source directory does not exist: " + sourceDirectoryPath );
         }
-        if( ! srcDir.canRead() ) {
+        if ( !srcDir.canRead() ) {
             throw new MojoExecutionException( "Source directory cannot be read: " + sourceDirectoryPath );
         }
 
         File trgDir = new File( targetDirectoryPath );
-        if( trgDir.exists() && ! trgDir.canWrite() ) {
+        if ( trgDir.exists() && !trgDir.canWrite() ) {
             throw new MojoExecutionException( "Target directory exists but cannot be written: " + targetDirectoryPath );
+        }
+
+        File logFile = null;
+        Writer logWriter = null;
+        if ( logFilePath != null ) {
+            logFile = new File( logFilePath );
+            logFile.getParentFile().mkdirs();
+
+            // initialize the writer
+            try {
+                logWriter = new BufferedWriter( new FileWriter( logFile ) );
+            } catch ( IOException e ) {
+                e.printStackTrace();
+                // We keep going, logs are not critical
+            }
         }
 
         // Build the target directory
@@ -60,6 +84,7 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
 
         System.out.println( "parameter 'sourceDirectoryPath' = " + sourceDirectoryPath );
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
+        System.out.println( "parameter 'logFilePath' = " + logFilePath );
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -70,6 +95,10 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         converter.setOverwriteOutputFile( true );
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairCluctering( true );
+
+        if ( logWriter != null ) {
+            converter.setLogWriter( logWriter );
+        }
 
         // Process datasets
         for ( Map.Entry<Integer, Collection<File>> entry : map.entrySet() ) {
@@ -84,8 +113,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
 
             // extract sub structure
             int idx = fileRootDir.getAbsolutePath().indexOf( srcDir.getAbsolutePath() );
-            if( idx == -1 ) {
-                throw new IllegalStateException( "\""+ fileRootDir.getAbsolutePath() + "\".indexOf(\""+ srcDir.getAbsolutePath() +"\") returned -1 !!" );
+            if ( idx == -1 ) {
+                throw new IllegalStateException( "\"" + fileRootDir.getAbsolutePath() + "\".indexOf(\"" + srcDir.getAbsolutePath() + "\") returned -1 !!" );
             }
             idx += sourceDirectoryPath.length();
 //            System.out.println( "idx = " + idx );
@@ -98,19 +127,28 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
             targetDir.mkdirs();
 
             File outputFile = new File( targetDir, pmid + EXCEL_FILE_EXTENSION );
-            System.out.println( "Creating " + outputFile.getAbsolutePath() + " ...");
+            System.out.println( "Creating " + outputFile.getAbsolutePath() + " ..." );
 
             // local config
             converter.setXmlFilesToConvert( xmlFiles );
             converter.setOutputFile( outputFile );
-
-            // TODO do not write empty files on disk.
 
             // run it
             try {
                 converter.convert();
             } catch ( Exception e ) {
                 throw new MojoExecutionException( "Error while converting files to PSIMITAB... see nested exception.", e );
+            }
+
+        } // for
+
+        if ( logWriter != null ) {
+            try {
+                logWriter.flush();
+                logWriter.close();
+            } catch ( IOException e ) {
+                e.printStackTrace();
+                // no need to crash here, logs are not critical.
             }
         }
     }
