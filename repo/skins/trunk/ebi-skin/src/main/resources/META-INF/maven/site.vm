@@ -65,9 +65,6 @@
     #else
       #link( $currentItemHref $item.name )
     #end
-    #if ( $breadcrumbs.size() > $counter )
-      &gt;
-    #end
   #end
 #end
 
@@ -121,8 +118,8 @@
       </ul>
     #end
     </li>
-    <li class="leftmenudivider"></li>
   #end
+  <li class="leftmenudivider"></li>
   </ul>
 #end
 
@@ -172,9 +169,6 @@
         #if ( $versionPosition.equalsIgnoreCase( $position ) )
           &nbsp;| $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
         #end
-        #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
-          | #breadcrumbs( $breadcrumbs )
-        #end
       </div>
     #end
   #elseif ( $versionPosition.equalsIgnoreCase( $position ) )
@@ -187,15 +181,6 @@
     #elseif ( $versionPosition.equalsIgnoreCase("left") )
       <div class="xleft">
         $i18n.getString( "site-renderer", $locale, "template.version" ): ${project.version}
-        #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
-          | #breadcrumbs( $breadcrumbs )
-        #end
-      </div>
-    #end
-  #elseif ( $position.equalsIgnoreCase( "left" ) )
-    #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
-      <div class="xleft">
-        #breadcrumbs( $breadcrumbs )
       </div>
     #end
   #end
@@ -244,10 +229,12 @@
 	<div class="contents" id="contents"><table class="contentspane" id="contentspane" summary="The main content pane of the page"><tr><td class="leftmargin"><img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer" /></td><td class="leftmenucell" id="leftmenucell">
 	  <div class="leftmenu" id="leftmenu" style="width: 145px; visibility: visible; display: block;">
 		  <!-- InstanceBeginEditable name="leftnav" -->
-
+        <!--
         <p>
           These are the development pages for IntAct. To go to the main IntAct page, click <a href="http://www.ebi.ac.uk/intact/site">here</a>.
         </p>
+        -->
+        <h2>${project.name}</h2>
 
 		  <!-- start left menu here  -->
           #mainMenu( $decoration.body.menus )
@@ -265,14 +252,13 @@
 
 		<!-- start contents here -->
 
-		<div class="breadcrumbs">
+        #if ( $breadcrumbs && $breadcrumbs.size() > 0 )
+          <div class="breadcrumbs">
            <a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a>
-           <a href="http://www.ebi.ac.uk/Databases/">Databases</a>
-           <a href="http://www.ebi.ac.uk/Databases/proteomic.html">Proteomic Databases</a>
-           <a href="http://www.ebi.ac.uk/intact/site">IntAct</a>
-           <a href="http://www.ebi.ac.uk/~intact/devsite">Development Site</a>
-           #links( $decoration.body.links )
+           #breadcrumbs( $breadcrumbs )
+           <a href="http://www.ebi.ac.uk/~intact/devsite">${project.name}</a>
         </div>
+        #end
 
         $bodyContent
 
