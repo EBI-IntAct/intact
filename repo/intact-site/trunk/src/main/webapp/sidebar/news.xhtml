@@ -28,7 +28,8 @@
               </div>
               <div id="newsPanel" class="iconboxcontents">
 
-                  <ui:repeat var="pieceOfNews" value="#{newsBean.lastNews}">
+                  <c:forEach var="pieceOfNews" items="#{newsBean.lastNews}">
+                  <!--<ui:repeat var="pieceOfNews" value="#{newsBean.lastNews}">-->
 
                       <strong>
                           <h:outputText value="#{is:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
@@ -53,8 +54,8 @@
                       </p>
                       <br/>
 
-
-                  </ui:repeat>
+                  <!--</ui:repeat>-->
+                  </c:forEach>
 
                   <h:outputText value="More news in the "/>
                   <h:commandLink value="Archive" action="news_archive"/>
