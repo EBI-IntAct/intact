@@ -11,13 +11,13 @@
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
     <name>Master Hibernate POM</name>
-    <version>7</version>
+    <version>8-SNAPSHOT</version>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-7</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-7</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-7</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/master-hibernate-pom</url>
     </scm>
 
     <properties>
