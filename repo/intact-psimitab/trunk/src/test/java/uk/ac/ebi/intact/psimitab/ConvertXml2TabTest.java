@@ -3,12 +3,12 @@ package uk.ac.ebi.intact.psimitab;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import psidev.psi.mi.tab.converter.xml2tab.TabConvertionException;
 import psidev.psi.mi.tab.expansion.SpokeExpansion;
+import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
+import psidev.psi.mi.xml.converter.ConverterException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -73,7 +73,7 @@ public class ConvertXml2TabTest extends TestCase {
 
     public void testSetGetXmlFilesToConvert() throws Exception {
         ConvertXml2Tab converter = new ConvertXml2Tab();
-        Collection<File> files = new ArrayList<File>( );
+        Collection<File> files = new ArrayList<File>();
         files.add( new File( "a" ) );
         files.add( new File( "b" ) );
         converter.setXmlFilesToConvert( files );
@@ -100,7 +100,7 @@ public class ConvertXml2TabTest extends TestCase {
         converter.setOutputFile( file );
         converter.setOverwriteOutputFile( false );
 
-        Collection<File> files = new ArrayList<File>( );
+        Collection<File> files = new ArrayList<File>();
         files.add( new File( "a.xml" ) );
         files.add( new File( "b.xml" ) );
 
@@ -112,12 +112,12 @@ public class ConvertXml2TabTest extends TestCase {
         } catch ( RuntimeException rte ) {
             // ok
         } catch ( Exception e ) {
-            e.printStackTrace( );
+            e.printStackTrace();
             fail();
         }
     }
 
-    public void testConvert() {
+    public void testConvert() throws IOException, ConverterException, TabConvertionException {
 
         File intputDir = new File( ConvertXml2TabTest.class.getResource( "/xml-samples" ).getFile() );
 
@@ -130,30 +130,37 @@ public class ConvertXml2TabTest extends TestCase {
         // configure the converter
         converter.setXmlFilesToConvert( inputFiles );
 
-        File file = new File( "target/xml-samples.csv" );
+        File file = new File( "target/xml-samples.xls" );
 
         converter.setOutputFile( file );
         converter.setOverwriteOutputFile( true );
 
-        converter.setExpansionStrategy( new SpokeExpansion() );
+        converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairCluctering( true );
 
+        File logFile = new File( intputDir, "mitab.log" );
+        Writer logWriter = new BufferedWriter( new FileWriter( logFile ) );
+        converter.setLogWriter( logWriter );
+
         // run the conversion
-        try {
-            converter.convert();
-            System.out.println( file.getAbsolutePath() );
-        } catch ( Exception e ) {
-            e.printStackTrace();
-            fail();
-        }
+        converter.convert();
+
+        logWriter.flush();
+        logWriter.close();
 
         assertTrue( file.exists() );
+        
+        assertTrue( logFile.exists() );
+
+        // empty as other files yielded data, so the converter doesn't output.
+        assertTrue( logFile.length() == 0 );
 
         // count the lines, we expect 4 of'em
         try {
             BufferedReader in = new BufferedReader( new FileReader( file ) );
-            String line;
             int count = 0;
+
+            String line = in.readLine(); // skip the header.
             while ( ( line = in.readLine() ) != null ) {
                 // process line here
                 count++;
@@ -165,5 +172,31 @@ public class ConvertXml2TabTest extends TestCase {
         } catch ( IOException e ) {
             fail();
         }
+    }
+
+    public void testConvert2() throws ConverterException, IOException, TabConvertionException {
+        File file = new File( ConvertXml2TabTest.class.getResource( "/xml-samples/11230133.xml" ).getFile() );
+        ConvertXml2Tab x2t = new ConvertXml2Tab();
+        x2t.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
+        x2t.setInteractorPairCluctering( true );
+        x2t.setOverwriteOutputFile( true );
+
+        File logFile = new File( file.getParentFile(), "11230133.log" );
+        Writer logWriter = new BufferedWriter( new FileWriter( logFile ) );
+        x2t.setLogWriter( logWriter );
+
+        Collection<File> inputFiles = new ArrayList<File>();
+        inputFiles.add( file );
+        x2t.setXmlFilesToConvert( inputFiles );
+
+        x2t.setOutputFile( new File( file.getAbsolutePath() + ".xls" ) );
+
+        x2t.convert();
+
+        logWriter.flush();
+        logWriter.close();
+
+        assertTrue( logFile.exists() );
+        assertTrue( logFile.length() > 0 );
     }
 }

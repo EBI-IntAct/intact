@@ -18,6 +18,7 @@ import psidev.psi.mi.xml.converter.ConverterException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 
 /**
@@ -33,6 +34,8 @@ public class ConvertXml2Tab {
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( ConvertXml2Tab.class );
+
+    private static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /////////////////////////
     // Instance variables
@@ -65,6 +68,11 @@ public class ConvertXml2Tab {
      * Controls whever the output file can be overwriten or not.
      */
     private boolean overwriteOutputFile = false;
+
+    /**
+     * Where warning messages are going to be writtet to.
+     */
+    private Writer logWriter;
 
     ////////////////////////
     // Constructor
@@ -115,6 +123,14 @@ public class ConvertXml2Tab {
         this.overwriteOutputFile = overwriteOutputFile;
     }
 
+    public Writer getLogWriter() {
+        return logWriter;
+    }
+
+    public void setLogWriter( Writer logWriter ) {
+        this.logWriter = logWriter;
+    }
+
     ///////////////////////////
     // Convertion
 
@@ -156,10 +172,23 @@ public class ConvertXml2Tab {
             x2t.setPostProcessor( null );
         }
 
-        Collection<BinaryInteraction> interaction = x2t.convert( xmlFilesToConvert );
+        Collection<BinaryInteraction> interactions = x2t.convert( xmlFilesToConvert );
 
-        log.debug( "Starting writing file on disk..." );
-        PsimiTabWriter writer = new PsimiTabWriter();
-        writer.write( interaction, outputFile );
+        if ( interactions.isEmpty() ) {
+            if ( logWriter != null ) {
+                logWriter.write( "The following file(s) didn't yield any binary interactions:" + NEW_LINE );
+                for ( File file : xmlFilesToConvert ) {
+                    logWriter.write( "  - " + file.getAbsolutePath() + NEW_LINE);
+                }
+                logWriter.write( outputFile.getName() + " was not generated." + NEW_LINE );
+                logWriter.flush();
+            } else {
+                log.warn( "The MITAB file " + outputFile.getName() + " didn't contain any data" );
+            }
+        } else {
+            // Writing file on disk
+            PsimiTabWriter writer = new PsimiTabWriter();
+            writer.write( interactions, outputFile );
+        }
     }
 }
