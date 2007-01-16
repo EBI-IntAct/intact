@@ -38,7 +38,7 @@
                             ]
                         </p>
                         <p>
-                            #{pieceOfNews.description}
+                            <h:outputText value="#{pieceOfNews.description.value}" escape="#{pieceOfNews.description.escape}"/>
 
                             <c:if test="#{pieceOfNews.moreLink != null}">
                                 &nbsp;
