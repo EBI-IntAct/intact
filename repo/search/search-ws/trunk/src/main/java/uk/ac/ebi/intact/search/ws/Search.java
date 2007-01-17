@@ -45,11 +45,13 @@ public class Search
 
         IntactSession intactSession = new WebServiceSession();
         IntactConfigurator.initIntact(intactSession);
+
     }
     
     @WebMethod()
     public InteractionInfo[] getInteractionInfoUsingUniprotIds(String uniprotId1, String uniprotId2)
     {
+        beginTransaction();
         DaoFactory daoFactory = getDataContext().getDaoFactory();
 
         List<ProteinImpl> protsForId1 = daoFactory.getProteinDao().getByUniprotId(uniprotId1);
@@ -59,17 +61,17 @@ public class Search
 
         for (Protein prot1 : protsForId1)
         {
-             for (Protein prot2 : protsForId2)
-             {
-                 InteractionInfo[] results = getInteractionInfoUsingIntactIds(prot1.getAc(), prot2.getAc());
-                 for (InteractionInfo result : results)
-                 {
-                     interInfos.add(result);
-                 }
-             }
+            for (Protein prot2 : protsForId2)
+            {
+                InteractionInfo[] results = getInteractionInfoUsingIntactIds(prot1.getAc(), prot2.getAc());
+                for (InteractionInfo result : results)
+                {
+                    interInfos.add(result);
+                }
+            }
         }
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
@@ -77,9 +79,11 @@ public class Search
     @WebMethod()
     public InteractionInfo[] getInteractionInfoUsingIntactIds(String id1, String id2)
     {
+        beginTransaction();
+
         DaoFactory daoFactory = getDataContext().getDaoFactory();
 
-        List<Interaction> interactions = daoFactory.getInteractionDao().getInteractionsForProtPair(id1,id2);
+        List<Interaction> interactions = daoFactory.getInteractionDao().getInteractionsForProtPair(id1, id2);
 
         List<InteractionInfo> interInfos = new ArrayList<InteractionInfo>();
 
@@ -109,7 +113,7 @@ public class Search
             interInfos.add(interInfo);
         }
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return interInfos.toArray(new InteractionInfo[interInfos.size()]);
     }
@@ -121,18 +125,21 @@ public class Search
      * @return
      */
     @WebMethod()
-    public PartnerResult[] findPartnersUsingUniprotIds(String[] proteinIds)  {
+    public PartnerResult[] findPartnersUsingUniprotIds(String[] proteinIds)
+    {
         if (log.isDebugEnabled())
         {
             if (proteinIds.length == 1)
             {
-                log.debug("Finding partners for: "+proteinIds[0]);
+                log.debug("Finding partners for: " + proteinIds[0]);
             }
             else
             {
-                log.debug("Finding partners for an array of "+proteinIds.length+" protein IDs");
+                log.debug("Finding partners for an array of " + proteinIds.length + " protein IDs");
             }
         }
+
+        beginTransaction();
 
         List<PartnerResult> results = new ArrayList<PartnerResult>(proteinIds.length);
 
@@ -160,18 +167,18 @@ public class Search
                     protIds = Collections.EMPTY_LIST;
                 }
 
-                totalFound = totalFound+protIds.size();
+                totalFound = totalFound + protIds.size();
 
                 results.add(new PartnerResult(uniprotId, protIds.toArray(new String[protIds.size()])));
             }
         }
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         if (log.isDebugEnabled())
         {
-            log.debug("Total IntAct prots found: "+intactProtsFound);
-            log.debug("Total partners found: "+totalFound);
+            log.debug("Total IntAct prots found: " + intactProtsFound);
+            log.debug("Total partners found: " + totalFound);
         }
 
         return results.toArray(new PartnerResult[results.size()]);
@@ -180,9 +187,11 @@ public class Search
     @WebMethod
     public int countExperimentsUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(Experiment.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -190,9 +199,11 @@ public class Search
     @WebMethod
     public int countProteinsUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(ProteinImpl.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -200,9 +211,11 @@ public class Search
     @WebMethod
     public int countNucleicAcidsUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(NucleicAcidImpl.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -210,9 +223,11 @@ public class Search
     @WebMethod
     public int countSmallMoleculesUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(SmallMoleculeImpl.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -220,9 +235,11 @@ public class Search
     @WebMethod
     public int countInteractionsUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(InteractionImpl.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -230,9 +247,11 @@ public class Search
     @WebMethod
     public int countCvObjectsUsingIntactQuery(String query)
     {
+        beginTransaction();
+
         int count = new SimpleSearchService().count(CvObject.class, query);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -240,13 +259,15 @@ public class Search
     @WebMethod
     public int countAllBinaryInteractions()
     {
+        beginTransaction();
+
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         int componentCount = daoFactory.getComponentDao().countAll();
         int interactionCount = daoFactory.getInteractionDao().countAll();
 
         int count = (componentCount - interactionCount);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return count;
     }
@@ -254,9 +275,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchExperimentsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {Experiment.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{Experiment.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -264,9 +287,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchProteinsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {ProteinImpl.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{ProteinImpl.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -274,9 +299,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchNucleicAcidsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {NucleicAcidImpl.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{NucleicAcidImpl.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -284,9 +311,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchSmallMoleculesUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {SmallMoleculeImpl.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{SmallMoleculeImpl.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -294,9 +323,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchInteractionsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {InteractionImpl.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{InteractionImpl.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -304,9 +335,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchCvObjectsUsingQuery(String query, Integer firstResult, Integer maxResults)
     {
-        List<SimpleResult> results = searchUsingQuery(query, new Class[] {CvObject.class}, firstResult, maxResults);
+        beginTransaction();
 
-        getDataContext().commitTransaction();
+        List<SimpleResult> results = searchUsingQuery(query, new Class[]{CvObject.class}, firstResult, maxResults);
+
+        endTransaction();
 
         return results;
     }
@@ -314,9 +347,11 @@ public class Search
     @WebMethod
     public List<SimpleResult> searchUsingQuery(String query, String[] searchableTypes, Integer firstResult, Integer maxResults)
     {
+        beginTransaction();
+
         Class<? extends Searchable>[] searchables = new Class[searchableTypes.length];
 
-        for (int i=0; i<searchableTypes.length; i++)
+        for (int i = 0; i < searchableTypes.length; i++)
         {
             try
             {
@@ -326,17 +361,23 @@ public class Search
             {
                 throw new IntactException(e);
             }
+            finally
+            {
+                getDataContext().getDaoFactory().getCurrentSession().close();
+            }
         }
 
         List<SimpleResult> results = searchUsingQuery(query, searchables, firstResult, maxResults);
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return results;
     }
 
     private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable>[] searchables, Integer firstResult, Integer maxResults)
     {
+        beginTransaction();
+
         List<SimpleResult> results = new ArrayList<SimpleResult>();
         if (firstResult == null) firstResult = 0;
         if (maxResults == null) maxResults = Integer.MAX_VALUE;
@@ -345,7 +386,7 @@ public class Search
 
         for (Class<? extends Searchable> searchable : searchables)
         {
-            results.addAll(searchUsingQuery(query, searchable, firstResult, maxResults-currentResultsNum));
+            results.addAll(searchUsingQuery(query, searchable, firstResult, maxResults - currentResultsNum));
             currentResultsNum = currentResultsNum + results.size();
 
             if (currentResultsNum == maxResults)
@@ -354,13 +395,15 @@ public class Search
             }
         }
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return results;
     }
 
-    private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable> searchable, Integer firstResult, Integer maxResults) 
+    private List<SimpleResult> searchUsingQuery(String query, Class<? extends Searchable> searchable, Integer firstResult, Integer maxResults)
     {
+        beginTransaction();
+
         List<SimpleResult> results = new ArrayList<SimpleResult>();
 
         List res = new SimpleSearchService().search(searchable, query, firstResult, maxResults);
@@ -371,7 +414,7 @@ public class Search
             results.add(new SimpleResult(ao.getAc(), ao.getShortLabel(), ao.getFullName(), ao.getClass().getName()));
         }
 
-        getDataContext().commitTransaction();
+        endTransaction();
 
         return results;
     }
@@ -403,6 +446,27 @@ public class Search
     private static DataContext getDataContext()
     {
         return IntactContext.getCurrentInstance().getDataContext();
+    }
+
+    private void beginTransaction()
+    {
+        getDataContext().getDaoFactory().beginTransaction();
+}
+
+    private void endTransaction()
+    {
+        try
+        {
+            getDataContext().commitTransaction();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+//        finally
+//        {
+//            getDataContext().getDaoFactory().getCurrentSession().close();
+//        }
     }
 
 }
