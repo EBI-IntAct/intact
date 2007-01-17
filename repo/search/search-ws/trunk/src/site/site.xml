@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Search Web Service - Client">
+<project name="Search Web Service">
     <bannerLeft>
         <name>Search Web Service - Server</name>
     </bannerLeft>
+
+    <skin>
+        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+    </skin>
 
     <body>
         <links>
