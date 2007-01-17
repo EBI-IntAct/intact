@@ -338,6 +338,12 @@
         </pluginRepository>
     </pluginRepositories>
 
-
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}</url>
+        </site>
+    </distributionManagement>
 
 </project>
