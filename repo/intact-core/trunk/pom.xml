@@ -189,4 +189,12 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+         <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
 </project>

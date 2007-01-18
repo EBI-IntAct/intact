@@ -4,7 +4,6 @@
     <skin>
         <groupId>uk.ac.ebi.intact.skins</groupId>
         <artifactId>ebi-skin</artifactId>
-        <version>1.0</version>
     </skin>
 
     <body>

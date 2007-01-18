@@ -32,7 +32,7 @@ public class IntactContext implements Serializable
         this.dataContext = dataContext;
     }
 
-    public static IntactContext getCurrentInstance()
+    public static synchronized IntactContext getCurrentInstance()
     {
         if (!currentInstanceExists())
         {
