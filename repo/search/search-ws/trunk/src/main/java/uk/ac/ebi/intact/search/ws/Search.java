@@ -12,13 +12,19 @@ import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.WebServiceSession;
+import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.svc.impl.SimpleSearchService;
 
+import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,16 +44,43 @@ public class Search
 
     private static final Log log = LogFactory.getLog(Search.class);
 
+    private IntactSession intactSession;
+
+    @Resource
+    WebServiceContext ctx;
 
     public Search()
     {
-        log.debug("Initializing Search...");
-
-        IntactSession intactSession = new WebServiceSession();
-        IntactConfigurator.initIntact(intactSession);
-
+        log.info("Initializing Search (new instance)...");
     }
-    
+
+    public synchronized void initialize()
+    {
+        if (ctx == null)
+        {
+            throw new NullPointerException("WebServiceContext");
+        }
+
+        MessageContext mc = ctx.getMessageContext();
+
+        ServletContext sContext = (ServletContext) mc.get(MessageContext.SERVLET_CONTEXT);
+        ServletRequest request = (ServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
+        this.intactSession = new WebappSession(sContext, null, (HttpServletRequest) request);
+
+
+        // start the intact application (e.g. load Institution, etc)
+        IntactConfigurator.createIntactContext(intactSession);
+    }
+    /*
+    @PreDestroy
+    public void closeSessionFactory()
+    {
+        log.info("Closing Search WS");
+
+        //IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null, null);
+        RuntimeConfig.getCurrentInstance(intactSession).getDefaultDataConfig().closeSessionFactory();
+    }  */
+
     @WebMethod()
     public InteractionInfo[] getInteractionInfoUsingUniprotIds(String uniprotId1, String uniprotId2)
     {
@@ -361,10 +394,10 @@ public class Search
             {
                 throw new IntactException(e);
             }
-            finally
-            {
-                getDataContext().getDaoFactory().getCurrentSession().close();
-            }
+            //finally
+            //{
+                //getDataContext().getDaoFactory().getCurrentSession().close();
+            //}
         }
 
         List<SimpleResult> results = searchUsingQuery(query, searchables, firstResult, maxResults);
@@ -450,8 +483,9 @@ public class Search
 
     private void beginTransaction()
     {
+        initialize();
         getDataContext().getDaoFactory().beginTransaction();
-}
+    }
 
     private void endTransaction()
     {
