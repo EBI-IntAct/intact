@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.context.impl.WebappSession;
 
 import javax.servlet.ServletContextEvent;
@@ -56,6 +57,10 @@ public class StartupIntactListener implements ServletContextListener, HttpSessio
     {
         log.debug("LogFactory.release and destroying application");
         LogFactory.release(Thread.currentThread().getContextClassLoader());
+
+        log.debug("Closing SessionFactory");
+        IntactSession intactSession = new WebappSession(servletContextEvent.getServletContext(), null, null);
+        RuntimeConfig.getCurrentInstance(intactSession).getDefaultDataConfig().closeSessionFactory();
     }
 
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent)

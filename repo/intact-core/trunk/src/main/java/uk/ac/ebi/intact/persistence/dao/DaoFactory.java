@@ -272,9 +272,20 @@ public class DaoFactory implements Serializable
         return currentTransaction;
     }
 
-    public Session getCurrentSession()
+    public synchronized Session getCurrentSession()
     {
-        return dataConfig.getSessionFactory().getCurrentSession();
+        Session session = dataConfig.getSessionFactory().getCurrentSession();
+
+        if (!session.isOpen())
+        {
+            if (log.isDebugEnabled())
+            {
+                log.debug("Opening new session because the current is closed");
+            }
+            session = dataConfig.getSessionFactory().openSession();
+        }
+
+        return session;
     }
 
     public boolean isTransactionActive()

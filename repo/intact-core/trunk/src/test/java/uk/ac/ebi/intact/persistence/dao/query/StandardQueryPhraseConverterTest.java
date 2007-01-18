@@ -51,7 +51,7 @@ public class StandardQueryPhraseConverterTest extends TestCase
         QueryTerm term = phrase.getTerms().iterator().next();
 
         assertEquals(1, term.getModifiers().length);
-        assertEquals("lsm%", term.getValue());
+        assertEquals("lsm", term.getValue());
     }
 
     public void testObjectToPhrase_wildcard_asterisk() throws Exception
@@ -64,7 +64,7 @@ public class StandardQueryPhraseConverterTest extends TestCase
         QueryTerm term = phrase.getTerms().iterator().next();
 
         assertEquals(1, term.getModifiers().length);
-        assertEquals("lsm%", term.getValue());
+        assertEquals("lsm", term.getValue());
     }
 
     public void testPhraseToObject_wild_percent() throws Exception

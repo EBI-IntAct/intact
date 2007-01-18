@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 
 /**
@@ -81,6 +80,11 @@ public class IntactTransaction
     public boolean wasRolledBack()
     {
         return transaction.wasRolledBack();
+    }
+
+    public Object getWrappedTransaction()
+    {
+        return transaction;
     }
 
 }
