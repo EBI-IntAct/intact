@@ -147,7 +147,7 @@ public class UpdateCVs {
 
                     if ( ia == null ) {
 
-                        // TODO doing the IS:xxxx update here may cause a problem if the file we are loading
+                        // TODO doing the IA:xxxx update here may cause a problem if the file we are loading
                         //      contains some IA:xxxx, they may clash.
                         //      It would be better to update all terms after the file has been loaded.
 
@@ -176,11 +176,19 @@ public class UpdateCVs {
         output.println("\nupdate of the terms' content");
 
             Collection oboTerms = ontology.getCvTerms( cvObjectClass );
+            oboTerms.addAll(ontology.getObsoleteTerms());
+        
             output.println( "\t " + oboTerms.size() + " term(s) for "+cvObjectClass+" loaded from definition file." );
             for ( Iterator iterator = oboTerms.iterator(); iterator.hasNext(); ) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
 
                 CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId() );
+
+                // if a cvterm is obsolete and its not present in the DB, ignore it
+                if (cvObject == null && cvTerm.isObsolete())
+                {
+                    continue;
+                }
 
                     output.println("----------------------------------------------------------------------------------");
                     if (cvObject == null)
@@ -970,12 +978,15 @@ public class UpdateCVs {
     private static void updateAnnotations( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report ) throws IntactException {
 
         // build a copy of the annotation list and add obsolete and definition (if any).
-        List annotations = new ArrayList( cvTerm.getAnnotations() );
+        List<CvTermAnnotation> annotations = new ArrayList<CvTermAnnotation>( cvTerm.getAnnotations() );
 
         if ( ! cvTerm.getId().equals( CvTopic.OBSOLETE_MI_REF ) ) {
             // the Obsolete term is not Obsolete in IntAct.
+            output.println("\t\t CvTerm '"+cvTerm.getShortName()+"' is obsolete? "+(cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null));
+
             if ( cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null ) {
                 output.println("\t\t Marking as obsolete, adding the annotation 'obsolete' to term: "+cvTerm.getShortName());
+
                 annotations.add( new CvTermAnnotation( CvTopic.OBSOLETE, cvTerm.getObsoleteMessage() ) );
 
                 report.getObsoleteTerms().add(cvTerm);
@@ -995,75 +1006,86 @@ public class UpdateCVs {
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Start updating ...
-        for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
-            CvTermAnnotation annotation = (CvTermAnnotation) iterator.next();
-
+        for (CvTermAnnotation annotation : annotations)
+        {
             // the term will be created if it doesn't exist yet.
-            CvTopic topic = (CvTopic) getCvObject(CvTopic.class, annotation.getTopic(), output, report );
+            CvTopic topic = (CvTopic) getCvObject(CvTopic.class, annotation.getTopic(), output, report);
 
-            if ( topic != null ) {
+            if (topic != null)
+            {
 
-                if ( uniqueCvTopics.contains( topic ) ) {
+                if (uniqueCvTopics.contains(topic))
+                {
 
                     // only one instance of that topic allowed.
-                    Collection annotationsByTopic = select( cvObject.getAnnotations(), topic );
-                    output.println("\t\t Select from Annotation with topic '" + topic.getShortLabel() + "' returned " + annotationsByTopic.size() + " hit(s)." );
+                    Collection annotationsByTopic = select(cvObject.getAnnotations(), topic);
+                    output.println("\t\t Select from Annotation with topic '" + topic.getShortLabel() + "' returned " + annotationsByTopic.size() + " hit(s).");
 
-                    if ( annotationsByTopic.isEmpty() ) {
+                    if (annotationsByTopic.isEmpty())
+                    {
                         // create one
-                        Annotation annot = new Annotation( institution, topic, annotation.getAnnotation() );
+                        Annotation annot = new Annotation(institution, topic, annotation.getAnnotation());
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annot );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(annot);
 
-                        cvObject.addAnnotation( annot );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
+                        cvObject.addAnnotation(annot);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
 
-                        output.println("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: "+cvObject.getShortLabel() + "("+cvObject.getAc()+")" );
+                        output.println("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: " + cvObject.getShortLabel() + "(" + cvObject.getAc() + ")");
 
-                    } else {
+                    }
+                    else
+                    {
 
                         Iterator i = annotationsByTopic.iterator();
                         Annotation annot = (Annotation) i.next();
 
                         // update that one if the text is different.
-                        String text = ( annot.getAnnotationText() == null ? "" : annot.getAnnotationText() );
-                        String newtext = ( annotation.getAnnotation() == null ? "" : annotation.getAnnotation() );
+                        String text = (annot.getAnnotationText() == null ? "" : annot.getAnnotationText());
+                        String newtext = (annotation.getAnnotation() == null ? "" : annotation.getAnnotation());
 
-                        if ( ! text.equals( newtext ) ) {
+                        if (!text.equals(newtext))
+                        {
                             // only update if required.
-                            annot.setAnnotationText( annotation.getAnnotation() );
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annot );
-                            output.println( "\t\t Updated Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
+                            annot.setAnnotationText(annotation.getAnnotation());
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update(annot);
+                            output.println("\t\t Updated Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )");
                         }
 
                         // delete all remaining ones as we want to maintain a unique annotation
-                        while ( i.hasNext() ) {
+                        while (i.hasNext())
+                        {
                             annot = (Annotation) i.next();
 
-                            output.println( "\t\t Removed Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )" );
-                            cvObject.removeAnnotation( annot );
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annot );
+                            output.println("\t\t Removed Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )");
+                            cvObject.removeAnnotation(annot);
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete(annot);
                         }
                     } // end - at least one annotation
 
-                } else {
+                }
+                else
+                {
 
                     // more than one instance of that topic allowed.
-                    Annotation annot = new Annotation( institution, topic, annotation.getAnnotation() );
+                    Annotation annot = new Annotation(institution, topic, annotation.getAnnotation());
 
-                    if ( ! cvObject.getAnnotations().contains( annot ) ) {
+                    if (!cvObject.getAnnotations().contains(annot))
+                    {
                         // add missing annotation
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annot );
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(annot);
 
-                        cvObject.addAnnotation( annot );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-                        output.println( "\t\t Created Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ). <topic not unique>" );
+                        cvObject.addAnnotation(annot);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                        output.println("\t\t Created Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ). <topic not unique>");
                     }
                 }
-            } else {
-                output.println( "ERROR: Could not find or create CvTopic( " + annotation.getTopic() + " ) in IntAct. Skip annotation." );
+            }
+            else
+            {
+                output.println("ERROR: Could not find or create CvTopic( " + annotation.getTopic() + " ) in IntAct. Skip annotation.");
             }
         }
     }
