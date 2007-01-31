@@ -33,9 +33,9 @@ public class NewtTermTest extends TestCase {
     // Tests
 
     public void testNewtTerm() {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 123 );
         assertNotNull( t );
-        assertEquals( 1, t.getTaxid() );
+        assertEquals( 123, t.getTaxid() );
         assertNull( t.getScientificName() );
         assertNull( t.getCommonName() );
         assertTrue( t.getChildren().isEmpty() );
@@ -43,7 +43,7 @@ public class NewtTermTest extends TestCase {
     }
 
     public void testSetGetCommonName() throws Exception {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 4 );
         t.setCommonName( "common" );
         assertEquals( "common", t.getCommonName() );
         t.setCommonName( null );
@@ -51,7 +51,7 @@ public class NewtTermTest extends TestCase {
     }
 
     public void testSetGetScientificName() throws Exception {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 4 );
         t.setScientificName( "common" );
         assertEquals( "common", t.getScientificName() );
         t.setScientificName( null );
@@ -59,21 +59,32 @@ public class NewtTermTest extends TestCase {
     }
 
     public void testSetGetTaxid() throws Exception {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 3 );
+        assertEquals( 3, t.getTaxid() );
         t.setTaxid( 2 );
         assertEquals( 2, t.getTaxid() );
         t.setTaxid( -1 );
         assertEquals( -1, t.getTaxid() );
+        t.setTaxid( -2 );
+        assertEquals( -2, t.getTaxid() );
+
+
         try {
-            t.setTaxid( -2 );
-            fail( "-2 is not a valid taxid" );
+            t.setTaxid( -3 );
+            fail( "-3 is not a valid taxid" );
+        } catch ( Exception e ) {
+            // ok
+        }
+        try {
+            t.setTaxid( 0 );
+            fail( "0 is not a valid taxid" );
         } catch ( Exception e ) {
             // ok
         }
     }
 
     public void testGetChildren() throws Exception {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 7 );
         t.addChild( new NewtTerm( 2 ) );
         assertEquals( new NewtTerm( 2 ), t.getChildren().iterator().next() );
 
@@ -85,7 +96,7 @@ public class NewtTermTest extends TestCase {
     }
 
     public void testGetParents() throws Exception {
-        NewtTerm t = new NewtTerm( 1 );
+        NewtTerm t = new NewtTerm( 7 );
         t.addParent( new NewtTerm( 2 ) );
         assertEquals( new NewtTerm( 2 ), t.getParents().iterator().next() );
 
