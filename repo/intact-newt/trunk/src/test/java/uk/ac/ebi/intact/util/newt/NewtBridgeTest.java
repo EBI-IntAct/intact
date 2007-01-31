@@ -64,11 +64,11 @@ public class NewtBridgeTest extends TestCase {
 
         // Term with direct children
         newt.retreiveChildren( term, false );
-        assertEquals( 53, NewtUtils.collectAllChildren( term ).size() );
+        assertEquals( 55, NewtUtils.collectAllChildren( term ).size() );
 
         // Term with all children
         newt.retreiveChildren( term, true );
-        assertEquals( 57, NewtUtils.collectAllChildren( term ).size() );
+        assertEquals( 59, NewtUtils.collectAllChildren( term ).size() );
     }
 
     public void testRetreiveParents() throws IOException {
@@ -118,6 +118,44 @@ public class NewtBridgeTest extends TestCase {
         t = t.getParents().iterator().next();
         assertEquals( 131567, t.getTaxid() );
 
+        t = t.getParents().iterator().next();
+        assertEquals( 1, t.getTaxid() );
+
         assertTrue( t.getParents().isEmpty() );
+    }
+
+    public void testCache() throws IOException {
+
+        // when the caching is enabled, we do not have duplication of terms, they are reused.
+        NewtBridge newt = new NewtBridge( true );
+
+        NewtTerm eukariota = newt.getNewtTerm( 2759 );
+        NewtTerm bacteria = newt.getNewtTerm( 2 );
+
+        newt.retreiveParents( eukariota, false );
+        newt.retreiveParents( bacteria, false );
+
+        NewtTerm eukariotaParent = eukariota.getParents().iterator().next();
+        NewtTerm bacteriaParent = bacteria.getParents().iterator().next();
+
+        assertTrue( eukariotaParent == bacteriaParent );
+    }
+
+    public void testNoCache() throws IOException {
+
+        // when the caching is disabled, we have duplication of terms
+        NewtBridge newt = new NewtBridge( false );
+
+        NewtTerm eukariota = newt.getNewtTerm( 2759 );
+        NewtTerm bacteria = newt.getNewtTerm( 2 );
+
+        newt.retreiveParents( eukariota, false );
+        newt.retreiveParents( bacteria, false );
+
+        NewtTerm eukariotaParent = eukariota.getParents().iterator().next();
+        NewtTerm bacteriaParent = bacteria.getParents().iterator().next();
+
+        assertFalse( eukariotaParent == bacteriaParent );
+        assertEquals( eukariotaParent, bacteriaParent );
     }
 }
