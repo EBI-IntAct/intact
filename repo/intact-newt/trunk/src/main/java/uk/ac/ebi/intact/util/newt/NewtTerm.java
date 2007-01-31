@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.Serializable;
 
 /**
  * Description of a Newt Term.
@@ -19,7 +20,12 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since <pre>17-Jan-2007</pre>
  */
-public class NewtTerm {
+public class NewtTerm implements Serializable {
+
+    /**
+     * Class version for checking when serializing.
+     */
+    private static final long serialVersionUID = 1L;  
 
     /**
      * Regular expression to extract taxid, common and scientific name.
@@ -128,8 +134,8 @@ public class NewtTerm {
      * @param taxid Value to set for property 'taxid'.
      */
     public void setTaxid( int taxid ) {
-        if ( taxid != -1 && taxid < 1 ) {
-            throw new IllegalArgumentException( taxid + ": a taxid must be > 0 or be -1 (in vitro)." );
+        if ( taxid < -2 || taxid == 0 ) {
+            throw new IllegalArgumentException( taxid + ": a taxid must be > 1 or be -1 (in vitro) or -2 (chemical synthesis)." );
         }
         this.taxid = taxid;
     }
