@@ -1,0 +1,17 @@
+<document>
+    <properties>
+        <title>Changes in IntAct's master-pom</title>
+        <author email="skerrien@ebi.ac.uk">Samuel Kerrien</author>
+    </properties>
+    <body>
+
+        <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
+
+        <release version="8" date="2007-02-01" description="plugin update">
+            <action dev="skerrien" type="add">
+                Now relies on intact-master-6.
+            </action>
+        </release>
+
+    </body>
+</document>
