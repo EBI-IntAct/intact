@@ -1,0 +1,15 @@
+<document>
+    <properties>
+        <title>Changes in IntAct's master-webapp-pom</title>
+        <author email="skerrien@ebi.ac.uk">Samuel Kerrien</author>
+    </properties>
+    <body>
+
+        <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
+
+        <release version="3" date="2007-02-01" description="?????">
+            <!-- no action yet -->
+        </release>
+
+    </body>
+</document>
