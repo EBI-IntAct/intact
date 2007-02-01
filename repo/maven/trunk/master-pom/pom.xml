@@ -1,18 +1,20 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
+    
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
     <version>6-SNAPSHOT</version>
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
-        that is common to all projects.</description>
+        that is common to all projects.
+    </description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-6</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-6</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-6</url>
     </scm>
 
     <properties>
@@ -52,28 +54,34 @@
             <id>skerrien</id>
             <name>Samuel Kerrien</name>
             <email>skerrien@ebi.ac.uk</email>
-            <organization>EBI</organization>
+            <organization>IntAct - EBI</organization>
+            <organizationUrl>http://www.ebi.ac.uk/intact</organizationUrl>
             <timezone>0</timezone>
         </developer>
         <developer>
             <id>cleroy</id>
             <name>Catherine Leroy</name>
             <email>cleroy@ebi.ac.uk</email>
-            <organization>EBI</organization>
+            <organization>IntAct - EBI</organization>
+            <organizationUrl>http://www.ebi.ac.uk/intact</organizationUrl>
             <timezone>0</timezone>
         </developer>
         <developer>
             <id>baranda</id>
             <name>Bruno Aranda</name>
             <email>baranda@ebi.ac.uk</email>
-            <organization>EBI</organization>
+            <organization>IntAct - EBI</organization>
+            <organizationUrl>http://www.ebi.ac.uk/intact</organizationUrl>
             <timezone>0</timezone>
         </developer>
     </developers>
 
     <contributors>
         <contributor>
-            <name>Arnaud</name>
+            <name>Arnaud Ceol</name>
+            <email>arnaud.ceol@uniroma2.it</email>
+            <organization>MINT - University of Rome</organization>
+            <organizationUrl>http://mint.bio.uniroma2.it/mint/</organizationUrl>
             <timezone>+1</timezone>
         </contributor>
     </contributors>
@@ -188,14 +196,13 @@
                 </executions>
             </plugin>
 
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
                 <configuration>
                     <jdk>1.5</jdk>
-                    <!--
                     <licenseLocation>${basedir}/src/test/clover/myclover.license</licenseLocation>
-                    -->
                 </configuration>
                 <executions>
                     <execution>
@@ -207,6 +214,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 
@@ -232,7 +240,7 @@
     </profiles>
 
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
@@ -243,7 +251,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-         <repository>
+        <repository>
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
@@ -401,10 +409,23 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changes-plugin</artifactId>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>changes-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <!-- Clover commented as it requires a licence we should not distribute.
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clover-plugin</artifactId>
             </plugin>
 
-            <!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
