@@ -23,4 +23,8 @@ public interface InteractorDao<T extends InteractorImpl> extends AnnotatedObject
     List<String> getGeneNamesByInteractorAc(String proteinAc);
 
     List<T> getByBioSourceAc(String ac);
+
+    public int countInteractorInvolvedInInteraction();
+
+    public List<T> getInteractorInvolvedInInteraction( Integer firstResult, Integer maxResults );
 }
