@@ -6,9 +6,15 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>7</version>
+        <artifactId>intact-master</artifactId>
+        <version>6</version>
     </parent>
+
+    <scm>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-newt/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-newt/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-newt/trunk</url>
+    </scm>
 
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-newt</artifactId>
@@ -17,6 +23,7 @@
     <name>intact-newt</name>
 
     <dependencies>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -24,11 +31,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
-            <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-8</version>
-        </dependency>
     </dependencies>
 
     <!-- EBI repositories -->
@@ -61,7 +63,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-proteins-update</url>
+            <url>${site.remote.basedir}/intact-newt</url>
         </site>
     </distributionManagement>
 
