@@ -87,28 +87,24 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
     }
 
     public int countInteractorInvolvedInInteraction() {
-        return ( Integer ) getSession().createCriteria( InteractorImpl.class )
+        return ( Integer ) getSession().createCriteria( getEntityClass() )
                 .add( Restrictions.isNotEmpty( "activeInstances" ) )
                 .setProjection( Projections.rowCount() ).uniqueResult();
     }
 
     public List<T> getInteractorInvolvedInInteraction( Integer firstResult, Integer maxResults ) {
-        {
-            Criteria crit = getSession().createCriteria( InteractorImpl.class )
-//                    .createAlias("xrefs", "xref")
-                    .add( Restrictions.isNotEmpty( "activeInstances" ) )
-//                    .addOrder( Order.asc( "xref.primaryId" ) )
-                    ;
 
-            if ( firstResult != null && firstResult >= 0 ) {
-                crit.setFirstResult( firstResult );
-            }
+        Criteria crit = getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.isNotEmpty( "activeInstances" ) );
 
-            if ( maxResults != null && maxResults > 0 ) {
-                crit.setMaxResults( maxResults );
-            }
-
-            return crit.list();
+        if ( firstResult != null && firstResult >= 0 ) {
+            crit.setFirstResult( firstResult );
         }
+
+        if ( maxResults != null && maxResults > 0 ) {
+            crit.setMaxResults( maxResults );
+        }
+
+        return crit.list();
     }
 }
