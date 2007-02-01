@@ -1,0 +1,23 @@
+<document>
+    <properties>
+        <title>Changes in intact-core</title>
+        <author email="skerrien@ebi.ac.uk">Samuel Kerrien</author>
+    </properties>
+    <body>
+
+        <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
+
+        <release version="1.5.0-rc1-SNAPSHOT" date="2007-02-01" description="Providing additionel searching facilities">
+            <action dev="skerrien" type="update">
+                Now relies on master-hibernate-8.
+            </action>
+            <action dev="skerrien" type="add">
+                Added 2 new methods in InteractorDAO allowing to count and retreive interactor involved in at least one Interaction.
+            </action>
+            <action dev="skerrien" type="add">
+                Added Test suite for InteractorDAO.
+            </action>
+        </release>
+
+    </body>
+</document>
