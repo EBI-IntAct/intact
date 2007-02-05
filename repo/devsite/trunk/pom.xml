@@ -5,12 +5,12 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>5-SNAPSHOT</version>
+        <version>6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact</groupId>
-    <artifactId>intact</artifactId>
+    <artifactId>intact-devsite</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>IntAct Development Site</name>
