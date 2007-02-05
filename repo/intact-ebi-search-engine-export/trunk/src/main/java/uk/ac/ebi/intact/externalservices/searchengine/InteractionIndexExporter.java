@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.externalservices.searchengine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -52,109 +53,119 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
     ////////////////////////////
     // AbstractIndexExporter
 
-    public void exportHeader() throws IOException {
+    public void exportHeader() throws IndexerException {
 
-        Writer out = getOutput();
+        try {
+            Writer out = getOutput();
 
-        writeXmlHeader( out );
+            writeXmlHeader( out );
 
-        out.write( "<database>" + NEW_LINE );
-        out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
-        out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
-        out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
-        out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
-        out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
+            out.write( "<database>" + NEW_LINE );
+            out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
+            out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
+            out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+            out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
+            out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
+        }
     }
 
-    public void exportEntry( Interaction interaction ) throws IOException {
-        Writer out = getOutput();
+    public void exportEntry( Interaction interaction ) throws IndexerException {
+        try {
+            Writer out = getOutput();
 
-        final String i = INDENT + INDENT;
+            final String i = INDENT + INDENT;
+            final String ii = INDENT + INDENT+ INDENT;
+            final String iii = INDENT + INDENT + INDENT + INDENT;
 
-        out.write( i + "<entry id=\"" + interaction.getAc() + "\">" + NEW_LINE );
-        out.write( i + "<name>" + interaction.getShortLabel() + "</name>" + NEW_LINE );
-        if ( interaction.getFullName() != null ) {
-            out.write( i + "<description>" + escapeXml( interaction.getFullName() ) + "</description>" + NEW_LINE );
-        }
-        out.write( i + "<dates>" + NEW_LINE );
-        writeCreationDate( out, interaction.getCreated(), i + INDENT );
-        writeLastUpdateDate( out, interaction.getUpdated(), i + INDENT );
-        out.write( i + "</dates>" + NEW_LINE );
-
-
-        boolean hasXrefs = !interaction.getXrefs().isEmpty();
-        boolean hasLinks = !interaction.getComponents().isEmpty();
-
-        if ( hasXrefs || hasLinks ) {
-            out.write( i + "<cross_references>" + NEW_LINE );
-
-            if ( hasXrefs ) {
-                for ( Xref xref : interaction.getXrefs() ) {
-                    String db = xref.getCvDatabase().getShortLabel();
-                    String id = xref.getPrimaryId();
-                    writeRef( out, db, id, i + INDENT );
-                }
+            out.write( i + "<entry id=\"" + interaction.getAc() + "\">" + NEW_LINE );
+            out.write( ii + "<name>" + interaction.getShortLabel() + "</name>" + NEW_LINE );
+            if ( interaction.getFullName() != null ) {
+                out.write( ii + "<description>" + escapeXml( interaction.getFullName() ) + "</description>" + NEW_LINE );
             }
+            out.write( ii + "<dates>" + NEW_LINE );
+            writeCreationDate( out, interaction.getCreated(), iii );
+            writeLastUpdateDate( out, interaction.getUpdated(), iii );
+            out.write( ii + "</dates>" + NEW_LINE );
 
-            // Add refs to interactions and experiments
-            if ( hasLinks ) {
 
-                Set<String> interactors = new HashSet<String>();
-                Set<String> experimentAcs = new HashSet<String>();
+            boolean hasXrefs = !interaction.getXrefs().isEmpty();
+            boolean hasLinks = !interaction.getComponents().isEmpty();
 
-                for ( Component c : interaction.getComponents() ) {
+            if ( hasXrefs || hasLinks ) {
+                out.write( ii + "<cross_references>" + NEW_LINE );
 
-                    Interactor interactor = c.getInteractor();
-                    interactors.add( interactor.getAc() );
-
-                    for ( Experiment experiment : interaction.getExperiments() ) {
-                        experimentAcs.add( experiment.getAc() );
+                if ( hasXrefs ) {
+                    for ( Xref xref : interaction.getXrefs() ) {
+                        String db = xref.getCvDatabase().getShortLabel();
+                        String id = xref.getPrimaryId();
+                        writeRef( out, db, id, iii );
                     }
                 }
 
-                for ( String ac : experimentAcs ) {
-                    writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, i + INDENT );
+                // Add refs to interactions and experiments
+                if ( hasLinks ) {
+
+                    Set<String> interactors = new HashSet<String>();
+                    Set<String> experimentAcs = new HashSet<String>();
+
+                    for ( Component c : interaction.getComponents() ) {
+
+                        Interactor interactor = c.getInteractor();
+                        interactors.add( interactor.getAc() );
+
+                        for ( Experiment experiment : interaction.getExperiments() ) {
+                            experimentAcs.add( experiment.getAc() );
+                        }
+                    }
+
+                    for ( String ac : experimentAcs ) {
+                        writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, iii );
+                    }
+
+                    for ( String ac : interactors ) {
+                        writeRef( out, InteractorIndexExporter.INDEX_NAME, ac, iii );
+                    }
                 }
 
-                for ( String ac : interactors ) {
-                    writeRef( out, InteractorIndexExporter.INDEX_NAME, ac, i + INDENT );
-                }
+                out.write( ii + "</cross_references>" + NEW_LINE );
             }
 
-            out.write( i + "</cross_references>" + NEW_LINE );
+            // TODO export Annotations ?
+
+            // TODO export respective Components' xref and aliases and annotation
+
+            out.write( ii + "<additional_fields>" + NEW_LINE );
+            for ( Alias alias : interaction.getAliases() ) {
+                String aliasName = escapeXml( alias.getName() );
+                writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, iii );
+            }
+
+            // export Controlled vocabularies
+
+            // interaction detection method
+            writeCvTerm( out, interaction.getCvInteractionType(), iii );
+
+            // participant detection method and interaction type
+            Set<CvObject> cvs = new HashSet<CvObject>();
+            for ( Experiment e : interaction.getExperiments() ) {
+                cvs.add( e.getCvInteraction() );
+                cvs.add( e.getCvIdentification() );
+            }
+            for ( CvObject cv : cvs ) {
+                writeCvTerm( out, cv, iii );
+            }
+
+            out.write( ii + "</additional_fields>" + NEW_LINE );
+
+            out.write( i + "</entry>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
         }
-
-        // TODO export Annotations ?
-
-        // TODO export respective Components' xref and aliases and annotation
-
-        out.write( i + "<additional_fields>" + NEW_LINE );
-        for ( Alias alias : interaction.getAliases() ) {
-            String aliasName = escapeXml( alias.getName() );
-            writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, i + INDENT );
-        }
-
-        // export Controlled vocabularies
-
-        // interaction detection method
-        writeCvTerm( out, interaction.getCvInteractionType(), i + INDENT );
-
-        // participant detection method and interaction type
-        Set<CvObject> cvs = new HashSet<CvObject>();
-        for ( Experiment e : interaction.getExperiments() ) {
-            cvs.add( e.getCvInteraction() );
-            cvs.add( e.getCvIdentification() );
-        }
-        for ( CvObject cv : cvs ) {
-            writeCvTerm( out, cv, i + INDENT );
-        }
-
-        out.write( i + "</additional_fields>" + NEW_LINE );
-
-        out.write( i + "</entry>" + NEW_LINE );
     }
 
-    public void exportEntries() throws IOException {
+    public void exportEntries() throws IndexerException {
         int current = 0;
 
         log.debug( "Starting export of " + count + " interaction(s)." );
@@ -176,11 +187,15 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
                 exportEntry( interaction );
             }
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new IndexerException( e );
+            }
         }
     }
 
-    public int getEntryCount() {
+    public int getEntryCount() throws IndexerException {
         if ( count == null ) {
 
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
@@ -191,7 +206,11 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
 
             count = idao.countAll();
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new IndexerException( e );
+            }
         }
 
         return count;
