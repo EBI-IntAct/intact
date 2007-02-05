@@ -19,6 +19,23 @@
 
     <dependencies>
 
+        <!-- IntAct deps -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-psimitab</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- Maven deps -->
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -52,21 +69,5 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- IntAct deps -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.13</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-logging</groupId>
-            <artifactId>commons-logging</artifactId>
-            <version>1.0.4</version>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.util</groupId>
-            <artifactId>intact-psimitab</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 </project>
