@@ -7,7 +7,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>4</version>
+        <version>6</version>
     </parent>
 
     <groupId>uk.ac.ebi.intact.plugins</groupId>
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>intact-psimitab</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 
         <!-- Maven deps -->
