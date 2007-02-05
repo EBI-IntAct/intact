@@ -157,8 +157,8 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
                 out.write( ii + "<description>" + escapeXml( interactor.getFullName() ) + "</description>" + NEW_LINE );
             }
             out.write( ii + "<dates>" + NEW_LINE );
-            writeCreationDate( out, interactor.getCreated(), i + INDENT );
-            writeLastUpdateDate( out, interactor.getUpdated(), i + INDENT );
+            writeCreationDate( out, interactor.getCreated(), iii );
+            writeLastUpdateDate( out, interactor.getUpdated(), iii );
             out.write( ii + "</dates>" + NEW_LINE );
 
 
