@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.plugins;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
@@ -22,11 +21,10 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         ConvertXmlPublicationToTabMojo mojo =
                 ( ConvertXmlPublicationToTabMojo ) lookupEmptyMojo( "pub2tab", pluginXmlFile );
 
-        File srcDir =
-                new File( getBasedir(), "target" + File.separator + "test-classes" + File.separator + "xml-samples" );
+        String root = "target" + File.separator + "test-classes";
+        File srcDir = new File( getBasedir(), root + File.separator + "xml-samples" );
+        File targetDir = new File( getBasedir(), root + File.separator + "tab-output" );
 
-        File targetDir =
-                new File( getBasedir(), "target" + File.separator + "test-classes" + File.separator + "tab-output" );
         targetDir.mkdirs();
 
         setVariableValueToObject( mojo, "sourceDirectoryPath", srcDir.getAbsolutePath() );
@@ -35,21 +33,15 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
 
         mojo.setLog( new SystemStreamLog() );
 
-        try {
-            mojo.execute();
-        } catch ( MojoExecutionException e ) {
-            e.printStackTrace();
-            fail();
-        }
+        mojo.execute();
 
         // now check if all files were created sucessfuly
-
-        assertTrue( new File( targetDir, "11283351.xls" ).exists() );
-        assertTrue( new File( targetDir, "7568142.xls" ).exists() );
-        assertTrue( new File( targetDir, "9070862.xls" ).exists() );
+        assertTrue( new File( targetDir, "11283351.txt" ).exists() );
+        assertTrue( new File( targetDir, "7568142.txt" ).exists() );
+        assertTrue( new File( targetDir, "9070862.txt" ).exists() );
 
         File subDir = new File( targetDir, "sub-dir" );
-        assertTrue( new File( subDir, "10366597.xls" ).exists() );
-        assertTrue( new File( subDir, "9686597.xls" ).exists() );
+        assertTrue( new File( subDir, "10366597.txt" ).exists() );
+        assertTrue( new File( subDir, "9686597.txt" ).exists() );
     }
 }
