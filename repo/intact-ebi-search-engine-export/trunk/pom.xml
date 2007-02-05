@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>7</version>
+        <version>8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -29,6 +29,8 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+
+        
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
@@ -37,10 +39,11 @@
             <!-- scope:test doesn't not work as the ZIP file is not present before the test, yet the dbtest-maven-plugin needs it. -->
             <scope>provided</scope>
         </dependency>
+        
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-4</version>
+            <version>1.5.0-beta-10</version>
         </dependency>
     </dependencies>
 
