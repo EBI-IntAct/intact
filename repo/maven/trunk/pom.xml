@@ -7,7 +7,8 @@
  */
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -35,14 +36,14 @@
         <repository>
             <id>ebi-repo</id>
             <name>EBI Repository</name>
-            <url>scp://localhost/homes/maven/public_html/m2repo</url>
+            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo</url>
         </repository>
 
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
             <id>ebi-repo-snapshots</id>
             <name>EBI Snapshots Repository</name>
-            <url>scp://localhost/homes/maven/public_html/m2repo_snapshots</url>
+            <url>scp://bark.ebi.ac.uk/homes/maven/public_html/m2repo_snapshots</url>
         </snapshotRepository>
 
         <site>
@@ -51,6 +52,5 @@
             <url>${site.remote.basedir}/maven-poms</url>
         </site>
     </distributionManagement>
-
 
 </project>
