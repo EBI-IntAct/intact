@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
 
-    public static final String EXCEL_FILE_EXTENSION = ".xls";
+    public static final String DEFAULT_FILE_EXTENSION = "txt";
 
     /**
      * Source directory to be processed.
@@ -48,6 +48,13 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
      */
     private String logFilePath;
 
+    /**
+     * File extension of the file produced. If not defined, the default will be applied.
+     *
+     * @parameter
+     */
+    private String fileExtension;
+
 
     public void execute() throws MojoExecutionException {
 
@@ -63,6 +70,14 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         if ( trgDir.exists() && !trgDir.canWrite() ) {
             throw new MojoExecutionException( "Target directory exists but cannot be written: " + targetDirectoryPath );
         }
+
+        if( fileExtension == null || fileExtension.trim().length() == 0 ) {
+            System.out.println( "Setting the file extension to default: '" + DEFAULT_FILE_EXTENSION + "'");
+            fileExtension = DEFAULT_FILE_EXTENSION;
+        }
+
+        // remove leading and trailing spaces
+        fileExtension = fileExtension.trim();
 
         File logFile = null;
         Writer logWriter = null;
@@ -84,6 +99,7 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         System.out.println( "parameter 'sourceDirectoryPath' = " + sourceDirectoryPath );
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
         System.out.println( "parameter 'logFilePath' = " + logFilePath );
+        System.out.println( "parameter 'fileExtension' = " + fileExtension );
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -125,7 +141,7 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
             // build potential missing sub-directory
             targetDir.mkdirs();
 
-            File outputFile = new File( targetDir, pmid + EXCEL_FILE_EXTENSION );
+            File outputFile = new File( targetDir, pmid + "." + fileExtension );
             System.out.println( "Creating " + outputFile.getAbsolutePath() + " ..." );
 
             // local config
