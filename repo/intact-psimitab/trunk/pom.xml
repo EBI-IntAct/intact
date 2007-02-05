@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-psimitab</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <name>IntAct's PSI-MI TAB integration</name>
 
@@ -38,10 +38,4 @@
             <version>1.0-beta3</version>
         </dependency>
     </dependencies>
-
-  <scm>
-    <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-psimitab-1.0</connection>
-    <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-psimitab-1.0</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-psimitab-1.0</url>
-  </scm>
 </project>
