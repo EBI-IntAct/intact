@@ -26,14 +26,14 @@ public interface IndexExporter<T extends AnnotatedObject> {
      *
      * @throws IOException
      */
-    public void exportHeader() throws IOException;
+    public void exportHeader() throws IndexerException;
 
     /**
      * Export the beginning of the list of entries;
      *
      * @throws IOException
      */
-    public void exportEntryListStart() throws IOException;
+    public void exportEntryListStart() throws IndexerException;
 
     /**
      * Export the given entry.
@@ -42,35 +42,35 @@ public interface IndexExporter<T extends AnnotatedObject> {
      *
      * @throws IOException
      */
-    public void exportEntry( T object ) throws IOException;
+    public void exportEntry( T object ) throws IndexerException;
 
     /**
      * Export all entries.
      *
      * @throws IOException
      */
-    public void exportEntries() throws IOException;
+    public void exportEntries() throws IndexerException;
 
     /**
      * Export the end of the list of entries of the index.
      *
      * @throws IOException
      */
-    public void exportEntryListEnd() throws IOException;
+    public void exportEntryListEnd() throws IndexerException;
 
     /**
      * Export the footer of the index.
      *
      * @throws IOException
      */
-    public void exportFooter() throws IOException;
+    public void exportFooter() throws IndexerException;
 
     /**
      * Builds a complete index.
      *
      * @throws IOException
      */
-    public void buildIndex() throws IOException;
+    public void buildIndex() throws IndexerException;
 
     /////////////////////
     // Counting
@@ -80,5 +80,5 @@ public interface IndexExporter<T extends AnnotatedObject> {
      *
      * @return
      */
-    public int getEntryCount();
+    public int getEntryCount() throws IndexerException;
 }

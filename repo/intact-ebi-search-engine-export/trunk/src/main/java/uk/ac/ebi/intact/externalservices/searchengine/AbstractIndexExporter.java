@@ -207,22 +207,34 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
     ////////////////////////////
     // IndexExporter methods
 
-    public void exportEntryListStart() throws IOException {
-        Writer out = getOutput();
-        out.write( INDENT + "<entries>" + NEW_LINE );
+    public void exportEntryListStart() throws IndexerException {
+        try {
+            Writer out = getOutput();
+            out.write( INDENT + "<entries>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
+        }
     }
 
-    public void exportEntryListEnd() throws IOException {
-        Writer out = getOutput();
-        out.write( INDENT + "</entries>" + NEW_LINE );
+    public void exportEntryListEnd() throws IndexerException {
+        try {
+            Writer out = getOutput();
+            out.write( INDENT + "</entries>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
+        }
     }
 
-    public void exportFooter() throws IOException {
-        Writer out = getOutput();
-        out.write( "</database>" + NEW_LINE );
+    public void exportFooter() throws IndexerException {
+        try {
+            Writer out = getOutput();
+            out.write( "</database>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
+        }
     }
 
-    public void buildIndex() throws IOException {
+    public void buildIndex() throws IndexerException {
         exportHeader();
 
         exportEntryListStart();
@@ -233,15 +245,19 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
 
         exportFooter();
 
-        closeIndex();
+        try {
+            closeIndex();
+        } catch ( IOException e ) {
+            throw new IndexerException( e );
+        }
     }
 
     ////////////////////////////
     // Abstract method
 
-    public abstract void exportEntries() throws IOException;
+    public abstract void exportEntries() throws IndexerException;
 
-    public abstract void exportEntry( T object ) throws IOException;
+    public abstract void exportEntry( T object ) throws IndexerException;
 
-    public abstract int getEntryCount();
+    public abstract int getEntryCount() throws IndexerException;
 }
