@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,8 +43,8 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
     // Instance variables
 
     private Integer count = null;
-    private int countPolymer = -1;
-    private int countSmallMolecule = -1;
+//    private int countPolymer = -1;
+//    private int countSmallMolecule = -1;
 
     //////////////////////////
     // Constructor
@@ -55,193 +56,184 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
     ////////////////////////
     // Export
 
-    public void exportHeader() throws IOException {
+    public void exportHeader() throws IndexerException {
 
-        Writer out = getOutput();
+        try {
+            Writer out = getOutput();
 
-        writeXmlHeader( out );
+            writeXmlHeader( out );
 
-        out.write( "<database>" + NEW_LINE );
-        out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
-        out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
+            out.write( "<database>" + NEW_LINE );
+            out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
+            out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
 
-        if ( release != null ) {
-            out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+            if ( release != null ) {
+                out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+            }
+
+            out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
+            out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
+        } catch ( IOException e ) {
+            throw new IndexerException( "Error while writing index header", e );
         }
-
-        out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
-        out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
     }
 
-    public int getEntryCount() {
+    public int getEntryCount() throws IndexerException {
         if ( count == null ) {
 
-
             DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-            InteractorDao<PolymerImpl> pdao = daoFactory.getInteractorDao( PolymerImpl.class );
-            InteractorDao<SmallMoleculeImpl> smdao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
+
+            InteractorDao<InteractorImpl> interactorDao = daoFactory.getInteractorDao();
+
+//            InteractorDao<PolymerImpl> pdao = daoFactory.getInteractorDao( PolymerImpl.class );
+//            InteractorDao<SmallMoleculeImpl> smdao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
+
 
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-            // TODO do not take into account interactor that do not interact.
+            count = interactorDao.countInteractorInvolvedInInteraction();
 
-            countPolymer = pdao.countAll();
-            countSmallMolecule = smdao.countAll();
+
+//            countPolymer = pdao.countAll();
+//            countSmallMolecule = smdao.countAll();
 
             // sum up polymer + small molecule.
-            count = countPolymer + countSmallMolecule;
+//            this.count = countPolymer + countSmallMolecule;
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new IndexerException( "Error while closing transaction.", e);
+            }
         }
 
         return count;
     }
 
-    public void exportEntries() throws IOException {
-        exportSmallMolecule();
-        exportPolymer();
-    }
+    public void exportEntries() throws IndexerException {
+        int current = 0;
 
-    public void exportEntry( Interactor interactor ) throws IOException {
+        log.debug( "Starting export of " + count + " interactor(s)." );
 
-        Writer out = getOutput();
+        while ( current < count ) {
+            DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+            InteractorDao pdao = daoFactory.getInteractorDao();
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
-        final String i = INDENT + INDENT;
+            List<Interactor> interactors = pdao.getInteractorInvolvedInInteraction( current, CHUNK_SIZE );
 
-        out.write( i + "<entry id=\"" + interactor.getAc() + "\">" + NEW_LINE );
-        out.write( i + "<name>" + interactor.getShortLabel() + "</name>" + NEW_LINE );
-        if ( interactor.getFullName() != null ) {
-            out.write( i + "<description>" + escapeXml( interactor.getFullName() ) + "</description>" + NEW_LINE );
-        }
-        out.write( i + "<dates>" + NEW_LINE );
-        writeCreationDate( out, interactor.getCreated(), i + INDENT );
-        writeLastUpdateDate( out, interactor.getUpdated(), i + INDENT );
-        out.write( i + "</dates>" + NEW_LINE );
-
-
-        boolean hasXrefs = !interactor.getXrefs().isEmpty();
-        boolean hasLinks = !interactor.getActiveInstances().isEmpty();
-
-        if ( hasXrefs || hasLinks ) {
-            out.write( i + "<cross_references>" + NEW_LINE );
-
-            if ( hasXrefs ) {
-                for ( Xref xref : interactor.getXrefs() ) {
-
-                    String db = xref.getCvDatabase().getShortLabel();
-                    String id = xref.getPrimaryId();
-                    writeRef( out, db, id, i + INDENT );
-                }
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Exporting interactor range " + current + ".." + Math.min( count, current + CHUNK_SIZE ) +
+                           " out of " + count );
             }
 
-            // Add refs to interactions and experiments
-            if ( hasLinks ) {
+            for ( Interactor interactor : interactors ) {
+                current++;
+                exportEntry( interactor );
+            }
 
-                Set<String> interactionAcs = new HashSet<String>();
-                Set<String> experimentAcs = new HashSet<String>();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new IndexerException( "Error when closing transaction.", e );
+            }
+        }
 
-                for ( Component c : interactor.getActiveInstances() ) {
+//        exportSmallMolecule();
+//        exportPolymer();
+    }
 
-                    Interaction interaction = c.getInteraction();
-                    interactionAcs.add( interaction.getAc() );
+    public void exportEntry( Interactor interactor ) throws IndexerException {
 
-                    for ( Experiment experiment : interaction.getExperiments() ) {
-                        experimentAcs.add( experiment.getAc() );
+        try {
+            Writer out = getOutput();
+
+            final String i = INDENT + INDENT;
+            final String ii = INDENT + INDENT+ INDENT;
+            final String iii = INDENT + INDENT + INDENT + INDENT;
+            
+            out.write( i + "<entry id=\"" + interactor.getAc() + "\">" + NEW_LINE );
+            out.write( ii + "<name>" + interactor.getShortLabel() + "</name>" + NEW_LINE );
+            if ( interactor.getFullName() != null ) {
+                out.write( ii + "<description>" + escapeXml( interactor.getFullName() ) + "</description>" + NEW_LINE );
+            }
+            out.write( ii + "<dates>" + NEW_LINE );
+            writeCreationDate( out, interactor.getCreated(), i + INDENT );
+            writeLastUpdateDate( out, interactor.getUpdated(), i + INDENT );
+            out.write( ii + "</dates>" + NEW_LINE );
+
+
+            boolean hasXrefs = !interactor.getXrefs().isEmpty();
+            boolean hasLinks = !interactor.getActiveInstances().isEmpty();
+
+            if ( hasXrefs || hasLinks ) {
+                out.write( ii + "<cross_references>" + NEW_LINE );
+
+                if ( hasXrefs ) {
+                    for ( Xref xref : interactor.getXrefs() ) {
+
+                        String db = xref.getCvDatabase().getShortLabel();
+                        String id = xref.getPrimaryId();
+                        writeRef( out, db, id, iii );
                     }
                 }
 
-                for ( String ac : experimentAcs ) {
-                    writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, i + INDENT );
+                // Add refs to interactions and experiments
+                if ( hasLinks ) {
+
+                    Set<String> interactionAcs = new HashSet<String>();
+                    Set<String> experimentAcs = new HashSet<String>();
+
+                    for ( Component c : interactor.getActiveInstances() ) {
+
+                        Interaction interaction = c.getInteraction();
+                        interactionAcs.add( interaction.getAc() );
+
+                        for ( Experiment experiment : interaction.getExperiments() ) {
+                            experimentAcs.add( experiment.getAc() );
+                        }
+                    }
+
+                    for ( String ac : experimentAcs ) {
+                        writeRef( out, ExperimentIndexExporter.INDEX_NAME, ac, iii );
+                    }
+
+                    for ( String ac : interactionAcs ) {
+                        writeRef( out, InteractionIndexExporter.INDEX_NAME, ac, iii );
+                    }
                 }
 
-                for ( String ac : interactionAcs ) {
-                    writeRef( out, InteractionIndexExporter.INDEX_NAME, ac, i + INDENT );
+                out.write( ii + "</cross_references>" + NEW_LINE );
+            }
+
+            // TODO export Annotations
+
+            // TODO export respective Components' xref and aliases and annotation
+
+            out.write( ii + "<additional_fields>" + NEW_LINE );
+            for ( Alias alias : interactor.getAliases() ) {
+                String aliasName = escapeXml( alias.getName() );
+                writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, iii );
+            }
+
+            Set<CvObject> cvs = new HashSet<CvObject>();
+            for ( Component c : interactor.getActiveInstances() ) {
+                Interaction interaction = c.getInteraction();
+                cvs.add( interaction.getCvInteractionType() );
+                for ( Experiment e : interaction.getExperiments() ) {
+                    cvs.add( e.getCvIdentification() );
+                    cvs.add( e.getCvInteraction() );
                 }
             }
-
-            out.write( i + "</cross_references>" + NEW_LINE );
-        }
-
-        // TODO export Annotations
-
-        // TODO export respective Components' xref and aliases and annotation
-
-        out.write( i + "<additional_fields>" + NEW_LINE );
-        for ( Alias alias : interactor.getAliases() ) {
-            String aliasName = escapeXml( alias.getName() );
-            writeField( out, alias.getCvAliasType().getShortLabel(), aliasName, i + INDENT );
-        }
-
-        Set<CvObject> cvs = new HashSet<CvObject>();
-        for ( Component c : interactor.getActiveInstances() ) {
-            Interaction interaction = c.getInteraction();
-            cvs.add( interaction.getCvInteractionType() );
-            for ( Experiment e : interaction.getExperiments() ) {
-                cvs.add( e.getCvIdentification() );
-                cvs.add( e.getCvInteraction() );
-            }
-        }
-        for ( CvObject cv : cvs ) {
-            writeCvTerm( out, cv, i + INDENT );
-        }
-
-        out.write( i + "</additional_fields>" + NEW_LINE );
-
-        out.write( i + "</entry>" + NEW_LINE );
-    }
-
-    //////////////////////////
-    // Private methods
-
-    private void exportSmallMolecule() throws IOException {
-        int current = 0;
-
-        log.debug( "Starting export of " + countSmallMolecule + " small molecule(s)." );
-
-        while ( current < countSmallMolecule ) {
-            DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-            InteractorDao<SmallMoleculeImpl> pdao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
-            List<SmallMoleculeImpl> interactors = pdao.getAll( current, CHUNK_SIZE );
-
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Exporting small molecule range " + current + ".." + Math.min( countSmallMolecule, current + CHUNK_SIZE ) +
-                           " out of " + countSmallMolecule );
+            for ( CvObject cv : cvs ) {
+                writeCvTerm( out, cv, iii );
             }
 
-            for ( Interactor interactor : interactors ) {
-                current++;
-                exportEntry( interactor );
-            }
+            out.write( ii + "</additional_fields>" + NEW_LINE );
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-        }
-    }
-
-    private void exportPolymer() throws IOException {
-
-        int current = 0;
-
-        log.debug( "Starting export of " + countPolymer + " polymer(s)." );
-
-        while ( current < countPolymer ) {
-            DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-            InteractorDao<PolymerImpl> pdao = daoFactory.getInteractorDao( PolymerImpl.class );
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
-            List<PolymerImpl> interactors = pdao.getAll( current, CHUNK_SIZE );
-
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Exporting polymer range " + current + ".." + Math.min( countPolymer, current + CHUNK_SIZE ) +
-                           " out of " + countPolymer );
-            }
-
-            for ( Interactor interactor : interactors ) {
-                current++;
-                exportEntry( interactor );
-            }
-
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            out.write( i + "</entry>" + NEW_LINE );
+            
+        } catch ( IOException e ) {
+            throw new IndexerException( "Error while writing index", e );
         }
     }
 }
