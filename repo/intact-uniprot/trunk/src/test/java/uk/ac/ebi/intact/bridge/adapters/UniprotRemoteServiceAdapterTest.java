@@ -24,6 +24,7 @@ import java.util.Collection;
  * @since <pre>10/24/2006</pre>
  */
 public class UniprotRemoteServiceAdapterTest extends TestCase {
+    
     public UniprotRemoteServiceAdapterTest( String name ) {
         super( name );
     }
@@ -51,9 +52,9 @@ public class UniprotRemoteServiceAdapterTest extends TestCase {
         if ( filter == null ) {
             fail( "you must give a non null filter !!" );
         }
-        AbstractUniprotBridgeAdapter service = (AbstractUniprotBridgeAdapter) getBridgeAdapter();
+        AbstractUniprotBridgeAdapter service = ( AbstractUniprotBridgeAdapter ) getBridgeAdapter();
         service.setCrossReferenceSelector( filter );
-        return (UniprotBridgeAdapter) service;
+        return ( UniprotBridgeAdapter ) service;
     }
 
     ////////////////////
@@ -370,13 +371,13 @@ public class UniprotRemoteServiceAdapterTest extends TestCase {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
 
-    public void testRetreiveUnknownProtein() {
-        UniprotBridgeAdapter uniprot = getBridgeAdapter();
-        try {
-            uniprot.retreive( "foobar" );
-            fail();
-        } catch ( UniprotBridgeException e ) {
-            // ok
-        }
+    public void testRetreiveUnknownProtein() throws UniprotBridgeException {
+        UniprotBridgeAdapter ya = new YaspAdapter();
+        Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
+        assertNotNull( proteins );
+        assertEquals( 0, proteins.size() );
+        assertNotNull( ya.getErrors() );
+        assertEquals( 1, ya.getErrors().size() );
+        assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
     }
 }
