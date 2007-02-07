@@ -27,7 +27,7 @@ public interface UniprotBridgeAdapter {
      * @return a collection of protein found.
      * @throws UniprotBridgeException
      */
-    public Collection<UniprotProtein> retreive( String ac ) throws UniprotBridgeException;
+    public Collection<UniprotProtein> retreive( String ac );
 
     /**
      * Retreive a set of Uniprot proteins based on their ID, AC or splice variant ID.
@@ -36,13 +36,13 @@ public interface UniprotBridgeAdapter {
      * @return an associative structure where each given ac is an entry and associated is a collection of protein found.
      * @throws UniprotBridgeException
      */
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) throws UniprotBridgeException;
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs );
 
     /**
      * Error messages encountered during retreival of proteins.
      * @return an associative structure where each given ac is an entry and associated a message.
      */
-    public Map<String, String> getErrors();
+    public Map<String, UniprotBridgeReport> getErrors();
 
     /**
      * Clear existing error messages.

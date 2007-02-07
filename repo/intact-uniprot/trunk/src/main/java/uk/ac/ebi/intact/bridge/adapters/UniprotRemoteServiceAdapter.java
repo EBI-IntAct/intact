@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.bridge.adapters;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridge.UniprotBridgeException;
 import uk.ac.ebi.intact.bridge.adapters.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.bridge.adapters.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.intact.bridge.model.Organism;
@@ -21,7 +20,10 @@ import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
 import uk.ac.ebi.kraken.model.uniprot.util.SplicedSequenceCalculator;
-import uk.ac.ebi.kraken.uuw.services.remoting.*;
+import uk.ac.ebi.kraken.uuw.services.remoting.Query;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtRemoteServiceFactory;
 
 import java.util.*;
 
@@ -39,30 +41,44 @@ public class UniprotRemoteServiceAdapter extends AbstractUniprotBridgeAdapter {
      */
     public static final Log log = LogFactory.getLog( UniprotRemoteServiceAdapter.class );
 
-    public Collection<UniprotProtein> retreive( String ac ) throws UniprotBridgeException {
+    public Collection<UniprotProtein> retreive( String ac ) {
 
-        Collection<UniprotProtein> results = new ArrayList<UniprotProtein>();
+        Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
 
         Iterator<UniProtEntry> it = getUniProtEntry( ac );
 
         if ( !it.hasNext() ) {
             // we didn't find anything
-            throw new UniprotBridgeException( "Could not find protein: " + ac, new ProteinNotFoundException( ac ) );
+            addError( ac, new UniprotBridgeReport( "Could not find protein: " + ac ) );
         }
 
         while ( it.hasNext() ) {
             UniProtEntry uniProtEntry = it.next();
-            results.add( buildUniprotProtein( uniProtEntry ) );
+            proteins.add( buildUniprotProtein( uniProtEntry ) );
         }
-        return results;
+        return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) throws UniprotBridgeException {
-        Map<String, Collection<UniprotProtein>> results = new HashMap<String, Collection<UniprotProtein>>();
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+
+        if ( acs == null ) {
+            throw new IllegalArgumentException( "You must give a non null List of UniProt ACs." );
+        }
+
+        if ( acs.isEmpty() ) {
+            throw new IllegalArgumentException( "You must give a non empty List of UniProt ACs." );
+        }
+
+        Map<String, Collection<UniprotProtein>> results = new HashMap<String, Collection<UniprotProtein>>( acs.size() );
 
         // TODO use bulk loading and post sort the Map
         for ( String ac : acs ) {
-            results.put( ac, retreive( ac ) );
+            Collection<UniprotProtein> proteins = retreive( ac );
+            if ( proteins != null ) {
+                results.put( ac, proteins );
+            } else {
+                addError( ac, new UniprotBridgeReport( "Could not find protein for AC: " + ac ) );
+            }
         }
 
         return results;
@@ -71,10 +87,10 @@ public class UniprotRemoteServiceAdapter extends AbstractUniprotBridgeAdapter {
     //////////////////////////
     // private methods
 
-    private EntryRetrievalService getEntryRetrievalService() {
-        UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
-        return factory.getEntryRetrievalService();
-    }
+//    private EntryRetrievalService getEntryRetrievalService() {
+//        UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
+//        return factory.getEntryRetrievalService();
+//    }
 
     private Iterator<UniProtEntry> getUniProtEntry( String ac ) {
         Iterator<UniProtEntry> iterator = null;
@@ -332,7 +348,7 @@ public class UniprotRemoteServiceAdapter extends AbstractUniprotBridgeAdapter {
 
                     // TODO remove this once the API is fixed, currently when multiple ids are present they are returned as a comma separated value :(
                     for ( int i = 0; i < isoID.getValue().split( "," ).length; i++ ) {
-                        String id = isoID.getValue().split( "," )[ i ].trim();
+                        String id = isoID.getValue().split( "," )[i].trim();
                         log.debug( "Found ID " + i + ":" + id );
                         ids.add( id );
                     }
