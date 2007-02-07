@@ -5,6 +5,8 @@
  */
 package uk.ac.ebi.intact.bridge.adapters;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridge.adapters.referenceFilter.CrossReferenceFilter;
 
 import java.util.HashMap;
@@ -19,25 +21,47 @@ import java.util.Map;
  */
 public abstract class AbstractUniprotBridgeAdapter implements UniprotBridgeAdapter {
 
+    /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog( AbstractUniprotBridgeAdapter.class );
+
     public static final String SWISS_PROT_PREFIX = "SP_";
+
     public static final String TREMBL_PREFIX = "TrEMBL_";
 
     /**
      * Holds error messages accumulated during protein retreival.
      */
-    Map<String, String> errors = new HashMap<String, String>();
+    private Map<String, UniprotBridgeReport> errors = new HashMap<String, UniprotBridgeReport>();
 
     /**
      * Defines how should the cross references be selected.
      */
     private CrossReferenceFilter crossReferenceFilter;
 
-    public Map<String, String> getErrors() {
+    public Map<String, UniprotBridgeReport> getErrors() {
         return errors;
     }
 
     public void clearErrors() {
         errors.clear();
+    }
+
+    public void addError( String ac, UniprotBridgeReport report ) {
+        if( ac == null ) {
+            throw new IllegalArgumentException( "You must give a non null UniProt AC." );
+        }
+
+        if( report == null ) {
+            throw new IllegalArgumentException( "You must give a non null Report." );
+        }
+
+        if( errors.containsKey( ac ) ) {
+            log.warn( "Overwriting existing report for UniProt AC: " + ac );
+        }
+        
+        errors.put( ac, report );
     }
 
     ///////////////////////////

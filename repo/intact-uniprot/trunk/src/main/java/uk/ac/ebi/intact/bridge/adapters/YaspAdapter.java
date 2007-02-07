@@ -24,6 +24,7 @@ import uk.ac.ebi.sptr.flatfile.yasp.YASPException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -41,40 +42,83 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
      */
     public static final Log log = LogFactory.getLog( YaspAdapter.class );
 
-    public Collection<UniprotProtein> retreive( String ac ) throws UniprotBridgeException {
+    /**
+     * Expected content of the beginning of the first line of a UniProt flat file.
+     */
+    public static final String FIRST_LINE_FIRST_FIVE_CHARS = "ID   ";
+
+    public static final int CHAR_TO_READ = FIRST_LINE_FIRST_FIVE_CHARS.length();
+
+    ///////////////////////////////////
+    // AbstractUniprotBridgeAdapter
+
+    public Collection<UniprotProtein> retreive( String ac ) {
 
         if ( ac == null ) {
             throw new IllegalArgumentException( "You must give a non null protein AC." );
         }
 
-        String url = getUniprotSearchUrl( ac );
+        String entryUrl = buildUniprotSearchUrl( ac );
 
         InputStream is = null;
+        Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
+
+        // 1. Check on format of the entry
         try {
-            URL myUrl = new URL( url );
-            is = myUrl.openStream();
+            is = checkUrlDataFormat( new URL( entryUrl ) );
         } catch ( IOException e ) {
-            throw new UniprotBridgeException( "Error while reading URL: " + url, e );
+            addError( ac, new UniprotBridgeReport( "Error upon reading URL: " + entryUrl, e ) );
+            return proteins;
+        } catch ( UniprotBridgeException e ) {
+            addError( ac, new UniprotBridgeReport( "UniProt entry has invalid format: " + entryUrl, e ) );
+            return proteins;
         }
 
-        Collection<UniprotProtein> proteins = retreive( is, ac );
-        log.debug( "[AC: " + ac + "] Retreived " + proteins.size() + " protein(s)." );
+        // 2. Process entry
+        try {
+            Collection<UniprotProtein> p = retreive( is, ac );
+            if ( p != null ) {
+                proteins.addAll( p );
+                log.debug( "[AC: " + ac + "] Retreived " + p.size() + " protein(s)." );
+            } else {
+                log.error( "" );
+            }
+        } catch ( UniprotBridgeException e ) {
+            addError( ac, new UniprotBridgeReport( "Error while processing UniProt entry: " + ac, e ) );
+            return proteins;
+        }
 
+        // 3. Cleanup I/O
         try {
             is.close();
         } catch ( IOException e ) {
-            throw new UniprotBridgeException( "Error while closing URL: " + url, e );
+            addError( ac, new UniprotBridgeReport( "Error while closing URL: " + entryUrl, e ) );
         }
 
         return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( java.util.Collection<String> acs ) throws UniprotBridgeException {
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+
+        if ( acs == null ) {
+            throw new IllegalArgumentException( "You must give a non null List of UniProt ACs." );
+        }
+
+        if ( acs.isEmpty() ) {
+            throw new IllegalArgumentException( "You must give a non empty List of UniProt ACs." );
+        }
 
         Map<String, Collection<UniprotProtein>> results = new HashMap<String, Collection<UniprotProtein>>( acs.size() );
+        String ac = null;
 
-        for ( String ac : acs ) {
-            results.put( ac, retreive( ac ) );
+        for ( Iterator<String> iterator = acs.iterator(); iterator.hasNext(); ) {
+            ac = iterator.next();
+            Collection<UniprotProtein> proteins = retreive( ac );
+            if ( proteins != null ) {
+                results.put( ac, proteins );
+            } else {
+                addError( ac, new UniprotBridgeReport( "Could not retreive any proteins for UniProt AC: " + ac ) );
+            }
         }
 
         return results;
@@ -83,7 +127,57 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
     ////////////////////////////////
     // Private methods
 
-    private String getUniprotSearchUrl( String ac ) {
+    /**
+     * Open the given URL and check that the data pointed to start with the expected prefix.
+     * <p/>
+     * The check is on the 5 first char contained in the InputStream, they have to match 'ID   '.
+     *
+     * @param url the URL pointing to the UniProt protein entry (can be one or more).
+     *
+     * @return the input stream one can read the entry (1..n) from.
+     *
+     * @throws UniprotBridgeException if the format of the entry is not as expected.
+     * @throws IOException
+     */
+    private InputStream checkUrlDataFormat( URL url ) throws UniprotBridgeException, IOException {
+
+        if ( url == null ) {
+            throw new IllegalArgumentException( "URL must not be null." );
+        }
+
+        PushbackInputStream pis = new PushbackInputStream( url.openStream(), 5 );
+        byte[] b = new byte[CHAR_TO_READ];
+
+        pis.read( b, 0, CHAR_TO_READ );
+        if ( b.length < CHAR_TO_READ ) {
+            throw new RuntimeException( "Could not read the whole 5 bytes" );
+        }
+
+        String fiveFirstChars = new String( b );
+        if ( !FIRST_LINE_FIRST_FIVE_CHARS.equals( fiveFirstChars ) ) {
+            throw new UniprotBridgeException( "Invalid UniProt entry format. An entry is expected to start with :'" +
+                                              FIRST_LINE_FIRST_FIVE_CHARS + "' and not '" + fiveFirstChars + "'." );
+        }
+
+        // check is fine, rewind the stream
+        pis.unread( b );
+
+        return pis;
+    }
+
+    /**
+     * Build a URL allowing to access the UniProt flat file given a specific UniProt AC.
+     *
+     * @param ac (non null) UniProt AC.
+     *
+     * @return a URL as a String.
+     */
+    private String buildUniprotSearchUrl( String ac ) {
+
+        if ( ac == null ) {
+            throw new IllegalArgumentException( "You must give a non null AC." );
+
+        }
 
         //        CvObjectDao cvDao = IntactContext.getCurrentInstance();
 //        IntactContext.getCurrentInstance();
@@ -126,6 +220,16 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
         return url;
     }
 
+    /**
+     * Build UniprotProteins based on a given InputStream.
+     *
+     * @param is InputStream on the data.
+     * @param ac protein ac
+     *
+     * @return a non null collection of UniprotProteins.
+     *
+     * @throws UniprotBridgeException
+     */
     private Collection<UniprotProtein> retreive( InputStream is, String ac ) throws UniprotBridgeException {
 
         if ( is == null ) {
@@ -161,24 +265,24 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
                 // Check if there is any exception remaining in the Entry before to use it
                 if ( entryIterator.hadException() ) {
 
-                    Exception originalException = entryIterator.getException().getOriginalException();
-                    errors.put( ac, originalException.getMessage() );
+                    YASPException originalException = entryIterator.getException();
+                    throw originalException;
 
-                    if ( originalException != null ) {
-
-                        if ( log != null ) {
-                            log.error( "Parsing error while processing the entry " + entryCount,
-                                       entryIterator.getException() );
-                            entryIterator.getException().getOriginalException();
-                        }
-                    }
-
-                    continue;
+//                    addError( ac, new UniprotBridgeReport( "Error occured while parsing entry (AC: " + ac + ")", originalException ) );
+//
+//                    if ( originalException != null ) {
+//
+//                        if ( log != null ) {
+//                            log.error( "Parsing error while processing the entry " + entryCount, entryIterator.getException() );
+//                            log.error( "Original exception was:", entryIterator.getException().getOriginalException() );
+//                        }
+//                    }
+//
+//                    continue;
                 }
 
                 // get the SPTREntry
-                SPTREntry sptrEntry = (SPTREntry) entryIterator.next();
-
+                SPTREntry sptrEntry = ( SPTREntry ) entryIterator.next();
 
                 if ( sptrEntry == null ) {
                     if ( log != null ) {
@@ -189,7 +293,6 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
                 }
 
                 log.info( "Processing " + sptrEntry.getID() + " ..." );
-
 
                 uniprotProtein = buildUniprotProtein( sptrEntry );
                 uniprotProteins.add( uniprotProtein );
@@ -228,26 +331,26 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
         }
 
         // Process OS, OC, OX
-        String organismName = sptrEntry.getOrganismNames()[ 0 ];
+        String organismName = sptrEntry.getOrganismNames()[0];
         String entryTaxid = sptrEntry.getNCBITaxonomyID( organismName );
         Organism o = new Organism( Integer.parseInt( entryTaxid ), organismName );
 
         // extract parent's names
         String[] taxons = sptrEntry.getTaxonomy( organismName );
         for ( int i = 0; i < taxons.length; i++ ) {
-            String taxon = taxons[ i ];
+            String taxon = taxons[i];
             o.getParents().add( taxon );
         }
 
         UniprotProtein uniprotProtein = new UniprotProtein( sptrEntry.getID(),
-                                                            sptrEntry.getAccessionNumbers()[ 0 ],
+                                                            sptrEntry.getAccessionNumbers()[0],
                                                             o,
                                                             sptrEntry.getProteinName() );
 
         String proteinAC[] = sptrEntry.getAccessionNumbers();
         if ( proteinAC.length > 1 ) {
             for ( int i = 1; i < proteinAC.length; i++ ) {
-                String ac = proteinAC[ i ];
+                String ac = proteinAC[i];
                 uniprotProtein.getSecondaryAcs().add( ac );
             }
         }
@@ -263,11 +366,11 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
         // comments: function
         SPTRComment[] comments = sptrEntry.getAllComments();
         for ( int i = 0; i < comments.length; i++ ) {
-            SPTRComment comment = comments[ i ];
+            SPTRComment comment = comments[i];
             log.debug( "comment.getClass().getSimpleName() = " + comment.getClass().getSimpleName() );
             if ( comment instanceof Function ) {
                 log.debug( "Found a Comment( Function )." );
-                Function function = (Function) comment;
+                Function function = ( Function ) comment;
                 uniprotProtein.getFunctions().add( function.getDescription() );
             }
         }
@@ -275,14 +378,14 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
         // Comments: disease
         SPTRComment[] diseases = sptrEntry.getComments( "DISEASE" );
         for ( int i = 0; i < diseases.length; i++ ) {
-            String disease = comments[ i ].getPropertyValue( 0 );
+            String disease = comments[i].getPropertyValue( 0 );
             uniprotProtein.getDiseases().add( disease );
         }
 
         // keywords
         String[] keywords = sptrEntry.getKeywords();
         for ( int i = 0; i < keywords.length; i++ ) {
-            String keyword = keywords[ i ];
+            String keyword = keywords[i];
             uniprotProtein.getKeywords().add( keyword );
         }
 
@@ -337,7 +440,7 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
 
             if ( feature instanceof PolypeptideChainFeature ) {
                 log.debug( "Found a PolypeptideChainFeature" );
-                PolypeptideChainFeature pcf = (PolypeptideChainFeature) feature;
+                PolypeptideChainFeature pcf = ( PolypeptideChainFeature ) feature;
 
                 String id = pcf.getID();
 
@@ -356,12 +459,12 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
 
                 if ( sequences.length > 0 ) {
                     for ( int i = 0; i < sequences.length; i++ ) {
-                        log.debug( "sequence[i] = " + sequences[ i ] );
+                        log.debug( "sequence[i] = " + sequences[i] );
                     }
 
                     if ( sequences.length > 1 ) {
                         log.debug( "Pick the first sequence out of " + sequences.length + ";" );
-                        chainSequence = sequences[ 0 ];
+                        chainSequence = sequences[0];
                     }
                 } else {
                     // TODO find more about startFuzzyness and endFuzzyness 
@@ -486,7 +589,7 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
         SPTRComment[] comments = sptrEntry.getComments( Factory.COMMENT_ALTERNATIVE_SPLICING );
 
         for ( int j = 0; j < comments.length; j++ ) {
-            SPTRComment comment = comments[ j ];
+            SPTRComment comment = comments[j];
 
             if ( !( comment instanceof AlternativeSplicingAdapter ) ) {
                 log.error( "Looking for Comment type: " + AlternativeSplicingAdapter.class.getName() );
@@ -495,12 +598,12 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
                 continue; // skip it, go to next iteration.
             }
 
-            AlternativeSplicingAdapter asa = (AlternativeSplicingAdapter) comment;
+            AlternativeSplicingAdapter asa = ( AlternativeSplicingAdapter ) comment;
             Isoform[] isoForms = asa.getIsoforms();
 
             // for each comment, browse its isoforms ...
             for ( int ii = 0; ii < isoForms.length; ii++ ) {
-                Isoform isoForm = isoForms[ ii ];
+                Isoform isoForm = isoForms[ii];
 
                 /**
                  * browse isoform's IDs which, in case they have been store in the database,
@@ -511,17 +614,17 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
                 if ( ids.length > 0 ) {
 
                     // only the first ID should be taken into account, the following ones are secondary IDs.
-                    String spliceVariantID = ids[ 0 ];
+                    String spliceVariantID = ids[0];
                     log.debug( "Splice variant ID: " + spliceVariantID );
                     String sequence = sptrEntry.getAlternativeSequence( isoForm );
-                    UniprotSpliceVariant sv = new UniprotSpliceVariant( ids[ 0 ],
+                    UniprotSpliceVariant sv = new UniprotSpliceVariant( ids[0],
                                                                         protein.getOrganism(),
                                                                         sequence );
                     protein.getSpliceVariants().add( sv );
 
                     if ( ids.length > 1 ) {
                         for ( int i = 1; i < ids.length; i++ ) {
-                            String id = ids[ i ];
+                            String id = ids[i];
                             sv.getSecondaryAcs().add( id );
                         }
                     }
@@ -533,7 +636,7 @@ public class YaspAdapter extends AbstractUniprotBridgeAdapter {
 
                     // synonyms
                     for ( int i = 0; i < isoForm.getSynonyms().length; i++ ) {
-                        sv.getSynomyms().add( isoForm.getSynonyms()[ i ] );
+                        sv.getSynomyms().add( isoForm.getSynonyms()[i] );
                     }
                 } // for ids
             } // for isoforms
