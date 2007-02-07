@@ -7,8 +7,11 @@
 
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
-        <release version="1.0-SNAPSHOT" date="2007-02-07" description="finishing up">
+        <release version="1.0-SNAPSHOT" date="2007-02-07" description="First release">
             <!-- No action taken yet -->
+            <action dev="skerrien" type="add">
+                New UniprotBridgeReport that allows to report issues during loading.
+            </action>
         </release>
 
     </body>
