@@ -55,7 +55,7 @@ public class YaspAdapterTest extends TestCase {
     }
 
     private UniprotBridgeAdapter getBridgeAdapter( IntactCrossReferenceFilter filter ) {
-        AbstractUniprotBridgeAdapter service = (AbstractUniprotBridgeAdapter) getBridgeAdapter();
+        AbstractUniprotBridgeAdapter service = ( AbstractUniprotBridgeAdapter ) getBridgeAdapter();
         service.setCrossReferenceSelector( filter );
         return service;
     }
@@ -63,17 +63,19 @@ public class YaspAdapterTest extends TestCase {
     ///////////////////
     // Tests
 
-//    public void testRetreiveUnknownProtein() throws UniprotBridgeException {
-//        UniprotBridgeAdapter ya = new YaspAdapter();
-//        Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
-//        assertNotNull( proteins );
-//        assertEquals( 0, proteins.size() );
-//        assertNotNull( ya.getErrors() );
-//        assertTrue( ya.getErrors().size() > 1 );
-//        assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
-//    }
+    public void testRetreiveUnknownProtein() throws UniprotBridgeException {
+        UniprotBridgeAdapter ya = new YaspAdapter();
+        Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
+        assertNotNull( proteins );
+        assertEquals( 0, proteins.size() );
+        assertNotNull( ya.getErrors() );
+        assertEquals( 1, ya.getErrors().size() );
+        assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
+    }
 
     public void testRetreiveSimpleProtein() throws UniprotBridgeException {
+
+        // TODO not a good idea to run test on data available online ... data can change, internet can be down ... find an other way !!
 
         UniprotBridgeAdapter uniprot = getBridgeAdapter();
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
@@ -131,7 +133,7 @@ public class YaspAdapterTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "31-OCT-2006" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "23-JAN-2007" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
@@ -145,30 +147,7 @@ public class YaspAdapterTest extends TestCase {
         assertEquals( 5, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 22, protein.getCrossReferences().size() );
-
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "Z49295", "EMBL" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "Z49296", "EMBL", "CAA89312.1" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "AF373805", "EMBL", "AAL57239.1" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "P47068", "IntAct" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "141636", "GermOnline" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "YJL020C", "Ensembl" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "Y13136_GR", "GenomeReviews" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "S000003557", "SGD" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "SCER-S28-01:SCER-S28-01-003102-MONOMER", "BioCyc" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "P47068", "LinkHub" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030479", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0017024", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0005515", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0007010", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "PF00018", "Pfam" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "PD000066", "ProDom" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "SM00326", "SMART" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "PS50002", "PROSITE" ) ) );
+        assertEquals( 24, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
@@ -250,15 +229,8 @@ public class YaspAdapterTest extends TestCase {
                            "QDSEYTIDAANYGNISHFINHSCDPNLAVFPCWIEHLNVALPHLVFFTLRPIKAGEELSF" +
                            "DYIRADNEDVPYENLSTAVRVECRCGRDNCRKVLF";
 
-//                System.out.println( s );
-//                System.out.println( s.length() );
-//                System.out.println( "" );
-//                System.out.println( sv.getSequence() );
-//                System.out.println( sv.getSequence().length() );
-
                 // it seems to return the sequence of the parent protein instead !!!!
                 assertEquals( protein.getSequence(), sv.getSequence() );
-//                assertEquals( s, sv.getSequence() );
 
                 sv2 = true;
 
