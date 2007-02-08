@@ -133,7 +133,7 @@ public class YaspAdapterTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "23-JAN-2007" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "06-FEB-2007" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
@@ -147,7 +147,7 @@ public class YaspAdapterTest extends TestCase {
         assertEquals( 5, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 24, protein.getCrossReferences().size() );
+        assertEquals( 22, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
@@ -270,16 +270,14 @@ public class YaspAdapterTest extends TestCase {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 9, protein.getCrossReferences().size() );
+        assertEquals( 7, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "S000003557", "SGD" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030479", "GO" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0017024", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0005515", "GO" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "GO" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0007010", "GO" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
 }

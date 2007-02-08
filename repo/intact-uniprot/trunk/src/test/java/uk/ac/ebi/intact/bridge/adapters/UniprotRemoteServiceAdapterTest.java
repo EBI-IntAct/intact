@@ -358,7 +358,7 @@ public class UniprotRemoteServiceAdapterTest extends TestCase {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 9, protein.getCrossReferences().size() );
+        assertEquals( 7, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
