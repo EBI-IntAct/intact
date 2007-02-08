@@ -19,6 +19,15 @@ public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
 {
     List<T> getByPsiMiRefCollection(Collection<String> psiMis);
 
+    /**
+     * Returns a list of controlled vocabulary terms having the given MI reference as identity.
+     *
+     * @param psiMiRef MI identifier we are looking after.
+     *
+     * @return a controlled vocabulary term of type T.
+     */
+    T getByPsiMiRef( String psiMiRef );
+
     List<T> getByObjClass(Class[] objClasses);
 
     <T extends CvObject> T getByShortLabel(Class<T> cvType, String label);

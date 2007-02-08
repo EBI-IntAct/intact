@@ -63,8 +63,15 @@ public class CvObjectDaoImplTest extends TestCase
     public void testGetByPsiMiRefCollection() throws Exception
     {
         List<CvObject> results = dao.getByPsiMiRefCollection(Arrays.asList(new String[] {CvTopic.COMMENT_MI_REF}));
-
         assertFalse(results.isEmpty());
+    }
+
+    public void testGetByPsiMiRef() throws Exception {
+        CvDatabase uniprot = (CvDatabase) dao.getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
+        assertNotNull( uniprot );
+
+        CvObject object = dao.getByPsiMiRef( "unknown" );
+        assertNull( object );
     }
 
     public void testGetByObjClass() throws Exception
