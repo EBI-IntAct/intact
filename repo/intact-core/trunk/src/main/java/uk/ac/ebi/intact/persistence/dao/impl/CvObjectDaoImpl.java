@@ -25,35 +25,39 @@ import java.util.List;
  * @version $Id$
  * @since <pre>02-May-2006</pre>
  */
-@SuppressWarnings("unchecked")
-public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T>
-{
-    public CvObjectDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
-    {
-        super(entityClass, session, intactSession);
+@SuppressWarnings( "unchecked" )
+public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T> {
+
+    public CvObjectDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
+        super( entityClass, session, intactSession );
     }
 
-     public List<T> getByPsiMiRefCollection(Collection<String> psiMis)
-    {
-       return getSession().createCriteria(getEntityClass()).createAlias("xrefs","xref")
-               .createAlias("xref.cvDatabase", "cvDb")
-               .createAlias("cvDb.xrefs", "cvDbXref")
-                .add(Restrictions.eq("cvDbXref.primaryId", CvDatabase.PSI_MI_MI_REF))
-                .add(Restrictions.in("xref.primaryId", psiMis)).list();
+    public List<T> getByPsiMiRefCollection( Collection<String> psiMis ) {
+        return getSession().createCriteria( getEntityClass() ).createAlias( "xrefs", "xref" )
+                .createAlias( "xref.cvDatabase", "cvDb" )
+                .createAlias( "cvDb.xrefs", "cvDbXref" )
+                .add( Restrictions.eq( "cvDbXref.primaryId", CvDatabase.PSI_MI_MI_REF ) )
+                .add( Restrictions.in( "xref.primaryId", psiMis ) ).list();
     }
 
-    public List<T> getByObjClass(Class[] objClasses)
-    {
-        Criteria criteria = getSession().createCriteria(CvObject.class);
+    public T getByPsiMiRef( String psiMiRef ) {
+        return ( T ) getSession().createCriteria( getEntityClass() ).createAlias( "xrefs", "xref" )
+                .createAlias( "xref.cvDatabase", "cvDb" )
+                .createAlias( "cvDb.xrefs", "cvDbXref" )
+                .add( Restrictions.eq( "cvDbXref.primaryId", CvDatabase.PSI_MI_MI_REF ) )
+                .add( Restrictions.eq( "xref.primaryId", psiMiRef ) ).uniqueResult();
+    }
+
+    public List<T> getByObjClass( Class[] objClasses ) {
+        Criteria criteria = getSession().createCriteria( CvObject.class );
 
         Disjunction disj = Restrictions.disjunction();
 
-        for (Class objClass : objClasses)
-        {
-            disj.add(Restrictions.eq("objClass", objClass.getName()));
+        for ( Class objClass : objClasses ) {
+            disj.add( Restrictions.eq( "objClass", objClass.getName() ) );
         }
 
-        criteria.add(disj);
+        criteria.add( disj );
 
         return criteria.list();
     }
@@ -61,25 +65,22 @@ public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<
 
     @Override
     @Deprecated
-    @PotentialThreat(description = "Labels are not unique in the database, so you could " +
-            "get more than one result and this method would fail")
-    public T getByShortLabel(String value)
-    {
-        return super.getByShortLabel(value);
+    @PotentialThreat( description = "Labels are not unique in the database, so you could " +
+                                    "get more than one result and this method would fail" )
+    public T getByShortLabel( String value ) {
+        return super.getByShortLabel( value );
     }
 
-    public <T extends CvObject> T getByShortLabel(Class<T> cvType, String label)
-    {
-        return (T) getSession().createCriteria(cvType)
-                .add(Restrictions.eq("objClass", cvType.getName()))
-                .add(Restrictions.eq("shortLabel", label)).uniqueResult();
+    public <T extends CvObject> T getByShortLabel( Class<T> cvType, String label ) {
+        return ( T ) getSession().createCriteria( cvType )
+                .add( Restrictions.eq( "objClass", cvType.getName() ) )
+                .add( Restrictions.eq( "shortLabel", label ) ).uniqueResult();
     }
 
-    public <T extends CvObject> T getByPrimaryId(Class<T> cvType, String miRef)
-    {
-        return (T) getSession().createCriteria(cvType)
-                .add(Restrictions.eq("objClass", cvType.getName()))
-                .createCriteria("xrefs")
-                .add(Restrictions.eq("primaryId", miRef)).uniqueResult();
+    public <T extends CvObject> T getByPrimaryId( Class<T> cvType, String miRef ) {
+        return ( T ) getSession().createCriteria( cvType )
+                .add( Restrictions.eq( "objClass", cvType.getName() ) )
+                .createCriteria( "xrefs" )
+                .add( Restrictions.eq( "primaryId", miRef ) ).uniqueResult();
     }
 }
