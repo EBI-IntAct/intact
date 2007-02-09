@@ -11,13 +11,10 @@
     </bannerRight>
     -->
 
-    <!--
-  <skin>
-      <groupId>uk.ac.ebi.maven.skins</groupId>
-      <artifactId>seqdbg-skin</artifactId>
-      <version>1.0-SNAPSHOT</version>
-  </skin>
-  -->
+    <skin>
+        <groupId>uk.ac.ebi.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+    </skin>
 
     <body>
         <links>
