@@ -16,8 +16,8 @@
     <description>Intact Commons, utility classes that do not use the database</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.2</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.2</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.2</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-commons/tags/intact-commons-1.1.2</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-commons/tags/intact-commons-1.1.2</url>
     </scm>
 
