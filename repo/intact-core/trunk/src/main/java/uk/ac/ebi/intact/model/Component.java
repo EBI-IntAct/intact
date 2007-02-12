@@ -100,7 +100,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     public Component( Institution owner, Interaction interaction,
                       Interactor interactor, CvComponentRole role ) {
 
-        this( owner, "V/A", interaction, interactor, role );
+        this( owner, "N/A", interaction, interactor, role );
     }
 
     /**
@@ -128,7 +128,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
 
         //super call sets creation time data
         super( shortLabel, owner );
-        this.shortLabel="V/A";
+        this.shortLabel="N/A";
         if ( interaction == null ) {
             throw new NullPointerException( "valid Component must have an Interaction set!" );
         }
