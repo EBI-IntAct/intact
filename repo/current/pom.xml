@@ -74,6 +74,7 @@
                 <module>intact-graph</module>
                 <module>intact-uniprot-export</module>
                 <module>intact-proteins-update</module>
+                <module>intact-ols</module>
 		<module>search-ws</module>
                 <module>search-wsclient</module>
                 <module>sanity-checker</module>
