@@ -8,6 +8,9 @@
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
         <release version="1.5.0-rc1-SNAPSHOT" date="2007-02-08" description="Providing additionel searching facilities">
+            <action dev="bruno" type="fix">
+                Changed wrong "V/A" in the code, which should be "N/A". This is the default shortLabel for the component
+            </action>
             <action dev="skerrien" type="add">
                 Added 1 new methods in CvObjectDAO allowing to search for a CV term by a single MI identifier.
             </action>
