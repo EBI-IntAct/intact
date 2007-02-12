@@ -18,18 +18,17 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.app.search</groupId>
-    <artifactId>search-wsclient</artifactId>
+    <groupId>uk.ac.ebi.intact.util</groupId>
+    <artifactId>intact-ols</artifactId>
     <packaging>jar</packaging>
-    <version>1.3.0-SNAPSHOT</version>
-    <!-- last released 1.2.0 -->
-    <name>Search WS Client</name>
-    <description>Client for the Search Web Services</description>
+    <version>1.0-SNAPSHOT</version>
+    <name>OLS Client</name>
+    <description>Client for the OLS Web Service</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-wsclient/trunk/</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ols/trunk</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ols/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-ols/trunk/</url>
     </scm>
 
     <properties>
@@ -49,6 +48,13 @@
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>xfire</groupId>
+                        <artifactId>xfire-jsr181-api</artifactId>
+                        <version>1.0-M1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -58,7 +64,7 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
-            <version>2.1-SNAPSHOT</version>
+            <version>2.1</version>
         </dependency>
         <dependency>
             <groupId>sun.jdk</groupId>
@@ -67,9 +73,13 @@
             <scope>system</scope>
             <systemPath>${java.home}/../lib/tools.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>xfire</groupId>
+            <artifactId>xfire-jsr181-api</artifactId>
+            <version>1.0-M1</version>
+        </dependency>
     </dependencies>
 
-    <!-- EBI repositories -->
     <repositories>
         <repository>
             <id>ebi-repo</id>
@@ -91,6 +101,11 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>java.net</id>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <layout>legacy</layout>
         </repository>
     </repositories>
     
