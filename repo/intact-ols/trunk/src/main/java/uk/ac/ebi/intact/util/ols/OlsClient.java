@@ -5,18 +5,16 @@
  */
 package uk.ac.ebi.intact.util.ols;
 
-import uk.ac.ebi.ontology_lookup.ontologyquery.Query;
-import uk.ac.ebi.ontology_lookup.ontologyquery.QueryService;
-
-import javax.xml.namespace.QName;
-import java.net.URL;
+import uk.ac.ebi.ook.web.services.Query;
+import uk.ac.ebi.ook.web.services.QueryService;
+import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 
 /**
  * Client for the Search Web Service
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * @since <pre>08-Aug-2006</pre>
+ * @since 1.0
  */
 public class OlsClient
 {
@@ -36,23 +34,11 @@ public class OlsClient
 
         try
         {
-            QueryService olsService = new QueryService(new URL(DEFAULT_URL), new QName("http://www.ebi.ac.uk/ontology-lookup/OntologyQuery", "QueryService"));
-            this.ontologyQuery = olsService.getOntologyQuery();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+            //QueryService olsService = new QueryService(new URL(DEFAULT_URL), new QName("http://www.ebi.ac.uk/ontology-lookup/OntologyQuery", "QueryService"));
+            //this.ontologyQuery = olsService.getOntologyQuery();
 
-    } // constructor
-
-    public OlsClient(String searchWsUrl)
-    {
-
-        try
-        {
-            QueryService olsService = new QueryService(new URL(searchWsUrl), new QName("http://www.ebi.ac.uk/ontology-lookup/OntologyQuery", "QueryService"));
-            this.ontologyQuery = olsService.getOntologyQuery();
+            QueryService locator = new QueryServiceLocator();
+            this.ontologyQuery = locator.getOntologyQuery();
         }
         catch (Exception e)
         {
@@ -70,7 +56,6 @@ public class OlsClient
     public static void main(String[] args) throws Exception
     {
         System.out.println("Version: "+new OlsClient().getOntologyQuery().getVersion());
-        System.out.println("Test2: "+new OlsClient().getOntologyQuery().getOntologyNames().getItem().size());
+        System.out.println("Test2: "+new OlsClient().getOntologyQuery().getOntologyNames());
     }
-
 }
