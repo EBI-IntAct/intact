@@ -15,8 +15,8 @@
     <description>Client for the OLS Web Service</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ols/tags/intact-ols-1.0</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-ols/tags/intact-ols-1.0</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ols/tags/intact-ols-1.0</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ols/tags/intact-ols-1.0</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-ols/tags/intact-ols-1.0</url>
     </scm>
 
