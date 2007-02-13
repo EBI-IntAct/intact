@@ -34,7 +34,7 @@
     <properties>
         <maven.test.failure.ignore>true</maven.test.failure.ignore>
     </properties>
-
+    <!--
     <build>
         <plugins>
             <plugin>
@@ -58,9 +58,9 @@
             </plugin>
         </plugins>
     </build>
-
+     -->
     <dependencies>
-        <!-- JAX-WS -->
+        <!-- JAX-WS
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
@@ -78,6 +78,13 @@
             <artifactId>xfire-jsr181-api</artifactId>
             <version>1.0-M1</version>
         </dependency>
+        -->
+        <dependency>
+            <groupId>uk.ac.ebi.pride</groupId>
+            <artifactId>ols-client</artifactId>
+            <version>1.9</version>
+        </dependency>
+
     </dependencies>
 
     <repositories>
