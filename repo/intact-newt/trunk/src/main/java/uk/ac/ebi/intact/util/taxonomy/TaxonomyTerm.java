@@ -3,45 +3,37 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.newt;
+package uk.ac.ebi.intact.util.taxonomy;
 
-import java.util.Set;
-import java.util.Collections;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Description of a Newt Term.
+ * Description of a taxonomy term.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>17-Jan-2007</pre>
+ * @since 1.0
  */
-public class NewtTerm implements Serializable {
+public class TaxonomyTerm implements Serializable {
 
     /**
      * Class version for checking when serializing.
      */
-    private static final long serialVersionUID = 1L;  
-
-    /**
-     * Regular expression to extract taxid, common and scientific name.
-     * The pattern is -- number|short_label|full_name|ignore other text
-     */
-    private static final Pattern REG_EXP = Pattern.compile( "(\\d+)\\|(.*?)\\|(.*?)\\|.*" );
+    private static final long serialVersionUID = 3886076190511081376L;
 
     /**
      * Set of non redundant parents.
      */
-    private Set<NewtTerm> parents = new HashSet<NewtTerm>( 1 );
+    private Set<TaxonomyTerm> parents = new HashSet<TaxonomyTerm>( 1 );
 
     /**
      * Set of non redundant children.
      */
-    private Set<NewtTerm> children = new HashSet<NewtTerm>( );
+    private Set<TaxonomyTerm> children = new HashSet<TaxonomyTerm>( );
 
     /**
      * Taxid of the newt term.
@@ -61,23 +53,8 @@ public class NewtTerm implements Serializable {
     ///////////////////
     // Constructor
 
-    public NewtTerm( int taxid ) {
+    public TaxonomyTerm( int taxid ) {
         setTaxid( taxid );
-    }
-
-    public NewtTerm( String newtLine ) {
-        // create a dummy term, it will be overriden later
-        this( 1 );
-
-        Matcher matcher = REG_EXP.matcher( newtLine );
-        if ( !matcher.matches() ) {
-            throw new IllegalArgumentException( "Could not parse: " + newtLine );
-        }
-
-        // Values from newt stored in
-        setTaxid( Integer.parseInt( matcher.group( 1 ) ) );
-        setCommonName( matcher.group( 2 ) );
-        setScientificName( matcher.group( 3 ) );
     }
 
     ////////////////////////
@@ -140,31 +117,31 @@ public class NewtTerm implements Serializable {
         this.taxid = taxid;
     }
 
-    public void addChild( NewtTerm child ) {
+    public void addChild( TaxonomyTerm child ) {
         children.add( child );
         child.parents.add( this );
     }
 
-    public void removeChild( NewtTerm child ) {
+    public void removeChild( TaxonomyTerm child ) {
         children.remove( child );
         child.parents.remove( this );
     }
 
-    public void addParent( NewtTerm parent ) {
+    public void addParent( TaxonomyTerm parent ) {
         parents.add( parent );
         parent.children.add( this );
     }
 
-    public void removeParent( NewtTerm parent ) {
+    public void removeParent( TaxonomyTerm parent ) {
         parents.remove( parent );
         parent.children.remove( this );
     }
 
-    public Collection<NewtTerm> getChildren() {
+    public Collection<TaxonomyTerm> getChildren() {
         return Collections.unmodifiableSet( children );
     }
 
-    public Collection<NewtTerm> getParents() {
+    public Collection<TaxonomyTerm> getParents() {
         return Collections.unmodifiableSet( parents );
     }
 
@@ -177,7 +154,7 @@ public class NewtTerm implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append( "NewtTerm" );
+        sb.append( "TaxonomyTerm" );
         sb.append( "{commonName='" ).append( commonName ).append( '\'' );
         sb.append( ", taxid=" ).append( taxid );
         sb.append( ", scientificName='" ).append( scientificName ).append( '\'' );
@@ -193,7 +170,7 @@ public class NewtTerm implements Serializable {
         if ( this == o ) return true;
         if ( o == null || getClass() != o.getClass() ) return false;
 
-        NewtTerm newtTerm = ( NewtTerm ) o;
+        TaxonomyTerm newtTerm = ( TaxonomyTerm ) o;
 
         if ( taxid != newtTerm.taxid ) return false;
 

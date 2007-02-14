@@ -3,24 +3,36 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.newt;
+package uk.ac.ebi.intact.util.taxonomy;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Collection of utilities for handling NewtTerm.
+ * Collection of utilities for handling TaxonomyTerms.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>17-Jan-2007</pre>
+ * @since 1.0
  */
-public class NewtUtils {
+public class TaxonomyTermUtils {
 
-    public static NewtTerm getRootParent( NewtTerm term ) {
+    /**
+     * Retreive the highest parent of the given term. this method doesn't alter the structure of the given hierarchy.
+     * That is, it doesn't load additional parent using a Taxonomy service.
+     *
+     * @param term a non null term.
+     *
+     * @return the highest parent or the term itself if it doesn't have any parent.
+     */
+    public static TaxonomyTerm getRootParent( TaxonomyTerm term ) {
 
-        NewtTerm root = null;
+        if ( term == null ) {
+            throw new NullPointerException( "term must not be null." );
+        }
+
+        TaxonomyTerm root = null;
 
         if ( term.getParents().size() == 0 ) {
             root = term;
@@ -37,17 +49,17 @@ public class NewtUtils {
     /////////////////////
     // Display
 
-    public static void printNewtHierarchy( NewtTerm term ) {
+    public static void printNewtHierarchy( TaxonomyTerm term ) {
         printNewtHierarchy( term, System.out );
     }
 
-    public static void printNewtHierarchy( NewtTerm term, PrintStream ps ) {
+    public static void printNewtHierarchy( TaxonomyTerm term, PrintStream ps ) {
         printNewtHierarchy( term, ps, "" );
     }
 
-    private static void printNewtHierarchy( NewtTerm term, PrintStream ps, String indent ) {
+    private static void printNewtHierarchy( TaxonomyTerm term, PrintStream ps, String indent ) {
         ps.println( indent + term );
-        for ( NewtTerm child : term.getChildren() ) {
+        for ( TaxonomyTerm child : term.getChildren() ) {
             printNewtHierarchy( child, ps, indent + "  " );
         }
     }
@@ -62,16 +74,16 @@ public class NewtUtils {
      *
      * @return a non null collection.
      */
-    public static Collection<NewtTerm> collectAllChildren( NewtTerm term ) {
-        Collection<NewtTerm> terms = new ArrayList<NewtTerm>();
+    public static Collection<TaxonomyTerm> collectAllChildren( TaxonomyTerm term ) {
+        Collection<TaxonomyTerm> terms = new ArrayList<TaxonomyTerm>();
 
         collectAllChildren( term, terms );
 
         return terms;
     }
 
-    private static void collectAllChildren( NewtTerm term, Collection<NewtTerm> terms ) {
-        for ( NewtTerm child : term.getChildren() ) {
+    private static void collectAllChildren( TaxonomyTerm term, Collection<TaxonomyTerm> terms ) {
+        for ( TaxonomyTerm child : term.getChildren() ) {
             terms.add( child );
             collectAllChildren( child, terms );
         }
