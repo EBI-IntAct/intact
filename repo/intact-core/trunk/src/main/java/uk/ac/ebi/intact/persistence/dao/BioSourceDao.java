@@ -18,7 +18,21 @@ import java.util.Collection;
  */
 public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
 
+    /**
+     * Searches for a BioSource having the given taxid and no CvTissue or CvCellType.
+     *
+     * @param taxonId the taxid we are looking for (non null).
+     *
+     * @return a biosource, can be null if not found.
+     */
     BioSource getByTaxonIdUnique(String taxonId);
 
+    /**
+     * Searches for all BioSources having the given taxid.
+     *
+     * @param taxonId the taxid we are looking for (non null).
+     *
+     * @return a non null collection of Biosource. May be empty.
+     */
     Collection<BioSource> getByTaxonId(String taxonId);
 }
