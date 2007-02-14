@@ -7,7 +7,18 @@
 
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
-        <release version="1.0-SNAPSHOT" date="2007-02-01" description="New artifact">
+        <release version="1.0" date="2007-02-14" description="Generifying intact-newt">
+            <action dev="skerrien" type="add">
+                Introduction of Service interface and implementations:
+                - Newt
+                - OLS (not yet implemented)
+                - Dummy (planned to be used for testing)
+            </action>
+        </release>
+
+        <!-- The artifact was renamed intact-taxonomy to reflect its genericity -->
+
+        <release version="intact-newt-1.0" date="2007-02-01" description="New artifact">
             <action dev="skerrien" type="add">
                 Object model to represent a Newt term: NewtTerm
             </action>
