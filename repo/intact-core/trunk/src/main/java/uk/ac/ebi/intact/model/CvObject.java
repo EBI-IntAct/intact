@@ -112,8 +112,8 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         }
 
         // Check this object has an identity xref first.
-        Xref idXref = getIdentityXref();
-        Xref idOther = other.getIdentityXref();
+        Xref idXref = getIdentityXref(CvDatabase.PSI_MI);
+        Xref idOther = other.getIdentityXref(CvDatabase.PSI_MI);
 
         if ( ( idXref != null ) && ( idOther != null ) ) {
             // Both objects have the identity xrefs
@@ -136,7 +136,7 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
     public int hashCode() {
         int result = super.hashCode();
 
-        Xref idXref = getIdentityXref();
+        Xref idXref = getIdentityXref(CvDatabase.PSI_MI);
 
         //need check as we still have no-arg constructor...
         if ( idXref != null ) {
@@ -149,16 +149,18 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
     }
 
     /**
-     * Returns the Identity xref
-     *
+     * Returns the Identity xref.
+     * @param cvDatabaseShortlabel the shortlabel of the cvDatabase of the identity xref (psi-mi, intact...), I can't
+     * use the psi-mi identity id of the cvDatabase as it's like a dog biting is own tail.
      * @return the Identity xref or null if there is no Identity xref found.
      */
     @Transient
-    public Xref getIdentityXref() {
+    public Xref getIdentityXref(String cvDatabaseShortlabel) {
         for (Xref xref : getXrefs())
         {
+            CvDatabase db = xref.getCvDatabase();
             CvXrefQualifier xq = xref.getCvXrefQualifier();
-            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()))
+            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()) && (db != null) && CvDatabase.PSI_MI.equals(db.getShortLabel()))
             {
                 return xref;
             }
