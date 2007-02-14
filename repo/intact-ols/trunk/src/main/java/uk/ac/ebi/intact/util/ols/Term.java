@@ -27,6 +27,7 @@ public class Term implements Serializable {
      * Constructs a new Term
      */
     public Term() {
+        this.children = new ArrayList<Term>();
     }
 
     /**
@@ -38,6 +39,7 @@ public class Term implements Serializable {
     public Term(String id, String name) {
         this.id = id;
         this.name = name;
+        this.children = new ArrayList<Term>();
     }
 
     public String getId() {
@@ -65,9 +67,6 @@ public class Term implements Serializable {
     }
 
     public void addChild(Term child) {
-        if (children == null) {
-            children = new ArrayList<Term>();
-        }
         child.setParent(this);
         children.add(child);
     }
