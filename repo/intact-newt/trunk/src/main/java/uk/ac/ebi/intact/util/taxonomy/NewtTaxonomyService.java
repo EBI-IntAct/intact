@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.newt;
+package uk.ac.ebi.intact.util.taxonomy;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,10 +19,9 @@ import java.util.Map;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>17-Jan-2007</pre>
+ * @since 1.0
  */
-public class NewtBridge {
-
+public class NewtTaxonomyService implements TaxonomyService {
 
     /**
      * Parameter that will be replaced by a taxid in a generic URL.
@@ -60,19 +59,19 @@ public class NewtBridge {
      * Cache NewtTerm by their taxid. When the cache is enabled, there should be only once instance of a NewtTerm with
      * a specific taxid.
      */
-    private Map<Integer, NewtTerm> cache;
+    private Map<Integer, TaxonomyTerm> cache;
 
     ///////////////////
     // Constructor
 
-    public NewtBridge() {
+    public NewtTaxonomyService() {
         this( DEFAULT_CACHE_ENABLED );
     }
 
-    public NewtBridge( boolean cacheEnabled ) {
+    public NewtTaxonomyService( boolean cacheEnabled ) {
         this.cacheEnabled = cacheEnabled;
         if ( cacheEnabled ) {
-            cache = new HashMap<Integer, NewtTerm>();
+            cache = new HashMap<Integer, TaxonomyTerm>();
         }
     }
 
@@ -115,45 +114,42 @@ public class NewtBridge {
         }
     }
 
-    //////////////////////
-    // Public methods
+    ///////////////////////////
+    // TaxonomyBridge methods
 
-    /**
-     * Retreives a term by taxid.
-     *
-     * @param taxid the taxid of the wanted term
-     *
-     * @return the term or null if not found.
-     *
-     * @throws IOException
-     */
-    public NewtTerm getNewtTerm( int taxid ) throws IOException {
+    public TaxonomyTerm getTaxonomyTerm( int taxid ) throws TaxonomyServiceException {
 
         checkTaxidValidity( taxid );
 
-        NewtTerm term = null;
+        TaxonomyTerm term = null;
 
         if ( cacheEnabled ) {
             term = cache.get( taxid );
         }
 
         if ( taxid == -1 ) {
-            term = new NewtTerm( -1 );
+            term = new TaxonomyTerm( -1 );
             term.setScientificName( "In vitro" );
             term.setCommonName( "In vitro" );
         } else if ( taxid == -2 ) {
-            term = new NewtTerm( -2 );
+            term = new TaxonomyTerm( -2 );
             term.setScientificName( "Chemical synthesis" );
             term.setCommonName( "Chemical synthesis" );
         }
 
         if ( term == null ) {
-            List<String> terms = readUrl( new URL( NEWT_URL_SPECIFIC_TERM.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+            List<String> terms = null;
+            try {
+                terms = readUrl( new URL( NEWT_URL_SPECIFIC_TERM.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+            } catch ( IOException e ) {
+                throw new TaxonomyServiceException( e );
+            }
             switch ( terms.size() ) {
                 case 0:
                     // null is returned.
                     break;
                 case 1:
+                    // TODO create a NewtTerm that has an extra constructor to parse String !!
                     term = new NewtTerm( terms.iterator().next() );
                     break;
                 default:
@@ -168,15 +164,7 @@ public class NewtBridge {
         return term;
     }
 
-    /**
-     * Update a NewtTerm by adding its children. the process can be done recursively if the given flag it true.
-     *
-     * @param term        the term to update.
-     * @param recursively if true, update recursively.
-     *
-     * @throws IOException
-     */
-    public void retreiveChildren( NewtTerm term, boolean recursively ) throws IOException {
+    public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
 
         if ( term.getTaxid() == -1 ) {
             return;
@@ -184,27 +172,19 @@ public class NewtBridge {
             return;
         }
 
-        List<NewtTerm> children = getNewtTermChildren( term.getTaxid() );
-        for ( NewtTerm child : children ) {
+        List<TaxonomyTerm> children = getTermChildren( term.getTaxid() );
+        for ( TaxonomyTerm child : children ) {
             term.addChild( child );
         }
 
         if ( recursively ) {
-            for ( NewtTerm child : term.getChildren() ) {
+            for ( TaxonomyTerm child : term.getChildren() ) {
                 retreiveChildren( child, recursively );
             }
         }
     }
 
-    /**
-     * Update a NewtTerm by adding its parents. the process can be done recursively if the given flag it true.
-     *
-     * @param term        the term to update.
-     * @param recursively if true, update recursively.
-     *
-     * @throws IOException
-     */
-    public void retreiveParents( NewtTerm term, boolean recursively ) throws IOException {
+    public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
 
         if ( term.getTaxid() == -1 ) {
             return;
@@ -212,44 +192,40 @@ public class NewtBridge {
             return;
         }
 
-        List<NewtTerm> parents = getNewtTermParent( term.getTaxid() );
-        for ( NewtTerm parent : parents ) {
+        List<TaxonomyTerm> parents = getTermParent( term.getTaxid() );
+        for ( TaxonomyTerm parent : parents ) {
             term.addParent( parent );
         }
 
         if ( recursively ) {
-            for ( NewtTerm parent : term.getParents() ) {
+            for ( TaxonomyTerm parent : term.getParents() ) {
                 retreiveParents( parent, recursively );
             }
         }
     }
 
-    /**
-     * Get the list of children of a given term given its taxid.
-     *
-     * @param taxid the term's taxid.
-     *
-     * @return a non null list of NewtTerm.
-     *
-     * @throws IOException
-     */
-    public List<NewtTerm> getNewtTermChildren( int taxid ) throws IOException {
+    public List<TaxonomyTerm> getTermChildren( int taxid ) throws TaxonomyServiceException {
 
         checkTaxidValidity( taxid );
 
-        List<NewtTerm> terms = new ArrayList<NewtTerm>();
+        List<TaxonomyTerm> terms = new ArrayList<TaxonomyTerm>();
 
-        List<String> lines = readUrl( new URL( NEWT_URL_TERMS_CHILDREN.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+        List<String> lines = null;
+        try {
+            lines = readUrl( new URL( NEWT_URL_TERMS_CHILDREN.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+        } catch ( IOException e ) {
+            throw new TaxonomyServiceException( e );
+        }
         switch ( lines.size() ) {
             case 0:
                 // null is returned.
                 break;
             default:
                 for ( String line : lines ) {
-                    NewtTerm term = new NewtTerm( line );
+                    TaxonomyTerm term = new NewtTerm( line );
 
                     if ( cacheEnabled ) {
-                        NewtTerm t = cache.get( term.getTaxid() );
+                        TaxonomyTerm t = cache.get( term.getTaxid() );
                         if ( t != null ) {
                             // we have the term already, reuse it.
                             term = t;
@@ -268,25 +244,21 @@ public class NewtBridge {
         return terms;
     }
 
-    /**
-     * Get the list of parents of a given term given its taxid.
-     *
-     * @param taxid the term's taxid.
-     *
-     * @return a non null list of NewtTerm.
-     *
-     * @throws IOException
-     */
-    public List<NewtTerm> getNewtTermParent( int taxid ) throws IOException {
+    public List<TaxonomyTerm> getTermParent( int taxid ) throws TaxonomyServiceException {
 
         checkTaxidValidity( taxid );
 
-        List<NewtTerm> terms = new ArrayList<NewtTerm>();
+        List<TaxonomyTerm> terms = new ArrayList<TaxonomyTerm>();
 
         // taxid 1 is the root of the Newt taxonomy. skip this.
         if ( taxid != 1 ) {
 
-            List<String> lines = readUrl( new URL( NEWT_URL_TERMS_PARENT.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+            List<String> lines = null;
+            try {
+                lines = readUrl( new URL( NEWT_URL_TERMS_PARENT.replace( TAXID_FLAG, String.valueOf( taxid ) ) ) );
+            } catch ( IOException e ) {
+                throw new TaxonomyServiceException( e );
+            }
             switch ( lines.size() ) {
                 case 0:
                     // null is returned.
@@ -294,10 +266,10 @@ public class NewtBridge {
                 default:
                     for ( String line : lines ) {
 
-                        NewtTerm term = new NewtTerm( line );
+                        TaxonomyTerm term = new NewtTerm( line );
 
                         if ( cacheEnabled ) {
-                            NewtTerm t = cache.get( term.getTaxid() );
+                            TaxonomyTerm t = cache.get( term.getTaxid() );
                             if ( t != null ) {
                                 // we have the term already, reuse it.
                                 term = t;
@@ -315,5 +287,9 @@ public class NewtBridge {
         }
 
         return terms;
+    }
+
+    public String getSourceDatabaseMiRef() throws TaxonomyServiceException {
+        return "MI:0247";
     }
 }
