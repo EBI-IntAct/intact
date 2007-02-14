@@ -9,6 +9,8 @@ import uk.ac.ebi.ook.web.services.Query;
 import uk.ac.ebi.ook.web.services.QueryService;
 import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 
+import java.util.Map;
+
 /**
  * Client for the Search Web Service
  *
@@ -16,8 +18,7 @@ import uk.ac.ebi.ook.web.services.QueryServiceLocator;
  * @version $Id$
  * @since 1.0
  */
-public class OlsClient
-{
+public class OlsClient {
 
     private static final String DEFAULT_URL = "http://www.ebi.ac.uk/ontology-lookup/services/OntologyQuery?wsdl";
 
@@ -29,33 +30,33 @@ public class OlsClient
     /**
      * Prepare the web service.
      */
-    public OlsClient()
-    {
+    public OlsClient() {
 
-        try
-        {
+        try {
             //QueryService olsService = new QueryService(new URL(DEFAULT_URL), new QName("http://www.ebi.ac.uk/ontology-lookup/OntologyQuery", "QueryService"));
             //this.ontologyQuery = olsService.getOntologyQuery();
 
             QueryService locator = new QueryServiceLocator();
             this.ontologyQuery = locator.getOntologyQuery();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     } // constructor
 
 
-    public Query getOntologyQuery()
-    {
+    public Query getOntologyQuery() {
         return ontologyQuery;
     }
 
-    public static void main(String[] args) throws Exception
-    {
-        System.out.println("Version: "+new OlsClient().getOntologyQuery().getVersion());
-        System.out.println("Test2: "+new OlsClient().getOntologyQuery().getOntologyNames());
+    public static void main(String[] args) throws Exception {
+        //System.out.println("Version: "+new OlsClient().getOntologyQuery().getVersion());
+        //System.out.println("Test2: "+new OlsClient().getOntologyQuery().getOntologyNames());
+
+        Map map = new OlsClient().getOntologyQuery().getTermChildren("MI:0001", "MI", 1, new int[]{0, 1, 2, 3, 4, 5, 6});
+        System.out.println(map);
+
+        System.out.println(new OlsClient().getOntologyQuery().getTermById("MI:0001", "MI"));
     }
 }
