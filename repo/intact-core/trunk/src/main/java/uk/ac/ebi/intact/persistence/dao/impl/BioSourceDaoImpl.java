@@ -20,26 +20,27 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>09-Jun-2006</pre>
  */
-public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implements BioSourceDao 
-{
+public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implements BioSourceDao {
 
-    private static final Log log = LogFactory.getLog(BioSourceDaoImpl.class);
+    private static final Log log = LogFactory.getLog( BioSourceDaoImpl.class );
 
-    public BioSourceDaoImpl(Session session, IntactSession intactSession) {
-        super(BioSource.class, session, intactSession);
+    public BioSourceDaoImpl( Session session, IntactSession intactSession ) {
+        super( BioSource.class, session, intactSession );
     }
 
 
-    public BioSource getByTaxonIdUnique(String taxonId)
-    {
-        Collection<BioSource> biosources = getByTaxonId(taxonId);
+    public BioSource getByTaxonIdUnique( String taxonId ) {
+
+        if ( taxonId == null ) {
+            throw new NullPointerException( "taxonId must not be null." );
+        }
+
+        Collection<BioSource> biosources = getByTaxonId( taxonId );
 
         // Get the biosource with null values for cell type and tisse
         //  (there is only one of them exists).
-        for (BioSource biosrc : biosources)
-        {
-            if ((biosrc.getCvCellType() == null) && (biosrc.getCvTissue() == null))
-            {
+        for ( BioSource biosrc : biosources ) {
+            if ( ( biosrc.getCvCellType() == null ) && ( biosrc.getCvTissue() == null ) ) {
                 return biosrc;
             }
         }
@@ -47,9 +48,13 @@ public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implemen
         return null;
     }
 
-    public Collection<BioSource> getByTaxonId(String taxonId)
-    {
-        return getSession().createCriteria(BioSource.class)
-                .add(Restrictions.eq("taxId", taxonId)).list();
+    public Collection<BioSource> getByTaxonId( String taxonId ) {
+
+        if ( taxonId == null ) {
+            throw new NullPointerException( "taxonId must not be null." );
+        }
+
+        return getSession().createCriteria( BioSource.class )
+                .add( Restrictions.eq( "taxId", taxonId ) ).list();
     }
 }
