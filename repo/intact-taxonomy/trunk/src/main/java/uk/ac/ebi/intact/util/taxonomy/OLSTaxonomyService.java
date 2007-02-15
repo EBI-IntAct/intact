@@ -36,7 +36,7 @@ public class OLSTaxonomyService implements TaxonomyService {
         throw new UnsupportedOperationException( );
     }
 
-    public String getSourceDatabaseMiRef() throws TaxonomyServiceException {
+    public String getSourceDatabaseMiRef() {
         throw new UnsupportedOperationException();
     }
 }
