@@ -5,8 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
+
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a controlled vocabulary object. CvObject is derived from AnnotatedObject to allow to store annotation of
@@ -112,8 +116,8 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         }
 
         // Check this object has an identity xref first.
-        Xref idXref = getIdentityXref(CvDatabase.PSI_MI);
-        Xref idOther = other.getIdentityXref(CvDatabase.PSI_MI);
+        Xref idXref = CvObjectUtils.getPsiMiIdentityXref(this);
+        Xref idOther = CvObjectUtils.getPsiMiIdentityXref(other);
 
         if ( ( idXref != null ) && ( idOther != null ) ) {
             // Both objects have the identity xrefs
@@ -136,7 +140,7 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
     public int hashCode() {
         int result = super.hashCode();
 
-        Xref idXref = getIdentityXref(CvDatabase.PSI_MI);
+        Xref idXref = CvObjectUtils.getPsiMiIdentityXref(this);
 
         //need check as we still have no-arg constructor...
         if ( idXref != null ) {
@@ -148,24 +152,33 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         return result;
     }
 
-    /**
+     /**
      * Returns the Identity xref.
-     * @param cvDatabaseShortlabel the shortlabel of the cvDatabase of the identity xref (psi-mi, intact...), I can't
-     * use the psi-mi identity id of the cvDatabase as it's like a dog biting is own tail.
+      * This method does not take into account that a cvObject can have several identity xref, therefore it will be
+      * deprecated and will disappear from version 1.7 use instead : getPsiMiIdentityXref from the
+      * uk.ac.ebi.intact.model.util.CvObjectUtils method.
+     *  It will throw an IllegalStateException if one CvObject is found 2 identity xref.
      * @return the Identity xref or null if there is no Identity xref found.
      */
     @Transient
-    public Xref getIdentityXref(String cvDatabaseShortlabel) {
-        for (Xref xref : getXrefs())
+    @Deprecated
+
+    public Xref getIdentityXref() {
+            List<Xref> xrefs = new ArrayList<Xref>();
+            for (Xref xref : getXrefs())
         {
-            CvDatabase db = xref.getCvDatabase();
+
             CvXrefQualifier xq = xref.getCvXrefQualifier();
-            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()) && (db != null) && CvDatabase.PSI_MI.equals(db.getShortLabel()))
+            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()))
             {
-                return xref;
+                xrefs.add(xref);
             }
+            if(xrefs.size() > 1){
+                throw new IllegalStateException("This cv has 2 xref identities. Can not decide on witch one to return");
+            }
+
         }
-        return null;
+        return xrefs.get(0);
     }
 } // end CvObject
 
