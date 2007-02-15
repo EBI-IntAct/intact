@@ -35,7 +35,7 @@ public class DummyTaxonomyService implements TaxonomyService {
         throw new UnsupportedOperationException();
     }
 
-    public String getSourceDatabaseMiRef() throws TaxonomyServiceException {
+    public String getSourceDatabaseMiRef() {
         return "MI:9999";
     }
 }

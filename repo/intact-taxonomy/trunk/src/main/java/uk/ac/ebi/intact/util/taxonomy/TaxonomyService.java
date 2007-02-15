@@ -23,7 +23,7 @@ public interface TaxonomyService {
      *
      * @return the term or null if not found.
      *
-     * @throws TaxonomyServiceException
+     * @throws TaxonomyServiceException if an error occur during the processing.
      */
     public TaxonomyTerm getTaxonomyTerm( int taxid ) throws TaxonomyServiceException;
 
@@ -33,7 +33,7 @@ public interface TaxonomyService {
      * @param term        the term to update.
      * @param recursively if true, update recursively.
      *
-     * @throws TaxonomyServiceException
+     * @throws TaxonomyServiceException if an error occur during the processing.
      */
     public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
 
@@ -43,7 +43,7 @@ public interface TaxonomyService {
      * @param term        the term to update.
      * @param recursively if true, update recursively.
      *
-     * @throws TaxonomyServiceException
+     * @throws TaxonomyServiceException if an error occur during the processing.
      */
     public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
 
@@ -54,7 +54,7 @@ public interface TaxonomyService {
      *
      * @return a non null list of NewtTerm.
      *
-     * @throws TaxonomyServiceException
+     * @throws TaxonomyServiceException if an error occur during the processing.
      */
     public List<TaxonomyTerm> getTermChildren( int taxid ) throws TaxonomyServiceException;
 
@@ -65,14 +65,14 @@ public interface TaxonomyService {
      *
      * @return a non null list of NewtTerm.
      *
-     * @throws TaxonomyServiceException
+     * @throws TaxonomyServiceException if an error occur during the processing.
      */
     public List<TaxonomyTerm> getTermParent( int taxid ) throws TaxonomyServiceException;
 
     /**
      * Return the IntAct CvDatabase corresponding to the resource that is being queried.
      *
-     * @return
+     * @return the MI reference of the source database.
      */
-    public String getSourceDatabaseMiRef() throws TaxonomyServiceException;
+    public String getSourceDatabaseMiRef();
 }

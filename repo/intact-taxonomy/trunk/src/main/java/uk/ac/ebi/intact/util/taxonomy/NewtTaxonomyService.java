@@ -289,7 +289,7 @@ public class NewtTaxonomyService implements TaxonomyService {
         return terms;
     }
 
-    public String getSourceDatabaseMiRef() throws TaxonomyServiceException {
+    public String getSourceDatabaseMiRef() {
         return "MI:0247";
     }
 }
