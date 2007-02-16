@@ -17,11 +17,13 @@ import java.util.regex.Pattern;
  */
 public class NewtTerm extends TaxonomyTerm {
 
+    private static final String PATTERN = "(\\d+)\\|(.*?)\\|(.*?)\\|.*";
+
     /**
      * Regular expression to extract taxid, common and scientific name.
      * The pattern is -- number|short_label|full_name|ignore other text
      */
-    private static final Pattern REG_EXP = Pattern.compile( "(\\d+)\\|(.*?)\\|(.*?)\\|.*" );
+    private static final Pattern REG_EXP = Pattern.compile( PATTERN );
 
     public NewtTerm( String newtLine ) {
         // create a dummy term, it will be overriden later
@@ -29,7 +31,7 @@ public class NewtTerm extends TaxonomyTerm {
 
         Matcher matcher = REG_EXP.matcher( newtLine );
         if ( !matcher.matches() ) {
-            throw new IllegalArgumentException( "Could not parse: " + newtLine );
+            throw new IllegalArgumentException( "Could not parse: " + newtLine + " (pattern:"+ PATTERN +")" );
         }
 
         // Values from newt stored in
