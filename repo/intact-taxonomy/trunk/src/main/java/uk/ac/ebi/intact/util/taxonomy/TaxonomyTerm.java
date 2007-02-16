@@ -111,8 +111,8 @@ public class TaxonomyTerm implements Serializable {
      * @param taxid Value to set for property 'taxid'.
      */
     public void setTaxid( int taxid ) {
-        if ( taxid < -2 || taxid == 0 ) {
-            throw new IllegalArgumentException( taxid + ": a taxid must be > 1 or be -1 (in vitro) or -2 (chemical synthesis)." );
+        if( ! TaxonomyUtils.isSupportedTaxid( taxid ) ) {
+            throw new IllegalArgumentException( taxid + ": a taxid must be > -4." );
         }
         this.taxid = taxid;
     }
