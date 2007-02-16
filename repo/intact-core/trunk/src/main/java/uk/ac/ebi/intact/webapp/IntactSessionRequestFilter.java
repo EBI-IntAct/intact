@@ -55,6 +55,10 @@ public class IntactSessionRequestFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest)request;
         HttpSession session = req.getSession();
 
+
+        // This is to prevent the IntactSessionRequestFilter from filtering all urls as for exemple it's not worth
+        // in our case to open and close an hibernate session if the url end in logout, as it means that the user
+        // is just asking to logout the application.
         String requestUrl = req.getRequestURL().toString();
         log.debug("Request send is : " + requestUrl);
         // if the the url end matches with a filtered extensions do not start IntactContext
@@ -70,6 +74,21 @@ public class IntactSessionRequestFilter implements Filter {
         IntactSession intactSession = new WebappSession(session.getServletContext(), session, req);
         IntactContext context = IntactConfigurator.createIntactContext(intactSession);
 
+        // We need to write the httpResponse firt in the responseWrapper. Other wise when we get back the response and
+        // do the commit, if the fails, it's impossible for us to display an error message as the httpResponse is already
+        // commited and sent.
+        // Therefore, we get the response in the responseWrapper, if the commit does not fail we write the responseWrapper
+        // to the out PrintWriter which displays the message on the client screen :
+        //          out.write(responseWrapper.toString());
+        // If the commit fails, we rollback, in a finally we close the session (hibernateSession.close()) and we throw
+        // a new ServletException("Exception commiting, rollback sucessfull" + e);
+        // In a web application you can configure your web.xml so that when those kind of exception occured a specific
+        // jsp is displayed :
+        //          <error-page>
+        //              <exception-type>javax.servlet.ServletException</exception-type>
+        //              <location>/pages/errorCommiting.jsp</location>
+        //          </error-page>
+        
         PrintWriter out = response.getWriter();
         StringResponseWrapper responseWrapper = new StringResponseWrapper((HttpServletResponse) response);
 
