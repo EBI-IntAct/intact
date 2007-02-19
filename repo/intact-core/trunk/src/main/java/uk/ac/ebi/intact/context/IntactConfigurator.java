@@ -33,20 +33,27 @@ public class IntactConfigurator {
     private static final Log log = LogFactory.getLog( IntactConfigurator.class );
 
     private static final String DEFAULT_INSTITUTION_LABEL = "ebi";
+
     private static final String DEFAULT_INSTITUTION_FULL_NAME = "European Bioinformatics Institute";
+
     private static final String DEFAULT_INSTITUTION_POSTAL_ADDRESS = "European Bioinformatics Institute; " +
                                                                      "Wellcome Trust Genome Campus; " +
                                                                      "Hinxton, Cambridge; " +
                                                                      "CB10 1SD; " +
                                                                      "United Kingdom";
+
     private static final String DEFAULT_INSTITUTION_URL = "http://www.ebi.ac.uk/";
 
     private static final String DEFAULT_AC_PREFIX = "UNK";
 
     private static final String DEFAULT_READ_ONLY_APP = Boolean.TRUE.toString();
+
     private static final String DEFAULT_SYNCHRONIZED_SEARCH_ITEMS = Boolean.FALSE.toString();
 
+    private static final String DEFAULT_TRANSACTION_AUTO_BEGIN = Boolean.FALSE.toString();
+
     private static final String INSTITUTION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.INSTITUTION_TO_BE_PERSISTED";
+
     private static final String SCHEMA_VERSION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.SCHEMA_VERSION_TO_BE_PERSISTED";
 
     private static final String INITIALIZED_APP_ATT_NAME = IntactConfigurator.class + "_INITIALIZED";
@@ -135,16 +142,19 @@ public class IntactConfigurator {
         log.debug( "Application is read-only: " + readOnly );
 
         // synchronize search items
-        String strSynchronizeSearchItems = getInitParamValue( session, IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS.getFqn(), DEFAULT_SYNCHRONIZED_SEARCH_ITEMS );
+        String strSynchronizeSearchItems = getInitParamValue( session,
+                                                              IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS.getFqn(), 
+                                                              DEFAULT_SYNCHRONIZED_SEARCH_ITEMS );
         boolean syncSearchItems = Boolean.parseBoolean( strSynchronizeSearchItems );
         config.setSynchronizedSearchItems( syncSearchItems );
         log.debug( "Application synchronizes SearchItems: " + syncSearchItems );
 
         // auto begin transaction
-        String strAutoBeginTransaction = getInitParamValue( session, IntactEnvironment.AUTO_BEGIN_TRANSACTION.getFqn(), DEFAULT_SYNCHRONIZED_SEARCH_ITEMS );
+        String strAutoBeginTransaction = getInitParamValue( session, IntactEnvironment.AUTO_BEGIN_TRANSACTION.getFqn(),
+                                                            DEFAULT_TRANSACTION_AUTO_BEGIN );
         boolean autoBeginTransaction = Boolean.parseBoolean( strAutoBeginTransaction );
         config.setAutoBeginTransaction( autoBeginTransaction );
-        log.debug( "Application auto begin transaction: " + autoBeginTransaction );
+        log.debug( "Application will auto begin transaction: " + autoBeginTransaction );
 
         // load the institution
         loadInstitution( session );
