@@ -22,7 +22,7 @@ import javax.persistence.MappedSuperclass;
 @MappedSuperclass
 public abstract class IntactObjectImpl extends AbstractAuditable implements IntactObject, Cloneable {
 
-    protected static final String NEW_LINE = System.getProperty("line.separator");   
+    protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
     /**
      * The unique accession number of an object. This is defined as protected to allow concrete subclasses to generate
@@ -39,10 +39,10 @@ public abstract class IntactObjectImpl extends AbstractAuditable implements Inta
     //access methods for attributes
 
     @Id
-    @GeneratedValue(generator="intact-id-generator")
-    @GenericGenerator(name="intact-id-generator", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
-    @Column(length = 30)
-    @Keyword(id=true)
+    @GeneratedValue( generator = "intact-id-generator" )
+    @GenericGenerator( name = "intact-id-generator", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator" )
+    @Column( length = 30 )
+    @Keyword( id = true )
     public String getAc() {
         return ac;
     }
@@ -57,31 +57,31 @@ public abstract class IntactObjectImpl extends AbstractAuditable implements Inta
         this.ac = ac;
     }
 
-    public boolean isDeprecated()
-    {
+    public boolean isDeprecated() {
         return deprecated;
     }
 
-    public void setDeprecated(boolean deprecated)
-    {
+    public void setDeprecated( boolean deprecated ) {
         this.deprecated = deprecated;
     }
 
 
     /**
      * Makes a clone of this intact object.
+     *
      * @return a cloned version of the current instance.
+     *
      * @throws CloneNotSupportedException to indicate that an instance cannot be cloned.
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        IntactObjectImpl copy = (IntactObjectImpl) super.clone();
+        IntactObjectImpl copy = ( IntactObjectImpl ) super.clone();
         // Reset the AC.
-        copy.setAc(null);
+        copy.setAc( null );
 
         // Sets the dates to the current date.
-        copy.setCreated(null);
-        copy.setUpdated(null);
+        copy.setCreated( null );
+        copy.setUpdated( null );
 
         return copy;
     }

@@ -28,29 +28,25 @@ import javax.persistence.*;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@Table(name = "ia_publication_alias")
-public class PublicationAlias extends Alias
-{
+@Table( name = "ia_publication_alias" )
+public class PublicationAlias extends Alias {
 
-    private static final Log log = LogFactory.getLog(PublicationAlias.class);
+    private static final Log log = LogFactory.getLog( PublicationAlias.class );
 
-    public PublicationAlias()
-    {
+    public PublicationAlias() {
     }
 
-    public PublicationAlias(Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name)
-    {
-        super(anOwner, annotatedObject, cvAliasType, name);
+    public PublicationAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
+        super( anOwner, annotatedObject, cvAliasType, name );
     }
 
-    @ManyToOne(targetEntity = Publication.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_ac")
-    public AnnotatedObject getParent()
-    {
+    @ManyToOne( targetEntity = Publication.class, fetch = FetchType.LAZY )
+    @JoinColumn( name = "parent_ac" )
+    public AnnotatedObject getParent() {
         return super.getParent();
     }
 
-    @Column(name = "parent_ac", insertable = false, updatable = false)
+    @Column( name = "parent_ac", insertable = false, updatable = false )
     public String getParentAc() {
         return super.getParentAc();
     }

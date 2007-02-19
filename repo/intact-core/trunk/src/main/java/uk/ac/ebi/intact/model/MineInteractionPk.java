@@ -28,107 +28,89 @@ import java.io.Serializable;
  * @since 1.5
  */
 @Embeddable
-public class MineInteractionPk implements Serializable
-{
+public class MineInteractionPk implements Serializable {
 
     @ManyToOne
-    @JoinColumn(name="protein1_ac")
+    @JoinColumn( name = "protein1_ac" )
     private ProteinImpl protein1;
 
     @ManyToOne
-    @JoinColumn(name="protein2_ac")
+    @JoinColumn( name = "protein2_ac" )
     private ProteinImpl protein2;
 
     @ManyToOne
-    @JoinColumn(name = "interaction_ac")
+    @JoinColumn( name = "interaction_ac" )
     private InteractionImpl interaction;
-    
-    public MineInteractionPk()
-    {
+
+    public MineInteractionPk() {
     }
 
-    public MineInteractionPk(ProteinImpl protein1, ProteinImpl protein2, InteractionImpl interaction)
-    {
+    public MineInteractionPk( ProteinImpl protein1, ProteinImpl protein2, InteractionImpl interaction ) {
         this.protein1 = protein1;
         this.protein2 = protein2;
         this.interaction = interaction;
     }
-    public ProteinImpl getProtein1()
-    {
+
+    public ProteinImpl getProtein1() {
         return protein1;
     }
 
-    public void setProtein1(ProteinImpl protein1)
-    {
+    public void setProtein1( ProteinImpl protein1 ) {
         this.protein1 = protein1;
     }
 
-    public ProteinImpl getProtein2()
-    {
+    public ProteinImpl getProtein2() {
         return protein2;
     }
 
-    public void setProtein2(ProteinImpl protein2)
-    {
+    public void setProtein2( ProteinImpl protein2 ) {
         this.protein2 = protein2;
     }
 
-    public InteractionImpl getInteraction()
-    {
+    public InteractionImpl getInteraction() {
         return interaction;
     }
 
-    public void setInteraction(InteractionImpl interaction)
-    {
+    public void setInteraction( InteractionImpl interaction ) {
         this.interaction = interaction;
     }
 
 
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        MineInteractionPk that = (MineInteractionPk) o;
+        MineInteractionPk that = ( MineInteractionPk ) o;
 
-        if (protein1 != null ? !protein1.equals(that.protein1) : that.protein1 != null)
-        {
+        if ( protein1 != null ? !protein1.equals( that.protein1 ) : that.protein1 != null ) {
             return false;
         }
-        if (protein2 != null ? !protein2.equals(that.protein2) : that.protein2 != null)
-        {
+        if ( protein2 != null ? !protein2.equals( that.protein2 ) : that.protein2 != null ) {
             return false;
         }
-        if (interaction != null && that.getInteraction() != null)
-        {
-            if (interaction.getAc() == null && that.getInteraction().getAc() != null)
-            {
-                if (!interaction.getAc().equals(that.getInteraction().getAc()))
-                {
+        if ( interaction != null && that.getInteraction() != null ) {
+            if ( interaction.getAc() == null && that.getInteraction().getAc() != null ) {
+                if ( !interaction.getAc().equals( that.getInteraction().getAc() ) ) {
                     return false;
                 }
             }
         }
-        if (interaction != null ? !interaction.equals(that.interaction) : that.interaction != null)
-        {
+        if ( interaction != null ? !interaction.equals( that.interaction ) : that.interaction != null ) {
             return false;
         }
 
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (protein1 != null ? protein1.hashCode() : 0);
-        result = 31 * result + (protein2 != null ? protein2.hashCode() : 0);
-        result = 31 * result + (interaction != null ? interaction.hashCode() : 0);
+        result = ( protein1 != null ? protein1.hashCode() : 0 );
+        result = 31 * result + ( protein2 != null ? protein2.hashCode() : 0 );
+        result = 31 * result + ( interaction != null ? interaction.hashCode() : 0 );
         return result;
     }
 }

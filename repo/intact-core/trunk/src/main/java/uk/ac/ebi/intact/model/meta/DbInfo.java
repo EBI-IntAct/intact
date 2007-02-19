@@ -31,119 +31,103 @@ import java.util.Date;
  * @since <pre>01-Sep-2006</pre>
  */
 @Entity
-@Table(name = "ia_db_info")
-public class DbInfo implements Auditable
-{
+@Table( name = "ia_db_info" )
+public class DbInfo implements Auditable {
 
-    public static final String SCHEMA_VERSION = "schema_version"; 
+    public static final String SCHEMA_VERSION = "schema_version";
 
     @Id
-    @Column(name="dbi_key", length = 20)
+    @Column( name = "dbi_key", length = 20 )
     private String key;
-    
-    @Column(name="value", length = 20)
+
+    @Column( name = "value", length = 20 )
     private String value;
 
     /**
      * The curator who has last edited the object.
      */
-    @Column(name = "updated_user", length = 30)
+    @Column( name = "updated_user", length = 30 )
     private String updator;
 
     /**
      * The curator who has created the edited object
      */
-    @Column(name = "created_user", length = 30)
+    @Column( name = "created_user", length = 30 )
     private String creator;
 
     /**
      * Creation date of an object. The type is java.sql.Date, not java.util.Data, for database compatibility.
      */
-    @Column(name = "created_date")
+    @Column( name = "created_date" )
     private Date created;
 
     /**
      * The last update of the object. The type is java.sql.Date, not java.util.Data, for database compatibility.
      */
-    @Column(name = "updated_date")
+    @Column( name = "updated_date" )
     private Date updated;
 
-    public DbInfo()
-    {
+    public DbInfo() {
     }
 
-    public DbInfo(String key, String value)
-    {
+    public DbInfo( String key, String value ) {
         this.key = key;
         this.value = value;
     }
 
-    public String getKey()
-    {
+    public String getKey() {
         return key;
     }
 
-    public void setKey(String key)
-    {
+    public void setKey( String key ) {
         this.key = key;
     }
 
-    public String getValue()
-    {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(String value)
-    {
+    public void setValue( String value ) {
         this.value = value;
     }
 
-    public String getUpdator()
-    {
+    public String getUpdator() {
         return updator;
     }
 
-    public void setUpdator(String updator)
-    {
+    public void setUpdator( String updator ) {
         this.updator = updator;
     }
 
-    public String getCreator()
-    {
+    public String getCreator() {
         return creator;
     }
 
-    public void setCreator(String creator)
-    {
+    public void setCreator( String creator ) {
         this.creator = creator;
     }
 
-    public Date getCreated()
-    {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(Date created)
-    {
+    public void setCreated( Date created ) {
         this.created = created;
     }
 
-    public Date getUpdated()
-    {
+    public Date getUpdated() {
         return updated;
     }
 
-    public void setUpdated(Date updated)
-    {
+    public void setUpdated( Date updated ) {
         this.updated = updated;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "DbInfo{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+               "key='" + key + '\'' +
+               ", value='" + value + '\'' +
+               '}';
     }
 }

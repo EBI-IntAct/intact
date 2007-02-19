@@ -70,8 +70,8 @@ public abstract class CvDagObject extends CvObject {
     @ManyToMany
     @JoinTable(
             name = "ia_cv2cv",
-            joinColumns = { @JoinColumn(name = "parent_ac", referencedColumnName = "ac") },
-            inverseJoinColumns = { @JoinColumn(name = "child_ac", referencedColumnName = "ac") }
+            joinColumns = {@JoinColumn( name = "parent_ac", referencedColumnName = "ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "child_ac", referencedColumnName = "ac" )}
     )
     public Collection<CvDagObject> getChildren() {
         return children;
@@ -138,11 +138,11 @@ public abstract class CvDagObject extends CvObject {
     // end modification (afrie)
     /////////////////////////////
 
-
     // TODO are they unique ?
+
     public void addChild( CvDagObject cvDagObject ) {
 
-        if ( ! children.contains( cvDagObject ) ) {
+        if ( !children.contains( cvDagObject ) ) {
             children.add( cvDagObject );
             cvDagObject.addParent( this );
         }
@@ -155,14 +155,14 @@ public abstract class CvDagObject extends CvObject {
         }
     }
 
-    @ManyToMany(mappedBy = "children")
+    @ManyToMany( mappedBy = "children" )
     public Collection<CvDagObject> getParents() {
         return parents;
     }
 
     public void addParent( CvDagObject cvDagObject ) {
 
-        if ( ! parents.contains( cvDagObject ) ) {
+        if ( !parents.contains( cvDagObject ) ) {
             parents.add( cvDagObject );
             cvDagObject.addChild( this );
         }

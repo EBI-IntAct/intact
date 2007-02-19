@@ -7,7 +7,6 @@ import uk.ac.ebi.intact.model.Range;
  * @version $Id$
  * @since <pre>07-Jul-2006</pre>
  */
-public interface RangeDao extends IntactObjectDao<Range>
-{
+public interface RangeDao extends IntactObjectDao<Range> {
 
 }

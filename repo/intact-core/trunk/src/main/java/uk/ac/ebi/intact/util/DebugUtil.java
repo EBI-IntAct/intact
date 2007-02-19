@@ -21,23 +21,22 @@ import java.util.List;
  * @version $Id$
  * @since <pre>29-Aug-2006</pre>
  */
-public class DebugUtil
-{
+public class DebugUtil {
 
-    private static final Log log = LogFactory.getLog(DebugUtil.class);
+    private static final Log log = LogFactory.getLog( DebugUtil.class );
 
     /**
      * Returns the list of labels for the annotated objects provided
+     *
      * @param intactObjects list of annotated objects
+     *
      * @return a list of labels
      */
-    public static List<String> labelList(Collection<? extends AnnotatedObject> intactObjects)
-    {
-        List<String> labels = new ArrayList<String>(intactObjects.size());
+    public static List<String> labelList( Collection<? extends AnnotatedObject> intactObjects ) {
+        List<String> labels = new ArrayList<String>( intactObjects.size() );
 
-        for (AnnotatedObject io : intactObjects)
-        {
-            labels.add(io.getShortLabel());
+        for ( AnnotatedObject io : intactObjects ) {
+            labels.add( io.getShortLabel() );
         }
 
         return labels;
@@ -45,16 +44,16 @@ public class DebugUtil
 
     /**
      * Returns the list of ACs for the annotated objects provided
+     *
      * @param intactObjects list of intact objects
+     *
      * @return a list of Acs
      */
-    public static List<String> acList(Collection<? extends IntactObject> intactObjects)
-    {
-        List<String> acs = new ArrayList<String>(intactObjects.size());
+    public static List<String> acList( Collection<? extends IntactObject> intactObjects ) {
+        List<String> acs = new ArrayList<String>( intactObjects.size() );
 
-        for (IntactObject io : intactObjects)
-        {
-            acs.add(io.getAc());
+        for ( IntactObject io : intactObjects ) {
+            acs.add( io.getAc() );
         }
 
         return acs;

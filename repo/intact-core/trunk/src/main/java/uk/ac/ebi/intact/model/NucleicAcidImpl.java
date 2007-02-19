@@ -17,18 +17,20 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.NucleicAcidImpl")
-@EditorTopic(name = "NucleicAcid")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.NucleicAcidImpl" )
+@EditorTopic( name = "NucleicAcid" )
 public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editable {
 
     /**
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    public NucleicAcidImpl() {}
+    public NucleicAcidImpl() {
+    }
 
     /**
      * A valid NucleicAcid must have at least an onwer, a biological source, a
@@ -37,10 +39,11 @@ public class NucleicAcidImpl extends PolymerImpl implements NucleicAcid, Editabl
      * @param owner      The 'owner' of this instance
      * @param source     The biological source of the Protein observation
      * @param shortLabel A memorable label used to refer to this instance
-     * @param type     The interactor type
+     * @param type       The interactor type
      */
-    public NucleicAcidImpl(Institution owner, BioSource source, String shortLabel,
-                           CvInteractorType type) {
-        super(owner, source, shortLabel, type);
+    public NucleicAcidImpl( Institution owner, BioSource source, String shortLabel,
+                            CvInteractorType type
+    ) {
+        super( owner, source, shortLabel, type );
     }
 }

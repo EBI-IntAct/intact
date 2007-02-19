@@ -27,54 +27,46 @@ import uk.ac.ebi.intact.persistence.dao.query.QueryTerm;
  * @version $Id$
  * @since 1.5
  */
-public class StandardAutoAddWildcardConverter implements AutoAddWildcardConverter
-{
+public class StandardAutoAddWildcardConverter implements AutoAddWildcardConverter {
 
-    public SearchableQuery autoAddWildCards(SearchableQuery query)
-    {
-        query.setAc(addAutomaticWildcardsToPhrase(query.getAc()));
-        query.setShortLabel(addAutomaticWildcardsToPhrase(query.getShortLabel()));
-        query.setDescription(addAutomaticWildcardsToPhrase(query.getDescription()));
-        query.setAnnotationText(addAutomaticWildcardsToPhrase(query.getAnnotationText()));
-        query.setFullText(addAutomaticWildcardsToPhrase(query.getFullText()));
-        query.setXref(addAutomaticWildcardsToPhrase(query.getXref()));
+    public SearchableQuery autoAddWildCards( SearchableQuery query ) {
+        query.setAc( addAutomaticWildcardsToPhrase( query.getAc() ) );
+        query.setShortLabel( addAutomaticWildcardsToPhrase( query.getShortLabel() ) );
+        query.setDescription( addAutomaticWildcardsToPhrase( query.getDescription() ) );
+        query.setAnnotationText( addAutomaticWildcardsToPhrase( query.getAnnotationText() ) );
+        query.setFullText( addAutomaticWildcardsToPhrase( query.getFullText() ) );
+        query.setXref( addAutomaticWildcardsToPhrase( query.getXref() ) );
 
         return query;
     }
 
-    private QueryPhrase addAutomaticWildcardsToPhrase(QueryPhrase originalPhrase)
-    {
-        if (originalPhrase == null) return null;
-        
+    private QueryPhrase addAutomaticWildcardsToPhrase( QueryPhrase originalPhrase ) {
+        if ( originalPhrase == null ) return null;
+
         QueryPhrase phrase = new QueryPhrase();
 
-        for (QueryTerm term : originalPhrase.getTerms())
-        {
-            addStartAndEndPercentIfNecessary(term);
-            phrase.getTerms().add(term);
+        for ( QueryTerm term : originalPhrase.getTerms() ) {
+            addStartAndEndPercentIfNecessary( term );
+            phrase.getTerms().add( term );
         }
 
         return phrase;
     }
 
-     private static void addStartAndEndPercentIfNecessary(QueryTerm term)
-     {
-         if (term.hasModifier(QueryModifier.PHRASE_DELIM))
-         {
-             return;
-         }
+    private static void addStartAndEndPercentIfNecessary( QueryTerm term ) {
+        if ( term.hasModifier( QueryModifier.PHRASE_DELIM ) ) {
+            return;
+        }
 
-         String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
+        String acPrefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
 
-         if (!term.startsWith(acPrefix) && !term.hasModifier(QueryModifier.WILDCARD_START))
-         {
-             term.addModifier(QueryModifier.WILDCARD_START);
-         }
+        if ( !term.startsWith( acPrefix ) && !term.hasModifier( QueryModifier.WILDCARD_START ) ) {
+            term.addModifier( QueryModifier.WILDCARD_START );
+        }
 
-         if (!term.startsWith(acPrefix) && !term.hasModifier(QueryModifier.WILDCARD_END))
-         {
-             term.addModifier(QueryModifier.WILDCARD_END);
-         }
-     }
+        if ( !term.startsWith( acPrefix ) && !term.hasModifier( QueryModifier.WILDCARD_END ) ) {
+            term.addModifier( QueryModifier.WILDCARD_END );
+        }
+    }
 
 }

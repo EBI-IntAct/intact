@@ -18,10 +18,10 @@ import java.util.Collection;
  * @version $id$
  */
 @Entity
-@Table(name = "ia_biosource")
-@AssociationOverride(name = "annotations",
-                     joinColumns = {@JoinColumn(name="annotation_ac")} )
-@Indexed(index = "lucene-indexes/intact-objects")
+@Table( name = "ia_biosource" )
+@AssociationOverride( name = "annotations",
+                      joinColumns = {@JoinColumn( name = "annotation_ac" )} )
+@Indexed( index = "lucene-indexes/intact-objects" )
 @EditorTopic
 public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias> implements Editable, Searchable {
 
@@ -94,36 +94,34 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
         setTaxId( taxId );
     }
 
-
     ///////////////////////////////////////
     //access methods for attributes
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
-        name="ia_biosource2annot",
-        joinColumns={@JoinColumn(name="biosource_ac")},
-        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+            name = "ia_biosource2annot",
+            joinColumns = {@JoinColumn( name = "biosource_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
-    public Collection<Annotation> getAnnotations()
-    {
+    public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<BioSourceXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<BioSourceAlias> getAliases() {
         return super.getAliases();
     }
-    
-    @Column(length = 30)
+
+    @Column( length = 30 )
     public String getTaxId() {
         return taxId;
 
@@ -147,8 +145,8 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
 
     ///////////////////////////////////////
     // access methods for associations
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "tissue_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "tissue_ac" )
     public CvTissue getCvTissue() {
         return cvTissue;
     }
@@ -157,8 +155,8 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
         this.cvTissue = cvTissue;
     }
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "celltype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "celltype_ac" )
     public CvCellType getCvCellType() {
         return cvCellType;
     }
@@ -167,7 +165,7 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
         this.cvCellType = cvCellType;
     }
 
-    @Column(name = "celltype_ac", insertable = false, updatable = false)
+    @Column( name = "celltype_ac", insertable = false, updatable = false )
     public String getCvCellTypeAc() {
         return cvCellTypeAc;
     }
@@ -176,7 +174,7 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
         this.cvCellTypeAc = ac;
     }
 
-    @Column(name = "tissue_ac", insertable = false, updatable = false)
+    @Column( name = "tissue_ac", insertable = false, updatable = false )
     public String getCvTissueAc() {
         return cvTissueAc;
     }
@@ -207,7 +205,7 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
             return false;
         }
 
-        final BioSource bioSource = (BioSource) o;
+        final BioSource bioSource = ( BioSource ) o;
 
         //check the taxId...
         if ( taxId != null ) {

@@ -22,7 +22,7 @@ package uk.ac.ebi.intact.persistence.dao.query.impl;
  * @version $Id$
  * @since 1.5
  */
-public interface AutoAddWildcardConverter
-{
-    SearchableQuery autoAddWildCards(SearchableQuery query);
+public interface AutoAddWildcardConverter {
+
+    SearchableQuery autoAddWildCards( SearchableQuery query );
 }

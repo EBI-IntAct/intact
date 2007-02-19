@@ -7,7 +7,7 @@ import uk.ac.ebi.intact.model.Institution;
  * @version $Id$
  * @since <pre>04-Jul-2006</pre>
  */
-public interface InstitutionDao extends IntactObjectDao<Institution>
-{
-    Institution getByShortLabel(String shortLabel);
+public interface InstitutionDao extends IntactObjectDao<Institution> {
+
+    Institution getByShortLabel( String shortLabel );
 }

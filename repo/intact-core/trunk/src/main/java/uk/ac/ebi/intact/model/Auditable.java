@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.model;
 
-import java.util.Date;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Contains the basic audit methods
@@ -25,21 +25,21 @@ import java.io.Serializable;
  * @version $Id$
  * @since <pre>01-Sep-2006</pre>
  */
-public interface Auditable extends Serializable
-{
+public interface Auditable extends Serializable {
+
     Date getCreated();
 
-    void setCreated(java.util.Date created);
+    void setCreated( java.util.Date created );
 
     Date getUpdated();
 
-    void setUpdated(java.util.Date updated);
+    void setUpdated( java.util.Date updated );
 
     String getCreator();
 
-    void setCreator(String createdUser);
+    void setCreator( String createdUser );
 
     String getUpdator();
 
-    void setUpdator(String userStamp);
+    void setUpdator( String userStamp );
 }

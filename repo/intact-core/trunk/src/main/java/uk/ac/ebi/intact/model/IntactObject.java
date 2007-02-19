@@ -6,15 +6,13 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 /**
- *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- *
  * @see uk.ac.ebi.intact.model.IntactObjectImpl
  */
 public interface IntactObject extends Auditable {
 
     String getAc();
 
-    void setAc(String ac);
+    void setAc( String ac );
 }

@@ -25,9 +25,9 @@ import java.util.Collection;
  * @author hhe
  */
 @MappedSuperclass
-public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> extends BasicObjectImpl implements AnnotatedObject<T,A> {
+public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> extends BasicObjectImpl implements AnnotatedObject<T, A> {
 
-    private static final Log log = LogFactory.getLog(AnnotatedObjectImpl.class);
+    private static final Log log = LogFactory.getLog( AnnotatedObjectImpl.class );
 
     /////////////////////////////////
     //attributes
@@ -85,6 +85,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
      *
      * @param shortLabel The memorable label to identify this AnnotatedObject
      * @param owner      The Institution which owns this AnnotatedObject
+     *
      * @throws NullPointerException thrown if either parameters are not specified
      */
     protected AnnotatedObjectImpl( String shortLabel, Institution owner ) {
@@ -99,7 +100,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Length(min = 1, max = MAX_SHORT_LABEL_LEN)
+
+    @Length( min = 1, max = MAX_SHORT_LABEL_LEN )
     @NotNull
     @Text
     public String getShortLabel() {
@@ -107,15 +109,14 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
     }
 
     public void setShortLabel( String shortLabel ) {
-        if (shortLabel != null && shortLabel.length() > MAX_SHORT_LABEL_LEN)
-        {
-            throw new FieldTooLongException(shortLabel, "shortLabel", MAX_SHORT_LABEL_LEN);
+        if ( shortLabel != null && shortLabel.length() > MAX_SHORT_LABEL_LEN ) {
+            throw new FieldTooLongException( shortLabel, "shortLabel", MAX_SHORT_LABEL_LEN );
         }
 
         this.shortLabel = shortLabel;
     }
 
-    @Column(length = 250)
+    @Column( length = 250 )
     public String getFullName() {
         return fullName;
     }
@@ -132,6 +133,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
     /**
      * This property must be overriden so it can have proper mappings
+     *
      * @return
      */
     @Transient
@@ -140,9 +142,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
     }
 
     public void addAnnotation( Annotation annotation ) {
-        if (!this.annotations.contains(annotation))
-        {
-            this.annotations.add(annotation);
+        if ( !this.annotations.contains( annotation ) ) {
+            this.annotations.add( annotation );
         }
     }
 
@@ -168,9 +169,9 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
      */
     public void addXref( T aXref ) {
         //if( !this.xrefs.contains( aXref ) ) {
-            this.xrefs.add( aXref );
-            aXref.setParent(this);
-            //aXref.setParentAc(this.getAc());
+        this.xrefs.add( aXref );
+        aXref.setParent( this );
+        //aXref.setParentAc(this.getAc());
         //}
     }
 
@@ -196,8 +197,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
      * if an equivalent alias is not yet part of the object.
      */
     public void addAlias( A alias ) {
-       this.aliases.add( alias );
-       alias.setParent(this);     
+        this.aliases.add( alias );
+        alias.setParent( this );
     }
 
     public void removeAlias( A alias ) {
@@ -215,7 +216,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
     }
 
     public void addReference( Reference reference ) {
-        if( !this.references.contains( reference ) ) {
+        if ( !this.references.contains( reference ) ) {
             this.references.add( reference );
             reference.addAnnotatedObject( this );
         }
@@ -223,9 +224,8 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
     public void removeReference( Reference reference ) {
         boolean removed = this.references.remove( reference );
-        if (removed)
-        {
-            reference.removeAnnotatedObject(this);
+        if ( removed ) {
+            reference.removeAnnotatedObject( this );
         }
     }
 
@@ -237,18 +237,18 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
      * <code>Xrefs</code>, shortLabels and fullNames.
      *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
+     *
      * @see uk.ac.ebi.intact.model.Xref
      */
     @Override
     public boolean equals( Object o ) {
         // TODO: the reviewed version of the intact model will provide a better implementation
-        if (this == o)
-        {
+        if ( this == o ) {
             return true;
         }
-        if (!(o instanceof AnnotatedObject))
-        {
+        if ( !( o instanceof AnnotatedObject ) ) {
             return false;
         }
 
@@ -258,34 +258,29 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 //            return false;
 //        }
 
-        final AnnotatedObject annotatedObject = (AnnotatedObject) o;
+        final AnnotatedObject annotatedObject = ( AnnotatedObject ) o;
 
-        if (annotatedObject.getAc() != null & ac != null)
-        {
-            return ac.equals(annotatedObject.getAc());
+        if ( annotatedObject.getAc() != null & ac != null ) {
+            return ac.equals( annotatedObject.getAc() );
         }
 
         //short label and full name (if it exists) must be equal also..
-        if( shortLabel != null ) {
-            if (!shortLabel.equals(annotatedObject.getShortLabel()))
-            {
+        if ( shortLabel != null ) {
+            if ( !shortLabel.equals( annotatedObject.getShortLabel() ) ) {
                 return false;
             }
         } else {
-            if (annotatedObject.getShortLabel() != null)
-            {
+            if ( annotatedObject.getShortLabel() != null ) {
                 return false;
             }
         }
 
-        if( fullName != null ) {
-            if (!fullName.equals(annotatedObject.getFullName()))
-            {
+        if ( fullName != null ) {
+            if ( !fullName.equals( annotatedObject.getFullName() ) ) {
                 return false;
             }
         } else {
-            if (annotatedObject.getFullName() != null)
-            {
+            if ( annotatedObject.getFullName() != null ) {
                 return false;
             }
         }
@@ -308,22 +303,18 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
         int code = 29;
 
-        if (ac != null)
-        {
+        if ( ac != null ) {
             return code * ac.hashCode();
         }
 
-        for (Xref xref : xrefs)
-        {
+        for ( Xref xref : xrefs ) {
             code = 29 * code + xref.getPrimaryId().hashCode();
         }
 
-        if (null != shortLabel)
-        {
+        if ( null != shortLabel ) {
             code = 29 * code + shortLabel.hashCode();
         }
-        if (null != fullName)
-        {
+        if ( null != fullName ) {
             code = 29 * code + fullName.hashCode();
         }
 
@@ -332,7 +323,7 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        AnnotatedObjectImpl copy = (AnnotatedObjectImpl) super.clone();
+        AnnotatedObjectImpl copy = ( AnnotatedObjectImpl ) super.clone();
 
         Collection<T> xrefs = getXrefs();
 
@@ -344,30 +335,28 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
         // Clone annotations; can't use annotations.clone here as annoatations
         // type is shown as a ListProxy (ClassCastException)
         copy.annotations = new ArrayList<Annotation>( annotations.size() );
-        for (Annotation annotation : annotations)
-        {
-            copy.annotations.add((Annotation) annotation.clone());
+        for ( Annotation annotation : annotations ) {
+            copy.annotations.add( ( Annotation ) annotation.clone() );
         }
 
         // Clone xrefs.
-        Collection<Xref> copiedXrefs = new ArrayList<Xref>(xrefs.size());
+        Collection<Xref> copiedXrefs = new ArrayList<Xref>( xrefs.size() );
         // Make deep copies.
-        for (Xref xref : getXrefs())
-        {
-            Xref xrefClone = (Xref) xref.clone();
-            xrefClone.setParent(copy);
-            copiedXrefs.add(xrefClone);
+        for ( Xref xref : getXrefs() ) {
+            Xref xrefClone = ( Xref ) xref.clone();
+            xrefClone.setParent( copy );
+            copiedXrefs.add( xrefClone );
         }
 //        copy.setXrefs(null);
-        copy.setXrefs(copiedXrefs);
+        copy.setXrefs( copiedXrefs );
 
-        Collection<Alias> copiedAliases = new ArrayList<Alias>(aliases.size());
-        for(Alias alias : getAliases()){
-            Alias aliasClone = (Alias) alias.clone();
-            aliasClone.setParent(copy);
-            copiedAliases.add((Alias) alias.clone());
+        Collection<Alias> copiedAliases = new ArrayList<Alias>( aliases.size() );
+        for ( Alias alias : getAliases() ) {
+            Alias aliasClone = ( Alias ) alias.clone();
+            aliasClone.setParent( copy );
+            copiedAliases.add( ( Alias ) alias.clone() );
         }
-        copy.setAliases(copiedAliases);
+        copy.setAliases( copiedAliases );
 
         return copy;
     }

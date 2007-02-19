@@ -18,7 +18,7 @@ import java.io.Serializable;
 // TODO cf. note
 
 @Entity
-@Table(name = "ia_institution")
+@Table( name = "ia_institution" )
 public class Institution extends IntactObjectImpl implements Serializable {
 
     ///////////////////////////////////////
@@ -59,15 +59,15 @@ public class Institution extends IntactObjectImpl implements Serializable {
      * <code>updated</code> fields of the instance to the current time.
      *
      * @param shortLabel The short label used to refer to this Institution.
+     *
      * @throws NullPointerException if an attempt is made to create an Instiution without
      *                              defining a shortLabel.
      */
     public Institution( String shortLabel ) {
         this();
 
-        this.shortLabel = prepareLabel(shortLabel);
+        this.shortLabel = prepareLabel( shortLabel );
     }
-
 
     ///////////////////////////////////////
     // access methods for attributes
@@ -80,24 +80,20 @@ public class Institution extends IntactObjectImpl implements Serializable {
         this.shortLabel = shortLabel;
     }
 
-    private String prepareLabel(String shortLabel)
-    {
-        if( shortLabel == null)
-        {
-            throw new NullPointerException("Must define a short label to create an Institution!");
+    private String prepareLabel( String shortLabel ) {
+        if ( shortLabel == null ) {
+            throw new NullPointerException( "Must define a short label to create an Institution!" );
         }
 
         // delete leading and trailing spaces.
         shortLabel = shortLabel.trim();
 
-        if ("".equals(shortLabel))
-        {
-            throw new IllegalArgumentException("Must define a short label to create an Institution!");
+        if ( "".equals( shortLabel ) ) {
+            throw new IllegalArgumentException( "Must define a short label to create an Institution!" );
         }
 
-        if (shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN)
-        {
-            shortLabel = shortLabel.substring(0, AnnotatedObject.MAX_SHORT_LABEL_LEN);
+        if ( shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN ) {
+            shortLabel = shortLabel.substring( 0, AnnotatedObject.MAX_SHORT_LABEL_LEN );
         }
 
         return shortLabel;
@@ -134,20 +130,21 @@ public class Institution extends IntactObjectImpl implements Serializable {
      * Equality for Institutions is currently based on equal shortLabels and fullNames.
      *
      * @param o The object to check
+     *
      * @return true if the parameter equlas this object, false otherwise
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Institution ) ) return false;
+        if ( this == o ) return true;
+        if ( !( o instanceof Institution ) ) return false;
 
-        final Institution institution = (Institution) o;
+        final Institution institution = ( Institution ) o;
 
-        if( !shortLabel.equals( institution.shortLabel ) ) {
+        if ( !shortLabel.equals( institution.shortLabel ) ) {
             return false;
         }
 
-        if( fullName != null ) {
+        if ( fullName != null ) {
             return ( fullName.equals( institution.fullName ) );
         }
 
@@ -167,7 +164,7 @@ public class Institution extends IntactObjectImpl implements Serializable {
 
         //still need shortLabel check as we still have no-arg constructor..
         code = 29 * code + shortLabel.hashCode();
-        if( null != fullName ) code = 29 * code + fullName.hashCode();
+        if ( null != fullName ) code = 29 * code + fullName.hashCode();
 
         return code;
     }

@@ -18,7 +18,6 @@ public class ReferenceQualifier {
     ///////////////////////////////////////
     // associations
 
-
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
     public String referenceAc;
@@ -38,16 +37,20 @@ public class ReferenceQualifier {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
     public ReferenceQualifier() {
         super();
     }
-    public ReferenceQualifier(Reference reference, CvReferenceQualifier cvReferenceQualifier) {
 
-        if(reference == null) throw new NullPointerException("valid ReferenceQualifier must have a non-null reference!");
-        if(cvReferenceQualifier == null) throw new NullPointerException("valid ReferenceQualifier must have a non-null cvReferenceQualifier!");
+    public ReferenceQualifier( Reference reference, CvReferenceQualifier cvReferenceQualifier ) {
+
+        if ( reference == null )
+            throw new NullPointerException( "valid ReferenceQualifier must have a non-null reference!" );
+        if ( cvReferenceQualifier == null )
+            throw new NullPointerException( "valid ReferenceQualifier must have a non-null cvReferenceQualifier!" );
 
         this.reference = reference;
         this.cvReferenceQualifier = cvReferenceQualifier;
@@ -60,14 +63,15 @@ public class ReferenceQualifier {
         return reference;
     }
 
-    public void setReference(Reference reference) {
+    public void setReference( Reference reference ) {
         this.reference = reference;
     }
+
     public CvReferenceQualifier getCvReferenceQualifier() {
         return cvReferenceQualifier;
     }
 
-    public void setCvReferenceQualifier(CvReferenceQualifier cvReferenceQualifier) {
+    public void setCvReferenceQualifier( CvReferenceQualifier cvReferenceQualifier ) {
         this.cvReferenceQualifier = cvReferenceQualifier;
     }
 
@@ -75,21 +79,26 @@ public class ReferenceQualifier {
     /**
      * Equality for ReferenceQualifiers is currently based on equality for
      * <code>CvReferenceQualifiers</code> and <code>References</code>.
+     *
+     * @param o The object to check
+     *
+     * @return true if the parameter equals this object, false otherwise
+     *
      * @see uk.ac.ebi.intact.model.Reference
      * @see uk.ac.ebi.intact.model.CvReferenceQualifier
-     * @param o The object to check
-     * @return true if the parameter equals this object, false otherwise
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReferenceQualifier)) return false;
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( !( o instanceof ReferenceQualifier ) ) return false;
 
-        final ReferenceQualifier referenceQualifier = (ReferenceQualifier) o;
+        final ReferenceQualifier referenceQualifier = ( ReferenceQualifier ) o;
 
         //TODO Needs to be more readable later (auto-generated)
-        if (cvReferenceQualifier != null ? !cvReferenceQualifier.equals(referenceQualifier.cvReferenceQualifier) : referenceQualifier.cvReferenceQualifier != null) return false;
-        if (reference != null ? !reference.equals(referenceQualifier.reference) : referenceQualifier.reference != null) return false;
+        if ( cvReferenceQualifier != null ? !cvReferenceQualifier.equals( referenceQualifier.cvReferenceQualifier ) : referenceQualifier.cvReferenceQualifier != null )
+            return false;
+        if ( reference != null ? !reference.equals( referenceQualifier.reference ) : referenceQualifier.reference != null )
+            return false;
 
         return true;
     }
@@ -99,8 +108,8 @@ public class ReferenceQualifier {
         int result;
 
         //TODO Needs to be more readable later (auto-generated)
-        result = (reference != null ? reference.hashCode() : 0);
-        result = 29 * result + (cvReferenceQualifier != null ? cvReferenceQualifier.hashCode() : 0);
+        result = ( reference != null ? reference.hashCode() : 0 );
+        result = 29 * result + ( cvReferenceQualifier != null ? cvReferenceQualifier.hashCode() : 0 );
         return result;
     }
 
@@ -109,14 +118,16 @@ public class ReferenceQualifier {
     public String getReferenceAc() {
         return referenceAc;
     }
-    public void setReferenceAc(String ac) {
+
+    public void setReferenceAc( String ac ) {
         this.referenceAc = ac;
     }
 
     public String getCvReferenceQualifierAc() {
         return cvReferenceQualifierAc;
     }
-    public void setCvReferenceQualifierAc(String ac) {
+
+    public void setCvReferenceQualifierAc( String ac ) {
         this.cvReferenceQualifierAc = ac;
     }
 

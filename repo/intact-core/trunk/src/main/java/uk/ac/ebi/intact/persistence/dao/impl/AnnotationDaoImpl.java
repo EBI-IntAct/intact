@@ -15,25 +15,21 @@ import java.util.List;
  * @version $Id$
  * @since <pre>07-jul-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class AnnotationDaoImpl extends IntactObjectDaoImpl<Annotation> implements AnnotationDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class AnnotationDaoImpl extends IntactObjectDaoImpl<Annotation> implements AnnotationDao {
 
-    public AnnotationDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Annotation.class, session, intactSession);
+    public AnnotationDaoImpl( Session session, IntactSession intactSession ) {
+        super( Annotation.class, session, intactSession );
     }
 
 
-    public List<Annotation> getByTextLike(String text)
-    {
-        return getSession().createCriteria(getEntityClass())
-                .add(Restrictions.like("annotationText", text)).list();
+    public List<Annotation> getByTextLike( String text ) {
+        return getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.like( "annotationText", text ) ).list();
     }
 
-    public List<Annotation> getByDescriptionLike(String description)
-    {
-        return getSession().createCriteria(getEntityClass())
-                .add(Restrictions.like("description", description)).list();
+    public List<Annotation> getByDescriptionLike( String description ) {
+        return getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.like( "description", description ) ).list();
     }
 }

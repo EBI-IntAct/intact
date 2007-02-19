@@ -23,13 +23,12 @@ import java.io.Serializable;
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- *
  * @since 1.5
  */
 @Entity
-@Table(name = "ia_payg_current_edge")
-public class PayAsYouGoCurrentEdge implements Serializable
-{
+@Table( name = "ia_payg_current_edge" )
+public class PayAsYouGoCurrentEdge implements Serializable {
+
     @EmbeddedId
     private PayAsYouGoCurrentEdgePk pk;
 
@@ -38,66 +37,53 @@ public class PayAsYouGoCurrentEdge implements Serializable
     private int conf;
 
 
-    public PayAsYouGoCurrentEdge()
-    {
+    public PayAsYouGoCurrentEdge() {
     }
 
 
-    public PayAsYouGoCurrentEdgePk getPk()
-    {
+    public PayAsYouGoCurrentEdgePk getPk() {
         return pk;
     }
 
-    public void setPk(PayAsYouGoCurrentEdgePk pk)
-    {
+    public void setPk( PayAsYouGoCurrentEdgePk pk ) {
         this.pk = pk;
     }
 
 
-    public int getSeen()
-    {
+    public int getSeen() {
         return seen;
     }
 
-    public void setSeen(int seen)
-    {
+    public void setSeen( int seen ) {
         this.seen = seen;
     }
 
-    public int getConf()
-    {
+    public int getConf() {
         return conf;
     }
 
-    public void setConf(int conf)
-    {
+    public void setConf( int conf ) {
         this.conf = conf;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        PayAsYouGoCurrentEdge that = (PayAsYouGoCurrentEdge) o;
+        PayAsYouGoCurrentEdge that = ( PayAsYouGoCurrentEdge ) o;
 
-        if (conf != that.conf)
-        {
+        if ( conf != that.conf ) {
             return false;
         }
-        if (seen != that.seen)
-        {
+        if ( seen != that.seen ) {
             return false;
         }
-        if (pk != null ? !pk.equals(that.pk) : that.pk != null)
-        {
+        if ( pk != null ? !pk.equals( that.pk ) : that.pk != null ) {
             return false;
         }
 
@@ -105,10 +91,9 @@ public class PayAsYouGoCurrentEdge implements Serializable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (pk != null ? pk.hashCode() : 0);
+        result = ( pk != null ? pk.hashCode() : 0 );
         result = 31 * result + seen;
         result = 31 * result + conf;
         return result;

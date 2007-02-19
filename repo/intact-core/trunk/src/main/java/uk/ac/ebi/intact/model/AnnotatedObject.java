@@ -8,10 +8,8 @@ package uk.ac.ebi.intact.model;
 import java.util.Collection;
 
 /**
- *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- *
  * @see uk.ac.ebi.intact.model.AnnotatedObjectImpl
  */
 public interface AnnotatedObject<T extends Xref, A extends Alias> extends BasicObject {
@@ -23,37 +21,37 @@ public interface AnnotatedObject<T extends Xref, A extends Alias> extends BasicO
 
     String getShortLabel();
 
-    void setShortLabel(String shortLabel);
+    void setShortLabel( String shortLabel );
 
     String getFullName();
 
-    void setFullName(String fullName);
+    void setFullName( String fullName );
 
     ///////////////////////////////////////
     // access methods for associations
-    void setAnnotations(Collection<Annotation> someAnnotation);
+    void setAnnotations( Collection<Annotation> someAnnotation );
 
     Collection<Annotation> getAnnotations();
 
-    void addAnnotation(Annotation annotation);
+    void addAnnotation( Annotation annotation );
 
-    void removeAnnotation(Annotation annotation);
+    void removeAnnotation( Annotation annotation );
 
     ///////////////////
     // Xref related
     ///////////////////
-    void setXrefs(Collection<T> someXrefs);
+    void setXrefs( Collection<T> someXrefs );
 
     Collection<T> getXrefs();
 
-    void addXref(T aXref);
+    void addXref( T aXref );
 
-    void removeXref(T xref);
+    void removeXref( T xref );
 
     ///////////////////
     // Alias related
     ///////////////////
-    void setAliases(Collection<A> someAliases);
+    void setAliases( Collection<A> someAliases );
 
     Collection<A> getAliases();
 
@@ -61,19 +59,19 @@ public interface AnnotatedObject<T extends Xref, A extends Alias> extends BasicO
 
     void removeAlias( A alias );
 
-    void setReferences(Collection<Reference> someReferences);
+    void setReferences( Collection<Reference> someReferences );
 
     Collection<Reference> getReferences();
 
-    void addReference(Reference reference);
+    void addReference( Reference reference );
 
-    void removeReference(Reference reference);
+    void removeReference( Reference reference );
 
 //    AnnotatedObject update(IntactHelper helper) throws IntactException;
 //
 //    Annotation updateUniqueAnnotation(CvTopic topic, String description, Institution owner);
 
-    boolean equals (Object o);
+    boolean equals( Object o );
 
     int hashCode();
 

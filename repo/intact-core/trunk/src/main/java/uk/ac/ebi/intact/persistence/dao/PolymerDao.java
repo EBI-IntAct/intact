@@ -22,7 +22,7 @@ import uk.ac.ebi.intact.model.PolymerImpl;
  * @version $Id$
  * @since 1.5
  */
-public interface PolymerDao<T extends PolymerImpl> extends InteractorDao<T>
-{
-    String getSequenceByPolymerAc(String polymerAc);
+public interface PolymerDao<T extends PolymerImpl> extends InteractorDao<T> {
+
+    String getSequenceByPolymerAc( String polymerAc );
 }

@@ -26,149 +26,127 @@ import java.util.Set;
  * @since 1.5
  */
 
-public enum QueryModifier
-{
+public enum QueryModifier {
+
     /**
      * Match anything before the term
      */
-    WILDCARD_START('%', new Character[] {'*'}, QueryModifierPosition.BEFORE_TERM),
+    WILDCARD_START( '%', new Character[]{'*'}, QueryModifierPosition.BEFORE_TERM ),
 
     /**
      * Match anything after the term
      */
-    WILDCARD_END('%', new Character[] {'*'}, QueryModifierPosition.AFTER_TERM),
+    WILDCARD_END( '%', new Character[]{'*'}, QueryModifierPosition.AFTER_TERM ),
 
     /**
      * The value is just a wildcard
      */
-    WILDCARD_VALUE('%', new Character[] {'*'}, QueryModifierPosition.ALL_TERM),
+    WILDCARD_VALUE( '%', new Character[]{'*'}, QueryModifierPosition.ALL_TERM ),
 
     /**
      * Include the term (AND conjunction)
      */
-    INCLUDE('+', QueryModifierPosition.BEFORE_TERM),
+    INCLUDE( '+', QueryModifierPosition.BEFORE_TERM ),
 
     /**
      * Exclude the term (AND NOT)
      */
-    EXCLUDE('-', QueryModifierPosition.BEFORE_TERM),
+    EXCLUDE( '-', QueryModifierPosition.BEFORE_TERM ),
 
     /**
      * Phrase delimiter
      */
-    PHRASE_DELIM('"', new Character[] {'\''}, QueryModifierPosition.BEFORE_AFTER_TERM);
+    PHRASE_DELIM( '"', new Character[]{'\''}, QueryModifierPosition.BEFORE_AFTER_TERM );
 
     private Character symbol;
     private Character[] synonyms;
     private QueryModifierPosition position;
 
-    private QueryModifier(Character symbol, QueryModifierPosition position)
-    {
-        this(symbol, new Character[0], position);
+    private QueryModifier( Character symbol, QueryModifierPosition position ) {
+        this( symbol, new Character[0], position );
     }
 
-    private QueryModifier(Character symbol, Character[] synonyms, QueryModifierPosition position)
-    {
+    private QueryModifier( Character symbol, Character[] synonyms, QueryModifierPosition position ) {
         this.symbol = symbol;
         this.synonyms = synonyms;
         this.position = position;
     }
 
-    public Character getSymbol()
-    {
+    public Character getSymbol() {
         return symbol;
     }
 
-    public Character[] getSynonyms()
-    {
+    public Character[] getSynonyms() {
         return synonyms;
     }
 
-    public Character[] allPossibleSymbols()
-    {
-        Character[] allSymbols = new Character[synonyms.length+1];
+    public Character[] allPossibleSymbols() {
+        Character[] allSymbols = new Character[synonyms.length + 1];
 
         allSymbols[0] = symbol;
 
-        for (int i=0; i<synonyms.length; i++)
-        {
-            allSymbols[i+1] = synonyms[i];
+        for ( int i = 0; i < synonyms.length; i++ ) {
+            allSymbols[i + 1] = synonyms[i];
         }
 
         return allSymbols;
     }
 
-    public QueryModifierPosition getPosition()
-    {
+    public QueryModifierPosition getPosition() {
         return position;
     }
 
-    public static QueryModifier[] identifyModifiers(String value)
-    {
+    public static QueryModifier[] identifyModifiers( String value ) {
         Set<QueryModifier> modifiers = new HashSet<QueryModifier>();
 
         // first check for "all-value" wildcads (the value is just a wildcard)
         boolean valueIsJustAWildcard = false;
-        if (value.length() == 1)
-        {
-            for (Character c : QueryModifier.WILDCARD_VALUE.allPossibleSymbols())
-            {
-                if (value.equals(c.toString()))
-                {
+        if ( value.length() == 1 ) {
+            for ( Character c : QueryModifier.WILDCARD_VALUE.allPossibleSymbols() ) {
+                if ( value.equals( c.toString() ) ) {
                     valueIsJustAWildcard = true;
-                    modifiers.add(QueryModifier.WILDCARD_VALUE);
+                    modifiers.add( QueryModifier.WILDCARD_VALUE );
                     break;
                 }
             }
         }
 
         // if the value is not just a wildcard, identify the modifiers
-        if (!valueIsJustAWildcard)
-        {
-            for (QueryModifier modifier : QueryModifier.values())
-            {
-                switch (modifier.getPosition())
-                {
+        if ( !valueIsJustAWildcard ) {
+            for ( QueryModifier modifier : QueryModifier.values() ) {
+                switch ( modifier.getPosition() ) {
                     case ALL_TERM:
-                        for (Character c : modifier.allPossibleSymbols())
-                        {
-                            if (value.length() == 1)
-                            {
-                                if (value.equals(c.toString()))
-                                {
-                                    modifiers.add(modifier);
+                        for ( Character c : modifier.allPossibleSymbols() ) {
+                            if ( value.length() == 1 ) {
+                                if ( value.equals( c.toString() ) ) {
+                                    modifiers.add( modifier );
                                 }
                             }
                         }
                         break;
                     case BEFORE_TERM:
-                        for (Character c : modifier.allPossibleSymbols())
-                        {
-                            if (value.startsWith(String.valueOf(c)))
-                            {
-                                modifiers.add(modifier);
+                        for ( Character c : modifier.allPossibleSymbols() ) {
+                            if ( value.startsWith( String.valueOf( c ) ) ) {
+                                modifiers.add( modifier );
                             }
                         }
                         break;
                     case AFTER_TERM:
-                        for (Character c : modifier.allPossibleSymbols())
-                        {
-                            if (value.endsWith(String.valueOf(c)))
-                            {
-                                modifiers.add(modifier);
+                        for ( Character c : modifier.allPossibleSymbols() ) {
+                            if ( value.endsWith( String.valueOf( c ) ) ) {
+                                modifiers.add( modifier );
                             }
                         }
                         break;
                 }
             }
         }
-        return modifiers.toArray(new QueryModifier[modifiers.size()]);
+        return modifiers.toArray( new QueryModifier[modifiers.size()] );
     }
 
     @Override
-    public String toString()
-    {
-        return "mod{"+symbol+" - "+position+"}";
+    public String toString() {
+        return "mod{" + symbol + " - " + position + "}";
     }
-    
+
 }

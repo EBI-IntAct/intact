@@ -25,15 +25,14 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>04/08/2006</pre>
  */
-public abstract class IntactSession
-{
-    private static final Log log = LogFactory.getLog(IntactSession.class);
+public abstract class IntactSession {
+
+    private static final Log log = LogFactory.getLog( IntactSession.class );
 
     private static final String DEFAULT_PROP_FILE = "intact.properties";
     private static final String CONFIG_FILE_SYSTEM_VAR = "intact.config.file";
 
-    protected void readDefaultProperties() throws IOException
-    {
+    protected void readDefaultProperties() throws IOException {
         // first read the properties for the classpath
         Properties props = readFromClasspathProperties();
 
@@ -41,31 +40,28 @@ public abstract class IntactSession
         // or a system variable intact.config.file has been defined, overwrite the properties with
         // those from that file
         Properties propsSystem = readFromFilesystem();
-        props.putAll(propsSystem);
+        props.putAll( propsSystem );
 
         // read properties supplied in the system environment (or provided with the -D parameter)
         Properties propsEnvironment = readFromEnvironment();
-        props.putAll(propsEnvironment);
+        props.putAll( propsEnvironment );
 
         // init
-        initParametersWithProperties(props);
+        initParametersWithProperties( props );
     }
 
 
-    private Properties readFromClasspathProperties() throws IOException
-    {
+    private Properties readFromClasspathProperties() throws IOException {
         Properties properties = new Properties();
 
-        URL intactPropertiesFilename = IntactSession.class.getResource("/"+DEFAULT_PROP_FILE);
+        URL intactPropertiesFilename = IntactSession.class.getResource( "/" + DEFAULT_PROP_FILE );
 
-        if (intactPropertiesFilename != null)
-        {
-           File intactPropsFile = new File(intactPropertiesFilename.getFile());
+        if ( intactPropertiesFilename != null ) {
+            File intactPropsFile = new File( intactPropertiesFilename.getFile() );
 
-            if (intactPropsFile.exists() && !intactPropsFile.isDirectory())
-            {
-                log.info("Loading properties from classpath: "+intactPropertiesFilename);
-                properties.load(new FileInputStream(intactPropsFile));
+            if ( intactPropsFile.exists() && !intactPropsFile.isDirectory() ) {
+                log.info( "Loading properties from classpath: " + intactPropertiesFilename );
+                properties.load( new FileInputStream( intactPropsFile ) );
             }
         }
 
@@ -77,29 +73,23 @@ public abstract class IntactSession
      * has been configured and points to a file. If any of those cases is true, read the file and
      * return the properties
      */
-    private Properties readFromFilesystem() throws IOException
-    {
+    private Properties readFromFilesystem() throws IOException {
         Properties properties = new Properties();
 
-        File propFile = new File(DEFAULT_PROP_FILE);
+        File propFile = new File( DEFAULT_PROP_FILE );
 
-        if (propFile.exists() && !propFile.isDirectory())
-        {
-            log.info("Loading properties from filesystem: "+propFile);
-            properties.load(new FileInputStream(propFile));
-        }
-        else
-        {
-            String filePath = System.getProperty(CONFIG_FILE_SYSTEM_VAR);
+        if ( propFile.exists() && !propFile.isDirectory() ) {
+            log.info( "Loading properties from filesystem: " + propFile );
+            properties.load( new FileInputStream( propFile ) );
+        } else {
+            String filePath = System.getProperty( CONFIG_FILE_SYSTEM_VAR );
 
-            if (filePath != null)
-            {
-                propFile = new File(filePath);
-    
-                if (propFile.exists() && !propFile.isDirectory())
-                {
-                    log.info("Loading properties from filesystem: "+propFile);
-                    properties.load(new FileInputStream(propFile));
+            if ( filePath != null ) {
+                propFile = new File( filePath );
+
+                if ( propFile.exists() && !propFile.isDirectory() ) {
+                    log.info( "Loading properties from filesystem: " + propFile );
+                    properties.load( new FileInputStream( propFile ) );
                 }
             }
         }
@@ -110,26 +100,21 @@ public abstract class IntactSession
     /**
      * Check the system properties for IntactEnvironment properties
      */
-    private Properties readFromEnvironment()
-    {
+    private Properties readFromEnvironment() {
         Properties properties = new Properties();
 
-        Enumeration<String> systemPropNames = (Enumeration<String>) System.getProperties().propertyNames();
+        Enumeration<String> systemPropNames = ( Enumeration<String> ) System.getProperties().propertyNames();
 
-        while (systemPropNames.hasMoreElements())
-        {
+        while ( systemPropNames.hasMoreElements() ) {
             String propName = systemPropNames.nextElement();
 
-            if (propName.startsWith("uk.ac.ebi.intact"))
-            {
-                for (IntactEnvironment env : IntactEnvironment.values())
-                {
-                    if (env.getFqn().equals(propName))
-                    {
-                        if (log.isDebugEnabled())
-                            log.debug("Property found in environment: "+propName+"="+System.getProperty(propName));
-                        
-                        properties.put(propName, System.getProperty(propName));
+            if ( propName.startsWith( "uk.ac.ebi.intact" ) ) {
+                for ( IntactEnvironment env : IntactEnvironment.values() ) {
+                    if ( env.getFqn().equals( propName ) ) {
+                        if ( log.isDebugEnabled() )
+                            log.debug( "Property found in environment: " + propName + "=" + System.getProperty( propName ) );
+
+                        properties.put( propName, System.getProperty( propName ) );
                     }
                 }
             }
@@ -138,34 +123,32 @@ public abstract class IntactSession
         return properties;
     }
 
-    protected void initParametersWithProperties(Properties properties)
-    {
-        Enumeration<String> propNames = (Enumeration<String>) properties.propertyNames();
+    protected void initParametersWithProperties( Properties properties ) {
+        Enumeration<String> propNames = ( Enumeration<String> ) properties.propertyNames();
 
-        while (propNames.hasMoreElements())
-        {
-           String propName = propNames.nextElement();
-           setInitParam(propName, properties.getProperty(propName));
+        while ( propNames.hasMoreElements() ) {
+            String propName = propNames.nextElement();
+            setInitParam( propName, properties.getProperty( propName ) );
         }
     }
 
-    public abstract Object getApplicationAttribute(String name);
+    public abstract Object getApplicationAttribute( String name );
 
-    public abstract void setApplicationAttribute(String name, Object attribute);
+    public abstract void setApplicationAttribute( String name, Object attribute );
 
-    public abstract Serializable getAttribute(String name);
+    public abstract Serializable getAttribute( String name );
 
-    public abstract void setAttribute(String name, Serializable attribute);
+    public abstract void setAttribute( String name, Serializable attribute );
 
-    public abstract Object getRequestAttribute(String name);
+    public abstract Object getRequestAttribute( String name );
 
-    public abstract void setRequestAttribute(String name, Object value);
+    public abstract void setRequestAttribute( String name, Object value );
 
-    public abstract boolean containsInitParam(String name);
+    public abstract boolean containsInitParam( String name );
 
-    public abstract String getInitParam(String name);
+    public abstract String getInitParam( String name );
 
-    public abstract void setInitParam(String name, String value);
+    public abstract void setInitParam( String name, String value );
 
     public abstract Collection<String> getInitParamNames();
 

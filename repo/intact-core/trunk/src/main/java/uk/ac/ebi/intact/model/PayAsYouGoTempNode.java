@@ -26,81 +26,67 @@ import java.io.Serializable;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- *
  * @since 1.5
  */
 @Entity
-@Table(name = "ia_payg_temp_node")
-public class PayAsYouGoTempNode implements Serializable
-{
+@Table( name = "ia_payg_temp_node" )
+public class PayAsYouGoTempNode implements Serializable {
+
     @EmbeddedId
     private PayAsYouGoPk pk;
 
-    @Column(updatable = false, insertable = false)
+    @Column( updatable = false, insertable = false )
     private String nid;
 
-    @Column(updatable = false, insertable = false)
+    @Column( updatable = false, insertable = false )
     private String species;
 
-    public PayAsYouGoTempNode()
-    {
+    public PayAsYouGoTempNode() {
     }
 
 
-    public PayAsYouGoPk getPk()
-    {
+    public PayAsYouGoPk getPk() {
         return pk;
     }
 
-    public void setPk(PayAsYouGoPk pk)
-    {
+    public void setPk( PayAsYouGoPk pk ) {
         this.pk = pk;
     }
 
-    public String getNid()
-    {
+    public String getNid() {
         return nid;
     }
 
-    public void setNid(String nid)
-    {
+    public void setNid( String nid ) {
         this.nid = nid;
     }
 
-    public String getSpecies()
-    {
+    public String getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species)
-    {
+    public void setSpecies( String species ) {
         this.species = species;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        PayAsYouGoTempNode that = (PayAsYouGoTempNode) o;
+        PayAsYouGoTempNode that = ( PayAsYouGoTempNode ) o;
 
-        if (nid != null ? !nid.equals(that.nid) : that.nid != null)
-        {
+        if ( nid != null ? !nid.equals( that.nid ) : that.nid != null ) {
             return false;
         }
-        if (pk != null ? !pk.equals(that.pk) : that.pk != null)
-        {
+        if ( pk != null ? !pk.equals( that.pk ) : that.pk != null ) {
             return false;
         }
-        if (species != null ? !species.equals(that.species) : that.species != null)
-        {
+        if ( species != null ? !species.equals( that.species ) : that.species != null ) {
             return false;
         }
 
@@ -108,12 +94,11 @@ public class PayAsYouGoTempNode implements Serializable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (pk != null ? pk.hashCode() : 0);
-        result = 31 * result + (nid != null ? nid.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = ( pk != null ? pk.hashCode() : 0 );
+        result = 31 * result + ( nid != null ? nid.hashCode() : 0 );
+        result = 31 * result + ( species != null ? species.hashCode() : 0 );
         return result;
     }
 }

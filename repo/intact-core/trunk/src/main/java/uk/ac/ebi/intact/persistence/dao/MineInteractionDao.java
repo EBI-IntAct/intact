@@ -24,17 +24,17 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
-public interface MineInteractionDao
-{
-    void persist(MineInteraction mineInteraction);
+public interface MineInteractionDao {
+
+    void persist( MineInteraction mineInteraction );
 
     int deleteAll();
 
-    MineInteraction get(String proteinIntactAc1, String proteinIntactAc2);
+    MineInteraction get( String proteinIntactAc1, String proteinIntactAc2 );
 
     int countAll();
 
-    int countByProteinIntactAc(String proteinIntactAc);
+    int countByProteinIntactAc( String proteinIntactAc );
 
-    List<MineInteraction> getByProteinIntactAc(String proteinIntactAc, Integer firstResult, Integer maxResults);
+    List<MineInteraction> getByProteinIntactAc( String proteinIntactAc, Integer firstResult, Integer maxResults );
 }

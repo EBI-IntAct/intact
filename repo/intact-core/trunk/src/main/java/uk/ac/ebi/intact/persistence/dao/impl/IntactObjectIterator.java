@@ -17,15 +17,15 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 
 import java.util.Iterator;
 import java.util.List;
@@ -38,8 +38,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
-public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
-{
+public class IntactObjectIterator<T extends IntactObject> implements Iterator<T> {
 
     /**
      * Sets up a logger for that class.
@@ -85,7 +84,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getIntactObjectDao( intactObjectClass );
     }
 
-    public IntactObjectIterator( Class<T> intactObjectClass, DetachedCriteria criteria) {
+    public IntactObjectIterator( Class<T> intactObjectClass, DetachedCriteria criteria ) {
 
         if ( intactObjectClass == null ) {
             throw new IllegalArgumentException( "You must give a non Class that extends IntactObject." );
@@ -97,7 +96,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         this.dao = buildDao();
 
         // initialisation
-         /*
+        /*
         objectCount = dao.countAll();
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -129,35 +128,33 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         }
         return index < objectCount;     */
 
- 
-        if (chunkIterator != null && chunkIterator.hasNext())
-        {
+
+        if ( chunkIterator != null && chunkIterator.hasNext() ) {
             return true;
         }
 
         if ( chunkIterator == null ) {
-            IntactTransaction tx =  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentTransaction();
-            try{
+            IntactTransaction tx = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentTransaction();
+            try {
                 tx.commit();
-            }catch(IntactTransactionException ie){
-                log.error("Exception commiting " + ie);
-                try{
+            } catch ( IntactTransactionException ie ) {
+                log.error( "Exception commiting " + ie );
+                try {
                     tx.rollback();
-                }catch(IntactTransactionException i){
-                    log.error("Exception rolling back " + ie);
+                } catch ( IntactTransactionException i ) {
+                    log.error( "Exception rolling back " + ie );
                 }
-            }finally{
+            } finally {
                 Session hibernateSession = getSession();
-                if(hibernateSession.isOpen()){
+                if ( hibernateSession.isOpen() ) {
                     hibernateSession.close();
                 }
             }
 
-
             //if (log.isTraceEnabled()) log.trace( "Retreiving " + batchSize + " objects." );
 
-            chunk = (List<T>)
-                    ((HibernateBaseDaoImpl<T>) buildDao())
+            chunk = ( List<T> )
+                    ( ( HibernateBaseDaoImpl<T> ) buildDao() )
                             .executeDetachedCriteria( criteria, index, batchSize );
             //if (log.isTraceEnabled()) log.trace(  "Retreived " + chunk.size() + " object(s)." );
 
@@ -167,8 +164,8 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
         return chunkIterator.hasNext();
     }
 
-    private Session getSession(){
-        AbstractHibernateDataConfig abstractHibernateDataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+    private Session getSession() {
+        AbstractHibernateDataConfig abstractHibernateDataConfig = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
         SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
         Session session = factory.getCurrentSession();
         return session;
@@ -177,11 +174,10 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
     public T next() {
 
         T object = null;
-          /*
-        if ( ! hasNext() ) {
-            throw new NoSuchElementException();
-        }   */
-
+        /*
+     if ( ! hasNext() ) {
+         throw new NoSuchElementException();
+     }   */
 
 
         if ( chunkIterator != null ) {
@@ -189,7 +185,7 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
             object = chunkIterator.next();
             index++;
 
-            if ( ! chunkIterator.hasNext() ) {
+            if ( !chunkIterator.hasNext() ) {
                 dao = null;
                 chunkIterator = null;
                 chunk = null;
@@ -200,18 +196,15 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
     }
 
 
-    public int getBatchSize()
-    {
+    public int getBatchSize() {
         return batchSize;
     }
 
-    public void setBatchSize(int batchSize)
-    {
+    public void setBatchSize( int batchSize ) {
         this.batchSize = batchSize;
     }
 
-    public int getIndex()
-    {
+    public int getIndex() {
         return index;
     }
 

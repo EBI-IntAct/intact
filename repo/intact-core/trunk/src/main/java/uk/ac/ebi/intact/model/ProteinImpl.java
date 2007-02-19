@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 
 /**
@@ -20,8 +20,8 @@ import javax.persistence.DiscriminatorValue;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.ProteinImpl")
-@EditorTopic(name="Protein")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.ProteinImpl" )
+@EditorTopic( name = "Protein" )
 public class ProteinImpl extends PolymerImpl implements Protein, Editable {
 
     /**
@@ -47,8 +47,8 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      * @param source     The biological source of the Protein observation
      * @param shortLabel A memorable label used to refer to the Protein instance
      *
-     * @deprecated Please use {@link #ProteinImpl(Institution, BioSource, String, CvInteractorType)}
-     * instead.
+     * @deprecated Please use {@link #ProteinImpl(Institution,BioSource,String,CvInteractorType)}
+     *             instead.
      */
     @Deprecated
     public ProteinImpl( Institution owner, BioSource source, String shortLabel ) {
@@ -58,7 +58,7 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
         //match with the classes - Interaction has a type, not Interactor...
 
         //super call sets up a valid AnnotatedObject (should an Interactor be better defined?)
-        this(owner, source, shortLabel, null);
+        this( owner, source, shortLabel, null );
     }
 
     /**
@@ -68,10 +68,10 @@ public class ProteinImpl extends PolymerImpl implements Protein, Editable {
      * @param owner      The 'owner' of this instance
      * @param source     The biological source of the Protein observation
      * @param shortLabel A memorable label used to refer to this instance
-     * @param type     The interactor type
+     * @param type       The interactor type
      */
-    public ProteinImpl(Institution owner, BioSource source, String shortLabel, CvInteractorType type ) {
-        super(owner, source, shortLabel, type);
+    public ProteinImpl( Institution owner, BioSource source, String shortLabel, CvInteractorType type ) {
+        super( owner, source, shortLabel, type );
     }
 
 }

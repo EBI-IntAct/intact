@@ -28,35 +28,30 @@ import javax.persistence.*;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@Table(name = "ia_component_xref")
-public class ComponentXref extends Xref
-{
+@Table( name = "ia_component_xref" )
+public class ComponentXref extends Xref {
 
-    private static final Log log = LogFactory.getLog(ComponentXref.class);
+    private static final Log log = LogFactory.getLog( ComponentXref.class );
 
 
-    public ComponentXref()
-    {
+    public ComponentXref() {
     }
 
-    public ComponentXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, String aSecondaryId, String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier)
-    {
-        super(anOwner, aDatabase, aPrimaryId, aSecondaryId, aDatabaseRelease, aCvXrefQualifier);
+    public ComponentXref( Institution anOwner, CvDatabase aDatabase, String aPrimaryId, String aSecondaryId, String aDatabaseRelease, CvXrefQualifier aCvXrefQualifier ) {
+        super( anOwner, aDatabase, aPrimaryId, aSecondaryId, aDatabaseRelease, aCvXrefQualifier );
     }
 
-    public ComponentXref(Institution anOwner, CvDatabase aDatabase, String aPrimaryId, CvXrefQualifier aCvXrefQualifier)
-    {
-        super(anOwner, aDatabase, aPrimaryId, aCvXrefQualifier);
+    public ComponentXref( Institution anOwner, CvDatabase aDatabase, String aPrimaryId, CvXrefQualifier aCvXrefQualifier ) {
+        super( anOwner, aDatabase, aPrimaryId, aCvXrefQualifier );
     }
 
-    @ManyToOne(targetEntity = Component.class)
-    @JoinColumn(name = "parent_ac")
-    public AnnotatedObject getParent()
-    {
+    @ManyToOne( targetEntity = Component.class )
+    @JoinColumn( name = "parent_ac" )
+    public AnnotatedObject getParent() {
         return super.getParent();
     }
 
-    @Column(name = "parent_ac", insertable = false, updatable = false)
+    @Column( name = "parent_ac", insertable = false, updatable = false )
     public String getParentAc() {
         return super.getParentAc();
     }

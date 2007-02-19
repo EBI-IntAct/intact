@@ -26,8 +26,8 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.InteractionImpl")
-@EditorTopic(name="Interaction")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.InteractionImpl" )
+@EditorTopic( name = "Interaction" )
 public class InteractionImpl extends InteractorImpl implements Editable, Interaction {
 
     ///////////////////////////////////////
@@ -92,13 +92,14 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *                                  contain a BioSource.
      * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
      *                                  there are less than two components specified
-     * @deprecated Use {@link #InteractionImpl(java.util.Collection, java.util.Collection, CvInteractionType,
-     *             CvInteractorType, String, Institution)} instead.
+     * @deprecated Use {@link #InteractionImpl(java.util.Collection,java.util.Collection,CvInteractionType,
+     *CvInteractorType,String,Institution)} instead.
      */
     @Deprecated
     public InteractionImpl( Collection experiments, Collection components,
                             CvInteractionType type, String shortLabel,
-                            Institution owner ) {
+                            Institution owner
+    ) {
         this( experiments, components, type, null, shortLabel, owner );
     }
 
@@ -128,7 +129,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     public InteractionImpl( Collection experiments, Collection components,
                             CvInteractionType type, CvInteractorType interactorType,
-                            String shortLabel, Institution owner ) {
+                            String shortLabel, Institution owner
+    ) {
         super( shortLabel, owner, interactorType );
 
         setExperiments( experiments );
@@ -159,11 +161,12 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      *                                  contain a BioSource.
      * @throws IllegalArgumentException thrown if either of the experiments or components Collections are empty, or if
      *                                  there are less than two components specified
-     * @deprecated {@link #InteractionImpl(java.util.Collection, CvInteractionType, CvInteractorType, String,
-     *             Institution)} instead
+     * @deprecated {@link #InteractionImpl(java.util.Collection,CvInteractionType,CvInteractorType,String,
+     *Institution)} instead
      */
     public InteractionImpl( Collection experiments, CvInteractionType type,
-                            String shortLabel, Institution owner ) {
+                            String shortLabel, Institution owner
+    ) {
         this( experiments, new ArrayList(), type, shortLabel, owner );
     }
 
@@ -193,7 +196,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     public InteractionImpl( Collection experiments, CvInteractionType type,
                             CvInteractorType interactorType, String shortLabel,
-                            Institution owner ) {
+                            Institution owner
+    ) {
         this( experiments, new ArrayList(), type, interactorType, shortLabel, owner );
     }
 
@@ -219,7 +223,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.components = someComponent;
     }
 
-    @OneToMany(mappedBy = "interaction", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "interaction", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     public Collection<Component> getComponents() {
         return components;
     }
@@ -277,8 +281,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     @ManyToMany
     @JoinTable(
             name = "ia_int2exp",
-            joinColumns = { @JoinColumn(name = "interaction_ac") },
-            inverseJoinColumns = { @JoinColumn(name = "experiment_ac") }
+            joinColumns = {@JoinColumn( name = "interaction_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "experiment_ac" )}
     )
     public Collection<Experiment> getExperiments() {
         return experiments;
@@ -298,8 +302,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         }
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "interactiontype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "interactiontype_ac" )
     public CvInteractionType getCvInteractionType() {
         return cvInteractionType;
     }
@@ -309,7 +313,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
 
     //attributes used for mapping BasicObjects - project synchron
-    @Column(name = "interactiontype_ac", insertable = false, updatable = false)
+    @Column( name = "interactiontype_ac", insertable = false, updatable = false )
     public String getCvInteractionTypeAc() {
         return this.cvInteractionTypeAc;
     }
@@ -355,8 +359,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     @Override
     public boolean equals( Object o ) {
-        if (super.equals(o))
-        {
+        if ( super.equals( o ) ) {
             return true;
         }
 
@@ -367,7 +370,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             return false;
         }
 
-        final Interaction interaction = (Interaction) o;
+        final Interaction interaction = ( Interaction ) o;
 
         if ( cvInteractionType != null ) {
             if ( !cvInteractionType.equals( interaction.getCvInteractionType() ) ) {
@@ -421,12 +424,12 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        InteractionImpl copy = (InteractionImpl) super.clone();
+        InteractionImpl copy = ( InteractionImpl ) super.clone();
 
         // Not copying any experiments.
         copy.experiments = new ArrayList<Experiment>();
 
-        copy.setActiveInstances(new ArrayList<Component>());
+        copy.setActiveInstances( new ArrayList<Component>() );
         // New components, will contain same number of componets. Can't use
         // clone here as components are OJB list proxies if an interation
         // is loaded from the database.
@@ -435,11 +438,11 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         // Make deep copies.
         for ( Component comp : components ) {
             // The cloned component.
-            Component copyComp = (Component) comp.clone();
+            Component copyComp = ( Component ) comp.clone();
             // Set the interactor as the current cloned interactions.
             copyComp.setInteractionForClone( copy );
             Interactor interactor = comp.getInteractor();
-            interactor.setActiveInstances(new ArrayList<Component>());
+            interactor.setActiveInstances( new ArrayList<Component>() );
             copyComp.setInteractorForClone( interactor );
             copy.components.add( copyComp );
         }
@@ -452,7 +455,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
                         + " [" + NEW_LINE;
         if ( null != this.getComponents() ) {
             for ( Iterator iter = this.getComponents().iterator(); iter.hasNext(); ) {
-                result += ( (Component) iter.next() ).getInteractor();
+                result += ( ( Component ) iter.next() ).getInteractor();
             }
         }
         return result + "] Interaction" + NEW_LINE;

@@ -19,7 +19,7 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvComponentRole")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvComponentRole" )
 @EditorTopic
 public class CvComponentRole extends CvObject implements Editable {
 
@@ -71,7 +71,7 @@ public class CvComponentRole extends CvObject implements Editable {
     public static final String ANCILLARY = "ancillary";
     public static final String ANCILLARY_MI_REF = "MI:0684";
 
-    public static final String COFACTOR= "cofactor";
+    public static final String COFACTOR = "cofactor";
     public static final String COFACTOR_MI_REF = "MI:0682";
 
 

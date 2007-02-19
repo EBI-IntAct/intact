@@ -22,6 +22,6 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  * @since 1.5
  */
-public interface Searchable
-{
+public interface Searchable {
+
 }

@@ -28,29 +28,25 @@ import javax.persistence.*;
  * @since <pre>21-Jul-2006</pre>
  */
 @Entity
-@Table(name = "ia_component_alias")
-public class ComponentAlias extends Alias
-{
+@Table( name = "ia_component_alias" )
+public class ComponentAlias extends Alias {
 
-    private static final Log log = LogFactory.getLog(ComponentAlias.class);
+    private static final Log log = LogFactory.getLog( ComponentAlias.class );
 
-    public ComponentAlias()
-    {
+    public ComponentAlias() {
     }
 
-    public ComponentAlias(Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name)
-    {
-        super(anOwner, annotatedObject, cvAliasType, name);
+    public ComponentAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
+        super( anOwner, annotatedObject, cvAliasType, name );
     }
 
-    @ManyToOne(targetEntity = Component.class)
-    @JoinColumn(name = "parent_ac")
-    public AnnotatedObject getParent()
-    {
+    @ManyToOne( targetEntity = Component.class )
+    @JoinColumn( name = "parent_ac" )
+    public AnnotatedObject getParent() {
         return super.getParent();
     }
 
-    @Column(name = "parent_ac", insertable = false, updatable = false)
+    @Column( name = "parent_ac", insertable = false, updatable = false )
     public String getParentAc() {
         return super.getParentAc();
     }

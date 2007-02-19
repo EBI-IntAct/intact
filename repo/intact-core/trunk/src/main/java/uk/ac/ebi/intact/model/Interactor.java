@@ -8,17 +8,15 @@ package uk.ac.ebi.intact.model;
 import java.util.Collection;
 
 /**
- *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- *
  * @see uk.ac.ebi.intact.model.Interactor
  */
-public interface Interactor extends AnnotatedObject<InteractorXref,InteractorAlias> {
+public interface Interactor extends AnnotatedObject<InteractorXref, InteractorAlias> {
 
     String getObjClass();
 
-    void setObjClass(String objClass);
+    void setObjClass( String objClass );
 
     BioSource getBioSource();
 
@@ -26,22 +24,23 @@ public interface Interactor extends AnnotatedObject<InteractorXref,InteractorAli
 
     ///////////////////////////////////////
     // access methods for associations
-    void setActiveInstances(Collection<Component> someActiveInstance);
+    void setActiveInstances( Collection<Component> someActiveInstance );
 
     Collection<Component> getActiveInstances();
 
-    void addActiveInstance(Component component);
+    void addActiveInstance( Component component );
 
-    void removeActiveInstance(Component component);
+    void removeActiveInstance( Component component );
 
-    void setProducts(Collection<Product> someProduct);
+    void setProducts( Collection<Product> someProduct );
 
     Collection<Product> getProducts();
 
-    void addProduct(Product product);
+    void addProduct( Product product );
 
-    void removeProduct(Product product);
+    void removeProduct( Product product );
 
     CvInteractorType getCvInteractorType();
-    void setCvInteractorType(CvInteractorType type);
+
+    void setCvInteractorType( CvInteractorType type );
 }

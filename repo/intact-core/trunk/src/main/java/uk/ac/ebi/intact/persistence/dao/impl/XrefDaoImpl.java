@@ -19,35 +19,29 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>03-May-2006</pre>
  */
-public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implements XrefDao<T>
-{
-    public XrefDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
-    {
-        super(entityClass, session, intactSession);
+public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implements XrefDao<T> {
+
+    public XrefDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
+        super( entityClass, session, intactSession );
     }
 
-    public Collection<T> getByPrimaryId(String primaryId)
-    {
-        return getColByPropertyName("primaryId", primaryId);
+    public Collection<T> getByPrimaryId( String primaryId ) {
+        return getColByPropertyName( "primaryId", primaryId );
     }
 
-    public Collection<T> getByPrimaryId(String primaryId, boolean ignoreCase)
-    {
-        return getColByPropertyName("primaryId", primaryId, ignoreCase);
+    public Collection<T> getByPrimaryId( String primaryId, boolean ignoreCase ) {
+        return getColByPropertyName( "primaryId", primaryId, ignoreCase );
     }
 
-    public Collection<T> getByPrimaryIdLike(String primaryId)
-    {
-        return getByPropertyNameLike("primaryId", primaryId);
+    public Collection<T> getByPrimaryIdLike( String primaryId ) {
+        return getByPropertyNameLike( "primaryId", primaryId );
     }
 
-    public Collection<T> getByParentAc(String parentAc)
-    {
-        return getColByPropertyName("parentAc", parentAc);
+    public Collection<T> getByParentAc( String parentAc ) {
+        return getColByPropertyName( "parentAc", parentAc );
     }
 
-    public Collection<T> getByParentAc(String parentAc, boolean ignoreCase)
-    {
-        return getColByPropertyName("parentAc", parentAc, ignoreCase);
+    public Collection<T> getByParentAc( String parentAc, boolean ignoreCase ) {
+        return getColByPropertyName( "parentAc", parentAc, ignoreCase );
     }
 }

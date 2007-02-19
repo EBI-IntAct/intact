@@ -33,29 +33,25 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
-@SuppressWarnings({"unchecked"})
-public class PolymerDaoImpl<T extends PolymerImpl> extends InteractorDaoImpl<T> implements PolymerDao<T>
-{
+@SuppressWarnings( {"unchecked"} )
+public class PolymerDaoImpl<T extends PolymerImpl> extends InteractorDaoImpl<T> implements PolymerDao<T> {
 
-    public PolymerDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
-    {
-        super(entityClass, session, intactSession);
+    public PolymerDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
+        super( entityClass, session, intactSession );
     }
 
-    public String getSequenceByPolymerAc(String polymerAc)
-    {
-        List<String> seqChunks = getSession().createCriteria(SequenceChunk.class)
-                .createAlias("parent", "p")
-                .add(Restrictions.eq("p.ac", polymerAc))
-                .addOrder(Order.asc("sequenceIndex"))
-                .setProjection(Property.forName("sequenceChunk"))
+    public String getSequenceByPolymerAc( String polymerAc ) {
+        List<String> seqChunks = getSession().createCriteria( SequenceChunk.class )
+                .createAlias( "parent", "p" )
+                .add( Restrictions.eq( "p.ac", polymerAc ) )
+                .addOrder( Order.asc( "sequenceIndex" ) )
+                .setProjection( Property.forName( "sequenceChunk" ) )
                 .list();
 
-        StringBuffer sb = new StringBuffer(seqChunks.size()*PolymerImpl.MAX_SEQ_LENGTH_PER_CHUNK);
+        StringBuffer sb = new StringBuffer( seqChunks.size() * PolymerImpl.MAX_SEQ_LENGTH_PER_CHUNK );
 
-        for (String seqChunk : seqChunks)
-        {
-            sb.append(seqChunk);
+        for ( String seqChunk : seqChunks ) {
+            sb.append( seqChunk );
         }
 
         return sb.toString();

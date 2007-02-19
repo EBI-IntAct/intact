@@ -28,123 +28,107 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>25-Apr-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implements SearchItemDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implements SearchItemDao {
 
-    public SearchItemDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(SearchItem.class, session, intactSession);
+    public SearchItemDaoImpl( Session session, IntactSession intactSession ) {
+        super( SearchItem.class, session, intactSession );
     }
 
-    public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type)
-    {
-        return countGroupsByValuesLike(values,objClasses,type,true);
+    public Map<String, Integer> countGroupsByValuesLike( String[] values, String[] objClasses, String type ) {
+        return countGroupsByValuesLike( values, objClasses, type, true );
     }
 
-    public Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type, boolean ignoreCase)
-    {
-        Map<String,Integer> results = new HashMap<String,Integer>();
+    public Map<String, Integer> countGroupsByValuesLike( String[] values, String[] objClasses, String type, boolean ignoreCase ) {
+        Map<String, Integer> results = new HashMap<String, Integer>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClasses, type, ignoreCase)
-                                     .setProjection(Projections.projectionList()
-                                             .add(Projections.countDistinct("ac"))
-                                             .add(Projections.groupProperty("objClass"))).list();
+        List<Object[]> critRes = criteriaByValues( values, objClasses, type, ignoreCase )
+                .setProjection( Projections.projectionList()
+                        .add( Projections.countDistinct( "ac" ) )
+                        .add( Projections.groupProperty( "objClass" ) ) ).list();
 
-        for (Object[] res : critRes)
-        {
-             results.put((String)res[1], (Integer)res[0]);
+        for ( Object[] res : critRes ) {
+            results.put( ( String ) res[1], ( Integer ) res[0] );
         }
 
         return results;
     }
 
-    public List<String> getDistinctAc(String[] values, String[] objClasses, String type, int firstResult, int maxResults){
+    public List<String> getDistinctAc( String[] values, String[] objClasses, String type, int firstResult, int maxResults ) {
 
-         return criteriaByValues(values, objClasses, type, true)
-                                    .setFirstResult(firstResult)
-                                    .setMaxResults(maxResults)
-                                    .setProjection(
-                                        Projections.distinct(Projections.property("ac"))).list();
+        return criteriaByValues( values, objClasses, type, true )
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .setProjection(
+                        Projections.distinct( Projections.property( "ac" ) ) ).list();
 
     }
 
 
-    public Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String[] objClasses, String type, int firstResult, int maxResults){
+    public Map<String, String> getDistinctAcGroupingByObjClass( String[] values, String[] objClasses, String type, int firstResult, int maxResults ) {
 
-        Map<String,String> results = new HashMap<String,String>();
+        Map<String, String> results = new HashMap<String, String>();
 
-        List<Object[]> critRes = criteriaByValues(values, objClasses, type, true)
-                                    .setFirstResult(firstResult)
-                                    .setMaxResults(maxResults)
-                                    .setProjection(Projections.projectionList()
-                                        .add(Projections.distinct(Projections.property("ac")))
-                                        .add(Projections.property("objClass"))).list();
+        List<Object[]> critRes = criteriaByValues( values, objClasses, type, true )
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .setProjection( Projections.projectionList()
+                        .add( Projections.distinct( Projections.property( "ac" ) ) )
+                        .add( Projections.property( "objClass" ) ) ).list();
 
-        for (Object[] res : critRes)
-        {
-             results.put((String)res[0], (String)res[1]);
+        for ( Object[] res : critRes ) {
+            results.put( ( String ) res[0], ( String ) res[1] );
         }
 
         return results;
     }
 
-    public List<SearchItem> getByAc(String ac)
-    {
-        return getSession().createCriteria(SearchItem.class)
-                .add(Restrictions.eq("ac", ac)).list();
+    public List<SearchItem> getByAc( String ac ) {
+        return getSession().createCriteria( SearchItem.class )
+                .add( Restrictions.eq( "ac", ac ) ).list();
     }
 
-    @PotentialThreat(description = "This method is using raw SQL (INSERT Query), which may create problems " +
-                    "when run with hibernate",
-                     origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                             "need a workaroung")
-    public void persist(SearchItem searchItem)
-    {
+    @PotentialThreat( description = "This method is using raw SQL (INSERT Query), which may create problems " +
+                                    "when run with hibernate",
+                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                               "need a workaroung" )
+    public void persist( SearchItem searchItem ) {
         String sql = "INSERT INTO ia_search (ac,value,objclass,type) VALUES (?,?,?,?)";
-        executeQueryUpdateForSearchItem(sql, searchItem);
+        executeQueryUpdateForSearchItem( sql, searchItem );
     }
 
-    @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
-                    "when run with hibernate",
-                     origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                             "need a workaroung")
-    public void delete(SearchItem searchItem)
-    {
-         String sql = "DELETE from ia_search WHERE ac=? AND value=? AND objclass=? AND type=?";
-         executeQueryUpdateForSearchItem(sql, searchItem);
+    @PotentialThreat( description = "This method is using raw SQL (DELETE Query), which may create problems " +
+                                    "when run with hibernate",
+                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                               "need a workaroung" )
+    public void delete( SearchItem searchItem ) {
+        String sql = "DELETE from ia_search WHERE ac=? AND value=? AND objclass=? AND type=?";
+        executeQueryUpdateForSearchItem( sql, searchItem );
     }
 
-    private int executeQueryUpdateForSearchItem(String sql, SearchItem searchItem)
-    {
+    private int executeQueryUpdateForSearchItem( String sql, SearchItem searchItem ) {
         int rows = 0;
 
         Connection connection = null;
-        try
-        {
+        try {
             connection = getSession().connection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, searchItem.getAc());
-            statement.setString(2, searchItem.getValue());
-            statement.setString(3, searchItem.getObjClass());
-            statement.setString(4, searchItem.getType());
+            PreparedStatement statement = connection.prepareStatement( sql );
+            statement.setString( 1, searchItem.getAc() );
+            statement.setString( 2, searchItem.getValue() );
+            statement.setString( 3, searchItem.getObjClass() );
+            statement.setString( 4, searchItem.getType() );
 
             rows = statement.executeUpdate();
         }
-        catch (SQLException e)
-        {
+        catch ( SQLException e ) {
             e.printStackTrace();
         }
-        finally
-        {
-            if (connection != null)
-            {
-                try
-                {
+        finally {
+            if ( connection != null ) {
+                try {
                     connection.close();
                 }
-                catch (SQLException e)
-                {
+                catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
@@ -153,39 +137,32 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
         return rows;
     }
 
-    @PotentialThreat(description = "This method is using raw SQL (DELETE Query), which may create problems " +
-                        "when run with hibernate",
-                         origin = "This code is used in a EventListener, so the session cannot be committed and we" +
-                             "need a workaroung")
-    public int deleteByAc(String ac)
-    {
+    @PotentialThreat( description = "This method is using raw SQL (DELETE Query), which may create problems " +
+                                    "when run with hibernate",
+                      origin = "This code is used in a EventListener, so the session cannot be committed and we" +
+                               "need a workaroung" )
+    public int deleteByAc( String ac ) {
         String sql = "DELETE FROM ia_search WHERE ac=?";
 
         int rows = 0;
 
         Connection connection = null;
-        try
-        {
+        try {
             connection = getSession().connection();
-            PreparedStatement statement = connection.prepareStatement(sql);
-            statement.setString(1, ac);
+            PreparedStatement statement = connection.prepareStatement( sql );
+            statement.setString( 1, ac );
 
             rows = statement.executeUpdate();
         }
-        catch (SQLException e)
-        {
+        catch ( SQLException e ) {
             e.printStackTrace();
         }
-        finally
-        {
-            if (connection != null)
-            {
-                try
-                {
+        finally {
+            if ( connection != null ) {
+                try {
                     connection.close();
                 }
-                catch (SQLException e)
-                {
+                catch ( SQLException e ) {
                     e.printStackTrace();
                 }
             }
@@ -194,34 +171,26 @@ public class SearchItemDaoImpl extends HibernateBaseDaoImpl<SearchItem> implemen
         return rows;
     }
 
-    private Criteria criteriaByValues(String[] values, String[] objClasses, String type, boolean ignoreCase)
-    {
-        Criteria crit = getSession().createCriteria(SearchItem.class);
+    private Criteria criteriaByValues( String[] values, String[] objClasses, String type, boolean ignoreCase ) {
+        Criteria crit = getSession().createCriteria( SearchItem.class );
 
         // no restriction (WHERE) necessary if only one value is passed and it is a wildcard
-        if (!(values.length == 1 && values[0].equals("%")))
-        {
-            crit.add(disjunctionForArray("value", values, ignoreCase));
+        if ( !( values.length == 1 && values[0].equals( "%" ) ) ) {
+            crit.add( disjunctionForArray( "value", values, ignoreCase ) );
         }
 
-        if (objClasses != null)
-        {
-            if (objClasses.length > 1)
-            {
-                crit.add(disjunctionForArray("objClass", objClasses));
-            }
-            else
-            {
-                if (objClasses[0] != null)
-                {
-                    crit.add(Restrictions.eq("objClass", objClasses[0]));
+        if ( objClasses != null ) {
+            if ( objClasses.length > 1 ) {
+                crit.add( disjunctionForArray( "objClass", objClasses ) );
+            } else {
+                if ( objClasses[0] != null ) {
+                    crit.add( Restrictions.eq( "objClass", objClasses[0] ) );
                 }
             }
         }
 
-        if (type != null)
-        {
-            crit.add(Restrictions.eq("type", type));
+        if ( type != null ) {
+            crit.add( Restrictions.eq( "type", type ) );
         }
 
         return crit;

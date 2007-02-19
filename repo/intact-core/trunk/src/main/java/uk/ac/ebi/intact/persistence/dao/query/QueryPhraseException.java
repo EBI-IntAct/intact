@@ -20,26 +20,21 @@ package uk.ac.ebi.intact.persistence.dao.query;
  * @version $Id$
  * @since 1.2
  */
-public class QueryPhraseException extends RuntimeException
-{
+public class QueryPhraseException extends RuntimeException {
 
-    public QueryPhraseException()
-    {
+    public QueryPhraseException() {
         super();
     }
 
-    public QueryPhraseException(String message)
-    {
-        super(message);
+    public QueryPhraseException( String message ) {
+        super( message );
     }
 
-    public QueryPhraseException(String message, Throwable cause)
-    {
-        super(message, cause);
+    public QueryPhraseException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public QueryPhraseException(Throwable cause)
-    {
-        super(cause);
+    public QueryPhraseException( Throwable cause ) {
+        super( cause );
     }
 }

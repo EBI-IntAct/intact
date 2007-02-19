@@ -5,8 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 
 /**
@@ -16,7 +16,7 @@ import javax.persistence.DiscriminatorValue;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureIdentification")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvFeatureIdentification" )
 public class CvFeatureIdentification extends CvDagObject {
 
     public static final String DELETION_ANALYSIS = "deletion analysis";
@@ -30,6 +30,12 @@ public class CvFeatureIdentification extends CvDagObject {
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
+     * <p/>
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
+     *
+     * @deprecated Use the full constructor instead
      */
 //    protected static Vector menuList = null;
 
@@ -48,14 +54,16 @@ public class CvFeatureIdentification extends CvDagObject {
     /**
      * Creates a valid CvFeatureIdentification instance. Requires at least a shortLabel and an
      * owner to be specified.
+     *
      * @param shortLabel The memorable label to identify this CvFeatureIdentification
-     * @param owner The Institution which owns this CvFeatureIdentification
-     * @exception NullPointerException thrown if either parameters are not specified
+     * @param owner      The Institution which owns this CvFeatureIdentification
+     *
+     * @throws NullPointerException thrown if either parameters are not specified
      */
-    public CvFeatureIdentification(Institution owner, String shortLabel) {
+    public CvFeatureIdentification( Institution owner, String shortLabel ) {
 
         //super call sets up a valid CvObject
-        super(owner, shortLabel);
+        super( owner, shortLabel );
     }
 
 } // end CvFeatureIdentification

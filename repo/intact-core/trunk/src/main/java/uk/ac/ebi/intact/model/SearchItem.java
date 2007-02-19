@@ -21,97 +21,81 @@ import java.io.Serializable;
  * @since <pre>25-Apr-2006</pre>
  */
 @Entity
-@Table(name = "ia_search")
-@org.hibernate.annotations.Table(appliesTo="ia_search",
-		indexes = {
-				@Index(name="i_ia_search", columnNames={"value", "objclass"} )
-		}
-	)
-public class SearchItem implements Serializable
-{
+@Table( name = "ia_search" )
+@org.hibernate.annotations.Table( appliesTo = "ia_search",
+                                  indexes = {
+                                  @Index( name = "i_ia_search", columnNames = {"value", "objclass"} )
+                                          }
+)
+public class SearchItem implements Serializable {
 
     private SearchItemPk pk;
 
-    public SearchItem()
-    {
-       // nothing
+    public SearchItem() {
+        // nothing
     }
 
-    public SearchItem(String ac, String value, String objClass, String type)
-    {
-        this.pk = new SearchItemPk(ac,value,objClass,type);
+    public SearchItem( String ac, String value, String objClass, String type ) {
+        this.pk = new SearchItemPk( ac, value, objClass, type );
     }
 
     @EmbeddedId
-    public SearchItemPk getPk()
-    {
+    public SearchItemPk getPk() {
         return pk;
     }
 
-    public void setPk(SearchItemPk pk)
-    {
+    public void setPk( SearchItemPk pk ) {
         this.pk = pk;
     }
 
-    @Column(insertable = false, updatable = false)
-    public String getAc()
-    {
+    @Column( insertable = false, updatable = false )
+    public String getAc() {
         return pk.getAc();
     }
 
-    public void setAc(String ac)
-    {
-        pk.setAc(ac);
+    public void setAc( String ac ) {
+        pk.setAc( ac );
     }
 
-    @Column(insertable = false, updatable = false)
-    public String getValue()
-    {
+    @Column( insertable = false, updatable = false )
+    public String getValue() {
         return pk.getValue();
     }
 
-    public void setValue(String value)
-    {
-        pk.setValue(value);
+    public void setValue( String value ) {
+        pk.setValue( value );
     }
 
-    @Column(insertable = false, updatable = false)
-    public String getObjClass()
-    {
+    @Column( insertable = false, updatable = false )
+    public String getObjClass() {
         return pk.getObjClass();
     }
 
-    public void setObjClass(String objClass)
-    {
-        pk.setObjClass(objClass);
+    public void setObjClass( String objClass ) {
+        pk.setObjClass( objClass );
     }
 
-    @Column(insertable = false, updatable = false)
-    public String getType()
-    {
+    @Column( insertable = false, updatable = false )
+    public String getType() {
         return pk.getType();
     }
 
-    public void setType(String type)
-    {
-        pk.setType(type);
+    public void setType( String type ) {
+        pk.setType( type );
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return pk.toString();
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        return pk.equals(o);
+    public boolean equals( Object o ) {
+        return pk.equals( o );
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return pk.hashCode();
     }
 }

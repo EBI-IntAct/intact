@@ -8,8 +8,6 @@ package uk.ac.ebi.intact.model.util;
 
 import uk.ac.ebi.intact.model.*;
 
-import java.util.Iterator;
-
 /**
  * The factory to create various polymer types.
  *
@@ -18,23 +16,27 @@ import java.util.Iterator;
  */
 public class PolymerFactory {
 
-    private PolymerFactory(){}
+    private PolymerFactory() {
+    }
 
     /**
      * Creats an instance of Polymer type based on type.
-     * @param owner The Institution which owns this instance
+     *
+     * @param owner      The Institution which owns this instance
      * @param source     The biological source of the Protein observation
      * @param shortLabel The memorable label to identify this instance
-     * @param type     The interactor type. This alone decides which type to
-     * create
+     * @param type       The interactor type. This alone decides which type to
+     *                   create
+     *
      * @return an instance of <code>Polymer</code> based on <code>type</code> or
-     * null if a Polymer cannot be instantiated (for exampple, no MI found in given
-     * type)
+     *         null if a Polymer cannot be instantiated (for exampple, no MI found in given
+     *         type)
      */
-    public static Polymer factory(Institution owner, BioSource source,
-                                  String shortLabel, CvInteractorType type) {
-        Xref xref = getMIXref(type);
-        if (xref == null) {
+    public static Polymer factory( Institution owner, BioSource source,
+                                   String shortLabel, CvInteractorType type
+    ) {
+        Xref xref = getMIXref( type );
+        if ( xref == null ) {
             // This should only happen if we have a CV without an MI number - big NO
             return null;
         }
@@ -44,25 +46,24 @@ public class PolymerFactory {
         // The MI number
         String mi = xref.getPrimaryId();
 
-        if (CvInteractorType.isProteinMI(mi)) {
-            polymer = new ProteinImpl(owner, source, shortLabel, type);
-        }
-        else if (CvInteractorType.isNucleicAcidMI(mi)) {
-            polymer = new NucleicAcidImpl(owner, source, shortLabel, type);
+        if ( CvInteractorType.isProteinMI( mi ) ) {
+            polymer = new ProteinImpl( owner, source, shortLabel, type );
+        } else if ( CvInteractorType.isNucleicAcidMI( mi ) ) {
+            polymer = new NucleicAcidImpl( owner, source, shortLabel, type );
         }
         return polymer;
     }
 
     /**
      * Returns the Xref with MI number for given CV object
+     *
      * @param cvobj the CV to search for MI
+     *
      * @return xref with MI or null if no xref found whose primaryid starts with 'MI:'.
      */
-    private static Xref getMIXref(CvInteractorType cvobj) {
-        for (Xref xref : cvobj.getXrefs())
-        {
-            if (xref.getPrimaryId().startsWith("MI:"))
-            {
+    private static Xref getMIXref( CvInteractorType cvobj ) {
+        for ( Xref xref : cvobj.getXrefs() ) {
+            if ( xref.getPrimaryId().startsWith( "MI:" ) ) {
                 return xref;
             }
         }

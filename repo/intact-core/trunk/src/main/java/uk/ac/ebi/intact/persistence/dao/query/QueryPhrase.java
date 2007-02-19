@@ -26,35 +26,29 @@ import java.util.HashSet;
  * @version $Id$
  * @since 1.5
  */
-public class QueryPhrase implements Serializable
-{
+public class QueryPhrase implements Serializable {
+
     private Collection<QueryTerm> terms;
 
-    public QueryPhrase()
-    {
+    public QueryPhrase() {
         this.terms = new HashSet<QueryTerm>();
     }
 
-    public QueryPhrase(Collection<QueryTerm> terms)
-    {
+    public QueryPhrase( Collection<QueryTerm> terms ) {
         this.terms = terms;
     }
 
 
-    public Collection<QueryTerm> getTerms()
-    {
+    public Collection<QueryTerm> getTerms() {
         return terms;
     }
 
-    public void setTerms(Collection<QueryTerm> terms)
-    {
+    public void setTerms( Collection<QueryTerm> terms ) {
         this.terms = terms;
     }
 
-    public boolean isOnlyWildcard()
-    {
-        if (terms != null && terms.size() == 1)
-        {
+    public boolean isOnlyWildcard() {
+        if ( terms != null && terms.size() == 1 ) {
             return terms.iterator().next().isOnlyWildcard();
         }
         return false;

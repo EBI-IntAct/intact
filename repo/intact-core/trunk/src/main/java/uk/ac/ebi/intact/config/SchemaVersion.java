@@ -30,8 +30,7 @@ import java.util.regex.Pattern;
  * @version $Id$
  * @since <pre>04-Sep-2006</pre>
  */
-public class SchemaVersion
-{
+public class SchemaVersion {
 
     // required version is 1.3.0 (build version should always be 0, as a change in the build
     // version should no break compatibility)
@@ -39,14 +38,13 @@ public class SchemaVersion
     private static final Integer REQUIRED_VERSION_MINOR = 3;
     private static final Integer REQUIERD_VERSION_BUILD = 0;
 
-    private static final Log log = LogFactory.getLog(SchemaVersion.class);
+    private static final Log log = LogFactory.getLog( SchemaVersion.class );
 
     private Integer major;
     private Integer minor;
     private Integer build;
 
-    public SchemaVersion(Integer major, Integer minor, Integer build)
-    {
+    public SchemaVersion( Integer major, Integer minor, Integer build ) {
         this.major = major;
         this.minor = minor;
         this.build = build;
@@ -54,27 +52,25 @@ public class SchemaVersion
 
     /**
      * Creates a SchemaVersion using the String provided
-     * @param version  the version to parse
+     *
+     * @param version the version to parse
+     *
      * @return the SchemaVersion instance
      */
-    public static SchemaVersion parse(String version)
-    {
+    public static SchemaVersion parse( String version ) {
         SchemaVersion schemaVersion = null;
 
-        Pattern p = Pattern.compile("(\\d+)\\.(\\d+)\\.(\\d+)");
-        Matcher m = p.matcher(version);
+        Pattern p = Pattern.compile( "(\\d+)\\.(\\d+)\\.(\\d+)" );
+        Matcher m = p.matcher( version );
 
-        if (m.find())
-        {
-            int major = Integer.parseInt(m.group(1));
-            int minor = Integer.parseInt(m.group(2));
-            int build = Integer.parseInt(m.group(3));
+        if ( m.find() ) {
+            int major = Integer.parseInt( m.group( 1 ) );
+            int minor = Integer.parseInt( m.group( 2 ) );
+            int build = Integer.parseInt( m.group( 3 ) );
 
-            schemaVersion = new SchemaVersion(major,minor,build);
-        }
-        else
-        {
-            throw new IntactException("A schema version must follow this pattern: \\d+\\.\\d+\\.\\d+");
+            schemaVersion = new SchemaVersion( major, minor, build );
+        } else {
+            throw new IntactException( "A schema version must follow this pattern: \\d+\\.\\d+\\.\\d+" );
 
         }
 
@@ -83,21 +79,17 @@ public class SchemaVersion
 
     /**
      * Checks whether the version of the instance is compatible with the provided version
+     *
      * @param schemaVersion the schema version to compare with
+     *
      * @return if true, the schemas are compatible
      */
-    public boolean isCompatibleWith(SchemaVersion schemaVersion)
-    {
-        if (getMajor() != schemaVersion.getMajor())
-        {
+    public boolean isCompatibleWith( SchemaVersion schemaVersion ) {
+        if ( getMajor() != schemaVersion.getMajor() ) {
             return false;
-        }
-        else if (getMinor() != schemaVersion.getMinor())
-        {
+        } else if ( getMinor() != schemaVersion.getMinor() ) {
             return false;
-        }
-        else if (getBuild() < schemaVersion.getBuild())
-        {
+        } else if ( getBuild() < schemaVersion.getBuild() ) {
             return false;
         }
         return true;
@@ -105,67 +97,55 @@ public class SchemaVersion
 
     /**
      * Returns the required minimum version
+     *
      * @return the minimum version
      */
-    public static SchemaVersion minimumVersion()
-    {
-        return new SchemaVersion(REQUIRED_VERSION_MAJOR, REQUIRED_VERSION_MINOR, REQUIERD_VERSION_BUILD);
+    public static SchemaVersion minimumVersion() {
+        return new SchemaVersion( REQUIRED_VERSION_MAJOR, REQUIRED_VERSION_MINOR, REQUIERD_VERSION_BUILD );
     }
 
-    public Integer getMajor()
-    {
+    public Integer getMajor() {
         return major;
     }
 
-    public void setMajor(Integer major)
-    {
+    public void setMajor( Integer major ) {
         this.major = major;
     }
 
-    public Integer getMinor()
-    {
+    public Integer getMinor() {
         return minor;
     }
 
-    public void setMinor(Integer minor)
-    {
+    public void setMinor( Integer minor ) {
         this.minor = minor;
     }
 
-    public Integer getBuild()
-    {
+    public Integer getBuild() {
         return build;
     }
 
-    public void setBuild(Integer build)
-    {
+    public void setBuild( Integer build ) {
         this.build = build;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        SchemaVersion that = (SchemaVersion) o;
+        SchemaVersion that = ( SchemaVersion ) o;
 
-        if (build != null ? !build.equals(that.build) : that.build != null)
-        {
+        if ( build != null ? !build.equals( that.build ) : that.build != null ) {
             return false;
         }
-        if (major != null ? !major.equals(that.major) : that.major != null)
-        {
+        if ( major != null ? !major.equals( that.major ) : that.major != null ) {
             return false;
         }
-        if (minor != null ? !minor.equals(that.minor) : that.minor != null)
-        {
+        if ( minor != null ? !minor.equals( that.minor ) : that.minor != null ) {
             return false;
         }
 
@@ -173,18 +153,16 @@ public class SchemaVersion
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (major != null ? major.hashCode() : 0);
-        result = 31 * result + (minor != null ? minor.hashCode() : 0);
-        result = 31 * result + (build != null ? build.hashCode() : 0);
+        result = ( major != null ? major.hashCode() : 0 );
+        result = 31 * result + ( minor != null ? minor.hashCode() : 0 );
+        result = 31 * result + ( build != null ? build.hashCode() : 0 );
         return result;
     }
 
     @Override
-    public String toString()
-    {
-        return major+"."+minor+"."+build;
+    public String toString() {
+        return major + "." + minor + "." + build;
     }
 }

@@ -12,10 +12,9 @@ import uk.ac.ebi.intact.persistence.dao.RangeDao;
  * @version $Id$
  * @since <pre>07-jul-2006</pre>
  */
-public class RangeDaoImpl extends IntactObjectDaoImpl<Range> implements RangeDao
-{
-    public RangeDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Range.class, session, intactSession);
+public class RangeDaoImpl extends IntactObjectDaoImpl<Range> implements RangeDao {
+
+    public RangeDaoImpl( Session session, IntactSession intactSession ) {
+        super( Range.class, session, intactSession );
     }
 }

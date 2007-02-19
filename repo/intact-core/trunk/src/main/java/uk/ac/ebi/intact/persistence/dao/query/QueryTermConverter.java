@@ -22,15 +22,15 @@ package uk.ac.ebi.intact.persistence.dao.query;
  * @version $Id$
  * @since 1.2
  */
-public interface QueryTermConverter
-{
+public interface QueryTermConverter {
+
     /**
      * Converts an <code>Object</code> to a <code>QueryTerm</code>
      */
-    QueryTerm stringToTerm(String value) throws QueryPhraseException;
+    QueryTerm stringToTerm( String value ) throws QueryPhraseException;
 
     /**
      * Converts a <code>QueryTerm</code> to an <code>Object</code>
      */
-    String termToString(QueryTerm phrase) throws QueryPhraseException;
+    String termToString( QueryTerm phrase ) throws QueryPhraseException;
 }

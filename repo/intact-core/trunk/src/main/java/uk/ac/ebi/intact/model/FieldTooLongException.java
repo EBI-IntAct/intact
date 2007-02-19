@@ -21,10 +21,9 @@ package uk.ac.ebi.intact.model;
  * @author Bruno Aranda (latest modification by $Author$)
  * @version $Revision$ $Date$
  */
-public class FieldTooLongException extends RuntimeException
-{
-    public FieldTooLongException(String value, String fieldName, int maxLength)
-    {
-        super("Value too long for field "+fieldName+"("+maxLength+"): "+value);
+public class FieldTooLongException extends RuntimeException {
+
+    public FieldTooLongException( String value, String fieldName, int maxLength ) {
+        super( "Value too long for field " + fieldName + "(" + maxLength + "): " + value );
     }
 }

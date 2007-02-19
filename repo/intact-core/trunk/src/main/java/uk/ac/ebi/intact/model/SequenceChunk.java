@@ -16,8 +16,8 @@ import javax.persistence.*;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_sequence_chunk")
-public class SequenceChunk extends AbstractAuditable  {
+@Table( name = "ia_sequence_chunk" )
+public class SequenceChunk extends AbstractAuditable {
 
     ///////////////////////////////////////
     //attributes
@@ -57,8 +57,8 @@ public class SequenceChunk extends AbstractAuditable  {
     ///////////////////////////////////////
     // associations
     @Id
-    @GeneratedValue(generator="intact-id")
-    @GenericGenerator(name="intact-id", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator")
+    @GeneratedValue( generator = "intact-id" )
+    @GenericGenerator( name = "intact-id", strategy = "uk.ac.ebi.intact.model.IntactIdGenerator" )
     public String getAc() {
         return ac;
     }
@@ -69,18 +69,17 @@ public class SequenceChunk extends AbstractAuditable  {
 
     ///////////////////////////////////////
     //access methods for attributes
-    @ManyToOne (targetEntity = PolymerImpl.class)
-    @JoinColumn(name = "parent_ac")
+    @ManyToOne( targetEntity = PolymerImpl.class )
+    @JoinColumn( name = "parent_ac" )
     public Polymer getParent() {
         return parent;
     }
 
-    public void setParent(Polymer parent)
-    {
+    public void setParent( Polymer parent ) {
         this.parent = parent;
     }
 
-    @Column(name = "sequence_chunk", length = PolymerImpl.MAX_SEQ_LENGTH_PER_CHUNK)
+    @Column( name = "sequence_chunk", length = PolymerImpl.MAX_SEQ_LENGTH_PER_CHUNK )
     public String getSequenceChunk() {
         return sequenceChunk;
     }
@@ -89,7 +88,7 @@ public class SequenceChunk extends AbstractAuditable  {
         this.sequenceChunk = sequenceChunk;
     }
 
-    @Column(name = "sequence_index")
+    @Column( name = "sequence_index" )
     public int getSequenceIndex() {
         return sequenceIndex;
     }
@@ -98,14 +97,12 @@ public class SequenceChunk extends AbstractAuditable  {
         this.sequenceIndex = sequenceIndex;
     }
 
-    @Column(name = "parent_ac", insertable = false, updatable = false)
-    public String getParentAc()
-    {
+    @Column( name = "parent_ac", insertable = false, updatable = false )
+    public String getParentAc() {
         return parentAc;
     }
 
-    public void setParentAc(String parentAc)
-    {
+    public void setParentAc( String parentAc ) {
         this.parentAc = parentAc;
     }
 } // end Xref

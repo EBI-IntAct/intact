@@ -15,29 +15,29 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface ProteinDao extends InteractorDao<ProteinImpl>
-{
-    String getIdentityXrefByProteinAc(String proteinAc);
+public interface ProteinDao extends InteractorDao<ProteinImpl> {
 
-    String getUniprotAcByProteinAc(String proteinAc);
+    String getIdentityXrefByProteinAc( String proteinAc );
 
-    List<String> getUniprotUrlTemplateByProteinAc(String proteinAc);
+    String getUniprotAcByProteinAc( String proteinAc );
 
-    Map<String,Integer> getPartnersCountingInteractionsByProteinAc(String proteinAc);
+    List<String> getUniprotUrlTemplateByProteinAc( String proteinAc );
 
-    Map<String, List<String>> getPartnersWithInteractionAcsByProteinAc(String proteinAc);
+    Map<String, Integer> getPartnersCountingInteractionsByProteinAc( String proteinAc );
 
-    List<String> getPartnersUniprotIdsByProteinAc(String proteinAc);
+    Map<String, List<String>> getPartnersWithInteractionAcsByProteinAc( String proteinAc );
 
-    Integer countPartnersByProteinAc(String proteinAc);
+    List<String> getPartnersUniprotIdsByProteinAc( String proteinAc );
 
-    List<ProteinImpl> getUniprotProteins(Integer firstResult, Integer maxResults);
+    Integer countPartnersByProteinAc( String proteinAc );
 
-    List<ProteinImpl> getUniprotProteinsInvolvedInInteractions(Integer firstResult, Integer maxResults);
+    List<ProteinImpl> getUniprotProteins( Integer firstResult, Integer maxResults );
+
+    List<ProteinImpl> getUniprotProteinsInvolvedInInteractions( Integer firstResult, Integer maxResults );
 
     Integer countUniprotProteins();
 
     Integer countUniprotProteinsInvolvedInInteractions();
 
-    List<ProteinImpl> getByUniprotId(String uniprotId);
+    List<ProteinImpl> getByUniprotId( String uniprotId );
 }

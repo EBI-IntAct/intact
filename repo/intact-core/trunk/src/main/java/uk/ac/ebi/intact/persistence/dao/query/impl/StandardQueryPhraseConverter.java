@@ -27,71 +27,63 @@ import java.util.List;
  * @version $Id$
  * @since 1.2
  */
-public class StandardQueryPhraseConverter implements QueryPhraseConverter<String>
-{
+public class StandardQueryPhraseConverter implements QueryPhraseConverter<String> {
+
     private static final String REPLACED_SPACE = "&nbsp;";
     private static final String REPLACED_COMMA = "&comma;";
 
 
-    public QueryPhrase objectToPhrase(String value) throws QueryPhraseException
-    {
-        if (value == null)
-        {
-            throw new NullPointerException("Value cannot be null");
+    public QueryPhrase objectToPhrase( String value ) throws QueryPhraseException {
+        if ( value == null ) {
+            throw new NullPointerException( "Value cannot be null" );
         }
 
         List<QueryTerm> terms = new ArrayList<QueryTerm>();
 
         // if the value contains quotes, transform any space or comma inside the quotes
         // so they won't be used to separate the different tokens for the value
-        if (value.contains("\""))
-        {
-             value = replaceSymbolsInPhrases(value);
+        if ( value.contains( "\"" ) ) {
+            value = replaceSymbolsInPhrases( value );
         }
 
         value = value.trim();
 
         // split the value in tokens by space or comma
-        String[] strTerms = value.split("\\s|,");
+        String[] strTerms = value.split( "\\s|," );
 
         StandardQueryTermConverter termConverter = new StandardQueryTermConverter();
 
-        for (String strTerm : strTerms)
-        {
-            strTerm = replacedToValue(strTerm);
-            strTerm = removeQuotesIfNecessary(strTerm);
+        for ( String strTerm : strTerms ) {
+            strTerm = replacedToValue( strTerm );
+            strTerm = removeQuotesIfNecessary( strTerm );
 
-            QueryTerm term = termConverter.stringToTerm(strTerm);
-            terms.add(term);
+            QueryTerm term = termConverter.stringToTerm( strTerm );
+            terms.add( term );
         }
 
-        return new QueryPhrase(terms);
+        return new QueryPhrase( terms );
     }
 
-    public String phraseToObject(QueryPhrase phrase) throws QueryPhraseException
-    {
-        if (phrase == null) return null;
+    public String phraseToObject( QueryPhrase phrase ) throws QueryPhraseException {
+        if ( phrase == null ) return null;
 
-        StringBuffer sb = new StringBuffer(phrase.getTerms().size() * 8);
+        StringBuffer sb = new StringBuffer( phrase.getTerms().size() * 8 );
 
         StandardQueryTermConverter termConverter = new StandardQueryTermConverter();
 
         int i = 0;
-        for (QueryTerm term : phrase.getTerms())
-        {
-            if (i > 0)
-            {
-                sb.append(",");
+        for ( QueryTerm term : phrase.getTerms() ) {
+            if ( i > 0 ) {
+                sb.append( "," );
             }
-            sb.append(termConverter.termToString(term));
+            sb.append( termConverter.termToString( term ) );
             i++;
         }
 
         return sb.toString();
     }
 
-    private static String replaceSymbolsInPhrases(String value)
-    {
+    private static String replaceSymbolsInPhrases( String value ) {
         boolean isInsidePhrase = false;
 
         StringBuffer replacedValue = new StringBuffer();
@@ -99,89 +91,72 @@ public class StandardQueryPhraseConverter implements QueryPhraseConverter<String
 
         char[] valueChars = value.toCharArray();
 
-        for (char c : valueChars)
-        {
-            for (Character phraseDelim : QueryModifier.PHRASE_DELIM.allPossibleSymbols())
-            {
-                if (c == phraseDelim)
-                {
-                    if (isInsidePhrase)
-                    {
+        for ( char c : valueChars ) {
+            for ( Character phraseDelim : QueryModifier.PHRASE_DELIM.allPossibleSymbols() ) {
+                if ( c == phraseDelim ) {
+                    if ( isInsidePhrase ) {
                         isInsidePhrase = false;
 
-                        String replacedPhrase = valueToReplaced(currentPhrase.toString());
-                        replacedValue.append(replacedPhrase);
-                    }
-                    else
-                    {
+                        String replacedPhrase = valueToReplaced( currentPhrase.toString() );
+                        replacedValue.append( replacedPhrase );
+                    } else {
                         isInsidePhrase = true;
                     }
                 }
             }
 
-            if (isInsidePhrase)
-            {
-                currentPhrase.append(c);
-            }
-            else
-            {
-                replacedValue.append(c);
+            if ( isInsidePhrase ) {
+                currentPhrase.append( c );
+            } else {
+                replacedValue.append( c );
             }
         }
 
         return replacedValue.toString();
     }
 
-    private static String valueToReplaced(String value)
-    {
-        String replaced = value.replaceAll("\\s", REPLACED_SPACE);
-        replaced = replaced.replaceAll(",", REPLACED_COMMA);
+    private static String valueToReplaced( String value ) {
+        String replaced = value.replaceAll( "\\s", REPLACED_SPACE );
+        replaced = replaced.replaceAll( ",", REPLACED_COMMA );
 
         return replaced;
     }
 
-    private static String replacedToValue(String replaced)
-    {
-        String value = replaced.replaceAll(REPLACED_SPACE, " ");
-        value = value.replaceAll(REPLACED_COMMA, ",");
+    private static String replacedToValue( String replaced ) {
+        String value = replaced.replaceAll( REPLACED_SPACE, " " );
+        value = value.replaceAll( REPLACED_COMMA, "," );
 
         return value;
     }
 
-    private static String removeQuotesIfNecessary(String value)
-        {
-            if (!value.contains("\""))
-            {
-                return value;
-            }
-
-            boolean initialPercent = value.startsWith("%");
-            boolean endPercent = value.endsWith("%");
-
-            if (initialPercent)
-            {
-                value = value.substring(1);
-            }
-
-            if (endPercent)
-            {
-                value = value.substring(0, value.length()-1);
-            }
-
-            if (value.startsWith("\""))
-            {
-                value = value.substring(1);
-            }
-
-            if (value.endsWith("\""))
-            {
-                value = value.substring(0, value.length()-1);
-            }
-
-            if (initialPercent) value = "%"+value;
-            if (endPercent) value = value+"%";
-
+    private static String removeQuotesIfNecessary( String value ) {
+        if ( !value.contains( "\"" ) ) {
             return value;
         }
-    
+
+        boolean initialPercent = value.startsWith( "%" );
+        boolean endPercent = value.endsWith( "%" );
+
+        if ( initialPercent ) {
+            value = value.substring( 1 );
+        }
+
+        if ( endPercent ) {
+            value = value.substring( 0, value.length() - 1 );
+        }
+
+        if ( value.startsWith( "\"" ) ) {
+            value = value.substring( 1 );
+        }
+
+        if ( value.endsWith( "\"" ) ) {
+            value = value.substring( 0, value.length() - 1 );
+        }
+
+        if ( initialPercent ) value = "%" + value;
+        if ( endPercent ) value = value + "%";
+
+        return value;
+    }
+
 }

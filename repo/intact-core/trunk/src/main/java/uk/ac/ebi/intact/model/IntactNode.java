@@ -55,7 +55,7 @@ public class IntactNode extends BasicObjectImpl {
     /**
      * TODO comments
      */
-    private Timestamp lastProvidedDate=new Timestamp(0);
+    private Timestamp lastProvidedDate = new Timestamp( 0 );
 
     /**
      * TODO comments
@@ -67,21 +67,23 @@ public class IntactNode extends BasicObjectImpl {
      */
     private String ownerPrefix;
 
-  ///////////////////////////////////////
-  //access methods for attributes
+    ///////////////////////////////////////
+    //access methods for attributes
 
 
     public String getFtpAddress() {
         return ftpAddress;
     }
-    public void setFtpAddress(String ftpAddress) {
+
+    public void setFtpAddress( String ftpAddress ) {
         this.ftpAddress = ftpAddress;
     }
 
     public String getFtpDirectory() {
         return ftpDirectory;
     }
-    public void setFtpDirectory(String ftpDirectory) {
+
+    public void setFtpDirectory( String ftpDirectory ) {
         this.ftpDirectory = ftpDirectory;
     }
 
@@ -89,7 +91,7 @@ public class IntactNode extends BasicObjectImpl {
         return ftpLogin;
     }
 
-    public void setFtpLogin(String ftpLogin) {
+    public void setFtpLogin( String ftpLogin ) {
         this.ftpLogin = ftpLogin;
     }
 
@@ -97,21 +99,23 @@ public class IntactNode extends BasicObjectImpl {
         return ftpPassword;
     }
 
-    public void setFtpPassword(String ftpPassword) {
-        this.ftpPassword= ftpPassword;
+    public void setFtpPassword( String ftpPassword ) {
+        this.ftpPassword = ftpPassword;
     }
 
     public int getLastCheckId() {
         return lastCheckId;
     }
-    public void setLastCheckId(int lastCheckId) {
+
+    public void setLastCheckId( int lastCheckId ) {
         this.lastCheckId = lastCheckId;
     }
 
     public int getLastProvidedId() {
         return lastProvidedId;
     }
-    public void setLastProvidedId(int lastProvidedId) {
+
+    public void setLastProvidedId( int lastProvidedId ) {
         this.lastProvidedId = lastProvidedId;
     }
 
@@ -119,20 +123,24 @@ public class IntactNode extends BasicObjectImpl {
         return lastProvidedDate;
 
     }
-    public void setLastProvidedDate(Timestamp lastProvidedDate) {
+
+    public void setLastProvidedDate( Timestamp lastProvidedDate ) {
         this.lastProvidedDate = lastProvidedDate;
     }
+
     public String getOwnerPrefix() {
         return ownerPrefix;
     }
-    public void setOwnerPrefix(String ownerPrefix) {
+
+    public void setOwnerPrefix( String ownerPrefix ) {
         this.ownerPrefix = ownerPrefix;
     }
 
     public int getRejected() {
         return rejected;
     }
-    public void setRejected(int rejected) {
+
+    public void setRejected( int rejected ) {
         this.rejected = rejected;
     }
 }

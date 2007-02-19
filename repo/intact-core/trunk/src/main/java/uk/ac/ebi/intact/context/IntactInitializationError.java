@@ -25,29 +25,24 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id$
  * @since <pre>04-Sep-2006</pre>
  */
-public class IntactInitializationError extends Error
-{
+public class IntactInitializationError extends Error {
 
-    private static final Log log = LogFactory.getLog(IntactInitializationError.class);
+    private static final Log log = LogFactory.getLog( IntactInitializationError.class );
 
 
-    public IntactInitializationError()
-    {
+    public IntactInitializationError() {
         super();
     }
 
-    public IntactInitializationError(String message)
-    {
-        super(message);
+    public IntactInitializationError( String message ) {
+        super( message );
     }
 
-    public IntactInitializationError(String message, Throwable cause)
-    {
-        super(message, cause);
+    public IntactInitializationError( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public IntactInitializationError(Throwable cause)
-    {
-        super(cause);
+    public IntactInitializationError( Throwable cause ) {
+        super( cause );
     }
 }

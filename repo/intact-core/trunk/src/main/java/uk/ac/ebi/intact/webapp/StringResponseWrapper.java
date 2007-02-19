@@ -1,10 +1,9 @@
 package uk.ac.ebi.intact.webapp;
 
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponseWrapper;
 import javax.servlet.http.HttpServletResponse;
-import java.io.PrintWriter;
+import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
@@ -18,17 +17,18 @@ public class StringResponseWrapper extends HttpServletResponseWrapper {
 
     private PrintWriter writer;
     StringWriter stringWriter;
+
     /**
      * Constructs a response adaptor wrapping the given response.
      *
      * @throws IllegalArgumentException if the response is null
      */
-    public StringResponseWrapper(HttpServletResponse response) {
+    public StringResponseWrapper( HttpServletResponse response ) {
 
-        super(response);
-        
-        stringWriter = new StringWriter(4096);
-        writer = new PrintWriter(stringWriter);
+        super( response );
+
+        stringWriter = new StringWriter( 4096 );
+        writer = new PrintWriter( stringWriter );
 
     }
 

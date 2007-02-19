@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.persistence;
 
 /**
- *  <p>Exception class to provide more meaningful error messages.
- *  There is an extra constructor to allow other exceptions to
+ * <p>Exception class to provide more meaningful error messages.
+ * There is an extra constructor to allow other exceptions to
  * pass on information.</p>
  */
 
@@ -20,14 +20,14 @@ public class SearchException extends Exception {
     public SearchException() {
     }
 
-    public SearchException(String msg) {
+    public SearchException( String msg ) {
 
-        super(msg);
+        super( msg );
     }
 
-    public SearchException(String msg, Exception e) {
+    public SearchException( String msg, Exception e ) {
 
-        super(msg);
+        super( msg );
         e.fillInStackTrace();
         nestedMessage = e.getMessage();
 
@@ -37,23 +37,20 @@ public class SearchException extends Exception {
     }
 
 
-    public SearchException(String message, Throwable cause)
-    {
-        super(message, cause);
+    public SearchException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public SearchException(Throwable cause)
-    {
-        super(cause);
+    public SearchException( Throwable cause ) {
+        super( cause );
     }
 
     public String getNestedMessage() {
 
-        if (nestedMessage != null) {
+        if ( nestedMessage != null ) {
 
             return nestedMessage;
-        }
-        else {
+        } else {
 
             return "No nested messages have been passed on.";
         }

@@ -18,10 +18,10 @@ import javax.persistence.*;
  * @version $Id$
  */
 @Entity()
-@Table(name="ia_annotation")
+@Table( name = "ia_annotation" )
 public class Annotation extends BasicObjectImpl {
 
-    private static final Log log = LogFactory.getLog(Annotation.class);
+    private static final Log log = LogFactory.getLog( Annotation.class );
 
     ///////////////////////////////////////
     //attributes
@@ -62,6 +62,7 @@ public class Annotation extends BasicObjectImpl {
      * @param owner The <code>Institution</code> which 'owns' this BioSource
      * @param topic Refers to the controlled vocabulary topic this Annotation relates
      *              to. This should be non-null.
+     *
      * @throws NullPointerException thrown if no Institution specified.
      */
     public Annotation( Institution owner, CvTopic topic ) {
@@ -81,25 +82,23 @@ public class Annotation extends BasicObjectImpl {
      * @param topic          Refers to the controlled vocabulary topic this Annotation relates
      *                       to. This should be non-null.
      * @param annotationText the test of the annotation.
+     *
      * @throws NullPointerException thrown if no Institution specified.
      */
     public Annotation( Institution owner, CvTopic topic, String annotationText ) {
 
         this( owner, topic );
 
-        if (annotationText != null)
-        {
+        if ( annotationText != null ) {
             this.annotationText = annotationText.trim();
-        }
-        else
-        {
-            log.warn("AnnotationText is null when instantiating Annotation using full constructor");
+        } else {
+            log.warn( "AnnotationText is null when instantiating Annotation using full constructor" );
         }
     }
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Column(name = "description", length = 4000)
+    @Column( name = "description", length = 4000 )
     public String getAnnotationText() {
         return annotationText;
     }
@@ -110,15 +109,15 @@ public class Annotation extends BasicObjectImpl {
 
     ///////////////////////////////////////
     // access methods for associations
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "topic_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "topic_ac" )
     public CvTopic getCvTopic() {
         return cvTopic;
     }
 
     public void setCvTopic( CvTopic cvTopic ) {
 
-        if( cvTopic == null ) {
+        if ( cvTopic == null ) {
             throw new NullPointerException( "valid Annotation must have an associated topic!" );
         }
 
@@ -130,19 +129,21 @@ public class Annotation extends BasicObjectImpl {
      * <code>CvTopics</code> and annotationText (a String).
      *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
+     *
      * @see uk.ac.ebi.intact.model.CvTopic
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) {
+        if ( this == o ) {
             return true;
         }
-        if( !( o instanceof Annotation ) ) {
+        if ( !( o instanceof Annotation ) ) {
             return false;
         }
 
-        final Annotation annotation = (Annotation) o;
+        final Annotation annotation = ( Annotation ) o;
 
         // Issue
         // -----
@@ -156,16 +157,16 @@ public class Annotation extends BasicObjectImpl {
         // --------
         // To get around the problem of shared annotation having the same CvTopic and text, we take its ac into account.
         // Hence, two Annotations having the same CvTopic and text can be different, hence all loaded normally by OJB.
-        if( ac != null ) {
+        if ( ac != null ) {
             return ac.equals( annotation.ac );
         }
 
-        if( !cvTopic.equals( annotation.cvTopic ) ) {
+        if ( !cvTopic.equals( annotation.cvTopic ) ) {
             return false;
         }
 
         //get to here and cvTopics are equal (null or non-null)
-        if( annotationText != null ) {
+        if ( annotationText != null ) {
             return annotationText.equals( annotation.annotationText );
         }
 
@@ -182,15 +183,15 @@ public class Annotation extends BasicObjectImpl {
     public int hashCode() {
 
         int code = 29;
-        if( ac != null ) {
+        if ( ac != null ) {
             code = 29 * code + ac.hashCode();
         }
 
-        if( cvTopic != null ) {
+        if ( cvTopic != null ) {
             code = 29 * code + cvTopic.hashCode();
         }
 
-        if( null != annotationText ) {
+        if ( null != annotationText ) {
             code = 29 * code + annotationText.hashCode();
         }
 

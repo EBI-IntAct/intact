@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.Session;
-
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Publication;
 import uk.ac.ebi.intact.persistence.dao.PublicationDao;
@@ -18,12 +17,10 @@ import uk.ac.ebi.intact.persistence.dao.PublicationDao;
  * @version $Id$
  * @since <pre>14-aug-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class PublicationDaoImpl extends AnnotatedObjectDaoImpl<Publication> implements PublicationDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class PublicationDaoImpl extends AnnotatedObjectDaoImpl<Publication> implements PublicationDao {
 
-    public PublicationDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Publication.class, session, intactSession);
+    public PublicationDaoImpl( Session session, IntactSession intactSession ) {
+        super( Publication.class, session, intactSession );
     }
 }

@@ -25,7 +25,7 @@ public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
      *
      * @return a biosource, can be null if not found.
      */
-    BioSource getByTaxonIdUnique(String taxonId);
+    BioSource getByTaxonIdUnique( String taxonId );
 
     /**
      * Searches for all BioSources having the given taxid.
@@ -34,5 +34,5 @@ public interface BioSourceDao extends AnnotatedObjectDao<BioSource> {
      *
      * @return a non null collection of Biosource. May be empty.
      */
-    Collection<BioSource> getByTaxonId(String taxonId);
+    Collection<BioSource> getByTaxonId( String taxonId );
 }

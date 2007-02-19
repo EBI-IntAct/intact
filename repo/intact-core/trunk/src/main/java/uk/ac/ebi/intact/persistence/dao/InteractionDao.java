@@ -16,17 +16,17 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface InteractionDao extends InteractorDao<InteractionImpl>
-{
-    Integer countInteractorsByInteractionAc(String interactionAc);
+public interface InteractionDao extends InteractorDao<InteractionImpl> {
 
-    List<String> getNestedInteractionAcsByInteractionAc(String interactionAc);
+    Integer countInteractorsByInteractionAc( String interactionAc );
 
-    List<Interaction> getInteractionByExperimentShortLabel(String[] experimentLabels, Integer firstResult, Integer maxResults);
+    List<String> getNestedInteractionAcsByInteractionAc( String interactionAc );
 
-    List<Interaction> getInteractionsByInteractorAc(String interactorAc);
+    List<Interaction> getInteractionByExperimentShortLabel( String[] experimentLabels, Integer firstResult, Integer maxResults );
 
-    List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2);
+    List<Interaction> getInteractionsByInteractorAc( String interactorAc );
 
-    Collection<Interaction> getSelfBinaryInteractionsByProtAc(String protAc);
+    List<Interaction> getInteractionsForProtPair( String protAc1, String protAc2 );
+
+    Collection<Interaction> getSelfBinaryInteractionsByProtAc( String protAc );
 }

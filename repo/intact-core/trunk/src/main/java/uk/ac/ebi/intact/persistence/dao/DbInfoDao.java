@@ -26,13 +26,12 @@ import java.util.List;
  * @version $Id$
  * @since <pre>01-Sep-2006</pre>
  */
-public interface DbInfoDao
-{
+public interface DbInfoDao {
 
-    DbInfo get(String key);
+    DbInfo get( String key );
 
     List<DbInfo> getAll();
 
-    void persist(DbInfo dbInfo);
+    void persist( DbInfo dbInfo );
 
 }

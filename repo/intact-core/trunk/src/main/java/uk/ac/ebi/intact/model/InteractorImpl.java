@@ -17,9 +17,9 @@ import java.util.Iterator;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_interactor")
-@DiscriminatorColumn(name = "objclass", length = 100)
-public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,InteractorAlias> implements Interactor, Searchable {
+@Table( name = "ia_interactor" )
+@DiscriminatorColumn( name = "objclass", length = 100 )
+public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref, InteractorAlias> implements Interactor, Searchable {
 
     ///////////////////////////////////////
     //attributes
@@ -76,7 +76,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
      * @param owner      The Institution which owns this Interactor
      *
      * @throws NullPointerException thrown if either parameters are not specified
-     * @deprecated Use {@link #InteractorImpl(String, Institution, CvInteractorType)} instead
+     * @deprecated Use {@link #InteractorImpl(String,Institution,CvInteractorType)} instead
      */
     @Deprecated
     protected InteractorImpl( String shortLabel, Institution owner ) {
@@ -102,19 +102,17 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Column(name = "objclass", insertable = false, updatable = false)
-    public String getObjClass()
-    {
+    @Column( name = "objclass", insertable = false, updatable = false )
+    public String getObjClass() {
         return objClass;
     }
 
-    public void setObjClass(String objClass)
-    {
+    public void setObjClass( String objClass ) {
         this.objClass = objClass;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "biosource_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "biosource_ac" )
     public BioSource getBioSource() {
         return bioSource;
     }
@@ -135,7 +133,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
         this.activeInstances = someActiveInstance;
     }
 
-    @OneToMany(mappedBy = "interactor")
+    @OneToMany( mappedBy = "interactor" )
     public Collection<Component> getActiveInstances() {
         return activeInstances;
     }
@@ -187,30 +185,30 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
         interactorType = type;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "interactortype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "interactortype_ac" )
     public CvInteractorType getCvInteractorType() {
         return interactorType;
     }
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
             name = "ia_int2annot",
-            joinColumns = { @JoinColumn(name = "interactor_ac") },
-            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
+            joinColumns = {@JoinColumn( name = "interactor_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
     public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<InteractorXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<InteractorAlias> getAliases() {
         return super.getAliases();
@@ -237,8 +235,7 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
 
     @Override
     public boolean equals( Object o ) {
-        if (!super.equals(o))
-        {
+        if ( !super.equals( o ) ) {
             return false;
         }
         if ( this == o ) {
@@ -251,10 +248,9 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
             return false;
         }
 
-        final InteractorImpl that = (InteractorImpl) o;
+        final InteractorImpl that = ( InteractorImpl ) o;
 
-        if ( activeInstances != null ? !activeInstances.equals( that.activeInstances ) : that.activeInstances != null )
-        {
+        if ( activeInstances != null ? !activeInstances.equals( that.activeInstances ) : that.activeInstances != null ) {
             return false;
         }
         if ( bioSource != null ? !bioSource.equals( that.bioSource ) : that.bioSource != null ) {

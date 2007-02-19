@@ -6,7 +6,7 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.model;
 
 /**
- * Represents the contact details of a person. 
+ * Represents the contact details of a person.
  * The person may be internal, for example a curator, or external, e.g. a submitter.
  *
  * @author Henning Hermjakob
@@ -58,6 +58,7 @@ public class Person extends BasicObjectImpl {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
@@ -65,32 +66,38 @@ public class Person extends BasicObjectImpl {
         super();
     }
 
-
     ///////////////////////////////////////
     //access methods for attributes
 
     public String getFirstNames() {
         return firstNames;
     }
-    public void setFirstNames(String firstNames) {
+
+    public void setFirstNames( String firstNames ) {
         this.firstNames = firstNames;
     }
+
     public String getSurName() {
         return surName;
     }
-    public void setSurName(String surName) {
+
+    public void setSurName( String surName ) {
         this.surName = surName;
     }
+
     public String getTelephone() {
         return telephone;
     }
-    public void setTelephone(String telephone) {
+
+    public void setTelephone( String telephone ) {
         this.telephone = telephone;
     }
+
     public String getEmail() {
         return email;
     }
-    public void setEmail(String email) {
+
+    public void setEmail( String email ) {
         this.email = email;
     }
 
@@ -101,24 +108,25 @@ public class Person extends BasicObjectImpl {
         return institution;
     }
 
-    public void setInstitution(Institution institution) {
+    public void setInstitution( Institution institution ) {
         this.institution = institution;
     }
 
 
     // TODO needs to be refines
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Person)) return false;
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( !( o instanceof Person ) ) return false;
 
-        final Person person = (Person) o;
+        final Person person = ( Person ) o;
 
-        if (email != null ? !email.equals(person.email) : person.email != null) return false;
-        if (firstNames != null ? !firstNames.equals(person.firstNames) : person.firstNames != null) return false;
-        if (institution != null ? !institution.equals(person.institution) : person.institution != null) return false;
-        if (surName != null ? !surName.equals(person.surName) : person.surName != null) return false;
-        if (telephone != null ? !telephone.equals(person.telephone) : person.telephone != null) return false;
+        if ( email != null ? !email.equals( person.email ) : person.email != null ) return false;
+        if ( firstNames != null ? !firstNames.equals( person.firstNames ) : person.firstNames != null ) return false;
+        if ( institution != null ? !institution.equals( person.institution ) : person.institution != null )
+            return false;
+        if ( surName != null ? !surName.equals( person.surName ) : person.surName != null ) return false;
+        if ( telephone != null ? !telephone.equals( person.telephone ) : person.telephone != null ) return false;
 
         return true;
     }
@@ -126,11 +134,11 @@ public class Person extends BasicObjectImpl {
     @Override
     public int hashCode() {
         int result;
-        result = (firstNames != null ? firstNames.hashCode() : 0);
-        result = 29 * result + (surName != null ? surName.hashCode() : 0);
-        result = 29 * result + (telephone != null ? telephone.hashCode() : 0);
-        result = 29 * result + (email != null ? email.hashCode() : 0);
-        result = 29 * result + (institution != null ? institution.hashCode() : 0);
+        result = ( firstNames != null ? firstNames.hashCode() : 0 );
+        result = 29 * result + ( surName != null ? surName.hashCode() : 0 );
+        result = 29 * result + ( telephone != null ? telephone.hashCode() : 0 );
+        result = 29 * result + ( email != null ? email.hashCode() : 0 );
+        result = 29 * result + ( institution != null ? institution.hashCode() : 0 );
         return result;
     }
 
@@ -139,7 +147,8 @@ public class Person extends BasicObjectImpl {
     public String getInstitutionAc() {
         return institutionAc;
     }
-    public void setInstitutionAc(String ac) {
+
+    public void setInstitutionAc( String ac ) {
         this.institutionAc = ac;
     }
 

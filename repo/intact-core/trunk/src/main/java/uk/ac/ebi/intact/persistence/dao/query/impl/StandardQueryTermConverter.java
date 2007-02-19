@@ -27,60 +27,49 @@ import uk.ac.ebi.intact.persistence.dao.query.QueryTermConverter;
  * @version $Id$
  * @since 1.5
  */
-public class StandardQueryTermConverter implements QueryTermConverter
-{
+public class StandardQueryTermConverter implements QueryTermConverter {
 
-    public QueryTerm stringToTerm(String value) throws QueryPhraseException
-    {
-        if (value == null)
-        {
-            throw new NullPointerException("value cannot be null");
+    public QueryTerm stringToTerm( String value ) throws QueryPhraseException {
+        if ( value == null ) {
+            throw new NullPointerException( "value cannot be null" );
         }
 
-        QueryModifier[] modifiers = QueryModifier.identifyModifiers(value);
+        QueryModifier[] modifiers = QueryModifier.identifyModifiers( value );
 
-        for (QueryModifier modifier : modifiers)
-        {
-            value = standardiseModifierSymbol(value, modifier);
-            value = removeModifierExceptWildcards(value, modifier);
+        for ( QueryModifier modifier : modifiers ) {
+            value = standardiseModifierSymbol( value, modifier );
+            value = removeModifierExceptWildcards( value, modifier );
         }
 
-        QueryTerm term = new QueryTerm(value);
-        term.setModifiers(modifiers);
+        QueryTerm term = new QueryTerm( value );
+        term.setModifiers( modifiers );
 
         return term;
     }
 
-    public String termToString(QueryTerm term) throws QueryPhraseException
-    {
+    public String termToString( QueryTerm term ) throws QueryPhraseException {
         String value = term.getValue();
 
-        if (value.contains(" ") || value.contains(","))
-        {
-            value = QueryModifier.PHRASE_DELIM.getSymbol()+value+QueryModifier.PHRASE_DELIM.getSymbol();
+        if ( value.contains( " " ) || value.contains( "," ) ) {
+            value = QueryModifier.PHRASE_DELIM.getSymbol() + value + QueryModifier.PHRASE_DELIM.getSymbol();
         }
 
-        for (QueryModifier modifier : term.getModifiers())
-        {
-            switch (modifier.getPosition())
-            {
+        for ( QueryModifier modifier : term.getModifiers() ) {
+            switch ( modifier.getPosition() ) {
                 case BEFORE_TERM:
-                    if (!value.startsWith(modifier.getSymbol().toString()))
-                    {
-                       value = modifier.getSymbol()+value;
+                    if ( !value.startsWith( modifier.getSymbol().toString() ) ) {
+                        value = modifier.getSymbol() + value;
                     }
                     break;
                 case AFTER_TERM:
-                    if (!value.endsWith(modifier.getSymbol().toString()))
-                    {
-                       value = value+modifier.getSymbol();
+                    if ( !value.endsWith( modifier.getSymbol().toString() ) ) {
+                        value = value + modifier.getSymbol();
                     }
                     break;
                 case BEFORE_AFTER_TERM:
-                    if (!value.startsWith(modifier.getSymbol().toString()) &&
-                        !value.endsWith(modifier.getSymbol().toString()))
-                    {
-                       value = modifier.getSymbol()+value+modifier.getSymbol();
+                    if ( !value.startsWith( modifier.getSymbol().toString() ) &&
+                         !value.endsWith( modifier.getSymbol().toString() ) ) {
+                        value = modifier.getSymbol() + value + modifier.getSymbol();
                     }
                     break;
             }
@@ -88,49 +77,45 @@ public class StandardQueryTermConverter implements QueryTermConverter
 
         return value;
     }
-    
 
-    private String removeModifierExceptWildcards(String value, QueryModifier modifier)
-    {
+
+    private String removeModifierExceptWildcards( String value, QueryModifier modifier ) {
         String valueWithoutModifier = value;
 
-        switch (modifier)
-        {
+        switch ( modifier ) {
             case EXCLUDE:
-                valueWithoutModifier = value.substring(1);
+                valueWithoutModifier = value.substring( 1 );
                 break;
             case INCLUDE:
-                valueWithoutModifier = value.substring(1);
+                valueWithoutModifier = value.substring( 1 );
                 break;
             case WILDCARD_START:
-                valueWithoutModifier = value.substring(1);
+                valueWithoutModifier = value.substring( 1 );
                 break;
             case WILDCARD_END:
-                valueWithoutModifier = value.substring(0, value.length()-1);
+                valueWithoutModifier = value.substring( 0, value.length() - 1 );
                 break;
             case PHRASE_DELIM:
-                valueWithoutModifier = value.substring(1, value.length()-1);
+                valueWithoutModifier = value.substring( 1, value.length() - 1 );
                 break;
         }
 
         return valueWithoutModifier.trim();
     }
 
-    private String standardiseModifierSymbol(String value, QueryModifier modifier)
-    {
+    private String standardiseModifierSymbol( String value, QueryModifier modifier ) {
         String stdValue = value;
 
-        switch (modifier.getPosition())
-        {
+        switch ( modifier.getPosition() ) {
             case AFTER_TERM:
-                stdValue = value.substring(0,value.length()-1)+modifier.getSymbol();
+                stdValue = value.substring( 0, value.length() - 1 ) + modifier.getSymbol();
                 break;
             case BEFORE_TERM:
-                stdValue = modifier.getSymbol()+value.substring(1);
+                stdValue = modifier.getSymbol() + value.substring( 1 );
                 break;
             case BEFORE_AFTER_TERM:
-                stdValue = value.substring(0,value.length()-1)+modifier.getSymbol();
-                stdValue = modifier.getSymbol()+stdValue.substring(1);
+                stdValue = value.substring( 0, value.length() - 1 ) + modifier.getSymbol();
+                stdValue = modifier.getSymbol() + stdValue.substring( 1 );
                 break;
         }
 

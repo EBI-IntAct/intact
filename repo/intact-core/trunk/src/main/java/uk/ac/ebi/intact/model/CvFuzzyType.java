@@ -2,11 +2,10 @@ package uk.ac.ebi.intact.model;
 
 import uk.ac.ebi.intact.annotation.EditorTopic;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.persistence.Transient;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 
@@ -18,7 +17,7 @@ import java.util.regex.Matcher;
  * @author Chris Lewington $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvFuzzyType")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvFuzzyType" )
 @EditorTopic
 public class CvFuzzyType extends CvObject implements Editable {
 
@@ -72,7 +71,7 @@ public class CvFuzzyType extends CvObject implements Editable {
         /**
          * Maps: CvFuzzy Labels -> Display labels.
          */
-        private static Map<String,String> ourNormalMap = new HashMap<String,String>();
+        private static Map<String, String> ourNormalMap = new HashMap<String, String>();
 
         static {
             ourNormalMap.put( LESS_THAN, "<" );
@@ -163,10 +162,8 @@ public class CvFuzzyType extends CvObject implements Editable {
          * @return the corresponding key for given <code>value</code>.
          */
         private static String getKey( String value ) {
-            for (Map.Entry<String, String> entry : ourNormalMap.entrySet())
-            {
-                if (entry.getValue().equals(value))
-                {
+            for ( Map.Entry<String, String> entry : ourNormalMap.entrySet() ) {
+                if ( entry.getValue().equals( value ) ) {
                     return entry.getKey();
                 }
             }

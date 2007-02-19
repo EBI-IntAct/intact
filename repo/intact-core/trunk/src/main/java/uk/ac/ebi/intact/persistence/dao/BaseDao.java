@@ -14,8 +14,8 @@ import java.sql.SQLException;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface BaseDao<S extends Object>
-{
+public interface BaseDao<S extends Object> {
+
     S getSession();
 
     void flushCurrentSession();

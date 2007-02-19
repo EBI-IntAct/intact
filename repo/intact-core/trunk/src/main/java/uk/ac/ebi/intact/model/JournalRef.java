@@ -43,6 +43,7 @@ public class JournalRef extends Reference {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
@@ -50,8 +51,8 @@ public class JournalRef extends Reference {
         super();
     }
 
-    public JournalRef(Institution owner, String title, String authors, Integer pubmidId, String firstpage, CvJournal cvJournal) {
-        super(owner, title, authors);
+    public JournalRef( Institution owner, String title, String authors, Integer pubmidId, String firstpage, CvJournal cvJournal ) {
+        super( owner, title, authors );
         this.pubmidId = pubmidId;
         this.firstpage = firstpage;
         this.cvJournal = cvJournal;
@@ -62,13 +63,16 @@ public class JournalRef extends Reference {
     public Integer getPubmidId() {
         return pubmidId;
     }
-    public void setPubmidId(Integer pubmidId) {
+
+    public void setPubmidId( Integer pubmidId ) {
         this.pubmidId = pubmidId;
     }
+
     public String getFirstpage() {
         return firstpage;
     }
-    public void setFirstpage(String firstpage) {
+
+    public void setFirstpage( String firstpage ) {
         this.firstpage = firstpage;
     }
 
@@ -79,16 +83,17 @@ public class JournalRef extends Reference {
         return cvJournal;
     }
 
-    public void setCvJournal(CvJournal cvJournal) {
+    public void setCvJournal( CvJournal cvJournal ) {
         this.cvJournal = cvJournal;
     }
 
     //attributes used for mapping BasicObjects - project synchron
     // TODO: should be move out of the model.
-    public void setCvJournalAc(String ac) {
+    public void setCvJournalAc( String ac ) {
         this.cvJournalAc = ac;
     }
-    public String getCvJournalAc(){
+
+    public String getCvJournalAc() {
         return this.cvJournalAc;
     }
 

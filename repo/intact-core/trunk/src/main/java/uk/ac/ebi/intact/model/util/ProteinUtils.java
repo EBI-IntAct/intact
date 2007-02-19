@@ -28,20 +28,21 @@ import java.util.Iterator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ProteinUtils
-{
+public class ProteinUtils {
+
     /**
      * Checks if the protein has been annotated with the no-uniprot-update CvTopic, if so, return false, otherwise true.
      * That flag is added to a protein when created via the editor. As some protein may have a UniProt ID as identity we
      * don't want those to be overwitten.
+     *
      * @param protein the protein to check
+     *
      * @return true if uniprot
      */
-    public static boolean isFromUniprot(Protein protein)
-    {
+    public static boolean isFromUniprot( Protein protein ) {
         boolean isFromUniprot = true;
 
-        CvTopic noUniprotUpdate = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, CvTopic.NON_UNIPROT);
+        CvTopic noUniprotUpdate = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
 
         if ( null == noUniprotUpdate ) {
             // in case the term hasn't been created, assume there are no proteins created via editor.
@@ -49,7 +50,7 @@ public class ProteinUtils
         }
 
         for ( Iterator iterator = protein.getAnnotations().iterator(); iterator.hasNext() && isFromUniprot; ) {
-            Annotation annotation = (Annotation) iterator.next();
+            Annotation annotation = ( Annotation ) iterator.next();
 
             if ( noUniprotUpdate.getAc().equals( annotation.getCvTopic().getAc() ) ) {
                 isFromUniprot = false;

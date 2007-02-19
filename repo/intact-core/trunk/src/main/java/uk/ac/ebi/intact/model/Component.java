@@ -22,10 +22,10 @@ import java.util.Collection;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_component")
-public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias> {
+@Table( name = "ia_component" )
+public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias> {
 
-    private static final Log log = LogFactory.getLog(Component.class);
+    private static final Log log = LogFactory.getLog( Component.class );
 
     public static final float STOICHIOMETRY_NOT_DEFINED = 0;
 
@@ -98,7 +98,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
     public Component( Institution owner, Interaction interaction,
-                      Interactor interactor, CvComponentRole role ) {
+                      Interactor interactor, CvComponentRole role
+    ) {
 
         this( owner, "N/A", interaction, interactor, role );
     }
@@ -124,11 +125,12 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
     public Component( Institution owner, String shortLabel, Interaction interaction,
-                      Interactor interactor, CvComponentRole role ) {
+                      Interactor interactor, CvComponentRole role
+    ) {
 
         //super call sets creation time data
         super( shortLabel, owner );
-        this.shortLabel="N/A";
+        this.shortLabel = "N/A";
         if ( interaction == null ) {
             throw new NullPointerException( "valid Component must have an Interaction set!" );
         }
@@ -150,6 +152,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
 
     /**
      * Answers the question: "is the stoichiometry of the component defined ?".
+     *
      * @return true if the stoichiometry is defined, false otherwise.
      */
     public boolean hasStoichiometry() {
@@ -164,8 +167,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.stoichiometry = stoichiometry;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expressedin_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "expressedin_ac" )
     public BioSource getExpressedIn() {
         return expressedIn;
     }
@@ -177,8 +180,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     ///////////////////////////////////////
     // access methods for associations
 
-    @ManyToOne(targetEntity = InteractorImpl.class)
-    @JoinColumn(name = "interactor_ac")
+    @ManyToOne( targetEntity = InteractorImpl.class )
+    @JoinColumn( name = "interactor_ac" )
     public Interactor getInteractor() {
         return interactor;
     }
@@ -190,8 +193,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.interactor = interactor;
     }
 
-    @ManyToOne(targetEntity = InteractionImpl.class, fetch = FetchType.LAZY)
-    @JoinColumn(name = "interaction_ac")
+    @ManyToOne( targetEntity = InteractionImpl.class, fetch = FetchType.LAZY )
+    @JoinColumn( name = "interaction_ac" )
     public Interaction getInteraction() {
         return interaction;
     }
@@ -207,13 +210,13 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.bindingDomains = someBindingDomain;
     }
 
-    @OneToMany(mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
+    @OneToMany( mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     public Collection<Feature> getBindingDomains() {
         return bindingDomains;
     }
 
     public void addBindingDomain( Feature feature ) {
-        if ( ! this.bindingDomains.contains( feature ) ) {
+        if ( !this.bindingDomains.contains( feature ) ) {
             this.bindingDomains.add( feature );
             feature.setComponent( this );
         }
@@ -226,8 +229,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         }
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "role" )
     public CvComponentRole getCvComponentRole() {
         return cvComponentRole;
     }
@@ -236,26 +239,25 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.cvComponentRole = cvComponentRole;
     }
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
-        name="ia_component2annot",
-        joinColumns={@JoinColumn(name="component_ac")},
-        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+            name = "ia_component2annot",
+            joinColumns = {@JoinColumn( name = "component_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
-    public Collection<Annotation> getAnnotations()
-    {
+    public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<ComponentXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<ComponentAlias> getAliases() {
         return super.getAliases();
@@ -282,7 +284,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         }
         // don't call super because that's a BasicObject !
 
-        final Component component = (Component) o;
+        final Component component = ( Component ) o;
 
         // Compare if the component links the same objects.
         // This comparision can be based on reference equality,
@@ -328,7 +330,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Component copy = (Component) super.clone();
+        Component copy = ( Component ) super.clone();
 
         // Reset interactor and interaction.
         copy.interaction = null;
@@ -339,7 +341,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         // Make deep copies of Features.
         copy.bindingDomains = new ArrayList<Feature>( bindingDomains.size() );
         for ( Feature feature : bindingDomains ) {
-            Feature copyFeature = (Feature) feature.clone();
+            Feature copyFeature = ( Feature ) feature.clone();
             // Set the copy component as the component for feature copy.
             copyFeature.setComponentForClone( copy );
             // Add the cloned feature to the binding domains.
@@ -349,7 +351,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
     }
 
     //attributes used for mapping BasicObjects
-    @Column(name = "interactor_ac", insertable = false, updatable = false)
+    @Column( name = "interactor_ac", insertable = false, updatable = false )
     public String getInteractorAc() {
         return this.interactorAc;
     }
@@ -358,7 +360,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.interactorAc = ac;
     }
 
-    @Column(name = "interaction_ac", insertable = false, updatable = false)
+    @Column( name = "interaction_ac", insertable = false, updatable = false )
     public String getInteractionAc() {
         return this.interactionAc;
     }
@@ -367,7 +369,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.interactionAc = ac;
     }
 
-    @Column(name = "role", insertable = false, updatable = false)
+    @Column( name = "role", insertable = false, updatable = false )
     public String getCvComponentRoleAc() {
         return this.cvComponentRoleAc;
     }
@@ -376,7 +378,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref,ComponentAlias>
         this.cvComponentRoleAc = ac;
     }
 
-    @Column(name = "expressedin_ac", insertable = false, updatable = false)
+    @Column( name = "expressedin_ac", insertable = false, updatable = false )
     public String getExpressedInAc() {
         return this.expressedInAc;
     }
