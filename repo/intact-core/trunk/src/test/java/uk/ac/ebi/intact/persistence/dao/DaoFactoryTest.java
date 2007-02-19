@@ -3,8 +3,6 @@ package uk.ac.ebi.intact.persistence.dao;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.AutoBeginTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
@@ -23,12 +21,17 @@ public class DaoFactoryTest extends TestCase {
         super( name );
     }
 
+
+    DaoFactory daoFactory;
+
     public void setUp() throws Exception {
         super.setUp();
+        daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
+        daoFactory = null;
     }
 
     public static Test suite() {
@@ -178,17 +181,10 @@ public class DaoFactoryTest extends TestCase {
 //        fail( "Not yet implemented." );
 //    }
 
-    /**
-     * Sets up a logger for that class.
-     */
-    public static final Log log = LogFactory.getLog( DaoFactoryTest.class );
-
     public void testIsTransactionActive_noRead() throws Exception {
 
         // set auto begin true
         IntactContext.getCurrentInstance().getConfig().setAutoBeginTransaction( true );
-
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
 
         assertFalse( daoFactory.isTransactionActive() );
 
@@ -202,8 +198,6 @@ public class DaoFactoryTest extends TestCase {
     public void testIsTransactionActive_readCV() throws Exception {
 
         IntactContext.getCurrentInstance().getConfig().setAutoBeginTransaction( false );
-
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
 
         assertFalse( daoFactory.isTransactionActive() );
 
@@ -222,7 +216,6 @@ public class DaoFactoryTest extends TestCase {
             // set auto begin false
             IntactContext.getCurrentInstance().getConfig().setAutoBeginTransaction( false );
 
-            DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
             assertFalse( daoFactory.isTransactionActive() );
 
             readData( daoFactory );
@@ -238,7 +231,6 @@ public class DaoFactoryTest extends TestCase {
         // set auto begin true
         IntactContext.getCurrentInstance().getConfig().setAutoBeginTransaction( true );
 
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         assertFalse( daoFactory.isTransactionActive() );
 
         readData( daoFactory );
