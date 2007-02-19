@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 /**
  * Created by IntelliJ IDEA.
  * User: CatherineLeroy
@@ -26,27 +25,27 @@ public class InteractionTest extends TestCase {
 
     public void tearDown() throws Exception {
         super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public void testClone() throws Exception {
-        //Getting this interaction to clone
+        // Getting this interaction to clone
         InteractionDao interactionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao();
         InteractionImpl orginal = interactionDao.getByShortLabel( "cara-7" );
 
-        //Getting the experiment to attach to the cloned interaction
+        // Getting the experiment to attach to the cloned interaction
         ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
         Experiment exp = expDao.getByShortLabel( "thoden-1999-1" );
 
-        //Getting a new CvInteractionType for the cloned Interaction so that it's not the same than the original one.
+        // Getting a new CvInteractionType for the cloned Interaction so that it's not the same than the original one.
         CvObjectDao<CvInteractionType> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvInteractionType.class );
         CvInteractionType cvInteractionType = cvObjectDao.getByShortLabel( "myristoylation" );
         if ( orginal != null ) {
-            System.out.println( orginal.getAc() );
-            //Clone the object
+            // Clone the object
             InteractionImpl copy = ( InteractionImpl ) orginal.clone();
-            //Add the experiment
+            // Add the experiment
             copy.addExperiment( exp );
-            //Change the cvInteractionType
+            // Change the cvInteractionType
             copy.setCvInteractionType( cvInteractionType );
 
             interactionDao.persist( copy );
@@ -99,8 +98,6 @@ public class InteractionTest extends TestCase {
             assertEquals( originalRangeCount, copyRangeCount );
             assertEquals( originalAnnot, copyAnnot );
             assertEquals( originalXref, copyXref );
-
         }
-
     }
 }
