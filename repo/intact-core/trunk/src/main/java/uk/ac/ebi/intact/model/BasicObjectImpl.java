@@ -45,7 +45,6 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
         setOwner( owner );
     }
 
-
     ///////////////////////////////////////
     // access methods for associations
 
@@ -59,21 +58,21 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     }
 
     public void addEvidence( Evidence evidence ) {
-        if( !this.evidences.contains( evidence ) ) this.evidences.add( evidence );
+        if ( !this.evidences.contains( evidence ) ) this.evidences.add( evidence );
     }
 
     public void removeEvidence( Evidence evidence ) {
         this.evidences.remove( evidence );
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="owner_ac", nullable = false)
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "owner_ac", nullable = false )
     public Institution getOwner() {
         return owner;
     }
 
     public void setOwner( Institution institution ) {
-       /*
+        /*
         if( institution == null ) {
             throw new NullPointerException( "valid " + getClass().getName() + " must have an owner (Institution) !" );
         }
@@ -86,7 +85,7 @@ public abstract class BasicObjectImpl extends IntactObjectImpl implements BasicO
     ///////////////////////////////////////
     // access methods for associations
 
-    @Column(name="owner_ac", insertable = false, updatable = false, nullable = false)
+    @Column( name = "owner_ac", insertable = false, updatable = false, nullable = false )
     public String getOwnerAc() {
         return ownerAc;
     }

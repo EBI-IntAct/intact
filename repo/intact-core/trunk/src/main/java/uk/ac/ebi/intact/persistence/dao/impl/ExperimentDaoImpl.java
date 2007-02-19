@@ -27,44 +27,40 @@ import java.util.List;
  * @version $Id$
  * @since <pre>26-Apr-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implements ExperimentDao
-{
-    public ExperimentDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Experiment.class, session, intactSession);
+@SuppressWarnings( {"unchecked"} )
+public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implements ExperimentDao {
+
+    public ExperimentDaoImpl( Session session, IntactSession intactSession ) {
+        super( Experiment.class, session, intactSession );
     }
 
-    public Integer countInteractionsForExperimentWithAc(String ac)
-    {
+    public Integer countInteractionsForExperimentWithAc( String ac ) {
 //        return (Integer) getSession().createCriteria(Experiment.class)
 //                    .add(Restrictions.idEq(ac))
 //                    .createAlias("interactions", "int")
 //                    .setProjection(Projections.countDistinct("int.ac")).uniqueResult();
 
         // this one performs slightly better
-        return (Integer) getSession().createCriteria(InteractionImpl.class)
-                    .createAlias("experiments", "exp")
-                    .add(Restrictions.eq("exp.ac", ac))
-                    .setProjection(Projections.rowCount()).uniqueResult();
+        return ( Integer ) getSession().createCriteria( InteractionImpl.class )
+                .createAlias( "experiments", "exp" )
+                .add( Restrictions.eq( "exp.ac", ac ) )
+                .setProjection( Projections.rowCount() ).uniqueResult();
     }
 
-    public List<Interaction> getInteractionsForExperimentWithAc(String ac, int firstResult, int maxResults)
-    {
-        return getSession().createCriteria(InteractionImpl.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults)
-                .createCriteria("experiments")
-                .add(Restrictions.idEq(ac)).list();
+    public List<Interaction> getInteractionsForExperimentWithAc( String ac, int firstResult, int maxResults ) {
+        return getSession().createCriteria( InteractionImpl.class )
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults )
+                .createCriteria( "experiments" )
+                .add( Restrictions.idEq( ac ) ).list();
     }
 
-    public Iterator<Interaction> getInteractionsForExperimentWithAcIterator(String ac)
-    {
-        DetachedCriteria crit = DetachedCriteria.forClass(InteractionImpl.class)
-                .createCriteria("experiments")
-                .add(Restrictions.idEq(ac));
+    public Iterator<Interaction> getInteractionsForExperimentWithAcIterator( String ac ) {
+        DetachedCriteria crit = DetachedCriteria.forClass( InteractionImpl.class )
+                .createCriteria( "experiments" )
+                .add( Restrictions.idEq( ac ) );
 
-        return new IntactObjectIterator(getEntityClass(), crit);
+        return new IntactObjectIterator( getEntityClass(), crit );
         /*
         return new ScrollableIntactObjectsImpl( InteractionImpl.class,
                 getSession().createCriteria(InteractionImpl.class)
@@ -74,38 +70,34 @@ public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implem
                 */
     }
 
-    public List<Interaction> getInteractionsForExperimentWithAcExcluding(String ac, String[] excludedAcs, int firstResult, int maxResults)
-    {
-        Criteria crit =  getSession().createCriteria(InteractionImpl.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults);
+    public List<Interaction> getInteractionsForExperimentWithAcExcluding( String ac, String[] excludedAcs, int firstResult, int maxResults ) {
+        Criteria crit = getSession().createCriteria( InteractionImpl.class )
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults );
 
-        for (String excludedAc : excludedAcs)
-        {
-            crit.add(Restrictions.ne("ac", excludedAc));
+        for ( String excludedAc : excludedAcs ) {
+            crit.add( Restrictions.ne( "ac", excludedAc ) );
         }
 
-         crit.createCriteria("experiments")
-             .add(Restrictions.idEq(ac));
+        crit.createCriteria( "experiments" )
+                .add( Restrictions.idEq( ac ) );
 
         return crit.list();
     }
 
 
-    public List<Interaction> getInteractionsForExperimentWithAcExcludingLike(String ac, String[] excludedAcsLike, int firstResult, int maxResults)
-    {
-        Criteria crit =  getSession().createCriteria(InteractionImpl.class)
-                .setFirstResult(firstResult)
-                .setMaxResults(maxResults);
+    public List<Interaction> getInteractionsForExperimentWithAcExcludingLike( String ac, String[] excludedAcsLike, int firstResult, int maxResults ) {
+        Criteria crit = getSession().createCriteria( InteractionImpl.class )
+                .setFirstResult( firstResult )
+                .setMaxResults( maxResults );
 
-        for (String excludedAc : excludedAcsLike)
-        {
-            excludedAc = DaoUtils.replaceWildcardsByPercent(excludedAc);
-            crit.add(Restrictions.not(Restrictions.like("ac", excludedAc)));
+        for ( String excludedAc : excludedAcsLike ) {
+            excludedAc = DaoUtils.replaceWildcardsByPercent( excludedAc );
+            crit.add( Restrictions.not( Restrictions.like( "ac", excludedAc ) ) );
         }
 
-         crit.createCriteria("experiments")
-             .add(Restrictions.idEq(ac));
+        crit.createCriteria( "experiments" )
+                .add( Restrictions.idEq( ac ) );
 
         return crit.list();
     }

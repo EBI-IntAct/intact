@@ -9,9 +9,9 @@ import java.util.List;
  * @version $Id$
  * @since <pre>04-Jul-2006</pre>
  */
-public interface AnnotationDao extends IntactObjectDao<Annotation>
-{
-    List<Annotation> getByTextLike(String text);
+public interface AnnotationDao extends IntactObjectDao<Annotation> {
 
-    List<Annotation> getByDescriptionLike(String description);
+    List<Annotation> getByTextLike( String text );
+
+    List<Annotation> getByDescriptionLike( String description );
 }

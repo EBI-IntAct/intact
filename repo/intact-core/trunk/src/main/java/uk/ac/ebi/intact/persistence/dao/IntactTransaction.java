@@ -18,17 +18,16 @@ import uk.ac.ebi.intact.business.IntactTransactionException;
  * @version $Id$
  * @since <pre>11-Jul-2006</pre>
  */
-public class IntactTransaction
-{
+public class IntactTransaction {
 
-    private static final Log log = LogFactory.getLog(IntactTransaction.class);
+    private static final Log log = LogFactory.getLog( IntactTransaction.class );
 
     private Transaction transaction;
 
-    public IntactTransaction(Transaction transaction) {
+    public IntactTransaction( Transaction transaction ) {
         this.transaction = transaction;
 
-        log.debug("Transaction started");
+        log.debug( "Transaction started" );
         /*
         int i=0;
         for (StackTraceElement ste : Thread.currentThread().getStackTrace())
@@ -40,50 +39,41 @@ public class IntactTransaction
         }   */
     }
 
-    public void commit() throws IntactTransactionException
-    {
-        log.debug("Committing transaction");
+    public void commit() throws IntactTransactionException {
+        log.debug( "Committing transaction" );
 
-        try
-        {
+        try {
             transaction.commit();
         }
-        catch (HibernateException e)
-        {
-            throw new IntactTransactionException("Commit exception", e);
+        catch ( HibernateException e ) {
+            throw new IntactTransactionException( "Commit exception", e );
         }
 
-        assert (wasCommitted());
+        assert ( wasCommitted() );
 
-        log.debug("Transaction committed");
+        log.debug( "Transaction committed" );
     }
 
-    public void rollback() throws IntactTransactionException
-    {
-        log.debug("Rolling-back transaction");
+    public void rollback() throws IntactTransactionException {
+        log.debug( "Rolling-back transaction" );
 
-        try
-        {
+        try {
             transaction.rollback();
         }
-        catch (HibernateException e)
-        {
-            throw new IntactTransactionException("Rollback exception", e);
+        catch ( HibernateException e ) {
+            throw new IntactTransactionException( "Rollback exception", e );
         }
     }
 
-    public boolean wasCommitted()
-    {
+    public boolean wasCommitted() {
         return transaction.wasCommitted();
     }
 
-    public boolean wasRolledBack()
-    {
+    public boolean wasRolledBack() {
         return transaction.wasRolledBack();
     }
 
-    public Object getWrappedTransaction()
-    {
+    public Object getWrappedTransaction() {
         return transaction;
     }
 

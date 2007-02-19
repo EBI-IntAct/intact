@@ -16,47 +16,47 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface IntactObjectDao<T extends IntactObject>
-{
-    T getByAc(String ac);
+public interface IntactObjectDao<T extends IntactObject> {
 
-    Collection<T> getByAcLike(String ac);
+    T getByAc( String ac );
 
-    Collection<T> getByAcLike(String ac, boolean ignoreCase);  
+    Collection<T> getByAcLike( String ac );
 
-    List<T> getByAc(String[] acs);
+    Collection<T> getByAcLike( String ac, boolean ignoreCase );
 
-    List<T> getByAc(Collection<String> acs);
+    List<T> getByAc( String[] acs );
+
+    List<T> getByAc( Collection<String> acs );
 
     List<T> getAll();
 
     Iterator<T> getAllIterator();
 
-    List<T> getAll(int firstResult, int maxResults);
+    List<T> getAll( int firstResult, int maxResults );
 
     public int countAll();
 
     public Iterator<T> iterator();
-    
+
     public Iterator<T> iterator( int batchSize );
 
-    Collection<T> getColByPropertyName(String propertyName, String value);
+    Collection<T> getColByPropertyName( String propertyName, String value );
 
-    void update(T objToUpdate);
+    void update( T objToUpdate );
 
-    void persist(T objToPersist);
+    void persist( T objToPersist );
 
-    void persistAll(Collection<T> objsToPersist);
+    void persistAll( Collection<T> objsToPersist );
 
-    void delete(T objToDelete);
+    void delete( T objToDelete );
 
-    int deleteByAc(String ac);
+    int deleteByAc( String ac );
 
-    void deleteAll(Collection<T> objsToDelete);
+    void deleteAll( Collection<T> objsToDelete );
 
-    void saveOrUpdate(T objToPersist);
+    void saveOrUpdate( T objToPersist );
 
-    boolean exists(T obj);
+    boolean exists( T obj );
 
-    void refresh(T objToRefresh);
+    void refresh( T objToRefresh );
 }

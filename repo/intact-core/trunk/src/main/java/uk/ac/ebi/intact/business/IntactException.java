@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.business;
 
 /**
- *  <p>Exception class to provide more meaningful error messages.
- *  There is an extra constructor to allow other exceptions to
+ * <p>Exception class to provide more meaningful error messages.
+ * There is an extra constructor to allow other exceptions to
  * pass on information.</p>
  */
 
@@ -20,14 +20,14 @@ public class IntactException extends RuntimeException {
     public IntactException() {
     }
 
-    public IntactException(String msg) {
+    public IntactException( String msg ) {
 
-        super(msg);
+        super( msg );
     }
 
-    public IntactException(String msg, Exception e) {
+    public IntactException( String msg, Exception e ) {
 
-        super(msg,e);
+        super( msg, e );
         /*
         if (e != null) {
             e.fillInStackTrace();
@@ -44,30 +44,27 @@ public class IntactException extends RuntimeException {
     }
 
 
-    public IntactException(String message, Throwable cause)
-    {
-        super(message, cause);
+    public IntactException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public IntactException(Throwable cause)
-    {
-        super(cause);
+    public IntactException( Throwable cause ) {
+        super( cause );
     }
 
     public String getNestedMessage() {
 
-        if (nestedMessage != null) {
+        if ( nestedMessage != null ) {
 
             return nestedMessage;
-        }
-        else {
+        } else {
 
             return "No nested messages have been passed on.";
         }
     }
 
-    public boolean rootCauseExists () {
-        return (rootCause != null);
+    public boolean rootCauseExists() {
+        return ( rootCause != null );
     }
 
     public Exception getRootCause() {

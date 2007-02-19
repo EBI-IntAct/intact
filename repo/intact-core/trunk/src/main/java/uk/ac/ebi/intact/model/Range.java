@@ -40,7 +40,7 @@ import javax.persistence.*;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_range")
+@Table( name = "ia_range" )
 public class Range extends BasicObjectImpl {
 
     //------------ attributes ------------------------------------
@@ -226,7 +226,6 @@ public class Range extends BasicObjectImpl {
     //------------------------- public methods --------------------------------------
 
 
-
     public int getFromIntervalStart() {
         return fromIntervalStart;
     }
@@ -266,37 +265,37 @@ public class Range extends BasicObjectImpl {
     public void setToIntervalEnd( int posTo ) {
         toIntervalEnd = posTo;
     }
-       /*
+    /*
+public boolean isUndetermined() {
+       return charToBoolean( undetermined );
+   }
+
+   /**
+    * Undetermined is true only both fuzzy types are of UNDETERMINED type. For all other instances, it is false.
+    *
+   public void setUndetermined() {
+       // Set only when we have fuzzy types.
+       if ( ( fromCvFuzzyType != null ) && ( toCvFuzzyType != null ) ) {
+           undetermined = booleanToChar( fromCvFuzzyType.getShortLabel().equals(
+                   CvFuzzyType.UNDETERMINED ) && toCvFuzzyType.getShortLabel().equals(
+                   CvFuzzyType.UNDETERMINED ) );
+       } else {
+           undetermined = booleanToChar( false );
+       }
+   }
+
+   public boolean isLinked() {
+       return charToBoolean( link );
+   }
+
+   public void setLink( boolean isLinked ) {
+       link = booleanToChar( isLinked );
+   } */
+
+
+    @Type( type = "yes_no" )
     public boolean isUndetermined() {
-            return charToBoolean( undetermined );
-        }
-
-        /**
-         * Undetermined is true only both fuzzy types are of UNDETERMINED type. For all other instances, it is false.
-         *
-        public void setUndetermined() {
-            // Set only when we have fuzzy types.
-            if ( ( fromCvFuzzyType != null ) && ( toCvFuzzyType != null ) ) {
-                undetermined = booleanToChar( fromCvFuzzyType.getShortLabel().equals(
-                        CvFuzzyType.UNDETERMINED ) && toCvFuzzyType.getShortLabel().equals(
-                        CvFuzzyType.UNDETERMINED ) );
-            } else {
-                undetermined = booleanToChar( false );
-            }
-        }
-
-        public boolean isLinked() {
-            return charToBoolean( link );
-        }
-
-        public void setLink( boolean isLinked ) {
-            link = booleanToChar( isLinked );
-        } */
-
-
-    @Type(type = "yes_no")
-    public boolean isUndetermined() {
-        return undetermined ;
+        return undetermined;
     }
 
     /**
@@ -307,29 +306,28 @@ public class Range extends BasicObjectImpl {
         if ( ( fromCvFuzzyType != null ) && ( toCvFuzzyType != null ) ) {
             undetermined = fromCvFuzzyType.getShortLabel().equals(
                     CvFuzzyType.UNDETERMINED ) && toCvFuzzyType.getShortLabel().equals(
-                    CvFuzzyType.UNDETERMINED ) ;
+                    CvFuzzyType.UNDETERMINED );
         } else {
-            undetermined = false ;
+            undetermined = false;
         }
     }
 
-    public void setUndetermined(boolean undetermined)
-    {
+    public void setUndetermined( boolean undetermined ) {
         this.undetermined = undetermined;
     }
 
-    @Column(name = "link")
-    @Type(type = "yes_no")
+    @Column( name = "link" )
+    @Type( type = "yes_no" )
     public boolean isLinked() {
-        return  linked ;
+        return linked;
     }
 
     public void setLinked( boolean linked ) {
-        this.linked = linked ;
+        this.linked = linked;
     }
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "fromfuzzytype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "fromfuzzytype_ac" )
     public CvFuzzyType getFromCvFuzzyType() {
         return fromCvFuzzyType;
     }
@@ -344,8 +342,8 @@ public class Range extends BasicObjectImpl {
         fromCvFuzzyType = type;
     }
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "tofuzzytype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "tofuzzytype_ac" )
     public CvFuzzyType getToCvFuzzyType() {
         return toCvFuzzyType;
     }
@@ -366,12 +364,11 @@ public class Range extends BasicObjectImpl {
      * @param sequence the raw sequence (generally this string is the full sequence).
      */
     public void setSequence( String sequence ) {
-       this.sequence = sequence;
+        this.sequence = sequence;
     }
 
-    public String prepareSequence(String sequence)
-    {
-       // Get the sequence from start if there is no fuzzy type.
+    public String prepareSequence( String sequence ) {
+        // Get the sequence from start if there is no fuzzy type.
         if ( fromCvFuzzyType == null ) {
             setSequenceIntern( getSequenceStartingFrom( sequence, fromIntervalStart ) );
             return this.sequence;
@@ -409,7 +406,7 @@ public class Range extends BasicObjectImpl {
             return false;
         }
 
-        final Range range = (Range) o;
+        final Range range = ( Range ) o;
 
         //check the intervals are the same
         if ( fromIntervalStart != range.fromIntervalStart ) {
@@ -521,9 +518,9 @@ public class Range extends BasicObjectImpl {
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Range copy = (Range) super.clone();
+        Range copy = ( Range ) super.clone();
         // Reset the parent ac.
-       // copy.featureAc = null;
+        // copy.featureAc = null;
         return copy;
     }
 
@@ -567,14 +564,12 @@ public class Range extends BasicObjectImpl {
     }
 
     @ManyToOne
-    @JoinColumn(name = "feature_ac")
-    public Feature getFeature()
-    {
+    @JoinColumn( name = "feature_ac" )
+    public Feature getFeature() {
         return feature;
     }
 
-    public void setFeature(Feature feature)
-    {
+    public void setFeature( Feature feature ) {
         this.feature = feature;
     }
 
@@ -654,7 +649,7 @@ public class Range extends BasicObjectImpl {
      * @return true if the String is "Y", false otherwise
      */
     private boolean charToBoolean( String st ) {
-        return !st.equals("N");
+        return !st.equals( "N" );
     }
 }
 

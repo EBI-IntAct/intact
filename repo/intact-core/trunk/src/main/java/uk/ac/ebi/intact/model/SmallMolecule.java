@@ -13,6 +13,7 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  */
 public interface SmallMolecule extends Interactor {
+
 } // end SmallMolecule
 
 

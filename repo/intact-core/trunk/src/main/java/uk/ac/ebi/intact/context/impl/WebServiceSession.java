@@ -27,31 +27,26 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>07-Sep-2006</pre>
  */
-public class WebServiceSession  extends StandaloneSession
-{
+public class WebServiceSession extends StandaloneSession {
 
-    private static final Log log = LogFactory.getLog(WebServiceSession.class);
+    private static final Log log = LogFactory.getLog( WebServiceSession.class );
 
 
-    public WebServiceSession()
-    {
+    public WebServiceSession() {
         super();
     }
 
-    public WebServiceSession(Properties properties)
-    {
-        super(properties);
+    public WebServiceSession( Properties properties ) {
+        super( properties );
     }
 
     @Override
-    public boolean isWebapp()
-    {
+    public boolean isWebapp() {
         return true;
     }
 
     @Override
-    public boolean isRequestAvailable()
-    {
+    public boolean isRequestAvailable() {
         return false;
     }
 }

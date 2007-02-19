@@ -26,10 +26,9 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>17-Jul-2006</pre>
  */
-public class IntactIdGenerator extends SequenceGenerator
-{
+public class IntactIdGenerator extends SequenceGenerator {
 
-    private static final Log log = LogFactory.getLog(IntactIdGenerator.class);
+    private static final Log log = LogFactory.getLog( IntactIdGenerator.class );
 
     /**
      * The sequence parameter
@@ -39,44 +38,43 @@ public class IntactIdGenerator extends SequenceGenerator
     public static final String INTACT_AC_SEQUENCE_NAME = "intact_ac";
 
     @Override
-    public void configure(Type type, Properties properties, Dialect dialect) throws MappingException
-    {
+    public void configure( Type type, Properties properties, Dialect dialect ) throws MappingException {
         String defaultSeqValue = "hibernate_sequence";
-        String sequenceName = PropertiesHelper.getString(SEQUENCE, properties, defaultSeqValue);
+        String sequenceName = PropertiesHelper.getString( SEQUENCE, properties, defaultSeqValue );
 
         // use "intact_ac" only if the default sequence name is provided
-        if (sequenceName.equals(defaultSeqValue))
-        {
+        if ( sequenceName.equals( defaultSeqValue ) ) {
             sequenceName = INTACT_AC_SEQUENCE_NAME;
-            properties.put(SEQUENCE, sequenceName);
+            properties.put( SEQUENCE, sequenceName );
         }
-        super.configure(type, properties, dialect);
+        super.configure( type, properties, dialect );
     }
 
     /**
      * The ID is the concatenation of the prefix and a sequence provided by the database, separated
      * by a dash.
+     *
      * @param sessionImplementor a hibernate session implementor
-     * @param object the object being persisted
+     * @param object             the object being persisted
+     *
      * @return the new generated ID
+     *
      * @throws HibernateException if something goes wrong
      */
     @Override
-    public Serializable generate(SessionImplementor sessionImplementor, Object object) throws HibernateException
-    {
+    public Serializable generate( SessionImplementor sessionImplementor, Object object ) throws HibernateException {
         String prefix = IntactContext.getCurrentInstance().getConfig().getAcPrefix();
 
-        String id = prefix+"-"+super.generate(sessionImplementor, object);
+        String id = prefix + "-" + super.generate( sessionImplementor, object );
 
-        log.trace("Assigning Id: "+id);
+        log.trace( "Assigning Id: " + id );
 
         return id;
     }
 
 
     @Override
-    public String getSequenceName()
-    {
+    public String getSequenceName() {
         return INTACT_AC_SEQUENCE_NAME;
     }
 }

@@ -27,6 +27,7 @@ import java.util.List;
  */
 @SuppressWarnings( "unchecked" )
 public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObjectDaoImpl<T> implements InteractorDao<T> {
+
     /**
      * Filter to provide filtering on GeneNames
      */

@@ -7,10 +7,9 @@ package uk.ac.ebi.intact.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -40,8 +39,7 @@ public class AnnotationFilter {
     private static AnnotationFilter ourInstance;
 
     public static AnnotationFilter getInstance() {
-        if (ourInstance == null)
-        {
+        if ( ourInstance == null ) {
             ourInstance = new AnnotationFilter();
         }
         return ourInstance;
@@ -82,7 +80,7 @@ public class AnnotationFilter {
         }
 
         logger.debug( filteredTopics.size() + " CvTopic" + ( filteredTopics.size() > 1 ? "s" : "" ) + " filtered." );
-         
+
     }
 
     /**

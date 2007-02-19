@@ -27,95 +27,79 @@ import java.io.Serializable;
  * @since 1.5
  */
 @Embeddable
-public class PayAsYouGoCurrentEdgePk implements Serializable
-{
+public class PayAsYouGoCurrentEdgePk implements Serializable {
 
-    @Column(length = 20)
+    @Column( length = 20 )
     private String nidA;
 
-    @Column(length = 20)
+    @Column( length = 20 )
     private String nidB;
 
-    @Column(length = 20)
+    @Column( length = 20 )
     private String species;
 
-    public PayAsYouGoCurrentEdgePk()
-    {
+    public PayAsYouGoCurrentEdgePk() {
     }
 
-    public PayAsYouGoCurrentEdgePk(String nidA, String nidB, String species)
-    {
+    public PayAsYouGoCurrentEdgePk( String nidA, String nidB, String species ) {
         this.nidA = nidA;
         this.nidB = nidB;
         this.species = species;
     }
 
 
-    public String getNidA()
-    {
+    public String getNidA() {
         return nidA;
     }
 
-    public void setNidA(String nidA)
-    {
+    public void setNidA( String nidA ) {
         this.nidA = nidA;
     }
 
-    public String getNidB()
-    {
+    public String getNidB() {
         return nidB;
     }
 
-    public void setNidB(String nidB)
-    {
+    public void setNidB( String nidB ) {
         this.nidB = nidB;
     }
 
-    public String getSpecies()
-    {
+    public String getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species)
-    {
+    public void setSpecies( String species ) {
         this.species = species;
     }
 
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        PayAsYouGoCurrentEdgePk that = (PayAsYouGoCurrentEdgePk) o;
+        PayAsYouGoCurrentEdgePk that = ( PayAsYouGoCurrentEdgePk ) o;
 
-        if (nidA != null ? !nidA.equals(that.nidA) : that.nidA != null)
-        {
+        if ( nidA != null ? !nidA.equals( that.nidA ) : that.nidA != null ) {
             return false;
         }
-        if (nidB != null ? !nidB.equals(that.nidB) : that.nidB != null)
-        {
+        if ( nidB != null ? !nidB.equals( that.nidB ) : that.nidB != null ) {
             return false;
         }
-        if (species != null ? !species.equals(that.species) : that.species != null)
-        {
+        if ( species != null ? !species.equals( that.species ) : that.species != null ) {
             return false;
         }
 
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (nidA != null ? nidA.hashCode() : 0);
-        result = 31 * result + (nidB != null ? nidB.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = ( nidA != null ? nidA.hashCode() : 0 );
+        result = 31 * result + ( nidB != null ? nidB.hashCode() : 0 );
+        result = 31 * result + ( species != null ? species.hashCode() : 0 );
         return result;
     }
 }

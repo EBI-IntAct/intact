@@ -25,81 +25,70 @@ import java.util.List;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public class StandardCoreDataConfig extends AbstractHibernateDataConfig
-{
+public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
 
-    private static final Log log = LogFactory.getLog(StandardCoreDataConfig.class);
+    private static final Log log = LogFactory.getLog( StandardCoreDataConfig.class );
 
     public static final String NAME = "uk.ac.ebi.intact.config.STANDARD_CORE";
 
     private boolean listenersRegistered;
 
-    public StandardCoreDataConfig(IntactSession session)
-    {
-        super(session);
+    public StandardCoreDataConfig( IntactSession session ) {
+        super( session );
     }
 
-    public String getName()
-    {
+    public String getName() {
         return NAME;
     }
 
-    protected List<String> getPackagesWithEntities()
-    {
-        List<String> packages = new ArrayList<String>(1);
+    protected List<String> getPackagesWithEntities() {
+        List<String> packages = new ArrayList<String>( 1 );
 
         // /uk/ac/ebi/intact/model
-        packages.add(Interactor.class.getPackage().getName());
-        packages.add(DbInfo.class.getPackage().getName());
+        packages.add( Interactor.class.getPackage().getName() );
+        packages.add( DbInfo.class.getPackage().getName() );
 
         return packages;
     }
 
 
     @Override
-    public Configuration getConfiguration()
-    {
+    public Configuration getConfiguration() {
         Configuration configuration = super.getConfiguration();
 
-        if (!isListenersRegistered())
-        {
-            if (log.isDebugEnabled())
-            {
-                log.info("Registering core EventListeners:");
-                log.debug("\tRegistering: " + IntactObjectEventListener.class);
+        if ( !isListenersRegistered() ) {
+            if ( log.isDebugEnabled() ) {
+                log.info( "Registering core EventListeners:" );
+                log.debug( "\tRegistering: " + IntactObjectEventListener.class );
             }
-            configuration.setListener("pre-insert", new IntactObjectEventListener());
-            configuration.setListener("pre-update", new IntactObjectEventListener());
+            configuration.setListener( "pre-insert", new IntactObjectEventListener() );
+            configuration.setListener( "pre-update", new IntactObjectEventListener() );
 
-            if (log.isDebugEnabled())
-            {
-                log.debug("\tRegistering: " + SearchItemSyncEventListener.class);
+            if ( log.isDebugEnabled() ) {
+                log.debug( "\tRegistering: " + SearchItemSyncEventListener.class );
             }
-            SearchItemSyncEventListener sisl = new SearchItemSyncEventListener(getSession());
-            configuration.setListener("post-insert", sisl);
-            configuration.setListener("post-commit-update", sisl);
-            configuration.setListener("pre-delete", sisl);
+            SearchItemSyncEventListener sisl = new SearchItemSyncEventListener( getSession() );
+            configuration.setListener( "post-insert", sisl );
+            configuration.setListener( "post-commit-update", sisl );
+            configuration.setListener( "pre-delete", sisl );
 
-            setListenersRegistered(true);
+            setListenersRegistered( true );
         }
 
         return configuration;
     }
 
-    protected File getConfigFile()
-    {
+    protected File getConfigFile() {
         // uses the default file in the classpath (/hibernate.cfg.xml)
         return null;
     }
 
-    protected void setListenersRegistered(boolean listenersRegistered)
-    {
+    protected void setListenersRegistered( boolean listenersRegistered ) {
         //getSession().setApplicationAttribute(LISTENERS_REGISTERED_FLAG, listenersRegistered);
         this.listenersRegistered = listenersRegistered;
     }
 
-    protected boolean isListenersRegistered()
-    {
+    protected boolean isListenersRegistered() {
         return listenersRegistered;
 
         //Object listenersRegistered = getSession().getApplicationAttribute(LISTENERS_REGISTERED_FLAG);

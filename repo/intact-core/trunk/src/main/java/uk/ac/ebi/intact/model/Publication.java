@@ -18,8 +18,8 @@ import java.util.Iterator;
  * @since <pre>11-May-2006</pre>
  */
 @Entity
-@Table(name = "ia_publication")
-public class Publication extends AnnotatedObjectImpl<PublicationXref,PublicationAlias> implements Editable {
+@Table( name = "ia_publication" )
+public class Publication extends AnnotatedObjectImpl<PublicationXref, PublicationAlias> implements Editable {
 
     /**
      * PubMed Id of the publication.
@@ -43,7 +43,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
 
     ////////////////////////////
     // Getter and Setter
-    @Column(name="shortlabel")
+    @Column( name = "shortlabel" )
     public String getPmid() {
         return pmid;
     }
@@ -66,7 +66,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
     // Experiment handling
 
     public void addExperiment( Experiment experiment ) {
-        if ( ! experiments.contains( experiment ) ) {
+        if ( !experiments.contains( experiment ) ) {
             experiments.add( experiment );
         }
     }
@@ -75,7 +75,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
         experiments.remove( experiment );
     }
 
-    @OneToMany(mappedBy = "publication")
+    @OneToMany( mappedBy = "publication" )
     public Collection<Experiment> getExperiments() {
         return experiments;
     }
@@ -88,29 +88,29 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
     }
 
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})    
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
             name = "ia_pub2annot",
-            joinColumns = { @JoinColumn(name = "publication_ac") },
-            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
+            joinColumns = {@JoinColumn( name = "publication_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
     public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<PublicationXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<PublicationAlias> getAliases() {
         return super.getAliases();
     }
-    
+
     ////////////////////////////
     // Object's override
     @Override
@@ -119,7 +119,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
         sb.append( "Publication" );
         sb.append( "{ac='" + ac + "', pmid='" ).append( pmid ).append( '\'' );
 
-        if ( ! annotations.isEmpty() ) {
+        if ( !annotations.isEmpty() ) {
             sb.append( ", annotations={" );
             for ( Iterator<Annotation> iterator = annotations.iterator(); iterator.hasNext(); ) {
                 Annotation annotation = iterator.next();
@@ -147,7 +147,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref,Publication
             return false;
         }
 
-        final Publication that = (Publication) o;
+        final Publication that = ( Publication ) o;
 
         if ( !pmid.equals( that.pmid ) ) {
             return false;

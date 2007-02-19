@@ -31,29 +31,24 @@ import java.util.List;
  * @version $Id$
  * @since <pre>01-Sep-2006</pre>
  */
-@SuppressWarnings("unchecked")
-public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInfoDao
-{
+@SuppressWarnings( "unchecked" )
+public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInfoDao {
 
-    private static final Log log = LogFactory.getLog(DbInfoDaoImpl.class);
+    private static final Log log = LogFactory.getLog( DbInfoDaoImpl.class );
 
-    public DbInfoDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(DbInfo.class, session, intactSession);
+    public DbInfoDaoImpl( Session session, IntactSession intactSession ) {
+        super( DbInfo.class, session, intactSession );
     }
 
-    public DbInfo get(String key)
-    {
-        return (DbInfo) getSession().get(DbInfo.class, key);
+    public DbInfo get( String key ) {
+        return ( DbInfo ) getSession().get( DbInfo.class, key );
     }
 
-    public List<DbInfo> getAll()
-    {
-        return getSession().createCriteria(DbInfo.class).list();
+    public List<DbInfo> getAll() {
+        return getSession().createCriteria( DbInfo.class ).list();
     }
 
-    public void persist(DbInfo dbInfo)
-    {
-        getSession().persist(dbInfo);
+    public void persist( DbInfo dbInfo ) {
+        getSession().persist( dbInfo );
     }
 }

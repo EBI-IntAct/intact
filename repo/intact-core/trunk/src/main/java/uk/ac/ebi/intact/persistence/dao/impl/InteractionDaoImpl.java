@@ -30,102 +30,91 @@ import java.util.Set;
  * @version $Id$
  * @since <pre>03-May-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> implements InteractionDao
-{
-    private static final Log log = LogFactory.getLog(InteractionDaoImpl.class);
+@SuppressWarnings( {"unchecked"} )
+public class InteractionDaoImpl extends InteractorDaoImpl<InteractionImpl> implements InteractionDao {
 
-    public InteractionDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(InteractionImpl.class, session, intactSession);
+    private static final Log log = LogFactory.getLog( InteractionDaoImpl.class );
+
+    public InteractionDaoImpl( Session session, IntactSession intactSession ) {
+        super( InteractionImpl.class, session, intactSession );
     }
 
     /**
      * Counts the interactors for an interaction
+     *
      * @param interactionAc The interaction accession number to use
+     *
      * @return number of distinct interactors
      */
-    public Integer countInteractorsByInteractionAc(String interactionAc)
-    {
-        if (log.isDebugEnabled())
-        {
-            log.debug("Counting interactors for interaction with ac: "+interactionAc);
+    public Integer countInteractorsByInteractionAc( String interactionAc ) {
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Counting interactors for interaction with ac: " + interactionAc );
         }
 
-        return (Integer) getSession().createCriteria(InteractionImpl.class)
-                .add(Restrictions.idEq(interactionAc))
-                .createAlias("components", "comp")
-                .createAlias("comp.interactor", "interactor")
-                .setProjection(Projections.count("interactor.ac")).uniqueResult();
+        return ( Integer ) getSession().createCriteria( InteractionImpl.class )
+                .add( Restrictions.idEq( interactionAc ) )
+                .createAlias( "components", "comp" )
+                .createAlias( "comp.interactor", "interactor" )
+                .setProjection( Projections.count( "interactor.ac" ) ).uniqueResult();
     }
 
-    public List<String> getNestedInteractionAcsByInteractionAc(String interactionAc)
-    {
-        if (log.isDebugEnabled())
-        {
-            log.debug("Getting nested interactions for interaction with ac: "+interactionAc);
+    public List<String> getNestedInteractionAcsByInteractionAc( String interactionAc ) {
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Getting nested interactions for interaction with ac: " + interactionAc );
         }
 
-        return getSession().createCriteria(InteractionImpl.class)
-                .add(Restrictions.idEq(interactionAc))
-                .createAlias("components", "comp")
-                .createAlias("comp.interactor", "interactor")
-                .add(Restrictions.eq("interactor.objClass", InteractionImpl.class.getName()))
-                .setProjection(Projections.distinct(Projections.property("interactor.ac"))).list();
+        return getSession().createCriteria( InteractionImpl.class )
+                .add( Restrictions.idEq( interactionAc ) )
+                .createAlias( "components", "comp" )
+                .createAlias( "comp.interactor", "interactor" )
+                .add( Restrictions.eq( "interactor.objClass", InteractionImpl.class.getName() ) )
+                .setProjection( Projections.distinct( Projections.property( "interactor.ac" ) ) ).list();
     }
 
-    public List<Interaction> getInteractionByExperimentShortLabel(String[] experimentLabels, Integer firstResult, Integer maxResults)
-    {
-        Criteria criteria = getSession().createCriteria(Interaction.class)
-                 .createCriteria("experiments")
-                 .add(Restrictions.in("shortLabel", experimentLabels));
+    public List<Interaction> getInteractionByExperimentShortLabel( String[] experimentLabels, Integer firstResult, Integer maxResults ) {
+        Criteria criteria = getSession().createCriteria( Interaction.class )
+                .createCriteria( "experiments" )
+                .add( Restrictions.in( "shortLabel", experimentLabels ) );
 
-        if (firstResult != null && firstResult >=0)
-        {
-            criteria.setFirstResult(firstResult);
+        if ( firstResult != null && firstResult >= 0 ) {
+            criteria.setFirstResult( firstResult );
         }
 
-        if (maxResults != null && maxResults > 0)
-        {
-            criteria.setMaxResults(maxResults);
+        if ( maxResults != null && maxResults > 0 ) {
+            criteria.setMaxResults( maxResults );
         }
 
         return criteria.list();
     }
 
-    public List<Interaction> getInteractionsByInteractorAc(String interactorAc)
-    {
-        return getSession().createCriteria(Interaction.class)
-                .createAlias("components", "comp")
-                .createAlias("comp.interactor", "interactor")
-                .add(Restrictions.eq("interactor.ac", interactorAc)).list();
+    public List<Interaction> getInteractionsByInteractorAc( String interactorAc ) {
+        return getSession().createCriteria( Interaction.class )
+                .createAlias( "components", "comp" )
+                .createAlias( "comp.interactor", "interactor" )
+                .add( Restrictions.eq( "interactor.ac", interactorAc ) ).list();
     }
 
-    public List<Interaction> getInteractionsForProtPair(String protAc1, String protAc2)
-    {
-        Query query = getSession().createQuery("SELECT i FROM InteractionImpl AS i, Component AS c1, Component AS c2 " +
-                "WHERE i.ac = c1.interactionAc AND i.ac = c2.interactionAc AND " +
-                "c1.interactorAc = :protAc1 AND c2.interactorAc = :protAc2");
+    public List<Interaction> getInteractionsForProtPair( String protAc1, String protAc2 ) {
+        Query query = getSession().createQuery( "SELECT i FROM InteractionImpl AS i, Component AS c1, Component AS c2 " +
+                                                "WHERE i.ac = c1.interactionAc AND i.ac = c2.interactionAc AND " +
+                                                "c1.interactorAc = :protAc1 AND c2.interactorAc = :protAc2" );
 
-        query.setParameter("protAc1", protAc1);
-        query.setParameter("protAc2", protAc2);
+        query.setParameter( "protAc1", protAc1 );
+        query.setParameter( "protAc2", protAc2 );
 
         return query.list();
     }
 
-    public Collection<Interaction> getSelfBinaryInteractionsByProtAc(String protAc)
-    {
-        List<Interaction> interactions = getInteractionsByInteractorAc(protAc);
+    public Collection<Interaction> getSelfBinaryInteractionsByProtAc( String protAc ) {
+        List<Interaction> interactions = getInteractionsByInteractorAc( protAc );
 
         Set<Interaction> selfInteractions = new HashSet<Interaction>();
 
-        for (Interaction inter : interactions)
-        {
-            boolean isSelfInteraction = InteractionUtils.isSelfBinaryInteraction(inter);
+        for ( Interaction inter : interactions ) {
+            boolean isSelfInteraction = InteractionUtils.isSelfBinaryInteraction( inter );
 
-            if (isSelfInteraction)
-            {
-                selfInteractions.add(inter);
+            if ( isSelfInteraction ) {
+                selfInteractions.add( inter );
             }
         }
 

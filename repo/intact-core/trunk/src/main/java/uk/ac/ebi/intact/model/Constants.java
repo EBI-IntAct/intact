@@ -14,8 +14,7 @@ package uk.ac.ebi.intact.model;
 
 public final class Constants {
 
-    private Constants()
-    {
+    private Constants() {
     }
 
     /**
@@ -94,91 +93,77 @@ public final class Constants {
     public static final String SEARCH_PARAM = "searchParam";
 
     /**
-     *  Name of the database engine being used
-     *
-     * */
+     * Name of the database engine being used
+     */
     public static final String JDO = "jdo";
 
     /**
-     *  holds the object type to class mapping within the servlet context
-     *
-     * */
+     * holds the object type to class mapping within the servlet context
+     */
     public static final String TYPE_MAP = "types";
 
 
     /**
-     *  a specific data store column  - better in a config file!!
-     *
-     * */
+     * a specific data store column  - better in a config file!!
+     */
     public static final String SEARCH_BY_AC = "ac";
 
     /**
-     *  a specific data store column - better in a config file!!
-     *
-     * */
+     * a specific data store column - better in a config file!!
+     */
     public static final String SEARCH_BY_NAME = "name";
 
     /**
-     *  used as a key to identify a DB filename (for Castor)
+     * used as a key to identify a DB filename (for Castor)
      * the value is defined in the web.xml file
-     *
-     * */
+     */
     public static final String DB_FILE_KEY = "dbfile";
 
     /**
-     *  used as a key to identify a mapping filename (for Castor)
+     * used as a key to identify a mapping filename (for Castor)
      * the value is defined in the web.xml file
-     *
-     * */
+     */
     public static final String MAPPING_FILE_KEY = "mappingfile";
 
     /**
-     *  used as a key to identify a DB name - value defined in web.xml file
-     *
-     * */
+     * used as a key to identify a DB name - value defined in web.xml file
+     */
     public static final String DB_NAME_KEY = "dbname";
 
     /**
-     *  used as a key to identify a datasource class - its value
-     *  is deifned in the web.xml file as a servlet context parameter
-     *
-     * */
+     * used as a key to identify a datasource class - its value
+     * is deifned in the web.xml file as a servlet context parameter
+     */
     public static final String DATASOURCE = "datasource";
 
     /**
-     *  used as a key to identify an intact object types property file -
+     * used as a key to identify an intact object types property file -
      * its value is defined in the web.xml file as a servlet context parameter
-     *
-     * */
+     */
     public static final String INTACT_TYPES_FILE = "intacttypesfile";
 
     /**
-     *  used as a key to identify a page to display when no matches are found
+     * used as a key to identify a page to display when no matches are found
      * from a search
-     *
-     * */
+     */
     public static final String FORWARD_NO_MATCHES = "noMatch";
 
     /**
-     *  used as a servlet context parameter name to refer to reflection data
+     * used as a servlet context parameter name to refer to reflection data
      * for the intact classes
-     *
-     * */
+     */
     public static final String CLASS_INFO = "classInfo";
 
     /**
-     *  used as a servlet context parameter name to refer to the path of
+     * used as a servlet context parameter name to refer to the path of
      * a log file
-     *
-     * */
+     */
     public static final String INTACT_LOG_FILE = "logfile";
 
     /**
-     *  used as a servlet session parameter name to refer to an intact helper instance
-     *
-     * */
+     * used as a servlet session parameter name to refer to an intact helper instance
+     */
     public static final String INTACT_HELPER = "intacthelper";
-
 
     /**
      * Expansion:

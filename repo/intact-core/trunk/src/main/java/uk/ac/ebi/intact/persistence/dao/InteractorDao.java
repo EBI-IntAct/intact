@@ -14,15 +14,15 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface InteractorDao<T extends InteractorImpl> extends AnnotatedObjectDao<T>
-{
-    Integer countInteractionsForInteractorWithAc(String ac);
+public interface InteractorDao<T extends InteractorImpl> extends AnnotatedObjectDao<T> {
 
-    Integer countComponentsForInteractorWithAc(String ac);
+    Integer countInteractionsForInteractorWithAc( String ac );
 
-    List<String> getGeneNamesByInteractorAc(String proteinAc);
+    Integer countComponentsForInteractorWithAc( String ac );
 
-    List<T> getByBioSourceAc(String ac);
+    List<String> getGeneNamesByInteractorAc( String proteinAc );
+
+    List<T> getByBioSourceAc( String ac );
 
     public int countInteractorInvolvedInInteraction();
 

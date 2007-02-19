@@ -6,8 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.persistence;
 
 /**
- *  <p>Exception class to provide more meaningful error messages.
- *  There is an extra constructor to allow other exceptions to
+ * <p>Exception class to provide more meaningful error messages.
+ * There is an extra constructor to allow other exceptions to
  * pass on information. </p>
  *
  * @author Chris Lewington
@@ -23,11 +23,11 @@ public class UpdateException extends Exception {
      * The default construstor with a default error message.
      */
     public UpdateException() {
-        this("Unable to update: the object not yet persisted; create first!");
+        this( "Unable to update: the object not yet persisted; create first!" );
     }
 
-    public UpdateException(String msg) {
-        super(msg);
+    public UpdateException( String msg ) {
+        super( msg );
     }
 
     /**
@@ -35,11 +35,10 @@ public class UpdateException extends Exception {
      * information from excpetions thrown elsewhere, eg from within other APIs
      *
      * @param msg - the currently raised message
-     * @param e - an Exception being passed on
-     *
+     * @param e   - an Exception being passed on
      */
-    public UpdateException(String msg, Exception e) {
-        super(msg);
+    public UpdateException( String msg, Exception e ) {
+        super( msg );
         e.fillInStackTrace();
         nestedMessage = e.getMessage();
         //this is the bottom level of intact exceptions - so wrap the origin
@@ -47,19 +46,17 @@ public class UpdateException extends Exception {
     }
 
     /**
-     *  this method obtains any information from within nested exceptions
+     * this method obtains any information from within nested exceptions
      * that have been passed on.
      *
      * @return String - a nested message, or a string indiciating none available
-     *
      */
     public String getNestedMessage() {
 
-        if (nestedMessage != null) {
+        if ( nestedMessage != null ) {
 
             return nestedMessage;
-        }
-        else {
+        } else {
 
             return "No nested messages have been passed on.";
         }

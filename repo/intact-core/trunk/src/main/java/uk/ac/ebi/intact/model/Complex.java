@@ -27,7 +27,8 @@ public class Complex extends InteractorImpl {
     public float getMw() {
         return mw;
     }
-    public void setMw(float mw) {
+
+    public void setMw( float mw ) {
         this.mw = mw;
     }
 } // end Complex

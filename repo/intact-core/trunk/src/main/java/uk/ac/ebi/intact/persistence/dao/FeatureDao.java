@@ -7,7 +7,6 @@ import uk.ac.ebi.intact.model.Feature;
  * @version $Id$
  * @since <pre>08-Jul-2006</pre>
  */
-public interface FeatureDao extends AnnotatedObjectDao<Feature>
-{
+public interface FeatureDao extends AnnotatedObjectDao<Feature> {
 
 }

@@ -35,109 +35,92 @@ import java.util.Map;
  * @version $Id$
  * @since 1.5
  */
-public class SimpleSearchService implements SearchService
-{
-    public SimpleSearchService()
-    {
+public class SimpleSearchService implements SearchService {
+
+    public SimpleSearchService() {
     }
 
-    public int count(Class<? extends Searchable> searchable, String query)
-    {
-        return count(searchable, createSimpleQuery(query));
+    public int count( Class<? extends Searchable> searchable, String query ) {
+        return count( searchable, createSimpleQuery( query ) );
     }
 
-    public int count(Class<? extends Searchable> searchable, SearchableQuery query)
-    {
-        int count = getDao().countByQuery(searchable, query);
+    public int count( Class<? extends Searchable> searchable, SearchableQuery query ) {
+        int count = getDao().countByQuery( searchable, query );
 
-        if (count > 0)
-        {
+        if ( count > 0 ) {
             return count;
         }
 
-        return getDao().countByQuery(searchable, createSimpleQueryWithWildcards(query));
+        return getDao().countByQuery( searchable, createSimpleQueryWithWildcards( query ) );
     }
 
-    public Map<Class<? extends Searchable>, Integer> count(Class<? extends Searchable>[] searchables, String query)
-    {
-        return getDao().countByQuery(searchables, createSimpleQuery(query));
+    public Map<Class<? extends Searchable>, Integer> count( Class<? extends Searchable>[] searchables, String query ) {
+        return getDao().countByQuery( searchables, createSimpleQuery( query ) );
     }
 
-    public Map<Class<? extends Searchable>, Integer> count(Class<? extends Searchable>[] searchables, SearchableQuery query)
-    {
-        Map<Class<? extends Searchable>, Integer> count = getDao().countByQuery(searchables, query);
+    public Map<Class<? extends Searchable>, Integer> count( Class<? extends Searchable>[] searchables, SearchableQuery query ) {
+        Map<Class<? extends Searchable>, Integer> count = getDao().countByQuery( searchables, query );
 
         int total = 0;
 
-        for (int c : count.values())
-        {
+        for ( int c : count.values() ) {
             total += c;
         }
 
-        if (total > 0)
-        {
+        if ( total > 0 ) {
             return count;
         }
 
-        return getDao().countByQuery(searchables, createSimpleQueryWithWildcards(query));
+        return getDao().countByQuery( searchables, createSimpleQueryWithWildcards( query ) );
     }
 
-    public <S extends Searchable> List<S> search(Class<S> searchable, String query, Integer firstResult, Integer maxResults)
-    {
-        return search(searchable, createSimpleQuery(query), firstResult, maxResults);
+    public <S extends Searchable> List<S> search( Class<S> searchable, String query, Integer firstResult, Integer maxResults ) {
+        return search( searchable, createSimpleQuery( query ), firstResult, maxResults );
     }
 
-    public <S extends Searchable> List<S> search(Class<S> searchable, SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
-        return (List<S>) search(new Class[] {searchable}, query, firstResult, maxResults);
+    public <S extends Searchable> List<S> search( Class<S> searchable, SearchableQuery query, Integer firstResult, Integer maxResults ) {
+        return ( List<S> ) search( new Class[]{searchable}, query, firstResult, maxResults );
     }
 
-    public List<? extends Searchable> search(Class<? extends Searchable>[] searchables, String query, Integer firstResult, Integer maxResults)
-    {
-        return search(searchables, createSimpleQuery(query), firstResult, maxResults);
+    public List<? extends Searchable> search( Class<? extends Searchable>[] searchables, String query, Integer firstResult, Integer maxResults ) {
+        return search( searchables, createSimpleQuery( query ), firstResult, maxResults );
     }
 
-    public List<? extends Searchable> search(Class<? extends Searchable>[] searchables, SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
-        if (firstResult == null) firstResult = 0;
-        if (maxResults == null) maxResults = Integer.MAX_VALUE;
+    public List<? extends Searchable> search( Class<? extends Searchable>[] searchables, SearchableQuery query, Integer firstResult, Integer maxResults ) {
+        if ( firstResult == null ) firstResult = 0;
+        if ( maxResults == null ) maxResults = Integer.MAX_VALUE;
 
-        List<? extends Searchable> results = getDao().getByQuery(searchables, query, firstResult, maxResults);
+        List<? extends Searchable> results = getDao().getByQuery( searchables, query, firstResult, maxResults );
 
-        if (results.size() > 0)
-        {
+        if ( results.size() > 0 ) {
             return results;
         }
 
-        return getDao().getByQuery(searchables, createSimpleQueryWithWildcards(query), firstResult, maxResults);
+        return getDao().getByQuery( searchables, createSimpleQueryWithWildcards( query ), firstResult, maxResults );
     }
 
-    private SearchableDao getDao()
-    {
+    private SearchableDao getDao() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getSearchableDao();
     }
 
-    private SearchableQuery createSimpleQuery(String query)
-    {
-        QueryPhrase phrase = new StandardQueryPhraseConverter().objectToPhrase(query);
+    private SearchableQuery createSimpleQuery( String query ) {
+        QueryPhrase phrase = new StandardQueryPhraseConverter().objectToPhrase( query );
 
         SearchableQuery sq = new SearchableQuery();
 
-        if (!phrase.isOnlyWildcard())
-        {
-            sq.setAc(phrase);
-            sq.setShortLabel(phrase);
-            sq.setDescription(phrase);
-            sq.setAnnotationText(phrase);
-            sq.setXref(phrase);
-            sq.setDisjunction(true);
+        if ( !phrase.isOnlyWildcard() ) {
+            sq.setAc( phrase );
+            sq.setShortLabel( phrase );
+            sq.setDescription( phrase );
+            sq.setAnnotationText( phrase );
+            sq.setXref( phrase );
+            sq.setDisjunction( true );
         }
 
         return sq;
     }
 
-    private SearchableQuery createSimpleQueryWithWildcards(SearchableQuery query)
-    {
-        return DaoUtils.autoAddWildcards(query);
+    private SearchableQuery createSimpleQueryWithWildcards( SearchableQuery query ) {
+        return DaoUtils.autoAddWildcards( query );
     }
 }

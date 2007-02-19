@@ -21,7 +21,7 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvXrefQualifier")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvXrefQualifier" )
 @EditorTopic
 public class CvXrefQualifier extends CvObject implements Editable {
 
@@ -59,18 +59,22 @@ public class CvXrefQualifier extends CvObject implements Editable {
 
     public static final String IMEX_PRIMARY = "imex-primary";
     public static final String IMEX_PRIMARY_MI_REF = "MI:0662";
-    
+
     public static final String SOURCE_REFERENCE = "source reference";
     public static final String SOURCE_REFERENCE_MI_REF = "MI:0685";
 
     public static final String METHOD_REFERENCE = "method reference";
     public static final String METHOD_REFERENCE_MI_REF = "MI:0357";
-    
+
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus.
      * This should not be here as it has no model functionality but is
      * related to eg user interfaces.
+     * <p/>
+     * This constructor should <b>not</b> be used as it could
+     * result in objects with invalid state. It is here for object mapping
+     * purposes only and if possible will be made private.
      */
 //    protected static Vector menuList = null;
 
@@ -91,6 +95,7 @@ public class CvXrefQualifier extends CvObject implements Editable {
      *
      * @param shortLabel The memorable label to identify this CvXrefQualifier
      * @param owner      The Institution which owns this CvXrefQualifier
+     *
      * @throws NullPointerException thrown if either parameters are not specified
      */
     public CvXrefQualifier( Institution owner, String shortLabel ) {

@@ -12,11 +12,10 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-public class NotAnEntityException extends RuntimeException
-{
-    public NotAnEntityException(Class offendingClass)
-    {
-        super("Class is not annotated with @javax.persistence.Entity: "+offendingClass);
+public class NotAnEntityException extends RuntimeException {
+
+    public NotAnEntityException( Class offendingClass ) {
+        super( "Class is not annotated with @javax.persistence.Entity: " + offendingClass );
     }
 
 }

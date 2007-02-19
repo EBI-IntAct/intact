@@ -22,8 +22,8 @@ package uk.ac.ebi.intact.persistence.dao.query;
  * @version $Id$
  * @since 1.5
  */
-public enum QueryModifierPosition
-{
+public enum QueryModifierPosition {
+
     BEFORE_TERM,
     AFTER_TERM,
     BEFORE_AFTER_TERM,

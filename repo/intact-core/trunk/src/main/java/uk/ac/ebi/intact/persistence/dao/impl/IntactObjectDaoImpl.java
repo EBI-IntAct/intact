@@ -27,7 +27,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings( {"unchecked"} )
 public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDaoImpl<T> implements IntactObjectDao<T> {
 
     public IntactObjectDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
@@ -42,15 +42,15 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
      * @return the object
      */
     public T getByAc( String ac ) {
-        return (T) getSession().get( getEntityClass(), ac );
+        return ( T ) getSession().get( getEntityClass(), ac );
     }
 
     public Collection<T> getByAcLike( String ac ) {
         return getByPropertyNameLike( "ac", ac );
     }
 
-    public Collection<T> getByAcLike(String ac, boolean ignoreCase){
-        return getByPropertyNameLike("ac", ac, ignoreCase);
+    public Collection<T> getByAcLike( String ac, boolean ignoreCase ) {
+        return getByPropertyNameLike( "ac", ac, ignoreCase );
     }
 
 
@@ -80,10 +80,9 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         return getSession().createCriteria( getEntityClass() ).list();
     }
 
-    public Iterator<T> getAllIterator()
-    {
+    public Iterator<T> getAllIterator() {
         return new IntactObjectIterator( getEntityClass(),
-                DetachedCriteria.forClass( getEntityClass() ));
+                                         DetachedCriteria.forClass( getEntityClass() ) );
     }
 
     public List<T> getAll( int firstResult, int maxResults ) {
@@ -93,7 +92,7 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     }
 
     public int countAll() {
-        return (Integer) getSession()
+        return ( Integer ) getSession()
                 .createCriteria( getEntityClass() )
                 .setProjection( Projections.rowCount() )
                 .uniqueResult();
@@ -117,7 +116,7 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
 
     public void update( T objToUpdate ) {
         checkReadOnly();
-        
+
         getSession().update( objToUpdate );
     }
 
@@ -141,10 +140,9 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
         getSession().delete( objToDelete );
     }
 
-    public int deleteByAc(String ac)
-    {
-        Query deleteQuery = getSession().createQuery("delete "+getEntityClass()+" item where item.ac = :ac");
-        deleteQuery.setParameter("ac", ac);
+    public int deleteByAc( String ac ) {
+        Query deleteQuery = getSession().createQuery( "delete " + getEntityClass() + " item where item.ac = :ac" );
+        deleteQuery.setParameter( "ac", ac );
 
         return deleteQuery.executeUpdate();
     }

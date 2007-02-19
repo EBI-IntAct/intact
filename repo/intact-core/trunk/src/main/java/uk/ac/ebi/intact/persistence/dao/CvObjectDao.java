@@ -15,9 +15,9 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
-{
-    List<T> getByPsiMiRefCollection(Collection<String> psiMis);
+public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T> {
+
+    List<T> getByPsiMiRefCollection( Collection<String> psiMis );
 
     /**
      * Returns a list of controlled vocabulary terms having the given MI reference as identity.
@@ -28,9 +28,9 @@ public interface CvObjectDao<T extends CvObject> extends AnnotatedObjectDao<T>
      */
     T getByPsiMiRef( String psiMiRef );
 
-    List<T> getByObjClass(Class[] objClasses);
+    List<T> getByObjClass( Class[] objClasses );
 
-    <T extends CvObject> T getByShortLabel(Class<T> cvType, String label);
+    <T extends CvObject> T getByShortLabel( Class<T> cvType, String label );
 
-    <T extends CvObject> T getByPrimaryId(Class<T> cvType, String miRef);
+    <T extends CvObject> T getByPrimaryId( Class<T> cvType, String miRef );
 }

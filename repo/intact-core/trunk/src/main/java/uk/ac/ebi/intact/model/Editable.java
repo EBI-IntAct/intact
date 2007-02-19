@@ -12,4 +12,6 @@ package uk.ac.ebi.intact.model;
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
-public interface Editable {}
+public interface Editable {
+
+}

@@ -27,21 +27,21 @@ import java.util.Map;
  * @version $Id$
  * @since 1.5
  */
-public interface SearchableDao extends BaseDao<Session>
-{
-    static final Class<? extends Searchable>[] STANDARD_SEARCHABLES = new Class[] { Experiment.class, InteractionImpl.class, ProteinImpl.class, NucleicAcidImpl.class, CvObject.class };
-    
-    Integer countByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query);
+public interface SearchableDao extends BaseDao<Session> {
 
-    Map<Class<? extends Searchable>, Integer> countByQuery(SearchableQuery query);
+    static final Class<? extends Searchable>[] STANDARD_SEARCHABLES = new Class[]{Experiment.class, InteractionImpl.class, ProteinImpl.class, NucleicAcidImpl.class, CvObject.class};
 
-    Map<Class<? extends Searchable>, Integer> countByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query);
+    Integer countByQuery( Class<? extends Searchable> searchableClass, SearchableQuery query );
 
-    List<? extends Searchable> getByQuery(SearchableQuery query, Integer firstResults, Integer maxResults);
+    Map<Class<? extends Searchable>, Integer> countByQuery( SearchableQuery query );
 
-    List<? extends Searchable> getByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResult, Integer maxResults);
+    Map<Class<? extends Searchable>, Integer> countByQuery( Class<? extends Searchable>[] searchableClasses, SearchableQuery query );
 
-    <T extends Searchable> List<T> getByQuery(Class<T> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults);
+    List<? extends Searchable> getByQuery( SearchableQuery query, Integer firstResults, Integer maxResults );
 
-    List<String> getAcsByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults);
+    List<? extends Searchable> getByQuery( Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResult, Integer maxResults );
+
+    <T extends Searchable> List<T> getByQuery( Class<T> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults );
+
+    List<String> getAcsByQuery( Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults );
 }

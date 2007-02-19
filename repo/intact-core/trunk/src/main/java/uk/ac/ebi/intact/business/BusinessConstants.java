@@ -29,12 +29,12 @@ public class BusinessConstants {
     /**
      * used to identify a JDBC transaction type. Used by DAOs etc.
      */
-        public static final int JDBC_TX = 0;
+    public static final int JDBC_TX = 0;
 
     /**
      * used to identify an object-level transaction. Used by DAOs etc.
      */
-        public static final int OBJECT_TX = 1;
+    public static final int OBJECT_TX = 1;
 
 
 }

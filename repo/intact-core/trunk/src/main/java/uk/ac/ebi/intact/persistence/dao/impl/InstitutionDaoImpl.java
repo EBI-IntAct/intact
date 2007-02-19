@@ -12,23 +12,19 @@ import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
  * @version $Id$
  * @since <pre>07-jul-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class InstitutionDaoImpl extends IntactObjectDaoImpl<Institution> implements InstitutionDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class InstitutionDaoImpl extends IntactObjectDaoImpl<Institution> implements InstitutionDao {
 
-    public InstitutionDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Institution.class, session, intactSession);
+    public InstitutionDaoImpl( Session session, IntactSession intactSession ) {
+        super( Institution.class, session, intactSession );
     }
 
-    public Institution getByShortLabel(String shortLabel)
-    {
-        return getByPropertyName("shortLabel", shortLabel);
+    public Institution getByShortLabel( String shortLabel ) {
+        return getByPropertyName( "shortLabel", shortLabel );
     }
 
     @Override
-    public void persist(Institution objToPersist)
-    {
-        getSession().persist(objToPersist);
+    public void persist( Institution objToPersist ) {
+        getSession().persist( objToPersist );
     }
 }

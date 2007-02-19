@@ -155,6 +155,7 @@ public class InteractionUtils {
      * @param interaction
      *
      * @return
+     *
      * @since 1.5
      */
     public static boolean isUnaryInteraction( Interaction interaction ) {

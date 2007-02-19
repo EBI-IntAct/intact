@@ -16,19 +16,19 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface SearchItemDao extends BaseDao<Session>
-{
-    Map<String,Integer> countGroupsByValuesLike(String[] values, String[] objClasses, String type);
+public interface SearchItemDao extends BaseDao<Session> {
 
-    List<String> getDistinctAc(String[] values, String[] objClasses, String type, int firstResult, int maxResults);
+    Map<String, Integer> countGroupsByValuesLike( String[] values, String[] objClasses, String type );
 
-    Map<String, String> getDistinctAcGroupingByObjClass(String[] values, String[] objClasses, String type, int firstResult, int maxResults);
+    List<String> getDistinctAc( String[] values, String[] objClasses, String type, int firstResult, int maxResults );
 
-    List<SearchItem> getByAc(String ac);
+    Map<String, String> getDistinctAcGroupingByObjClass( String[] values, String[] objClasses, String type, int firstResult, int maxResults );
 
-    void persist(SearchItem searchItem);
+    List<SearchItem> getByAc( String ac );
 
-    void delete(SearchItem searchItem);
+    void persist( SearchItem searchItem );
 
-    int deleteByAc(String ac);
+    void delete( SearchItem searchItem );
+
+    int deleteByAc( String ac );
 }

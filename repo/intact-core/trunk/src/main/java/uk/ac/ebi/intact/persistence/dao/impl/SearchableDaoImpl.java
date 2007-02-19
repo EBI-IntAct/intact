@@ -35,67 +35,57 @@ import java.util.*;
  * @version $Id$
  * @since 1.5
  */
-public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl> implements SearchableDao
-{
-    public SearchableDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(AnnotatedObjectImpl.class, session, intactSession);
+public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl> implements SearchableDao {
+
+    public SearchableDaoImpl( Session session, IntactSession intactSession ) {
+        super( AnnotatedObjectImpl.class, session, intactSession );
     }
 
-    public Integer countByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query)
-    {
-        Criteria criteria = new SearchableCriteriaBuilder(query)
-                .createCriteria(searchableClass, getSession());
-        criteria.setProjection(Projections.countDistinct("ac"));
+    public Integer countByQuery( Class<? extends Searchable> searchableClass, SearchableQuery query ) {
+        Criteria criteria = new SearchableCriteriaBuilder( query )
+                .createCriteria( searchableClass, getSession() );
+        criteria.setProjection( Projections.countDistinct( "ac" ) );
 
         List<Integer> list = criteria.list();
 
         int count = 0;
 
-        for (Integer entityCount : list)
-        {
+        for ( Integer entityCount : list ) {
             count += entityCount;
         }
 
         return count;
     }
 
-    public Map<Class<? extends Searchable>, Integer> countByQuery(SearchableQuery query)
-    {
-        return countByQuery(STANDARD_SEARCHABLES, query);
+    public Map<Class<? extends Searchable>, Integer> countByQuery( SearchableQuery query ) {
+        return countByQuery( STANDARD_SEARCHABLES, query );
     }
 
-    public Map<Class<? extends Searchable>, Integer> countByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query)
-    {
+    public Map<Class<? extends Searchable>, Integer> countByQuery( Class<? extends Searchable>[] searchableClasses, SearchableQuery query ) {
         Map<Class<? extends Searchable>, Integer> counts = new HashMap<Class<? extends Searchable>, Integer>();
 
-        for (Class<? extends Searchable> searchable : searchableClasses)
-        {
-            counts.put(searchable, countByQuery(searchable, query));
+        for ( Class<? extends Searchable> searchable : searchableClasses ) {
+            counts.put( searchable, countByQuery( searchable, query ) );
         }
 
         return counts;
     }
 
-    public List<? extends Searchable> getByQuery(SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
-        return getByQuery(STANDARD_SEARCHABLES, query, firstResult, maxResults);
+    public List<? extends Searchable> getByQuery( SearchableQuery query, Integer firstResult, Integer maxResults ) {
+        return getByQuery( STANDARD_SEARCHABLES, query, firstResult, maxResults );
     }
 
-    public List<? extends Searchable> getByQuery(Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
+    public List<? extends Searchable> getByQuery( Class<? extends Searchable>[] searchableClasses, SearchableQuery query, Integer firstResult, Integer maxResults ) {
         // iterate each searchable and get the results
         List<? extends Searchable> results = new ArrayList<Searchable>();
 
-        for (Class searchable : searchableClasses)
-        {
+        for ( Class searchable : searchableClasses ) {
             int resultsFoundSoFar = results.size();
-            int resultsToFetch = maxResults-resultsFoundSoFar;
-            
-            results.addAll(getByQuery(searchable, query, firstResult, resultsToFetch));
+            int resultsToFetch = maxResults - resultsFoundSoFar;
 
-            if (results.size() == maxResults)
-            {
+            results.addAll( getByQuery( searchable, query, firstResult, resultsToFetch ) );
+
+            if ( results.size() == maxResults ) {
                 break;
             }
         }
@@ -103,40 +93,35 @@ public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl>
         return results;
     }
 
-    public <T extends Searchable> List<T> getByQuery(Class<T> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
+    public <T extends Searchable> List<T> getByQuery( Class<T> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults ) {
         //DetachedCriteria criteria = new SearchableCriteriaBuilder(query)
         //        .createCriteria(searchableClass);
 
         //Criteria crit = criteria.getExecutableCriteria(getSession());
 
-        List<String> acs = getAcsByQuery(searchableClass, query, firstResult, maxResults);
+        List<String> acs = getAcsByQuery( searchableClass, query, firstResult, maxResults );
 
-        if (acs.isEmpty())
-        {
+        if ( acs.isEmpty() ) {
             return Collections.EMPTY_LIST;
         }
 
-        Criteria crit = getSession().createCriteria(searchableClass)
-                .add(Restrictions.in("ac", acs));
+        Criteria crit = getSession().createCriteria( searchableClass )
+                .add( Restrictions.in( "ac", acs ) );
 
         return crit.list();
     }
 
-    public List<String> getAcsByQuery(Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults)
-    {
-        Criteria crit = new SearchableCriteriaBuilder(query)
-                .createCriteria(searchableClass, getSession())
-                .setProjection(Projections.distinct(Property.forName("ac")));
+    public List<String> getAcsByQuery( Class<? extends Searchable> searchableClass, SearchableQuery query, Integer firstResult, Integer maxResults ) {
+        Criteria crit = new SearchableCriteriaBuilder( query )
+                .createCriteria( searchableClass, getSession() )
+                .setProjection( Projections.distinct( Property.forName( "ac" ) ) );
 
-        if (firstResult != null)
-        {
-            crit.setFirstResult(firstResult);
+        if ( firstResult != null ) {
+            crit.setFirstResult( firstResult );
         }
 
-        if (maxResults != null)
-        {
-            crit.setMaxResults(maxResults);
+        if ( maxResults != null ) {
+            crit.setMaxResults( maxResults );
         }
 
         return crit.list();

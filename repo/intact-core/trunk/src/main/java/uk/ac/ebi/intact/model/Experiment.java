@@ -21,10 +21,9 @@ import java.util.Collection;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_experiment")
+@Table( name = "ia_experiment" )
 @EditorTopic
-public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAlias> implements Editable, Searchable
-{
+public class Experiment extends AnnotatedObjectImpl<ExperimentXref, ExperimentAlias> implements Editable, Searchable {
 
     ///////////////////////////////////////
     // associations
@@ -137,6 +136,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
 
     // TODO could wipe all existing interaction ... maybe dangerous.
     // TODO shold also allow to have no interaction if the collection is null or empty.
+
     public void setInteractions( Collection<Interaction> someInteraction ) {
         if ( someInteraction == null ) {
             throw new IllegalArgumentException( "Interactions must not be null." );
@@ -144,7 +144,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.interactions = someInteraction;
     }
 
-    @ManyToMany(targetEntity = InteractionImpl.class, mappedBy = "experiments")
+    @ManyToMany( targetEntity = InteractionImpl.class, mappedBy = "experiments" )
     public Collection<Interaction> getInteractions() {
         return interactions;
     }
@@ -173,8 +173,8 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         }
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "relatedexperiment_ac", referencedColumnName = "ac")
+    @OneToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "relatedexperiment_ac", referencedColumnName = "ac" )
     public Experiment getRelatedExperiment() {
         return relatedExperiment;
     }
@@ -183,8 +183,8 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.relatedExperiment = experiment;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "identmethod_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "identmethod_ac" )
     public CvIdentification getCvIdentification() {
         return cvIdentification;
     }
@@ -198,8 +198,8 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
      *
      * @return
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "detectmethod_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "detectmethod_ac" )
     public CvInteraction getCvInteraction() {
         return cvInteraction;
     }
@@ -213,8 +213,8 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.cvInteraction = cvInteraction;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "biosource_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "biosource_ac" )
     public BioSource getBioSource() {
         return bioSource;
     }
@@ -233,8 +233,8 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.bioSource = bioSource;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "publication_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "publication_ac" )
     public Publication getPublication() {
         return publication;
     }
@@ -247,7 +247,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.cvIdentificationAc = ac;
     }
 
-    @Column(name = "detectmethod_ac", insertable = false, updatable = false)
+    @Column( name = "detectmethod_ac", insertable = false, updatable = false )
     public String getCvInteractionAc() {
         return this.cvInteractionAc;
     }
@@ -256,7 +256,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.cvInteractionAc = ac;
     }
 
-    @Column(name = "biosource_ac", insertable = false, updatable = false)
+    @Column( name = "biosource_ac", insertable = false, updatable = false )
     public String getBioSourceAc() {
         return this.bioSourceAc;
     }
@@ -265,11 +265,11 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
         this.bioSourceAc = ac;
     }
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
             name = "ia_exp2annot",
-            joinColumns = { @JoinColumn(name = "experiment_ac") },
-            inverseJoinColumns = { @JoinColumn(name = "annotation_ac") }
+            joinColumns = {@JoinColumn( name = "experiment_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
     public Collection<Annotation> getAnnotations() {
@@ -277,14 +277,14 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
     }
 
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    @Cascade(value = org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
+    @Cascade( value = org.hibernate.annotations.CascadeType.ALL )
     @Override
     public Collection<ExperimentXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<ExperimentAlias> getAliases() {
         return super.getAliases();
@@ -311,12 +311,12 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
             return false;
         }
 
-        final Experiment that = (Experiment) o;
+        final Experiment that = ( Experiment ) o;
 
-        if ( ! bioSource.equals( that.bioSource ) ) {
+        if ( !bioSource.equals( that.bioSource ) ) {
             return false;
         }
-        if ( publication != null ? ! publication.equals( that.publication ) : that.publication != null ) {
+        if ( publication != null ? !publication.equals( that.publication ) : that.publication != null ) {
             return false;
         }
 
@@ -342,7 +342,7 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref,ExperimentAli
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Experiment copy = (Experiment) super.clone();
+        Experiment copy = ( Experiment ) super.clone();
 
         // Not copying any interactions.
         copy.interactions = new ArrayList<Interaction>();

@@ -13,4 +13,5 @@ package uk.ac.ebi.intact.model;
  * @version $Id$
  */
 public interface NucleicAcid extends Polymer {
+
 }

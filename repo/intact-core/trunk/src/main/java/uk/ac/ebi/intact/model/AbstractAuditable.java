@@ -58,7 +58,7 @@ public abstract class AbstractAuditable implements Auditable {
     }
 
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal( value = TemporalType.TIMESTAMP )
     public Date getCreated() {
         return created;
     }
@@ -71,7 +71,7 @@ public abstract class AbstractAuditable implements Auditable {
         this.created = created;
     }
 
-    @Temporal(value = TemporalType.TIMESTAMP)
+    @Temporal( value = TemporalType.TIMESTAMP )
     public Date getUpdated() {
         return updated;
     }
@@ -80,27 +80,25 @@ public abstract class AbstractAuditable implements Auditable {
      * <b>Avoid calling this method as this field is set by the DB and it can't
      * be modifiable via OJB because 'updated' field is declared as read-only</b>
      */
-    public void setUpdated(Date updated) {
+    public void setUpdated( Date updated ) {
         this.updated = updated;
     }
 
-    @Column(name="created_user")
+    @Column( name = "created_user" )
     public String getCreator() {
         return creator;
     }
 
-    public void setCreator(String creator)
-    {
+    public void setCreator( String creator ) {
         this.creator = creator;
     }
 
-    @Column(name="userstamp")
+    @Column( name = "userstamp" )
     public String getUpdator() {
         return updator;
     }
 
-    public void setUpdator(String updator)
-    {
+    public void setUpdator( String updator ) {
         this.updator = updator;
     }
 

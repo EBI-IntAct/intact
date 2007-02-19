@@ -28,20 +28,19 @@ import java.io.Serializable;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- *
  * @since 1.5
  */
 @Entity
-@Table(name = "ia_payg")
-public class PayAsYouGo implements Serializable
-{
+@Table( name = "ia_payg" )
+public class PayAsYouGo implements Serializable {
+
     @EmbeddedId
     private PayAsYouGoPk pk;
 
-    @Column(updatable = false, insertable = false)
+    @Column( updatable = false, insertable = false )
     private String nid;
 
-    @Column(updatable = false, insertable = false)
+    @Column( updatable = false, insertable = false )
     private String species;
 
     private int bait;
@@ -56,186 +55,151 @@ public class PayAsYouGo implements Serializable
 
     private int econf;
 
-    @Column(name = "really_used_as_bait")
-    @Type(type = "yes_no")
+    @Column( name = "really_used_as_bait" )
+    @Type( type = "yes_no" )
     private boolean reallyUsedAsBait;
 
 
-    public PayAsYouGo()
-    {
+    public PayAsYouGo() {
     }
 
 
-    public PayAsYouGoPk getPk()
-    {
+    public PayAsYouGoPk getPk() {
         return pk;
     }
 
-    public void setPk(PayAsYouGoPk pk)
-    {
+    public void setPk( PayAsYouGoPk pk ) {
         this.pk = pk;
     }
 
-    public String getNid()
-    {
+    public String getNid() {
         return nid;
     }
 
-    public void setNid(String nid)
-    {
+    public void setNid( String nid ) {
         this.nid = nid;
     }
 
-    public String getSpecies()
-    {
+    public String getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species)
-    {
+    public void setSpecies( String species ) {
         this.species = species;
     }
 
-    public int getBait()
-    {
+    public int getBait() {
         return bait;
     }
 
-    public void setBait(int bait)
-    {
+    public void setBait( int bait ) {
         this.bait = bait;
     }
 
-    public int getPrey()
-    {
+    public int getPrey() {
         return prey;
     }
 
-    public void setPrey(int prey)
-    {
+    public void setPrey( int prey ) {
         this.prey = prey;
     }
 
-    public int getInDegree()
-    {
+    public int getInDegree() {
         return inDegree;
     }
 
-    public void setInDegree(int inDegree)
-    {
+    public void setInDegree( int inDegree ) {
         this.inDegree = inDegree;
     }
 
-    public float getOutDegree()
-    {
+    public float getOutDegree() {
         return outDegree;
     }
 
-    public void setOutDegree(float outDegree)
-    {
+    public void setOutDegree( float outDegree ) {
         this.outDegree = outDegree;
     }
 
-    public int getEseen()
-    {
+    public int getEseen() {
         return eseen;
     }
 
-    public void setEseen(int eseen)
-    {
+    public void setEseen( int eseen ) {
         this.eseen = eseen;
     }
 
-    public int getEconf()
-    {
+    public int getEconf() {
         return econf;
     }
 
-    public void setEconf(int econf)
-    {
+    public void setEconf( int econf ) {
         this.econf = econf;
     }
 
-    public boolean isReallyUsedAsBait()
-    {
+    public boolean isReallyUsedAsBait() {
         return reallyUsedAsBait;
     }
 
-    public void setReallyUsedAsBait(boolean reallyUsedAsBait)
-    {
+    public void setReallyUsedAsBait( boolean reallyUsedAsBait ) {
         this.reallyUsedAsBait = reallyUsedAsBait;
     }
 
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        PayAsYouGo that = (PayAsYouGo) o;
+        PayAsYouGo that = ( PayAsYouGo ) o;
 
-        if (bait != that.bait)
-        {
+        if ( bait != that.bait ) {
             return false;
         }
-        if (econf != that.econf)
-        {
+        if ( econf != that.econf ) {
             return false;
         }
-        if (eseen != that.eseen)
-        {
+        if ( eseen != that.eseen ) {
             return false;
         }
-        if (inDegree != that.inDegree)
-        {
+        if ( inDegree != that.inDegree ) {
             return false;
         }
-        if (Float.compare(that.outDegree, outDegree) != 0)
-        {
+        if ( Float.compare( that.outDegree, outDegree ) != 0 ) {
             return false;
         }
-        if (prey != that.prey)
-        {
+        if ( prey != that.prey ) {
             return false;
         }
-        if (reallyUsedAsBait != that.reallyUsedAsBait)
-        {
+        if ( reallyUsedAsBait != that.reallyUsedAsBait ) {
             return false;
         }
-        if (nid != null ? !nid.equals(that.nid) : that.nid != null)
-        {
+        if ( nid != null ? !nid.equals( that.nid ) : that.nid != null ) {
             return false;
         }
-        if (pk != null ? !pk.equals(that.pk) : that.pk != null)
-        {
+        if ( pk != null ? !pk.equals( that.pk ) : that.pk != null ) {
             return false;
         }
-        if (species != null ? !species.equals(that.species) : that.species != null)
-        {
+        if ( species != null ? !species.equals( that.species ) : that.species != null ) {
             return false;
         }
 
         return true;
     }
 
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (pk != null ? pk.hashCode() : 0);
-        result = 31 * result + (nid != null ? nid.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = ( pk != null ? pk.hashCode() : 0 );
+        result = 31 * result + ( nid != null ? nid.hashCode() : 0 );
+        result = 31 * result + ( species != null ? species.hashCode() : 0 );
         result = 31 * result + bait;
         result = 31 * result + prey;
         result = 31 * result + inDegree;
-        result = 31 * result + outDegree != +0.0f ? Float.floatToIntBits(outDegree) : 0;
+        result = 31 * result + outDegree != +0.0f ? Float.floatToIntBits( outDegree ) : 0;
         result = 31 * result + eseen;
         result = 31 * result + econf;
-        result = 31 * result + (reallyUsedAsBait ? 1 : 0);
+        result = 31 * result + ( reallyUsedAsBait ? 1 : 0 );
         return result;
     }
 }

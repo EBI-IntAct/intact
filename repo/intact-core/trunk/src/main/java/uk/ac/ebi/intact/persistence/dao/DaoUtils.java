@@ -26,64 +26,64 @@ import uk.ac.ebi.intact.persistence.dao.query.impl.StandardAutoAddWildcardConver
  * @version $Id$
  * @since <pre>09-Oct-2006</pre>
  */
-public class DaoUtils
-{
+public class DaoUtils {
 
-    private DaoUtils() {}
+    private DaoUtils() {
+    }
 
     /**
      * Removes the wildcards (*) from the beginning and end of a value,
      * so it can be used in a like query
+     *
      * @param value the value to use
+     *
      * @return the value with replaced wildcards
      */
-    public static String replaceWildcardsByPercent(String value)
-    {
-        if (value.startsWith("*"))
-        {
-            value = value.replaceFirst("\\*", "%");
+    public static String replaceWildcardsByPercent( String value ) {
+        if ( value.startsWith( "*" ) ) {
+            value = value.replaceFirst( "\\*", "%" );
         }
 
-        if (value.endsWith("*"))
-        {
-            value = value.substring(0, value.length()-1)+"%";
+        if ( value.endsWith( "*" ) ) {
+            value = value.substring( 0, value.length() - 1 ) + "%";
         }
 
-        value = value.replaceAll("\\* ", "% ");
-        value = value.replaceAll(" \\*", " %");
-        value = value.replaceAll("\\*,", "%,");
-        value = value.replaceAll(",\\*", "%");
-        value = value.replaceAll("\\+\\*", "+%");
-        value = value.replaceAll("\\-\\*", "-%");
+        value = value.replaceAll( "\\* ", "% " );
+        value = value.replaceAll( " \\*", " %" );
+        value = value.replaceAll( "\\*,", "%," );
+        value = value.replaceAll( ",\\*", "%" );
+        value = value.replaceAll( "\\+\\*", "+%" );
+        value = value.replaceAll( "\\-\\*", "-%" );
 
         return value;
     }
 
-    public static boolean isValueForLike(String value)
-    {
-        String replacedValue = replaceWildcardsByPercent(value);
+    public static boolean isValueForLike( String value ) {
+        String replacedValue = replaceWildcardsByPercent( value );
 
-        return (replacedValue.startsWith("%") || replacedValue.endsWith("%"));
+        return ( replacedValue.startsWith( "%" ) || replacedValue.endsWith( "%" ) );
     }
 
     /**
      * Adds wildcards to a searchable query using the standard AutoAddWildcardConverter
+     *
      * @param query the query to convert
+     *
      * @return a query with wildcards where necessary
      */
-    public static SearchableQuery autoAddWildcards(SearchableQuery query)
-    {
-        return autoAddWildcards(query, new StandardAutoAddWildcardConverter());
+    public static SearchableQuery autoAddWildcards( SearchableQuery query ) {
+        return autoAddWildcards( query, new StandardAutoAddWildcardConverter() );
     }
 
     /**
      * Adds wildcards to a searchable query using the provided AutoAddWildcardConverter
-     * @param query the query to convert
+     *
+     * @param query     the query to convert
      * @param converter the converter to use
+     *
      * @return a query with wildcards where necessary
      */
-    public static SearchableQuery autoAddWildcards(SearchableQuery query, AutoAddWildcardConverter converter)
-    {
-        return converter.autoAddWildCards(query);
+    public static SearchableQuery autoAddWildcards( SearchableQuery query, AutoAddWildcardConverter converter ) {
+        return converter.autoAddWildCards( query );
     }
 }

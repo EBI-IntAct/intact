@@ -28,16 +28,13 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class NonRepeatedResultsTransformer implements ResultTransformer
-{
+public class NonRepeatedResultsTransformer implements ResultTransformer {
 
-    public Object transformTuple(Object[] objects, String[] strings)
-    {
-        return transformList(Arrays.asList(objects));
+    public Object transformTuple( Object[] objects, String[] strings ) {
+        return transformList( Arrays.asList( objects ) );
     }
 
-    public List transformList(List list)
-    {
-        return new ArrayList(new HashSet(list));
+    public List transformList( List list ) {
+        return new ArrayList( new HashSet( list ) );
     }
 }

@@ -12,12 +12,10 @@ import uk.ac.ebi.intact.persistence.dao.FeatureDao;
  * @version $Id$
  * @since <pre>08-jul-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class FeatureDaoImpl extends AnnotatedObjectDaoImpl<Feature> implements FeatureDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class FeatureDaoImpl extends AnnotatedObjectDaoImpl<Feature> implements FeatureDao {
 
-    public FeatureDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Feature.class, session, intactSession);
+    public FeatureDaoImpl( Session session, IntactSession intactSession ) {
+        super( Feature.class, session, intactSession );
     }
 }

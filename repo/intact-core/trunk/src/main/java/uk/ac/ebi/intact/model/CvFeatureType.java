@@ -5,8 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Entity;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 
 /**
@@ -16,7 +16,7 @@ import javax.persistence.DiscriminatorValue;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvFeatureType")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvFeatureType" )
 public class CvFeatureType extends CvDagObject {
 
     public static final String SUFFICIENT_FOR_BINDING = "sufficient for binding";
@@ -30,6 +30,7 @@ public class CvFeatureType extends CvDagObject {
 
     public static final String MUTATION_INCREASING = "mutation increasing";
     public static final String MUTATION_INCREASING_MI_REF = "MI:0382";
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.

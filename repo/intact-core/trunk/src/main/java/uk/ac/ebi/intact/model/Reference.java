@@ -65,10 +65,10 @@ public class Reference extends BasicObjectImpl {
     }
 
 
-    public Reference(Institution owner, String title, String authors) {
-        super(owner);
-        if(title == null) throw new NullPointerException("valid Reference must have a non-null title!");
-        if(authors == null) throw new NullPointerException("valid Reference must have a non-null authors!");
+    public Reference( Institution owner, String title, String authors ) {
+        super( owner );
+        if ( title == null ) throw new NullPointerException( "valid Reference must have a non-null title!" );
+        if ( authors == null ) throw new NullPointerException( "valid Reference must have a non-null authors!" );
 
         this.title = title;
         this.authors = authors;
@@ -80,13 +80,16 @@ public class Reference extends BasicObjectImpl {
     public String getTitle() {
         return title;
     }
-    public void setTitle(String title) {
+
+    public void setTitle( String title ) {
         this.title = title;
     }
+
     public String getAuthors() {
         return authors;
     }
-    public void setAuthors(String authors) {
+
+    public void setAuthors( String authors ) {
         this.authors = authors;
     }
 
@@ -96,46 +99,52 @@ public class Reference extends BasicObjectImpl {
     public Collection<? extends AnnotatedObject> getAnnotatedObjects() {
         return annotatedObjects;
     }
-    public void addAnnotatedObject(AnnotatedObject annotatedObject) {
-        if (! this.annotatedObjects.contains(annotatedObject)) {
-            this.annotatedObjects.add(annotatedObject);
-            annotatedObject.addReference(this);
+
+    public void addAnnotatedObject( AnnotatedObject annotatedObject ) {
+        if ( !this.annotatedObjects.contains( annotatedObject ) ) {
+            this.annotatedObjects.add( annotatedObject );
+            annotatedObject.addReference( this );
         }
     }
-    public void removeAnnotatedObject(AnnotatedObject annotatedObject) {
-        boolean removed = this.annotatedObjects.remove(annotatedObject);
-        if (removed) annotatedObject.removeReference(this);
+
+    public void removeAnnotatedObject( AnnotatedObject annotatedObject ) {
+        boolean removed = this.annotatedObjects.remove( annotatedObject );
+        if ( removed ) annotatedObject.removeReference( this );
     }
+
     public SubmissionRef getSubmissionRef() {
         return submissionRef;
     }
 
-    public void setSubmissionRef(SubmissionRef submissionRef) {
-        if (this.submissionRef != submissionRef) {
+    public void setSubmissionRef( SubmissionRef submissionRef ) {
+        if ( this.submissionRef != submissionRef ) {
             this.submissionRef = submissionRef;
-            if (submissionRef != null) submissionRef.setReference(this);
+            if ( submissionRef != null ) submissionRef.setReference( this );
         }
     }
 
     /**
      * Equality for References is currently based on equality for
      * author, title and <code>Xrefs</code>.
-     * @see uk.ac.ebi.intact.model.Xref
+     *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
+     *
+     * @see uk.ac.ebi.intact.model.Xref
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Reference)) return false;
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( !( o instanceof Reference ) ) return false;
 
-        final Reference reference = (Reference) o;
-         //TODO Auto-generated - needs to be readable when we use the class...
+        final Reference reference = ( Reference ) o;
+        //TODO Auto-generated - needs to be readable when we use the class...
         // Bear in mind that if you test SubmissionRef you could get a cycle ...
 
-        if (authors != null ? !authors.equals(reference.authors) : reference.authors != null) return false;
-        if (title != null ? !title.equals(reference.title) : reference.title != null) return false;
-        if (xref != null ? !xref.equals(reference.xref) : reference.xref != null) return false;
+        if ( authors != null ? !authors.equals( reference.authors ) : reference.authors != null ) return false;
+        if ( title != null ? !title.equals( reference.title ) : reference.title != null ) return false;
+        if ( xref != null ? !xref.equals( reference.xref ) : reference.xref != null ) return false;
 
         return true;
     }
@@ -145,10 +154,10 @@ public class Reference extends BasicObjectImpl {
         int result;
 
         //TODO Auto-generated - needs to be readable when we use the class...
-        result = (title != null ? title.hashCode() : 0);
-        result = 29 * result + (authors != null ? authors.hashCode() : 0);
-        result = 29 * result + (submissionRef != null ? submissionRef.hashCode() : 0);
-        result = 29 * result + (xref != null ? xref.hashCode() : 0);
+        result = ( title != null ? title.hashCode() : 0 );
+        result = 29 * result + ( authors != null ? authors.hashCode() : 0 );
+        result = 29 * result + ( submissionRef != null ? submissionRef.hashCode() : 0 );
+        result = 29 * result + ( xref != null ? xref.hashCode() : 0 );
         return result;
     }
 
@@ -158,13 +167,16 @@ public class Reference extends BasicObjectImpl {
     public String getSubmissionRefAc() {
         return this.submissionRefAc;
     }
-    public void setSubmissionRefAc(String ac) {
+
+    public void setSubmissionRefAc( String ac ) {
         this.submissionRefAc = ac;
     }
+
     public String getXrefAc() {
         return this.xrefAc;
     }
-    public void setXrefAc(String ac) {
+
+    public void setXrefAc( String ac ) {
         this.xrefAc = ac;
     }
 

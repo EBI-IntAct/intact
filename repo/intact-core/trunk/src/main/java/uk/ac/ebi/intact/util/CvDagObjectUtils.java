@@ -9,7 +9,6 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -60,7 +59,7 @@ public class CvDagObjectUtils {
         if ( dag.hasChildren() ) {
             Collection children = dag.getChildren();
             for ( Iterator lIterator = children.iterator(); lIterator.hasNext(); ) {
-                CvDagObject lTemp = (CvDagObject) lIterator.next();
+                CvDagObject lTemp = ( CvDagObject ) lIterator.next();
                 result = this.buildBounds( lTemp, result );
             }
         }
@@ -117,10 +116,10 @@ public class CvDagObjectUtils {
             throw new IntactException( "invalid class!" );
         }
 
-        Collection cvDagObjects = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(cvClass).getAll();
+        Collection cvDagObjects = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( cvClass ).getAll();
 
         // take any object out of the list to get the root
-        CvDagObject aDagObject = (CvDagObject) cvDagObjects.iterator().next();
+        CvDagObject aDagObject = ( CvDagObject ) cvDagObjects.iterator().next();
         // get the root of the specified class
         CvDagObject root = aDagObject.getRoot();
 
@@ -215,7 +214,7 @@ public class CvDagObjectUtils {
         int rightBound;
         System.out.println( "cvAC: " + cvAc );
         // get the CVDagObject with the given AC number out of the database
-        CvDagObject aCv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).getByAc(cvAc);
+        CvDagObject aCv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvDagObject.class ).getByAc( cvAc );
 
         // check if that parent CV really exists
         if ( aCv == null ) {
@@ -282,8 +281,7 @@ public class CvDagObjectUtils {
         return cvWithChildren;
     }
 
-    private Connection getConnection()
-    {
+    private Connection getConnection() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 }

@@ -7,10 +7,9 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import java.io.File;
-
-import uk.ac.ebi.intact.context.IntactSession;
 
 /**
  * TODO comment this!
@@ -19,28 +18,24 @@ import uk.ac.ebi.intact.context.IntactSession;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class CustomCoreDataConfig extends StandardCoreDataConfig
-{
+public class CustomCoreDataConfig extends StandardCoreDataConfig {
 
-    private static final Log log = LogFactory.getLog(CustomCoreDataConfig.class);
+    private static final Log log = LogFactory.getLog( CustomCoreDataConfig.class );
 
     private String name;
     private File configFile;
 
-    public CustomCoreDataConfig(String name, File configFile, IntactSession session)
-    {
-        super(session);
+    public CustomCoreDataConfig( String name, File configFile, IntactSession session ) {
+        super( session );
         this.name = name;
         this.configFile = configFile;
     }
 
-    protected File getConfigFile()
-    {
+    protected File getConfigFile() {
         return configFile;
     }
 
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 }

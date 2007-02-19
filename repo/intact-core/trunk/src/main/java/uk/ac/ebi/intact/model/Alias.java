@@ -19,8 +19,8 @@ import javax.persistence.*;
  * @see uk.ac.ebi.intact.model.CvAliasType
  */
 @Entity
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public abstract class Alias extends BasicObjectImpl  {
+@Inheritance( strategy = InheritanceType.TABLE_PER_CLASS )
+public abstract class Alias extends BasicObjectImpl {
 
     protected static final int MAX_ALIAS_NAME_LEN = 30;
 
@@ -60,6 +60,7 @@ public abstract class Alias extends BasicObjectImpl  {
      * @param annotatedObject the object to which we'll add a new Alias
      * @param cvAliasType     the CvAliasType (may be null)
      * @param name            the name of the alias (namy be null)
+     *
      * @see uk.ac.ebi.intact.model.CvAliasType
      * @see uk.ac.ebi.intact.model.AnnotatedObject
      */
@@ -72,19 +73,19 @@ public abstract class Alias extends BasicObjectImpl  {
 
     ///////////////////////////////////////
     //access methods for attributes
-    @Column(length = 30)
+    @Column( length = 30 )
     public String getName() {
         return name;
     }
 
     public void setName( String name ) {
 
-        if( name != null ) {
+        if ( name != null ) {
 
             // delete leading and trailing spaces.
             name = name.trim();
 
-            if( name.length() >= MAX_ALIAS_NAME_LEN ) {
+            if ( name.length() >= MAX_ALIAS_NAME_LEN ) {
                 name = name.substring( 0, MAX_ALIAS_NAME_LEN );
             }
         }
@@ -94,8 +95,7 @@ public abstract class Alias extends BasicObjectImpl  {
 
     @Transient
     public String getParentAc() {
-        if (parent != null)
-        {
+        if ( parent != null ) {
             parentAc = parent.getAc();
         }
         return parentAc;
@@ -106,21 +106,19 @@ public abstract class Alias extends BasicObjectImpl  {
     }
 
     @Transient
-    public AnnotatedObject getParent()
-    {
+    public AnnotatedObject getParent() {
         return parent;
     }
 
-    public void setParent(AnnotatedObject parent)
-    {
+    public void setParent( AnnotatedObject parent ) {
         this.parent = parent;
     }
 
     ///////////////////////////////////////
     // access methods for associations
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn(name = "aliastype_ac")
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "aliastype_ac" )
     public CvAliasType getCvAliasType() {
         return cvAliasType;
     }
@@ -134,29 +132,31 @@ public abstract class Alias extends BasicObjectImpl  {
      * <code>CvAliasTypes</code> and names.
      *
      * @param o The object to check
+     *
      * @return true if the parameter equals this object, false otherwise
+     *
      * @see uk.ac.ebi.intact.model.CvAliasType
      */
     @Override
     public boolean equals( Object o ) {
-        if( this == o ) return true;
-        if( !( o instanceof Alias ) ) return false;
+        if ( this == o ) return true;
+        if ( !( o instanceof Alias ) ) return false;
 
         //NO! BasicObject's equals is the Java Object one!!
         //if ( !super.equals ( o ) ) return false;
 
-        final Alias alias = (Alias) o;
+        final Alias alias = ( Alias ) o;
 
         //NB according to the constructor, cvAliasType and name may be null,
         //so need to handle this here....
-        if( cvAliasType != null ) {
-            if( !cvAliasType.equals( alias.cvAliasType ) ) return false;
+        if ( cvAliasType != null ) {
+            if ( !cvAliasType.equals( alias.cvAliasType ) ) return false;
         } else {
-            if( alias.cvAliasType != null ) return false;
+            if ( alias.cvAliasType != null ) return false;
         }
 
-        if( name != null ) {
-            if( !name.equals( alias.name ) ) return false;
+        if ( name != null ) {
+            if ( !name.equals( alias.name ) ) return false;
         } else
             return alias.name == null;
 
@@ -166,8 +166,8 @@ public abstract class Alias extends BasicObjectImpl  {
     @Override
     public int hashCode() {
         int result = 29;
-        if( name != null ) result = 29 * result + name.hashCode();
-        if( cvAliasType != null ) result = 29 * result + cvAliasType.hashCode();
+        if ( name != null ) result = 29 * result + name.hashCode();
+        if ( cvAliasType != null ) result = 29 * result + cvAliasType.hashCode();
         return result;
     }
 
@@ -179,12 +179,14 @@ public abstract class Alias extends BasicObjectImpl  {
 
     /**
      * Clone a an alias
+     *
      * @return an alias setting it ac, parentAc and parent to null.
+     *
      * @throws CloneNotSupportedException
      */
     @Override
     public Object clone() throws CloneNotSupportedException {
-        Alias copy = (Alias) super.clone();
+        Alias copy = ( Alias ) super.clone();
         // Reset the parent ac.
         copy.parentAc = null;
         copy.parent = null;

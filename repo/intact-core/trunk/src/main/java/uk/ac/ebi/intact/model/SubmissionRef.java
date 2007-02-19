@@ -39,14 +39,16 @@ public class SubmissionRef extends Reference {
      * This constructor should <b>not</b> be used as it could
      * result in objects with invalid state. It is here for object mapping
      * purposes only and if possible will be made private.
+     *
      * @deprecated Use the full constructor instead
      */
     @Deprecated
-    public SubmissionRef () {
+    public SubmissionRef() {
         super();
     }
-    public SubmissionRef(Institution owner, String title, String authors, Reference reference, Date holdDate) {
-        super(owner, title, authors);
+
+    public SubmissionRef( Institution owner, String title, String authors, Reference reference, Date holdDate ) {
+        super( owner, title, authors );
 
         // TODO null ?
         this.reference = reference;
@@ -59,7 +61,8 @@ public class SubmissionRef extends Reference {
     public Date getHoldDate() {
         return holdDate;
     }
-    public void setHoldDate(Date holdDate) {
+
+    public void setHoldDate( Date holdDate ) {
         this.holdDate = holdDate;
     }
 
@@ -70,10 +73,10 @@ public class SubmissionRef extends Reference {
         return reference;
     }
 
-    public void setReference(Reference reference) {
-        if (this.reference != reference) {
+    public void setReference( Reference reference ) {
+        if ( this.reference != reference ) {
             this.reference = reference;
-            if (reference != null) reference.setSubmissionRef(this);
+            if ( reference != null ) reference.setSubmissionRef( this );
         }
     }
 
@@ -84,7 +87,7 @@ public class SubmissionRef extends Reference {
         return referenceAc;
     }
 
-    public void setReferenceAc(String ac) {
+    public void setReferenceAc( String ac ) {
         this.referenceAc = ac;
     }
 

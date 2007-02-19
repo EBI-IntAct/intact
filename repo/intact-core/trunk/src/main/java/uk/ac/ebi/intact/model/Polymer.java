@@ -5,12 +5,9 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactException;
-
 import java.util.List;
 
 /**
- *
  * @author Sugath Mudali (smudali@ebi.ac.uk)
  * @version $Id$
  */
@@ -22,13 +19,15 @@ public interface Polymer extends Interactor {
     public String getSequence();
 
     /**
-     * Sets the current sequence. 
+     * Sets the current sequence.
+     *
      * @param aSequence the sequence to set
+     *
      * @return a list of SequenceChunk objects to remove. This list is non empty
-     * only when the current sequence is longer than the new sequence
-     * (i.e, <code>aSequence</code>).
+     *         only when the current sequence is longer than the new sequence
+     *         (i.e, <code>aSequence</code>).
      */
-    public List<SequenceChunk> setSequence(String aSequence);
+    public List<SequenceChunk> setSequence( String aSequence );
 
     /**
      * @return crc64 as a string
@@ -37,12 +36,14 @@ public interface Polymer extends Interactor {
 
     /**
      * Sets the crc64
+     *
      * @param crc64 the crc64 value
      */
-    public void setCrc64(String crc64);
+    public void setCrc64( String crc64 );
 
     /**
      * This method is mainly for testing purposes to examine the chunks array
+     *
      * @return unmodifiable list of sequence chunks.
      */
     public List<SequenceChunk> getSequenceChunks();

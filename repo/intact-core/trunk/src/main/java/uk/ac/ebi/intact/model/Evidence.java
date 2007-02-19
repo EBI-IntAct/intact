@@ -34,14 +34,14 @@ public class Evidence {
      */
     private CvEvidenceType cvEvidenceType;
 
-
     ///////////////////////////////////////
     //access methods for attributes
 
     public String getParameters() {
         return parameters;
     }
-    public void setParameters(String parameters) {
+
+    public void setParameters( String parameters ) {
         this.parameters = parameters;
     }
 
@@ -52,7 +52,7 @@ public class Evidence {
         return cvEvidenceType;
     }
 
-    public void setCvEvidenceType(CvEvidenceType cvEvidenceType) {
+    public void setCvEvidenceType( CvEvidenceType cvEvidenceType ) {
         this.cvEvidenceType = cvEvidenceType;
     }
 
@@ -61,7 +61,8 @@ public class Evidence {
     public String getCvEvidenceTypeAc() {
         return this.cvEvidenceTypeAc;
     }
-    public void setCvEvidenceTypeAc(String ac) {
+
+    public void setCvEvidenceTypeAc( String ac ) {
         this.cvEvidenceTypeAc = ac;
     }
 

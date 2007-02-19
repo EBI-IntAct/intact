@@ -8,8 +8,8 @@ package uk.ac.ebi.intact.model;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import javax.persistence.*;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -20,10 +20,10 @@ import java.util.List;
  * @version $Id$
  */
 @Entity
-@Table(name = "ia_controlledvocab")
-@DiscriminatorColumn(name="objclass", discriminatorType = DiscriminatorType.STRING, length = 255)
-public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObjectAlias> implements Searchable
-{
+@Table( name = "ia_controlledvocab" )
+@DiscriminatorColumn( name = "objclass", discriminatorType = DiscriminatorType.STRING, length = 255 )
+public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref, CvObjectAlias> implements Searchable {
+
     private String objClass;
 
     public CvObject() {
@@ -46,36 +46,33 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
         super( shortLabel, owner );
     }
 
-    @Column(name = "objclass", insertable = false, updatable = false)
-    public String getObjClass()
-    {
+    @Column( name = "objclass", insertable = false, updatable = false )
+    public String getObjClass() {
         return objClass;
     }
 
-    public void setObjClass(String objClass)
-    {
+    public void setObjClass( String objClass ) {
         this.objClass = objClass;
     }
 
-    @ManyToMany (cascade = {CascadeType.PERSIST})    
+    @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
-        name="ia_cvobject2annot",
-        joinColumns={@JoinColumn(name="cvobject_ac")},
-        inverseJoinColumns={@JoinColumn(name="annotation_ac")}
+            name = "ia_cvobject2annot",
+            joinColumns = {@JoinColumn( name = "cvobject_ac" )},
+            inverseJoinColumns = {@JoinColumn( name = "annotation_ac" )}
     )
     @Override
-    public Collection<Annotation> getAnnotations()
-    {
+    public Collection<Annotation> getAnnotations() {
         return super.getAnnotations();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<CvObjectXref> getXrefs() {
         return super.getXrefs();
     }
 
-    @OneToMany (mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<CvObjectAlias> getAliases() {
         return super.getAliases();
@@ -95,29 +92,25 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
      */
     @Override
     public boolean equals( Object obj ) {
-        if (!super.equals(obj))
-        {
+        if ( !super.equals( obj ) ) {
             return false;
         }
 
-        if (!(obj instanceof CvObject))
-        {
+        if ( !( obj instanceof CvObject ) ) {
             return false;
         }
 
-        final CvObject other = (CvObject) obj;
+        final CvObject other = ( CvObject ) obj;
 
-        if (ac != null && other.getAc() != null)
-        {
-            if (ac.equals(other.getAc()))
-            {
+        if ( ac != null && other.getAc() != null ) {
+            if ( ac.equals( other.getAc() ) ) {
                 return true;
             }
         }
 
         // Check this object has an identity xref first.
-        Xref idXref = CvObjectUtils.getPsiMiIdentityXref(this);
-        Xref idOther = CvObjectUtils.getPsiMiIdentityXref(other);
+        Xref idXref = CvObjectUtils.getPsiMiIdentityXref( this );
+        Xref idOther = CvObjectUtils.getPsiMiIdentityXref( other );
 
         if ( ( idXref != null ) && ( idOther != null ) ) {
             // Both objects have the identity xrefs
@@ -140,45 +133,44 @@ public abstract class CvObject extends AnnotatedObjectImpl<CvObjectXref,CvObject
     public int hashCode() {
         int result = super.hashCode();
 
-        Xref idXref = CvObjectUtils.getPsiMiIdentityXref(this);
+        Xref idXref = CvObjectUtils.getPsiMiIdentityXref( this );
 
         //need check as we still have no-arg constructor...
         if ( idXref != null ) {
             result = 29 * result + idXref.getPrimaryId().hashCode();
         } else {
-            result = 29 * result + ((getShortLabel() == null)? 31 :getShortLabel().hashCode());
+            result = 29 * result + ( ( getShortLabel() == null ) ? 31 : getShortLabel().hashCode() );
         }
 
         return result;
     }
 
-     /**
+    /**
      * Returns the Identity xref.
-      * This method does not take into account that a cvObject can have several identity xref, therefore it will be
-      * deprecated and will disappear from version 1.7 use instead : getPsiMiIdentityXref from the
-      * uk.ac.ebi.intact.model.util.CvObjectUtils method.
-     *  It will throw an IllegalStateException if one CvObject is found 2 identity xref.
+     * This method does not take into account that a cvObject can have several identity xref, therefore it will be
+     * deprecated and will disappear from version 1.7 use instead : getPsiMiIdentityXref from the
+     * uk.ac.ebi.intact.model.util.CvObjectUtils method.
+     * It will throw an IllegalStateException if one CvObject is found 2 identity xref.
+     *
      * @return the Identity xref or null if there is no Identity xref found.
      */
     @Transient
     @Deprecated
 
     public Xref getIdentityXref() {
-            List<Xref> xrefs = new ArrayList<Xref>();
-            for (Xref xref : getXrefs())
-        {
+        List<Xref> xrefs = new ArrayList<Xref>();
+        for ( Xref xref : getXrefs() ) {
 
             CvXrefQualifier xq = xref.getCvXrefQualifier();
-            if ((xq != null) && CvXrefQualifier.IDENTITY.equals(xq.getShortLabel()))
-            {
-                xrefs.add(xref);
+            if ( ( xq != null ) && CvXrefQualifier.IDENTITY.equals( xq.getShortLabel() ) ) {
+                xrefs.add( xref );
             }
-            if(xrefs.size() > 1){
-                throw new IllegalStateException("This cv has 2 xref identities. Can not decide on witch one to return");
+            if ( xrefs.size() > 1 ) {
+                throw new IllegalStateException( "This cv has 2 xref identities. Can not decide on witch one to return" );
             }
 
         }
-        return xrefs.get(0);
+        return xrefs.get( 0 );
     }
 } // end CvObject
 

@@ -16,15 +16,14 @@ import uk.ac.ebi.intact.context.IntactSession;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public abstract class DataConfig<T,C>
-{
-    private static final Log log = LogFactory.getLog(DataConfig.class);
+public abstract class DataConfig<T, C> {
+
+    private static final Log log = LogFactory.getLog( DataConfig.class );
 
     private IntactSession session;
 
-    public DataConfig(IntactSession session)
-    {
-       this.session = session;
+    public DataConfig( IntactSession session ) {
+        this.session = session;
     }
 
     public abstract String getName();
@@ -39,38 +38,31 @@ public abstract class DataConfig<T,C>
 
     private boolean initialized;
 
-    protected void checkInitialization()
-    {
-        if (!isInitialized())
-        {
+    protected void checkInitialization() {
+        if ( !isInitialized() ) {
             initialize();
             this.initialized = true;
         }
     }
 
-    public boolean isInitialized()
-    {
+    public boolean isInitialized() {
         return initialized;
     }
 
-    public void setInitialized(boolean initialized)
-    {
+    public void setInitialized( boolean initialized ) {
         this.initialized = initialized;
     }
 
-    public IntactSession getSession()
-    {
+    public IntactSession getSession() {
         return session;
     }
 
-    public void setSession(IntactSession session)
-    {
+    public void setSession( IntactSession session ) {
         this.session = session;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getName();
     }
 }

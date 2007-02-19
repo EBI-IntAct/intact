@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.model.Publication;
  * @version $Id$
  * @since <pre>14-Aug-2006</pre>
  */
-public interface PublicationDao extends IntactObjectDao<Publication>
-{
+public interface PublicationDao extends IntactObjectDao<Publication> {
 
 }

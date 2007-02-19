@@ -16,15 +16,15 @@ import java.util.List;
  * @version $Id$
  * @since <pre>08-May-2006</pre>
  */
-public interface ExperimentDao extends AnnotatedObjectDao<Experiment>
-{
-    Integer countInteractionsForExperimentWithAc(String ac);
+public interface ExperimentDao extends AnnotatedObjectDao<Experiment> {
 
-    List<Interaction> getInteractionsForExperimentWithAc(String ac, int firstResult, int maxResults);
+    Integer countInteractionsForExperimentWithAc( String ac );
 
-    Iterator<Interaction> getInteractionsForExperimentWithAcIterator(String ac);
+    List<Interaction> getInteractionsForExperimentWithAc( String ac, int firstResult, int maxResults );
 
-    List<Interaction> getInteractionsForExperimentWithAcExcluding(String ac, String[] excludedAcs, int firstResult, int maxResults);
+    Iterator<Interaction> getInteractionsForExperimentWithAcIterator( String ac );
 
-    List<Interaction> getInteractionsForExperimentWithAcExcludingLike(String ac, String[] excludedAcsLike, int firstResult, int maxResults);
+    List<Interaction> getInteractionsForExperimentWithAcExcluding( String ac, String[] excludedAcs, int firstResult, int maxResults );
+
+    List<Interaction> getInteractionsForExperimentWithAcExcludingLike( String ac, String[] excludedAcsLike, int firstResult, int maxResults );
 }

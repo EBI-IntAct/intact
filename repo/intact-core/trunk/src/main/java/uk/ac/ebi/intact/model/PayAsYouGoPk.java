@@ -20,72 +20,60 @@ import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Primary key for the pay as you go entity. 
+ * Primary key for the pay as you go entity.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since 1.5
  */
 @Embeddable
-public class PayAsYouGoPk implements Serializable
-{
+public class PayAsYouGoPk implements Serializable {
 
-    @Column(length = 20)
+    @Column( length = 20 )
     private String nid;
 
-    @Column(length = 30)
+    @Column( length = 30 )
     private String species;
 
-    public PayAsYouGoPk()
-    {
+    public PayAsYouGoPk() {
     }
 
-    public PayAsYouGoPk(String nid, String species)
-    {
+    public PayAsYouGoPk( String nid, String species ) {
         this.nid = nid;
         this.species = species;
     }
 
-    public String getNid()
-    {
+    public String getNid() {
         return nid;
     }
 
-    public void setNid(String nid)
-    {
+    public void setNid( String nid ) {
         this.nid = nid;
     }
 
-    public String getSpecies()
-    {
+    public String getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species)
-    {
+    public void setSpecies( String species ) {
         this.species = species;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o)
-        {
+    public boolean equals( Object o ) {
+        if ( this == o ) {
             return true;
         }
-        if (o == null || getClass() != o.getClass())
-        {
+        if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
 
-        PayAsYouGoPk that = (PayAsYouGoPk) o;
+        PayAsYouGoPk that = ( PayAsYouGoPk ) o;
 
-        if (nid != null ? !nid.equals(that.nid) : that.nid != null)
-        {
+        if ( nid != null ? !nid.equals( that.nid ) : that.nid != null ) {
             return false;
         }
-        if (species != null ? !species.equals(that.species) : that.species != null)
-        {
+        if ( species != null ? !species.equals( that.species ) : that.species != null ) {
             return false;
         }
 
@@ -93,11 +81,10 @@ public class PayAsYouGoPk implements Serializable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         int result;
-        result = (nid != null ? nid.hashCode() : 0);
-        result = 31 * result + (species != null ? species.hashCode() : 0);
+        result = ( nid != null ? nid.hashCode() : 0 );
+        result = 31 * result + ( species != null ? species.hashCode() : 0 );
         return result;
     }
 }

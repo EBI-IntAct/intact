@@ -7,21 +7,22 @@ package uk.ac.ebi.intact.business;
  * Time: 10:14:51
  * To change this template use File | Settings | File Templates.
  */
-public class IntactTransactionException extends Exception{
-private String nestedMessage;
+public class IntactTransactionException extends Exception {
+
+    private String nestedMessage;
     private Exception rootCause;
 
     public IntactTransactionException() {
     }
 
-    public IntactTransactionException(String msg) {
+    public IntactTransactionException( String msg ) {
 
-        super(msg);
+        super( msg );
     }
 
-    public IntactTransactionException(String msg, Exception e) {
+    public IntactTransactionException( String msg, Exception e ) {
 
-        super(msg,e);
+        super( msg, e );
         /*
         if (e != null) {
             e.fillInStackTrace();
@@ -38,30 +39,27 @@ private String nestedMessage;
     }
 
 
-    public IntactTransactionException(String message, Throwable cause)
-    {
-        super(message, cause);
+    public IntactTransactionException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public IntactTransactionException(Throwable cause)
-    {
-        super(cause);
+    public IntactTransactionException( Throwable cause ) {
+        super( cause );
     }
 
     public String getNestedMessage() {
 
-        if (nestedMessage != null) {
+        if ( nestedMessage != null ) {
 
             return nestedMessage;
-        }
-        else {
+        } else {
 
             return "No nested messages have been passed on.";
         }
     }
 
-    public boolean rootCauseExists () {
-        return (rootCause != null);
+    public boolean rootCauseExists() {
+        return ( rootCause != null );
     }
 
     public Exception getRootCause() {

@@ -4,10 +4,8 @@
  */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 
 /**
@@ -17,7 +15,7 @@ import javax.persistence.Table;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvInteraction")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvInteraction" )
 public class CvInteraction extends CvDagObject {
 
     public static final String INFERRED_BY_CURATOR = "inferred by curator";
@@ -25,7 +23,7 @@ public class CvInteraction extends CvDagObject {
 
     public static final String EXPERIMENTAL_INTERACTION = "experimental interac";
 
-    
+
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
      * functionality but is related to eg user interfaces.

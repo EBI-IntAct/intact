@@ -15,28 +15,23 @@ import org.apache.commons.logging.LogFactory;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class ConfigurationException extends RuntimeException
-{
+public class ConfigurationException extends RuntimeException {
 
-    private static final Log log = LogFactory.getLog(ConfigurationException.class);
+    private static final Log log = LogFactory.getLog( ConfigurationException.class );
 
-    public ConfigurationException()
-    {
+    public ConfigurationException() {
         super();
     }
 
-    public ConfigurationException(String message)
-    {
-        super(message);
+    public ConfigurationException( String message ) {
+        super( message );
     }
 
-    public ConfigurationException(String message, Throwable cause)
-    {
-        super(message, cause);
+    public ConfigurationException( String message, Throwable cause ) {
+        super( message, cause );
     }
 
-    public ConfigurationException(Throwable cause)
-    {
-        super(cause);
+    public ConfigurationException( Throwable cause ) {
+        super( cause );
     }
 }

@@ -5,8 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
-import uk.ac.ebi.intact.business.IntactException;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
@@ -25,7 +23,7 @@ import java.util.HashSet;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue("uk.ac.ebi.intact.model.CvGoNode")
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvGoNode" )
 public class CvGoNode extends CvDagObject {
 
     // =======================================================================
@@ -67,8 +65,8 @@ public class CvGoNode extends CvDagObject {
     @Transient
     public String getGoId() {
         Collection<CvObjectXref> someXrefs = this.getXrefs();
-        if (someXrefs.size() != 1) {
-            System.out.println("warning: a CvGoNode can only have one specific Xref");
+        if ( someXrefs.size() != 1 ) {
+            System.out.println( "warning: a CvGoNode can only have one specific Xref" );
         }
         Xref xref = someXrefs.iterator().next();
         return xref.getPrimaryId();
@@ -79,13 +77,14 @@ public class CvGoNode extends CvDagObject {
      * super class CvDagObject by "getChilds" method<br>
      * This method should provide ALL children (subchildren) of the node,<br>
      * that means also the children of the children of the children etc.
+     *
      * @return all possible children of this node as a Collection of CvGoNodes
      */
     @Transient
     public Collection<CvGoNode> getAllChilds() {
         visited = new HashSet<CvGoNode>();
         Collection<CvGoNode> childs = new ArrayList<CvGoNode>();
-        childs = this.calculateAllChilds(this, childs);
+        childs = this.calculateAllChilds( this, childs );
         return childs; // Collection of CvGoNodes
     }
 
@@ -97,12 +96,11 @@ public class CvGoNode extends CvDagObject {
     @Override
     public String toString() {
         StringBuffer string = new StringBuffer();
-        string.append("\nCvGoNode object for " + this.getGoId());
-        string.append("\n      -> childs: ");
-        for (CvDagObject cvDagObject : this.getChildren())
-        {
-            CvGoNode cvGoNode = (CvGoNode) cvDagObject;
-            string.append(cvGoNode.getGoId()).append(", ");
+        string.append( "\nCvGoNode object for " + this.getGoId() );
+        string.append( "\n      -> childs: " );
+        for ( CvDagObject cvDagObject : this.getChildren() ) {
+            CvGoNode cvGoNode = ( CvGoNode ) cvDagObject;
+            string.append( cvGoNode.getGoId() ).append( ", " );
         }
         return string.toString();
     }
@@ -113,25 +111,26 @@ public class CvGoNode extends CvDagObject {
 
     /**
      * Recursive method wich calculates all children and subchildren of a node.
+     *
      * @param aParent
      * @param collection - to call method with an empty collection - it is used internally for recursive call.
+     *
      * @return all children and subchildren as CvGoNode objects
      */
-    private Collection<CvGoNode> calculateAllChilds(CvGoNode aParent, Collection<CvGoNode> collection) {
-        if (!visited.contains(aParent)) {
+    private Collection<CvGoNode> calculateAllChilds( CvGoNode aParent, Collection<CvGoNode> collection ) {
+        if ( !visited.contains( aParent ) ) {
             // Iterate over children to add subtrees.
             level++; // Hierarchylevel
-            for (CvDagObject cvDagObject : aParent.getChildren())
-            {
+            for ( CvDagObject cvDagObject : aParent.getChildren() ) {
                 // For each child recursive call
-                CvGoNode node = (CvGoNode) cvDagObject;
-                collection = calculateAllChilds(node, collection);
+                CvGoNode node = ( CvGoNode ) cvDagObject;
+                collection = calculateAllChilds( node, collection );
             }
             level--;
             // only children are in interested - root of request will be filtered out
-            if (level > 0) {
-                collection.add(aParent);
-                visited.add(aParent);
+            if ( level > 0 ) {
+                collection.add( aParent );
+                visited.add( aParent );
             }
         }
         return collection; // CvGoNodes

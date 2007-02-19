@@ -26,41 +26,36 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
  * @version $Id$
  * @since <pre>14-Aug-2006</pre>
  */
-public class AnnotatedObjectUtils
-{
+public class AnnotatedObjectUtils {
 
-    private static final Log log = LogFactory.getLog(AnnotatedObjectUtils.class);
+    private static final Log log = LogFactory.getLog( AnnotatedObjectUtils.class );
 
-    private AnnotatedObjectUtils(){}
+    private AnnotatedObjectUtils() {
+    }
 
     /**
      * Trims a shortlabel if it is too long to be inserted in the database
+     *
      * @return true if the label has been modified
      */
-    public static String prepareShortLabel(String shortLabel)
-    {
+    public static String prepareShortLabel( String shortLabel ) {
         boolean modified = false;
 
-        if (shortLabel == null)
-        {
+        if ( shortLabel == null ) {
 
-            throw new NullPointerException("Must define a non null short label");
+            throw new NullPointerException( "Must define a non null short label" );
 
-        }
-        else
-        {
+        } else {
             // delete leading and trailing spaces.
             shortLabel = shortLabel.trim();
 
-            if ("".equals(shortLabel))
-            {
+            if ( "".equals( shortLabel ) ) {
                 throw new IllegalArgumentException(
-                        "Must define a non empty short label");
+                        "Must define a non empty short label" );
             }
 
-            if (shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN)
-            {
-                shortLabel = shortLabel.substring(0, AnnotatedObject.MAX_SHORT_LABEL_LEN);
+            if ( shortLabel.length() >= AnnotatedObject.MAX_SHORT_LABEL_LEN ) {
+                shortLabel = shortLabel.substring( 0, AnnotatedObject.MAX_SHORT_LABEL_LEN );
                 modified = true;
             }
         }

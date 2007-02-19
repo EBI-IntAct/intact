@@ -32,70 +32,60 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings( "unchecked" )
 public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction>
-        implements MineInteractionDao
-{
+        implements MineInteractionDao {
 
-    public MineInteractionDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(MineInteraction.class, session, intactSession);
+    public MineInteractionDaoImpl( Session session, IntactSession intactSession ) {
+        super( MineInteraction.class, session, intactSession );
     }
 
-    public void persist(MineInteraction mineInteraction)
-    {
-        getSession().persist(mineInteraction);
+    public void persist( MineInteraction mineInteraction ) {
+        getSession().persist( mineInteraction );
     }
 
-    public int deleteAll()
-    {
-        return getSession().createQuery("DELETE MineInteraction").executeUpdate();
+    public int deleteAll() {
+        return getSession().createQuery( "DELETE MineInteraction" ).executeUpdate();
     }
 
-    public MineInteraction get(String proteinIntactAc1, String proteinIntactAc2)
-    {
-        return (MineInteraction) getSession().createCriteria(getEntityClass())
-                .add(Restrictions.or(
+    public MineInteraction get( String proteinIntactAc1, String proteinIntactAc2 ) {
+        return ( MineInteraction ) getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.or(
                         Restrictions.and(
-                                Restrictions.eq("protein1Ac", proteinIntactAc1),
-                                Restrictions.eq("protein2Ac", proteinIntactAc2)
+                                Restrictions.eq( "protein1Ac", proteinIntactAc1 ),
+                                Restrictions.eq( "protein2Ac", proteinIntactAc2 )
                         ),
                         Restrictions.and(
-                                Restrictions.eq("protein2Ac", proteinIntactAc1),
-                                Restrictions.eq("protein1Ac", proteinIntactAc2)
+                                Restrictions.eq( "protein2Ac", proteinIntactAc1 ),
+                                Restrictions.eq( "protein1Ac", proteinIntactAc2 )
                         )
-                )).uniqueResult();
+                ) ).uniqueResult();
     }
 
-    public int countAll()
-    {
-        return (Integer) getSession().createCriteria(getEntityClass())
-                .setProjection(Projections.rowCount()).uniqueResult();
+    public int countAll() {
+        return ( Integer ) getSession().createCriteria( getEntityClass() )
+                .setProjection( Projections.rowCount() ).uniqueResult();
     }
 
-    public int countByProteinIntactAc(String proteinIntactAc)
-    {
-        return (Integer) getSession().createCriteria(getEntityClass())
-                .add(Restrictions.or(
-                        Restrictions.eq("protein1Ac", proteinIntactAc),
-                        Restrictions.eq("protein2Ac", proteinIntactAc)))
-                .setProjection(Projections.rowCount()).uniqueResult();
+    public int countByProteinIntactAc( String proteinIntactAc ) {
+        return ( Integer ) getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.or(
+                        Restrictions.eq( "protein1Ac", proteinIntactAc ),
+                        Restrictions.eq( "protein2Ac", proteinIntactAc ) ) )
+                .setProjection( Projections.rowCount() ).uniqueResult();
     }
 
-    public List<MineInteraction> getByProteinIntactAc(String proteinIntactAc, Integer firstResult, Integer maxResults)
-    {
-       Criteria crit = getSession().createCriteria(getEntityClass())
-                .add(Restrictions.or(
-                        Restrictions.eq("protein1Ac", proteinIntactAc),
-                        Restrictions.eq("protein2Ac", proteinIntactAc)));
+    public List<MineInteraction> getByProteinIntactAc( String proteinIntactAc, Integer firstResult, Integer maxResults ) {
+        Criteria crit = getSession().createCriteria( getEntityClass() )
+                .add( Restrictions.or(
+                        Restrictions.eq( "protein1Ac", proteinIntactAc ),
+                        Restrictions.eq( "protein2Ac", proteinIntactAc ) ) );
 
-        if (firstResult != null && firstResult > 0)
-        {
-            crit.setFirstResult(firstResult);
+        if ( firstResult != null && firstResult > 0 ) {
+            crit.setFirstResult( firstResult );
         }
-        if (maxResults != null && maxResults > 0)
-        {
-            crit.setMaxResults(maxResults);
+        if ( maxResults != null && maxResults > 0 ) {
+            crit.setMaxResults( maxResults );
         }
 
         return crit.list();

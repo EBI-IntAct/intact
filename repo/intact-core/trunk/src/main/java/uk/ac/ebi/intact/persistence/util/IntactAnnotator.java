@@ -25,79 +25,71 @@ import java.util.List;
  * @version $Id$
  * @since <pre>17-Mar-2006</pre>
  */
-public class IntactAnnotator
-{
+public class IntactAnnotator {
 
-    public static final Log log = LogFactory.getLog(IntactAnnotator.class);
+    public static final Log log = LogFactory.getLog( IntactAnnotator.class );
 
-    private IntactAnnotator()
-    {
+    private IntactAnnotator() {
     }
 
     /**
      * Retrieves a list of the annotated classes to use. This methods look for classes annotated with
      * <code>@javax.persistence.Entity</code> in the uk.ac.ebi.intact.model package
-     * @return  The list of hibernate annotated classes
+     *
+     * @return The list of hibernate annotated classes
      */
-    public static List<Class> getAnnotatedClasses(String packageName) {
+    public static List<Class> getAnnotatedClasses( String packageName ) {
         String pkg = packageName;
 
-        if (!packageName.startsWith("/") && packageName.contains("."))
-        {
-            packageName = "/" + packageName.replaceAll("\\.", "/");
+        if ( !packageName.startsWith( "/" ) && packageName.contains( "." ) ) {
+            packageName = "/" + packageName.replaceAll( "\\.", "/" );
         }
 
         List<Class> annotatedClasses = new ArrayList<Class>();
 
         // Get a File object for the package
-        URL url = IntactAnnotator.class.getResource(packageName);
+        URL url = IntactAnnotator.class.getResource( packageName );
 
         // convert funny chars (%20 into spaces...)
         String strDir = null;
         try {
-            strDir = URLDecoder.decode( url.getPath(), "UTF-8" ) ;
+            strDir = URLDecoder.decode( url.getPath(), "UTF-8" );
         } catch ( UnsupportedEncodingException e ) {
             // this error should never occur, let's not add a throws in the method signature.
-            throw new RuntimeException("An error occured while decoding the URL.", e);
+            throw new RuntimeException( "An error occured while decoding the URL.", e );
         }
 
-        File directory = new File(strDir);
+        File directory = new File( strDir );
 
-        if (directory.exists()) {
-            log.debug("Reading annotated classes from directory: "+directory);
+        if ( directory.exists() ) {
+            log.debug( "Reading annotated classes from directory: " + directory );
 
             // Get the list of the files contained in the package
-            for (String file : directory.list()) {
-                Class clazz = AnnotationUtil.getAnnotatedClass(Entity.class, packageName+"/"+file);
+            for ( String file : directory.list() ) {
+                Class clazz = AnnotationUtil.getAnnotatedClass( Entity.class, packageName + "/" + file );
 
-                if (clazz != null)
-                {
-                    annotatedClasses.add(clazz);
+                if ( clazz != null ) {
+                    annotatedClasses.add( clazz );
                 }
             }
-        }
-        else
-        {
-            log.info("Directory not found: "+directory+". Reading classes from jar");
+        } else {
+            log.info( "Directory not found: " + directory + ". Reading classes from jar" );
 
             // probably directory points inside a jar file, we get the jar name
             // and will look for annotated classes inside
-            String jarPath = directory.toString().substring(5, directory.toString().indexOf(".jar")+4);
+            String jarPath = directory.toString().substring( 5, directory.toString().indexOf( ".jar" ) + 4 );
 
-            log.info("Searching classes in jar: "+jarPath);
-            try
-            {
-                annotatedClasses.addAll(AnnotationUtil.getClassesWithAnnotationFromJar(Entity.class, jarPath));
+            log.info( "Searching classes in jar: " + jarPath );
+            try {
+                annotatedClasses.addAll( AnnotationUtil.getClassesWithAnnotationFromJar( Entity.class, jarPath ) );
             }
-            catch (IOException e)
-            {
+            catch ( IOException e ) {
                 e.printStackTrace();
             }
         }
 
         return annotatedClasses;
     }
-
 
 
 }

@@ -15,20 +15,17 @@ import java.util.List;
  * @version $Id$
  * @since <pre>07-jul-2006</pre>
  */
-@SuppressWarnings({"unchecked"})
-public class ComponentDaoImpl extends AnnotatedObjectDaoImpl<Component> implements ComponentDao
-{
+@SuppressWarnings( {"unchecked"} )
+public class ComponentDaoImpl extends AnnotatedObjectDaoImpl<Component> implements ComponentDao {
 
-    public ComponentDaoImpl(Session session, IntactSession intactSession)
-    {
-        super(Component.class, session, intactSession);
+    public ComponentDaoImpl( Session session, IntactSession intactSession ) {
+        super( Component.class, session, intactSession );
     }
 
 
-    public List<Component> getByInteractorAc(String interactorAc)
-    {
-        return getSession().createCriteria(getEntityClass())
-                .createCriteria("interactor")
-                .add(Restrictions.idEq(interactorAc)).list();
+    public List<Component> getByInteractorAc( String interactorAc ) {
+        return getSession().createCriteria( getEntityClass() )
+                .createCriteria( "interactor" )
+                .add( Restrictions.idEq( interactorAc ) ).list();
     }
 }
