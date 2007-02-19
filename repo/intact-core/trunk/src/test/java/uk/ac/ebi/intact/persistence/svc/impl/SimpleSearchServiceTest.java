@@ -29,39 +29,34 @@ import uk.ac.ebi.intact.persistence.svc.SearchService;
  * @version $Id$
  * @since 10/10/2006
  */
-public class SimpleSearchServiceTest extends TestCase
-{
+public class SimpleSearchServiceTest extends TestCase {
+
     private SearchService searchService;
 
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
         searchService = new SimpleSearchService();
     }
 
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         super.tearDown();
         IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         searchService = null;
     }
 
-    public void testCount_experiment_all() throws Exception
-    {
-        int count = searchService.count(Experiment.class, "*");
-        assertEquals(1, count);
+    public void testCount_experiment_all() throws Exception {
+        int count = searchService.count( Experiment.class, "*" );
+        assertEquals( 1, count );
     }
 
-    public void testCount_cvobjects_all() throws Exception
-    {
-        int count = searchService.count(CvObject.class, "*");
-        System.out.println(count);
+    public void testCount_cvobjects_all() throws Exception {
+        int count = searchService.count( CvObject.class, "*" );
+        System.out.println( count );
     }
 
-    public void testCount_interaction_cara() throws Exception
-    {
-        int count = searchService.count(InteractionImpl.class, "cara");
-        assertEquals(1, count);
+    public void testCount_interaction_cara() throws Exception {
+        int count = searchService.count( InteractionImpl.class, "cara" );
+        assertEquals( 1, count );
     }
 
 }

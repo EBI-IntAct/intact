@@ -21,8 +21,9 @@ import java.util.List;
  * @since 10/13/2006
  */
 public class SearchableQueryTest extends TestCase {
-    public SearchableQueryTest(String name) {
-        super(name);
+
+    public SearchableQueryTest( String name ) {
+        super( name );
     }
 
     public void setUp() throws Exception {
@@ -38,23 +39,20 @@ public class SearchableQueryTest extends TestCase {
 
         SearchableQuery sq = null;
 
-        try
-        {
-            sq = SearchableQuery.parseSearchableQuery(str);
+        try {
+            sq = SearchableQuery.parseSearchableQuery( str );
         }
-        catch (Throwable t)
-        {
+        catch ( Throwable t ) {
             t.printStackTrace();
         }
-        finally
-        {
-            if (sq == null) fail("Could parse SearchableQuery from String: "+str);
+        finally {
+            if ( sq == null ) fail( "Could parse SearchableQuery from String: " + str );
         }
 
-        assertEquals("EBI-12345", sq.getAc().getTerms().iterator().next().getValue());
-        assertEquals("ab", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(0).getValue());
-        assertEquals("hola", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(1).getValue());
-        assertTrue(sq.isIncludeCvIdentificationChildren());
+        assertEquals( "EBI-12345", sq.getAc().getTerms().iterator().next().getValue() );
+        assertEquals( "ab", ( ( List<QueryTerm> ) sq.getShortLabel().getTerms() ).get( 0 ).getValue() );
+        assertEquals( "hola", ( ( List<QueryTerm> ) sq.getShortLabel().getTerms() ).get( 1 ).getValue() );
+        assertTrue( sq.isIncludeCvIdentificationChildren() );
     }
 
     public void testParseSearchableQuery() throws Exception {
@@ -62,26 +60,23 @@ public class SearchableQueryTest extends TestCase {
 
         SearchableQuery sq = null;
 
-        try
-        {
-            sq = SearchableQuery.parseSearchableQuery(str);
+        try {
+            sq = SearchableQuery.parseSearchableQuery( str );
         }
-        catch (Throwable t)
-        {
+        catch ( Throwable t ) {
             t.printStackTrace();
         }
-        finally
-        {
-            if (sq == null) fail("Could parse SearchableQuery from String: "+str);
+        finally {
+            if ( sq == null ) fail( "Could parse SearchableQuery from String: " + str );
         }
 
-        assertEquals("EBI-12345", sq.getAc().getTerms().iterator().next().getValue());
-        assertEquals("ab", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(0).getValue());
-        assertEquals("hola", ((List<QueryTerm>)sq.getShortLabel().getTerms()).get(1).getValue());
-        assertTrue(sq.isIncludeCvIdentificationChildren());
+        assertEquals( "EBI-12345", sq.getAc().getTerms().iterator().next().getValue() );
+        assertEquals( "ab", ( ( List<QueryTerm> ) sq.getShortLabel().getTerms() ).get( 0 ).getValue() );
+        assertEquals( "hola", ( ( List<QueryTerm> ) sq.getShortLabel().getTerms() ).get( 1 ).getValue() );
+        assertTrue( sq.isIncludeCvIdentificationChildren() );
     }
 
     public static Test suite() {
-        return new TestSuite(SearchableQueryTest.class);
+        return new TestSuite( SearchableQueryTest.class );
     }
 }

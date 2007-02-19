@@ -24,8 +24,8 @@ import java.util.List;
  */
 public class DbInfoDaoImplTest extends TestCase {
 
-    public DbInfoDaoImplTest(String name) {
-        super(name);
+    public DbInfoDaoImplTest( String name ) {
+        super( name );
     }
 
     private DbInfoDao dao;
@@ -42,17 +42,17 @@ public class DbInfoDaoImplTest extends TestCase {
     }
 
     public void testGet() throws Exception {
-        DbInfo version = dao.get(DbInfo.SCHEMA_VERSION);
-        assertNotNull(version.getValue());
+        DbInfo version = dao.get( DbInfo.SCHEMA_VERSION );
+        assertNotNull( version.getValue() );
     }
 
     public void testGetAll() throws Exception {
         List<DbInfo> all = dao.getAll();
 
-        assertEquals(1, all.size());
+        assertEquals( 1, all.size() );
     }
 
     public static Test suite() {
-        return new TestSuite(DbInfoDaoImplTest.class);
+        return new TestSuite( DbInfoDaoImplTest.class );
     }
 }

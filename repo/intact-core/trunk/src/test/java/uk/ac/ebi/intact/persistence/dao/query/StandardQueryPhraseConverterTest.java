@@ -24,73 +24,65 @@ import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class StandardQueryPhraseConverterTest extends TestCase
-{
+public class StandardQueryPhraseConverterTest extends TestCase {
 
     private StandardQueryPhraseConverter converter;
 
-    protected void setUp() throws Exception
-    {
+    protected void setUp() throws Exception {
         super.setUp();
         converter = new StandardQueryPhraseConverter();
     }
 
-    protected void tearDown() throws Exception
-    {
+    protected void tearDown() throws Exception {
         super.tearDown();
         converter = null;
     }
 
-    public void testObjectToPhrase_wildcard_percent() throws Exception
-    {
+    public void testObjectToPhrase_wildcard_percent() throws Exception {
         String value = "lsm%";
-        QueryPhrase phrase = converter.objectToPhrase(value);
-        
-        assertEquals(1, phrase.getTerms().size());
+        QueryPhrase phrase = converter.objectToPhrase( value );
+
+        assertEquals( 1, phrase.getTerms().size() );
 
         QueryTerm term = phrase.getTerms().iterator().next();
 
-        assertEquals(1, term.getModifiers().length);
-        assertEquals("lsm", term.getValue());
+        assertEquals( 1, term.getModifiers().length );
+        assertEquals( "lsm", term.getValue() );
     }
 
-    public void testObjectToPhrase_wildcard_asterisk() throws Exception
-    {
+    public void testObjectToPhrase_wildcard_asterisk() throws Exception {
         String value = "lsm*";
-        QueryPhrase phrase = converter.objectToPhrase(value);
+        QueryPhrase phrase = converter.objectToPhrase( value );
 
-        assertEquals(1, phrase.getTerms().size());
+        assertEquals( 1, phrase.getTerms().size() );
 
         QueryTerm term = phrase.getTerms().iterator().next();
 
-        assertEquals(1, term.getModifiers().length);
-        assertEquals("lsm", term.getValue());
+        assertEquals( 1, term.getModifiers().length );
+        assertEquals( "lsm", term.getValue() );
     }
 
-    public void testPhraseToObject_wild_percent() throws Exception
-    {
+    public void testPhraseToObject_wild_percent() throws Exception {
         String prevValue = "lsm%";
-        QueryPhrase phrase = converter.objectToPhrase(prevValue);
+        QueryPhrase phrase = converter.objectToPhrase( prevValue );
 
-        String value = converter.phraseToObject(phrase);
-        assertEquals(prevValue, value);
+        String value = converter.phraseToObject( phrase );
+        assertEquals( prevValue, value );
     }
 
-    public void testPhraseToObject_wild_asterisk() throws Exception
-    {
+    public void testPhraseToObject_wild_asterisk() throws Exception {
         String prevValue = "*lsm";
-        QueryPhrase phrase = converter.objectToPhrase(prevValue);
+        QueryPhrase phrase = converter.objectToPhrase( prevValue );
 
-        String value = converter.phraseToObject(phrase);
-        assertEquals("%lsm", value);
+        String value = converter.phraseToObject( phrase );
+        assertEquals( "%lsm", value );
     }
 
-    public void testPhraseToObject_complex_phrases() throws Exception
-    {
+    public void testPhraseToObject_complex_phrases() throws Exception {
         String prevValue = "\"Hello there\" -lsm";
-        QueryPhrase phrase = converter.objectToPhrase(prevValue);
+        QueryPhrase phrase = converter.objectToPhrase( prevValue );
 
-        String value = converter.phraseToObject(phrase);
-        assertEquals("\"Hello there\",-lsm", value);
+        String value = converter.phraseToObject( phrase );
+        assertEquals( "\"Hello there\",-lsm", value );
     }
 }

@@ -17,54 +17,47 @@ import junit.framework.TestSuite;
  * @version $Id$
  * @since 09/04/2006
  */
-public class SchemaVersionTest extends TestCase
-{
-    public SchemaVersionTest(String name)
-    {
-        super(name);
+public class SchemaVersionTest extends TestCase {
+
+    public SchemaVersionTest( String name ) {
+        super( name );
     }
 
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
     }
 
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 
-    public void testParse() throws Exception
-    {
+    public void testParse() throws Exception {
         String version = "1.2.3";
-        SchemaVersion sv = SchemaVersion.parse(version);
+        SchemaVersion sv = SchemaVersion.parse( version );
 
-        assertEquals(Integer.valueOf(1), sv.getMajor());
-        assertEquals(Integer.valueOf(2), sv.getMinor());
-        assertEquals(Integer.valueOf(3), sv.getBuild());
+        assertEquals( Integer.valueOf( 1 ), sv.getMajor() );
+        assertEquals( Integer.valueOf( 2 ), sv.getMinor() );
+        assertEquals( Integer.valueOf( 3 ), sv.getBuild() );
 
-        SchemaVersion sv2 = new SchemaVersion(1, 2, 3);
-        assertEquals(sv2, sv);
+        SchemaVersion sv2 = new SchemaVersion( 1, 2, 3 );
+        assertEquals( sv2, sv );
     }
 
-    public void testIsCompatible_True() throws Exception
-    {
-        SchemaVersion minVersion = new SchemaVersion(1, 2, 4);
-        SchemaVersion compVersion = new SchemaVersion(1, 2, 5);
+    public void testIsCompatible_True() throws Exception {
+        SchemaVersion minVersion = new SchemaVersion( 1, 2, 4 );
+        SchemaVersion compVersion = new SchemaVersion( 1, 2, 5 );
 
-        assertTrue(compVersion+" should be compatible with "+minVersion, compVersion.isCompatibleWith(minVersion));
+        assertTrue( compVersion + " should be compatible with " + minVersion, compVersion.isCompatibleWith( minVersion ) );
     }
 
-    public void testIsCompatible_False() throws Exception
-    {
-        SchemaVersion minVersion = new SchemaVersion(2, 0, 5);
-        SchemaVersion compVersion = new SchemaVersion(1, 2, 4);
+    public void testIsCompatible_False() throws Exception {
+        SchemaVersion minVersion = new SchemaVersion( 2, 0, 5 );
+        SchemaVersion compVersion = new SchemaVersion( 1, 2, 4 );
 
-        assertFalse(compVersion.isCompatibleWith(minVersion));
+        assertFalse( compVersion.isCompatibleWith( minVersion ) );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite(SchemaVersionTest.class);
+    public static Test suite() {
+        return new TestSuite( SchemaVersionTest.class );
     }
 }

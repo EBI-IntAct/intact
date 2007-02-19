@@ -4,8 +4,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import java.util.List;
  * InteractorDaoImpl Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @since <pre>01/31/2007</pre>
  * @version 1.0
+ * @since <pre>01/31/2007</pre>
  */
 public class InteractorDaoImplTest extends TestCase {
-    
-    public InteractorDaoImplTest(String name) {
-        super(name);
+
+    public InteractorDaoImplTest( String name ) {
+        super( name );
     }
 
     private InteractorDao dao;
@@ -36,12 +36,12 @@ public class InteractorDaoImplTest extends TestCase {
     }
 
     public static Test suite() {
-        return new TestSuite(InteractorDaoImplTest.class);
+        return new TestSuite( InteractorDaoImplTest.class );
     }
 
     ////////////////////
     // Tests
-    
+
     public void testGetGeneNamesByInteractorAc() throws Exception {
         List<String> geneNames = dao.getGeneNamesByInteractorAc( "TEST-5153" );
         assertEquals( 3, geneNames.size() );
