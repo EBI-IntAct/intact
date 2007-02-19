@@ -118,11 +118,6 @@ public class DataContext implements Serializable {
 
     private DaoFactory getDaoFactory( DataConfig dataConfig ) {
         DaoFactory daoFactory = DaoFactory.getCurrentInstance( session, dataConfig );
-
-        if ( !daoFactory.isTransactionActive() ) {
-            daoFactory.beginTransaction(); // starts or uses an existing transaction
-        }
-
         return daoFactory;
     }
 

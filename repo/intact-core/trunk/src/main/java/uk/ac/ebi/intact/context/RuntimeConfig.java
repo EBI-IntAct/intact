@@ -38,6 +38,7 @@ public final class RuntimeConfig implements Serializable {
     private final Map<String, DataConfig> dataConfigs;
 
     private boolean readOnlyApp;
+    private boolean isAutoBeginTransaction;
     private boolean synchronizedSearchItems;
 
     private RuntimeConfig( IntactSession session ) {
@@ -127,6 +128,13 @@ public final class RuntimeConfig implements Serializable {
         return defaultDataConfig;
     }
 
+    public boolean isAutoBeginTransaction() {
+         return isAutoBeginTransaction;
+    }
+
+    public void setAutoBeginTransaction( boolean autoBeginTransaction ) {
+        isAutoBeginTransaction = autoBeginTransaction;
+    }
 
     public boolean isReadOnlyApp() {
         return readOnlyApp;
