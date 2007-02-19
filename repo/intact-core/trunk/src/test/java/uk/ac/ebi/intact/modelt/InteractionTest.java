@@ -3,9 +3,9 @@ package uk.ac.ebi.intact.modelt;
 import junit.framework.TestCase;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.InteractionDao;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.InteractionDao;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,29 +28,28 @@ public class InteractionTest extends TestCase {
         super.tearDown();
     }
 
-    public void testClone() throws Exception{
+    public void testClone() throws Exception {
         //Getting this interaction to clone
         InteractionDao interactionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao();
-        InteractionImpl orginal = interactionDao.getByShortLabel("cara-7");
+        InteractionImpl orginal = interactionDao.getByShortLabel( "cara-7" );
 
         //Getting the experiment to attach to the cloned interaction
         ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-        Experiment exp = expDao.getByShortLabel("thoden-1999-1");
+        Experiment exp = expDao.getByShortLabel( "thoden-1999-1" );
 
         //Getting a new CvInteractionType for the cloned Interaction so that it's not the same than the original one.
-        CvObjectDao<CvInteractionType> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvInteractionType.class);
-        CvInteractionType cvInteractionType = cvObjectDao.getByShortLabel("myristoylation");
-        if (orginal != null)
-        {
-            System.out.println(orginal.getAc());
+        CvObjectDao<CvInteractionType> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvInteractionType.class );
+        CvInteractionType cvInteractionType = cvObjectDao.getByShortLabel( "myristoylation" );
+        if ( orginal != null ) {
+            System.out.println( orginal.getAc() );
             //Clone the object
-            InteractionImpl copy = (InteractionImpl) orginal.clone();
+            InteractionImpl copy = ( InteractionImpl ) orginal.clone();
             //Add the experiment
-            copy.addExperiment(exp);
+            copy.addExperiment( exp );
             //Change the cvInteractionType
-            copy.setCvInteractionType(cvInteractionType);
+            copy.setCvInteractionType( cvInteractionType );
 
-            interactionDao.persist(copy);
+            interactionDao.persist( copy );
 
             // FROM HERE I'M TESTING THAT THE CLONE AND THE ORIGINAL ARE "EQUAL"
 
@@ -58,23 +57,23 @@ public class InteractionTest extends TestCase {
 
             interactionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao();
             String copyShortlabel = copy.getShortLabel();
-            copy = interactionDao.getByShortLabel(copyShortlabel);
+            copy = interactionDao.getByShortLabel( copyShortlabel );
 
-            assertEquals(copy.getComponents().size(), orginal.getComponents().size());
-            assertEquals(copy.getAnnotations().size(),orginal.getAnnotations().size());
-            assertEquals(copy.getXrefs().size(),orginal.getXrefs().size());
+            assertEquals( copy.getComponents().size(), orginal.getComponents().size() );
+            assertEquals( copy.getAnnotations().size(), orginal.getAnnotations().size() );
+            assertEquals( copy.getXrefs().size(), orginal.getXrefs().size() );
 
             int originalFeatureCount = 0;
             int originalRangeCount = 0;
             int originalAnnot = 0;
             int originalXref = 0;
             Collection<String> interactorShorlabels = new ArrayList();
-            for (Component component : orginal.getComponents()){
+            for ( Component component : orginal.getComponents() ) {
                 originalFeatureCount += component.getBindingDomains().size();
                 originalAnnot += component.getAnnotations().size();
                 originalXref += component.getXrefs().size();
-                interactorShorlabels.add(component.getInteractor().getShortLabel());
-                for(Feature feature : component.getBindingDomains()){
+                interactorShorlabels.add( component.getInteractor().getShortLabel() );
+                for ( Feature feature : component.getBindingDomains() ) {
                     originalRangeCount += feature.getRanges().size();
                     originalAnnot += component.getAnnotations().size();
                     originalXref += component.getXrefs().size();
@@ -85,21 +84,21 @@ public class InteractionTest extends TestCase {
             int copyRangeCount = 0;
             int copyAnnot = 0;
             int copyXref = 0;
-            for (Component component : orginal.getComponents()){
+            for ( Component component : orginal.getComponents() ) {
                 copyFeatureCount += component.getBindingDomains().size();
                 copyAnnot += component.getAnnotations().size();
                 copyXref += component.getXrefs().size();
-                for(Feature feature : component.getBindingDomains()){
+                for ( Feature feature : component.getBindingDomains() ) {
                     copyRangeCount += feature.getRanges().size();
                     copyAnnot += component.getAnnotations().size();
                     copyXref += component.getXrefs().size();
                 }
-                assertTrue(interactorShorlabels.contains(component.getInteractor().getShortLabel()));
+                assertTrue( interactorShorlabels.contains( component.getInteractor().getShortLabel() ) );
             }
-            assertEquals(originalFeatureCount,copyFeatureCount);
-            assertEquals(originalRangeCount,copyRangeCount);
-            assertEquals(originalAnnot,copyAnnot);
-            assertEquals(originalXref,copyXref);
+            assertEquals( originalFeatureCount, copyFeatureCount );
+            assertEquals( originalRangeCount, copyRangeCount );
+            assertEquals( originalAnnot, copyAnnot );
+            assertEquals( originalXref, copyXref );
 
         }
 

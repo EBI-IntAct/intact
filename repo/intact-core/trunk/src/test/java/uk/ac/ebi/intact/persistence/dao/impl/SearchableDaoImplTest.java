@@ -24,146 +24,130 @@ import java.util.Map;
  * @version $Id$
  * @since 10/10/2006
  */
-public class SearchableDaoImplTest extends TestCase
-{
-    public SearchableDaoImplTest(String name)
-    {
-        super(name);
+public class SearchableDaoImplTest extends TestCase {
+
+    public SearchableDaoImplTest( String name ) {
+        super( name );
     }
 
     private SearchableDao dao;
     private StandardQueryPhraseConverter converter;
 
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
         dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getSearchableDao();
         converter = new StandardQueryPhraseConverter();
     }
 
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         super.tearDown();
         IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         dao = null;
         converter = new StandardQueryPhraseConverter();
     }
 
-    public void testCountByQuery_ac() throws Exception
-    {
+    public void testCountByQuery_ac() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc(converter.objectToPhrase("TEST-5153"));
+        query.setAc( converter.objectToPhrase( "TEST-5153" ) );
 
-        int count = dao.countByQuery(InteractorImpl.class, query);
-        assertEquals(1, count);
+        int count = dao.countByQuery( InteractorImpl.class, query );
+        assertEquals( 1, count );
     }
 
-    public void testCountByQuery_2ac() throws Exception
-    {
+    public void testCountByQuery_2ac() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc(converter.objectToPhrase("TEST-5153,TEST-5169"));
+        query.setAc( converter.objectToPhrase( "TEST-5153,TEST-5169" ) );
 
-        int count = dao.countByQuery(InteractorImpl.class, query);
-        assertEquals(2, count);
+        int count = dao.countByQuery( InteractorImpl.class, query );
+        assertEquals( 2, count );
     }
 
-    public void testCountByQuery_2ac_self() throws Exception
-    {
+    public void testCountByQuery_2ac_self() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc(converter.objectToPhrase("TEST-5153,TEST-5153"));
+        query.setAc( converter.objectToPhrase( "TEST-5153,TEST-5153" ) );
 
-        int count = dao.countByQuery(InteractorImpl.class, query);
-        assertEquals(1, count);
+        int count = dao.countByQuery( InteractorImpl.class, query );
+        assertEquals( 1, count );
     }
 
-    public void testCountByQuery_all_standard() throws Exception
-    {
+    public void testCountByQuery_all_standard() throws Exception {
         SearchableQuery query = new SearchableQuery();
 
-        Map<Class<? extends Searchable>, Integer> counts = dao.countByQuery(query);
-        assertEquals(5, counts.entrySet().size());
+        Map<Class<? extends Searchable>, Integer> counts = dao.countByQuery( query );
+        assertEquals( 5, counts.entrySet().size() );
 
 
-        for (Map.Entry<Class<? extends Searchable>,Integer> entry : counts.entrySet())
-        {
-            System.out.println(entry.getKey()+": "+entry.getValue());
+        for ( Map.Entry<Class<? extends Searchable>, Integer> entry : counts.entrySet() ) {
+            System.out.println( entry.getKey() + ": " + entry.getValue() );
 
-            if (entry.getKey().equals(NucleicAcidImpl.class))
-            {
-                assertTrue(entry.getValue() == 0);
-            }
-            else
-            {
-                assertTrue(entry.getValue() > 0);
+            if ( entry.getKey().equals( NucleicAcidImpl.class ) ) {
+                assertTrue( entry.getValue() == 0 );
+            } else {
+                assertTrue( entry.getValue() > 0 );
             }
         }
 
     }
 
-    public void testGetByQuery_fullText() throws Exception
-    {
+    public void testGetByQuery_fullText() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setFullText(converter.objectToPhrase("%phosphate%"));
+        query.setFullText( converter.objectToPhrase( "%phosphate%" ) );
 
-        List<InteractorImpl> results = dao.getByQuery(InteractorImpl.class, query, 0, 50);
+        List<InteractorImpl> results = dao.getByQuery( InteractorImpl.class, query, 0, 50 );
 
-        assertEquals(4, results.size());
+        assertEquals( 4, results.size() );
     }
 
-    public void testGetByQuery_description() throws Exception
-    {
+    public void testGetByQuery_description() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setDescription(converter.objectToPhrase("%\"phosphate synthetase\"%"));
+        query.setDescription( converter.objectToPhrase( "%\"phosphate synthetase\"%" ) );
 
-        List<Experiment> results = dao.getByQuery(Experiment.class, query, 0, 50);
+        List<Experiment> results = dao.getByQuery( Experiment.class, query, 0, 50 );
 
-        assertEquals(1, results.size());
+        assertEquals( 1, results.size() );
     }
 
-    public void testGetByQuery_annotation() throws Exception
-    {
+    public void testGetByQuery_annotation() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAnnotationText(converter.objectToPhrase("%diploid%"));
+        query.setAnnotationText( converter.objectToPhrase( "%diploid%" ) );
 
-        List<CvObject> results = dao.getByQuery(CvObject.class, query, 0, 50);
-        assertFalse(results.isEmpty());
+        List<CvObject> results = dao.getByQuery( CvObject.class, query, 0, 50 );
+        assertFalse( results.isEmpty() );
     }
 
-    public void testGetByQuery_annotation_and_topic() throws Exception
-    {
+    public void testGetByQuery_annotation_and_topic() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setCvTopicLabel(converter.objectToPhrase(CvTopic.COMMENT));
-        query.setAnnotationText(converter.objectToPhrase("%tumour%"));
+        query.setCvTopicLabel( converter.objectToPhrase( CvTopic.COMMENT ) );
+        query.setAnnotationText( converter.objectToPhrase( "%tumour%" ) );
 
-        List<? extends Searchable> results = dao.getByQuery(CvObject.class, query, 0, 50);
+        List<? extends Searchable> results = dao.getByQuery( CvObject.class, query, 0, 50 );
 
-        assertEquals(1, results.size());
+        assertEquals( 1, results.size() );
     }
 
-    public void testGetByQuery_experiments_standard_disjunction() throws Exception
-    {
-        QueryPhrase search = converter.objectToPhrase("tho%");
+    public void testGetByQuery_experiments_standard_disjunction() throws Exception {
+        QueryPhrase search = converter.objectToPhrase( "tho%" );
 
         SearchableQuery query = new SearchableQuery();
-        query.setShortLabel(search);
-        query.setDescription(search);
-        query.setXref(search);
-        query.setAc(search);
-        query.setDisjunction(true);
+        query.setShortLabel( search );
+        query.setDescription( search );
+        query.setXref( search );
+        query.setAc( search );
+        query.setDisjunction( true );
 
-        List<? extends Searchable> results = dao.getByQuery(Experiment.class, query, 0, 50);
-        assertEquals(1, results.size());
+        List<? extends Searchable> results = dao.getByQuery( Experiment.class, query, 0, 50 );
+        assertEquals( 1, results.size() );
 
     }
 
-    public void testGetByQuery_std() throws Exception
-    {
+    public void testGetByQuery_std() throws Exception {
         SearchableQuery query = new SearchableQuery();
 
-        List<? extends Searchable> results = dao.getByQuery(query, 0, 50);
+        List<? extends Searchable> results = dao.getByQuery( query, 0, 50 );
 
-        assertEquals(50, results.size());
+        assertEquals( 50, results.size() );
     }
+
     /*
     public void testGetByQuery_cvDatabase_xref() throws Exception
     {
@@ -175,13 +159,12 @@ public class SearchableDaoImplTest extends TestCase
         assertFalse(results.isEmpty());
     }
     */
-    public void testGetByQuery_cvInteraction_withChildren()
-    {
+    public void testGetByQuery_cvInteraction_withChildren() {
         SearchableQuery query = new SearchableQuery();
-        query.setCvInteractionLabel(converter.objectToPhrase("\"2h fragment pooling\""));
-        query.setIncludeCvInteractionChildren(true);
+        query.setCvInteractionLabel( converter.objectToPhrase( "\"2h fragment pooling\"" ) );
+        query.setIncludeCvInteractionChildren( true );
 
-        int count = dao.countByQuery(Experiment.class, query);
+        int count = dao.countByQuery( Experiment.class, query );
         /*
         assertTrue(count > 600);
 
@@ -190,35 +173,33 @@ public class SearchableDaoImplTest extends TestCase
         assertFalse(results.isEmpty());
         assertEquals(50, results.size());
           */
-        assertEquals(0, count);
+        assertEquals( 0, count );
     }
 
-    public void testGetByQuery_cvInteraction_cvIdentification_withChildren()
-    {
+    public void testGetByQuery_cvInteraction_cvIdentification_withChildren() {
         SearchableQuery query = new SearchableQuery();
-        query.setCvInteractionLabel(converter.objectToPhrase("biophysical"));
-        query.setIncludeCvInteractionChildren(true);
-        query.setCvIdentificationLabel(converter.objectToPhrase("\"mass spectrometry\""));
-        query.setIncludeCvIdentificationChildren(true);
+        query.setCvInteractionLabel( converter.objectToPhrase( "biophysical" ) );
+        query.setIncludeCvInteractionChildren( true );
+        query.setCvIdentificationLabel( converter.objectToPhrase( "\"mass spectrometry\"" ) );
+        query.setIncludeCvIdentificationChildren( true );
 
-        int count = dao.countByQuery(Experiment.class, query);
-        assertTrue(count == 0);
+        int count = dao.countByQuery( Experiment.class, query );
+        assertTrue( count == 0 );
 
-        List<Experiment> results = dao.getByQuery(Experiment.class, query, 0, 50);
+        List<Experiment> results = dao.getByQuery( Experiment.class, query, 0, 50 );
 
-        assertTrue(results.isEmpty());
+        assertTrue( results.isEmpty() );
     }
 
-    public void testCountByQuery_interaction_label() throws Exception
-    {
-        QueryPhrase search = converter.objectToPhrase("cara%");
+    public void testCountByQuery_interaction_label() throws Exception {
+        QueryPhrase search = converter.objectToPhrase( "cara%" );
 
         SearchableQuery query = new SearchableQuery();
-        query.setDisjunction(true);
-        query.setShortLabel(search);
-        query.setXref(search);
+        query.setDisjunction( true );
+        query.setShortLabel( search );
+        query.setXref( search );
 
-        assertEquals(Integer.valueOf(2), dao.countByQuery(InteractionImpl.class, query));
+        assertEquals( Integer.valueOf( 2 ), dao.countByQuery( InteractionImpl.class, query ) );
 
     }
 

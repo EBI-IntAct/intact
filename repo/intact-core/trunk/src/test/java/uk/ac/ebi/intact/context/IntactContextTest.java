@@ -18,35 +18,31 @@ import junit.framework.TestSuite;
  * @since 09/04/2006
  */
 public class IntactContextTest extends TestCase {
-    public IntactContextTest(String name)
-    {
-        super(name);
+
+    public IntactContextTest( String name ) {
+        super( name );
     }
 
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
     }
 
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         super.tearDown();
     }
 
-    public void testInitContext_Default() throws Exception
-    {
+    public void testInitContext_Default() throws Exception {
         IntactContext ctx = IntactContext.getCurrentInstance();
 
-        assertNotNull(ctx.getInstitution());
-        assertEquals("TEST", ctx.getConfig().getAcPrefix());
+        assertNotNull( ctx.getInstitution() );
+        assertEquals( "TEST", ctx.getConfig().getAcPrefix() );
 
-        assertNotNull(ctx.getDataContext());
+        assertNotNull( ctx.getDataContext() );
 
-        assertFalse("App not read-only", ctx.getDataContext().isReadOnly());
+        assertFalse( "App not read-only", ctx.getDataContext().isReadOnly() );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite(IntactContextTest.class);
+    public static Test suite() {
+        return new TestSuite( IntactContextTest.class );
     }
 }

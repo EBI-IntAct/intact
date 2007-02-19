@@ -19,8 +19,9 @@ import uk.ac.ebi.intact.model.CvDatabase;
  * @since 08/29/2006
  */
 public class CvContextTest extends TestCase {
-    public CvContextTest(String name) {
-        super(name);
+
+    public CvContextTest( String name ) {
+        super( name );
     }
 
     private CvContext cvContext;
@@ -38,18 +39,18 @@ public class CvContextTest extends TestCase {
     }
 
     public void testGetCurrentInstance() throws Exception {
-        assertNotNull(cvContext);
+        assertNotNull( cvContext );
     }
 
     public void testGetByLabel() throws Exception {
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByLabel(CvDatabase.class, CvDatabase.UNIPROT).getShortLabel());
+        assertEquals( CvDatabase.UNIPROT, cvContext.getByLabel( CvDatabase.class, CvDatabase.UNIPROT ).getShortLabel() );
     }
 
     public void testGetByMiRef() throws Exception {
-        assertEquals(CvDatabase.UNIPROT, cvContext.getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF).getShortLabel());
+        assertEquals( CvDatabase.UNIPROT, cvContext.getByMiRef( CvDatabase.class, CvDatabase.UNIPROT_MI_REF ).getShortLabel() );
     }
 
     public static Test suite() {
-        return new TestSuite(CvContextTest.class);
+        return new TestSuite( CvContextTest.class );
     }
 }

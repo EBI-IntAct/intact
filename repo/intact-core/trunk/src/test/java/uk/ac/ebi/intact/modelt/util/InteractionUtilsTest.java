@@ -23,6 +23,7 @@ import java.util.List;
  * @since 08/22/2006
  */
 public class InteractionUtilsTest extends TestCase {
+
     public InteractionUtilsTest( String name ) {
         super( name );
     }
@@ -67,10 +68,10 @@ public class InteractionUtilsTest extends TestCase {
         assertFalse( InteractionUtils.isUnaryInteraction( createUnaryInteraction( 99f ) ) );
 
         // true binary and self
-        assertFalse( InteractionUtils.isUnaryInteraction( createBinaryInteraction( ) ) );
-        assertFalse( InteractionUtils.isUnaryInteraction( createBinaryInteractionWithNonProtein( ) ) );
-        assertFalse( InteractionUtils.isUnaryInteraction( createSelfBinaryInteraction( ) ) );
-        assertFalse( InteractionUtils.isUnaryInteraction( createSelfInteraction2( ) ) );
+        assertFalse( InteractionUtils.isUnaryInteraction( createBinaryInteraction() ) );
+        assertFalse( InteractionUtils.isUnaryInteraction( createBinaryInteractionWithNonProtein() ) );
+        assertFalse( InteractionUtils.isUnaryInteraction( createSelfBinaryInteraction() ) );
+        assertFalse( InteractionUtils.isUnaryInteraction( createSelfInteraction2() ) );
     }
 
     public static Test suite() {

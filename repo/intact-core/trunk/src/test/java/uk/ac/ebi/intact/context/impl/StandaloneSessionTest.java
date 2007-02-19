@@ -19,11 +19,10 @@ import uk.ac.ebi.intact.context.IntactSession;
  * @version $Id$
  * @since 09/04/2006
  */
-public class StandaloneSessionTest extends TestCase
-{
-    public StandaloneSessionTest(String name)
-    {
-        super(name);
+public class StandaloneSessionTest extends TestCase {
+
+    public StandaloneSessionTest( String name ) {
+        super( name );
     }
 
     private static final String APP_ATT_NAME = "app_att_name";
@@ -35,46 +34,39 @@ public class StandaloneSessionTest extends TestCase
 
     IntactSession session;
 
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
         session = new StandaloneSession();
     }
 
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         super.tearDown();
 
         session = null;
     }
 
-    public void testSetGetApplicationAttribute() throws Exception
-    {
-        session.setApplicationAttribute(APP_ATT_NAME, APP_ATT_VALUE);
-        assertEquals(APP_ATT_VALUE, session.getApplicationAttribute(APP_ATT_NAME));
+    public void testSetGetApplicationAttribute() throws Exception {
+        session.setApplicationAttribute( APP_ATT_NAME, APP_ATT_VALUE );
+        assertEquals( APP_ATT_VALUE, session.getApplicationAttribute( APP_ATT_NAME ) );
     }
 
-    public void testSetGetAttribute() throws Exception
-    {
-        session.setAttribute(ATT_NAME, ATT_VALUE);
-        assertEquals(ATT_VALUE, session.getAttribute(ATT_NAME));
+    public void testSetGetAttribute() throws Exception {
+        session.setAttribute( ATT_NAME, ATT_VALUE );
+        assertEquals( ATT_VALUE, session.getAttribute( ATT_NAME ) );
     }
 
-    public void testSetGetRequestAttribute() throws Exception
-    {
-        session.setRequestAttribute(REQ_ATT_NAME, REQ_ATT_VALUE);
-        assertEquals(REQ_ATT_VALUE, session.getRequestAttribute(REQ_ATT_NAME));
+    public void testSetGetRequestAttribute() throws Exception {
+        session.setRequestAttribute( REQ_ATT_NAME, REQ_ATT_VALUE );
+        assertEquals( REQ_ATT_VALUE, session.getRequestAttribute( REQ_ATT_NAME ) );
     }
 
-    public void testSetGetInitParam() throws Exception
-    {
-        assertEquals("TEST", session.getInitParam(IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn()));
-        assertEquals("ebi", session.getInitParam(IntactEnvironment.INSTITUTION_LABEL.getFqn()));
+    public void testSetGetInitParam() throws Exception {
+        assertEquals( "TEST", session.getInitParam( IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn() ) );
+        assertEquals( "ebi", session.getInitParam( IntactEnvironment.INSTITUTION_LABEL.getFqn() ) );
     }
 
-    public static Test suite()
-    {
-        return new TestSuite(StandaloneSessionTest.class);
+    public static Test suite() {
+        return new TestSuite( StandaloneSessionTest.class );
     }
 }
