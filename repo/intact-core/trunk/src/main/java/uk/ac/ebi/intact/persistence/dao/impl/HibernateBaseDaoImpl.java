@@ -8,13 +8,14 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.context.IntactEnvironment;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.RuntimeConfig;
+import uk.ac.ebi.intact.context.*;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.persistence.Entity;
 import java.sql.SQLException;
@@ -29,6 +30,8 @@ import java.util.Collection;
  */
 public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session> {
 
+    public static final Log log = LogFactory.getLog( HibernateBaseDaoImpl.class );
+
     private Class<T> entityClass;
     private Session session;
     private IntactSession intactSession;
@@ -40,6 +43,19 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session> {
     }
 
     public Session getSession() {
+
+        RuntimeConfig config = RuntimeConfig.getCurrentInstance( intactSession );
+        DaoFactory daoFactory = DaoFactory.getCurrentInstance( intactSession, config.getDefaultDataConfig() );
+
+        if ( !daoFactory.isTransactionActive() ) {
+            if ( config.isAutoBeginTransaction() ) {
+                log.debug( "Auto starting transaction" );
+                daoFactory.beginTransaction(); // starts or uses an existing transaction
+            } else {
+                throw new AutoBeginTransactionException( "You must begin a transaction manually." );
+            }
+        }
+
         return session;
     }
 

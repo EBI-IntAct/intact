@@ -121,7 +121,6 @@ public class IntactConfigurator {
         }
 
         // check the schema Version
-        // read only
         String strForceNoSchemaCheck = getInitParamValue( session, IntactEnvironment.FORCE_NO_SCHEMA_VERSION_CHECK.getFqn(), Boolean.FALSE.toString() );
         boolean forceNoSchemaCheck = Boolean.parseBoolean( strForceNoSchemaCheck );
 
@@ -140,6 +139,12 @@ public class IntactConfigurator {
         boolean syncSearchItems = Boolean.parseBoolean( strSynchronizeSearchItems );
         config.setSynchronizedSearchItems( syncSearchItems );
         log.debug( "Application synchronizes SearchItems: " + syncSearchItems );
+
+        // auto begin transaction
+        String strAutoBeginTransaction = getInitParamValue( session, IntactEnvironment.AUTO_BEGIN_TRANSACTION.getFqn(), DEFAULT_SYNCHRONIZED_SEARCH_ITEMS );
+        boolean autoBeginTransaction = Boolean.parseBoolean( strAutoBeginTransaction );
+        config.setAutoBeginTransaction( autoBeginTransaction );
+        log.debug( "Application auto begin transaction: " + autoBeginTransaction );
 
         // load the institution
         loadInstitution( session );

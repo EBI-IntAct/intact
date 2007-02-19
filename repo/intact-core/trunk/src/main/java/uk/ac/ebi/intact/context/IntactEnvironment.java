@@ -73,11 +73,15 @@ public enum IntactEnvironment {
      */
     SYNCHRONIZED_SEARCH_ITEMS( "uk.ac.ebi.intact.SYNCHRONIZED_SEARCH_ITEMS" ),
 
-
     /**
      * If true, don't check the schema version agains the intact-core version. Default: false
      */
-    FORCE_NO_SCHEMA_VERSION_CHECK( "uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK" );
+    FORCE_NO_SCHEMA_VERSION_CHECK( "uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK" ),
+
+    /**
+     * If true, don't open a transaction automatically when DataContext.getDaoFactory() is called. Default: false
+     */
+    AUTO_BEGIN_TRANSACTION( "uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION" );
 
 
     private String fqn;
