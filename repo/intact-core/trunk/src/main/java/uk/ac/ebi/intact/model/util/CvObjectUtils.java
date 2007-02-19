@@ -20,11 +20,9 @@ public class CvObjectUtils {
         if ( cvObject == null ) {
             throw new NullPointerException( "cvObject should not be null" );
         }
-        System.out.println( "CvObject :" + cvObject.getShortLabel() );
         Collection<CvObjectXref> cvObjectXrefs = cvObject.getXrefs();
         CvObjectXref cvObjectXref = null;
         for ( CvObjectXref xref : cvObjectXrefs ) {
-            System.out.println( "   xref [ " + xref.getCvDatabase().getShortLabel() + ", " + xref.getCvXrefQualifier().getShortLabel() + "]" );
             //Check that the cvdatabase of the xref has an psi-mi identity xref equal to CvDatabase.PSI_MI_MI_REF ( i.e:
             //check that the database is Psi-mi)
             if ( hasIdentity( xref.getCvDatabase(), CvDatabase.PSI_MI_MI_REF ) ) {
