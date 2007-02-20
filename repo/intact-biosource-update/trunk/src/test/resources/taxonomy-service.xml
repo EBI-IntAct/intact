@@ -16,8 +16,7 @@
 
     <bean id="biosourceLoaderBean" class="uk.ac.ebi.intact.util.biosource.BioSourceServiceImpl">
         <constructor-arg>
-            <!--<ref bean="${TaxonomyBridgeAdapter.class}"/>-->
-            <ref bean="newt"/>
+            <ref bean="dummy"/>
         </constructor-arg>
     </bean>
 </beans>

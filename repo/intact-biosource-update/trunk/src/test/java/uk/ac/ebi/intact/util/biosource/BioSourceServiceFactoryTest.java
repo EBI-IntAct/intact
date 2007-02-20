@@ -45,4 +45,11 @@ public class BioSourceServiceFactoryTest extends TestCase {
             // ok
         }
     }
+
+    public void testGetInstance_noParam() throws Exception {
+        // Test Spring bean injection
+        BioSourceServiceFactory factory = BioSourceServiceFactory.getInstance();
+        BioSourceService service = factory.buildBioSourceService();
+        assertNotNull( service );
+    }
 }

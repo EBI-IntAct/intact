@@ -5,10 +5,9 @@
  */
 package uk.ac.ebi.intact.util.biosource;
 
-//import org.springframework.beans.factory.BeanFactory;
-//import org.springframework.beans.factory.xml.XmlBeanFactory;
-//import org.springframework.core.io.ClassPathResource;
-
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.xml.XmlBeanFactory;
+import org.springframework.core.io.ClassPathResource;
 import uk.ac.ebi.intact.util.taxonomy.TaxonomyService;
 
 /**
@@ -37,15 +36,12 @@ public class BioSourceServiceFactory {
     ////////////////////////////
     // Instance methods
 
-    public TaxonomyService buildBioSourceService() {
+    public BioSourceService buildBioSourceService() {
 
-        // TODO why is Spring not available in the Classpath ????
-
-//        ClassPathResource resource = new ClassPathResource( SPRING_CONFIG_FILE );
-//        BeanFactory factory = new XmlBeanFactory( resource );
-//        TaxonomyService service = ( TaxonomyService ) factory.getBean( "proteinLoaderBean" );
-//        return service;
-        throw new UnsupportedOperationException( "Spring Bean not configured yet." );
+        ClassPathResource resource = new ClassPathResource( SPRING_CONFIG_FILE );
+        BeanFactory factory = new XmlBeanFactory( resource );
+        BioSourceService service = ( BioSourceService ) factory.getBean( "biosourceLoaderBean" );
+        return service;
     }
 
     public BioSourceService buildBioSourceService( TaxonomyService taxonomyService ) {
