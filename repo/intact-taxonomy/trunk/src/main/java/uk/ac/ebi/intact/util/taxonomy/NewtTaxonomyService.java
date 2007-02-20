@@ -103,23 +103,12 @@ public class NewtTaxonomyService implements TaxonomyService {
         return lines;
     }
 
-    /**
-     * Check the validity of a given taxid.
-     *
-     * @param taxid
-     */
-    private void checkTaxidValidity( int taxid ) {
-        if ( taxid < -2 || taxid == 0 ) {
-            throw new IllegalArgumentException( taxid + ": a taxid must be > 1 or be -1 (in vitro) or -2 (chemical synthesis)." );
-        }
-    }
-
     ///////////////////////////
     // TaxonomyBridge methods
 
     public TaxonomyTerm getTaxonomyTerm( int taxid ) throws TaxonomyServiceException {
 
-        checkTaxidValidity( taxid );
+        TaxonomyUtils.isSupportedTaxid( taxid );
 
         TaxonomyTerm term = null;
 
@@ -206,7 +195,7 @@ public class NewtTaxonomyService implements TaxonomyService {
 
     public List<TaxonomyTerm> getTermChildren( int taxid ) throws TaxonomyServiceException {
 
-        checkTaxidValidity( taxid );
+        TaxonomyUtils.isSupportedTaxid( taxid );
 
         List<TaxonomyTerm> terms = new ArrayList<TaxonomyTerm>();
 
@@ -246,7 +235,7 @@ public class NewtTaxonomyService implements TaxonomyService {
 
     public List<TaxonomyTerm> getTermParent( int taxid ) throws TaxonomyServiceException {
 
-        checkTaxidValidity( taxid );
+        TaxonomyUtils.isSupportedTaxid( taxid );
 
         List<TaxonomyTerm> terms = new ArrayList<TaxonomyTerm>();
 
@@ -290,6 +279,7 @@ public class NewtTaxonomyService implements TaxonomyService {
     }
 
     public String getSourceDatabaseMiRef() {
+        // return Newt
         return "MI:0247";
     }
 }
