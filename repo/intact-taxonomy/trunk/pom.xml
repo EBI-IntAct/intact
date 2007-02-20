@@ -9,15 +9,15 @@
     </parent>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-taxonomy/tags/intact-taxonomy-1.0</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-taxonomy/tags/intact-taxonomy-1.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-taxonomy/tags/intact-taxonomy-1.0</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-taxonomy/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-taxonomy/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-taxonomy/trunk</url>
     </scm>
 
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-taxonomy</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <name>intact-taxonomy</name>
 
     <dependencies>
