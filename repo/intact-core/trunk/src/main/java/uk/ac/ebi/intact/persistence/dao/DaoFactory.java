@@ -247,8 +247,11 @@ public class DaoFactory implements Serializable {
     }
 
     public boolean isTransactionActive() {
-        log.debug( "Current transaction is " + currentTransaction );
-        return ( currentTransaction != null && !currentTransaction.wasCommitted() );
+        boolean active = ( currentTransaction != null && !currentTransaction.wasCommitted() );
+        if( log.isDebugEnabled() ) {
+            log.debug( "Current transaction is " + (currentTransaction == null ? "null" : ( active ? "active" : "committed" ) );
+        }
+        return active;
     }
 
     public IntactTransaction getCurrentTransaction() {
