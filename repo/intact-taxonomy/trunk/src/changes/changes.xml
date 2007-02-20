@@ -7,7 +7,7 @@
 
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
-        <release version="1.0" date="2007-02-14" description="Generifying intact-newt">
+        <release version="1.0" date="2007-02-20" description="Generifying intact-newt into intact-taxonomy">
             <action dev="skerrien" type="add">
                 Introduction of Service interface and implementations:
                 - Newt
