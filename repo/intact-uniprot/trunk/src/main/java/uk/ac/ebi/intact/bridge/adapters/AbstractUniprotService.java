@@ -19,12 +19,12 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>24-Oct-2006</pre>
  */
-public abstract class AbstractUniprotBridgeAdapter implements UniprotBridgeAdapter {
+public abstract class AbstractUniprotService implements UniprotService {
 
     /**
      * Sets up a logger for that class.
      */
-    public static final Log log = LogFactory.getLog( AbstractUniprotBridgeAdapter.class );
+    public static final Log log = LogFactory.getLog( AbstractUniprotService.class );
 
     public static final String SWISS_PROT_PREFIX = "SP_";
 

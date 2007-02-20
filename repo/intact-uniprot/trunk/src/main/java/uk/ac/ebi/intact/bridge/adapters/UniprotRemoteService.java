@@ -34,12 +34,12 @@ import java.util.*;
  * @version $Id$
  * @since <pre>23-Oct-2006</pre>
  */
-public class UniprotRemoteServiceAdapter extends AbstractUniprotBridgeAdapter {
+public class UniprotRemoteService extends AbstractUniprotService {
 
     /**
      * Sets up a logger for that class.
      */
-    public static final Log log = LogFactory.getLog( UniprotRemoteServiceAdapter.class );
+    public static final Log log = LogFactory.getLog( UniprotRemoteService.class );
 
     public Collection<UniprotProtein> retreive( String ac ) {
 

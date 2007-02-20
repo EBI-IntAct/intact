@@ -35,12 +35,12 @@ import java.util.*;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public class YaspAdapter extends AbstractUniprotBridgeAdapter {
+public class YaspService extends AbstractUniprotService {
 
     /**
      * Sets up a logger for that class.
      */
-    public static final Log log = LogFactory.getLog( YaspAdapter.class );
+    public static final Log log = LogFactory.getLog( YaspService.class );
 
     /**
      * Expected content of the beginning of the first line of a UniProt flat file.

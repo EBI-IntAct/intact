@@ -18,7 +18,7 @@ import java.util.Map;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
-public interface UniprotBridgeAdapter {
+public interface UniprotService {
 
     /**
      * Retreive a Uniprot protein based on its ID, AC or splice variant ID.
