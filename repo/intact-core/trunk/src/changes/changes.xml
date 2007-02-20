@@ -7,22 +7,22 @@
 
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
-        <release version="1.5.0-rc1-SNAPSHOT" date="2007-02-08" description="Providing additionel searching facilities">
+        <release version="1.5.0-rc1-SNAPSHOT" date="2007-02-08" description="New features and bug fixes">
             <action dev="bruno" type="fix">
                 Changed wrong "V/A" in the code, which should be "N/A". This is the default shortLabel for the component
             </action>
             <action dev="skerrien" type="add">
                 Added 1 new methods in CvObjectDAO allowing to search for a CV term by a single MI identifier.
             </action>
+
+            <action dev="skerrien" type="fix" issue="IAC-1">
+                 Make sure isTransactionActive behaves well.
+                 #1 - added a nre property in IntactEnvironment that sets if the transaction can be auto began (default is false).
+                 #2 - in the HibernateBaseDaoImpl, getSession() checks is there is a transaction started. If not and transactionAutoBegin=false -> it throws a runtime exception.
+                 #3 - transactionAutoBegin can be controlled via the API
+                 #4 - added unit tests
+            </action>
         </release>
-
-
-        <release version="1.5.0-rc1" date="2007-02-01" description="Providing additionel searching facilities">
-        
-		   <!-- No action added yet -->
-
-		</release>
-
 
         <release version="1.5.0-beta10" date="2007-02-01" description="Providing additionel searching facilities">
             <action dev="skerrien" type="update">
@@ -78,9 +78,9 @@
                 produce an exception.
             </action>
             <action dev="baranda" type="fix">
-                 Intact Query Interface - some fixes (cf. r7273).
+                Intact Query Interface - some fixes (cf. r7273).
             </action>
-            
+
         </release>
 
 
