@@ -46,7 +46,7 @@ public abstract class DatabaseTestCase extends TestCase {
                         sb.append( ste ).append( NEW_LINE );
                     }
                 } else {
-                    sb.append( "No stack trace is available, despite DEBUG_MODE being true." )
+                    sb.append( "No stack trace is available, despite DEBUG_MODE being true." );
                 }
 
                 fail( sb.toString() );
