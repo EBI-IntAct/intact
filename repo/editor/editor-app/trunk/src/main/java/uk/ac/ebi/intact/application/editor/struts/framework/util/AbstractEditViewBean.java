@@ -41,10 +41,8 @@ import java.util.*;
  * @version $Id$
  */
 public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implements Serializable {
+
     private static final Log log = LogFactory.getLog(AbstractEditViewBean.class);
-
-    private static final Logger logger = Logger.getLogger(EditorConstants.LOGGER);
-
 
     // Ac of the object from which the clone was created. (this should be null when myAnnotObject is persistent and
     // not a clone).
@@ -98,7 +96,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     private String myAnchor;
 
 
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+//    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
 
 
     /**
@@ -296,7 +294,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         }
         catch (IntactException ie) {
             // Log the error; the editor will display without menus!
-            Logger.getLogger(EditorConstants.LOGGER).error("loadMenus() error", ie);
+            log.error("loadMenus() error", ie);
         }
     }
 
@@ -1307,7 +1305,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             Annotation correspondingAnnotation = getCorrespondingAnnotation(getAnnotatedObject(), annot);
             if(correspondingAnnotation == null){
                 if(annotateOtherObject(annot)){
-                    LOGGER.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
+                    log.info("The annotation " + annot.getAc() + " is shared amongst several other object.");
                     //delAnnotation(commentBean);
                     getAnnotatedObject().removeAnnotation(annot);
                     Annotation newAnnot = createAnnotation(annot);
@@ -1349,7 +1347,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             Annotation correspondingAnnotation = getCorrespondingAnnotation(myAnnotObject, annot);
 
             if(correspondingAnnotation == null){
-                LOGGER.error("Add annot " +  annot.getAnnotationText());
+                log.error("Add annot " +  annot.getAnnotationText());
                 // Need this to generate the PK for the indirection table.
                 annotationDao.persist(annot);
                 getAnnotatedObject().addAnnotation(annot);
@@ -1399,7 +1397,7 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // update the cvObject in the cvContext (application scope)
         if (getAnnotatedObject() instanceof CvObject) {
             IntactContext.getCurrentInstance().getCvContext().updateCvObject((CvObject)getAnnotatedObject());
-            logger.info("CvObject updated: "+myAnnotObject);
+            log.info("CvObject updated: "+myAnnotObject);
         }
     }
 
@@ -1555,18 +1553,18 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             num = num + cvObjectDao.getByAnnotationAc(annotationAc).size();
 
             if(num > 1){
-                LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
+                log.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
                         "persistant and annotate and annotate an other object");
                 return true;
             } else {
-                LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
+                log.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is " +
                         "persistant and annotate and do not annotate an other object");
                 return false;
             }
 
         }
 
-        LOGGER.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is not " +
+        log.error("Annotation[" + annot.getAc() + "," + annot.getCvTopic().getShortLabel() + "] is not " +
                         "persistant");
         return false;
     }
