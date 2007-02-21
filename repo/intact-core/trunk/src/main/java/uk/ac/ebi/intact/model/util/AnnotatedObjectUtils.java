@@ -18,6 +18,13 @@ package uk.ac.ebi.intact.model.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Xref;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Util methods for interactions
@@ -61,5 +68,67 @@ public class AnnotatedObjectUtils {
         }
 
         return shortLabel;
+    }
+
+    /**
+     * Search for all Xrefs having Xref with the given CvDatabase.
+     *
+     * @param ao the non null AnnotatedObject to search on.
+     * @param db the non null CvDatabase filter.
+     *
+     * @return a non null Collection of Xref, may be empty.
+     */
+    public static Collection<Xref> searchXrefs( AnnotatedObject ao, CvDatabase db ) {
+
+        if ( ao == null ) {
+            throw new NullPointerException( "AnnotatedObject must not be null." );
+        }
+        if ( db == null ) {
+            throw new NullPointerException( "CvDatabase must not be null." );
+        }
+
+        Collection<Xref> xrefs = new ArrayList<Xref>( ao.getXrefs().size() );
+
+        for ( Iterator<Xref> iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
+            if ( db.equals( xref.getCvDatabase() ) ) {
+                xrefs.add( xref );
+            }
+        }
+
+        return xrefs;
+    }
+
+    /**
+     * Search for all Xrefs having Xref with both the given CvDatabase and CvXrefQualifier.
+     *
+     * @param ao the non null AnnotatedObject to search on.
+     * @param db the non null CvDatabase filter.
+     * @param qu the non null CvXrefQualifier filter.
+     *
+     * @return a non null Collection of Xref, may be empty.
+     */
+    public static Collection<Xref> searchXrefs( AnnotatedObject ao, CvDatabase db, CvXrefQualifier qu ) {
+
+        if ( ao == null ) {
+            throw new NullPointerException( "AnnotatedObject must not be null." );
+        }
+        if ( db == null ) {
+            throw new NullPointerException( "CvDatabase must not be null." );
+        }
+        if ( qu == null ) {
+            throw new NullPointerException( "CvXrefQualifier must not be null." );
+        }
+
+        Collection<Xref> xrefs = new ArrayList<Xref>( ao.getXrefs().size() );
+
+        for ( Iterator<Xref> iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
+            if ( db.equals( xref.getCvDatabase() ) && qu.equals( xref.getCvXrefQualifier() ) ) {
+                xrefs.add( xref );
+            }
+        }
+
+        return xrefs;
     }
 }
