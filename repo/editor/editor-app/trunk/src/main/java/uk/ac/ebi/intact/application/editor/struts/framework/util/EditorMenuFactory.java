@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.framework.util;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.util.CvHelper;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
@@ -25,7 +27,9 @@ import java.util.*;
 public class EditorMenuFactory {
 
 
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+//    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+    protected static final Log LOGGER = LogFactory.getLog(EditorMenuFactory.class);
+
     // Those variables are used when a called of the function getMenus(String EditorPageName) from the Class
     // AbstractEditViexBean is done in order to tell for which page this method is called to remove the relevant
     // cvTopic from the annotation section
