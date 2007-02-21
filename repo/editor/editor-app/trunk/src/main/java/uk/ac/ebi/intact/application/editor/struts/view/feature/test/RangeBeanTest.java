@@ -10,6 +10,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.RangeBean;
@@ -27,6 +29,7 @@ import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
  * @version $Id$
  */
 public class RangeBeanTest extends TestCase {
+    protected static final Log LOGGER = LogFactory.getLog(RangeBeanTest.class);
 
     /**
      * Constructs a RangeBeanTest instance with the specified name.
@@ -66,7 +69,7 @@ public class RangeBeanTest extends TestCase {
             doTestConstructor1();
         }
         catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            LOGGER.error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }
@@ -361,7 +364,7 @@ public class RangeBeanTest extends TestCase {
             copy = (RangeBean) bean.clone();
         }
         catch (CloneNotSupportedException cnse) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", cnse);
+            LOGGER.error("", cnse);
             assertTrue(true);
             return;
         }
