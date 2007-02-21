@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.security;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 
 import javax.servlet.*;
@@ -23,9 +25,9 @@ import java.io.IOException;
 public class LoginCheckFilter implements Filter {
 
     /**
-     * For logging.
+     * The logger for Editor. Allow access from the subclasses.
      */
-    private static final Logger ourLog = Logger.getLogger(EditorConstants.LOGGER);
+    protected static final Log ourLog = LogFactory.getLog(LoginCheckFilter.class);
 
     /**
      * A filter configuration object used by the web container to pass
