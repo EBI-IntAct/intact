@@ -41,6 +41,13 @@
             If read-only, an application cannot persist data in the database
         </description>
     </context-param>
+   <context-param>
+        <param-name>uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK</param-name>
+        <param-value>true</param-value>
+        <description>
+            If read-only, an application cannot persist data in the database
+        </description>
+    </context-param>
 
     <!-- =================================================================== -->
 
