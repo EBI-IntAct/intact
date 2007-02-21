@@ -81,7 +81,13 @@ public enum IntactEnvironment {
     /**
      * If true, don't open a transaction automatically when DataContext.getDaoFactory() is called. Default: false
      */
-    AUTO_BEGIN_TRANSACTION( "uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION" );
+    AUTO_BEGIN_TRANSACTION( "uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION" ),
+
+    /**
+     * If true, debug mode such as memorizing who begin a transaction, ... Should not be true in production environment.
+     * Default is false.
+     */
+    DEBUG_MODE( "uk.ac.ebi.intact.DEBUG_MODE" );
 
 
     private String fqn;
