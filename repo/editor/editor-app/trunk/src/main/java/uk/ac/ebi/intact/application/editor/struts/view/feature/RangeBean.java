@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.view.feature;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.AbstractEditKeyBean;
 import uk.ac.ebi.intact.application.editor.util.DaoProvider;
@@ -30,6 +32,7 @@ import java.util.regex.Pattern;
 public class RangeBean extends AbstractEditKeyBean {
 
     // Class Data
+    protected static final Log LOGGER = LogFactory.getLog(RangeBean.class);
 
     /**
      * pattern 1: starting with ? or c or n
@@ -249,7 +252,7 @@ public class RangeBean extends AbstractEditKeyBean {
             }
         }
         catch (IllegalArgumentException iae) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", iae);
+            LOGGER.error("", iae);
             errors = new ActionErrors();
             errors.add(prefix + ".fromRange",
                     new ActionMessage("error.feature.range.invalid"));
@@ -279,7 +282,7 @@ public class RangeBean extends AbstractEditKeyBean {
             }
         }
         catch (IllegalArgumentException iae) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", iae);
+            LOGGER.error("", iae);
             errors = new ActionErrors();
             errors.add(prefix + ".toRange", new ActionMessage("error.feature.range.invalid"));
         }
