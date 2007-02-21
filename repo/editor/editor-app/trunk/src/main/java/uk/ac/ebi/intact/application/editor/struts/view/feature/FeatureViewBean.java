@@ -345,7 +345,7 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
             user.rollback(); //to end editing
         }
         catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            log.error("", ie1);
             ie1.printStackTrace();
             user.rollback();
             // Rethrow the exception to be logged.
