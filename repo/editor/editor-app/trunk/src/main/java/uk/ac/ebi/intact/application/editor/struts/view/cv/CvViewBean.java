@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.view.cv;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.business.IntactException;
@@ -30,7 +32,7 @@ import java.util.Map;
  */
 public class CvViewBean extends AbstractEditViewBean<CvObject> {
 
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+    protected static final Log LOGGER = LogFactory.getLog(CvViewBean.class);
 
     /**
      * The map of menus for this view.
