@@ -43,6 +43,7 @@ public class IntactSessionRequestFilter implements Filter {
 
     private static final String[] DEFAULT_EXCLUDED_EXTENSIONS = new String[]{".js", "logout"};
 
+    private static final String COMMIT_ERRROR_MESSAGE_PARAM = IntactSessionRequestFilter.class+".COMMIT_ERROR_MSG";
 
     private List<String> excludedExtensions;
 
@@ -116,7 +117,14 @@ public class IntactSessionRequestFilter implements Filter {
                     log.error( "Couldn't rollback." + ie );
                     throw new ServletException( "Couldn't rollback." + ie );
                 }
-                throw new ServletException( "Exception commiting, rollback sucessfull" + e );
+                if (getCommitErrorMessage(req) != null)
+                {
+                    throw new ServletException( getCommitErrorMessage(req) );
+                }
+                else
+                {
+                    throw new ServletException( "Exception commiting, rollback sucessfull" + e );
+                }
 
             } finally {
                 Session hibernateSession = getSession();
@@ -170,4 +178,13 @@ public class IntactSessionRequestFilter implements Filter {
     public void destroy() {
     }
 
+    public static final void setCommitErrorMessage(String message, IntactSession session)
+    {
+        session.setRequestAttribute(COMMIT_ERRROR_MESSAGE_PARAM, message);
+    }
+
+    private static final String getCommitErrorMessage(HttpServletRequest request)
+    {
+        return (String) request.getAttribute(COMMIT_ERRROR_MESSAGE_PARAM);
+    }
 }
