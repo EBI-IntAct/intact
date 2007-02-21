@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.view;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.XrefHelper;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
@@ -29,6 +31,8 @@ import java.net.URLEncoder;
  * @version $Id$
  */
 public class XreferenceBean extends AbstractEditKeyBean {
+
+    protected static final Log LOGGER = LogFactory.getLog(XreferenceBean.class);
 
     /**
      * Reference to the Xref object this instance is created with. Transient as
@@ -368,14 +372,14 @@ public class XreferenceBean extends AbstractEditKeyBean {
         }
         catch (GoServerProxy.GoIdNotFoundException ex) {
 
-            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ex);
+            LOGGER.info("GO Proxy", ex);
             // GO id not found.
             result.addErrors("error.xref.go.search",new ActionMessage("error.xref.go.search",
                     getPrimaryId()));
             return result;
         }
         catch (IOException ioe) {
-            Logger.getLogger(EditorConstants.LOGGER).info("GO Proxy", ioe);
+            LOGGER.info("GO Proxy", ioe);
             // Error in communcating with the server.
             result.addErrors("error.xref.go.connection",new ActionMessage("error.xref.go.connection",
                     ioe.getMessage()));
@@ -408,7 +412,7 @@ public class XreferenceBean extends AbstractEditKeyBean {
             }
             catch (UnsupportedEncodingException uee) {
                 // This shouldn't happen as we know the encoding.
-                Logger.getLogger(EditorConstants.LOGGER).info("PID Link", uee);
+                LOGGER.info("PID Link", uee);
             }
         }
         myPrimaryIdLink = link;
