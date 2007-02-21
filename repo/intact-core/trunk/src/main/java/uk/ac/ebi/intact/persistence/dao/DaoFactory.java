@@ -228,7 +228,7 @@ public class DaoFactory implements Serializable {
         Transaction transaction = getCurrentSession().beginTransaction();
 
         // wrap it
-        currentTransaction = new IntactTransaction( transaction );
+        currentTransaction = new IntactTransaction( intactSession, transaction );
 
         return currentTransaction;
     }
