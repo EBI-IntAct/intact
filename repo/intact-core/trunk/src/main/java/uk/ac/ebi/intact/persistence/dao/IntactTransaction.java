@@ -10,6 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.RuntimeConfig;
 
 /**
  * It is a wrapper for Transactions
@@ -24,19 +26,36 @@ public class IntactTransaction {
 
     private Transaction transaction;
 
-    public IntactTransaction( Transaction transaction ) {
+    /**
+     * If DEBUG_MODE is true, a stack trace has been stored in the transaction so we can trace who created it.
+     */
+    private StackTraceElement[] stackTrace;
+
+    public IntactTransaction( IntactSession session, Transaction transaction ) {
         this.transaction = transaction;
 
         log.debug( "Transaction started" );
-        /*
-        int i=0;
-        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
-        {
-            log.debug(ste.toString());
 
-            if (i == 10) break;
-            i++;
-        }   */
+        if ( !RuntimeConfig.getCurrentInstance( session ).isDebugMode() ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Storing StackTrace on opening transaction, now the caller can be traced !!" );
+            }
+
+            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+            stackTrace = new StackTraceElement[elements.length - 2];
+            for ( int i = 2; i < elements.length; i++ ) {
+                stackTrace[i - 2] = elements[i];
+            }
+        }
+    }
+
+    /**
+     * If DEBUG_MODE is true, a stack trace has been stored in the transaction so we can trace who created it.
+     *
+     * @return This method returns the StackTraceElement array representing the stack trace. May be null.
+     */
+    public StackTraceElement[] getStackTrace() {
+        return stackTrace;
     }
 
     public void commit() throws IntactTransactionException {
@@ -76,5 +95,4 @@ public class IntactTransaction {
     public Object getWrappedTransaction() {
         return transaction;
     }
-
 }
