@@ -80,4 +80,19 @@ public class RuntimeConfigTest extends TestCase {
     public void testIsAutoBeginTransaction() throws Exception {
         assertTrue( config.isAutoBeginTransaction() );
     }
+
+    public void testIsDebugMode() {
+        boolean b = config.isDebugMode();
+
+        config.setDebugMode( false );
+        assertFalse( config.isDebugMode() );
+
+        config.setDebugMode( b );
+    }
+
+    public void testSetDebugMode() {
+        assertTrue( config.isDebugMode() );
+    }
+
+
 }

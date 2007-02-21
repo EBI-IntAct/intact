@@ -40,6 +40,7 @@ public final class RuntimeConfig implements Serializable {
     private boolean readOnlyApp;
     private boolean isAutoBeginTransaction;
     private boolean synchronizedSearchItems;
+    private boolean debugMode;
 
     private RuntimeConfig( IntactSession session ) {
         this.dataConfigs = new HashMap<String, DataConfig>();
@@ -150,5 +151,13 @@ public final class RuntimeConfig implements Serializable {
 
     public void setSynchronizedSearchItems( boolean synchronizedSearchItems ) {
         this.synchronizedSearchItems = synchronizedSearchItems;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode( boolean debugMode ) {
+        this.debugMode = debugMode;
     }
 }

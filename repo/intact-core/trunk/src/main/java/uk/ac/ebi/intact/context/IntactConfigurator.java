@@ -52,6 +52,8 @@ public class IntactConfigurator {
 
     private static final String DEFAULT_TRANSACTION_AUTO_BEGIN = Boolean.FALSE.toString();
 
+    private static final String DEFAULT_DEBUG_MODE = Boolean.FALSE.toString();
+
     private static final String INSTITUTION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.INSTITUTION_TO_BE_PERSISTED";
 
     private static final String SCHEMA_VERSION_TO_BE_PERSISTED_FLAG = "uk.ac.ebi.intact.internal.SCHEMA_VERSION_TO_BE_PERSISTED";
@@ -143,7 +145,7 @@ public class IntactConfigurator {
 
         // synchronize search items
         String strSynchronizeSearchItems = getInitParamValue( session,
-                                                              IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS.getFqn(), 
+                                                              IntactEnvironment.SYNCHRONIZED_SEARCH_ITEMS.getFqn(),
                                                               DEFAULT_SYNCHRONIZED_SEARCH_ITEMS );
         boolean syncSearchItems = Boolean.parseBoolean( strSynchronizeSearchItems );
         config.setSynchronizedSearchItems( syncSearchItems );
@@ -155,6 +157,13 @@ public class IntactConfigurator {
         boolean autoBeginTransaction = Boolean.parseBoolean( strAutoBeginTransaction );
         config.setAutoBeginTransaction( autoBeginTransaction );
         log.debug( "Application will auto begin transaction: " + autoBeginTransaction );
+
+        // debug mode
+        String strDebugMode = getInitParamValue( session, IntactEnvironment.DEBUG_MODE.getFqn(),
+                                                 DEFAULT_DEBUG_MODE );
+        boolean debugMode = Boolean.parseBoolean( strDebugMode );
+        config.setDebugMode( debugMode );
+        log.debug( "Application is in debug mode: " + debugMode );
 
         // load the institution
         loadInstitution( session );
@@ -194,9 +203,12 @@ public class IntactConfigurator {
         // start a context
         log.info( "Creating IntactContext..." );
         context = new IntactContextWrapper( dataContext, session );
-        persistInstitutionIfNecessary( context );
+        try {
+            persistInstitutionIfNecessary( context );
+        } catch ( IntactTransactionException e ) {
+            throw new IntactException( "Error while persisting institution.", e );
+        }
         persistSchemaVersionIfNecessary( context );
-
 
         return context;
     }
@@ -327,7 +339,7 @@ public class IntactConfigurator {
         log.debug( "Institution: " + institution.getShortLabel() );
     }
 
-    private static void persistInstitutionIfNecessary( IntactContext context ) {
+    private static void persistInstitutionIfNecessary( IntactContext context ) throws IntactTransactionException {
         IntactSession session = context.getSession();
 
         Object obj = session.getApplicationAttribute( INSTITUTION_TO_BE_PERSISTED_FLAG );
@@ -345,12 +357,7 @@ public class IntactConfigurator {
             DaoFactory daoFactory = DaoFactory.getCurrentInstance( session, RuntimeConfig.getCurrentInstance( session ).getDefaultDataConfig() );
             IntactTransaction tx = daoFactory.beginTransaction();
             daoFactory.getInstitutionDao().persist( institution );
-            //context.getDataContext().commitTransaction();
-            try {
-                tx.commit();
-            } catch ( IntactTransactionException e ) {
-                log.error( "Exception commiting " + e );
-            }
+            context.getDataContext().commitTransaction();
 
             session.setApplicationAttribute( INSTITUTION_TO_BE_PERSISTED_FLAG, Boolean.FALSE );
         }
