@@ -95,5 +95,8 @@
 <html:messages id="msg" property="new.annotation">
     <font color="red"><li><bean:write name="msg" /></li></font>
 </html:messages>
+<html:messages id="msg" property="char.not.allowed">
+    <font color="red"><li><bean:write name="msg" /></li></font>
+</html:messages>
 <%--<html:messages id="msg" property="annotation"/>--%>
 <%--<html:messages id="msg" property="new.annotation"/>--%>
