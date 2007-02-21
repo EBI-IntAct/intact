@@ -82,7 +82,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     /**
      * The stoichiometry.
      */
-    private float myStoichiometry = 1.0f;
+    private float myStoichiometry = 0;//1.0f;
 
     /**
      * The organism.
@@ -135,7 +135,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         catch (IntactException ex) {
             // Error in setting the Gene name for display
-            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+            log.error("Gene Name", ex);
         }
     }
 
@@ -150,7 +150,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         catch (IntactException ex) {
             // Error in setting the Gene name for display
-            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+            log.error("Gene Name", ex);
         }
     }
 
@@ -440,7 +440,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         }
         catch (IntactException ex) {
             // Error in setting the Gene name for display
-            Logger.getLogger(EditorConstants.LOGGER).error("Gene Name", ex);
+            log.error("Gene Name", ex);
         }
     }
 
