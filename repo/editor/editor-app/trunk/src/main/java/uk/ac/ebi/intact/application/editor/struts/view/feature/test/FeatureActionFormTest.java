@@ -11,6 +11,8 @@ import junit.framework.TestSuite;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorConstants;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureActionForm;
 
@@ -23,6 +25,8 @@ import java.util.ResourceBundle;
  * @version $Id$
  */
 public class FeatureActionFormTest extends TestCase {
+
+    protected static final Log LOGGER = LogFactory.getLog(FeatureActionFormTest.class);
 
     private static ResourceBundle ourResourceBundle;
 
@@ -52,7 +56,7 @@ public class FeatureActionFormTest extends TestCase {
             doMutationValidation();
         }
         catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            LOGGER.error("", ex);
             ex.printStackTrace();
             fail(ex.getMessage());
         }
