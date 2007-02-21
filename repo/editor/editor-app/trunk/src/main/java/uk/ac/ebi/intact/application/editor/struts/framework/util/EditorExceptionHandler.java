@@ -9,6 +9,8 @@ package uk.ac.ebi.intact.application.editor.struts.framework.util;
 import org.apache.log4j.Logger;
 import org.apache.struts.action.*;
 import org.apache.struts.config.ExceptionConfig;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.exception.BaseException;
 import uk.ac.ebi.intact.application.editor.exception.validation.ValidationException;
 
@@ -27,7 +29,7 @@ public class EditorExceptionHandler extends ExceptionHandler {
     /**
      * The Editor logger for logging.
      */
-    private static final Logger myLogger = Logger.getLogger(EditorConstants.LOGGER);
+    protected static final Log myLogger = LogFactory.getLog(EditorExceptionHandler.class);
 
     public ActionForward execute(Exception ex,
                                  ExceptionConfig config,
