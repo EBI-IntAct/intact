@@ -112,7 +112,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
     }
 
     /**
-     * Handles when Adde Feature button is pressed.
+     * Handles when Add Feature button is pressed.
      */
     public ActionForward add(ActionMapping mapping,
                              ActionForm form,
@@ -148,15 +148,8 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // The selected component from the form.
 
         ComponentBean selectedComp = intform.getSelectedComponent();
-        Collection<Component> comps = featureView.getCorrespondingComponent(interactionViewBean.getAnnotatedObject(), selectedComp);
-        if(comps.size() != 0){
-            for(Component comp : comps){
-                featureView.setComponent(comp);
-            }
-        } else {
-            // The component for the feature.
-            featureView.setComponent(selectedComp.getComponent());
-        }
+        // The component for the feature.
+        featureView.setComponent(selectedComp.getComponent());
         return mapping.findForward(SUCCESS);
     }
 }
