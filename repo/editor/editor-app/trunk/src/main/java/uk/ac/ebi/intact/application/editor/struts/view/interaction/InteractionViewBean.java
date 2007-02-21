@@ -120,7 +120,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         super.reset();
 
         // Set fields to null.
-        setKD(Float.valueOf("1.0"));
+        setKD(Float.valueOf("0"));
         setOrganism(null);
         setInteractionType(null);
         myFeatureSorter = null;
@@ -177,7 +177,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             user.rollback(); //to end editing
         }
         catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            log.error("", ie1);
             user.rollback();
             // Rethrow the exception to be logged.
             throw ie1;
@@ -192,7 +192,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         }
         catch (IntactException ie1) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ie1);
+            log.error("", ie1);
             user.rollback();
             throw ie1;
         }
