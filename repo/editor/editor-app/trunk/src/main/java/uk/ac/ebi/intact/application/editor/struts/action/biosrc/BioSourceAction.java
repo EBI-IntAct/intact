@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.biosrc;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction;
 import uk.ac.ebi.intact.application.editor.struts.view.XreferenceBean;
@@ -42,6 +44,8 @@ import java.util.StringTokenizer;
  *      validate="false"
  */
 public class BioSourceAction extends AbstractEditorAction {
+
+    protected static final Log LOGGER = LogFactory.getLog(BioSourceAction.class);
 
     /**
      * Process the specified HTTP request, and create the corresponding
