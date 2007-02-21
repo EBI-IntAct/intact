@@ -16,6 +16,8 @@ import java.lang.reflect.Modifier;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * This utility class generates EditorTopics.properties file using the
@@ -37,6 +39,8 @@ import org.apache.log4j.Logger;
  * @version $Id$
  */
 public class EditorTopicsGenerator {
+
+    protected static final Log LOGGER = LogFactory.getLog(EditorTopicsGenerator.class);
 
     /**
      * The root of the classpath. The package uk.ac.ebi.intact.model
@@ -235,7 +239,7 @@ public class EditorTopicsGenerator {
                     out.close();
                 }
                 catch (IOException ioe) {
-                    Logger.getLogger(EditorConstants.LOGGER).error("", ioe);
+                    LOGGER.error("", ioe);
                 }
             }
         }
@@ -255,7 +259,7 @@ public class EditorTopicsGenerator {
             System.out.println("Wrote to " + args[1]);
         }
         catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            LOGGER.error("", ex);
             ex.printStackTrace();
         }
     }
