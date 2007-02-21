@@ -34,15 +34,19 @@ public abstract class DatabaseTestCase extends TestCase {
 
         if ( daoFactory.isTransactionActive() ) {
 
-            if ( !IntactContext.getCurrentInstance().getConfig().isDebugMode() ) {
+            if ( IntactContext.getCurrentInstance().getConfig().isDebugMode() ) {
                 IntactTransaction transaction = daoFactory.getCurrentTransaction();
                 StackTraceElement[] stackTraceElements = transaction.getStackTrace();
 
                 StringBuilder sb = new StringBuilder( 512 );
                 sb.append( "There is still a transaction active. See StackTrace below:" ).append( NEW_LINE );
-                for ( int i = 0; i < stackTraceElements.length; i++ ) {
-                    StackTraceElement ste = stackTraceElements[i];
-                    sb.append( ste ).append( NEW_LINE );
+                if ( stackTraceElements != null ) {
+                    for ( int i = 0; i < stackTraceElements.length; i++ ) {
+                        StackTraceElement ste = stackTraceElements[i];
+                        sb.append( ste ).append( NEW_LINE );
+                    }
+                } else {
+                    sb.append( "No stack trace is available, despite DEBUG_MODE being true." )
                 }
 
                 fail( sb.toString() );
@@ -50,7 +54,7 @@ public abstract class DatabaseTestCase extends TestCase {
             } else {
 
                 StringBuffer sb = new StringBuffer( 128 );
-                sb.append("There is still a transaction active. Please add the following in your resources/intact.properties:");
+                sb.append( "There is still a transaction active. Please add the following in your resources/intact.properties:" );
                 sb.append( "uk.ac.ebi.intact.DEBUG_MODE=true" );
                 fail( sb.toString() );
             }
