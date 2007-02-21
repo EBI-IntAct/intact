@@ -34,7 +34,7 @@ import java.util.Map;
  * @version $Id$
  */
 public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  {
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+
     private static final Log log = LogFactory.getLog(SmallMoleculeViewBean.class);
 
     /**
