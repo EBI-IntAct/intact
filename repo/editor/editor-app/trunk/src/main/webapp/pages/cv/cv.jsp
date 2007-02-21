@@ -16,9 +16,6 @@
 
 <jsp:include page="../js.jsp" />
 
-<!-- To validate annotation text -->
-<script type="text/javascript" src="<%=request.getContextPath()%>/js/annotation.js"></script>
-
 <%-- Include javascript for show user functionality --%>
 <jsp:include page="../misc/user_js.jsp"/>
 
