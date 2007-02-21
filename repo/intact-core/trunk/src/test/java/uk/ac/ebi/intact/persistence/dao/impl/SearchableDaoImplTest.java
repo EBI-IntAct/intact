@@ -6,8 +6,7 @@
 
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import junit.framework.TestCase;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.DatabaseTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
@@ -24,7 +23,7 @@ import java.util.Map;
  * @version $Id$
  * @since 10/10/2006
  */
-public class SearchableDaoImplTest extends TestCase {
+public class SearchableDaoImplTest extends DatabaseTestCase {
 
     public SearchableDaoImplTest( String name ) {
         super( name );
@@ -35,15 +34,14 @@ public class SearchableDaoImplTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-        dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getSearchableDao();
+        dao = getDaoFactory().getSearchableDao();
         converter = new StandardQueryPhraseConverter();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
         dao = null;
-        converter = new StandardQueryPhraseConverter();
+        converter = null;
     }
 
     public void testCountByQuery_ac() throws Exception {
@@ -202,5 +200,4 @@ public class SearchableDaoImplTest extends TestCase {
         assertEquals( Integer.valueOf( 2 ), dao.countByQuery( InteractionImpl.class, query ) );
 
     }
-
 }
