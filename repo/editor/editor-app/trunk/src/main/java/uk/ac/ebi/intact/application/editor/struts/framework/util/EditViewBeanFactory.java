@@ -10,6 +10,8 @@ import org.apache.commons.pool.KeyedObjectPool;
 import org.apache.commons.pool.KeyedPoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool.impl.GenericKeyedObjectPoolFactory;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.editor.struts.view.biosrc.BioSourceViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.cv.CvViewBean;
@@ -29,6 +31,7 @@ import uk.ac.ebi.intact.model.*;
  */
 public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
 
+    protected static final Log log = LogFactory.getLog(EditViewBeanFactory.class);
     /**
      * Only instance of this class.
      */
@@ -78,7 +81,7 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
             return view;
         }
         catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            log.error("", ex);
         }
         return null;
     }
@@ -92,7 +95,7 @@ public class EditViewBeanFactory implements KeyedPoolableObjectFactory {
             myPool.returnObject(view.getEditClass(), view);
         }
         catch (Exception ex) {
-            Logger.getLogger(EditorConstants.LOGGER).error("", ex);
+            log.error("", ex);
         }
     }
 
