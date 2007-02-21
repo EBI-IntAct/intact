@@ -7,6 +7,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.commons.util.DateToolbox;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
@@ -29,6 +31,7 @@ import uk.ac.ebi.intact.application.editor.util.DaoProvider;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
@@ -46,7 +49,12 @@ import java.util.*;
  */
 public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
-    // Implements super's abstract methods.
+    /**
+     * Commons Logging instance.
+     */
+    protected static Log log = LogFactory.getLog(CommonDispatchAction.class);
+
+    public static String allowedChar = "A to Z, a to z, 0 to 9 and : !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";//new String();
 
     /**
      * Provides the mapping from resource key to method name.
@@ -132,6 +140,14 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         if (forward.equals(mapping.findForward(SUCCESS))) {
             getIntactUser(request).startEditing();
         }
+        // Handler to the Intact User.
+        EditUserI user = getIntactUser(request);
+
+        // The current view.
+        AbstractEditViewBean view = user.getView();
+
+        getLockManager().acquire(view.getAc(),user.getUserName());
+
         return forward;
     }
 
@@ -225,6 +241,26 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
             // The current view.
             AbstractEditViewBean view = user.getView();
 
+            String description = cb.getDescription();
+            log.debug("The description is " + cb.getDescription());
+
+            for (int i=0; i<description.length(); i++ ){
+                char c = description.charAt(i);
+               
+                if (!(c >= 32  && c <= 126)){
+
+//                if(!Character.isUnicodeIdentifierPart(c)){
+                    ActionMessages errors = new ActionMessages();
+                    errors.add("char.not.allowed", new ActionMessage("error.annotation.char.not.allowed", formatErrorMessage(description,i)));
+                    saveErrors(request, errors);
+
+                    // Set the anchor
+                    setAnchor(request, editorForm);
+                    // Display the error in the edit page.
+                    return mapping.getInputForward();
+                }
+            }
+
             // Does this bean exist in the current view?
             if (view.annotationExists(cb)) {
                 // The errors to display.
@@ -251,6 +287,15 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
 
         setAnchor(request, editorForm);
         return mapping.getInputForward();
+    }
+
+    String formatErrorMessage(String msg, int char2hilightPosition){
+    // Implements super's abstract methods.
+
+        String firstPart = msg.substring(0,char2hilightPosition);
+        String char2hilight = " ["+ Character.toString(msg.charAt(char2hilightPosition)) +  "] ";
+        String secondPart = msg.substring(char2hilightPosition+1, msg.length());
+        return " The annotation decription : " + firstPart + char2hilight + secondPart + " Allowed characters :"+ allowedChar;
     }
 
     /**
@@ -284,6 +329,22 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // The current view.
         AbstractEditViewBean view = user.getView();
 
+        // We test that the xref has a valid primaryId, has the hasValidPrimaryId is already implemented in
+        // uk.ac.ebi.intact.model.Xref, out of the XreferenceBean we create an xref and use its method hasValidPrimaryId
+        // If if return false we display the error.
+        Xref xref = createXref(xb, view);
+        if(!xref.hasValidPrimaryId()){
+            String regExp = getIdRegularExpression(xref.getCvDatabase());
+            ActionMessages errors = new ActionMessages();
+            errors.add("new.xref", new ActionMessage("error.xref.pid.not.valid",regExp));
+            saveErrors(request, errors);
+
+            // Set the anchor
+            setAnchor(request, editorForm);
+            // Display the error in the edit page.
+            return mapping.getInputForward();
+        }
+
         // Does this bean exist in the current view?
         if (view.xrefExists(xb)) {
             ActionMessages errors = new ActionMessages();
@@ -306,22 +367,10 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 // Display the errors in the input page.
                 return mapping.getInputForward();
             }
+            // reset the xref value as the xb value have changed.  
+            xref = createXref(xb, view);
         }
 
-        // We test that the xref has a valid primaryId, has the hasValidPrimaryId is already implemented in
-        // uk.ac.ebi.intact.model.Xref, out of the XreferenceBean we create an xref and use its method hasValidPrimaryId
-        // If if return false we display the error.
-        Xref xref = createXref(xb, view);
-        if(!xref.hasValidPrimaryId()){
-            ActionMessages errors = new ActionMessages();
-            errors.add("new.xref", new ActionMessage("error.xref.pid.not.valid"));
-            saveErrors(request, errors);
-
-            // Set the anchor
-            setAnchor(request, editorForm);
-            // Display the error in the edit page.
-            return mapping.getInputForward();
-        }
 
         // Add the bean to the view.
         view.addXref((XreferenceBean) xb.clone());
@@ -330,6 +379,17 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         setAnchor(request, editorForm);
 
         return mapping.getInputForward();
+    }
+
+    private String getIdRegularExpression(CvDatabase cv)  {
+        Collection<Annotation> annotations = cv.getAnnotations();
+        for(Annotation annotation : annotations){
+            CvObjectXref cvTopicXref = CvObjectUtils.getPsiMiIdentityXref(annotation.getCvTopic());
+            if(cvTopicXref != null && CvTopic.XREF_VALIDATION_REGEXP_MI_REF.equals(cvTopicXref.getPrimaryId())){
+                return annotation.getAnnotationText();
+            }
+        }
+        return null;
     }
 
     /**
@@ -421,7 +481,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         }
         catch (IntactException ie) {
             // Log the stack trace.
-            LOGGER.error("Exception trying to persist the view ", ie);
+            log.error("Exception trying to persist the view ", ie);
             // Error with updating.
             ActionMessages errors = new ActionMessages();
             // The error message.
@@ -492,7 +552,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         ExperimentDao experimentDao = DaoProvider.getDaoFactory().getExperimentDao();
         Experiment experiment = experimentDao.getByShortLabel(shortLabel);
         if (experiment == null){
-            LOGGER.error("Experiment is null,  we won't be abble to get the creator.");
+            log.error("Experiment is null,  we won't be abble to get the creator.");
         }
 
         String creator = experiment.getCreator();
@@ -532,7 +592,6 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 description = description + " " + cb1.getDescription();
             }
             Annotation annotation=new Annotation(IntactContext.getCurrentInstance().getConfig().getInstitution(), cvTopic, description);
-
             CommentBean cb = new CommentBean(annotation);
             AbstractEditViewBean view = getIntactUser(request).getView();
             view.addAnnotation(cb);
