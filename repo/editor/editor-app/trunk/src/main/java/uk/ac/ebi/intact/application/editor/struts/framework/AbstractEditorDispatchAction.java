@@ -11,6 +11,8 @@ import org.apache.struts.Globals;
 import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionMessages;
 import org.apache.struts.actions.LookupDispatchAction;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
@@ -39,7 +41,7 @@ public abstract class AbstractEditorDispatchAction extends LookupDispatchAction
     /**
      * The logger for Editor. Allow access from the subclasses.
      */
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+    protected static final Log LOGGER = LogFactory.getLog(AbstractEditorDispatchAction.class);
 
     /**
      * Returns the only instance of Intact Service instance.
