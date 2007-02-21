@@ -14,6 +14,10 @@
                 When enabled, all IntactTransaction record who has created them and can deliver a stack trace upon
                 request to show more details.
             </action>
+            <action dev="skerrien" type="add">
+                Added a new test environment: DatabaseTestCase that takes care of beginning and closing transaction.
+                Also it fails if a transaction hasn't been closed by an other test.
+            </action>
         </release>
 
 
