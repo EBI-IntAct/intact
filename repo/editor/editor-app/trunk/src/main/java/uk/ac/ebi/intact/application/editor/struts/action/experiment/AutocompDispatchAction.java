@@ -27,6 +27,8 @@ previous one.
 package uk.ac.ebi.intact.application.editor.struts.action.experiment;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
@@ -66,6 +68,9 @@ import java.util.*;
  */
 
 public class AutocompDispatchAction extends AbstractEditorDispatchAction {
+
+    private static final Log log = LogFactory.getLog(AutocompDispatchAction.class);
+
 
     // Implements super's abstract methods.
 
@@ -113,7 +118,10 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
 
         String pubmedId=view.getPubmedId();
         if(pubmedId!=null){
+            log.debug("The pubmed is : " + pubmedId);
             pubmedId = pubmedId.trim();
+        } else{
+            log.debug("The pubmed Id was null");
         }
 
         /*
@@ -379,7 +387,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         }catch (PublicationNotFoundException e){  //If the publication is not found
             LOGGER.error(" The publication corresponding to pubmedId " + pubmedId + "couldn't be found : ", e);
             ActionMessages errors = new ActionMessages();
-            errors.add("autocomp", new ActionMessage("error.exp.autocomp.publication.not.found"));
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp.publication.not.found",pubmedId));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.
@@ -387,7 +395,7 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         }catch(UnexpectedException e){ //Unexpected exception
             LOGGER.error("", e);
             ActionMessages errors = new ActionMessages();
-            errors.add("autocomp", new ActionMessage("error.exp.autocomp"));
+            errors.add("autocomp", new ActionMessage("error.exp.autocomp", pubmedId));
             saveErrors(request, errors);
             setAnchor(request, editorForm);
             // Display the error in the edit page.
