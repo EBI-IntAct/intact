@@ -7,14 +7,23 @@
 
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
-        <release version="1.5.0-rc1-SNAPSHOT" date="2007-02-08" description="New features and bug fixes">
+        <release version="1.5.0-rc2-SNAPSHOT" date="2007-02-21" description="New features and bug fixes">
+            <action dev="skerrien" type="add">
+                New configuration item: DEBUG_MODE that can be set in resources/intact.properties or via the API
+                (RuntimeConfig).
+                When enabled, all IntactTransaction record who has created them and can deliver a stack trace upon
+                request to show more details.
+            </action>
+        </release>
+
+
+        <release version="1.5.0-rc1" date="2007-02-20" description="New features and bug fixes">
             <action dev="bruno" type="fix">
                 Changed wrong "V/A" in the code, which should be "N/A". This is the default shortLabel for the component
             </action>
             <action dev="skerrien" type="add">
                 Added 1 new methods in CvObjectDAO allowing to search for a CV term by a single MI identifier.
             </action>
-
             <action dev="skerrien" type="fix" issue="IAC-1">
                 Make sure isTransactionActive behaves well.
                 #1 - added a nre property in IntactEnvironment that sets if the transaction can be auto began (default
@@ -25,6 +34,7 @@
                 #4 - added unit tests
             </action>
         </release>
+
 
         <release version="1.5.0-beta-10" date="2007-02-01" description="Providing additionel searching facilities">
             <action dev="skerrien" type="update">
@@ -96,6 +106,7 @@
                 IntactSessionRequestFilter now wraps HTTP response in StringResponseWrapper.
             </action>
         </release>
+
 
         <release version="1.5.0-beta-9" date="2007-01-08" description="New features and bug fixes">
             <action dev="baranda" type="fix">
@@ -240,6 +251,7 @@
             </action>
 
         </release>
+
 
         <release version="1.5.0-beta-3" date="2006-11-20" description="Bug fix">
 
@@ -464,7 +476,7 @@
 
         <release version="1.4.5" date="2006-09-27" description="">
 
-            <!-- TODO keep reading SVB logs ...  -->
+            <!-- TODO keep reading SVN logs ...  -->
 
         </release>
 
