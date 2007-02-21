@@ -15,8 +15,6 @@
  */
 package uk.ac.ebi.intact.model.util;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
@@ -27,7 +25,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * Util methods for interactions
+ * Util methods for annotatedObject.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -35,15 +33,13 @@ import java.util.Iterator;
  */
 public class AnnotatedObjectUtils {
 
-    private static final Log log = LogFactory.getLog( AnnotatedObjectUtils.class );
-
     private AnnotatedObjectUtils() {
     }
 
     /**
-     * Trims a shortlabel if it is too long to be inserted in the database
+     * Trims a shortlabel if it is too long to be inserted in the database.
      *
-     * @return true if the label has been modified
+     * @return the shortlabel.
      */
     public static String prepareShortLabel( String shortLabel ) {
         boolean modified = false;
