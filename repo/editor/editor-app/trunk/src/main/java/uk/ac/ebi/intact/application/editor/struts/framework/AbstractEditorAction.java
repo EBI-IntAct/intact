@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.apache.struts.Globals;
 import org.apache.struts.action.*;
 import org.apache.struts.util.MessageResources;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.exception.SessionExpiredException;
@@ -35,7 +37,8 @@ public abstract class AbstractEditorAction extends Action implements ForwardCons
     /**
      * The logger for Editor. Allow access from the subclasses.
      */
-    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+//    protected static final Logger LOGGER = Logger.getLogger(EditorConstants.LOGGER);
+      protected static final Log LOGGER = LogFactory.getLog(AbstractEditorAction.class);
 
     // Class Methods
 
