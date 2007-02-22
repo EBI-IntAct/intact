@@ -52,9 +52,4 @@ public class CachedUniprotServiceTest extends TestCase {
         assertEquals( p1, p2);
         assertSame( p1, p2 );
     }
-
-    public void testGetErrors() throws Exception {
-        fail( "Not yet implemented." );
-    }
-    
 }
