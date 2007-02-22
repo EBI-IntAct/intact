@@ -95,12 +95,28 @@ PROMPT
 PROMPT *********************************************************************************/
 PROMPT "Migrating IA_ALIAS data into specific tables."
 PROMPT
+PROMPT "1. Disable Alias audit trigger"
+@disable_alias_tables_audit_triggers.sql
+
+PROMPT "2. Run the alias transfert"
 @150_run_alias_table_split.sql
+
+PROMPT "3. Enable Alias audit trigger"
+@enable_alias_tables_audit_triggers.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Migrating IA_XREF data into specific tables."
 PROMPT
+
+PROMPT "1. Disable Xref audit trigger"
+@disable_xref_tables_audit_triggers.sql
+
+PROMPT "2. Run the xref transfert"
 @160_run_xref_table_split.sql
+
+PROMPT "3. Enable Xref audit trigger"
+@enable_xref_tables_audit_triggers.sql
+
 
 PROMPT *********************************************************************************/
 PROMPT "Migrating IA_ALIAS_AUDIT data into specific tables."
