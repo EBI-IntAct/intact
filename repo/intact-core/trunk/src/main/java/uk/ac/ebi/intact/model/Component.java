@@ -29,6 +29,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
 
     public static final float STOICHIOMETRY_NOT_DEFINED = 0;
 
+    public static final String NON_APPLICABLE = "N/A";
+
     ///////////////////////////////////////
     //attributes
 
@@ -97,11 +99,9 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
-    public Component( Institution owner, Interaction interaction,
-                      Interactor interactor, CvComponentRole role
-    ) {
+    public Component( Institution owner, Interaction interaction, Interactor interactor, CvComponentRole role ) {
 
-        this( owner, "N/A", interaction, interactor, role );
+        this( owner, NON_APPLICABLE, interaction, interactor, role );
     }
 
     /**
@@ -124,13 +124,14 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
-    public Component( Institution owner, String shortLabel, Interaction interaction,
-                      Interactor interactor, CvComponentRole role
-    ) {
+    public Component( Institution owner, String shortLabel, Interaction interaction, Interactor interactor,
+                      CvComponentRole role ) {
 
         //super call sets creation time data
         super( shortLabel, owner );
-        this.shortLabel = "N/A";
+
+        this.shortLabel = NON_APPLICABLE;
+
         if ( interaction == null ) {
             throw new NullPointerException( "valid Component must have an Interaction set!" );
         }
@@ -331,6 +332,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     @Override
     public Object clone() throws CloneNotSupportedException {
         Component copy = ( Component ) super.clone();
+
+        this.shortLabel = NON_APPLICABLE;
 
         // Reset interactor and interaction.
         copy.interaction = null;
