@@ -79,13 +79,6 @@ public class AnnotatedObjectUtilsTest extends TestCase {
         } catch ( Exception e ) {
             // ok
         }
-
-        try {
-            xrefs = AnnotatedObjectUtils.searchXrefs( ao, (CvXrefQualifier) null );
-            fail( "null param not allowed." );
-        } catch ( Exception e ) {
-            // ok
-        }
     }
 
     public void testSearchXref_databaseAndQualifier() {
@@ -137,7 +130,7 @@ public class AnnotatedObjectUtilsTest extends TestCase {
         assertEquals( 0, xrefs.size() );
 
         try {
-            xrefs = AnnotatedObjectUtils.searchXrefs( ao, null, null );
+            xrefs = AnnotatedObjectUtils.searchXrefs( ao, (CvXrefQualifier) null );
             fail( "null param not allowed." );
         } catch ( Exception e ) {
             // ok
