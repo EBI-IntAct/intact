@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.editor.exception.AuthenticateException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.UserContext;
+import uk.ac.ebi.intact.webapp.IntactSessionRequestFilter;
 
 /**
  * The custom authenticator for Intact editor.
@@ -46,6 +47,8 @@ public class UserAuthenticator {
         }
         catch (AuthenticateException ie) {
             log.error(username + " disallowed", ie);
+
+            IntactSessionRequestFilter.setCommitErrorMessage(IntactSessionRequestFilter.COULD_NOT_LOGIN, IntactContext.getCurrentInstance().getSession());
             throw new AuthenticateException(username + " disallowed");
         }
     }
