@@ -29,6 +29,21 @@ import java.util.List;
  * Right before the response is send to the client, and after all the work has been done,
  * the transaction will be committed, and the Session will be closed.
  *
+ * If there's an error at commit time 3 things can happen :
+ *
+ *         1. The COMMIT_ERRROR_MESSAGE_PARAM request attribute, is null. The intactSessionRequestFilter, will throw
+ *            a ServletException with the message "Exception commiting trying to commit...".
+ *         2. The COMMIT_ERROR_MESSAGE_PARAM request attribute is not null but not equal to IntactSessionRequestFilter.COULD_NOT_LOGIN.
+ *            The IntactSessionRequestFilter will throw a ServletException with as first part or the message, the value
+ *            of the attribute COMMIT_ERRROR_MESSAGE_PARAM.
+ *         3. The COMMIT_ERROR_MESSAGE_PARAM is equal to IntactSessionRequestFilter.COULD_NOT_LOGIN
+ *            The IntactSessionRequestFilter, will assume that your application have dealt with the problem earlier
+ *            (ex: you've build a page with a nice error message "login or password was wrong" and will just display the
+ *            Response your application has built.
+ *            So if the login in your aplication fail, you should set the COMMIT_ERRROR_MESSAGE_PARAM attribute
+ *            of the request to IntactSessionRequestFilter.COULD_NOT_LOGIN if you want your own built response to be
+ *            displayed.
+ *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
@@ -38,6 +53,8 @@ public class IntactSessionRequestFilter implements Filter {
     private FilterConfig myFilterConfig;
 
     private static final Log log = LogFactory.getLog( IntactSessionRequestFilter.class );
+
+    public static final String  COULD_NOT_LOGIN = "Could not login";
 
     private static final String FILTERED_PARAM_NAME = "uk.ac.ebi.intact.filter.EXCLUDED_EXTENSIONS";
 
@@ -119,11 +136,17 @@ public class IntactSessionRequestFilter implements Filter {
                 }
                 if (getCommitErrorMessage(req) != null)
                 {
+                    if(COULD_NOT_LOGIN.equals(getCommitErrorMessage(req))){
+                        out.write( responseWrapper.toString() );
+                    }
+                    log.error( getCommitErrorMessage(req));
                     throw new ServletException( getCommitErrorMessage(req) );
+
                 }
                 else
                 {
-                    throw new ServletException( "Exception commiting, rollback sucessfull" + e );
+                   log.error("Exception commiting, rollback sucessfull" + e ); 
+                   throw new ServletException( "Exception commiting, rollback sucessfull" + e );
                 }
 
             } finally {
