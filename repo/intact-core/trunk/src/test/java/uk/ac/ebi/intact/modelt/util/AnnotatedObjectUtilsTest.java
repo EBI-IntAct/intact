@@ -74,7 +74,14 @@ public class AnnotatedObjectUtilsTest extends TestCase {
         assertEquals( 0, xrefs.size() );
 
         try {
-            xrefs = AnnotatedObjectUtils.searchXrefs( ao, null );
+            xrefs = AnnotatedObjectUtils.searchXrefs( ao, (CvDatabase) null );
+            fail( "null param not allowed." );
+        } catch ( Exception e ) {
+            // ok
+        }
+
+        try {
+            xrefs = AnnotatedObjectUtils.searchXrefs( ao, (CvXrefQualifier) null );
             fail( "null param not allowed." );
         } catch ( Exception e ) {
             // ok
@@ -102,6 +109,30 @@ public class AnnotatedObjectUtilsTest extends TestCase {
 
         xrefs = AnnotatedObjectUtils.searchXrefs( ao,
                                                   new CvDatabase( institution, "db1" ),
+                                                  new CvXrefQualifier( institution, "XXX" ) );
+        assertEquals( 0, xrefs.size() );
+
+        try {
+            xrefs = AnnotatedObjectUtils.searchXrefs( ao, null, null );
+            fail( "null param not allowed." );
+        } catch ( Exception e ) {
+            // ok
+        }
+    }
+
+    public void testSearchXref_qualifier() {
+        AnnotatedObject ao = buildObject();
+        Collection<Xref> xrefs;
+
+        xrefs = AnnotatedObjectUtils.searchXrefs( ao,
+                                                  new CvXrefQualifier( institution, "qu1" ) );
+        assertEquals( 3, xrefs.size() );
+
+        xrefs = AnnotatedObjectUtils.searchXrefs( ao,
+                                                  new CvXrefQualifier( institution, "qu2" ) );
+        assertEquals( 1, xrefs.size() );
+
+        xrefs = AnnotatedObjectUtils.searchXrefs( ao,
                                                   new CvXrefQualifier( institution, "XXX" ) );
         assertEquals( 0, xrefs.size() );
 

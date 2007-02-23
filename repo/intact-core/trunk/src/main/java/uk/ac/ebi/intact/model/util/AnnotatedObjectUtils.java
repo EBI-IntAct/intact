@@ -127,4 +127,33 @@ public class AnnotatedObjectUtils {
 
         return xrefs;
     }
+
+    /**
+     * Search for all Xrefs having Xref with the given CvXrefQualifier.
+     *
+     * @param ao the non null AnnotatedObject to search on.
+     * @param qu the non null CvXrefQualifier filter.
+     *
+     * @return a non null Collection of Xref, may be empty.
+     */
+    public static Collection<Xref> searchXrefs( AnnotatedObject ao, CvXrefQualifier qu ) {
+
+        if ( ao == null ) {
+            throw new NullPointerException( "AnnotatedObject must not be null." );
+        }
+        if ( qu == null ) {
+            throw new NullPointerException( "CvXrefQualifier must not be null." );
+        }
+
+        Collection<Xref> xrefs = new ArrayList<Xref>( ao.getXrefs().size() );
+
+        for ( Iterator<Xref> iterator = ao.getXrefs().iterator(); iterator.hasNext(); ) {
+            Xref xref = iterator.next();
+            if ( qu.equals( xref.getCvXrefQualifier() ) ) {
+                xrefs.add( xref );
+            }
+        }
+
+        return xrefs;
+    }
 }
