@@ -315,7 +315,11 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         myXrefs.clear();
 
         // Set it with most likely next short label from the database.
-        String newSL = user.getNextAvailableShortLabel(copy.getClass(),
+        String newSL = null;
+        if(copy instanceof Component){
+            newSL = Component.NON_APPLICABLE;
+        }
+        newSL = user.getNextAvailableShortLabel(copy.getClass(),
                                                        copy.getShortLabel());
         setShortLabel(newSL);
 
