@@ -77,7 +77,7 @@ public class InteractorDaoImplTest extends TestCase {
         // We do not have any interactor not interacting
 //        InteractorDao dao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractorDao();
         int count = dao.countInteractorInvolvedInInteraction();
-        assertEquals( 2, count );
+        assertEquals( 4, count );
 //        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
 //        dao = null;
     }

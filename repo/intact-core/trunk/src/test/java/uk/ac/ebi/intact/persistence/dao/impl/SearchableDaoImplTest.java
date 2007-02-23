@@ -93,7 +93,7 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
 
         List<InteractorImpl> results = dao.getByQuery( InteractorImpl.class, query, 0, 50 );
 
-        assertEquals( 4, results.size() );
+        assertEquals( 19, results.size() );
     }
 
     public void testGetByQuery_description() throws Exception {
