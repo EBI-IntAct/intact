@@ -46,7 +46,7 @@ public class SimpleSearchServiceTest extends TestCase {
 
     public void testCount_experiment_all() throws Exception {
         int count = searchService.count( Experiment.class, "*" );
-        assertEquals( 1, count );
+        assertEquals( 6, count );
     }
 
     public void testCount_cvobjects_all() throws Exception {
