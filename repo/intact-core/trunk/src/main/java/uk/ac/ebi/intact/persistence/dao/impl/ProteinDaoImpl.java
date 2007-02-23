@@ -13,17 +13,16 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * TODO comment this
+ * Protein specific searches.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -38,9 +37,6 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
         super( ProteinImpl.class, session, intactSession );
     }
 
-    /**
-     * Gets the AC of the identity Xref
-     */
     public String getIdentityXrefByProteinAc( String proteinAc ) {
         Criteria crit = getSession().createCriteria( ProteinImpl.class )
                 .add( Restrictions.idEq( proteinAc ) )
@@ -52,9 +48,6 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
         return ( String ) crit.uniqueResult();
     }
 
-    /**
-     * Gets the AC of the identity Xref
-     */
     public String getUniprotAcByProteinAc( String proteinAc ) {
         Criteria crit = getSession().createCriteria( ProteinImpl.class )
                 .add( Restrictions.idEq( proteinAc ) )
@@ -66,10 +59,6 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
         return ( String ) crit.uniqueResult();
     }
 
-    /**
-     * Obtains the template of the url to be used in search.
-     * Uses the uniprot Xref and then get hold of its annotation 'search-url'
-     */
     public List<String> getUniprotUrlTemplateByProteinAc( String proteinAc ) {
         if ( proteinAc == null ) {
             throw new NullPointerException( "proteinAc" );
@@ -165,20 +154,6 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
                 .setProjection( Projections.rowCount() ).uniqueResult();
     }
 
-    private Criteria criteriaForUniprotProteins() {
-        return getSession().createCriteria( ProteinImpl.class )
-                .createAlias( "xrefs", "xref" )
-                .createAlias( "xref.cvDatabase", "cvDatabase" )
-                .createAlias( "xref.cvXrefQualifier", "cvXrefQualifier" )
-                .add( Restrictions.eq( "cvDatabase.shortLabel",
-                                       CvDatabase.UNIPROT ) )
-                .add( Restrictions.eq( "cvXrefQualifier.shortLabel",
-                                       CvXrefQualifier.IDENTITY ) )
-
-                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "A%" ) ) )
-                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "B%" ) ) )
-                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "C%" ) ) );
-    }
 
     public List<ProteinImpl> getByUniprotId( String uniprotId ) {
         return getSession().createCriteria( getEntityClass() )
@@ -218,13 +193,6 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
         return results;
     }
 
-    /**
-     * Returns the protein id of the parners
-     *
-     * @param proteinAc
-     *
-     * @return
-     */
     public List<String> getPartnersUniprotIdsByProteinAc( String proteinAc ) {
         return partnersByProteinAcCriteria( proteinAc )
                 .createAlias( "prot.xrefs", "xref" )
@@ -253,5 +221,93 @@ public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements Prote
                         .add( Restrictions.eq( "comp.stoichiometry", 2f ) ) );
     }
 
+    public List<ProteinImpl> getSpliceVariants( Protein protein ) {
+        if ( protein == null ) {
+            throw new NullPointerException( "The master protein must not be null." );
+        }
 
+        String ac = protein.getAc();
+
+        if ( ac == null ) {
+            // This protein doesn't have an AC, it cannot have splice variants.
+            return new ArrayList<ProteinImpl>( 1 );
+        }
+
+        return getSession().createCriteria( ProteinImpl.class )
+                .createAlias( "xrefs", "xref" )
+                .createAlias( "xref.cvXrefQualifier", "qual" )
+                .createAlias( "xref.cvDatabase", "database" )
+                .createCriteria( "qual.xrefs", "qualXref" )
+                .createCriteria( "database.xrefs", "dbXref" )
+                .add( Restrictions.eq( "qualXref.primaryId", CvXrefQualifier.ISOFORM_PARENT_MI_REF ) )
+                .add( Restrictions.eq( "dbXref.primaryId", CvDatabase.INTACT_MI_REF ) )
+                .add( Restrictions.eq( "xref.primaryId", ac ) ).list();
+    }
+
+    public ProteinImpl getSpliceVariantMasterProtein( Protein spliceVariant ) {
+
+        if ( spliceVariant == null ) {
+            throw new NullPointerException( "spliceVariant must not be null." );
+        }
+
+        CvXrefQualifier isoformParent = ( CvXrefQualifier ) getSession().createCriteria( CvXrefQualifier.class )
+                .createAlias( "xrefs", "xref" )
+                .createAlias( "xref.cvXrefQualifier", "qual" )
+                .createAlias( "xref.cvDatabase", "database" )
+                .createCriteria( "qual.xrefs", "qualXref" )
+                .createCriteria( "database.xrefs", "dbXref" )
+                .add( Restrictions.eq( "qualXref.primaryId", CvXrefQualifier.IDENTITY_MI_REF ) )
+                .add( Restrictions.eq( "dbXref.primaryId", CvDatabase.PSI_MI_MI_REF ) )
+                .add( Restrictions.eq( "xref.primaryId", CvXrefQualifier.ISOFORM_PARENT_MI_REF ) ).uniqueResult();
+
+        if ( isoformParent == null ) {
+            throw new IntactException( "Failed to find CvXrefQualifier(isoform-parent) by PSI identifier: " + CvXrefQualifier.ISOFORM_PARENT_MI_REF );
+        }
+
+        // first off, we search the Xref having the qualifier isoform-parent and get he master protein AC
+        Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( spliceVariant, isoformParent );
+
+        if ( xrefs.isEmpty() ) {
+            if ( log.isDebugEnabled() ) {
+                // well, that was not a splice variant
+                log.warn( "Could not find an Xref having CvXrefQualifier(isoform-parent) in splice variant: " + spliceVariant.getAc() );
+                log.warn( "Most likely, the given protein wasn't a (valid) splice variant." );
+            }
+
+            return null;
+
+        } else {
+
+            if ( xrefs.size() > 1 ) {
+                // well, that was not a splice variant
+                throw new IntactException( "Found more than one Xref having CvXrefQualifier(isoform-parent) in splice variant: " + spliceVariant.getAc() );
+            }
+
+            String masterAc = xrefs.iterator().next().getPrimaryId();
+
+            // search protein by AC
+            return ( ProteinImpl ) getSession().createCriteria( ProteinImpl.class )
+                    .add( Restrictions.eq( "ac", masterAc ) ).uniqueResult();
+        }
+    }
+
+    /**
+     * Builds a Hibernate Criteria allowing to select a UniProt protein.
+     *
+     * @return a non null Hibernate criteria.
+     */
+    private Criteria criteriaForUniprotProteins() {
+        return getSession().createCriteria( ProteinImpl.class )
+                .createAlias( "xrefs", "xref" )
+                .createAlias( "xref.cvDatabase", "cvDatabase" )
+                .createAlias( "xref.cvXrefQualifier", "cvXrefQualifier" )
+                .add( Restrictions.eq( "cvDatabase.shortLabel",
+                                       CvDatabase.UNIPROT ) )
+                .add( Restrictions.eq( "cvXrefQualifier.shortLabel",
+                                       CvXrefQualifier.IDENTITY ) )
+
+                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "A%" ) ) )
+                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "B%" ) ) )
+                .add( Restrictions.not( Restrictions.like( "xref.primaryId", "C%" ) ) );
+    }
 }
