@@ -368,7 +368,8 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
                 return mapping.getInputForward();
             }
             // reset the xref value as the xb value have changed.  
-            xref = createXref(xb, view);
+            xref.setSecondaryId(xb.getSecondaryId());
+            xref.setDbRelease(xb.getReleaseNumber());
         }
 
 
@@ -527,6 +528,7 @@ public class CommonDispatchAction extends AbstractEditorDispatchAction {
         // Try to get the next available short label by adding -x if it doesn't
         // end with -
 //        formlabel += formlabel.endsWith("-") ? "x" : "-x";
+
         return user.getNextAvailableShortLabel(editClass, formlabel);
     }
 
