@@ -15,21 +15,7 @@
 <%@ taglib uri="/WEB-INF/tld/struts-bean.tld"  prefix="bean" %>
 <%@ taglib uri="/WEB-INF/tld/struts-logic.tld" prefix="logic" %>
 
-<h1>
-    <font color="red">Error when commiting or loging in.
-        If this occured at login time :
-        <lu>
-            <li>
-                either your login or password was wrong
-            </li>
-            <li>
-                either you do not have an account in the database
-            </li>
-        </lu>
-
-    </font>
-
-</h1>
+<h1><font color="red">Error when commiting</font></h1>
 
 <script type="text/javascript" language="JavaScript">
     var message = getMessage();
