@@ -129,6 +129,11 @@ public class UniprotProtein {
      */
     private Date lastSequenceUpdate;
 
+    /**
+     * Where the entry is coming from .
+     */
+    private UniprotProteinType source;
+
     /////////////////////////
     // Constructor
 
@@ -469,6 +474,24 @@ public class UniprotProtein {
         this.lastSequenceUpdate = lastSequenceUpdate;
     }
 
+    /**
+     * Setter for property 'source'.
+     *
+     * @param source Value to set for property 'source'.
+     */
+    public void setSource( UniprotProteinType source ) {
+       this.source = source;
+    }
+
+    /**
+     * Getter for property 'source'.
+     *
+     * @return Value for property 'source'.
+     */
+    public UniprotProteinType getSource() {
+        return source;
+    }
+    
     /////////////////////////
     // Object's override
 
