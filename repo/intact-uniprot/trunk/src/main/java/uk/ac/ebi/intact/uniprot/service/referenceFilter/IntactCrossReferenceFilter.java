@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters.referenceFilter;
+package uk.ac.ebi.intact.uniprot.service.referenceFilter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

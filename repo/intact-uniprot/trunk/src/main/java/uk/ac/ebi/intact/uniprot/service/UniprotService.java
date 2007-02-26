@@ -3,10 +3,10 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.uniprot.UniprotBridgeException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -25,7 +25,7 @@ public interface UniprotService {
      *
      * @param ac ID, AC or splice variant ID of the protein we are searching for.
      * @return a collection of protein found.
-     * @throws UniprotBridgeException
+     * @throws UniprotServiceException
      */
     public Collection<UniprotProtein> retreive( String ac );
 
@@ -34,7 +34,7 @@ public interface UniprotService {
      *
      * @param acs list of ID, AC or splice variant ID of the proteins we are searching for.
      * @return an associative structure where each given ac is an entry and associated is a collection of protein found.
-     * @throws UniprotBridgeException
+     * @throws UniprotServiceException
      */
     public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs );
 
@@ -42,7 +42,7 @@ public interface UniprotService {
      * Error messages encountered during retreival of proteins.
      * @return an associative structure where each given ac is an entry and associated a message.
      */
-    public Map<String, UniprotBridgeReport> getErrors();
+    public Map<String, UniprotServiceReport> getErrors();
 
     /**
      * Clear existing error messages.

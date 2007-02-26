@@ -1,10 +1,8 @@
-package uk.ac.ebi.intact.bridge.adapters.referenceFilter;
+package uk.ac.ebi.intact.uniprot.service.referenceFilter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.bridge.adapters.referenceFilter.CrossReferenceFilter;
-import uk.ac.ebi.intact.bridge.adapters.referenceFilter.IntactCrossReferenceFilter;
 
 /**
  * IntactCrossReferenceSelector Tester.

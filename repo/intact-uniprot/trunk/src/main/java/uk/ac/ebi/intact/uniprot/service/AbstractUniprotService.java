@@ -3,11 +3,11 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.uniprot.adapters.referenceFilter.CrossReferenceFilter;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,14 +33,14 @@ public abstract class AbstractUniprotService implements UniprotService {
     /**
      * Holds error messages accumulated during protein retreival.
      */
-    private Map<String, UniprotBridgeReport> errors = new HashMap<String, UniprotBridgeReport>();
+    private Map<String, UniprotServiceReport> errors = new HashMap<String, UniprotServiceReport>();
 
     /**
      * Defines how should the cross references be selected.
      */
     private CrossReferenceFilter crossReferenceFilter;
 
-    public Map<String, UniprotBridgeReport> getErrors() {
+    public Map<String, UniprotServiceReport> getErrors() {
         return errors;
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractUniprotService implements UniprotService {
         errors.clear();
     }
 
-    public void addError( String ac, UniprotBridgeReport report ) {
+    public void addError( String ac, UniprotServiceReport report ) {
         if( ac == null ) {
             throw new IllegalArgumentException( "You must give a non null UniProt AC." );
         }

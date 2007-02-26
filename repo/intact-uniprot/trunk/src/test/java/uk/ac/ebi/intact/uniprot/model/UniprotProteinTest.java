@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.bridge.model;
+package uk.ac.ebi.intact.uniprot.model;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
