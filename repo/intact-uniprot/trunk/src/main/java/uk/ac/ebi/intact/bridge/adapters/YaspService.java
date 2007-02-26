@@ -360,6 +360,18 @@ public class YaspService extends AbstractUniprotService {
         uniprotProtein.setLastAnnotationUpdate( new Date( sptrEntry.getLastAnnotationUpdateDate().getTime() ) );
         uniprotProtein.setLastSequenceUpdate( new Date( sptrEntry.getLastSequenceUpdateDate().getTime() ) );
 
+        // type of the entry
+        if ( SPTREntry.SWISSPROT == sptrEntry.getEntryType() ) {
+            uniprotProtein.setSource( UniprotProteinType.SWISSPROT );
+        } else if ( SPTREntry.TREMBL == sptrEntry.getEntryType() ) {
+            uniprotProtein.setSource( UniprotProteinType.TREMBL );
+        } else if ( SPTREntry.UNKNOWN == sptrEntry.getEntryType() ) {
+            uniprotProtein.setSource( UniprotProteinType.UNKNOWN );
+        } else {
+            throw new IllegalStateException( "Only SWISSPROT, TREMBL and UNKNOWN source are supported: " +
+                                             sptrEntry.getEntryType() );
+        }
+
         // Process gene names, orfs, synonyms, locus...
         processGeneNames( sptrEntry, uniprotProtein );
 
