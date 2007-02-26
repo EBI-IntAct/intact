@@ -87,11 +87,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
     //////////////////////////
     // private methods
 
-//    private EntryRetrievalService getEntryRetrievalService() {
-//        UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
-//        return factory.getEntryRetrievalService();
-//    }
-
     private Iterator<UniProtEntry> getUniProtEntry( String ac ) {
         Iterator<UniProtEntry> iterator = null;
 
@@ -101,7 +96,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
             Query query = UniProtQueryBuilder.buildFullTextSearch( ac );
             UniProtQueryService uniProtQueryService = factory.getUniProtQueryService();
-            iterator = uniProtQueryService.getEntries( query );
+            iterator = uniProtQueryService.getEntryIterator( query );
 
         } else {
 
@@ -114,7 +109,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private Iterator<UniProtEntry> getUniProtEntryForProteinEntry( String ac ) {
         UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
         UniProtQueryService uniProtQueryService = factory.getUniProtQueryService();
-        return uniProtQueryService.getEntries( UniProtQueryBuilder.buildQuery( ac ) );
+        return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( "ac:" + ac ) );
     }
 
     private UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
@@ -159,6 +154,18 @@ public class UniprotRemoteService extends AbstractUniprotService {
         uniprotProtein.setLastAnnotationUpdate( uniProtEntry.getEntryAudit().getLastAnnotationUpdateDate() );
         uniprotProtein.setLastSequenceUpdate( uniProtEntry.getEntryAudit().getLastSequenceUpdateDate() );
 
+        // type of the entry
+        if ( UniProtEntryType.SWISSPROT.equals( uniProtEntry.getType() ) ) {
+            uniprotProtein.setSource( UniprotProteinType.SWISSPROT );
+        } else if ( UniProtEntryType.TREMBL.equals( uniProtEntry.getType() ) ) {
+            uniprotProtein.setSource( UniprotProteinType.TREMBL );
+        } else if( UniProtEntryType.UNKNOWN.equals( uniProtEntry.getType() ) ) {
+            uniprotProtein.setSource( UniprotProteinType.UNKNOWN );
+        } else {
+            throw new IllegalStateException( "Only SWISSPROT, TREMBL and UNKNOWN source are supported: " +
+                                             uniProtEntry.getType().getValue() );
+        }
+
         // Process gene names, orfs, synonyms, locus...
         processGeneNames( uniProtEntry, uniprotProtein );
 
@@ -199,7 +206,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
         return uniprotProtein;
     }
 
-
     /**
      * Extract from the SPTREntry the annotation release and the entry type, then combine them to get a version we will
      * use in the Xref. uniprot, identity )
@@ -207,9 +213,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
      * @param sptrEntry the entry from which we extract the information.
      *
      * @return a version as a String.
-     *
-     * @throws uk.ac.ebi.interfaces.sptr.SPTRException
-     *
      */
     private String getSPTREntryReleaseVersion( UniProtEntry sptrEntry ) {
         String version = null;

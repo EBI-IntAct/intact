@@ -7,10 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridge.UniprotBridgeException;
 import uk.ac.ebi.intact.bridge.adapters.referenceFilter.IntactCrossReferenceFilter;
-import uk.ac.ebi.intact.bridge.model.UniprotFeatureChain;
-import uk.ac.ebi.intact.bridge.model.UniprotProtein;
-import uk.ac.ebi.intact.bridge.model.UniprotSpliceVariant;
-import uk.ac.ebi.intact.bridge.model.UniprotXref;
+import uk.ac.ebi.intact.bridge.model.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -86,6 +83,8 @@ public class YaspServiceTest extends TestCase {
 
         assertEquals( "BBC1_YEAST", protein.getId() );
         assertEquals( "Myosin tail region-interacting protein MTI1", protein.getDescription() );
+
+        assertEquals( UniprotProteinType.SWISSPROT, protein.getSource() );
 
         assertEquals( "P47068", protein.getPrimaryAc() );
         assertTrue( protein.getSecondaryAcs().contains( "P47067" ) );

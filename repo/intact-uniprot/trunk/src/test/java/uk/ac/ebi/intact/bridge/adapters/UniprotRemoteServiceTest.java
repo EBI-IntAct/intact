@@ -3,12 +3,11 @@ package uk.ac.ebi.intact.bridge.adapters;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridge.UniprotBridgeException;
 import uk.ac.ebi.intact.bridge.adapters.referenceFilter.IntactCrossReferenceFilter;
-import uk.ac.ebi.intact.bridge.model.UniprotFeatureChain;
-import uk.ac.ebi.intact.bridge.model.UniprotProtein;
-import uk.ac.ebi.intact.bridge.model.UniprotSpliceVariant;
-import uk.ac.ebi.intact.bridge.model.UniprotXref;
+import uk.ac.ebi.intact.bridge.model.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +23,8 @@ import java.util.Collection;
  * @since <pre>10/24/2006</pre>
  */
 public class UniprotRemoteServiceTest extends TestCase {
+
+    public static final Log log = LogFactory.getLog( UniprotRemoteServiceTest.class );
     
     public UniprotRemoteServiceTest( String name ) {
         super( name );
@@ -224,7 +225,7 @@ public class UniprotRemoteServiceTest extends TestCase {
             for ( UniprotSpliceVariant sv : protein.getSpliceVariants() ) {
                 if ( sv.getSecondaryAcs().contains( "P21181-1" ) ) {
                     found = true;
-                    System.out.println( "Found Splice Variant P21181-1 (secondary ac) in protein " + protein.getId() + "." );
+                    log.debug( "Found Splice Variant P21181-1 (secondary ac) in protein " + protein.getId() + "." );
                     break; // exits the splice variant loop
                 }
             }
@@ -251,8 +252,9 @@ public class UniprotRemoteServiceTest extends TestCase {
         boolean sv2 = false;
         boolean sv3 = false;
 
-        System.out.println( "parent: " + protein.getSequence() );
-        System.out.println( "parent's length: " + protein.getSequence().length() );
+        log.debug( "" );
+        log.debug( "parent: " + protein.getSequence() );
+        log.debug( "parent's length: " + protein.getSequence().length() );
 
         for ( UniprotSpliceVariant sv : protein.getSpliceVariants() ) {
 
@@ -306,19 +308,20 @@ public class UniprotRemoteServiceTest extends TestCase {
                            "ELEISYYLLRRLLGVRTDGDKKGARVEKLQKNEILLVNIGSLSTGGRISATKGDLAKIVL" +
                            "TTPVCTEKGEKIALSRRVENHWRLIGWGQIFGGKTITPVLDSQVAKK";
 
-                System.out.println( s.length() );
-                System.out.println( s + "\n" );
-                System.out.println( sv.getSequence() );
-                System.out.println( sv.getSequence().length() );
+                log.debug( s.length() );
+                log.debug( s + "\n" );
+                log.debug( sv.getSequence() );
+                log.debug( sv.getSequence().length() );
 
-                assertEquals( "MMHLRGDVLLGGVAADVSKLTPLSPEVISRQATINIGTIGHVAHGKSTVVKAISGVQTVRF" +
-                              "KNELERNITIKLGYANAKIYKCDNPKCPRPASFVSDASSKDDSLPCTRLNCSGNFRLVRH" +
-                              "VSFVDCPGHDILMATMLNGAAVMDAALLLIAGNESCPQPQTSEHLAAIEIMKLKQILILQ" +
-                              "NKIDLIKESQAKEQYEEITKFVQGTVAEGAPIIPISAQLKYNIDVLCEYIVNKIPVPPRD" +
-                              "FNAPPRLIVIRSFDVNKPGCEVADLKGGVAGGSILSGVLKVGQEIEVRPGVVTKDSDGNI" +
-                              "TCRPIFSRIVSLFAEQNELQYAVPGGLIGVGTKIDPTLCRADRLVGQVLGAVGQLPDIYQ" +
-                              "ELEISYYLLRRLLGVRTDGDKKGARVEKLQKNEILLVNIGSLSTGGRISATKGDLAKIVL" +
-                              "TTPVCTEKGEKIALSRRVENHWRLIGWGQIFGGKTITPVLDSQVAKK", sv.getSequence() );
+                assertEquals( "MHLRGDVLLGGVAADVSKLTPLSPEVISRQATINIGTIGHVAHGKSTVVKAISGVQT" +
+                              "VRFKNELERNITIKLGYANAKIYKCDNPKCPRPASFVSDASSKDDSLPCTRLNCSGN" +
+                              "FRLVRHVSFVDCPGHDILMATMLNGAAVMDAALLLIAGNESCPQPQTSEHLAAIEIM" +
+                              "KLKQILILQNKIDLIKESQAKEQYEEITKFVQGTVAEGAPIIPISAQLKYNIDVLCE" +
+                              "YIVNKIPVPPRDFNAPPRLIVIRSFDVNKPGCEVADLKGGVAGGSILSGVLKVGQEI" +
+                              "EVRPGVVTKDSDGNITCRPIFSRIVSLFAEQNELQYAVPGGLIGVGTKIDPTLCRAD" +
+                              "RLVGQVLGAVGQLPDIYQELEISYYLLRRLLGVRTDGDKKGARVEKLQKNEILLVNI" +
+                              "GSLSTGGRISATKGDLAKIVLTTPVCTEKGEKIALSRRVENHWRLIGWGQIFGGKTI" +
+                              "TPVLDSQVAKK", sv.getSequence() );
                 sv3 = true;
 
             } else {
@@ -351,10 +354,12 @@ public class UniprotRemoteServiceTest extends TestCase {
     public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotBridgeException {
         UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
-
+        
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
         UniprotProtein protein = proteins.iterator().next();
+
+        assertEquals( UniprotProteinType.SWISSPROT, protein.getSource() );
 
         // check that we have not so many cross references
         // cross references
@@ -365,9 +370,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "S000003557", "SGD" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030479", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0017024", "Go" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0005515", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "Go" ) ) );
-        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0007010", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
 
