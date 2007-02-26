@@ -258,4 +258,11 @@ public class UniprotProteinTest extends TestCase {
         protein.setLastSequenceUpdate( sdf.parse( "2006-NOV-01" ) );
         assertEquals( sdf.parse( "2006-NOV-01" ), protein.getLastSequenceUpdate() );
     }
+
+    public void testSetGetSource() throws Exception {
+        UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
+        assertNull( protein.getSource() );
+        protein.setSource( UniprotProteinType.SWISSPROT );
+        assertEquals( UniprotProteinType.SWISSPROT, protein.getSource() );
+    }
 }
