@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

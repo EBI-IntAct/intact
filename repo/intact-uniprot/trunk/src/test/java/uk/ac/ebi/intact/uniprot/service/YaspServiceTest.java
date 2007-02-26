@@ -1,13 +1,13 @@
-package uk.ac.ebi.intact.bridge.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridge.UniprotBridgeException;
-import uk.ac.ebi.intact.bridge.adapters.referenceFilter.IntactCrossReferenceFilter;
-import uk.ac.ebi.intact.bridge.model.*;
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
+import uk.ac.ebi.intact.uniprot.model.*;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -60,7 +60,7 @@ public class YaspServiceTest extends TestCase {
     ///////////////////
     // Tests
 
-    public void testRetreiveUnknownProtein() throws UniprotBridgeException {
+    public void testRetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
         Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
         assertNotNull( proteins );
@@ -70,7 +70,7 @@ public class YaspServiceTest extends TestCase {
         assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
     }
 
-    public void testRetreiveSimpleProtein() throws UniprotBridgeException {
+    public void testRetreiveSimpleProtein() throws UniprotServiceException {
 
         // TODO not a good idea to run test on data available online ... data can change, internet can be down ... find an other way !!
 
@@ -161,7 +161,7 @@ public class YaspServiceTest extends TestCase {
         assertEquals( protein.getOrganism(), featureChain.getOrganism() );
     }
 
-    public void testRetreiveMultipleProteins() throws UniprotBridgeException {
+    public void testRetreiveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P21181" );
 
@@ -178,7 +178,7 @@ public class YaspServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveProteinWithSpliceVariant() throws UniprotBridgeException {
+    public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getBridgeAdapter();
         Collection<UniprotProtein> proteins = uniprot.retreive( "Q24208" );
@@ -259,7 +259,7 @@ public class YaspServiceTest extends TestCase {
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
     }
 
-    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotBridgeException {
+    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
 

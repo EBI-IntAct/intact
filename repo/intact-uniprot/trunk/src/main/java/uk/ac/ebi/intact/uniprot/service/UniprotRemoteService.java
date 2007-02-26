@@ -3,12 +3,12 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.uniprot.adapters.crossRefAdapter.ReflectionCrossReferenceBuilder;
-import uk.ac.ebi.intact.uniprot.adapters.crossRefAdapter.UniprotCrossReference;
+import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
+import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.intact.uniprot.model.Organism;
 import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
@@ -49,7 +49,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         if ( !it.hasNext() ) {
             // we didn't find anything
-            addError( ac, new UniprotBridgeReport( "Could not find protein: " + ac ) );
+            addError( ac, new UniprotServiceReport( "Could not find protein: " + ac ) );
         }
 
         while ( it.hasNext() ) {
@@ -77,7 +77,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             if ( proteins != null ) {
                 results.put( ac, proteins );
             } else {
-                addError( ac, new UniprotBridgeReport( "Could not find protein for AC: " + ac ) );
+                addError( ac, new UniprotServiceReport( "Could not find protein for AC: " + ac ) );
             }
         }
 

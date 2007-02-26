@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters.crossRefAdapter;
+package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 
 /**
  * TODO comment this

@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -95,7 +95,7 @@ public class CachedUniprotService implements UniprotService {
         return resultMap;
     }
 
-    public Map<String, UniprotBridgeReport> getErrors() {
+    public Map<String, UniprotServiceReport> getErrors() {
         return service.getErrors();
     }
 

@@ -1,13 +1,13 @@
-package uk.ac.ebi.intact.bridge.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridge.UniprotBridgeException;
-import uk.ac.ebi.intact.bridge.adapters.referenceFilter.IntactCrossReferenceFilter;
-import uk.ac.ebi.intact.bridge.model.*;
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
+import uk.ac.ebi.intact.uniprot.model.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,7 +49,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         return new UniprotRemoteService();
     }
 
-    private UniprotService getBridgeAdapter( IntactCrossReferenceFilter filter ) {
+    private UniprotService getUniprotService( IntactCrossReferenceFilter filter ) {
         if ( filter == null ) {
             fail( "you must give a non null filter !!" );
         }
@@ -186,7 +186,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertEquals( protein.getOrganism(), featureChain.getOrganism() );
     }
 
-    public void testSearchBySpliceVariant() throws UniprotBridgeException {
+    public void testSearchBySpliceVariant() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getBridgeAdapter();
@@ -209,7 +209,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testSearchBySpliceVariantSecondaryId() throws UniprotBridgeException {
+    public void testSearchBySpliceVariantSecondaryId() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getBridgeAdapter();
@@ -236,7 +236,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveProteinWithSpliceVariant() throws UniprotBridgeException {
+    public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getBridgeAdapter();
         Collection<UniprotProtein> proteins = uniprot.retreive( "Q24208" );
@@ -334,8 +334,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
     }
 
-    public void testRetreiveMultipleProteins() throws UniprotBridgeException {
-        UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
+    public void testRetreiveMultipleProteins() throws UniprotServiceException {
+        UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P21181" );
 
         assertNotNull( proteins );
@@ -351,8 +351,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotBridgeException {
-        UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
+    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
+        UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
         
         assertNotNull( proteins );
@@ -374,7 +374,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
 
-    public void testRetreiveUnknownProtein() throws UniprotBridgeException {
+    public void testRetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
         Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
         assertNotNull( proteins );

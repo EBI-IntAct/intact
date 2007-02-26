@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.uniprot.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,7 +11,7 @@ import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.model.sptr.comment.Function;
 import uk.ac.ebi.aristotle.model.sptr.feature.PolypeptideChainFeature;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
-import uk.ac.ebi.intact.uniprot.UniprotBridgeException;
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.interfaces.Factory;
 import uk.ac.ebi.interfaces.feature.Feature;
@@ -67,10 +67,10 @@ public class YaspService extends AbstractUniprotService {
         try {
             is = checkUrlDataFormat( new URL( entryUrl ) );
         } catch ( IOException e ) {
-            addError( ac, new UniprotBridgeReport( "Error upon reading URL: " + entryUrl, e ) );
+            addError( ac, new UniprotServiceReport( "Error upon reading URL: " + entryUrl, e ) );
             return proteins;
-        } catch ( UniprotBridgeException e ) {
-            addError( ac, new UniprotBridgeReport( "UniProt entry has invalid format: " + entryUrl, e ) );
+        } catch ( UniprotServiceException e ) {
+            addError( ac, new UniprotServiceReport( "UniProt entry has invalid format: " + entryUrl, e ) );
             return proteins;
         }
 
@@ -83,8 +83,8 @@ public class YaspService extends AbstractUniprotService {
             } else {
                 log.error( "" );
             }
-        } catch ( UniprotBridgeException e ) {
-            addError( ac, new UniprotBridgeReport( "Error while processing UniProt entry: " + ac, e ) );
+        } catch ( UniprotServiceException e ) {
+            addError( ac, new UniprotServiceReport( "Error while processing UniProt entry: " + ac, e ) );
             return proteins;
         }
 
@@ -92,7 +92,7 @@ public class YaspService extends AbstractUniprotService {
         try {
             is.close();
         } catch ( IOException e ) {
-            addError( ac, new UniprotBridgeReport( "Error while closing URL: " + entryUrl, e ) );
+            addError( ac, new UniprotServiceReport( "Error while closing URL: " + entryUrl, e ) );
         }
 
         return proteins;
@@ -117,7 +117,7 @@ public class YaspService extends AbstractUniprotService {
             if ( proteins != null ) {
                 results.put( ac, proteins );
             } else {
-                addError( ac, new UniprotBridgeReport( "Could not retreive any proteins for UniProt AC: " + ac ) );
+                addError( ac, new UniprotServiceReport( "Could not retreive any proteins for UniProt AC: " + ac ) );
             }
         }
 
@@ -136,10 +136,10 @@ public class YaspService extends AbstractUniprotService {
      *
      * @return the input stream one can read the entry (1..n) from.
      *
-     * @throws UniprotBridgeException if the format of the entry is not as expected.
+     * @throws UniprotServiceException if the format of the entry is not as expected.
      * @throws IOException
      */
-    private InputStream checkUrlDataFormat( URL url ) throws UniprotBridgeException, IOException {
+    private InputStream checkUrlDataFormat( URL url ) throws UniprotServiceException, IOException {
 
         if ( url == null ) {
             throw new IllegalArgumentException( "URL must not be null." );
@@ -155,7 +155,7 @@ public class YaspService extends AbstractUniprotService {
 
         String fiveFirstChars = new String( b );
         if ( !FIRST_LINE_FIRST_FIVE_CHARS.equals( fiveFirstChars ) ) {
-            throw new UniprotBridgeException( "Invalid UniProt entry format. An entry is expected to start with :'" +
+            throw new UniprotServiceException( "Invalid UniProt entry format. An entry is expected to start with :'" +
                                               FIRST_LINE_FIRST_FIVE_CHARS + "' and not '" + fiveFirstChars + "'." );
         }
 
@@ -228,9 +228,9 @@ public class YaspService extends AbstractUniprotService {
      *
      * @return a non null collection of UniprotProteins.
      *
-     * @throws UniprotBridgeException
+     * @throws UniprotServiceException
      */
-    private Collection<UniprotProtein> retreive( InputStream is, String ac ) throws UniprotBridgeException {
+    private Collection<UniprotProtein> retreive( InputStream is, String ac ) throws UniprotServiceException {
 
         if ( is == null ) {
             throw new IllegalArgumentException( "You must give a non null InputStream." );
@@ -299,13 +299,13 @@ public class YaspService extends AbstractUniprotService {
             }
 
         } catch ( YASPException e ) {
-            throw new UniprotBridgeException( "A YASP error occured while processing", e );
+            throw new UniprotServiceException( "A YASP error occured while processing", e );
         } catch ( SPTRException e ) {
-            throw new UniprotBridgeException( "An SPTR error occured while processing", e );
+            throw new UniprotServiceException( "An SPTR error occured while processing", e );
         } catch ( IOException e ) {
-            throw new UniprotBridgeException( "An IO error occured while processing", e );
+            throw new UniprotServiceException( "An IO error occured while processing", e );
         } catch ( FeatureException e ) {
-            throw new UniprotBridgeException( "An error occured while processing the features of an entry", e );
+            throw new UniprotServiceException( "An error occured while processing the features of an entry", e );
         }
 
         return uniprotProteins;

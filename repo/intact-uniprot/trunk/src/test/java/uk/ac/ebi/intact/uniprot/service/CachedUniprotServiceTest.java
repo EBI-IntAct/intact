@@ -1,9 +1,9 @@
-package uk.ac.ebi.intact.bridge.adapters;
+package uk.ac.ebi.intact.uniprot.service;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.bridge.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import java.util.Collection;
 
