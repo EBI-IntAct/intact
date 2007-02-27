@@ -88,6 +88,11 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+	<repository>
+            <id>java.net</id>
+            <url>https://maven-repository.dev.java.net/nonav/repository</url>
+            <layout>legacy</layout>
+        </repository>
     </repositories>
 
     <distributionManagement>
