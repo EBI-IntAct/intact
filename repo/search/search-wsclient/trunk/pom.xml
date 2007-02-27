@@ -27,8 +27,8 @@
     <description>Client for the Search Web Services</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-wsclient/trunk/</url>
     </scm>
 
