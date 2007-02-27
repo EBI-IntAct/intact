@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>6</version>
+        <version>8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -27,8 +27,8 @@
     <description>A web service interface to retrieve data from intact</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search/search-ws/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/search-ws/trunk
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-ws/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search-ws/trunk
         </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search-ws/trunk/</url>
     </scm>
