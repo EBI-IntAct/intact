@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>7</version>
+        <version>8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,6 +20,8 @@
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-core/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk</url>
     </scm>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <build>
         <resources>
