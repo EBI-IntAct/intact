@@ -16,18 +16,30 @@
   ~ limitations under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.ac.ebi.intact.archetype</groupId>
-  <artifactId>intact-archetype-mojo</artifactId>
-  <name>IntAct Archetype MOJO</name>
-  <version>1.1.1-SNAPSHOT</version>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-   <parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>3</version>
-   </parent>
+        <version>6</version>
+    </parent>
+
+    <groupId>uk.ac.ebi.intact.archetype</groupId>
+    <artifactId>intact-archetype-mojo</artifactId>
+    <version>1.1.1-SNAPSHOT</version>
+
+    <name>IntAct Archetype MOJO</name>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
+    <scm>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetype/intact-archetype-mojo/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetype/intact-archetype-mojo/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetype/intact-archetype-mojo/trunk/</url>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -50,7 +62,7 @@
 
     <!-- EBI repositories -->
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
@@ -61,7 +73,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-         <repository>
+        <repository>
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
@@ -74,9 +86,12 @@
         </repository>
     </repositories>
 
-  <scm>
-    <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
-    <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
-  </scm>
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>    
+
 </project>
