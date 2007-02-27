@@ -18,6 +18,7 @@
             <item name="Overview" href="overview.html"/>
             <item name="General Installation" href="general_install.html"/>
             <item name="Module Installation" href="webapp_install.html"/>
+            <item name="Database" href="database.html"/>
             <item name="Downloads" href="downloads.html"/>
             <item name="FAQ" href="faq_intact.html"/>
         </menu>
