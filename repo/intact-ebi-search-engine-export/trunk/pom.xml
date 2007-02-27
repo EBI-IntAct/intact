@@ -7,7 +7,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-
+    
     <groupId>uk.ac.ebi.intact</groupId>
     <artifactId>intact-ebi-search-engine-export</artifactId>
     <packaging>jar</packaging>
@@ -21,6 +21,8 @@
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ebi-search-engine-export/trunk</developerConnection>
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-ebi-search-engine-export/trunk/</url>
     </scm>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <dependencies>
         <dependency>
@@ -98,5 +100,13 @@
             </snapshots>
         </repository>
     </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>
