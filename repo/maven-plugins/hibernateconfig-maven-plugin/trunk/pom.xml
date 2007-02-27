@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>2</version>
+        <version>6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -17,10 +17,11 @@
     <description>
         This plugin creates a hibernate config file
     </description>
+     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/hibernateconfig-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/hibernateconfig-maven-plugin/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/hibernateconfig-maven-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/hibernateconfig-maven-plugin/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/hibernateconfig-maven-plugin/trunk/</url>
     </scm>
 
