@@ -24,27 +24,11 @@
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-go/trunk/</url>
     </scm>
 
-    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
-
+<!--   <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+-->
     <properties>
         <hibernate.scope>test</hibernate.scope>
     </properties>
-
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.myfaces.tobago</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
         <dependency>
