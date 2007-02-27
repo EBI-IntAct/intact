@@ -76,7 +76,6 @@
                 <module>intact-ols</module>
 		<module>search-ws</module>
                 <module>search-wsclient</module>
-                <module>sanity-checker</module>
                 <module>graph2mif-server</module>
                 <module>graph2mif-client</module>
                 <module>tulip-ws</module>
@@ -86,6 +85,10 @@
                 <module>predict-app</module>
                 <module>statistic-view</module>
                 <module>confidence-score</module>
+				<module>intact-taxonomy</module>
+				<module>intact-uniprot</module>
+				<module>intact-biosource-update</module>
+				<module>intact-proteins-update</module>
             </modules>
         </profile>
     </profiles>
