@@ -103,7 +103,7 @@ public class ProteinServiceImpl implements ProteinService {
     //////////////////////////
     // ProteinLoaderService
 
-    public Collection<Protein> retrieve( String uniprotId ) {
+    public Collection<Protein> retrieve( String uniprotId ) throws ProteinServiceException {
         if ( uniprotId == null ) {
             throw new IllegalArgumentException();
         }
@@ -128,23 +128,23 @@ public class ProteinServiceImpl implements ProteinService {
         return intactProteins;
     }
 
-    public Collection<Protein> retrieve( String uniprotId, int taxidFilter ) {
+    public Collection<Protein> retrieve( String uniprotId, int taxidFilter ) throws ProteinServiceException{
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters ) {
+    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters ) throws ProteinServiceException{
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds ) {
+    public Collection<Protein> retrieve( Collection<String> uniprotIds ) throws ProteinServiceException{
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) {
+    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) throws ProteinServiceException{
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) {
+    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) throws ProteinServiceException{
         throw new UnsupportedOperationException();
     }
 
@@ -258,7 +258,7 @@ public class ProteinServiceImpl implements ProteinService {
         throw new UnsupportedOperationException();
     }
 
-    private Collection<Protein> saveOrUpdate( Collection<UniprotProtein> uniprotProtein ) {
+    private Collection<Protein> saveOrUpdate( Collection<UniprotProtein> uniprotProtein ) throws ProteinServiceException {
         Collection<Protein> proteins = new ArrayList<Protein>( uniprotProtein.size() );
 
         for ( UniprotProtein protein : uniprotProtein ) {
