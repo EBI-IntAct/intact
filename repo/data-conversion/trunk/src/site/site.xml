@@ -3,23 +3,20 @@
     <bannerLeft>
         <name>Data Conversion</name>
     </bannerLeft>
-    <!--
-    <bannerRight>
-        <name>IntAct</name>
-        <src>images/logo_intact.gif</src>
-        <href>http://www.ebi.ac.uk/intact</href>
-    </bannerRight>
-    -->
 
-    <!--
-  <skin>
-      <groupId>uk.ac.ebi.maven.skins</groupId>
-      <artifactId>seqdbg-skin</artifactId>
-      <version>1.0-SNAPSHOT</version>
-  </skin>
-  -->
+    <skin>
+        <groupId>uk.ac.ebi.skins</groupId>
+        <artifactId>ebi-skin</artifactId>
+    </skin>
 
     <body>
+        <breadcrumbs>
+            <item name="Databases" href="http://www.ebi.ac.uk/Databases/" />
+            <item name="Proteomic Databases" href="http://www.ebi.ac.uk/Databases/proteomic.html" />
+            <item name="IntAct" href="http://www.ebi.ac.uk/intact/site/" />
+            <item name="Development Site" href="http://www.ebi.ac.uk/~intact/devsite" />
+        </breadcrumbs>
+        
         <links>
             <item name="IntAct" href="http://www.ebi.ac.uk/intact"/>
             <item name="Development Site" href="http://www.ebi.ac.uk/~intact/devsite"/>
