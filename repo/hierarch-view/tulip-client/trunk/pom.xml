@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.5</version>
+        <version>6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -25,10 +25,11 @@
     <!-- last released 1.1.0 -->
     <name>Tulip WS Client</name>
     <description>Tulip Web Service Client</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/hierarch-view/tulip-client/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/hierarch-view/tulip-client/trunk/</url>
     </scm>
 
