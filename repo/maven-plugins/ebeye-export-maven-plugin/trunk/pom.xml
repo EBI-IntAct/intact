@@ -13,7 +13,7 @@
     <version>1.1-SNAPSHOT</version>
     <name>ebeye-export-maven-plugin Maven Mojo</name>
     <description>EB-eye export plugin for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/ebeye-export-maven-plugin</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/ebeye-export-maven-plugin/trunk</connection>
@@ -143,7 +143,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/maven-plugins/dbupdate-maven-plugin</url>
+            <url>${site.remote.basedir}/maven-plugins/${artifactId}</url>
         </site>
     </distributionManagement>
 
