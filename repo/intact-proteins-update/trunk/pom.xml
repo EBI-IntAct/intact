@@ -100,6 +100,13 @@
             <artifactId>uniprot-bridge</artifactId>
             <version>1.0-beta-1</version>
         </dependency>
+        <!-- Keep this one until we get rid of uniprot-bridge -->
+        <dependency>
+            <groupId>uk.ac.ebi.uniprot.kraken</groupId>
+            <artifactId>remote-api</artifactId>
+            <version>(9.6,]</version>
+        </dependency>
+
 
     </dependencies>
 
