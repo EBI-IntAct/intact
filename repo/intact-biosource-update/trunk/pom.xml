@@ -41,10 +41,6 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.myfaces.tobago</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
                 <version>1.0.3</version>
