@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.util.protein;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
-import uk.ac.ebi.intact.bridge.adapters.UniprotService;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 /**
  * Factory allowing to instanciate a ProteinLoaderService.
