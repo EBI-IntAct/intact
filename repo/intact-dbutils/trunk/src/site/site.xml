@@ -4,7 +4,7 @@
         <name>Intact DB Utils</name>
     </bannerLeft>
 
-  <skin>
+    <skin>
         <groupId>uk.ac.ebi.skins</groupId>
         <artifactId>ebi-skin</artifactId>
     </skin>
@@ -25,7 +25,7 @@
             <item name="Go Back Home" href="http://www.ebi.ac.uk/~intact/devsite" />
         </menu>
 
-        <menu name="DB Utils"
+        <menu name="DB Utils">
 
         </menu>
 
