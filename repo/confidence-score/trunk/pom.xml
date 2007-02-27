@@ -52,7 +52,7 @@
         </dependency>
     </dependencies>
 
-    <!-- EBI repo -->
+ <!-- EBI repositories -->
     <repositories>
         <repository>
             <id>ebi-repo</id>
@@ -65,6 +65,25 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>
