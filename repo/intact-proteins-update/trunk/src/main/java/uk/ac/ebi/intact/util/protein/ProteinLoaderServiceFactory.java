@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.util.protein;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
-import uk.ac.ebi.intact.bridge.adapters.UniprotBridgeAdapter;
+import uk.ac.ebi.intact.bridge.adapters.UniprotService;
 
 /**
  * Factory allowing to instanciate a ProteinLoaderService.
@@ -36,21 +36,17 @@ public class ProteinLoaderServiceFactory {
     //////////////////////
     // Instance methods
 
-    private UniprotBridgeAdapter getUniprotBridgeAdapter() {
+    public ProteinService buildProteinLoaderService() {
         ClassPathResource resource = new ClassPathResource( SPRING_CONFIG_FILE );
         BeanFactory factory = new XmlBeanFactory( resource );
-        UniprotBridgeAdapter bridge = ( UniprotBridgeAdapter ) factory.getBean( "UniprotBridgeAdapter" );
-        return bridge;
+        ProteinService loaderService = ( ProteinService ) factory.getBean( "proteinLoaderBean" );
+        return loaderService;
     }
 
-    public ProteinLoaderService buildProteinLoaderService() {
-        return buildProteinLoaderService( getUniprotBridgeAdapter() );
-    }
-
-    public ProteinLoaderService buildProteinLoaderService( UniprotBridgeAdapter adapter ) {
-        if( adapter == null ) {
-            throw new IllegalArgumentException( "You must give a non null implementation of UniprotBridgeAdapter." );
+    public ProteinService buildProteinLoaderService( UniprotService uniprotService ) {
+        if ( uniprotService == null ) {
+            throw new IllegalArgumentException( "You must give a non null implementation of UniprotService." );
         }
-        return new ProteinLoaderServiceImpl( adapter );
+        return new ProteinServiceImpl( uniprotService );
     }
 }
