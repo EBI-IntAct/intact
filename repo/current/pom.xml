@@ -38,6 +38,7 @@
         <module>editor-app</module>
         <module>data-conversion</module>
         <module>intact-devsite</module>
+	<module>intact-imex-central</module>
     </modules>
 
     <build>
