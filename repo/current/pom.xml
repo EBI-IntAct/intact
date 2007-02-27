@@ -38,7 +38,6 @@
         <module>editor-app</module>
         <module>data-conversion</module>
         <module>intact-devsite</module>
-        <module>intact-test</module>
     </modules>
 
     <build>
