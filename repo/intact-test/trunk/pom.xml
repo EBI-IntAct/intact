@@ -25,6 +25,8 @@
     <name>IntAct Test Suite</name>
     <description>Test Suite</description>
 
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-test/trunk</connection>
         <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-test/trunk</developerConnection>
@@ -89,9 +91,9 @@
         </dependency>
     </dependencies>
 
-     <!-- EBI repositories -->
+    <!-- EBI repositories -->
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
@@ -100,6 +102,17 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
