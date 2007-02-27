@@ -7,13 +7,15 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-uniprot-export</artifactId>
     <packaging>jar</packaging>
     <version>1.1-SNAPSHOT</version>
+
     <name>intact-uniprot-export Module</name>
-    <description>Module for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-uniprot-export</url>
+    <description>IntAct CC/DR line export for UniProt</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-uniprot-export/trunk</connection>
@@ -75,7 +77,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-uniprot-export</url>
+            <url>${site.remote.basedir}/${artifactId}</url>
         </site>
     </distributionManagement>
 
