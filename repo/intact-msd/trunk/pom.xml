@@ -25,22 +25,6 @@
         <hibernate.scope>test</hibernate.scope>
     </properties>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>org.apache.myfaces.tobago</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
