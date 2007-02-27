@@ -12,8 +12,9 @@
     <artifactId>intact-psimitab</artifactId>
     <packaging>jar</packaging>
     <version>1.1-SNAPSHOT</version>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
-    <name>IntAct's PSI-MI TAB integration</name>
+    <name>IntAct - PSI-MI TAB integration</name>
 
     <dependencies>
         <dependency>
