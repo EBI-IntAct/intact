@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>7</version>
+        <version>8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -19,10 +19,12 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-go/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/intact-go/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-go/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-go/trunk</developerConnection>
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-go/trunk/</url>
     </scm>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <properties>
         <hibernate.scope>test</hibernate.scope>
@@ -77,5 +79,13 @@
             </snapshots>
         </repository>
     </repositories>
+    
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>
