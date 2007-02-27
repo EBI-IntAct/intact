@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master</artifactId>
-        <version>1.0.5</version>
+        <version>6</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -26,8 +26,8 @@
     <description>Graph2MIF Web Service Client</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/graph2mif/client/trunk/</url>
     </scm>
 
