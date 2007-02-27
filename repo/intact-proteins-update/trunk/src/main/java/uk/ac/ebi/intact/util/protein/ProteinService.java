@@ -34,18 +34,18 @@ public interface ProteinService {
     ///////////////////////////
     // Handle single protein
 
-    public Collection<Protein> retrieve( String uniprotId );
+    public Collection<Protein> retrieve( String uniprotId ) throws ProteinServiceException;
 
-    public Collection<Protein> retrieve( String uniprotId, int taxidFilter );
+    public Collection<Protein> retrieve( String uniprotId, int taxidFilter ) throws ProteinServiceException;
 
-    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters );
+    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters ) throws ProteinServiceException;
 
     ///////////////////////////////////
     // Handle collections of proteins
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds );
+    public Collection<Protein> retrieve( Collection<String> uniprotIds ) throws ProteinServiceException;
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter );
+    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) throws ProteinServiceException;
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters );
+    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) throws ProteinServiceException;
 }
