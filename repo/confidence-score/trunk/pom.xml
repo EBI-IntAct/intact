@@ -32,6 +32,8 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/confidence-score/trunk/</url>
     </scm>
 
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
     <build>
         <plugins>
             <plugin>
