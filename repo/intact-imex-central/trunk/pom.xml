@@ -21,8 +21,6 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-core/trunk</url>
     </scm>
 
-    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
-
     <build>
         <resources>
             <resource>
