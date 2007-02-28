@@ -54,7 +54,7 @@ public class IntactSessionRequestFilter implements Filter {
 
     private static final Log log = LogFactory.getLog( IntactSessionRequestFilter.class );
 
-    public static final String  COULD_NOT_LOGIN = "Could not login";
+        public static final String  COULD_NOT_LOGIN = "Could not login";
 
     private static final String FILTERED_PARAM_NAME = "uk.ac.ebi.intact.filter.EXCLUDED_EXTENSIONS";
 
@@ -90,6 +90,8 @@ public class IntactSessionRequestFilter implements Filter {
         log.debug( "Creating IntactContext, for request url: " + requestUrl );
         IntactSession intactSession = new WebappSession( session.getServletContext(), session, req );
         IntactContext context = IntactConfigurator.createIntactContext( intactSession );
+        log.debug("Beginning the transaction");
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         // We need to write the httpResponse firt in the responseWrapper. Other wise when we get back the response and
         // do the commit, if the fails, it's impossible for us to display an error message as the httpResponse is already
@@ -138,10 +140,10 @@ public class IntactSessionRequestFilter implements Filter {
                 {
                     if(COULD_NOT_LOGIN.equals(getCommitErrorMessage(req))){
                         out.write( responseWrapper.toString() );
+                    }else{
+                        log.error( getCommitErrorMessage(req));
+                        throw new ServletException( getCommitErrorMessage(req) );
                     }
-                    log.error( getCommitErrorMessage(req));
-                    throw new ServletException( getCommitErrorMessage(req) );
-
                 }
                 else
                 {
