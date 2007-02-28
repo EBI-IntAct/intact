@@ -1,13 +1,5 @@
- -----
- Downloads
- -----
- Samuel Kerrien
- -----
- 27 Feb 2007
- -----
-
-
 Schema version 1.3.0
+~~~~~~~~~~~~~~~~~~~~
 
  In order to make the representation of the database simpler we have chosen to split the diagram into many of
  smaller size. So first of all, we will see the major object types and their respective tables allowing to store
