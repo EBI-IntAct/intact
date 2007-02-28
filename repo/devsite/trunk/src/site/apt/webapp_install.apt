@@ -77,6 +77,12 @@ Installing IntAct Web Applications
 *-----+------------------------------+-------------+--------+--------+
 | uk.ac.ebi.intact.SYNCHRONIZED_SEARCH_ITEMS | optional | false |  1.5.0 | If true, the IA_SEARCH table is maintained by hibernate in a syncronized way. When an AnnotatedObject is modified, the SearchItems are modified accordingly |
 *-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK | optional | false |  1.5.0 | If true, don't check the schema version agains the intact-core version |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION | optional | false |  1.5.0 | If true, don't open a transaction automatically when DataContext.getDaoFactory() is called |
+*-----+------------------------------+-------------+--------+--------+
+| uk.ac.ebi.intact.DEBUG_MODE | optional | false |  1.5.0 | If true, debug mode such as memorizing who begin a transaction, ... Should not be true in production environment |
+*-----+------------------------------+-------------+--------+--------+
 
 
  (*) if uk.ac.ebi.intact.INSTITUTION_LABEL is 'ebi', the full name, postal address and url will be set to the EBI default values.
