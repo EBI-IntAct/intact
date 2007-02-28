@@ -1,8 +1,13 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.skins</groupId>
     <artifactId>ebi-skin</artifactId>
     <version>1.2-SNAPSHOT</version>
+
     <name>EBI Skin</name>
     <description>EBI Skin</description>
 
@@ -12,7 +17,8 @@
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/trunk/ebi-skin</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/trunk/ebi-skin</developerConnection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/skins/trunk/ebi-skin
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/skins/trunk/ebi-skin</url>
     </scm>
 
