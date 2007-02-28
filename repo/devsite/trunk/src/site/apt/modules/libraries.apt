@@ -12,7 +12,38 @@ Libraries
 *-----+------------------------------------------------------------------+
 | {{{../data-conversion/index.html}data-conversion}} | classes to convert the data to/from PSI XML files |
 *-----+------------------------------------------------------------------+
-| {{{../confidence-score/index.html}confidence-score}} | package to generate a confidence score for IntAct |
+| {{{../confidence-score/index.html}confidence-score}} | package to generate a confidence score for IntAct's interactions |
 *-----+------------------------------------------------------------------+
-
+| {{{../intact-annotations/index.html}intact-annotations}} | IntAct specific Java annotations |
+*-----+------------------------------------------------------------------+
+| {{{../intact-apt/index.html}intact-apt}} | IntAct Annotation Processor |
+*-----+------------------------------------------------------------------+
+| {{{../intact-taxonomy/index.html}intact-taxonomy}} | package to retreive information from a taxonomy source |
+*-----+------------------------------------------------------------------+
+| {{{../intact-biosource-update/index.html}intact-biosource-update}} | package to create/update BioSource in IntAct |
+*-----+------------------------------------------------------------------+
+| {{{../intact-uniprot/index.html}intact-uniprot}} | package to programaticaly retreive data from UniProtKB |
+*-----+------------------------------------------------------------------+
+| {{{../intact-proteins-update/index.html}intact-proteins-update}} | package to create/update intact proteins |
+*-----+------------------------------------------------------------------+
+| {{{../intact-uniprot-export/index.html}intact-uniprot-export}} | package to export DR and CC to UniProtKB |
+*-----+------------------------------------------------------------------+
+| {{{../intact-cdb/index.html}intact-cdb}} | package to retreive data from CitExplore web service |
+*-----+------------------------------------------------------------------+
+| {{{../intact-dutils/index.html}intact-dutils}} | package to perform various update operation on the database (eg. update target-species...) |
+*-----+------------------------------------------------------------------+
+| {{{../intact-ebi-search-engine-export/index.html}intact-ebi-search-engine-export}} | package to export IntAct data to the EB-eye data format |
+*-----+------------------------------------------------------------------+
+| {{{../intact-go/index.html}intact-go}} | package to retreive GO data programaticaly |
+*-----+------------------------------------------------------------------+
+| {{{../intact-graph/index.html}intact-graph}} | package to handle graph data structure |
+*-----+------------------------------------------------------------------+
+| {{{../intact-imex-central/index.html}intact-imex-central}} | package to communicate with the IMEx Central web service |
+*-----+------------------------------------------------------------------+
+| {{{../intact-msd/index.html}intact-msd}} | package to integrate MSD data in IntAct |
+*-----+------------------------------------------------------------------+
+| {{{../intact-ols/index.html}intact-ols}} | package to retreive data from the OLS web service |
+*-----+------------------------------------------------------------------+
+| {{{../intact-psimitab/index.html}intact-psimitab}} | package to integrate manupulation of MITAB25 data file in IntAct |
+*-----+------------------------------------------------------------------+
  
