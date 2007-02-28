@@ -18,31 +18,33 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.app.hierarchview</groupId>
     <artifactId>hierarch-view-app</artifactId>
     <packaging>war</packaging>
     <version>1.5-SNAPSHOT</version>
-    <!-- last released: 1.4.0 -->
+
     <name>Hierarch View</name>
     <description>Hierarch View Application</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/hierarch-view-app/trunk
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/hierarch-view/hierarch-view-app/trunk
         </connection>
         <developerConnection>
-            scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/hierarch-view/hierarch-view-app/trunk
+            scm:svn:https://intactsvn.sourceforge.net/svnroot/intact/repo/hierarch-view/hierarch-view-app/trunk
         </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/hierarch-view/hierarch-view-app/trunk/</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>hibernateconfig-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <!--<build>-->
+    <!--<plugins>-->
+    <!--<plugin>-->
+    <!--<groupId>uk.ac.ebi.intact.plugins</groupId>-->
+    <!--<artifactId>hibernateconfig-maven-plugin</artifactId>-->
+    <!--</plugin>-->
+    <!--</plugins>-->
+    <!--</build>-->
 
     <dependencies>
         <dependency>
@@ -60,11 +62,15 @@
             <artifactId>search-engine</artifactId>
             <version>1.3.0</version>
         </dependency>
-
         <dependency>
             <groupId>displaytag</groupId>
             <artifactId>displaytag</artifactId>
             <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>struts</groupId>
+            <artifactId>struts</artifactId>
+            <version>1.2.4</version>
         </dependency>
     </dependencies>
 
@@ -79,6 +85,17 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
