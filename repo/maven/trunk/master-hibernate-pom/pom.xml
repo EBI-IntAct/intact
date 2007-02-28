@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -10,13 +11,18 @@
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
-    <name>Master Hibernate POM</name>
     <version>9-SNAPSHOT</version>
+
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+    <name>Master Hibernate POM</name>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/master-hibernate-pom</url>
     </scm>
 
@@ -68,7 +74,7 @@
 
                     <executions>
                         <execution>
-                             <goals>
+                            <goals>
                                 <goal>h2-preload</goal>
                                 <goal>import-psi</goal>
                             </goals>
@@ -195,7 +201,7 @@
 
     <!-- EBI repositories -->
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
@@ -206,7 +212,7 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-         <repository>
+        <repository>
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
@@ -219,7 +225,7 @@
         </repository>
     </repositories>
 
-     <pluginRepositories>
+    <pluginRepositories>
         <pluginRepository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
@@ -232,5 +238,13 @@
             </releases>
         </pluginRepository>
     </pluginRepositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
 
 </project>
