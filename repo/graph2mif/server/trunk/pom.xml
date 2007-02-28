@@ -18,17 +18,20 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.app.graph2mif</groupId>
     <artifactId>graph2mif-server</artifactId>
     <packaging>war</packaging>
     <version>1.4-SNAPSHOT</version>
-    <!-- last released 1.3.0 -->
+
     <name>Graph2MIF Server</name>
     <description>Graph2MIF Web Service</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/graph2mif/server/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/graph2mif/server/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/server/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/server/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/graph2mif/server/trunk/</url>
     </scm>
 
@@ -36,10 +39,6 @@
         <finalName>${artifactId}-${db.alias}-${version}</finalName>
 
         <plugins>
-            <plugin>
-                    <groupId>uk.ac.ebi.intact.plugins</groupId>
-                    <artifactId>hibernateconfig-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -167,6 +166,17 @@
             </releases>
             <snapshots>
                 <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
             </snapshots>
         </repository>
     </repositories>
