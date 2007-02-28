@@ -18,12 +18,15 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-app</artifactId>
     <packaging>war</packaging>
     <version>1.5-SNAPSHOT</version>
+
     <name>Search application</name>
     <description>Search web interface</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
                                           
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-app/trunk</connection>
@@ -111,6 +114,5 @@
             <url>${site.remote.basedir}/${artifactId}</url>
         </site>
     </distributionManagement>
-
 
 </project>
