@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="Search Web Service - Client">
+<project name="IntAct OLS">
     <bannerLeft>
-        <name>Search Web Service - Client</name>
+        <name>IntAct - OLS</name>
     </bannerLeft>
 
     <skin>
