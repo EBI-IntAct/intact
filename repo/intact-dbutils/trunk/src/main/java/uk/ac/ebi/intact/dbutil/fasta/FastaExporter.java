@@ -10,21 +10,18 @@
  */
 package uk.ac.ebi.intact.dbutil.fasta;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.io.*;
-import java.util.Iterator;
-import java.util.Collection;
 import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Utility class exporting all proteins sequence into a fasta file.
@@ -68,8 +65,7 @@ public class FastaExporter {
      * @return an <code>OutputStream</code> with the log of the process
      * @throws IOException bad thing
      */
-    public static void exportToFastaFile(PrintStream out, File exportedFasta) throws IOException
-    {
+    public static void exportToFastaFile(PrintStream out, File exportedFasta) throws IOException, IntactTransactionException {
         if (exportedFasta == null)
         {
             throw new NullPointerException("Provided exportedFasta file is null");
@@ -184,7 +180,7 @@ public class FastaExporter {
 
 
 
-    public static void main( String[] args ) throws IOException {
+    public static void main( String[] args ) throws Exception {
         exportToFastaFile( System.out, new File( "intact.fasta") );
     }
 }

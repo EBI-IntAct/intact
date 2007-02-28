@@ -9,8 +9,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractionDao;
@@ -85,7 +89,7 @@ public class FillPredictTables {
         return list;
     }
 
-    private void PrepareTables() throws SQLException {
+    private void PrepareTables() throws SQLException, IntactTransactionException {
 
         Statement stmt = null;
         try {
@@ -154,7 +158,7 @@ public class FillPredictTables {
 
     public static final int CHUNK_SIZE = 300;
 
-    private void fillCurrentEdgesTable() throws SQLException {
+    private void fillCurrentEdgesTable() throws SQLException, IntactTransactionException {
 
         String bait = "";
 
@@ -238,7 +242,7 @@ public class FillPredictTables {
         }
     }
 
-    private ArrayList getSpeciesTypes() throws SQLException {
+    private ArrayList getSpeciesTypes() throws SQLException, IntactTransactionException {
         ArrayList species = new ArrayList();
         Statement stmt = null;
 
@@ -267,7 +271,7 @@ public class FillPredictTables {
         return species;
     }
 
-    private void doPayAsYouGo( String species ) throws SQLException {
+    private void doPayAsYouGo( String species ) throws SQLException, IntactTransactionException {
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -496,7 +500,7 @@ public class FillPredictTables {
         stmt.executeUpdate( "delete FROM ia_payg_current_edge" );
     }
 
-    public static void main( String[] args ) throws SQLException {
+    public static void main( String[] args ) throws Exception {
 
         long start = System.currentTimeMillis();
         long stop = start;
