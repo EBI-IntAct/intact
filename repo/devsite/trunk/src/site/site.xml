@@ -60,7 +60,7 @@
                 -->
             </item>
 
-            <item name="Maven Plugins" href="modules/maven-plugins.html">
+            <item name="Maven Plugins" href="modules/maven_plugins.html">
                 <!--
                 <item name="Hibernate config" href="maven-plugins/maven-hibernateconfig-plugin/index.html"/>
                 <item name="PSI XML Generator" href="maven-plugins/maven-psixml-generator-plugin/index.html"/>
