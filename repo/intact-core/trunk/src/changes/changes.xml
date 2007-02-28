@@ -8,6 +8,10 @@
         <!-- Usage documentation: http://maven.apache.org/plugins/maven-changes-plugin/usage.html -->
 
         <release version="1.5.0-rc2-SNAPSHOT" date="2007-02-21" description="New features and bug fixes">
+            <action issue="IAC-8" dev="cleroy" type="fix">
+                The IntactSessionRequest now begin the Transaction as it is not done automatically anymore
+                when gettin the dataContext() (IntactContext.getCurrentInstance().getDataContext())
+            </action>
             <action dev="skerrien" type="add">
                 New configuration item: DEBUG_MODE that can be set in resources/intact.properties or via the API
                 (RuntimeConfig).
