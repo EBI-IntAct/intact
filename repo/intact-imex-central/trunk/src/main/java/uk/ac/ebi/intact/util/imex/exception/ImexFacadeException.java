@@ -23,7 +23,6 @@ public class ImexFacadeException extends Exception {
         super(msg,e);
     }
 
-
     public ImexFacadeException(String message, Throwable cause){
         super(message, cause);
     }
@@ -31,7 +30,6 @@ public class ImexFacadeException extends Exception {
     public ImexFacadeException(Throwable cause){
         super(cause);
     }
-/
 
     public String toString(){
         return ( getMessage() + "\n" + getCause());
