@@ -32,7 +32,7 @@
     <modules>
         <module>intact-plugin</module>
         <module>cv-maven-plugin</module>
-        <module>dbtest-maven-plugin</module>
+<!--        <module>dbtest-maven-plugin</module>      -->
         <module>dbupdate-maven-plugin</module>
         <module>ebeye-export-maven-plugin</module>
         <module>fasta-maven-plugin</module>
