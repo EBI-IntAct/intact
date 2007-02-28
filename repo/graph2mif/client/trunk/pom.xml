@@ -27,48 +27,65 @@
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk</developerConnection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/graph2mif/client/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/graph2mif/client/trunk/</url>
     </scm>
 
     <build>
-         <plugins>
+        <plugins>
             <plugin>
-               <groupId>org.codehaus.mojo</groupId>
-               <artifactId>axistools-maven-plugin</artifactId>
-               <version>1.0</version>
-               <configuration>
-                  <urls>
-                      <url>file://${project.basedir}/src/main/wsdl/graph2mif.wsdl</url>
-                  </urls>
-                  <packageSpace>uk.ac.ebi.intact.application.graph2mif.client</packageSpace>
-                  <testCases>false</testCases>
-                  <serverSide>true</serverSide>
-               </configuration>
-               <executions>
-                 <execution>
-                   <phase>generate-sources</phase>
-                   <goals>
-                     <goal>wsdl2java</goal>
-                   </goals>
-                 </execution>
-               </executions>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>axistools-maven-plugin</artifactId>
+                <version>1.0</version>
+                <configuration>
+                    <urls>
+                        <url>file://${project.basedir}/src/main/wsdl/graph2mif.wsdl</url>
+                    </urls>
+                    <packageSpace>uk.ac.ebi.intact.application.graph2mif.client</packageSpace>
+                    <testCases>false</testCases>
+                    <serverSide>true</serverSide>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
-         </plugins>
-      </build>
+        </plugins>
+    </build>
 
-      <dependencies>
-          <dependency>
-              <groupId>org.apache.axis</groupId>
-              <artifactId>axis</artifactId>
-              <version>1.4</version>
-          </dependency>
-          <dependency>
-              <groupId>org.apache.axis</groupId>
-              <artifactId>axis-jaxrpc</artifactId>
-              <version>1.4</version>
-          </dependency>
-      </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+    </dependencies>
+
+    <!-- EBI repositories -->
+    <repositories>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+
+    </repositories>
 
     <distributionManagement>
         <site>
