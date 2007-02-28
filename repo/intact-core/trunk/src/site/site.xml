@@ -24,10 +24,10 @@
 
         <menu name="Development">
             <item name="IntactContext" href="intact_context.html"/>
-            <item name="Data Access">
-                <item name="DAOs" href="data/daos.html"/>
-                <item name="IDs Generation" href="data/idgeneration.html"/>
-                <item name="Migration from OJB to Hibernate" href="data/migrationOJB2Hibernate.html"/>
+            <item name="Data Access" href="data_access.html">
+                <!--<item name="DAOs" href="data/daos.html"/>-->
+                <!--<item name="IDs Generation" href="data/idgeneration.html"/>-->
+                <!--<item name="Migration from OJB to Hibernate" href="data/migrationOJB2Hibernate.html"/>-->
             </item>
         </menu>
         <!--
