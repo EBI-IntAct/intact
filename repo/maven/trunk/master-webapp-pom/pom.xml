@@ -16,9 +16,9 @@
 
     <name>Master Webapp POM</name>
     <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It
-        contains information
-        that is common to all web applications.
+        contains information that is common to all web applications.
     </description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom
