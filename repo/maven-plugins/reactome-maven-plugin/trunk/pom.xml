@@ -5,7 +5,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>5</version>
+        <version>8</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
     <version>1.0-beta-1-SNAPSHOT</version>
     <name>reactome-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/reactome-maven-plugin</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/reactome-maven-plugin/trunk</connection>
@@ -123,7 +123,7 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/maven-plugins/reactome-maven-plugin</url>
+            <url>${site.remote.basedir}/maven-plugins/${artifactId}</url>
         </site>
     </distributionManagement>
 
