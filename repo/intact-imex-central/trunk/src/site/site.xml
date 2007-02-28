@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Intact IMEx Central">
     <bannerLeft>
-        <name>intact-go</name>
+        <name>intact-imex-central</name>
     </bannerLeft>
 
     <skin>
