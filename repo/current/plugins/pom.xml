@@ -25,6 +25,10 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
     </scm>
 
+    <properties>
+        <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
+    </properties>
+
     <modules>
         <module>intact-plugin</module>
         <module>cv-maven-plugin</module>
