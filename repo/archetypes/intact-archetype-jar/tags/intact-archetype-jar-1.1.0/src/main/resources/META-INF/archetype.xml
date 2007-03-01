@@ -1,0 +1,22 @@
+<archetype>
+    <id>intact-jar</id>
+    <sources>
+        <source>src/main/java/MyUselessObject.java</source>
+    </sources>
+    <testSources>
+        <source>src/test/java/MyUselessObjectTest.java</source>
+    </testSources>
+    <testResources>
+        <resource>src/test/resources/intact.properties</resource>
+        <resource>src/test/resources/log4j.properties</resource>
+    </testResources>
+    <resources>
+        <resource>src/test/psi1/10360579.xml</resource>
+        <resource>src/test-db/resources/intact.properties</resource>
+        <resource>LICENSE</resource>
+    </resources>
+    <siteResources>
+        <resource>src/site/site.xml</resource>
+        <resource>src/site/apt/testpage.apt</resource>
+    </siteResources>
+</archetype>

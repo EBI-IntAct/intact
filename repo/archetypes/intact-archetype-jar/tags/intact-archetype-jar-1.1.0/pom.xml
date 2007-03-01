@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-master</artifactId>
+        <version>6</version>
+    </parent>
+
+    <groupId>uk.ac.ebi.intact.archetype</groupId>
+    <artifactId>intact-archetype-jar</artifactId>
+    <version>1.1.0</version>
+
+    <name>IntAct Archetype JAR</name>
+    <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
+
+    <scm>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-jar/tags/intact-archetype-jar-1.1.0</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-jar/tags/intact-archetype-jar-1.1.0</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetypes/intact-archetype-jar/tags/intact-archetype-jar-1.1.0</url>
+    </scm>
+
+
+    <!-- EBI repositories -->
+    <repositories>
+        <repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
