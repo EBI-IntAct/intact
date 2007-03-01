@@ -6,6 +6,7 @@
 
 <web-app>
 
+
     <!-- IntAct Init parameters -->
     <context-param>
         <param-name>uk.ac.ebi.intact.AC_PREFIX</param-name>
@@ -41,11 +42,20 @@
             If read-only, an application cannot persist data in the database
         </description>
     </context-param>
+
    <context-param>
         <param-name>uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK</param-name>
         <param-value>true</param-value>
         <description>
             If read-only, an application cannot persist data in the database
+        </description>
+    </context-param>
+
+    <context-param>
+        <param-name>uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION</param-name>
+        <param-value>true</param-value>
+        <description>
+            If true, don't open a transaction automatically when DataContext.getDaoFactory() is called.
         </description>
     </context-param>
 
@@ -133,20 +143,19 @@
         <url-pattern>/do/*</url-pattern>
     </servlet-mapping>
 
-
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-
-    <error-page>
-        <exception-type>javax.servlet.ServletException</exception-type>
-        <location>/pages/errorCommiting.jsp</location>
-    </error-page>
 
     <!-- The Welcome File List -->
     <welcome-file-list>
         <welcome-file>welcome.jsp</welcome-file>
     </welcome-file-list>
+
+    <error-page>
+        <exception-type>javax.servlet.ServletException</exception-type>
+        <location>/pages/errorCommiting.jsp</location>
+    </error-page>
 
     <!-- JSTL Tag Library Descriptor  -->
     <taglib>
