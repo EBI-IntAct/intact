@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="IntAct confidence score">
-    
+
+    <bannerLeft>
+        <name>Confidence Score</name>
+    </bannerLeft>
+
     <skin>
-        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <groupId>uk.ac.ebi.skins</groupId>
         <artifactId>ebi-skin</artifactId>
     </skin>
 
