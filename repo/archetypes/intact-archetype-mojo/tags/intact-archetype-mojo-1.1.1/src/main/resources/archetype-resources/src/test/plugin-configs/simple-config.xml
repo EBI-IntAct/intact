@@ -1,0 +1,13 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>${artifactId}</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <outputFile>target/myOutput.log</outputFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
