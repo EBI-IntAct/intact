@@ -5,7 +5,7 @@
     </bannerLeft>
 
     <skin>
-        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <groupId>uk.ac.ebi.skins</groupId>
         <artifactId>ebi-skin</artifactId>
     </skin>
 
