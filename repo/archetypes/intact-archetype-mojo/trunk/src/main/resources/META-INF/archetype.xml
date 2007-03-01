@@ -14,4 +14,8 @@
         <resource>src/test/plugin-configs/simple-config.xml</resource>
         <resource>LICENSE</resource>
     </resources>
+    <siteResources>
+        <resource>src/site/site.xml</resource>
+        <resource>src/site/apt/testpage.apt</resource>
+    </siteResources>
 </archetype>
