@@ -29,7 +29,7 @@
 
     <groupId>uk.ac.ebi.intact.archetype</groupId>
     <artifactId>intact-archetype-jar</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
 
     <name>IntAct Archetype JAR</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
