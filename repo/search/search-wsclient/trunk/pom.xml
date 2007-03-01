@@ -28,8 +28,10 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk
+        </connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/search/search-wsclient/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/search/search-wsclient/trunk/</url>
     </scm>
 
@@ -104,6 +106,11 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
+        </repository>
+        <repository>
+            <id>java.net</id>
+            <url>https://maven-repository.dev.java.net/repository</url>
+            <layout>legacy</layout>
         </repository>
     </repositories>
 
