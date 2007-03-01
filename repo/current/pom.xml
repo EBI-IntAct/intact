@@ -65,8 +65,6 @@
         <profile>
             <id>all-modules</id>
             <modules>
-                <module>plugins</module>
-                <module>maven</module>
                 <module>tools</module>
                 <module>archetypes</module>
                 <!--    <module>intact-dbutils</module>     -->
@@ -74,17 +72,15 @@
                 <module>graph2mif-client</module>
                 <module>intact-biosource-update</module>
                 <module>intact-cdb</module>
-                <module>intact-devsite</module>
                 <module>intact-msd</module>
                 <module>intact-ebi-search-engine-export</module>
                 <module>intact-go</module>
                 <module>intact-graph</module>
-                <module>intact-imex-central</module>
                 <module>intact-msd</module>
                 <module>intact-ols</module>
                 <module>intact-proteins-update</module>
-                <module>search-psimitab</module>
-                <module>search-site</module>
+                <module>intact-psimitab</module>
+                <module>intact-site</module>
                 <module>intact-taxonomy</module>
                 <module>intact-uniprot</module>
                 <module>intact-uniprot-export</module>
@@ -97,7 +93,6 @@
                 <module>predict-app</module>
                 <module>statistic-view</module>
                 <module>confidence-score</module>
-                <module>skins</module>
             </modules>
         </profile>
     </profiles>
