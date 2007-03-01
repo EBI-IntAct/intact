@@ -10,15 +10,15 @@
 
     <groupId>uk.ac.ebi.intact.archetype</groupId>
     <artifactId>intact-archetype-mojo</artifactId>
-    <version>1.1.1</version>
+    <version>1.1.2-SNAPSHOT</version>
 
     <name>IntAct Archetype MOJO</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/tags/intact-archetype-mojo-1.1.1</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/tags/intact-archetype-mojo-1.1.1</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetypes/intact-archetype-mojo/tags/intact-archetype-mojo-1.1.1</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetypes/intact-archetype-mojo/trunk/</url>
     </scm>
 
     <dependencies>
