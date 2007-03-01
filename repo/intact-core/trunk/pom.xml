@@ -29,7 +29,7 @@
         <maven.pmd.skip>true</maven.pmd.skip>
     </properties>
 
-    <build>
+    <!--<build>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -43,7 +43,7 @@
                 <artifactId>maven-apt-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
     <profiles>
         <!-- This profile is used when running the tests. If
