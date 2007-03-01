@@ -36,16 +36,16 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetype/intact-archetype-mojo/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetype/intact-archetype-mojo/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetype/intact-archetype-mojo/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/archetypes/intact-archetype-mojo/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/archetypes/intact-archetype-mojo/trunk/</url>
     </scm>
 
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>
             <artifactId>intact-plugin</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
