@@ -119,6 +119,8 @@ public class DaoFactory implements Serializable {
     }
 
     public BaseDao getBaseDao() {
+        // It is returning an ExperimentDaoImpl because HibernateBaseDaoImpl is an abstract class, and ExperimentDaoImpl
+        // implement all HibernateBaseDaoImpl anyway.
         return new ExperimentDaoImpl( getCurrentSession(), intactSession );
     }
 
