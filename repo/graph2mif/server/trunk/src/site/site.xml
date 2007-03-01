@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Graph2MIF server">
-    
+
+    <bannerLeft>
+        <name>Graph2MIF server</name>
+    </bannerLeft>
+
     <skin>
-        <groupId>uk.ac.ebi.intact.skins</groupId>
+        <groupId>uk.ac.ebi.skins</groupId>
         <artifactId>ebi-skin</artifactId>
     </skin>
 
