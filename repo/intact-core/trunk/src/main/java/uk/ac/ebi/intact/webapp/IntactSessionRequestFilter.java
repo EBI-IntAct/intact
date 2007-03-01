@@ -142,7 +142,7 @@ public class IntactSessionRequestFilter implements Filter {
                         out.write( responseWrapper.toString() );
                     }else{
                         log.error( getCommitErrorMessage(req));
-                        throw new ServletException( getCommitErrorMessage(req) );
+                        throw new ServletException( getCommitErrorMessage(req) + e );
                     }
                 }
                 else
