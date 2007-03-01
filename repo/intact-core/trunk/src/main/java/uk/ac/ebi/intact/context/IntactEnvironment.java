@@ -79,7 +79,7 @@ public enum IntactEnvironment {
     FORCE_NO_SCHEMA_VERSION_CHECK( "uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK" ),
 
     /**
-     * If true, don't open a transaction automatically when DataContext.getDaoFactory() is called. Default: false
+     * If true, do open a transaction automatically when DataContext.getDaoFactory() is called. Default: false
      */
     AUTO_BEGIN_TRANSACTION( "uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION" ),
 
