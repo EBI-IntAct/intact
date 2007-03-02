@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="Development Site">
 
+    <bannerLeft>
+        <name>Development Site</name>
+    </bannerLeft>
+
     <skin>
         <groupId>uk.ac.ebi.skins</groupId>
         <artifactId>ebi-skin</artifactId>
     </skin>
 
     <body>
-        
+
         <breadcrumbs>
-            <item name="Databases" href="http://www.ebi.ac.uk/Databases/" />
-            <item name="Proteomic Databases" href="http://www.ebi.ac.uk/Databases/proteomic.html" />
-            <item name="IntAct" href="http://www.ebi.ac.uk/intact/site/" />
+            <item name="Databases" href="http://www.ebi.ac.uk/Databases/"/>
+            <item name="Proteomic Databases" href="http://www.ebi.ac.uk/Databases/proteomic.html"/>
+            <item name="IntAct" href="http://www.ebi.ac.uk/intact/site/"/>
         </breadcrumbs>
 
         <menu name="IntAct">
@@ -81,8 +85,8 @@
         </menu>
 
         ${reports}
-    
-  </body>
+
+    </body>
 
     <custom>
         <test name="TEST">test</test>
