@@ -20,7 +20,7 @@ Developing new modules based on IntAct
 *--------------------*-------------------------------------------------------------------------------*
 | intact-hibernate    | if your application requires access to a database but IS NOT a web application. |
 *--------------------*-------------------------------------------------------------------------------*
-| intact-webapp-master| if your application requires access to a database and IS not a web application. |
+| intact-webapp-master| if your application requires access to a database and IS a web application. |
 *--------------------*-------------------------------------------------------------------------------*
 
  If using a database outside the EBI, you will have to setup the database first, following the {{{general_install.html}instructions}} provided.
@@ -29,10 +29,33 @@ Using existing modules in your project
 
 * Maven-based project
 
+** IntAct Maven Archetypes
+
  Using maven is the easiest way to start working with the intact libraries in your own project.
 
+ The best way to setup a new project fast is to use the IntAct Maven Archetypes:
+
+*-----------------------*----------------------------*-------------*------------------------------------------------------*
+| <<artifactId>>        | <<groupId>>                | <<version>> | <<description>>                                      |
+*-----------------------*----------------------------*-------------*------------------------------------------------------*
+| intact-archetype-jar  | uk.ac.ebi.intact.archetype | 1.1.0       | Creates a maven module to create jars using IntAct   |
+*-----------------------*----------------------------*-------------*------------------------------------------------------*
+| intact-archetype-mojo | uk.ac.ebi.intact.archetype | 1.1.1       | Creates a maven module to create plugins for IntAct  |
+*-----------------------*----------------------------*-------------*------------------------------------------------------*
+
+ An example of using the archetype to create and setup the maven project, for the intact-archetype-jar
+
++--------------------+
+mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar -DarchetypeGroupId=uk.ac.ebi.intact.archetype -DarchetypeVersion=1.1.0 \
+                     -Dversion=1.0-SNAPSHOT -DgroupId=uk.ac.ebi.intact.mygroup -DartifactId=myTest \
+                     -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo
++--------------------+
+
+** Further setup
+
  To be able to use any of the libraries (e.g. intact-core) as a dependency for your maven-based project, you need
- to add the EBI repository in the repositories section of your pom.xml file:
+ to add the EBI repository in the repositories section of your pom.xml file. Note that the archetype automatically
+ generates a pom.xml including this section.
 
 +---------------+
 <!-- EBI repositories -->
