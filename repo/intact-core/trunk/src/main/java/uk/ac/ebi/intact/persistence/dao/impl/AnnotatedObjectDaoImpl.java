@@ -156,20 +156,25 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         Collection<T> subList = Collections.EMPTY_LIST;
         if ( excludeObsolete || excludeHidden ) {
             crit.createAlias( "annotations", "annot" )
-                    .createAlias( "annot.cvTopic", "annotTopic" );
+                    .createAlias( "annot.cvTopic", "annotTopic" )
+                    .createAlias("annotTopic.xrefs", "topicXref")
+                    .createAlias("topicXref.cvXrefQualifier", "topicXrefQual");
         }
 
         if ( excludeObsolete && excludeHidden ) {
             crit.add( Restrictions.or(
-                    Restrictions.eq( "annotTopic.shortLabel", CvTopic.OBSOLETE ),
-                    Restrictions.eq( "annotTopic.shortLabel", CvTopic.HIDDEN ) )
+                                      Restrictions.and(Restrictions.eq("topicXrefQual.shortLabel", CvXrefQualifier.IDENTITY),
+                                                       Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )),
+                                      Restrictions.eq( "annotTopic.shortLabel", CvTopic.HIDDEN ) )
             );
             subList = crit.list();
         } else if ( excludeObsolete && !excludeHidden ) {
-            crit.add( Restrictions.ne( "annotTopic.shortLabel", CvTopic.OBSOLETE ) );
+            crit.add( Restrictions.and(Restrictions.eq("topicXrefQual.shortLabel", CvXrefQualifier.IDENTITY),
+                                       Restrictions.eq("topicXref.primaryId",CvTopic.OBSOLETE_MI_REF )) );
             subList = crit.list();
+            System.out.println("subList.size() = " + subList.size());
         } else if ( !excludeObsolete && excludeHidden ) {
-            crit.add( Restrictions.ne( "annotTopic.shortLabel", CvTopic.HIDDEN ) );
+            crit.add( Restrictions.eq( "annotTopic.shortLabel", CvTopic.HIDDEN ) );
             subList = crit.list();
         }
 
