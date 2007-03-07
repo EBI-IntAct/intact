@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +43,7 @@ public class AnnotationDaoTest  extends TestCase {
 
 
 
-    public void testSaveOrUpdate (){
+    public void testSaveOrUpdate () throws IntactTransactionException {
         Institution ebi = IntactContext.getCurrentInstance().getInstitution();
         CvObjectDao<CvTopic> cvTopicDao = daoFactory.getCvObjectDao(CvTopic.class);
         CvTopic authorConfidence = cvTopicDao.getByXref(CvTopic.AUTHOR_CONFIDENCE_MI_REF);
@@ -79,6 +80,8 @@ public class AnnotationDaoTest  extends TestCase {
         annotation = new Annotation(ebi,newTopic, "He left without screeming station");
         annotationDao.saveOrUpdate(annotation);
 
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
         CvTopic topics = cvTopicDao.getByShortLabel("Moscow");
         if(topics == null){
             fail("Topic Moscow not created at all ");
@@ -94,37 +97,6 @@ public class AnnotationDaoTest  extends TestCase {
         if(found == false){
             fail("Annotation \"He left without screeming station\" was not saved");
         }
-
-        // CASE 3 : Create a cv_topic, saveOrUpdate() it, create an annotation using this cvtopic saveOrUpdate the annotation.
-        // Check that the cvTopic is created, check that the annotation is created.
-        CvTopic secondNewTopic = new CvTopic(ebi,"Brest");
-        cvTopicDao.saveOrUpdate(newTopic);
-
-        topics = cvTopicDao.getByShortLabel("Brest");
-
-
-
-        annotation = new Annotation(ebi,secondNewTopic, "Break a leg");
-        annotationDao.saveOrUpdate(annotation);
-
-        topics = cvTopicDao.getByShortLabel("Moscow");
-        if(topics == null){
-            fail("Topic Moscow not created at all ");
-        }
-
-        found = false;
-        for(Annotation annot : annotations){
-            if("Break a leg".equals(annot.getAnnotationText())){
-                found = true;
-            }
-        }
-        if(found == false){
-            fail("Annotation \"Break a leg\" was not saved");
-        }
-
-
-
-
 
     }
 }
