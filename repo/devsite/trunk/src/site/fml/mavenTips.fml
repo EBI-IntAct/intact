@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<faqs title="Maven tips for IntAct developpement">
+<part id="about">
+    <faq>
+      <question>How to run an IntAct web-application in Jetty?</question>
+      <answer>
+        <p>
+          Go in the pom.xml directory of your web-application and type :<br/>
+            mvn -PjettyConfig,your-database-profile -Ddb=your-db-type-oracle-or-postgres clean jetty:run
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to generate the hibernate.cfg.xml file?</question>
+      <answer>
+        <p>
+          Go in the pom.xml directory of your web-application and type : <br/>
+            mvn hibernateconfig:generate-config <br/>
+          This will generate the hibernate.cfg.xml file in target/hibernate/config file.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to skip db schema version check?</question>
+      <answer>
+        <p>
+          Create the file <b>intact.properties</b> in <b>src/main/ressources</b> and add the following line :<br/>
+            uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK=true<br/>
+          This will set the value of FORCE_NO_SCHEMA_VERSION_CHECK of the IntactEnvironment class of the intact-core.
+          If it's a web application, you can do it as well in the web.xml file by adding a context-param tag. You'll
+          find an exemple of it in the web.xml of the editor-app for exemple.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question> How to skip the tests?</question>
+      <answer>
+        <p>
+          To skip the tests, add the following option to your maven command line :<br/>
+            -Dmaven.skip.test<br/>
+          <b>Example</b> : mvn -Dmaven.skip.test package
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs> 
