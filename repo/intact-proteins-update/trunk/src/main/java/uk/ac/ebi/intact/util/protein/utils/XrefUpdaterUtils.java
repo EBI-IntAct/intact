@@ -231,12 +231,13 @@ public class XrefUpdaterUtils {
         Collection<Xref> ux = new ArrayList<Xref>( uniprotProtein.getSecondaryAcs().size() + 1 );
         ux.add( new InteractorXref( owner, uniprot, uniprotProtein.getPrimaryAc(), null, dbRelease, identity ) );
 
+        log.debug( "Found " + uniprotProtein.getSecondaryAcs().size() + " secondary ACs" );
         for ( String ac : uniprotProtein.getSecondaryAcs() ) {
             ux.add( new InteractorXref( owner, uniprot, ac, null, dbRelease, secondaryAc ) );
         }
 
         if ( log.isDebugEnabled() ) {
-            log.debug( "Built " + ux.size() + " Xref(s)." );
+            log.debug( "Built " + ux.size() + " UniProt Xref(s)." );
         }
 
         XrefUpdaterUtils.updateXrefCollection( protein, uniprot, ux );
