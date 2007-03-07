@@ -22,34 +22,58 @@ public class CvHelper {
     public static CvDatabase getDatabaseByMi( String miRef ) {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvDatabase> cvObjectDao = daoFactory.getCvObjectDao( CvDatabase.class );
-        return cvObjectDao.getByPsiMiRef( miRef );
+        CvDatabase db = cvObjectDao.getByPsiMiRef( miRef );
+        if ( db == null ) {
+            throw new IllegalStateException( "Could not find CvDatabase by MI ref: " + miRef );
+        }
+        return db;
     }
 
     public static CvXrefQualifier getQualifierByMi( String miRef ) {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvXrefQualifier> cvObjectDao = daoFactory.getCvObjectDao( CvXrefQualifier.class );
-        return cvObjectDao.getByPsiMiRef( miRef );
+        CvXrefQualifier qualif = cvObjectDao.getByPsiMiRef( miRef );
+        if ( qualif == null ) {
+            throw new IllegalStateException( "Could not find CvXrefQualifier by MI ref: " + miRef );
+        }
+        return qualif;
     }
 
     public static CvAliasType getAliasTypeByMi( String miRef ) {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvAliasType> cvObjectDao = daoFactory.getCvObjectDao( CvAliasType.class );
-        return cvObjectDao.getByPsiMiRef( miRef );
+        CvAliasType type = cvObjectDao.getByPsiMiRef( miRef );
+        if ( type == null ) {
+            throw new IllegalStateException( "Could not find CvAliasType by MI ref: " + miRef );
+        }
+        return type;
     }
 
     public static CvTopic getTopicByMi( String miRef ) {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvTopic> cvObjectDao = daoFactory.getCvObjectDao( CvTopic.class );
-        return cvObjectDao.getByPsiMiRef( miRef );
+        CvTopic topic = cvObjectDao.getByPsiMiRef( miRef );
+        if ( topic == null ) {
+            throw new IllegalStateException( "Could not find CvTopic by MI topic: " + miRef );
+        }
+        return topic;
     }
 
     public static CvInteractorType getInteractorTypeByMi( String miRef ) {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvInteractorType> cvObjectDao = daoFactory.getCvObjectDao( CvInteractorType.class );
-        return cvObjectDao.getByPsiMiRef( miRef );
+        CvInteractorType type = cvObjectDao.getByPsiMiRef( miRef );
+        if ( type == null ) {
+            throw new IllegalStateException( "Could not find CvInteractorType by MI type: " + miRef );
+        }
+        return type;
     }
 
     public static Institution getInstitution() {
         return IntactContext.getCurrentInstance().getInstitution();
+    }
+
+    public static CvInteractorType getProteinType() {
+        return getInteractorTypeByMi( CvInteractorType.PROTEIN_MI_REF );
     }
 }
