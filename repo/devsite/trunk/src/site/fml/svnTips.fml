@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<faqs title="Subversion tips for IntAct developers">
+<part id="about">
+    <faq>
+      <question>Where can I get Subversion from ?</question>
+      <answer>
+        <p>
+          You can check out the Tigris web site: <a href="http://subversion.tigris.org/" target="_blank">here</a>.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>Which version of Subversion are you working with ?</question>
+      <answer>
+        <p>
+          We currently use Subversion 4.x.
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to get Subversion to ignore files and directories ?</question>
+      <answer>
+        <p>
+          Use <pre>svn propedit svn:ignore .</pre> in the directory where you want Subversion to ignore files/directories.
+          <br/>
+          If your environment variable SVN_EDITOR is set, your favorite text editor should pop up and you can add/update
+          a list of file pattern (one per line) that will be ignored by Subversion.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
