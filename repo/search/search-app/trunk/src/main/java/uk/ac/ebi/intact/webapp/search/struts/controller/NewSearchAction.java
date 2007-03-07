@@ -144,9 +144,9 @@ public class NewSearchAction extends SearchActionBase
                         log.debug("Could not decode to UTF-8: "+value);
                     }
                 }
-            }
 
-            return value;
+                return value;
+            }
         }
 
         return null;
