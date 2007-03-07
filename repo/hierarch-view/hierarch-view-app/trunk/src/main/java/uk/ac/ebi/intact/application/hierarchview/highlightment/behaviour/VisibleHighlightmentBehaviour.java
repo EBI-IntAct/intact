@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.application.hierarchview.highlightment.behaviour;
 
 import uk.ac.ebi.intact.application.hierarchview.business.Constants;
 import uk.ac.ebi.intact.application.hierarchview.business.graph.InteractionNetwork;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
+import uk.ac.ebi.intact.util.simplegraph.BasicGraphI;
 
 import java.util.ArrayList;
 import java.util.Collection;

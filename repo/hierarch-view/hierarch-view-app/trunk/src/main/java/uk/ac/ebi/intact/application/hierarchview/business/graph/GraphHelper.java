@@ -15,10 +15,10 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.SearchException;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.simpleGraph.BasicGraph;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.MineEdge;
+import uk.ac.ebi.intact.util.simplegraph.BasicGraph;
+import uk.ac.ebi.intact.util.simplegraph.BasicGraphI;
+import uk.ac.ebi.intact.util.simplegraph.EdgeI;
+import uk.ac.ebi.intact.util.simplegraph.MineEdge;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

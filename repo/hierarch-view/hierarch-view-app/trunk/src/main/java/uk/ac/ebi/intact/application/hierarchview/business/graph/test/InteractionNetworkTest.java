@@ -11,9 +11,9 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.application.hierarchview.business.graph.InteractionNetwork;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.CriteriaBean;
-import uk.ac.ebi.intact.simpleGraph.Edge;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.util.simplegraph.Edge;
+import uk.ac.ebi.intact.util.simplegraph.EdgeI;
+import uk.ac.ebi.intact.util.simplegraph.Node;
 
 import java.util.ArrayList;
 import java.util.Collection;

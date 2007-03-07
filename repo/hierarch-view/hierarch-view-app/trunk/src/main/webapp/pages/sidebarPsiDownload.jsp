@@ -17,7 +17,7 @@
                  uk.ac.ebi.intact.application.hierarchview.business.Constants,
                  uk.ac.ebi.intact.application.hierarchview.business.IntactUserI,
                  uk.ac.ebi.intact.context.IntactContext,
-                 uk.ac.ebi.intact.simpleGraph.BasicGraphI,
+                 uk.ac.ebi.intact.util.simplegraph.BasicGraphI,
                  java.util.Iterator"%>
 
 <%@ taglib uri="http://struts.apache.org/tags-html" prefix="html"%>
