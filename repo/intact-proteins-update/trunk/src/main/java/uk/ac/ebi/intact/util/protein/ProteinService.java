@@ -6,6 +6,9 @@
 package uk.ac.ebi.intact.util.protein;
 
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.util.biosource.BioSourceService;
+import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 import java.util.Collection;
 
@@ -48,4 +51,21 @@ public interface ProteinService {
     public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) throws ProteinServiceException;
 
     public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) throws ProteinServiceException;
+
+    ////////////////////////////////////
+    // Configuration
+
+    public BioSourceService getBioSourceService();
+
+    public void setBioSourceService( BioSourceService bioSourceService );
+
+    public UniprotService getUniprotService();
+
+    public void setUniprotService( UniprotService uniprotService );
+
+    public AlarmProcessor getAlarmProcessor();
+
+    public void setAlarmProcessor( AlarmProcessor alarmProcessor );
+
+    public void addDbMapping( String databaseName, String miRef );
 }
