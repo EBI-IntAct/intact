@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.DatabaseTestCase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,22 +25,22 @@ import java.util.List;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  */
-public class CvObjectDaoTest  extends TestCase {
-     private static final Log log = LogFactory.getLog(DaoFactoryTest.class);
+public class CvObjectDaoTest  extends DatabaseTestCase {
+     private static final Log log = LogFactory.getLog(DaoFactoryTestBis.class);
 
-    private DaoFactory daoFactory;
 
-        protected void setUp() throws Exception
+    public CvObjectDaoTest(String name) {
+        super(name);
+    }
+
+    public void setUp() throws Exception
         {
             super.setUp();
-            daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         }
 
-        protected void tearDown() throws Exception
+        public void tearDown() throws Exception
         {
             super.tearDown();
-            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-            daoFactory = null;
         }
 
 
@@ -50,7 +51,7 @@ public class CvObjectDaoTest  extends TestCase {
         psiMiRefs.add(CvDatabase.CABRI_MI_REF);
         psiMiRefs.add(CvDatabase.IMEX_MI_REF);
 
-        CvObjectDao<CvDatabase> cvObjectDao = daoFactory.getCvObjectDao(CvDatabase.class);
+        CvObjectDao<CvDatabase> cvObjectDao = getDaoFactory().getCvObjectDao(CvDatabase.class);
 
         List cvObjects = cvObjectDao.getByPsiMiRefCollection(psiMiRefs);
         assertEquals(cvObjects.size(),3);
@@ -58,7 +59,7 @@ public class CvObjectDaoTest  extends TestCase {
 
     public void testGetByObjClass (){
         Class[] classes = {CvTopic.class, CvXrefQualifier.class};
-        CvObjectDao<CvObject> cvObjectDao = daoFactory.getCvObjectDao(CvObject.class);
+        CvObjectDao<CvObject> cvObjectDao = getDaoFactory().getCvObjectDao(CvObject.class);
         List cvObjects = cvObjectDao.getByObjClass(classes);
         int cvTopicCount = 0;
         int cvXrefQualifierCount = 0;
