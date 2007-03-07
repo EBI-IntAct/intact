@@ -58,10 +58,6 @@
         <filter-name>intactFilter</filter-name>
         <url-pattern>*.jsp</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>intactFilter</filter-name>
-        <url-pattern>/GenerateImage</url-pattern>
-    </filter-mapping>
 
     <!-- =================================================================== -->
 

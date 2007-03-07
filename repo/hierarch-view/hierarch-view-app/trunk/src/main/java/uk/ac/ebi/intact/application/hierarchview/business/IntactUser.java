@@ -17,9 +17,9 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.simpleGraph.Node;
+import uk.ac.ebi.intact.util.simplegraph.BasicGraphI;
+import uk.ac.ebi.intact.util.simplegraph.Graph;
+import uk.ac.ebi.intact.util.simplegraph.Node;
 import uk.ac.ebi.intact.util.Chrono;
 
 import javax.servlet.http.HttpSessionBindingEvent;
