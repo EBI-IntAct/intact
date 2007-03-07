@@ -82,7 +82,8 @@
             <item name="Where to start" href="where_to_start.html"/>
             <item name="Versioning policy" href="version_policy.html"/>
             <item name="Documentation needed" href="howtodoc.html"/>
-            <item name="Maven tips for IntAct developpment" href="mavenTips.html"/>
+            <item name="Maven tips" href="mavenTips.html"/>
+            <item name="Subversion tips" href="svnTips.html"/>
         </menu>
 
         ${reports}

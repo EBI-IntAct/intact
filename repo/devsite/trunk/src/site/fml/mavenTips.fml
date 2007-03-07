@@ -1,12 +1,94 @@
 <?xml version="1.0"?>
-<faqs title="Maven tips for IntAct developpement">
+<faqs title="Maven tips for IntAct developers">
 <part id="about">
     <faq>
-      <question>How to run an IntAct web-application in Jetty?</question>
+      <question>How to run an IntAct web-application in Jetty ?</question>
       <answer>
         <p>
           Go in the pom.xml directory of your web-application and type :<br/>
             mvn -PjettyConfig,your-database-profile -Ddb=your-db-type-oracle-or-postgres clean jetty:run
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to create an IntelliJ/Eclipse project for a given Maven module ?</question>
+      <answer>
+        <p>
+          Maven comes with a few plugin allowing to auto-generate project configuration for some Java IDE.
+          <br/>
+          If you are using <a href="http://www.jetbrains.com/idea/" target="_blank">IntelliJ</a>, you can use:
+          <pre>
+                mvn idea:idea
+          </pre>
+          If you are using <a href="http://www.eclipse.org/" target="_blank">Eclipse</a>, you can use:
+          <pre>
+                mvn eclipse:eclipse
+          </pre>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to run create a new Maven artifact for IntAct ?</question>
+      <answer>
+        <p>
+          We advise to use the Maven Archetype we have developped to create the base structure of the module you are
+          about to create. Running the command below should do the job: <br/>
+          <pre>
+          mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar \            <br/>
+                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \         <br/>
+                               -DarchetypeVersion=1.1.0 \                              <br/>
+                               -Dversion=1.0-SNAPSHOT \                                <br/>
+                               -DgroupId=uk.ac.ebi.intact.mygroup \                    <br/>
+                               -DartifactId=myTest \                                   <br/>
+                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo <br/>
+          </pre>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to run create a new Maven plugin for IntAct ?</question>
+      <answer>
+        <p>
+          We advise to use the Maven Archetype we have developped to create the base structure of the module you are
+          about to create. Running the command below should do the job: <br/>
+          <pre>
+          mvn archetype:create -DarchetypeArtifactId=intact-archetype-mojo \           <br/>
+                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \         <br/>
+                               -DarchetypeVersion=1.1.1 \                              <br/>
+                               -Dversion=1.0-SNAPSHOT \                                <br/>
+                               -DgroupId=uk.ac.ebi.intact.mygroup \                    <br/>
+                               -DartifactId=myTest \                                   <br/>
+                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo <br/>
+          </pre>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>Releasing a Maven module is a pain, is there a way to do this easily ?</question>
+      <answer>
+        <p>
+          Yes there is ;)
+          <br/>
+          We recommend the use of the
+          <a href="http://maven.apache.org/plugins/maven-release-plugin/" target="_blank">Maven release plugin</a>
+          to do so.
+          <br/>
+          Here is how to proceed with it:
+          <br/>
+          1. Make sure you have commited all pending modification in your Maven module
+          <br/>
+          2. Make sure the SCM section of your POM file is up to date. The release plugin uses it to access Subversion.
+          <br/>
+          3. Make sure the version of the module you are working on is a SNAPSHOT (eg. 1.2-SNAPSHOT)
+          <br/>
+          4. run <pre>mvn release:prepare</pre> to check that everything is fine and prepare the release for things
+          like what will the next version be, how will the tag in Subversion be called...
+          <br/>
+          5. If everything went fine, run <pre>mvn release:perform</pre> to finalize the release.
+          <br/>
+          <br/>
+          <u>Final note</u>: This said, it does happen that the plugin chokes while releasing your artifact, reading the
+          verbose Maven output you should be able to work around any problems.
         </p>
       </answer>
     </faq>
