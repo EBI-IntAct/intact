@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.application.hierarchview.business.IntactUserI;
 import uk.ac.ebi.intact.application.hierarchview.business.image.ImageBean;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.util.Chrono;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -47,6 +48,8 @@ public class GenerateImage extends HttpServlet {
     public void doGet (HttpServletRequest aRequest, HttpServletResponse aResponse)
             throws ServletException {
         OutputStream outputStream = null;
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         try {
             // get the current user session
@@ -109,8 +112,19 @@ public class GenerateImage extends HttpServlet {
         }
         finally {
             try {
-                outputStream.close();
-            } catch (IOException ioe) {}
+                if (outputStream != null)
+                {
+                    outputStream.close();
+                }
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
         }
     } // doGet
 }
