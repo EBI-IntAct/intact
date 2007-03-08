@@ -10,7 +10,7 @@
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-      xmlns:is="http://www.ebi.ac.uk/intact/jsf/site">
+      xmlns:sf="http://www.ebi.ac.uk/faces/site">
 <body>
 
 <f:view>
@@ -32,7 +32,7 @@
 
                             &nbsp;[&nbsp;
 
-                            <h:outputText value="#{is:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
+                            <h:outputText value="#{sf:convertToDate(pieceOfNews.date,'yyyyMMdd')}">
                                 <f:convertDateTime/>
                             </h:outputText>
                             ]

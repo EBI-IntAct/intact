@@ -10,7 +10,8 @@
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+      xmlns:ebi="http://ebi.ac.uk/faces/components">
   <head>
     <title></title>
   </head>
@@ -28,10 +29,8 @@
 
           <h:panelGroup id="stats">
               <div style="float:right;">
-                  <div class="iconboxheading" onclick="intact_toggleVisibility('statsContent')">
-                      IntAct Basic Statistics
-                  </div>
-                  <div class="iconboxcontents" id="statsContent">
+
+                  <ebi:panelBox id="statsBox" title="IntAct Basic Statistics">
                       <h:panelGroup rendered="#{!statisticsBean.loaded and !statisticsBean.failed}">
                           <h:graphicImage url="#{appConfigBean.absoluteContextPath}/images/wait_red_indicator.gif"
                                           style="vertical-align: middle"/>
@@ -69,7 +68,8 @@
                               </li>
                           </ul>
                       </h:panelGroup>
-                  </div>
+                  </ebi:panelBox>
+
               </div>
           </h:panelGroup>
 

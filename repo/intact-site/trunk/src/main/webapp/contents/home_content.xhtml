@@ -10,7 +10,8 @@
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax">
+      xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
+      xmlns:ebi="http://ebi.ac.uk/faces/components">
   <body>
 
   <f:view>
@@ -22,6 +23,9 @@
               <td class="intact_table">
                   <h1>IntAct Home</h1>
 
+                  <ebi:panelUrgentNews sourceUrl="#{initParam['uk.ac.ebi.faces.NEWS_URL']}"
+                                       rendered="#{not empty newsBean.urgentNews}"/>
+                  
                   <h2>Search IntAct</h2>
 
                   <h:inputText value="#{searchBean.searchQuery}"/>
