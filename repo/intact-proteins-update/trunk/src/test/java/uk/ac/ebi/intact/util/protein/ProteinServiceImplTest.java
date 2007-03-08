@@ -8,11 +8,12 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
-import uk.ac.ebi.intact.util.protein.mock.MockAlarmProcessor;
-import uk.ac.ebi.intact.util.protein.mock.MockUniprotService;
+import uk.ac.ebi.intact.util.protein.mock.*;
 import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
 
 import java.util.Collection;
@@ -57,6 +58,13 @@ public class ProteinServiceImplTest extends TestCase {
         return service;
     }
 
+    private ProteinService buildProteinService( UniprotService uniprotService ) {
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        service.setAlarmProcessor( alarmProcessor );
+        return service;
+    }
+
     private Protein searchByShortlabel( List<ProteinImpl> proteins, String shortlabel ) {
         for ( ProteinImpl protein : proteins ) {
             if ( protein.getShortLabel().equals( shortlabel ) ) {
@@ -69,14 +77,12 @@ public class ProteinServiceImplTest extends TestCase {
     ////////////////////
     // Tests
 
-    public void testUpdate() throws Exception {
+    public void testRetrieve_CDC42_CANFA() throws Exception {
+
         ProteinService service = buildProteinService();
         Collection<Protein> proteins = service.retrieve( "P60952" ); /* CDC42_CANFA */
 
         assertNotNull( proteins );
-        for ( Protein protein : proteins ) {
-            System.out.println( protein );
-        }
         assertEquals( 1, proteins.size() );
 
         Protein protein = proteins.iterator().next();
@@ -153,7 +159,7 @@ public class ProteinServiceImplTest extends TestCase {
         assertTrue( sv1.getAliases().contains( new InteractorAlias( owner, sv1, isoformSynonym, "Brain" ) ) );
         assertTrue( sv1.getAnnotations().contains(
                 new Annotation( owner, isoformComment, "Has not been isolated in dog so far" ) ) );
-        
+
         Protein sv2 = searchByShortlabel( variants, "P60952-2" );
         assertNotNull( sv2 );
         assertEquals( "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)", sv2.getFullName() );
@@ -163,5 +169,81 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals( Crc64.getCrc64( "MQTIKCVKRKCCIF" ), sv2.getCrc64() );
         assertEquals( "MQTIKCVKRKCCIF", sv2.getSequence() );
         assertTrue( sv2.getAliases().contains( new InteractorAlias( owner, sv2, isoformSynonym, "Placental" ) ) );
+
+        // check that a second call to the service bring the same protein
+        String ac = protein.getAc();
+        String sv1ac = sv1.getAc();
+        String sv2ac = sv2.getAc();
+
+        proteins = service.retrieve( "P60952" ); /* CDC42_CANFA */
+
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+
+        protein = proteins.iterator().next();
+        assertEquals( ac, protein.getAc() );
+
+        variants = pdao.getSpliceVariants( protein );
+        assertEquals( 2, variants.size() );
+
+        sv1 = searchByShortlabel( variants, "P60952-1" );
+        assertEquals( sv1ac, sv1.getAc() );
+
+        sv2 = searchByShortlabel( variants, "P60952-2" );
+        assertEquals( sv2ac, sv2.getAc() );
+    }
+
+    public void testRetrieve_update_CDC42_CANFA() throws Exception {
+
+        FlexibleMockUniprotService service = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        service.add( "P60952", canfa );
+
+        ProteinService proteinService = buildProteinService( service );
+        Collection<Protein> proteins = proteinService.retrieve( "P60952" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+
+        // update shortlabel
+        canfa.setId( "FOO_BAR" );
+        canfa.setDescription( "" );
+        canfa.setSequence( "LLLLLLLLLLLLL" );
+        canfa.setCrc64( "LLLLLLLLLLLLL" );
+
+        // provoking recycling and deletion of Xrefs
+        canfa.getCrossReferences().addAll( new UniprotProteinXrefBuilder()
+                .add( "IPR00000", "InterPro", "he he" )
+                .build() );
+
+        canfa.getCrossReferences().removeAll( new UniprotProteinXrefBuilder()
+                .add( "IPR003578", "InterPro", "GTPase_Rho" )
+                .add( "IPR005225", "InterPro", "Small_GTP_bd" )
+                .build() );
+
+        for ( UniprotXref xref : canfa.getCrossReferences() ) {
+            System.out.println( xref );
+        }
+
+        proteins = proteinService.retrieve( "P60952" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+
+
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        CvObjectDao<CvObject> cvDao = daoFactory.getCvObjectDao();
+
+        Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
+        CvDatabase interpro = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.INTERPRO_MI_REF );
+
+        Protein protein = proteins.iterator().next();
+
+        for ( InteractorXref xref : protein.getXrefs() ) {
+            System.out.println( xref );
+        }
+
+        assertEquals( 6, protein.getXrefs().size() );
+        assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR00000", null ) ) );
+        assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR013753", null ) ) );
+        assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR001806", null ) ) );
     }
 }
