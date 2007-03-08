@@ -18,7 +18,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.1.2
  */
-public class MockUniprotProteinBuilder {
+public class UniprotProteinBuilder {
 
     /////////////////////////
     // Instance attributes
@@ -138,119 +138,119 @@ public class MockUniprotProteinBuilder {
     ////////////////////////////
     // Constructor
 
-    public MockUniprotProteinBuilder() {
+    public UniprotProteinBuilder() {
     }
 
     ////////////////////////////
     // Setters
 
 
-    public MockUniprotProteinBuilder setCrc64( String crc64 ) {
+    public UniprotProteinBuilder setCrc64( String crc64 ) {
         this.crc64 = crc64;
         return this;
     }
 
-    public MockUniprotProteinBuilder setCrossReferences( Collection<UniprotXref> crossReferences ) {
+    public UniprotProteinBuilder setCrossReferences( Collection<UniprotXref> crossReferences ) {
         this.crossReferences = crossReferences;
         return this;
     }
 
-    public MockUniprotProteinBuilder setDescription( String description ) {
+    public UniprotProteinBuilder setDescription( String description ) {
         this.description = description;
         return this;
     }
 
-    public MockUniprotProteinBuilder setDiseases( Collection<String> diseases ) {
+    public UniprotProteinBuilder setDiseases( Collection<String> diseases ) {
         this.diseases = diseases;
         return this;
     }
 
-    public MockUniprotProteinBuilder setFeatureChains( Collection<UniprotFeatureChain> featureChains ) {
+    public UniprotProteinBuilder setFeatureChains( Collection<UniprotFeatureChain> featureChains ) {
         this.featureChains = featureChains;
         return this;
     }
 
-    public MockUniprotProteinBuilder setFunctions( Collection<String> functions ) {
+    public UniprotProteinBuilder setFunctions( Collection<String> functions ) {
         this.functions = functions;
         return this;
     }
 
-    public MockUniprotProteinBuilder setGenes( Collection<String> genes ) {
+    public UniprotProteinBuilder setGenes( Collection<String> genes ) {
         this.genes = genes;
         return this;
     }
 
-    public MockUniprotProteinBuilder setId( String id ) {
+    public UniprotProteinBuilder setId( String id ) {
         this.id = id;
         return this;
     }
 
-    public MockUniprotProteinBuilder setKeywords( Collection<String> keywords ) {
+    public UniprotProteinBuilder setKeywords( Collection<String> keywords ) {
         this.keywords = keywords;
         return this;
     }
 
-    public MockUniprotProteinBuilder setLastAnnotationUpdate( Date lastAnnotationUpdate ) {
+    public UniprotProteinBuilder setLastAnnotationUpdate( Date lastAnnotationUpdate ) {
         this.lastAnnotationUpdate = lastAnnotationUpdate;
         return this;
     }
 
-    public MockUniprotProteinBuilder setLastSequenceUpdate( Date lastSequenceUpdate ) {
+    public UniprotProteinBuilder setLastSequenceUpdate( Date lastSequenceUpdate ) {
         this.lastSequenceUpdate = lastSequenceUpdate;
         return this;
     }
 
-    public MockUniprotProteinBuilder setLocuses( Collection<String> locuses ) {
+    public UniprotProteinBuilder setLocuses( Collection<String> locuses ) {
         this.locuses = locuses;
         return this;
     }
 
-    public MockUniprotProteinBuilder setOrfs( Collection<String> orfs ) {
+    public UniprotProteinBuilder setOrfs( Collection<String> orfs ) {
         this.orfs = orfs;
         return this;
     }
 
-    public MockUniprotProteinBuilder setOrganism( Organism organism ) {
+    public UniprotProteinBuilder setOrganism( Organism organism ) {
         this.organism = organism;
         return this;
     }
 
-    public MockUniprotProteinBuilder setPrimaryAc( String primaryAc ) {
+    public UniprotProteinBuilder setPrimaryAc( String primaryAc ) {
         this.primaryAc = primaryAc;
         return this;
     }
 
-    public MockUniprotProteinBuilder setReleaseVersion( String releaseVersion ) {
+    public UniprotProteinBuilder setReleaseVersion( String releaseVersion ) {
         this.releaseVersion = releaseVersion;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSecondaryAcs( List<String> secondaryAcs ) {
+    public UniprotProteinBuilder setSecondaryAcs( List<String> secondaryAcs ) {
         this.secondaryAcs = secondaryAcs;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSequence( String sequence ) {
+    public UniprotProteinBuilder setSequence( String sequence ) {
         this.sequence = sequence;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSequenceLength( int sequenceLength ) {
+    public UniprotProteinBuilder setSequenceLength( int sequenceLength ) {
         this.sequenceLength = sequenceLength;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSource( UniprotProteinType source ) {
+    public UniprotProteinBuilder setSource( UniprotProteinType source ) {
         this.source = source;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSpliceVariants( Collection<UniprotSpliceVariant> spliceVariants ) {
+    public UniprotProteinBuilder setSpliceVariants( Collection<UniprotSpliceVariant> spliceVariants ) {
         this.spliceVariants = spliceVariants;
         return this;
     }
 
-    public MockUniprotProteinBuilder setSynomyms( Collection<String> synomyms ) {
+    public UniprotProteinBuilder setSynomyms( Collection<String> synomyms ) {
         this.synomyms = synomyms;
         return this;
     }
