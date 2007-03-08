@@ -11,8 +11,6 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 
-import java.util.Collection;
-
 /**
  * Utilities for updating Annotations.
  *
@@ -36,27 +34,18 @@ public class AnnotationUpdaterUtils {
      */
     public static void addNewAnnotation( AnnotatedObject current, final Annotation annotation ) {
 
-        // TODO: what if an annotation is already existing ... should we use a single one ?
-        // YES ! we should search dor it first and reuse existing Annotation
-
-        // Make sure the alias does not yet exist in the object
-        Collection<Annotation> annotations = current.getAnnotations();
-        for ( Annotation anAnnotation : annotations ) {
-            if ( anAnnotation.equals( annotation ) ) {
-                return; // already in, exit
+        if ( current.getAnnotations().contains( annotation ) ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "SKIP " + annotation );
             }
+            return; // already in, exit
         }
 
         // add the alias to the AnnotatedObject
         current.addAnnotation( annotation );
 
-        try {
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
-            log.debug( "ADD " + annotation + " to: " + current.getShortLabel() );
-        } catch ( Exception e_alias ) {
-            if ( log != null ) {
-                log.error( "Error when creating an Annotation for protein " + current, e_alias );
-            }
-        }
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
+        // update current as well !
+        log.debug( "ADDED " + annotation + " to: " + current.getShortLabel() );
     }
 }
