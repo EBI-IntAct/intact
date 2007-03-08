@@ -87,6 +87,9 @@
           5. If everything went fine, run <pre>mvn release:perform</pre> to finalize the release.
           <br/>
           <br/>
+          <u>Note</u>:If anything goes bad and you wish to start from scratch again, you can run
+          <pre>mvn release:prepare -Dresume=false</pre>
+          <br/>
           <u>Final note</u>: This said, it does happen that the plugin chokes while releasing your artifact, reading the
           verbose Maven output you should be able to work around any problems.
         </p>
