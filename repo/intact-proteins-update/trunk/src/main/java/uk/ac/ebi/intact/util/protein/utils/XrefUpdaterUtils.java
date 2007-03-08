@@ -156,13 +156,24 @@ public class XrefUpdaterUtils {
         }
 
         Collection<Xref> toDelete = CollectionUtils.subtract( currentXrefs, newXrefs ); // current minus new
+        if( log.isDebugEnabled() ) {
+            log.debug( toDelete.size() + " xref to delete." );
+        }
         Collection<Xref> toCreate = CollectionUtils.subtract( newXrefs, currentXrefs );
+        if( log.isDebugEnabled() ) {
+            log.debug( toCreate.size() + " xref to create." );
+        }
 
         Iterator toDeleteIterator = toDelete.iterator();
         for ( Xref xref : toCreate ) {
             if ( toDeleteIterator.hasNext() ) {
+
                 // in order to avoid wasting ACs, we overwrite attributes of an outdated xref.
                 Xref recycledXref = ( Xref ) toDeleteIterator.next();
+
+                if( log.isDebugEnabled() ) {
+                    log.debug( "RECYCLING : " + recycledXref + " into " + xref );
+                }
 
                 // note: parent_ac was already set before as the object was persistent
                 recycledXref.setPrimaryId( xref.getPrimaryId() );
@@ -183,7 +194,13 @@ public class XrefUpdaterUtils {
         for ( ; toDeleteIterator.hasNext(); ) {
             // delete remaining outdated/unrecycled xrefs
             Xref xref = ( Xref ) toDeleteIterator.next();
+            if( log.isDebugEnabled() ) {
+                log.debug( "DELETING: " + xref );
+            }
             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
+            protein.getXrefs().remove( xref );
+
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao().update( (ProteinImpl ) protein );
 
             updated = true;
         }
