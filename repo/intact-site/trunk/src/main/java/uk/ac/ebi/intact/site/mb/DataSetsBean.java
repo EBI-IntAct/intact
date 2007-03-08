@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.site.mb;
 
 import static uk.ac.ebi.intact.site.items.Datasets.Dataset;
 import uk.ac.ebi.intact.site.util.SiteUtils;
-import uk.ac.ebi.intact.site.util.DataLoadingException;
+import uk.ac.ebi.faces.DataLoadingException;
 
 import javax.faces.context.FacesContext;
 import java.io.Serializable;

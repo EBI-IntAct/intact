@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:jsp="http://java.sun.com/JSP/Page"
       xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -9,55 +9,24 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
-      xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+      xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+      xmlns:ebi="http://ebi.ac.uk/faces/components">
 
-<head>
-
-    <title>IntAct - Home page</title>
-
-    <meta http-equiv="Content-Type"
-          content="text/html; charset=iso-8859-1"/>
-    <meta name="description"
-          content="The IntAct database provides a freely available, open source database system and analysis tools for protein interaction data. All interactions are derived from literature curation or direct user submissions and are freely available."/>
-    <meta name="keywords" content="EBI, EMBL, UniProt, Swiss-Prot, TrEMBL, bioinformatics, proteomics, molecular,
+<f:view>
+    <ebi:head title="IntAct" description="The IntAct database provides a freely available, open source database system and analysis tools for protein interaction data. All interactions are derived from literature curation or direct user submissions and are freely available."
+            keywords="EBI, EMBL, UniProt, Swiss-Prot, TrEMBL, bioinformatics, proteomics, molecular,
                                  software, database, sequence, protein, interaction, interacting, open source,
                                  analysis, curator, curation, scientific literature, high throughput, graph,
                                  visualization, rendering, network, hub, local installation, free,
                                  computational biology, nucleotide, DNA, RNA, science, leading edge, protein-protein,
                                  annotation, controlled vocabulary, CV, PSI, PSI-MI, Proteome Standards Initiative,
-                                 IMEx, binding-site, binding site, domain, GO classification, GO, PDB"/>
+                                 IMEx, binding-site, binding site, domain, GO classification, GO, PDB">
+        <link rel="stylesheet" href="#{appConfigBean.absoluteContextPath}/inc/css/intact.css" type="text/css"/>
+        <script type="javascript" src="#{appConfigBean.absoluteContextPath}/inc/css/intact.css"></script>
+    </ebi:head>
 
-    <!-- IntAct dynamic application should not be indexed by search engines -->
-    <meta name='robots' content='nofollow'/>
+    <ebi:body>
 
-    <link rel="stylesheet" href="http://www.ebi.ac.uk/inc/css/contents.css" type="text/css"/>
-    <link rel="stylesheet" href="http://www.ebi.ac.uk/inc/css/userstyles.css" type="text/css"/>
-    <link rel="stylesheet" href="http://www.ebi.ac.uk/inc/css/sidebars.css" type="text/css"/>
-
-    <script src="http://www.ebi.ac.uk/inc/js/contents.js" type="text/javascript"></script>
-
-    <!-- Intact javascript -->
-    <script src="#{appConfigBean.absoluteContextPath}/inc/js/intact_panels.js" type="text/javascript"></script>
-    <!-- Intact CSS -->
-    <link rel="stylesheet" href="#{appConfigBean.absoluteContextPath}/inc/css/intact.css" type="text/css"/>
-
-    <!-- Feeds -->
-    <link rel="alternate"  type="application/rss+xml" title="IntAct News RSS feed" href="feed"/>
-
-</head>
-
-
-<body onload="if(navigator.userAgent.indexOf('MSIE') != -1) {document.getElementById('head').allowTransparency = true;}">
-
-<div class="headerdiv" id="headerdiv" style="position:absolute; z-index: 1;">
-
-    <iframe src="http://www.ebi.ac.uk/inc/head.html" name="head" id="head" frameborder="0" marginwidth="0"
-            marginheight="0"
-            scrolling="no" width="100%" style="position:absolute; z-index: 1; height: 57px;"></iframe>
-</div>
-
-<f:view>
-        <div class="contents" id="contents">
             <table class="contentspane" id="contentspane" summary="The main content pane of the page"
                    style="width: 100%">
                 <tr>
@@ -85,19 +54,19 @@
 
                         <h:form id="mainForm">
 
-                        <!-- breadcrumbs -->
-                        <div class="breadcrumbs"><a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a><a
-                                href="http://www.ebi.ac.uk/Databases/">Databases</a><a
-                                href="http://www.ebi.ac.uk/Databases/proteomic.html">Proteomic Databases</a>
+                            <!-- breadcrumbs -->
+                            <div class="breadcrumbs"><a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a><a
+                                    href="http://www.ebi.ac.uk/Databases/">Databases</a><a
+                                    href="http://www.ebi.ac.uk/Databases/proteomic.html">Proteomic Databases</a>
 
-                            <h:commandLink value="IntAct" action="home"/>
-                            <h:commandLink value="#{sectionTitle}" action="null"/>
-                        </div>
+                                <h:commandLink value="IntAct" action="home"/>
+                                <h:commandLink value="#{sectionTitle}" action="null"/>
+                            </div>
 
-                        <!-- start contents here -->
+                            <!-- start contents here -->
 
                             <ui:insert name="contents"/>
-                            
+
                         </h:form>
 
 
@@ -109,33 +78,7 @@
                     </td>
                 </tr>
             </table>
-            <table class="footerpane" id="footerpane" summary="The main footer pane of the page">
-                <tr>
-                    <td colspan="4" class="footerrow">
-                        <div class="footerdiv" id="footerdiv" style="z-index:2;">
-                            <iframe src="http://www.ebi.ac.uk/inc/foot.html" name="foot" frameborder="0" marginwidth="0"
-                                    marginheight="0"
-                                    scrolling="no" height="22" width="100%" style="z-index:2;"></iframe>
-                        </div>
-                    </td>
-                </tr>
-            </table>
 
-            <script src="http://www.ebi.ac.uk/inc/js/footer.js" type="text/javascript"> </script>
-
-            <iframe src="iframed_scripts.html" marginheight="0" marginwidth="0" style="height:0;width:0"></iframe>
-
-            <!-- Google analytics
-            <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
-            </script>
-            <script type="text/javascript">
-                _uacct = "UA-672146-1";
-                urchinTracker();
-            </script>
-            -->
-
-        </div>
+    </ebi:body>
 </f:view>
-
-</body>
 </html>

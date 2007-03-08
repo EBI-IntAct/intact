@@ -17,10 +17,11 @@ package uk.ac.ebi.intact.site.mb;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
-import uk.ac.ebi.intact.site.items.News;
-import uk.ac.ebi.intact.site.util.FeedType;
-import uk.ac.ebi.intact.site.util.SiteUtils;
-import uk.ac.ebi.intact.site.util.DataLoadingException;
+import uk.ac.ebi.faces.component.news.NewsUtil;
+import uk.ac.ebi.faces.component.news.FeedType;
+import uk.ac.ebi.faces.DataLoadingException;
+import uk.ac.ebi.faces.model.News;
+import uk.ac.ebi.faces.model.NewsItem;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -38,11 +39,13 @@ import java.util.List;
 public class NewsBean implements Serializable
 {
 
-    public static final String NEWS_URL = "uk.ac.ebi.intact.NEWS_URL";
+    public static final String NEWS_URL = "uk.ac.ebi.faces.NEWS_URL";
     private static final String NEWS_SHOWN_NUM = "uk.ac.ebi.intact.NEWS_SHOWN_NUM";
 
-    private List<News.PieceOfNews> news;
-    private List<News.PieceOfNews> lastNews;
+    private News newsObject;
+    private List<NewsItem> news;
+    private List<NewsItem> lastNews;
+    private List<NewsItem> urgentNews;
 
     public NewsBean()
     {
@@ -52,12 +55,13 @@ public class NewsBean implements Serializable
 
         try
         {
-            news = SiteUtils.readNews(newsXml);
+            newsObject = NewsUtil.readNews(newsXml);
+            news = newsObject.getNewsItem();
         }
         catch (DataLoadingException e)
         {
             e.printStackTrace();
-            news = new ArrayList<News.PieceOfNews>();
+            news = new ArrayList<NewsItem>();
         }
 
         if (!news.isEmpty())
@@ -66,19 +70,30 @@ public class NewsBean implements Serializable
         }
         else
         {
-            lastNews = new ArrayList<News.PieceOfNews>();
+            lastNews = new ArrayList<NewsItem>();
+        }
+
+        // urgent news
+        urgentNews = new ArrayList<NewsItem>();
+
+        for (NewsItem newsItem : news)
+        {
+            if (newsItem.isUrgent() != null && newsItem.isUrgent())
+            {
+                urgentNews.add(newsItem);
+            }
         }
     }
 
     public void exportFeed(ActionEvent evt)
     {
-        SyndFeed feed = SiteUtils.createNewsFeed(news);
+        SyndFeed feed = NewsUtil.createNewsFeed(newsObject);
 
         FacesContext context = FacesContext.getCurrentInstance();
 
         try
         {
-            SiteUtils.writeFeed(feed, FeedType.DEFAULT, context);
+            NewsUtil.writeFeed(feed, FeedType.DEFAULT, context);
         }
         catch (FeedException e)
         {
@@ -95,23 +110,39 @@ public class NewsBean implements Serializable
 
     
 
-    public List<News.PieceOfNews> getNews()
+    public List<NewsItem> getNews()
     {
         return news;
     }
 
-    public void setNews(List<News.PieceOfNews> news)
+    public void setNews(List<NewsItem> news)
     {
         this.news = news;
     }
 
-    public List<News.PieceOfNews> getLastNews()
+    public List<NewsItem> getLastNews()
     {
         return lastNews;
     }
 
-    public void setLastNews(List<News.PieceOfNews> lastNews)
+    public void setLastNews(List<NewsItem> lastNews)
     {
         this.lastNews = lastNews;
+    }
+
+    public News getNewsObject() {
+        return newsObject;
+    }
+
+    public void setNewsObject(News newsObject) {
+        this.newsObject = newsObject;
+    }
+
+    public List<NewsItem> getUrgentNews() {
+        return urgentNews;
+    }
+
+    public void setUrgentNews(List<NewsItem> urgentNews) {
+        this.urgentNews = urgentNews;
     }
 }

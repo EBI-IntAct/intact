@@ -1,45 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:jsp="http://java.sun.com/JSP/Page"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html">
-  <head>
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ebi="http://ebi.ac.uk/faces/components">
+<head>
     <title></title>
-  </head>
-  <body>
+</head>
+<body>
 
-  <f:view>
+<f:view>
 
-      <ui:composition>
+    <ui:composition>
+        <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif"/>
 
-          <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif"/>
+        <ebi:panelBox id="searchbox" title="Search IntAct"
+                      expanded="#{initiallyExpandSearchBox}">
+            <h:inputText id="search" value="#{searchBean.searchQuery}" size="12"/>
 
-          <ui:define name="searchbox">
-              <ui:include src="sidebar/searchbox.xhtml"/>
-          </ui:define>
+            <h:panelGrid columns="2">
+                <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
+                <a href="#" onclick="intact_clearAndFocusField('sideForm:search')">Clear</a>
+            </h:panelGrid>
+        </ebi:panelBox>
 
-          <ui:define name="menu">
-              <ui:include src="sidebar/menu.xhtml"/>
-          </ui:define>
+        <ui:define name="menu">
+            <ui:include src="sidebar/menu.xhtml"/>
+        </ui:define>
 
-          <ui:define name="news">
-              <ui:include src="sidebar/news.xhtml"/>
-          </ui:define>
+        <ebi:dynamicMenu id="menu1" sourceUrl="#{initParam['uk.ac.ebi.faces.MENU_URL']}"/>
 
-          <!-- end left menu here -->
+        <ebi:news id="news1"
+                  sourceUrl="#{initParam['uk.ac.ebi.faces.NEWS_URL']}"
+                  maxShown="3"
+                  rendered="#{not empty newsBean.news}"
+                  newsFeedUrl="feed"
+                  archiveUrl="#{appConfigBean.absoluteContextPath}/contents/news_archive.jsf"/>
+
+        <!-- end left menu here -->
 
 
-          <!-- InstanceEndEditable -->
-          <script type="text/javascript" src="http://www.ebi.ac.uk/inc/js/sidebars.js"></script>
-          <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
+        <!-- InstanceEndEditable -->
+        <script type="text/javascript" src="http://www.ebi.ac.uk/inc/js/sidebars.js"></script>
+        <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
 
-      </ui:composition>
+    </ui:composition>
 
-  </f:view>
+</f:view>
 
-  </body>
+</body>
 </html>

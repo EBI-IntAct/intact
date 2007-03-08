@@ -40,10 +40,17 @@
     </context-param>
     <context-param>
         <description>
+            Where to find the Menu XML file
+        </description>
+        <param-name>uk.ac.ebi.faces.MENU_URL</param-name>
+        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu.xml</param-value>
+    </context-param>
+     <context-param>
+        <description>
             Where to find the News XML file
         </description>
-        <param-name>uk.ac.ebi.intact.NEWS_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/~intact/site/news/news.xml</param-value>
+        <param-name>uk.ac.ebi.faces.NEWS_URL</param-name>
+        <param-value>http://www.ebi.ac.uk/~intact/site/news/news-1.2.xml</param-value>
     </context-param>
     <context-param>
         <description>
@@ -239,12 +246,12 @@
 
     <!-- Feed Servlet -->
     <servlet>
-        <servlet-name>FeedServlet</servlet-name>
-        <servlet-class>uk.ac.ebi.intact.site.webapp.FeedServlet</servlet-class>
+        <servlet-name>NewsFeedServlet</servlet-name>
+        <servlet-class>uk.ac.ebi.faces.webapp.NewsFeedServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-         <servlet-name>FeedServlet</servlet-name>
+         <servlet-name>NewsFeedServlet</servlet-name>
          <url-pattern>/feed</url-pattern>
     </servlet-mapping>
 

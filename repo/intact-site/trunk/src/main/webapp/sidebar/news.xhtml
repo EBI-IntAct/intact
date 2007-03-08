@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+y e<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -10,7 +10,7 @@
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
-      xmlns:is="http://www.ebi.ac.uk/intact/jsf/site">
+      xmlns:ebi="http://ebi.ac.uk/faces/components">
 
   <body>
 
@@ -18,6 +18,11 @@
       <ui:composition>
 
           <h:panelGroup rendered="#{not empty newsBean.news}">
+
+              <ebi:news id="news1" value="#{newsBean.lastNews}"
+                        newsFeedUrl="feed"
+                        archiveAction="news_archive"/>
+
 
               <div class="iconboxheading">
                   <a href="#" onclick="intact_toggleVisibility('newsPanel')">News</a>

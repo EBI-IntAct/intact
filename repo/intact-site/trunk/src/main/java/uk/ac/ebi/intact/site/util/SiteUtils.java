@@ -15,21 +15,13 @@
  */
 package uk.ac.ebi.intact.site.util;
 
-import com.sun.syndication.feed.synd.*;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedOutput;
+import uk.ac.ebi.faces.DataLoadingException;
 import uk.ac.ebi.intact.site.items.Datasets;
-import uk.ac.ebi.intact.site.items.News;
-import uk.ac.ebi.intact.taglib.IntactSiteFunctions;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.Writer;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,74 +38,6 @@ public class SiteUtils
     public static final String XML_MIME_TYPE = "application/xml; charset=UTF-8";
 
     private SiteUtils(){}
-
-    public static List<News.PieceOfNews> readNews(String newsXml) throws DataLoadingException
-    {
-        List<News.PieceOfNews> news;
-
-        News objNews = null;
-        try {
-            URL datasetsUrl = new URL(newsXml);
-            objNews = (News) readDatasetsXml(datasetsUrl.openStream());
-        } catch (Throwable e) {
-            throw new DataLoadingException(e);
-        }
-
-        if (objNews != null)
-        {
-            news = objNews.getPieceOfNews();
-        }
-        else
-        {
-            news = new ArrayList<News.PieceOfNews>();
-        }
-
-        return news;
-    }
-
-    public static SyndFeed createNewsFeed(List<News.PieceOfNews> news)
-    {
-        SyndFeed feed = new SyndFeedImpl();
-
-        feed.setTitle("EBI IntAct News");
-        feed.setLink("http://www.ebi.ac.uk/intact");
-        feed.setDescription("News of the IntAct Project");
-
-        List<SyndEntry> entries = new ArrayList<SyndEntry>();
-
-        for (News.PieceOfNews pieceOfNews : news)
-        {
-            SyndEntry entry = createNewsFeedEntry(pieceOfNews);
-            entries.add(entry);
-        }
-
-        feed.setEntries(entries);
-
-        return feed;
-    }
-
-    private static SyndEntry createNewsFeedEntry(News.PieceOfNews pieceOfNews)
-    {
-        SyndEntry entry;
-        SyndContent description;
-
-        entry = new SyndEntryImpl();
-        entry.setTitle(pieceOfNews.getTitle());
-
-        if (pieceOfNews.getMoreLink() != null)
-        {
-            entry.setLink(pieceOfNews.getMoreLink());
-        }
-
-        entry.setPublishedDate(IntactSiteFunctions.convertToDate(pieceOfNews.getDate(), "yyyyMMdd"));
-
-        description = new SyndContentImpl();
-        description.setType("text/plain");
-        description.setValue(pieceOfNews.getDescription().getValue());
-        entry.setDescription(description);
-
-        return entry;
-    }
 
     public static List<Datasets.Dataset> readDatasets(String datasetsXml) throws DataLoadingException
     {
@@ -141,29 +65,9 @@ public class SiteUtils
 
     private static Object readDatasetsXml(InputStream is) throws JAXBException
     {
-        JAXBContext jc = JAXBContext.newInstance(News.class.getPackage().getName());
+        JAXBContext jc = JAXBContext.newInstance(Datasets.class.getPackage().getName());
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         return  unmarshaller.unmarshal(is);
     }
 
-    public static void writeFeed(SyndFeed feed, FeedType feedType, Writer outputWriter) throws FeedException, IOException
-    {
-        try {
-            feed.setFeedType(feedType.getType());
-
-            SyndFeedOutput output = new SyndFeedOutput();
-            output.output(feed,outputWriter);
-        }
-        catch (FeedException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public static void writeFeed(SyndFeed feed, FeedType feedType, FacesContext context) throws FeedException, IOException
-    {
-        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-
-        response.setContentType(XML_MIME_TYPE);
-        writeFeed(feed, feedType, response.getWriter());
-    }
 }
