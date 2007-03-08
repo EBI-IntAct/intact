@@ -9,7 +9,6 @@ import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
@@ -206,9 +205,9 @@ public class ProteinServiceImplTest extends TestCase {
 
         // update shortlabel
         canfa.setId( "FOO_BAR" );
-        canfa.setDescription( "" );
+        canfa.setDescription( "LALALA" );
         canfa.setSequence( "LLLLLLLLLLLLL" );
-        canfa.setCrc64( "LLLLLLLLLLLLL" );
+        canfa.setCrc64( "XXXXXXXXXXXXX" );
 
         // provoking recycling and deletion of Xrefs
         canfa.getCrossReferences().addAll( new UniprotProteinXrefBuilder()
@@ -220,30 +219,41 @@ public class ProteinServiceImplTest extends TestCase {
                 .add( "IPR005225", "InterPro", "Small_GTP_bd" )
                 .build() );
 
-        for ( UniprotXref xref : canfa.getCrossReferences() ) {
-            System.out.println( xref );
-        }
+        canfa.getSynomyms().add( "s" );
+        canfa.getOrfs().add( "o" );
+        canfa.getLocuses().add( "l" );
+        canfa.getGenes().add( "foo" );
+        canfa.getGenes().remove( "CDC42" );
 
         proteins = proteinService.retrieve( "P60952" );
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
+        Protein protein = proteins.iterator().next();
 
+        assertEquals( "foo_bar", protein.getShortLabel() );
+        assertEquals( "LALALA", protein.getFullName() );
+        assertEquals( "LLLLLLLLLLLLL", protein.getSequence() );
+        assertEquals( "XXXXXXXXXXXXX", protein.getCrc64() );
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvObject> cvDao = daoFactory.getCvObjectDao();
 
         Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
         CvDatabase interpro = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.INTERPRO_MI_REF );
-
-        Protein protein = proteins.iterator().next();
-
-        for ( InteractorXref xref : protein.getXrefs() ) {
-            System.out.println( xref );
-        }
+        CvAliasType gene = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.GENE_NAME_MI_REF );
+        CvAliasType synonym = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.GENE_NAME_SYNONYM_MI_REF );
+        CvAliasType orf = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.ORF_NAME_MI_REF );
+        CvAliasType locus = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.LOCUS_NAME_MI_REF );
 
         assertEquals( 6, protein.getXrefs().size() );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR00000", null ) ) );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR013753", null ) ) );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR001806", null ) ) );
+
+        assertEquals( 4, protein.getAliases().size() );
+        assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, gene, "foo" ) ) );
+        assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, synonym, "s" ) ) );
+        assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, orf, "o" ) ) );
+        assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, locus, "l" ) ) );
     }
 }
