@@ -93,7 +93,7 @@ public class XrefUpdaterUtils {
 
             } else {
                 if ( log.isDebugEnabled() ) {
-                    log.debug( "No mapping found for CvDatabase(), searching by database name instead of MI ref..." );
+                    log.debug( "No mapping found for CvDatabase("+db+"), searching by database name instead of MI ref..." );
                 }
                 cvDatabase = dbDao.getByShortLabel( db, true );
 
@@ -102,7 +102,7 @@ public class XrefUpdaterUtils {
                 }
             }
 
-            // Convert cr collection into Xref
+            // Convert collection into Xref
             Collection<Xref> xrefs = XrefUpdaterUtils.convert( uniprotXrefs, cvDatabase );
             XrefUpdaterUtils.updateXrefCollection( protein, cvDatabase, xrefs );
         }
