@@ -128,6 +128,11 @@ PROMPT "Migrating IA_XREF_AUDIT data into specific tables."
 PROMPT
 @180_run_xref_audit_split.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Creating IA_UNASSIGNED sequence."
+PROMPT
+@190_create_unassigned_sequence.sql
+
 
 UPDATE ia_db_info
 set value = '1.3.0'
