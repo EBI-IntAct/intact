@@ -74,7 +74,7 @@ public class ExperimentListItemTest extends TestCase {
         experimentListItem = ExperimentListItem.parseString("species/drome_giot-2003-1_01.xml giot-2003-1 [1,2000]");
         assertEquals("species/drome_giot-2003-1_01.xml",experimentListItem.getFilename());
 
-        experimentListItem = ExperimentListItem.parseString("pmid/2007/unassigned1.xml ewans-2007-1 [1,2000]");
+        experimentListItem = ExperimentListItem.parseString("pmid/2007/unassigned1.xml ewans-2007-1");
         assertEquals("pmid/2007/unassigned1.xml",experimentListItem.getFilename());
     }
 
