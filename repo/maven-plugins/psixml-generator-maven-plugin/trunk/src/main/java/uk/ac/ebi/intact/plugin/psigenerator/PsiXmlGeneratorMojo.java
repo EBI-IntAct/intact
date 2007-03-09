@@ -9,6 +9,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.application.dataConversion.*;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.util.Chrono;
@@ -124,7 +125,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getSpeciesFile().exists() ) {
                 getLog().info( "Classifying and writing classification by species" );
                 writeClassificationBySpeciesToFile();
-                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by species: " + getSpeciesFile() );
             }
@@ -136,7 +142,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getPublicationsFile().exists() ) {
                 getLog().info( "Writing classifications by publications" );
                 writeClassificationByPublicationsToFile();
-                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by publications: " + getPublicationsFile() );
             }
@@ -148,7 +159,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getDatasetsFile().exists() ) {
                 getLog().info( "Writing classifications by datasets" );
                 writeClassificationByDatasetToFile();
-                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by datasets: " + getDatasetsFile() );
             }
@@ -170,7 +186,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             items.clear();
             items = null;
 
-            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+            } catch (IntactTransactionException e) {
+                e.printStackTrace();
+                getLog().error(e);
+            }
         }
 
         try {
@@ -257,7 +278,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+            getLog().error(e);
+        }
     }
 
     private File getReverseMapping() {
