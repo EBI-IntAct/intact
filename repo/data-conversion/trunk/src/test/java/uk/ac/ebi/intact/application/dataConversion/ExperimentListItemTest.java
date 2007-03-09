@@ -7,12 +7,12 @@
 package uk.ac.ebi.intact.application.dataConversion;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test for <code>ExperimentListItemTest</code>
@@ -55,7 +55,7 @@ public class ExperimentListItemTest extends TestCase {
 
     public void testStaticParseString() throws Exception {
         ExperimentListItem experimentListItem = ExperimentListItem.parseString("species/humt-_small.xml kanamori-2003-4");
-        assertEquals("species/\\humt-_small.xml",experimentListItem.getFilename());
+        assertEquals("species/humt-_small.xml",experimentListItem.getFilename());
 
         experimentListItem = ExperimentListItem.parseString("species/yeast_small-11.xml suvorova-2002-4,metz-2006-4,huang-1998b-1,skibbens-2004-1,chilkova-2003-1,hall-2003-2,vandemark-20\\\n" +
                 "06-1,millson-2005-1,cairns-1994-2,szerlong-2003-2,bardwell-1996-3,mcnew-1998-1,gadbois-1997-1,treich-1995-2,howe-2002-2,bardw\\\n" +
@@ -69,12 +69,13 @@ public class ExperimentListItemTest extends TestCase {
                 "arneau-2000-2,chilkova-2003-3,milkereit-2001-2,seol-2001-2,eugster-2000-2,chavan-2003-1,gonzales-2005-3,hershey-1999-1,vignol\\\n" +
                 "s-2005-1,matern-2000-1,rodriguez_n-2002-1,english-2006-1,lalo-1996-1,allard-1999-1,mizuguchi-2004-2,singh-2006-3,eugster-2000\\\n" +
                 "-3,fiedler-2002-2,chavan-2005-1,kim-2005a-1,zhao-2005-2");
-        assertEquals("species/\\yeast_small-11.xml",experimentListItem.getFilename());
+        assertEquals("species/yeast_small-11.xml",experimentListItem.getFilename());
 
         experimentListItem = ExperimentListItem.parseString("species/drome_giot-2003-1_01.xml giot-2003-1 [1,2000]");
-        assertEquals("species/\\drome_giot-2003-1_01.xml",experimentListItem.getFilename());
+        assertEquals("species/drome_giot-2003-1_01.xml",experimentListItem.getFilename());
 
-
+        experimentListItem = ExperimentListItem.parseString("pmid/2007/unassigned1.xml ewans-2007-1 [1,2000]");
+        assertEquals("pmid/2007/unassigned1.xml",experimentListItem.getFilename());
     }
 
 

@@ -386,7 +386,7 @@ public class PsiDataLoader {
                             System.out.println( "The data have been successfully saved in your Intact node." );
                         }
 
-                    } catch ( IntactException e ) {
+                    } catch ( Exception e ) {
 
                         e.printStackTrace();
 

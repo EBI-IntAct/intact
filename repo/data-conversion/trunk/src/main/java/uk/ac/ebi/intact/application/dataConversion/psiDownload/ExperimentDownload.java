@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Inte
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -201,7 +202,11 @@ public class ExperimentDownload {
             e.printStackTrace();
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
 
         chrono.stop();
         System.out.println( "Time elapsed: " + chrono );

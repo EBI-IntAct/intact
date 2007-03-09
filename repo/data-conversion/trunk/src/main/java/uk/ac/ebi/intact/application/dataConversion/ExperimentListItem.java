@@ -231,7 +231,12 @@ public class ExperimentListItem
     {
         String strNum = "";
 
-        if (number < 10)
+        if (number == null)
+        {
+            strNum = "0";
+        }
+
+        if (number != null && number < 10)
         {
             strNum = "0";
         }
