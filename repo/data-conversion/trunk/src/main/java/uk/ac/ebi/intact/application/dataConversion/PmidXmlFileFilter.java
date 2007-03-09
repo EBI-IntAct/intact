@@ -29,7 +29,7 @@ public class PmidXmlFileFilter implements FileFilter
      * <p/>
      * It matches 12345.xml, 12345_author-2006-1.xml
      */
-    public static final String PMID_XML_FILE_PATTERN = "^(\\d+)\\D.*xml";
+    public static final String PMID_XML_FILE_PATTERN = "^((?:unassigned)?(?:\\d+))\\D.*xml";
 
     /**
      * Compiled pattern.

@@ -42,6 +42,6 @@ public class ZipFileGeneratorTest extends TestCase
             }
         });
 
-        assertEquals(2, zipFiles.length);
+        assertEquals(3, zipFiles.length);
     }
 }
