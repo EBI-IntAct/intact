@@ -28,15 +28,11 @@
             </h:panelGrid>
         </ebi:panelBox>
 
-        <ui:define name="menu">
-            <ui:include src="sidebar/menu.xhtml"/>
-        </ui:define>
-
         <ebi:dynamicMenu id="menu1" sourceUrl="#{initParam['uk.ac.ebi.faces.MENU_URL']}"/>
 
         <ebi:news id="news1"
-                  sourceUrl="#{initParam['uk.ac.ebi.faces.NEWS_URL']}"
-                  maxShown="3"
+                  value="#{newsBean.news}"
+                  maxShown="#{initParam['uk.ac.ebi.intact.NEWS_SHOWN_NUM']}"
                   rendered="#{not empty newsBean.news}"
                   newsFeedUrl="feed"
                   archiveUrl="#{appConfigBean.absoluteContextPath}/contents/news_archive.jsf"/>

@@ -23,8 +23,9 @@
               <td class="intact_table">
                   <h1>IntAct Home</h1>
 
-                  <ebi:panelUrgentNews sourceUrl="#{initParam['uk.ac.ebi.faces.NEWS_URL']}"
-                                       rendered="#{not empty newsBean.urgentNews}"/>
+                  <h:panelGroup rendered="#{not empty newsBean.urgentNews}">
+                    <ebi:panelUrgentNews value="#{newsBean.urgentNews}" />
+                  </h:panelGroup>
                   
                   <h2>Search IntAct</h2>
 

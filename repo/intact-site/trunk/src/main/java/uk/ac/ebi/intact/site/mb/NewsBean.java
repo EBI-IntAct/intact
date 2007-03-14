@@ -40,18 +40,15 @@ public class NewsBean implements Serializable
 {
 
     public static final String NEWS_URL = "uk.ac.ebi.faces.NEWS_URL";
-    private static final String NEWS_SHOWN_NUM = "uk.ac.ebi.intact.NEWS_SHOWN_NUM";
 
     private News newsObject;
     private List<NewsItem> news;
-    private List<NewsItem> lastNews;
     private List<NewsItem> urgentNews;
 
     public NewsBean()
     {
-        String newsXml = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(NEWS_URL);
 
-        int newsNum = Integer.parseInt(FacesContext.getCurrentInstance().getExternalContext().getInitParameter(NEWS_SHOWN_NUM));
+        String newsXml = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(NEWS_URL);
 
         try
         {
@@ -64,15 +61,6 @@ public class NewsBean implements Serializable
             news = new ArrayList<NewsItem>();
         }
 
-        if (!news.isEmpty())
-        {
-            lastNews = news.subList(0, Math.min(newsNum, news.size()));
-        }
-        else
-        {
-            lastNews = new ArrayList<NewsItem>();
-        }
-
         // urgent news
         urgentNews = new ArrayList<NewsItem>();
 
@@ -83,6 +71,7 @@ public class NewsBean implements Serializable
                 urgentNews.add(newsItem);
             }
         }
+
     }
 
     public void exportFeed(ActionEvent evt)
@@ -106,9 +95,7 @@ public class NewsBean implements Serializable
 
         context.getApplication().getStateManager().saveSerializedView(context);
         context.renderResponse();
-    }
-
-    
+    }    
 
     public List<NewsItem> getNews()
     {
@@ -118,16 +105,6 @@ public class NewsBean implements Serializable
     public void setNews(List<NewsItem> news)
     {
         this.news = news;
-    }
-
-    public List<NewsItem> getLastNews()
-    {
-        return lastNews;
-    }
-
-    public void setLastNews(List<NewsItem> lastNews)
-    {
-        this.lastNews = lastNews;
     }
 
     public News getNewsObject() {
