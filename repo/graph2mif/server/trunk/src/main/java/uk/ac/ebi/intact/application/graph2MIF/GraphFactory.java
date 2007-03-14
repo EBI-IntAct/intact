@@ -11,10 +11,10 @@ import uk.ac.ebi.intact.application.graph2MIF.conversion.FusionableGraph;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedException;
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Constants;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.util.simplegraph.Graph;
 
 import java.util.ArrayList;
 import java.util.Collection;

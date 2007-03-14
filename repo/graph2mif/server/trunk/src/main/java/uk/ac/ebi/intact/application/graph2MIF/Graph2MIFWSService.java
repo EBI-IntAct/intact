@@ -11,6 +11,7 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.dataConversion.PsiValidator;
+import uk.ac.ebi.intact.application.dataConversion.PsiValidatorReport;
 import uk.ac.ebi.intact.application.dataConversion.PsiVersion;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.UserSessionDownload;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Interaction2xmlFactory;
@@ -20,8 +21,8 @@ import uk.ac.ebi.intact.application.graph2MIF.exception.NoGraphRetrievedExceptio
 import uk.ac.ebi.intact.application.graph2MIF.exception.NoInteractorFoundException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.Graph;
+import uk.ac.ebi.intact.util.simplegraph.EdgeI;
+import uk.ac.ebi.intact.util.simplegraph.Graph;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -92,9 +93,9 @@ public class Graph2MIFWSService implements Graph2MIFWS
 
         if (strictmif)
         {
-            boolean psiIsValid = PsiValidator.validate(xmlPsi);
+            PsiValidatorReport report = PsiValidator.validate(xmlPsi);
 
-            if (!psiIsValid)
+            if (!report.isValid())
                  throw new MIFSerializeException("Output PSI xml is invalid for AC: "+ac);
         }
 

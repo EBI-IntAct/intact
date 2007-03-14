@@ -5,10 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.graph2MIF.conversion;
 
-import uk.ac.ebi.intact.simpleGraph.Edge;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.simpleGraph.Node;
-import uk.ac.ebi.intact.simpleGraph.NodeI;
+import uk.ac.ebi.intact.util.simplegraph.Edge;
+import uk.ac.ebi.intact.util.simplegraph.Graph;
+import uk.ac.ebi.intact.util.simplegraph.Node;
+import uk.ac.ebi.intact.util.simplegraph.NodeI;
 
 import java.util.Collection;
 import java.util.HashMap;
