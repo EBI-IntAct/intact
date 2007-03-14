@@ -1,13 +1,12 @@
 package uk.ac.ebi.intact.application.graph2MIF;
 
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.simpleGraph.BasicGraphI;
-import uk.ac.ebi.intact.simpleGraph.Edge;
-import uk.ac.ebi.intact.simpleGraph.EdgeI;
-import uk.ac.ebi.intact.simpleGraph.Graph;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.util.simplegraph.BasicGraphI;
+import uk.ac.ebi.intact.util.simplegraph.Edge;
+import uk.ac.ebi.intact.util.simplegraph.EdgeI;
+import uk.ac.ebi.intact.util.simplegraph.Graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
