@@ -15,7 +15,7 @@
             Where to find the Dataset of the Month XML file
         </description>
         <param-name>uk.ac.ebi.intact.DATASET_OF_THE_MONTH_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/~intact/site/dotm/dotm.xml</param-value>
+        <param-value>http://www.ebi.ac.uk/~intact/site/dotm/dotm-1.1.xml</param-value>
     </context-param>
     <context-param>
         <description>
@@ -163,16 +163,6 @@
         </description>
         <param-name>org.apache.myfaces.VALIDATE</param-name>
         <param-value>true</param-value>
-    </context-param>
-
-    <!-- Facelets -->
-    <context-param>
-        <param-name>facelets.LIBRARIES</param-name>
-        <param-value>
-            /WEB-INF/facelets/tags/intact-site.taglib.xml;
-            /WEB-INF/facelets/tags/tomahawk.taglib.xml;
-            /WEB-INF/facelets/tags/tomahawk-sandbox.taglib.xml
-        </param-value>
     </context-param>
 
     <!-- ajax4jsf -->
