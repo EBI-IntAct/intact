@@ -226,9 +226,10 @@ public class Experiment extends AnnotatedObjectImpl<ExperimentXref, ExperimentAl
      */
     public void setBioSource( BioSource bioSource ) {
 
-        if ( bioSource == null ) {
-            throw new NullPointerException( "valid Experiment must have a BioSource!" );
-        }
+// We shouldn't not forbiden bioSource to be set to null as it is not mandatory in psi-mi
+//        if ( bioSource == null ) {
+//            throw new NullPointerException( "valid Experiment must have a BioSource!" );
+//        }
 
         this.bioSource = bioSource;
     }
