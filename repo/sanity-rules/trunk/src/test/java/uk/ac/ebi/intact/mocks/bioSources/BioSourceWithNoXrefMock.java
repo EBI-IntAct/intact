@@ -6,10 +6,10 @@
 package uk.ac.ebi.intact.mocks.bioSources;
 
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.BioSourceXref;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvTopics.UrlMock;
 
 /**
@@ -28,6 +28,8 @@ public class BioSourceWithNoXrefMock {
 
     public static BioSource getMock(){
         BioSource bioSource = new BioSource(InstitutionMock.getMock(), SHORTLABEL, NEWT_ID);
+
+        bioSource = (BioSource) IntactObjectSetter.setBasicObject(bioSource);
 
         Annotation annotation = AnnotationMock.getMock(UrlMock.getMock(),"http://www.dsmz.de/human_and_animal_cell_lines/info.php?dsmz_nr=6&from=cell_line_index&select=search_for_term&term=peer&preselect=human&firstload=0");
         bioSource.addAnnotation(annotation);

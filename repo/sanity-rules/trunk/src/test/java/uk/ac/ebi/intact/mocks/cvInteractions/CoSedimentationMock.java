@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvTopics.UniprotDrExportMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
@@ -27,6 +28,9 @@ public class CoSedimentationMock {
     public static CvInteraction getMock(){
 
         CvInteraction cosedimentation = CvObjectMock.getMock(CvInteraction.class,CvInteraction.COSEDIMENTATION, "cosedimentation");
+
+        cosedimentation = (CvInteraction) IntactObjectSetter.setBasicObject(cosedimentation);
+
 
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(),CvInteraction.COSEDIMENTATION_MI_REF);
         cosedimentation.addXref(xref);

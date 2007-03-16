@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 
 /**
@@ -29,6 +30,7 @@ public class NewtMock {
      */
     public static CvDatabase getMock(){
         CvDatabase newt = CvObjectMock.getMock(CvDatabase.class,CvDatabase.NEWT, "newt");
+        newt = (CvDatabase) IntactObjectSetter.setBasicObject(newt);
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class,PsiMiMock.getMock(), IdentityMock.getMock(),CvDatabase.NEWT_MI_REF);
         newt.addXref(xref);
         return newt;

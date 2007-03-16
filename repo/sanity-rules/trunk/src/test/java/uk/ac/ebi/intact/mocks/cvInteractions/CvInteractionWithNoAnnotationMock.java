@@ -6,14 +6,8 @@
 package uk.ac.ebi.intact.mocks.cvInteractions;
 
 import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.CvObjectXref;
-import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
-import uk.ac.ebi.intact.mocks.XrefMock;
-import uk.ac.ebi.intact.mocks.AnnotationMock;
-import uk.ac.ebi.intact.mocks.cvTopics.UniprotDrExportMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
-import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 
 /**
  * TODO comment this
@@ -26,9 +20,10 @@ public class CvInteractionWithNoAnnotationMock {
 
     public static CvInteraction getMock(){
 
-        CvInteraction cosedimentation = CvObjectMock.getMock(CvInteraction.class,"test", "test");
+        CvInteraction test = CvObjectMock.getMock(CvInteraction.class,"test", "test");
+        test = (CvInteraction) IntactObjectSetter.setBasicObject(test);
 
-        return cosedimentation;
+        return test;
     }
 
 

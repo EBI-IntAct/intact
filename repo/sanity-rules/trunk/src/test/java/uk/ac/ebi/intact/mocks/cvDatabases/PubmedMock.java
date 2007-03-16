@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 
 /**
@@ -31,6 +32,7 @@ public class PubmedMock {
 
     public static CvDatabase getMock(){
         CvDatabase pubmed = CvObjectMock.getMock(CvDatabase.class,CvDatabase.PUBMED, "pubmed");
+        pubmed = (CvDatabase) IntactObjectSetter.setBasicObject(pubmed);
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class,PsiMiMock.getMock(), IdentityMock.getMock(),CvDatabase.PUBMED_MI_REF);
         pubmed.addXref(xref);
         return pubmed;

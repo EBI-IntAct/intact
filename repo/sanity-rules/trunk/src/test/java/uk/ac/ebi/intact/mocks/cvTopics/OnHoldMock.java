@@ -17,17 +17,19 @@ import uk.ac.ebi.intact.mocks.IntactObjectSetter;
  * @version $Id$
  * @since TODO
  */
-public class UniprotDrExportMock {
-    private static final String USED_IN_CLASS_DESCR = CvInteraction.class.getName();
-    public static CvTopic getMock(){
-        CvTopic uniprotDrExport = CvObjectMock.getMock(CvTopic.class,CvTopic.UNIPROT_DR_EXPORT, "uniprot-dr-export");
+public class OnHoldMock {
 
-        uniprotDrExport = (CvTopic) IntactObjectSetter.setBasicObject(uniprotDrExport);
+    private static final String SEPARATOR = ", ";
+
+    private static final String USED_IN_CLASS_DESCR = Experiment.class.getName()
+                                                      + SEPARATOR + Interaction.class.getName();
+    public static CvTopic getMock(){
+        CvTopic onHold = CvObjectMock.getMock(CvTopic.class,CvTopic.ON_HOLD, "on hold");
+
+        onHold = (CvTopic) IntactObjectSetter.setBasicObject(onHold);
 
         Annotation usedInClass = AnnotationMock.getMock(UsedInClassMock.getMock(),USED_IN_CLASS_DESCR );
-        uniprotDrExport.addAnnotation(usedInClass);
-
-        return uniprotDrExport;
+        onHold.addAnnotation(usedInClass);
+        return onHold;
     }
-
 }
