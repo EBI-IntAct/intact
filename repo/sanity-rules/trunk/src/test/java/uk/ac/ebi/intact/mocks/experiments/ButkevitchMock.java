@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.PrimaryRefMock;
 import uk.ac.ebi.intact.mocks.cvTopics.AuthorListMock;
+import uk.ac.ebi.intact.mocks.cvTopics.AcceptedMock;
 import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
 import uk.ac.ebi.intact.mocks.cvIdentifications.PredeterminedMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
@@ -40,6 +41,9 @@ public class ButkevitchMock {
 
         Annotation authorList = AnnotationMock.getMock(AuthorListMock.getMock(), AUTHOR_LIST);
         experiment.addAnnotation(authorList);
+
+        Annotation accepted = new Annotation(InstitutionMock.getMock(), AcceptedMock.getMock(),"by JYOTI, 09-03-07");
+        experiment.addAnnotation(accepted);
 
         experiment.setCvInteraction(CoSedimentationMock.getMock());
         experiment.setCvIdentification(PredeterminedMock.getMock());

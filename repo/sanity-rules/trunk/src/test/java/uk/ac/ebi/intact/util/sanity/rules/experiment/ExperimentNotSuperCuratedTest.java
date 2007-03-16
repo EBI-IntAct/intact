@@ -13,11 +13,8 @@ import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
-import uk.ac.ebi.intact.mocks.AnnotationMock;
-import uk.ac.ebi.intact.mocks.cvTopics.OnHoldMock;
-import uk.ac.ebi.intact.mocks.cvTopics.ToBeReviewedMock;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * TODO comment this
@@ -26,7 +23,7 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class ToBeReviewedExperimentTest extends TestCase {
+public class ExperimentNotSuperCuratedTest extends TestCase {
 
 
     /**
@@ -34,7 +31,7 @@ public class ToBeReviewedExperimentTest extends TestCase {
      *
      * @param testName name of the test case
      */
-    public ToBeReviewedExperimentTest( String testName )
+    public ExperimentNotSuperCuratedTest( String testName )
     {
         super( testName );
     }
@@ -44,29 +41,40 @@ public class ToBeReviewedExperimentTest extends TestCase {
      */
     public static Test suite()
     {
-        return new TestSuite( ToBeReviewedExperimentTest.class );
+        return new TestSuite( ExperimentNotSuperCuratedTest.class );
     }
 
     /**
      * Rigourous Test :-)
      */
     public void testCheck() throws SanityCheckerException {
-        ToBeReviewedExperiment rule = new ToBeReviewedExperiment();
+        ExperimentNotSuperCurated rule = new ExperimentNotSuperCurated();
 
-        // Give the check method an experiment without on-hold annotation and make sure that it returns no message.
+        // Give the check method an experiment newer then september 2005 and super-curated, check that it return no error
+        // message.
         Experiment experiment = ButkevitchMock.getMock();
         Collection<GeneralMessage> messages =  rule.check(experiment);
         assertEquals(0,messages.size());
 
-        // Give the check method an experiment with 1 on-hold annotation and make sure that it returns 1 message
-        Annotation annotation = AnnotationMock.getMock(ToBeReviewedMock.getMock(),"waiting for data" );
-        experiment.addAnnotation(annotation);
+        // Give the check method an experiment newer then september 2005 and not super-curated, check that it returns an
+        // error message.
+        Collection<Annotation> annotations = new ArrayList<Annotation>();
+        experiment.setAnnotations(annotations);
         messages =  rule.check(experiment);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(ToBeReviewedExperiment.getDescription(), message.getDescription());
-            assertEquals(ToBeReviewedExperiment.getSuggestion(), message.getProposedSolution());
+            assertEquals(ExperimentNotSuperCurated.getDescription(), message.getDescription());
+            assertEquals(ExperimentNotSuperCurated.getSuggestion(), message.getProposedSolution());
         }
+
+        // Give the check method an experiment older then september 2005 and not super-curated, check that it returns no
+        // error message.
+        Calendar calendar = new GregorianCalendar();
+        calendar.set(2003, Calendar.SEPTEMBER, 1);
+        Date createdDate = calendar.getTime();
+        experiment.setCreated(createdDate);
+        messages =  rule.check(experiment);
+        assertEquals(0,messages.size());
     }
-    
+
 }
