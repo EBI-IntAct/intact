@@ -22,7 +22,7 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
  */
 public class ProteinInteractorTypeMock {
     public static CvInteractorType getMock(){
-        CvInteractorType protein = CvObjectMock.getMock(CvInteractorType.class,CvDatabase.NEWT, "newt");
+        CvInteractorType protein = CvObjectMock.getMock(CvInteractorType.class,CvInteractorType.PROTEIN, "protein");
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(),CvInteractorType.PROTEIN_MI_REF);
         protein.addXref(xref);
         return protein;
