@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
 
@@ -25,6 +26,8 @@ public class AuthorListMock {
 
     public static CvTopic getMock(){
         CvTopic authorList = CvObjectMock.getMock(CvTopic.class,CvTopic.AUTHOR_LIST, "author list");
+
+        authorList = (CvTopic) IntactObjectSetter.setBasicObject(authorList);
 
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(), CvTopic.AUTHOR_LIST_MI_REF);
         authorList.addXref(xref);

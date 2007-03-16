@@ -3,10 +3,10 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.mocks.CvAliasType;
+package uk.ac.ebi.intact.mocks.cvComponentRoles;
 
-import uk.ac.ebi.intact.model.CvAliasType;
 import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.CvComponentRole;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
@@ -20,15 +20,16 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
  * @version $Id$
  * @since TODO
  */
-public class GeneNameMock {
-    public static CvAliasType getMock(){
-        CvAliasType geneName = CvObjectMock.getMock(CvAliasType.class,CvAliasType.GENE_NAME, "newt");
-        geneName = (CvAliasType) IntactObjectSetter.setBasicObject(geneName);
+public class BaitMock {
+    public static CvComponentRole getMock(){
+        CvComponentRole bait = CvObjectMock.getMock(CvComponentRole.class,CvComponentRole.BAIT, CvComponentRole.BAIT);
+
+        bait = (CvComponentRole) IntactObjectSetter.setBasicObject(bait);
 
 
-        CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(),CvAliasType.GENE_NAME_MI_REF);
-        geneName.addXref(xref);
+        CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(),CvComponentRole.BAIT_PSI_REF);
+        bait.addXref(xref);
 
-        return geneName;
+        return bait;
     }
 }

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.mocks.cvTopics;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
 import uk.ac.ebi.intact.model.*;
@@ -27,6 +28,9 @@ public class UrlMock {
                                                       + SEPARATOR + BioSource.class.getName();
     public static CvTopic getMock(){
         CvTopic url = CvObjectMock.getMock(CvTopic.class,CvTopic.URL, "url");
+
+        url = (CvTopic) IntactObjectSetter.setBasicObject(url);
+
         CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(), CvTopic.URL_MI_REF);
         url.addXref(xref);
         Annotation usedInClass = AnnotationMock.getMock(UsedInClassMock.getMock(),USED_IN_CLASS_DESCR );

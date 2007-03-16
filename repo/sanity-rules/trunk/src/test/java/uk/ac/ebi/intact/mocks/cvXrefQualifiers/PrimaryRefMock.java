@@ -19,14 +19,15 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
  * @version $Id$
  * @since TODO
  */
-public class IdentityMock {
+public class PrimaryRefMock {
+
     public static CvXrefQualifier getMock(){
-        CvXrefQualifier identity = CvObjectMock.getMock(CvXrefQualifier.class,CvXrefQualifier.IDENTITY, "identical object");
+        CvXrefQualifier primaryRef = CvObjectMock.getMock(CvXrefQualifier.class,CvXrefQualifier.PRIMARY_REFERENCE, "identical object");
 
-        identity = (CvXrefQualifier) IntactObjectSetter.setBasicObject(identity);
+        primaryRef = (CvXrefQualifier) IntactObjectSetter.setBasicObject(primaryRef);
 
-        CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getPsiMi(), identity, CvXrefQualifier.IDENTITY_MI_REF);
-        identity.addXref(xref);
-        return identity;
+        CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getMock(), IdentityMock.getMock(), CvXrefQualifier.PRIMARY_REFERENCE_MI_REF);
+        primaryRef.addXref(xref);
+        return primaryRef;
     }
 }

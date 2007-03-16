@@ -5,10 +5,12 @@
  */
 package uk.ac.ebi.intact.mocks.cvTopics;
 
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
-import uk.ac.ebi.intact.mocks.AnnotationMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
+import uk.ac.ebi.intact.mocks.AnnotationMock;
 
 /**
  * TODO comment this
@@ -17,17 +19,18 @@ import uk.ac.ebi.intact.mocks.IntactObjectSetter;
  * @version $Id$
  * @since TODO
  */
-public class UniprotDrExportMock {
-    private static final String USED_IN_CLASS_DESCR = CvInteraction.class.getName();
-    public static CvTopic getMock(){
-        CvTopic uniprotDrExport = CvObjectMock.getMock(CvTopic.class,CvTopic.UNIPROT_DR_EXPORT, "uniprot-dr-export");
+public class ToBeReviewedMock {
 
-        uniprotDrExport = (CvTopic) IntactObjectSetter.setBasicObject(uniprotDrExport);
+    private static final String USED_IN_CLASS_DESCR = Experiment.class.getName();
+
+
+    public static CvTopic getMock(){
+        CvTopic toBeReviewed = CvObjectMock.getMock(CvTopic.class,CvTopic.TO_BE_REVIEWED, CvTopic.TO_BE_REVIEWED);
+
+        toBeReviewed = (CvTopic) IntactObjectSetter.setBasicObject(toBeReviewed);
 
         Annotation usedInClass = AnnotationMock.getMock(UsedInClassMock.getMock(),USED_IN_CLASS_DESCR );
-        uniprotDrExport.addAnnotation(usedInClass);
-
-        return uniprotDrExport;
+        toBeReviewed.addAnnotation(usedInClass);
+        return toBeReviewed;
     }
-
 }

@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 
 /**
@@ -23,6 +24,7 @@ public class PsiMiMock {
 
     static{
         psiMi = CvObjectMock.getMock(CvDatabase.class,CvDatabase.PSI_MI, "psi-mi");
+        psiMi = (CvDatabase) IntactObjectSetter.setBasicObject(psiMi);
     }
 
     public static CvDatabase getMock(){

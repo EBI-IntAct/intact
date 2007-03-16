@@ -11,8 +11,10 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.mocks.cvInteractions.CvInteractionWithNoAnnotationMock;
 import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
+import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 
 import java.util.Collection;
 
@@ -61,6 +63,12 @@ public class CvInteractionWithoutUniprotDrExportTest extends TestCase {
         // return any message
         cvInteraction = CoSedimentationMock.getMock();
         messages = rule.check(cvInteraction);
+        assertEquals(0,messages.size());
+
+        // Check that if we give the check method a cvDatabase  it does not
+        // return any message
+        CvDatabase pubmed = PubmedMock.getMock();
+        messages = rule.check(pubmed);
         assertEquals(0,messages.size());
     }
 }
