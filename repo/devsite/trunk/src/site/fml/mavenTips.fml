@@ -5,8 +5,10 @@
       <question>How to run an IntAct web-application in Jetty ?</question>
       <answer>
         <p>
-          Go in the pom.xml directory of your web-application and type :<br/>
+          Go in the pom.xml directory of your web-application and type :
+          <pre>
             mvn -PjettyConfig,your-database-profile -Ddb=your-db-type-oracle-or-postgres clean jetty:run
+          </pre>
         </p>
       </answer>
     </faq>
