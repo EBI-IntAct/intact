@@ -48,10 +48,12 @@ public class Cja1Dbn1Mock {
         components.add(Q9QXS6ComponentMock.getMock(interaction));
         interaction.setComponents(components);
 
-        Collection<Experiment> experiments = new ArrayList<Experiment>();
-        experiments.add(experiment);
-        interaction.setExperiments(experiments);
-
+        // Experiment can be set to null.
+        if(experiment != null){
+            Collection<Experiment> experiments = new ArrayList<Experiment>();
+            experiments.add(experiment);
+            interaction.setExperiments(experiments);
+        }
         return interaction;
     }
 }
