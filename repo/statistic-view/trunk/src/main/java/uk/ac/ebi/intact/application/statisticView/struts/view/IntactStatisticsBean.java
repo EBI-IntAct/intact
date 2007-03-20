@@ -5,25 +5,18 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.struts.view;
 
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.ChartUtilities;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.Writer;
-import java.io.File;
 
 /**
  * User: Michael Kleen mkleen@ebi.ac.uk Date: Mar 17, 2005 Time: 5:16:48 PM
  */
 public class IntactStatisticsBean {
 
-    private static final Log log = LogFactory.getLog(IntactStatisticsBean.class);
+    private static final Log log = LogFactory.getLog( IntactStatisticsBean.class );
 
     private final String contextPath;
     private String experimentChartUrl;
@@ -63,13 +56,11 @@ public class IntactStatisticsBean {
     }
 
 
-    public int getExperimentCount()
-    {
+    public int getExperimentCount() {
         return experimentCount;
     }
 
-    public void setExperimentCount(int experimentCount)
-    {
+    public void setExperimentCount( int experimentCount ) {
         this.experimentCount = experimentCount;
     }
 
@@ -122,43 +113,35 @@ public class IntactStatisticsBean {
     }
 
 
-    public void setExperimentChartUrl(String experimentChartUrl)
-    {
+    public void setExperimentChartUrl( String experimentChartUrl ) {
         this.experimentChartUrl = experimentChartUrl;
     }
 
-    public void setInteractionChartUrl(String interactionChartUrl)
-    {
+    public void setInteractionChartUrl( String interactionChartUrl ) {
         this.interactionChartUrl = interactionChartUrl;
     }
 
-    public void setProteinChartUrl(String proteinChartUrl)
-    {
+    public void setProteinChartUrl( String proteinChartUrl ) {
         this.proteinChartUrl = proteinChartUrl;
     }
 
-    public void setBinaryChartUrl(String binaryChartUrl)
-    {
+    public void setBinaryChartUrl( String binaryChartUrl ) {
         this.binaryChartUrl = binaryChartUrl;
     }
 
-    public void setCvTermChartUrl(String cvTermChartUrl)
-    {
+    public void setCvTermChartUrl( String cvTermChartUrl ) {
         this.cvTermChartUrl = cvTermChartUrl;
     }
 
-    public void setBioSourceChartUrl(String bioSourceChartUrl)
-    {
+    public void setBioSourceChartUrl( String bioSourceChartUrl ) {
         this.bioSourceChartUrl = bioSourceChartUrl;
     }
 
-    public void setEvidenceChartUrl(String evidenceChartUrl)
-    {
+    public void setEvidenceChartUrl( String evidenceChartUrl ) {
         this.evidenceChartUrl = evidenceChartUrl;
     }
 
-    public void setDetectionChartUrl(String detectionChartUrl)
-    {
+    public void setDetectionChartUrl( String detectionChartUrl ) {
         this.detectionChartUrl = detectionChartUrl;
     }
 
@@ -195,11 +178,11 @@ public class IntactStatisticsBean {
 
         result.add( new DisplayStatisticsBean( INTERACTIONS_PER_BIOSOURCE,
                                                "-",
-                                               "<a href=\"#"+ INTERACTIONS_PER_BIOSOURCE +"\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
+                                               "<a href=\"#" + INTERACTIONS_PER_BIOSOURCE + "\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
 
         result.add( new DisplayStatisticsBean( INTERACTIONS_PER_IDENTIFICATION,
                                                "-",
-                                               "<a href=\"#"+ INTERACTIONS_PER_IDENTIFICATION +"\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
+                                               "<a href=\"#" + INTERACTIONS_PER_IDENTIFICATION + "\" class=\"red_bold_small\">(Link to detailed statistics)</a>" ) );
 
         return result;
     }

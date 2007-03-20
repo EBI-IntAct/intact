@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.application.statisticView.business.publications;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -20,6 +22,8 @@ import java.util.List;
  * @since <pre>24-Feb-2006</pre>
  */
 public class DbUtilsBeanFactory {
+
+    public static final Log log = LogFactory.getLog( DbUtilsBeanFactory.class );
 
     /**
      * Create a List of the specified bean using the given SQL statement.
@@ -36,12 +40,13 @@ public class DbUtilsBeanFactory {
     public static List createBean( QueryRunner queryRunner,
                                    Class beanClass,
                                    Connection connection,
-                                   String sql ) throws SQLException {
+                                   String sql
+    ) throws SQLException {
 
-        System.out.println( sql );
+        if ( log.isDebugEnabled() ) {
+            log.debug( sql );
+        }
 
-        return (List) queryRunner.query( connection,
-                                         sql,
-                                         new BeanListHandler( beanClass ) );
+        return ( List ) queryRunner.query( connection, sql, new BeanListHandler( beanClass ) );
     }
 }

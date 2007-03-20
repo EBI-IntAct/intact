@@ -12,10 +12,8 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.entity.StandardEntityCollection;
 import uk.ac.ebi.intact.application.statisticView.business.data.StatisticHelper;
 import uk.ac.ebi.intact.application.statisticView.webapp.ChartSessionInfo;
-import uk.ac.ebi.intact.business.IntactException;
 
 import javax.servlet.http.HttpSession;
-import javax.servlet.ServletContext;
 import java.io.IOException;
 
 /**
@@ -23,7 +21,7 @@ import java.io.IOException;
  */
 public class ViewBeanFactory {
 
-    private static final Log logger = LogFactory.getLog(ViewBeanFactory.class);
+    private static final Log logger = LogFactory.getLog( ViewBeanFactory.class );
 
     private StatisticHelper helper;
     private String contextPath;
@@ -50,30 +48,29 @@ public class ViewBeanFactory {
 
         final ChartRenderingInfo info = new ChartRenderingInfo( new StandardEntityCollection() );
         IntactStatisticsBean intactBean = new IntactStatisticsBean( contextPath );
-        intactBean.setCvTermChartUrl(putChartInSession("cvTermChart", cvChart, 600, 400, info, session));
-        intactBean.setExperimentChartUrl ( putChartInSession( "experimentChart", experimentChart, 600, 400, info, session ) );
-        intactBean.setInteractionChartUrl ( putChartInSession( "interactionChart", interactionChart, 600, 400, info, session ) );
-        intactBean.setProteinChartUrl ( putChartInSession( "proteinChart", proteinChart, 600, 400, info, session ) );
-        intactBean.setBinaryChartUrl ( putChartInSession( "binaryChart", binaryChart, 600, 400, info, session ) );
+        intactBean.setCvTermChartUrl( putChartInSession( "cvTermChart", cvChart, 600, 400, info, session ) );
+        intactBean.setExperimentChartUrl( putChartInSession( "experimentChart", experimentChart, 600, 400, info, session ) );
+        intactBean.setInteractionChartUrl( putChartInSession( "interactionChart", interactionChart, 600, 400, info, session ) );
+        intactBean.setProteinChartUrl( putChartInSession( "proteinChart", proteinChart, 600, 400, info, session ) );
+        intactBean.setBinaryChartUrl( putChartInSession( "binaryChart", binaryChart, 600, 400, info, session ) );
 
         intactBean.setCvTermCount( helper.getCvCount() );
         intactBean.setExperimentCount( helper.getExperimentCount() );
         intactBean.setInteractionCount( helper.getInteractionCount() );
         intactBean.setProteinCount( helper.getProteinCount() );
         intactBean.setBinaryInteractionCount( helper.getBinaryInteractionCount() );
-        intactBean.setBioSourceChartUrl ( putChartInSession( "bioSourcechart", bioSourceChart, 600, 400, info, session ) );
-        intactBean.setDetectionChartUrl ( putChartInSession( "identificationChart", identificationChart, 600, 400, info, session ) );
+        intactBean.setBioSourceChartUrl( putChartInSession( "bioSourcechart", bioSourceChart, 600, 400, info, session ) );
+        intactBean.setDetectionChartUrl( putChartInSession( "identificationChart", identificationChart, 600, 400, info, session ) );
 
         return intactBean;
     }
 
-    private static String putChartInSession(String name, JFreeChart chart, int height, int width, ChartRenderingInfo info, HttpSession session)
-            throws IOException
-    {
-        ChartSessionInfo chartSessionInfo = new ChartSessionInfo(chart, height, width, info);
+    private static String putChartInSession( String name, JFreeChart chart, int height, int width, ChartRenderingInfo info, HttpSession session )
+            throws IOException {
+        ChartSessionInfo chartSessionInfo = new ChartSessionInfo( chart, height, width, info );
 
-        session.setAttribute(name, chartSessionInfo);
+        session.setAttribute( name, chartSessionInfo );
 
-        return "/servlet/ChartProvider?name="+name;
+        return "/servlet/ChartProvider?name=" + name;
     }
 }

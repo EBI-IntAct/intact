@@ -1,6 +1,5 @@
 package uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.*;
@@ -39,7 +38,7 @@ import java.util.List;
  */
 public class GraphRenderer extends JFrame implements Serializable {
 
-    private static final Log logger = LogFactory.getLog(GraphRenderer.class);
+    private static final Log logger = LogFactory.getLog( GraphRenderer.class );
 
     /**
      * Data of the Chart
@@ -98,7 +97,7 @@ public class GraphRenderer extends JFrame implements Serializable {
 
         for ( Iterator iterator = data.iterator(); iterator.hasNext() && count < StatisticConstants.MAXIMUM_NUMBER_OF_BARS_TO_BE_DISPLAYED; )
         {
-            StackedBarData barData = (StackedBarData) iterator.next();
+            StackedBarData barData = ( StackedBarData ) iterator.next();
             count++;
 
             PublicationStatisticsBean publiBean = barData.getPublicationStatisticsBean();

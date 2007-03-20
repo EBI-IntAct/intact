@@ -5,8 +5,6 @@
  */
 package uk.ac.ebi.intact.application.statisticView.business.persistence.dao;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import uk.ac.ebi.intact.application.statisticView.business.model.StatsBase;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.impl.StatsBaseDaoImpl;
@@ -22,28 +20,24 @@ import java.sql.Connection;
  * @version $Id$
  * @since <pre>17-Jul-2006</pre>
  */
-public class StatsDaoFactory
-{
-    public static <T extends StatsBase> StatsBaseDao getStatsBaseDao(Class<T> stats)
-    {
+public class StatsDaoFactory {
+
+    public static <T extends StatsBase> StatsBaseDao getStatsBaseDao( Class<T> stats ) {
         checkTransaction();
-        return new StatsBaseDaoImpl<T>(stats, getCurrentSession(), IntactContext.getCurrentInstance().getSession());
+        return new StatsBaseDaoImpl<T>( stats, getCurrentSession(), IntactContext.getCurrentInstance().getSession() );
     }
 
-    public static Connection connection()
-    {
+    public static Connection connection() {
         return getCurrentSession().connection();
     }
 
-    public static void checkTransaction()
-    {
+    public static void checkTransaction() {
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
-    private static Session getCurrentSession()
-    {
-        AbstractHibernateDataConfig config = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
-        return config.getSessionFactory().getCurrentSession(); 
+    private static Session getCurrentSession() {
+        AbstractHibernateDataConfig config = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        return config.getSessionFactory().getCurrentSession();
     }
 
 }

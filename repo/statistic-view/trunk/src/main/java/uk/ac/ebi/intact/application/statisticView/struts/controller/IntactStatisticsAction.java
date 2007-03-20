@@ -5,13 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.struts.controller;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.log4j.Logger;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.statisticView.business.util.Constants;
 import uk.ac.ebi.intact.application.statisticView.struts.view.FilterForm;
 import uk.ac.ebi.intact.application.statisticView.struts.view.IntactStatisticsBean;
@@ -33,7 +32,7 @@ import java.io.IOException;
  */
 public class IntactStatisticsAction extends Action {
 
-    private static final Log logger = LogFactory.getLog(IntactStatisticsAction.class);
+    private static final Log logger = LogFactory.getLog( IntactStatisticsAction.class );
 
     /**
      * Process the specified HTTP request, and create the corresponding HTTP response (or forward to another web
@@ -52,8 +51,9 @@ public class IntactStatisticsAction extends Action {
     public ActionForward execute( ActionMapping mapping,
                                   ActionForm form,
                                   HttpServletRequest request,
-                                  HttpServletResponse response ) {
-        logger.debug("Enterning execution of IntactStatisticsAction");
+                                  HttpServletResponse response
+    ) {
+        logger.debug( "Enterning execution of IntactStatisticsAction" );
 
         // get the session
         HttpSession session = request.getSession();
@@ -62,7 +62,7 @@ public class IntactStatisticsAction extends Action {
         String start = null;
         String stop = null;
 
-        FilterForm filterForm = (FilterForm) form;
+        FilterForm filterForm = ( FilterForm ) form;
 
         // get the date to search for
         if ( null != form ) {
@@ -82,30 +82,29 @@ public class IntactStatisticsAction extends Action {
 
         try {
             // receive the viewbean for the specific
-            logger.debug("Creating ViewBean factory");
+            logger.debug( "Creating ViewBean factory" );
             ViewBeanFactory chartFactory = new ViewBeanFactory( request.getContextPath() );
 
-             logger.debug("Creating ViewBean");
+            logger.debug( "Creating ViewBean" );
             intactBean = chartFactory.createViewBean( start, stop, session );
 
         } catch ( IntactException e ) {
             // forward to an error page if something went wrong
-            logger.error( "Error when loading the statistics data.", e);
+            logger.error( "Error when loading the statistics data.", e );
             return mapping.findForward( "error" );
-        } catch(IOException ioe) {
+        } catch ( IOException ioe ) {
             // forward to an error page if something went wrong
-            logger.error( "Error when savingthe charts on disk.", ioe);
+            logger.error( "Error when saving the charts on disk.", ioe );
             return mapping.findForward( "error" );
-        } catch (Throwable e)
-        {
-            logger.error("Exception creating view bean", e);
+        } catch ( Throwable e ) {
+            logger.error( "Exception creating view bean", e );
             return mapping.findForward( "error" );
         }
 
         // put the databean to the request and forward to the jsp
         request.setAttribute( "intactbean", intactBean );
 
-        logger.debug("Redirecting to result page");
+        logger.debug( "Redirecting to result page" );
 
         return mapping.findForward( Constants.FORWARD_RESULT_PAGE );
     }

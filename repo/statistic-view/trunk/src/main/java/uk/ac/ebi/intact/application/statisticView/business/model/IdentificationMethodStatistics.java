@@ -15,7 +15,7 @@ import javax.persistence.Table;
  * @version identificationMethods.java Date: Feb 18, 2005 Time: 1:06:33 PM
  */
 @Entity
-@Table(name = "ia_detectionmethodsstatistics")
+@Table( name = "ia_detectionmethodsstatistics" )
 public class IdentificationMethodStatistics extends StatsBase implements Comparable {
 
     private String detectionName;
@@ -24,27 +24,27 @@ public class IdentificationMethodStatistics extends StatsBase implements Compara
     public IdentificationMethodStatistics() {
     }
 
-    @Column(name="fullname")
+    @Column( name = "fullname" )
     public String getDetectionName() {
         return detectionName;
     }
 
-    public void setDetectionName(String detectionName) {
+    public void setDetectionName( String detectionName ) {
         this.detectionName = detectionName;
     }
 
-    @Column(name = "number_interactions")
+    @Column( name = "number_interactions" )
     public int getNumberInteractions() {
         return numberInteractions;
     }
 
-    public void setNumberInteractions(int numberInteractions) {
+    public void setNumberInteractions( int numberInteractions ) {
         this.numberInteractions = numberInteractions;
     }
 
-    public int compareTo(Object o) {
-        String detectionName = ((IdentificationMethodStatistics) o).getDetectionName();
-        return detectionName.compareTo(detectionName);
+    public int compareTo( Object o ) {
+        String detectionName = ( ( IdentificationMethodStatistics ) o ).getDetectionName();
+        return detectionName.compareTo( detectionName );
     }
 
 

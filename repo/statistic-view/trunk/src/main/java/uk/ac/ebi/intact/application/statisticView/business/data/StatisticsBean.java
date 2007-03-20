@@ -5,7 +5,6 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.application.statisticView.business.data;
 
-import org.apache.log4j.Logger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
@@ -26,9 +25,9 @@ import java.util.List;
  */
 public final class StatisticsBean {
 
-    public static final SimpleDateFormat dateFormater = new SimpleDateFormat ( "dd MMM yyyy" );
+    public static final SimpleDateFormat dateFormater = new SimpleDateFormat( "dd MMM yyyy" );
 
-    private static final Log logger = LogFactory.getLog(StatisticsBean.class);
+    private static final Log logger = LogFactory.getLog( StatisticsBean.class );
 
     /**
      * the statistics
@@ -41,23 +40,24 @@ public final class StatisticsBean {
     private final String databaseName;
     private final String userName;
 
-    public StatisticsBean ( final List<IntactStatistics> statistics,
-                            final String databaseName,
-                            final String userName ) {
+    public StatisticsBean( final List<IntactStatistics> statistics,
+                           final String databaseName,
+                           final String userName
+    ) {
         this.statistics = statistics;
         this.databaseName = databaseName;
         this.userName = userName;
     }
 
-    public final List<IntactStatistics> getStatistics () {
+    public final List<IntactStatistics> getStatistics() {
         return statistics;
     }
 
-    public final String getDatabaseName () {
+    public final String getDatabaseName() {
         return databaseName;
     }
 
-    public final String getUserName () {
+    public final String getUserName() {
         return userName;
     }
 
@@ -66,14 +66,14 @@ public final class StatisticsBean {
      *
      * @return Timestamp the timestamp of the last line in the Statistics table or null if no data found.
      */
-    public final Timestamp getLastTimestamp () throws NoDataException {
+    public final Timestamp getLastTimestamp() throws NoDataException {
 
-        final IntactStatistics item = getLastRow ();
+        final IntactStatistics item = getLastRow();
         if ( item != null ) {
-            logger.info ( "latest timestamp found" );
-            return item.getTimestamp ();
+            logger.info( "latest timestamp found" );
+            return item.getTimestamp();
         } else {
-            logger.info ( "No data found" );
+            logger.info( "No data found" );
             return null;
         }
     }
@@ -83,15 +83,15 @@ public final class StatisticsBean {
      *
      * @return Collection which contains the latest data of the Statistics table
      */
-    public final IntactStatistics getLastRow () throws NoDataException {
+    public final IntactStatistics getLastRow() throws NoDataException {
 
-        final int size = statistics.size ();
+        final int size = statistics.size();
         if ( size > 0 ) {
-            logger.info ( "last row found" );
-            return statistics.get ( size - 1 );
+            logger.info( "last row found" );
+            return statistics.get( size - 1 );
         } else {
-            logger.info ( "No data found" );
-            throw new NoDataException ( );
+            logger.info( "No data found" );
+            throw new NoDataException();
         }
     }
 
@@ -101,29 +101,28 @@ public final class StatisticsBean {
      *
      * @return Collection which contains the latest data of the Statistics table
      */
-    public final IntactStatistics getFirstRow () throws NoDataException {
+    public final IntactStatistics getFirstRow() throws NoDataException {
 
-        final int size = statistics.size ();
+        final int size = statistics.size();
         if ( size > 0 ) {
-            logger.info ( "last row found" );
-            return statistics.get ( 0 );
+            logger.info( "last row found" );
+            return statistics.get( 0 );
         } else {
-            logger.info ( "No data found" );
-            throw new NoDataException ( );
+            logger.info( "No data found" );
+            throw new NoDataException();
         }
     }
 
 
+    public final String getMoreRecentStatisticsDate() throws IntactException, NoDataException {
 
-    public final String getMoreRecentStatisticsDate () throws IntactException, NoDataException {
-
-        final Timestamp timestamp = getLastTimestamp ();
+        final Timestamp timestamp = getLastTimestamp();
         if ( timestamp == null ) {
-            logger.error ( "Could not get the last imestamp." );
-            throw new IntactException ( "There is no statistics to display" );
+            logger.error( "Could not get the last imestamp." );
+            throw new IntactException( "There is no statistics to display" );
         }
 
-        final Date date = new Date ( timestamp.getTime () );
-        return dateFormater.format ( date );
+        final Date date = new Date( timestamp.getTime() );
+        return dateFormater.format( date );
     }
 }

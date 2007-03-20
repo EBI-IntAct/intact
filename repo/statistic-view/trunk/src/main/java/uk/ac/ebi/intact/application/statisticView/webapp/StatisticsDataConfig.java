@@ -15,29 +15,27 @@
  */
 package uk.ac.ebi.intact.application.statisticView.webapp;
 
+import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 import uk.ac.ebi.intact.config.impl.StandardCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * DataConfig class for statistics
-*
-* @author Bruno Aranda (baranda@ebi.ac.uk)
-* @version $Id$
-*/
-class StatisticsDataConfig extends StandardCoreDataConfig
-{
-    public StatisticsDataConfig(IntactSession session)
-    {
-        super(session);
+ *
+ * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @version $Id$
+ */
+class StatisticsDataConfig extends StandardCoreDataConfig {
+
+    public StatisticsDataConfig( IntactSession session ) {
+        super( session );
     }
 
     @Override
-    protected List<String> getPackagesWithEntities()
-    {
-        return Arrays.asList(IntactStatistics.class.getPackage().getName());
+    protected List<String> getPackagesWithEntities() {
+        return Arrays.asList( IntactStatistics.class.getPackage().getName() );
     }
 }

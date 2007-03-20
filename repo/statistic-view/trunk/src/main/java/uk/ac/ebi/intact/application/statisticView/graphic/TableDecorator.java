@@ -10,11 +10,10 @@ import uk.ac.ebi.intact.application.statisticView.struts.view.DisplayStatisticsB
 
 /**
  * Allow the Display tag library to customize the table view.
- * 
- * @see uk.ac.ebi.intact.application.statisticView.struts.view.DisplayStatisticsBean
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
+ * @see uk.ac.ebi.intact.application.statisticView.struts.view.DisplayStatisticsBean
  * @since <pre>07-Jul-2005</pre>
  */
 public class TableDecorator extends Decorator {
@@ -25,7 +24,7 @@ public class TableDecorator extends Decorator {
      * @return
      */
     public String getStatObject() {
-        DisplayStatisticsBean bean = (DisplayStatisticsBean) this.getObject();
-        return "<a href=\"#"+ bean.getStatObject() +"\" class=\"red_bold_small\">" + bean.getStatObject() + "</a>";
+        DisplayStatisticsBean bean = ( DisplayStatisticsBean ) this.getObject();
+        return "<a href=\"#" + bean.getStatObject() + "\" class=\"red_bold_small\">" + bean.getStatObject() + "</a>";
     }
 }

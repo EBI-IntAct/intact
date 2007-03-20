@@ -26,7 +26,7 @@ import java.util.*;
  */
 public class StatisticHelper {
 
-    private static final Log log = LogFactory.getLog(StatisticHelper.class);
+    private static final Log log = LogFactory.getLog( StatisticHelper.class );
 
     private List intactStatistics = null;
     private List filteredStatistics = null;
@@ -84,23 +84,23 @@ public class StatisticHelper {
 
     public JFreeChart getIdentificationChart() throws IntactException {
 
-            Collection<IdentificationMethodStatistics> result =
-                    StatsDaoFactory.getStatsBaseDao(IdentificationMethodStatistics.class).getAll();
+        Collection<IdentificationMethodStatistics> result =
+                StatsDaoFactory.getStatsBaseDao( IdentificationMethodStatistics.class ).getAll();
 
-            List toSort = new ArrayList( result );
-            Collections.sort( toSort );
+        List toSort = new ArrayList( result );
+        Collections.sort( toSort );
 
-            ChartBuilder chartBuilder = new ChartBuilder();
-            JFreeChart chart = chartBuilder.identificationMethods( toSort );
+        ChartBuilder chartBuilder = new ChartBuilder();
+        JFreeChart chart = chartBuilder.identificationMethods( toSort );
 
-            return chart;
+        return chart;
     }
 
     public JFreeChart getBioSourceChart() throws IntactException {
 
         // Collect the data
         Collection<BioSourceStatistics> result =
-                    StatsDaoFactory.getStatsBaseDao(BioSourceStatistics.class).getAll();
+                StatsDaoFactory.getStatsBaseDao( BioSourceStatistics.class ).getAll();
 
         // sort the items
         List toSort = new ArrayList( result );
@@ -114,7 +114,7 @@ public class StatisticHelper {
     private List getIntactStatistics() throws IntactException {
 
         Collection<IntactStatistics> result =
-                    StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
+                StatsDaoFactory.getStatsBaseDao( IntactStatistics.class ).getAll();
 
         ArrayList toSort = new ArrayList( result );
         Collections.sort( toSort, new IntactStatisticComparator() );
@@ -127,7 +127,7 @@ public class StatisticHelper {
         long start = 0;
         long stop = 0;
 
-        final Collection<IntactStatistics> result = StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
+        final Collection<IntactStatistics> result = StatsDaoFactory.getStatsBaseDao( IntactStatistics.class ).getAll();
 
         if ( startDate == null || startDate.equals( "" ) ) {
             start = ( this.getFirstTimestamp() ).getTime();
@@ -155,7 +155,7 @@ public class StatisticHelper {
         final List filteredIntactStatistics = new ArrayList( result.size() );
 
         for ( Iterator iterator = result.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics intactStatistics = (IntactStatistics) iterator.next();
+            final IntactStatistics intactStatistics = ( IntactStatistics ) iterator.next();
             final long timestamp = intactStatistics.getTimestamp().getTime();
             boolean keepIt = true;
 
@@ -181,7 +181,7 @@ public class StatisticHelper {
         if ( intactStatistics == null ) {
             intactStatistics = this.getIntactStatistics();
         }
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getNumberOfProteins();
     }
 
@@ -189,7 +189,7 @@ public class StatisticHelper {
         if ( intactStatistics == null ) {
             intactStatistics = this.getIntactStatistics();
         }
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getNumberOfExperiments();
     }
 
@@ -197,7 +197,7 @@ public class StatisticHelper {
         if ( intactStatistics == null ) {
             intactStatistics = this.getIntactStatistics();
         }
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getNumberOfInteractions();
     }
 
@@ -205,7 +205,7 @@ public class StatisticHelper {
         if ( intactStatistics == null ) {
             intactStatistics = this.getIntactStatistics();
         }
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getNumberOfBinaryInteractions();
     }
 
@@ -213,7 +213,7 @@ public class StatisticHelper {
         if ( intactStatistics == null ) {
             intactStatistics = this.getIntactStatistics();
         }
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getNumberOfCvTerms();
     }
 
@@ -222,7 +222,7 @@ public class StatisticHelper {
             intactStatistics = this.getIntactStatistics();
         }
 
-        IntactStatistics first = (IntactStatistics) intactStatistics.get( 0 );
+        IntactStatistics first = ( IntactStatistics ) intactStatistics.get( 0 );
         return first.getTimestamp();
     }
 
@@ -231,7 +231,7 @@ public class StatisticHelper {
             intactStatistics = this.getIntactStatistics();
         }
 
-        IntactStatistics last = (IntactStatistics) intactStatistics.get( intactStatistics.size() - 1 );
+        IntactStatistics last = ( IntactStatistics ) intactStatistics.get( intactStatistics.size() - 1 );
         return last.getTimestamp();
     }
 }

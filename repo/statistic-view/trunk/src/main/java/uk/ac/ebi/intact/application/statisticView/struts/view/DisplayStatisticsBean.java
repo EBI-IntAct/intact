@@ -20,18 +20,17 @@ public final class DisplayStatisticsBean {
     private String description;
     private String count;
 
-
     //////////////////////////
     // Constructor
 
-    public DisplayStatisticsBean(final String object,
-                                 final String count,
-                                 final String description) {
+    public DisplayStatisticsBean( final String object,
+                                  final String count,
+                                  final String description
+    ) {
         this.statObject = object;
         this.count = count;
         this.description = description;
     }
-
 
     /////////////////////////
     // Getters & Setters
@@ -40,7 +39,7 @@ public final class DisplayStatisticsBean {
         return statObject;
     }
 
-    public void setStatObject(final String object) {
+    public void setStatObject( final String object ) {
         this.statObject = object;
     }
 
@@ -48,7 +47,7 @@ public final class DisplayStatisticsBean {
         return count;
     }
 
-    public void setCount(final String count) {
+    public void setCount( final String count ) {
         this.count = count;
     }
 
@@ -56,7 +55,7 @@ public final class DisplayStatisticsBean {
         return description;
     }
 
-    public void setDescription(final String description) {
+    public void setDescription( final String description ) {
         this.description = description;
     }
 }

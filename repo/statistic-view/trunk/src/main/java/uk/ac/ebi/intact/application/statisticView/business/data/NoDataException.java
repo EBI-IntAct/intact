@@ -13,7 +13,7 @@ package uk.ac.ebi.intact.application.statisticView.business.data;
 
 public final class NoDataException extends Exception {
 
-    public NoDataException () {
-        super ();
+    public NoDataException() {
+        super();
     }
 }

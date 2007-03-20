@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.application.statisticView.webapp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.ChartRenderingInfo;
+import org.jfree.chart.JFreeChart;
 
 import java.io.Serializable;
 
@@ -19,43 +19,50 @@ import java.io.Serializable;
  * @version $Id$
  * @since <pre>03-Aug-2006</pre>
  */
-public class ChartSessionInfo implements Serializable
-{
+public class ChartSessionInfo implements Serializable {
 
-    private static final Log log = LogFactory.getLog(ChartSessionInfo.class);
+    private static final Log log = LogFactory.getLog( ChartSessionInfo.class );
 
+    /**
+     * Chart to be rendered.
+     */
     private JFreeChart chart;
+
+    /**
+     * Height of the generated chart.
+     */
     private int height;
+
+    /**
+     * Width of the generated chart.
+     */
     private int width;
+
+    /**
+     * Chart rendering information.
+     */
     private ChartRenderingInfo chartRenderingInfo;
 
-
-    public ChartSessionInfo(JFreeChart chart, int height, int width, ChartRenderingInfo chartRenderingInfo)
-    {
+    public ChartSessionInfo( JFreeChart chart, int height, int width, ChartRenderingInfo chartRenderingInfo ) {
         this.chart = chart;
         this.height = height;
         this.width = width;
         this.chartRenderingInfo = chartRenderingInfo;
     }
 
-
-    public JFreeChart getChart()
-    {
+    public JFreeChart getChart() {
         return chart;
     }
 
-    public int getHeight()
-    {
+    public int getHeight() {
         return height;
     }
 
-    public int getWidth()
-    {
+    public int getWidth() {
         return width;
     }
 
-    public ChartRenderingInfo getChartRenderingInfo()
-    {
+    public ChartRenderingInfo getChartRenderingInfo() {
         return chartRenderingInfo;
     }
 }
