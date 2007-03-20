@@ -60,7 +60,7 @@ public class ChartBuilder {
         // create the dataseries
         final XYSeries aDataSeries = new XYSeries( "" );
         for ( Iterator iterator = someIntactStatistics.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics anIntactStatistic = (IntactStatistics) iterator.next();
+            final IntactStatistics anIntactStatistic = ( IntactStatistics ) iterator.next();
             aDataSeries.add( anIntactStatistic.getTimestamp().getTime(),
                              anIntactStatistic.getNumberOfExperiments() );
         }
@@ -89,7 +89,7 @@ public class ChartBuilder {
         // create the dataseries
         final XYSeries aDataSeries = new XYSeries( "" );
         for ( Iterator iterator = someIntactStatistics.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics anIntactStatistic = (IntactStatistics) iterator.next();
+            final IntactStatistics anIntactStatistic = ( IntactStatistics ) iterator.next();
             aDataSeries.add( anIntactStatistic.getTimestamp().getTime(),
                              anIntactStatistic.getNumberOfProteins() );
         }
@@ -118,7 +118,7 @@ public class ChartBuilder {
         // create the dataseries
         final XYSeries aDataSeries = new XYSeries( "" );
         for ( Iterator iterator = someIntactStatistics.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics anIntactStatistic = (IntactStatistics) iterator.next();
+            final IntactStatistics anIntactStatistic = ( IntactStatistics ) iterator.next();
             aDataSeries.add( anIntactStatistic.getTimestamp().getTime(),
                              anIntactStatistic.getNumberOfInteractions() );
         }
@@ -147,7 +147,7 @@ public class ChartBuilder {
         // create the dataseries
         final XYSeries aDataSeries = new XYSeries( "" );
         for ( Iterator iterator = someIntactStatistics.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics anIntactStatistic = (IntactStatistics) iterator.next();
+            final IntactStatistics anIntactStatistic = ( IntactStatistics ) iterator.next();
             aDataSeries.add( anIntactStatistic.getTimestamp().getTime(),
                              anIntactStatistic.getNumberOfBinaryInteractions() );
         }
@@ -177,7 +177,7 @@ public class ChartBuilder {
         // create the dataseries
         final XYSeries aDataSeries = new XYSeries( "" );
         for ( Iterator iterator = someIntactStatistics.iterator(); iterator.hasNext(); ) {
-            final IntactStatistics anIntactStatistic = (IntactStatistics) iterator.next();
+            final IntactStatistics anIntactStatistic = ( IntactStatistics ) iterator.next();
             aDataSeries.add( anIntactStatistic.getTimestamp().getTime(),
                              anIntactStatistic.getNumberOfCvTerms() );
         }
@@ -203,7 +203,7 @@ public class ChartBuilder {
         public Item( String name, String[] taxidArray ) {
             this.name = name;
             for ( int i = 0; i < taxidArray.length; i++ ) {
-                String taxid = taxidArray[ i ];
+                String taxid = taxidArray[i];
                 taxids.add( taxid );
             }
         }
@@ -237,13 +237,13 @@ public class ChartBuilder {
 
             Item _item = null;
             if ( o instanceof Item ) {
-                _item = (Item) o;
+                _item = ( Item ) o;
             } else {
                 throw new ClassCastException( o.getClass().getName() );
             }
 
             // sort the stats by decreasing interaction count
-            return (int) ( _item.getInteractionCount() - getInteractionCount() );
+            return ( int ) ( _item.getInteractionCount() - getInteractionCount() );
         }
     }
 
@@ -251,15 +251,15 @@ public class ChartBuilder {
 
     static {
         // todo load that from a properties file.
-        taxidFilter.add( new Item( "Human", new String[]{ "9606" } ) );
-        taxidFilter.add( new Item( "Mouse", new String[]{ "10090" } ) );
-        taxidFilter.add( new Item( "C. elegans", new String[]{ "6239" } ) );
-        taxidFilter.add( new Item( "D. melanogaster", new String[]{ "7227" } ) );
-        taxidFilter.add( new Item( "A. thaliana", new String[]{ "3702" } ) );
-        taxidFilter.add( new Item( "S. cerevisiae", new String[]{ "4932" } ) );
-        taxidFilter.add( new Item( "S. pombe", new String[]{ "4896" } ) );
-        taxidFilter.add( new Item( "E. coli", new String[]{ "562" } ) );
-        taxidFilter.add( new Item( "Rice (O. sativa)", new String[]{ "4530" } ) );
+        taxidFilter.add( new Item( "Human", new String[]{"9606"} ) );
+        taxidFilter.add( new Item( "Mouse", new String[]{"10090"} ) );
+        taxidFilter.add( new Item( "C. elegans", new String[]{"6239"} ) );
+        taxidFilter.add( new Item( "D. melanogaster", new String[]{"7227"} ) );
+        taxidFilter.add( new Item( "A. thaliana", new String[]{"3702"} ) );
+        taxidFilter.add( new Item( "S. cerevisiae", new String[]{"4932"} ) );
+        taxidFilter.add( new Item( "S. pombe", new String[]{"4896"} ) );
+        taxidFilter.add( new Item( "E. coli", new String[]{"562"} ) );
+        taxidFilter.add( new Item( "Rice (O. sativa)", new String[]{"4530"} ) );
     }
 
     /**
@@ -283,15 +283,15 @@ public class ChartBuilder {
         if ( false == listInitialized ) {
             // this will be done only once.
 
-            Item others = new Item( "Others", new String[]{ "" } );
+            Item others = new Item( "Others", new String[]{""} );
 
             for ( Iterator iterator = someBioSourceStatistics.iterator(); iterator.hasNext(); ) {
 
-                BioSourceStatistics statistics = (BioSourceStatistics) iterator.next();
+                BioSourceStatistics statistics = ( BioSourceStatistics ) iterator.next();
 
                 boolean foundInTheList = false;
                 for ( Iterator iterator1 = taxidFilter.iterator(); iterator1.hasNext() && !foundInTheList; ) {
-                    Item item = (Item) iterator1.next();
+                    Item item = ( Item ) iterator1.next();
 
                     if ( item.containsTaxid( statistics.getTaxId() ) ) {
                         item.addInteractionCount( statistics.getBinaryInteractions() );
@@ -321,7 +321,7 @@ public class ChartBuilder {
         final DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
 
         for ( Iterator iterator = taxidFilter.iterator(); iterator.hasNext(); ) {
-            Item item = (Item) iterator.next();
+            Item item = ( Item ) iterator.next();
 
             dataSet.addValue( item.getInteractionCount(), "Binary Interactions", item.getName() );
             dataSet.addValue( item.getProteinCount(), "Proteins", item.getName() );
@@ -348,7 +348,7 @@ public class ChartBuilder {
 
         for ( Iterator iterator = someBioSourceStatistics.iterator(); iterator.hasNext(); ) {
 
-            BioSourceStatistics statistics = (BioSourceStatistics) iterator.next();
+            BioSourceStatistics statistics = ( BioSourceStatistics ) iterator.next();
 
             if ( taxidFilter.contains( statistics.getTaxId() ) ) {
                 // we display that biosource
@@ -389,13 +389,13 @@ public class ChartBuilder {
         }
 
         // sort the data, to have a nicer chart
-        Collections.sort( (List) identificationStatistics, new IdentificationComparator() );
+        Collections.sort( ( List ) identificationStatistics, new IdentificationComparator() );
         final DefaultPieDataset dataSet = new DefaultPieDataset();
         int count;
         int rest = 0;
         // create the dataset
         for ( Iterator iterator = identificationStatistics.iterator(); iterator.hasNext(); ) {
-            IdentificationMethodStatistics method = (IdentificationMethodStatistics) iterator.next();
+            IdentificationMethodStatistics method = ( IdentificationMethodStatistics ) iterator.next();
             count = method.getNumberInteractions();
             // sort out the threshold which are unter the limit
             if ( count > Constants.MIN_DETECTION_METHODS ) {
@@ -412,9 +412,9 @@ public class ChartBuilder {
         chart.setAntiAlias( true );
 
         // Set the default colors for the chart
-        ( (org.jfree.chart.plot.PiePlot) chart.getPlot() ).setSectionPaint( 0, Color.red );
-        ( (org.jfree.chart.plot.PiePlot) chart.getPlot() ).setSectionPaint( 1, Color.blue );
-        ( (org.jfree.chart.plot.PiePlot) chart.getPlot() ).setSectionPaint( 2, Color.green );
+        ( ( org.jfree.chart.plot.PiePlot ) chart.getPlot() ).setSectionPaint( 0, Color.red );
+        ( ( org.jfree.chart.plot.PiePlot ) chart.getPlot() ).setSectionPaint( 1, Color.blue );
+        ( ( org.jfree.chart.plot.PiePlot ) chart.getPlot() ).setSectionPaint( 2, Color.green );
 
         return chart;
     }
@@ -430,22 +430,22 @@ public class ChartBuilder {
      * @throws IntactException
      *
     public JFreeChart evidencePerExperiment( Collection someEvidenceExperiments ) throws IntactException {
-        // first check if it is not null
-        if ( someEvidenceExperiments == null ) {
-            throw new IntactException( "DataSource of someEvidenceExperiments must no be null" );
-        }
-        // create the dataset
-        final DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
-        for ( Iterator iterator = someEvidenceExperiments.iterator(); iterator.hasNext(); ) {
-            ExperimentStatistics experimentStatistics = (ExperimentStatistics) iterator.next();
-            if ( experimentStatistics.getBinaryInteractions() > Constants.MIN_BINARY_INTERACTIONS ) {
-                double result = experimentStatistics.getBinaryInteractions();
-                dataSet.addValue( result, "Number of Experiments", Integer.toString( experimentStatistics.getExperimentNumber() ) );
-            }
-        }
-        // create the chart
-        final JFreeChart chart = ChartFactory.getBarChart( dataSet, EVIDENCE_PER_EXPERIMENT_CHART_TITLE, "Experiments", "Binary interactions", false );
-        chart.setAntiAlias( true );
-        return chart;
+    // first check if it is not null
+    if ( someEvidenceExperiments == null ) {
+    throw new IntactException( "DataSource of someEvidenceExperiments must no be null" );
+    }
+    // create the dataset
+    final DefaultCategoryDataset dataSet = new DefaultCategoryDataset();
+    for ( Iterator iterator = someEvidenceExperiments.iterator(); iterator.hasNext(); ) {
+    ExperimentStatistics experimentStatistics = (ExperimentStatistics) iterator.next();
+    if ( experimentStatistics.getBinaryInteractions() > Constants.MIN_BINARY_INTERACTIONS ) {
+    double result = experimentStatistics.getBinaryInteractions();
+    dataSet.addValue( result, "Number of Experiments", Integer.toString( experimentStatistics.getExperimentNumber() ) );
+    }
+    }
+    // create the chart
+    final JFreeChart chart = ChartFactory.getBarChart( dataSet, EVIDENCE_PER_EXPERIMENT_CHART_TITLE, "Experiments", "Binary interactions", false );
+    chart.setAntiAlias( true );
+    return chart;
     }    */
 }

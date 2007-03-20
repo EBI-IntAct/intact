@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.application.statisticView.business.publications;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.log4j.Logger;
 import uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart.GraphRenderer;
 import uk.ac.ebi.intact.application.statisticView.business.publications.jfreechart.StackedBarData;
 import uk.ac.ebi.intact.application.statisticView.business.publications.model.ExperimentBean;
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public class StatisticRunner {
 
-    private static final Log logger = LogFactory.getLog(StatisticRunner.class);
+    private static final Log logger = LogFactory.getLog( StatisticRunner.class );
 
     public static void main( String[] args ) throws IntactException, SQLException {
 
@@ -43,10 +42,10 @@ public class StatisticRunner {
         // run SQL-Statement for building the precalculated Table
         //System.out.print("Loading publication stats ...");
         //System.out.flush();
-        ArrayList publicationBeans = (ArrayList) DbUtilsBeanFactory.createBean( queryRunner,
-                                                                                PublicationStatisticsBean.class,
-                                                                                connection,
-                                                                                StatisticUtils.getPrecalculatedTable() );
+        ArrayList publicationBeans = ( ArrayList ) DbUtilsBeanFactory.createBean( queryRunner,
+                                                                                  PublicationStatisticsBean.class,
+                                                                                  connection,
+                                                                                  StatisticUtils.getPrecalculatedTable() );
         //System.out.println( publicationBeans.size() + " row(s) retreived." );
 
         // keep data in order
@@ -58,7 +57,7 @@ public class StatisticRunner {
 
         for ( Iterator iterator = publicationBeans.iterator(); iterator.hasNext(); ) {
 
-            PublicationStatisticsBean dataBean = (PublicationStatisticsBean) iterator.next();
+            PublicationStatisticsBean dataBean = ( PublicationStatisticsBean ) iterator.next();
 
             if ( count < StatisticConstants.MAXIMUM_NUMBER_OF_BARS_TO_BE_DISPLAYED ) {
 
@@ -80,7 +79,7 @@ public class StatisticRunner {
                 } else {
 
 
-                    ExperimentBean experiment = (ExperimentBean) pubmedExperimentList.iterator().next();
+                    ExperimentBean experiment = ( ExperimentBean ) pubmedExperimentList.iterator().next();
 
                     StackedBarData barData = new StackedBarData( dataBean, experiment );
                     stackedBarGraphData.add( barData );
@@ -100,12 +99,10 @@ public class StatisticRunner {
         //calculates the total runTime of this application
         StatisticUtils.getTotalRunTime( startTime );
 
-        try
-        {
+        try {
             connection.close();
         }
-        catch (SQLException e)
-        {
+        catch ( SQLException e ) {
             e.printStackTrace();
         }
     }

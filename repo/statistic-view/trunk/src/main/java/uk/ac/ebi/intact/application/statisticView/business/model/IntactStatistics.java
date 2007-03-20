@@ -23,7 +23,7 @@ import java.sql.Timestamp;
  * @version : $Id$
  */
 @Entity
-@Table(name = "ia_statistics")
+@Table( name = "ia_statistics" )
 public class IntactStatistics extends StatsBase implements Comparable {
 
     private int proteinNumber;
@@ -34,78 +34,78 @@ public class IntactStatistics extends StatsBase implements Comparable {
     private int termNumber;
 
     public IntactStatistics() {
-        super.setTimestamp(new java.sql.Timestamp(System.currentTimeMillis()));
+        super.setTimestamp( new java.sql.Timestamp( System.currentTimeMillis() ) );
     }
 
-    @Column(name = "protein_number")
+    @Column( name = "protein_number" )
     public int getNumberOfProteins() {
-        return (this.proteinNumber);
+        return ( this.proteinNumber );
     }
 
-    public void setNumberOfProteins(int proteinNumb) {
+    public void setNumberOfProteins( int proteinNumb ) {
         this.proteinNumber = proteinNumb;
     }
 
-    @Column(name = "interaction_number")
+    @Column( name = "interaction_number" )
     public int getNumberOfInteractions() {
-        return (this.interactionNumber);
+        return ( this.interactionNumber );
     }
 
-    public void setNumberOfInteractions(int interactionNumb) {
+    public void setNumberOfInteractions( int interactionNumb ) {
         this.interactionNumber = interactionNumb;
     }
 
-    @Column(name = "binary_interactions")
+    @Column( name = "binary_interactions" )
     public int getNumberOfBinaryInteractions() {
-        return (this.binaryInteractions);
+        return ( this.binaryInteractions );
     }
 
-    public void setNumberOfBinaryInteractions(int binaryInteraction) {
+    public void setNumberOfBinaryInteractions( int binaryInteraction ) {
         this.binaryInteractions = binaryInteraction;
     }
 
-    @Column(name = "complex_interactions")
+    @Column( name = "complex_interactions" )
     public int getNumberOfComplexInteractions() {
-        return (this.complexInteractions);
+        return ( this.complexInteractions );
     }
 
-    public void setNumberOfComplexInteractions(int complexInteraction) {
+    public void setNumberOfComplexInteractions( int complexInteraction ) {
         this.complexInteractions = complexInteraction;
     }
 
-    @Column(name = "experiment_number")
+    @Column( name = "experiment_number" )
     public int getNumberOfExperiments() {
-        return (this.experimentNumber);
+        return ( this.experimentNumber );
     }
 
-    public void setNumberOfExperiments(int experimentNumb) {
+    public void setNumberOfExperiments( int experimentNumb ) {
         this.experimentNumber = experimentNumb;
     }
 
-    @Column(name = "term_number")
+    @Column( name = "term_number" )
     public int getNumberOfCvTerms() {
-        return (this.termNumber);
+        return ( this.termNumber );
     }
 
-    public void setNumberOfCvTerms(int termNumb) {
+    public void setNumberOfCvTerms( int termNumb ) {
         this.termNumber = termNumb;
     }
 
     @Override
     public String toString() {
         return " Timestamp: " + this.getTimestamp()
-                + "; Number of proteins: " + this.getNumberOfProteins()
-                + "; Number of interactions: " + this.getNumberOfInteractions()
-                + " of which " + this.getNumberOfBinaryInteractions() + " with 2 interactors "
-                + " and " + this.getNumberOfComplexInteractions() + "with more than 2 interactors"
-                + "; Number of experiments: " + this.getNumberOfExperiments()
-                + "; Number of terms in Go: " + this.getNumberOfProteins()
-                + "\n";
+               + "; Number of proteins: " + this.getNumberOfProteins()
+               + "; Number of interactions: " + this.getNumberOfInteractions()
+               + " of which " + this.getNumberOfBinaryInteractions() + " with 2 interactors "
+               + " and " + this.getNumberOfComplexInteractions() + "with more than 2 interactors"
+               + "; Number of experiments: " + this.getNumberOfExperiments()
+               + "; Number of terms in Go: " + this.getNumberOfProteins()
+               + "\n";
     }
 
-    public int compareTo(Object o) {
+    public int compareTo( Object o ) {
 
-        Timestamp t = ((IntactStatistics) o).getTimestamp();
-        return getTimestamp().compareTo(t);
+        Timestamp t = ( ( IntactStatistics ) o ).getTimestamp();
+        return getTimestamp().compareTo( t );
     }
 }

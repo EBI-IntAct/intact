@@ -25,7 +25,8 @@ public class StackedBarData {
     // Constructor
 
     public StackedBarData( PublicationStatisticsBean publicationStatisticsBean,
-                           ExperimentBean experimentBean ) {
+                           ExperimentBean experimentBean
+    ) {
         this.publicationStatisticsBean = publicationStatisticsBean;
         this.experimentBean = experimentBean;
     }

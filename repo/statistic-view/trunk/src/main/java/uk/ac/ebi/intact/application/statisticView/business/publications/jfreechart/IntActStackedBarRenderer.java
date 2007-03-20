@@ -100,7 +100,8 @@ public class IntActStackedBarRenderer extends StackedBarRenderer {
                           CategoryDataset dataset,
                           int row,
                           int column,
-                          int pass ) {
+                          int pass
+    ) {
 
         // nothing is drawn for null values...
         Number dataValue = dataset.getValue( row, column );
@@ -182,8 +183,8 @@ public class IntActStackedBarRenderer extends StackedBarRenderer {
                     );
                     TextUtilities.drawRotatedString(
                             this.totalFormatter.format( total ), g2,
-                            (float) bar.getCenterX(),
-                            (float) ( bar.getMinY() - 4.0 ),
+                            ( float ) bar.getCenterX(),
+                            ( float ) ( bar.getMinY() - 4.0 ),
                             TextAnchor.BOTTOM_CENTER,
                             0.0,
                             TextAnchor.BOTTOM_CENTER
@@ -230,7 +231,8 @@ public class IntActStackedBarRenderer extends StackedBarRenderer {
      */
     private boolean isLastPositiveItem( CategoryDataset dataset,
                                         int row,
-                                        int column ) {
+                                        int column
+    ) {
         boolean result = true;
         Number dataValue = dataset.getValue( row, column );
         if ( dataValue == null ) {
@@ -254,7 +256,8 @@ public class IntActStackedBarRenderer extends StackedBarRenderer {
      * @return the sum of the positive values.
      */
     private double calculateSumOfPositiveValuesForCategory(
-            CategoryDataset dataset, int column ) {
+            CategoryDataset dataset, int column
+    ) {
         double result = 0.0;
         for ( int r = 0; r < dataset.getRowCount(); r++ ) {
             Number dataValue = dataset.getValue( r, column );

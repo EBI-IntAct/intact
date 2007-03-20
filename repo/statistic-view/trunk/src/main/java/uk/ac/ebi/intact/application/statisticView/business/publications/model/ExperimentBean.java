@@ -45,7 +45,7 @@ public class ExperimentBean {
             return false;
         }
 
-        final ExperimentBean that = (ExperimentBean) o;
+        final ExperimentBean that = ( ExperimentBean ) o;
 
         if ( ac != null ? !ac.equals( that.ac ) : that.ac != null ) {
             return false;

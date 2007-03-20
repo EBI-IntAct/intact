@@ -10,8 +10,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import uk.ac.ebi.intact.application.statisticView.business.model.StatsBase;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsBaseDao;
-import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
 import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.persistence.dao.impl.HibernateBaseDaoImpl;
 
 import java.util.Collection;
 
@@ -22,23 +22,19 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>17-Jul-2006</pre>
  */
-public class StatsBaseDaoImpl<T extends StatsBase> extends HibernateBaseDaoImpl<T> implements StatsBaseDao<T>
-{
+public class StatsBaseDaoImpl<T extends StatsBase> extends HibernateBaseDaoImpl<T> implements StatsBaseDao<T> {
 
-    private static final Log log = LogFactory.getLog(StatsBaseDaoImpl.class);
+    private static final Log log = LogFactory.getLog( StatsBaseDaoImpl.class );
 
-    public StatsBaseDaoImpl(Class<T> entityClass, Session session, IntactSession intactSession)
-    {
-        super(entityClass, session, intactSession);
+    public StatsBaseDaoImpl( Class<T> entityClass, Session session, IntactSession intactSession ) {
+        super( entityClass, session, intactSession );
     }
 
-    public T getByAc(int ac)
-    {
-        return (T) getSession().get(getEntityClass(), ac);
+    public T getByAc( int ac ) {
+        return ( T ) getSession().get( getEntityClass(), ac );
     }
 
-    public Collection<T> getAll()
-    {
-        return getSession().createCriteria(getEntityClass()).list();
+    public Collection<T> getAll() {
+        return getSession().createCriteria( getEntityClass() ).list();
     }
 }

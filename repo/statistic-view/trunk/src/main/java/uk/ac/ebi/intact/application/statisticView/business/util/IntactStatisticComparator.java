@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.application.statisticView.business.util;
 
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 
-import java.util.Comparator;
 import java.sql.Timestamp;
+import java.util.Comparator;
 
 /**
  * User: Michael Kleen mkleen@ebi.ac.uk
@@ -16,13 +16,14 @@ import java.sql.Timestamp;
  * Time: 3:49:52 PM
  */
 public class IntactStatisticComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
 
-        IntactStatistics stat1 = (IntactStatistics) o1;
-        IntactStatistics stat2 = (IntactStatistics) o2;
+    public int compare( Object o1, Object o2 ) {
+
+        IntactStatistics stat1 = ( IntactStatistics ) o1;
+        IntactStatistics stat2 = ( IntactStatistics ) o2;
         Timestamp t1 = stat1.getTimestamp();
         Timestamp t2 = stat2.getTimestamp();
-        return t1.compareTo(t2);       
+        return t1.compareTo( t2 );
 
     }
 

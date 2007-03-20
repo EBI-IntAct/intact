@@ -32,7 +32,7 @@ public final class FilterForm extends ActionForm {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart( String start ) {
         this.start = start;
     }
 
@@ -40,7 +40,7 @@ public final class FilterForm extends ActionForm {
         return stop;
     }
 
-    public void setStop(String stop) {
+    public void setStop( String stop ) {
         this.stop = stop;
     }
 
@@ -50,17 +50,17 @@ public final class FilterForm extends ActionForm {
      * @param mapping The mapping used to select this instance
      * @param request The servlet request we are processing
      */
-    public void reset(ActionMapping mapping, HttpServletRequest request) {
+    public void reset( ActionMapping mapping, HttpServletRequest request ) {
         this.start = null;
         this.stop = null;
     } // reset
 
     public String toString() {
-        StringBuffer sb = new StringBuffer("FilterForm[start=");
-        sb.append(start);
-        sb.append(", stop=");
-        sb.append(stop);
-        sb.append("]");
-        return (sb.toString());
+        StringBuffer sb = new StringBuffer( "FilterForm[start=" );
+        sb.append( start );
+        sb.append( ", stop=" );
+        sb.append( stop );
+        sb.append( "]" );
+        return ( sb.toString() );
     }
 }

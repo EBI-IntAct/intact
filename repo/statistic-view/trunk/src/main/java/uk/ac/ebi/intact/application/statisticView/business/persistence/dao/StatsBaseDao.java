@@ -16,10 +16,9 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>17-Jul-2006</pre>
  */
-public interface StatsBaseDao<T extends StatsBase>
-{
+public interface StatsBaseDao<T extends StatsBase> {
 
-    T getByAc(int ac);
+    T getByAc( int ac );
 
     Collection<T> getAll();
 

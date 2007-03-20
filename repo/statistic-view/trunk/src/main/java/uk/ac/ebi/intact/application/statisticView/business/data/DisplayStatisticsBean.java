@@ -12,40 +12,42 @@ package uk.ac.ebi.intact.application.statisticView.business.data;
  * @version $Id$
  */
 public final class DisplayStatisticsBean {
+
     private String object;
     private String description;
     private int count;
 
-    public DisplayStatisticsBean ( final String object,
-                      final int count,
-                      final String description ) {
+    public DisplayStatisticsBean( final String object,
+                                  final int count,
+                                  final String description
+    ) {
         this.object = object;
         this.count = count;
         this.description = description;
     }
 
 
-    public final String getObject () {
+    public final String getObject() {
         return object;
     }
 
-    public final void setObject ( final String object ) {
+    public final void setObject( final String object ) {
         this.object = object;
     }
 
-    public final int getCount () {
+    public final int getCount() {
         return count;
     }
 
-    public final void setCount ( final int count ) {
+    public final void setCount( final int count ) {
         this.count = count;
     }
 
-    public final String getDescription () {
+    public final String getDescription() {
         return description;
     }
 
-    public final void setDescription ( final String description ) {
+    public final void setDescription( final String description ) {
         this.description = description;
     }
 }

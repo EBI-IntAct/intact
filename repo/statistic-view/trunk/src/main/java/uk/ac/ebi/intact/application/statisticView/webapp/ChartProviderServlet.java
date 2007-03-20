@@ -5,18 +5,17 @@
  */
 package uk.ac.ebi.intact.application.statisticView.webapp;
 
+import com.keypoint.PngEncoder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jfree.chart.JFreeChart;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.awt.image.BufferedImage;
-
-import com.keypoint.PngEncoder;
+import java.io.IOException;
 
 /**
  * TODO comment this!
@@ -25,36 +24,39 @@ import com.keypoint.PngEncoder;
  * @version $Id$
  * @since <pre>03-Aug-2006</pre>
  */
-public class ChartProviderServlet extends HttpServlet
-{
+public class ChartProviderServlet extends HttpServlet {
 
-    private static final Log log = LogFactory.getLog(ChartProviderServlet.class);
+    private static final Log log = LogFactory.getLog( ChartProviderServlet.class );
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        String chartName = request.getParameter("name");
+    public void doGet( HttpServletRequest request, HttpServletResponse response ) throws ServletException,
+                                                                                         IOException {
 
-        ChartSessionInfo chartSessionInfo = (ChartSessionInfo) request.getSession().getAttribute(chartName);
+        String chartName = request.getParameter( "name" );
 
-        if (chartSessionInfo == null)
-        {
-            throw new NullPointerException("No chart with name in the session: "+chartName);
+        ChartSessionInfo chartSessionInfo = ( ChartSessionInfo ) request.getSession().getAttribute( chartName );
+
+        if ( chartSessionInfo == null ) {
+            throw new NullPointerException( "No chart with name in the session: " + chartName );
         }
 
         // get the chart from storage
         JFreeChart chart = chartSessionInfo.getChart();
         // set the content type so the browser can see this as it is
-        response.setContentType("image/png");
+        response.setContentType( "image/png" );
 
-        log.debug("Creating buffered chart: "+chartName);
+        log.debug( "Creating buffered chart: " + chartName );
 
         // send the picture
-        BufferedImage buf = chart.createBufferedImage(chartSessionInfo.getHeight(),
-                                                      chartSessionInfo.getWidth(),
-                                                      chartSessionInfo.getChartRenderingInfo());
-        PngEncoder encoder = new PngEncoder(buf, false, 0, 9);
-        response.getOutputStream().write(encoder.pngEncode());
-    }
+        BufferedImage buf = chart.createBufferedImage( chartSessionInfo.getHeight(),
+                                                       chartSessionInfo.getWidth(),
+                                                       chartSessionInfo.getChartRenderingInfo() );
+        PngEncoder encoder = new PngEncoder( buf, false, 0, 9 );
+        byte[] bytes = encoder.pngEncode();
 
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Encoded image: " + bytes.length + " byte(s)" );
+        }
+
+        response.getOutputStream().write( bytes );
+    }
 }

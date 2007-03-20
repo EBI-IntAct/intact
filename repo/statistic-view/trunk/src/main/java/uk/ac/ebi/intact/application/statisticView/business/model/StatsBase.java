@@ -20,28 +20,27 @@ import java.sql.Timestamp;
  * @since <pre>17-Jul-2006</pre>
  */
 @MappedSuperclass
-public class StatsBase
-{
+public class StatsBase {
 
-    private static Log log = LogFactory.getLog(StatsBase.class);
+    private static Log log = LogFactory.getLog( StatsBase.class );
 
     private int ac;
     private Timestamp timestamp;
 
     @Id
     public int getAc() {
-        return (this.ac);
+        return ( this.ac );
     }
 
-    public void setAc(int ac) {
+    public void setAc( int ac ) {
         this.ac = ac;
     }
 
     public Timestamp getTimestamp() {
-        return (this.timestamp);
+        return ( this.timestamp );
     }
 
-    public void setTimestamp(Timestamp timeStamp) {
+    public void setTimestamp( Timestamp timeStamp ) {
         this.timestamp = timeStamp;
     }
 

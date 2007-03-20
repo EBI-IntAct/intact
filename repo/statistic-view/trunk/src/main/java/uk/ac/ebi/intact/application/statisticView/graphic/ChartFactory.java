@@ -52,7 +52,7 @@ public class ChartFactory {
                                                                               true,
                                                                               true );
 
-        final PiePlot plot = (PiePlot) chart.getPlot();
+        final PiePlot plot = ( PiePlot ) chart.getPlot();
 
         // set a new font for the label
 
@@ -90,7 +90,8 @@ public class ChartFactory {
                                           final String title,
                                           final String xAxisTitle,
                                           final String yAxisTitle,
-                                          final boolean rotateLabel ) {
+                                          final boolean rotateLabel
+    ) {
 
         // cast to dataset
         DefaultCategoryDataset barDataset = dataset;
@@ -115,11 +116,11 @@ public class ChartFactory {
         }
 
         // set the range axis to display integers only
-        final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
+        final NumberAxis rangeAxis = ( NumberAxis ) plot.getRangeAxis();
         rangeAxis.setStandardTickUnits( NumberAxis.createIntegerTickUnits() );
 
         // disable bar outlines
-        BarRenderer renderer = (BarRenderer) plot.getRenderer();
+        BarRenderer renderer = ( BarRenderer ) plot.getRenderer();
         renderer.setDrawBarOutline( false );
         // renderer.setMaxBarWidth(0.8);
         renderer.setMaximumBarWidth( 0.4 );
@@ -146,7 +147,8 @@ public class ChartFactory {
      * @return a JfreeChart XYChart Diagramm
      */
     public static JFreeChart getXYChart( final XYDataset dataset, final String title, final String xAxisTitle,
-                                         final String yAxisTitle ) {
+                                         final String yAxisTitle
+    ) {
 
         XYDataset xyDataset = dataset;
 

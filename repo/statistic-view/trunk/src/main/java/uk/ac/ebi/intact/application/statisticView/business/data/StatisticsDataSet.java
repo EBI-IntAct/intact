@@ -19,9 +19,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.statisticView.business.model.IntactStatistics;
 import uk.ac.ebi.intact.application.statisticView.business.persistence.dao.StatsDaoFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.persistence.dao.BaseDao;
 
 import java.sql.SQLException;
 import java.text.ParseException;
@@ -61,7 +60,7 @@ public final class StatisticsDataSet {
     /**
      * Data loading logger
      */
-    private static final Log logger = LogFactory.getLog(StatisticsDataSet.class);
+    private static final Log logger = LogFactory.getLog( StatisticsDataSet.class );
 
     /**
      * the statistics
@@ -83,7 +82,7 @@ public final class StatisticsDataSet {
     // Instanciation methods
     ///////////////////////////////
 
-    public synchronized static StatisticsDataSet getInstance( ) {
+    public synchronized static StatisticsDataSet getInstance() {
 
         if ( ourInstance == null ) {
             ourInstance = new StatisticsDataSet();
@@ -149,7 +148,7 @@ public final class StatisticsDataSet {
             // null parameter means no restrictive criteria.
             logger.info( "Look for statistics..." );
 
-            final Collection<IntactStatistics> intactStatistics = StatsDaoFactory.getStatsBaseDao(IntactStatistics.class).getAll();
+            final Collection<IntactStatistics> intactStatistics = StatsDaoFactory.getStatsBaseDao( IntactStatistics.class ).getAll();
 
             // keep track of the time.
             timestamp = System.currentTimeMillis();
@@ -207,7 +206,8 @@ public final class StatisticsDataSet {
      * @return a bean containing the statistics and the database source details.
      */
     public final synchronized StatisticsBean getStatisticBean( final String startDate,
-                                                               final String stopDate )
+                                                               final String stopDate
+    )
             throws NoDataException {
 
         if ( statistics == null || statistics.size() == 0 ) {

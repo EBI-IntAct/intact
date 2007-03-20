@@ -15,22 +15,20 @@ import java.util.Comparator;
  * Time: 1:32:26 PM
  */
 public class IdentificationComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
 
-        final IdentificationMethodStatistics ident1 = (IdentificationMethodStatistics) o1;
-        final IdentificationMethodStatistics ident2 = (IdentificationMethodStatistics) o2;
+    public int compare( Object o1, Object o2 ) {
 
-        if (ident1.getNumberInteractions() < ident2.getNumberInteractions()) {
+        final IdentificationMethodStatistics ident1 = ( IdentificationMethodStatistics ) o1;
+        final IdentificationMethodStatistics ident2 = ( IdentificationMethodStatistics ) o2;
+
+        if ( ident1.getNumberInteractions() < ident2.getNumberInteractions() ) {
             return -1;
-        }
-        else if (ident1.getNumberInteractions() == ident2.getNumberInteractions()) {
+        } else if ( ident1.getNumberInteractions() == ident2.getNumberInteractions() ) {
             return 0;
-        }
-        else if (ident1.getNumberInteractions() > ident2.getNumberInteractions()) {
+        } else if ( ident1.getNumberInteractions() > ident2.getNumberInteractions() ) {
             return 1;
-        }
-        else {
-            throw new RuntimeException("not possible to compare these objects");
+        } else {
+            throw new RuntimeException( "not possible to compare these objects" );
         }
     }
 }

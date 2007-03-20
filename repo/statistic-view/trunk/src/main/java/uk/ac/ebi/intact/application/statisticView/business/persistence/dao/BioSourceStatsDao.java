@@ -12,9 +12,7 @@ package uk.ac.ebi.intact.application.statisticView.business.persistence.dao;
  * @version $Id$
  * @since <pre>17-Jul-2006</pre>
  */
-public interface BioSourceStatsDao
-{
-
+public interface BioSourceStatsDao {
 
 
 }
