@@ -94,13 +94,13 @@ public class SearchableCriteriaBuilder {
         }
 
         // ac
-        addRestriction( junction, AC_PROPERTY, query.getAc() );
+        addRestriction( junction, AC_PROPERTY, query.getAc(), query.isIgnoreCase() );
 
         // ac or xref id
         QueryPhrase acOrId = query.getAcOrId();
         if ( isValueValid( acOrId ) ) {
             Disjunction disjAcOrXref = Restrictions.disjunction();
-            addRestriction( disjAcOrXref, AC_PROPERTY, acOrId );
+            addRestriction( disjAcOrXref, AC_PROPERTY, acOrId, query.isIgnoreCase() );
 
             // TODO add here only search for primaryId of the xref and wualifier is identity
 
@@ -108,15 +108,15 @@ public class SearchableCriteriaBuilder {
             disjAcOrXref.add( primaryIdentityConj );
             junction.add( disjAcOrXref );
 
-            addRestriction( primaryIdentityConj, xrefProperty( criteria, PRIMARY_ID_PROPERTY ), acOrId );
+            addRestriction( primaryIdentityConj, xrefProperty( criteria, PRIMARY_ID_PROPERTY ), acOrId, query.isIgnoreCase() );
             primaryIdentityConj.add( Restrictions.eq( xrefCvXrefQualifierXrefProperty( criteria, "primaryId" ), CvXrefQualifier.IDENTITY_MI_REF ) );
         }
 
         // shortLabel
-        addRestriction( junction, SHORT_LABEL_PROPERTY, query.getShortLabel() );
+        addRestriction( junction, SHORT_LABEL_PROPERTY, query.getShortLabel(), query.isIgnoreCase() );
 
         // description
-        addRestriction( junction, FULL_NAME_PROPERTY, query.getDescription() );
+        addRestriction( junction, FULL_NAME_PROPERTY, query.getDescription(), query.isIgnoreCase() );
 
         // xref - database
         QueryPhrase xrefPrimaryId = query.getXref();
@@ -125,10 +125,10 @@ public class SearchableCriteriaBuilder {
         Junction jXref = Restrictions.conjunction();
 
         if ( isValueValid( xrefPrimaryId ) ) {
-            addRestriction( jXref, xrefProperty( criteria, PRIMARY_ID_PROPERTY ), xrefPrimaryId );
+            addRestriction( jXref, xrefProperty( criteria, PRIMARY_ID_PROPERTY ), xrefPrimaryId, query.isIgnoreCase() );
         }
         if ( isValueValid( xrefDb ) ) {
-            addRestriction( jXref, xrefCvDatabaseProperty( criteria, SHORT_LABEL_PROPERTY ), xrefDb );
+            addRestriction( jXref, xrefCvDatabaseProperty( criteria, SHORT_LABEL_PROPERTY ), xrefDb, false );
         }
         if ( isValueValid( xrefPrimaryId ) || isValueValid( xrefDb ) ) {
             junction.add( jXref );
@@ -141,10 +141,10 @@ public class SearchableCriteriaBuilder {
         Junction jAnnot = Restrictions.conjunction();
 
         if ( isValueValid( annotText ) ) {
-            addRestriction( jAnnot, annotationProperty( criteria, "annotationText" ), annotText );
+            addRestriction( jAnnot, annotationProperty( criteria, "annotationText" ), annotText, false );
         }
         if ( isValueValid( annotTopic ) ) {
-            addRestriction( jAnnot, annotationCvTopicProperty( criteria, SHORT_LABEL_PROPERTY ), annotTopic );
+            addRestriction( jAnnot, annotationCvTopicProperty( criteria, SHORT_LABEL_PROPERTY ), annotTopic, false );
         }
         if ( isValueValid( annotText ) || isValueValid( annotTopic ) ) {
             junction.add( jAnnot );
@@ -156,7 +156,7 @@ public class SearchableCriteriaBuilder {
             if ( isValueValid( query.getCvInteractionTypeLabel() ) ) {
                 Conjunction objAndLabelConj = Restrictions.conjunction();
 
-                addRestriction( objAndLabelConj, cvInteractionTypeProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvInteractionTypeLabel() );
+                addRestriction( objAndLabelConj, cvInteractionTypeProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvInteractionTypeLabel(), false );
                 objAndLabelConj.add( Restrictions.eq( cvIdentificationProperty( criteria, CV_OBJCLASS_PROPERTY ), CvInteractionType.class.getName() ) );
 
                 if ( query.isIncludeCvInteractionTypeChildren() ) {
@@ -187,7 +187,7 @@ public class SearchableCriteriaBuilder {
                 Conjunction objAndLabelConj = Restrictions.conjunction();
                 objAndLabelConj.add( Restrictions.eq( cvIdentificationProperty( criteria, CV_OBJCLASS_PROPERTY ), CvIdentification.class.getName() ) );
 
-                addRestriction( objAndLabelConj, cvIdentificationProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvIdentificationLabel() );
+                addRestriction( objAndLabelConj, cvIdentificationProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvIdentificationLabel(), false );
 
                 if ( query.isIncludeCvIdentificationChildren() ) {
                     Junction childJunct = getChildrenDisjunctionForCv( criteria,
@@ -214,7 +214,7 @@ public class SearchableCriteriaBuilder {
                 Conjunction objAndLabelConj = Restrictions.conjunction();
                 objAndLabelConj.add( Restrictions.eq( cvInteractionProperty( criteria, CV_OBJCLASS_PROPERTY ), CvInteraction.class.getName() ) );
 
-                addRestriction( objAndLabelConj, cvInteractionProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvInteractionLabel() );
+                addRestriction( objAndLabelConj, cvInteractionProperty( criteria, SHORT_LABEL_PROPERTY ), query.getCvInteractionLabel(), false);
 
                 if ( query.isIncludeCvInteractionChildren() ) {
                     Junction childJunct = getChildrenDisjunctionForCv( criteria,
@@ -243,7 +243,7 @@ public class SearchableCriteriaBuilder {
         return criteria;
     }
 
-    private void addRestriction( Junction junction, String property, QueryPhrase value ) {
+    private void addRestriction( Junction junction, String property, QueryPhrase value, boolean ignoreCase ) {
         if ( isValueValid( value ) ) {
             // classify the terms of the phrase in excluded / included
             List<QueryTerm> exclusionTerms = new ArrayList<QueryTerm>();
@@ -268,27 +268,27 @@ public class SearchableCriteriaBuilder {
             junction.add( propertyCriterion );
 
             if ( !inclusionTerms.isEmpty() ) {
-                Criterion inclusionCriterion = termDisjunction( property, inclusionTerms );
+                Criterion inclusionCriterion = termDisjunction( property, inclusionTerms, ignoreCase );
                 propertyCriterion.add( inclusionCriterion );
             }
 
             if ( !exclusionTerms.isEmpty() ) {
-                Criterion exclusionCriterion = Restrictions.not( termDisjunction( property, exclusionTerms ) );
+                Criterion exclusionCriterion = Restrictions.not( termDisjunction( property, exclusionTerms, ignoreCase ) );
                 propertyCriterion.add( exclusionCriterion );
             }
 
         }
     }
 
-    private Criterion termDisjunction( String property, List<QueryTerm> terms ) {
+    private Criterion termDisjunction( String property, List<QueryTerm> terms, boolean ignoreCase ) {
         Criterion criterion = null;
 
         if ( terms.size() == 1 ) {
-            criterion = termToCriterion( property, terms.get( 0 ) );
+            criterion = termToCriterion( property, terms.get( 0 ), ignoreCase );
         } else if ( terms.size() > 1 ) {
             Disjunction disj = Restrictions.disjunction();
             for ( QueryTerm term : terms ) {
-                disj.add( termToCriterion( property, term ) );
+                disj.add( termToCriterion( property, term, ignoreCase ) );
             }
             criterion = disj;
         }
@@ -296,14 +296,25 @@ public class SearchableCriteriaBuilder {
         return criterion;
     }
 
-    private Criterion termToCriterion( String property, QueryTerm term ) {
+    private Criterion termToCriterion( String property, QueryTerm term, boolean ignoreCase) {
         String val = term.getValue();
 
+
+        SimpleExpression criterion;
+
         if ( isLikeQuery( term ) ) {
-            return Restrictions.like( property, val, mathModeForTerm( term ) );
+            criterion = Restrictions.like( property, val, mathModeForTerm( term ) );
+        }
+        else {
+            criterion = Restrictions.eq (property, val);
         }
 
-        return Restrictions.eq( property, val );
+        if (ignoreCase)
+        {
+            criterion.ignoreCase();
+        }
+
+        return criterion;
 
     }
 

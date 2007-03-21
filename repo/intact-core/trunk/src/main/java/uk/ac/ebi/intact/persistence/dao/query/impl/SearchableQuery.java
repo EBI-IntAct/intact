@@ -50,6 +50,7 @@ public class SearchableQuery implements Serializable {
     private boolean includeCvIdentificationChildren;
     private boolean includeCvInteractionTypeChildren;
     private boolean disjunction;
+    private boolean ignoreCase = true;
 
     public SearchableQuery() {
     }
@@ -348,5 +349,11 @@ public class SearchableQuery implements Serializable {
         return searchableQueryStr.startsWith( "{" ) && searchableQueryStr.endsWith( "}" );
     }
 
+    public boolean isIgnoreCase() {
+        return ignoreCase;
+    }
 
+    public void setIgnoreCase(boolean ignoreCase) {
+        this.ignoreCase = ignoreCase;
+    }
 }
