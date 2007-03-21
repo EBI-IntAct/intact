@@ -104,11 +104,18 @@ public class InteractionAndComponentRole   implements Rule {
             int fluorophoreAcceptorDonor = ( fluorophoreAcceptorCount + fluorophoreDonorCount > 0 ? 1 : 0 );
             int electronAcceptorDonor = ( electronAcceptorCount + electronDonorCount > 0 ? 1 : 0 );
             int inhibitedInhibitor = ( inhibitorCount + inhibitedCount > 0 ? 1 : 0 );
-            // count the number of categories used.
-            int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor +
-                    electronAcceptorDonor +inhibitedInhibitor;
 
-            switch ( categoryCount ) {
+            // The only mixed category allowed is "neutral + inhibitedInhibitor"
+            // For exemple : baitPrey + neutral should not be superior to 1 but baitPrey + neutral + inhibitedInhibitor
+            // can be superior to one. Therefore we need to do 2 counts of mixed categories one with all the categories
+            // but not neutral and one with all categoriew but not inhibitedInhibitor. 
+            int categoryCountWithoutInhibCat = baitPrey + neutral + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor +
+                    electronAcceptorDonor;
+            int categoryCountWithoutNeutralCat = baitPrey + inhibitedInhibitor + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor +
+                    electronAcceptorDonor;
+
+            boolean isAMixedCategoryInteraction = false;
+            switch ( categoryCountWithoutInhibCat ) {
                 case 0:
                     messages.add(new GeneralMessage(NO_CATEGORY_DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, interaction));
                     break;
@@ -137,7 +144,7 @@ public class InteractionAndComponentRole   implements Rule {
                         }
                     }
                     else if ( self == 1 ) {
-                        if ( selfCount > 1F ) {
+                        if ( selfCount > 1 ) {
                             messages.add(new GeneralMessage(MORE_THAN_2_SELF_PROTEIN_DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, interaction));
                         } else {
                             if ( selfStoichiometry < 1F ) {
@@ -153,9 +160,15 @@ public class InteractionAndComponentRole   implements Rule {
                     }
                     break;
                 default:
+                    isAMixedCategoryInteraction = true;
                     messages.add(new GeneralMessage(MIXED_CATEGORIES_DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, interaction));
                     break;
             }
+        // It was no mixed interaction counting all categories but not InhibitedInhibitor, we now check if there's no
+        // mixed interaction counting all categories but not Neutral
+        if(categoryCountWithoutNeutralCat > 1 && isAMixedCategoryInteraction == false){
+            messages.add(new GeneralMessage(MIXED_CATEGORIES_DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, interaction));
+        }
 
         return messages;
     }
