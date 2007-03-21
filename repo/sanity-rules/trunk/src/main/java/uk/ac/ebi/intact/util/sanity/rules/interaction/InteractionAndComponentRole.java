@@ -67,9 +67,9 @@ public class InteractionAndComponentRole   implements Rule {
             if(CvComponentRole.BAIT_PSI_REF.equals(cvRoleMiRef)){
                 baitCount++;
             }else if(CvComponentRole.PREY_PSI_REF.equals(cvRoleMiRef)){
-                enzymeCount++;
-            }else if(CvComponentRole.ENZYME_PSI_REF.equals(cvRoleMiRef)){
                 preyCount++;
+            }else if(CvComponentRole.ENZYME_PSI_REF.equals(cvRoleMiRef)){
+                enzymeCount++;
             }else if(CvComponentRole.ENZYME_TARGET_PSI_REF.equals(cvRoleMiRef)){
                 enzymeTargetCount++;
             }else if(CvComponentRole.NEUTRAL_PSI_REF.equals(cvRoleMiRef)){
@@ -93,6 +93,8 @@ public class InteractionAndComponentRole   implements Rule {
             }else if(CvComponentRole.INHIBITED_PSI_REF.equals(cvRoleMiRef)){
                 inhibitedCount++;
             }
+        }
+
 
             int baitPrey = ( baitCount + preyCount > 0 ? 1 : 0 );
             int enzymeTarget = ( enzymeCount + enzymeTargetCount > 0 ? 1 : 0 );
@@ -104,7 +106,7 @@ public class InteractionAndComponentRole   implements Rule {
             int inhibitedInhibitor = ( inhibitorCount + inhibitedCount > 0 ? 1 : 0 );
             // count the number of categories used.
             int categoryCount = baitPrey + neutral + enzymeTarget + self + unspecified + fluorophoreAcceptorDonor +
-                    electronAcceptorDonor;
+                    electronAcceptorDonor +inhibitedInhibitor;
 
             switch ( categoryCount ) {
                 case 0:
@@ -154,7 +156,7 @@ public class InteractionAndComponentRole   implements Rule {
                     messages.add(new GeneralMessage(MIXED_CATEGORIES_DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, interaction));
                     break;
             }
-        }
+
         return messages;
     }
 
