@@ -63,7 +63,7 @@ public class WebappSession extends IntactSession {
 
     public void setApplicationAttribute( String name, Object attribute ) {
         if ( log.isDebugEnabled() ) {
-            log.debug( "APP: " + name + "=" + attribute );
+            log.debug( "APP: " + name + "=" + attribute +" (sessionid="+session.getId()+")");
         }
         servletContext.setAttribute( name, attribute );
     }
@@ -74,18 +74,22 @@ public class WebappSession extends IntactSession {
 
     public void setAttribute( String name, Serializable attribute ) {
         if ( log.isDebugEnabled() ) {
-            log.debug( "SES: " + name + "=" + attribute );
+            log.debug( "SES: " + name + "=" + attribute +" (sessionid="+session.getId()+")");
         }
         session.setAttribute( name, attribute );
     }
 
     public Object getRequestAttribute( String name ) {
+        if (log.isDebugEnabled())
+        {
+            log.debug("REQ - Get '"+name+"' (sessionid="+session.getId()+")");
+        }
         return request.getAttribute( name );
     }
 
     public void setRequestAttribute( String name, Object value ) {
         if ( log.isDebugEnabled() ) {
-            log.debug( "REQ: " + name + "=" + value );
+            log.debug( "REQ - Set " + name + "=" + value +" (sessionid="+session.getId()+")");
         }
         request.setAttribute( name, value );
     }

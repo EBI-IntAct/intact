@@ -87,7 +87,10 @@ public class IntactSessionRequestFilter implements Filter {
             }
         }
 
-        log.debug( "Creating IntactContext, for request url: " + requestUrl );
+        if (log.isDebugEnabled())
+        {
+            log.debug( "Creating IntactContext, for request url: " + requestUrl + " ; session id: "+session.getId() +" ; thread: "+Thread.currentThread().getName());
+        }
         IntactSession intactSession = new WebappSession( session.getServletContext(), session, req );
         IntactContext context = IntactConfigurator.createIntactContext( intactSession );
         log.debug("Beginning the transaction");
