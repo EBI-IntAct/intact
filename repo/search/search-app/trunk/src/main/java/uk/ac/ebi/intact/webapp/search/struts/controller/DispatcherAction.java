@@ -67,8 +67,6 @@ public class DispatcherAction extends IntactBaseAction {
         logger.debug( "Binary Value " + binaryValue );
         logger.debug( "View Value " + viewSource );
 
-        logger.debug("SESSION id: "+request.getSession().getId());
-
         Object resultItem = results.iterator().next();
         logger.debug( "First item className: " + resultItem.getClass().getName() );
 
