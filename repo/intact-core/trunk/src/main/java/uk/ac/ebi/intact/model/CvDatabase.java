@@ -27,6 +27,8 @@ public class CvDatabase extends CvObject implements Editable {
     public static final String ENTREZ_GENE = "entrez gene/locuslink";
     public static final String ENTREZ_GENE_MI_REF = "MI:0475";
 
+    public static final String ENSEMBL = "ensembl";
+    public static final String ENSEMBL_MI_REF = "MI:0476";
 
     public static final String DDBG = "ddbj-embl-genbank";
     public static final String DDBG_MI_REF = "MI:0475";
