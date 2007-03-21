@@ -22,9 +22,11 @@ import javax.persistence.Entity;
 @DiscriminatorValue( "uk.ac.ebi.intact.model.CvDatabase" )
 @EditorTopic
 public class CvDatabase extends CvObject implements Editable {
-
-    ////////////////////////////////
     // Constants
+    ////////////////////////////////
+    public static final String ENTREZ_GENE = "entrez gene/locuslink";
+    public static final String ENTREZ_GENE_MI_REF = "MI:0475";
+
 
     public static final String DDBG = "ddbj-embl-genbank";
     public static final String DDBG_MI_REF = "MI:0475";
