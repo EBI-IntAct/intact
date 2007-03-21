@@ -43,7 +43,7 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref, Publicatio
 
     ////////////////////////////
     // Getter and Setter
-    @Column( name = "shortlabel" )
+    @Column( name = "pmid" )
     public String getPmid() {
         return pmid;
     }
