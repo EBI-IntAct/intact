@@ -59,4 +59,9 @@ public class SimpleSearchServiceTest extends TestCase {
         assertEquals( 1, count );
     }
 
+    public void testCount_interaction_cara_uppercase() throws Exception {
+        int count = searchService.count( InteractionImpl.class, "CARA" );
+        assertEquals( 1, count );
+    }
+
 }
