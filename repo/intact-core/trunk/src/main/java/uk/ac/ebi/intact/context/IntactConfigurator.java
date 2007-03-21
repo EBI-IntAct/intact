@@ -201,7 +201,7 @@ public class IntactConfigurator {
         DataContext dataContext = new DataContext( session );
 
         // start a context
-        log.info( "Creating IntactContext..." );
+        log.debug( "Creating IntactContext..." );
         context = new IntactContextWrapper( dataContext, session );
         try {
             persistInstitutionIfNecessary( context );
