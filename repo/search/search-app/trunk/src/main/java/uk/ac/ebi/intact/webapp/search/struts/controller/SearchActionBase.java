@@ -22,6 +22,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.impl.WebappSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
@@ -50,15 +51,6 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     private static final Log log = LogFactory.getLog(SearchActionBase.class);
 
-    private IntactContext intactContext;
-    private ActionMapping mapping;
-    private ActionForm form;
-
-    private HttpServletRequest request;
-    private HttpServletResponse response;
-
-    private SimpleSearchService searchService;
-
     protected static Class<? extends Searchable>[] DEFAULT_SEARCHABLE_TYPES
             = new Class[] {
                             Experiment.class,
@@ -74,15 +66,12 @@ public abstract class SearchActionBase extends IntactSearchAction
                                   HttpServletResponse response )
             throws IOException, ServletException
     {
-        this.intactContext = IntactContext.getCurrentInstance();
-        this.mapping = mapping;
-        this.form = form;
-        this.request = request;
-        this.response = response;
 
-        this.searchService = new SimpleSearchService();
+        IntactContext intactContext = IntactContext.getCurrentInstance();
 
-        log.info( "in SearchActionBase");
+        log.debug( "in SearchActionBase");
+
+        log.debug("   IntactContext with session id: "+((WebappSession)intactContext.getSession()).getSession().getId());
 
         SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance(intactContext);
 
@@ -94,7 +83,7 @@ public abstract class SearchActionBase extends IntactSearchAction
         if (binaryView != null && binaryView.length() > 0)
         {
              log.debug("Request URL contains the binary parameter. Preparing the binary view...");
-             return prepareBinaryView(binaryView);
+             return prepareBinaryView(binaryView, mapping);
         }        
 
         //clear the error message
@@ -122,8 +111,8 @@ public abstract class SearchActionBase extends IntactSearchAction
         }
 
         // starting query
-        webappContext.setCurrentSearchQuery(getSearchableQuery());
-        webappContext.setCurrentSearchTypes(getSearchableTypes());
+        webappContext.setCurrentSearchQuery(getSearchableQuery(form));
+        webappContext.setCurrentSearchTypes(getSearchableTypes(form));
 
         
         boolean explicitSearch = (request.getParameter("searchClass") != null) || (request.getAttribute("searchClass") != null);
@@ -131,10 +120,10 @@ public abstract class SearchActionBase extends IntactSearchAction
         // if the query is not paginated, count the results
         if (!explicitSearch)
         {
-            countResults();
+            countResults(mapping, form);
 
             // forward to a place or another depending on the counts
-            ActionForward af = forwardIfNecessary();
+            ActionForward af = forwardIfNecessary(mapping);
 
             if (af != null)
             {
@@ -144,12 +133,12 @@ public abstract class SearchActionBase extends IntactSearchAction
         else
         {
             // paginated search, get the results from a existing query
-            Class<? extends Searchable> searchClass = getSearchableTypes()[0];
+            Class<? extends Searchable> searchClass = getSearchableTypes(form)[0];
 
             if (log.isDebugEnabled())
-                log.debug("Getting existing result count for class "+searchClass+ " in history, using query: "+getSearchableQuery());
+                log.debug("Getting existing result count for class "+searchClass+ " in history, using query: "+getSearchableQuery(form));
 
-            Integer count = webappContext.getResultCountFor(getSearchableQuery(), searchClass);
+            Integer count = webappContext.getResultCountFor(getSearchableQuery(form), searchClass);
 
             if (count != null)
             {
@@ -160,26 +149,26 @@ public abstract class SearchActionBase extends IntactSearchAction
             {
                 if (log.isDebugEnabled())
                 {
-                    log.debug("No results count found for class "+searchClass+ " using query: "+getSearchableQuery());
+                    log.debug("No results count found for class "+searchClass+ " using query: "+getSearchableQuery(form));
                 }
 
                 // count results again
-                countResults();
+                countResults(mapping, form);
             }
         }
 
         // if results are to be fetched, get the results and return the appropriate actionForward
-        return searchUsingQuery();
+        return searchUsingQuery(mapping, form);
     }
 
-    public abstract SearchableQuery createSearchableQuery();
+    public abstract SearchableQuery createSearchableQuery(ActionForm form);
 
-    public abstract Class<? extends Searchable>[] getSearchableTypes();
+    public abstract Class<? extends Searchable>[] getSearchableTypes(ActionForm form);
 
     /**
      * Search using a <code>SearchableQuery</code> and not the lucene index
      */
-    protected Map<Class<? extends Searchable>, Integer> countResults()
+    protected Map<Class<? extends Searchable>, Integer> countResults(ActionMapping mapping, ActionForm form)
     {
         log.debug("Checking number of results");
 
@@ -187,20 +176,22 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         // count the results
         Map<Class<? extends Searchable>, Integer> resultInfo =
-                webappContext.getResultCountsFromAppHistory(getSearchableQuery(), getSearchableTypes());
+                webappContext.getResultCountsFromAppHistory(getSearchableQuery(form), getSearchableTypes(form));
 
         if (resultInfo == null)
         {
             if (log.isDebugEnabled())
                 log.debug("No results found in the application scope, from previous searches. Counting from db.");
 
-            if (getSearchableTypes() != null)
+            SimpleSearchService searchService = new SimpleSearchService();
+
+            if (getSearchableTypes(form) != null)
             {
-                resultInfo = searchService.count(getSearchableTypes(), getSearchableQuery());
+                resultInfo = searchService.count(getSearchableTypes(form), getSearchableQuery(form));
             }
             else
             {
-                resultInfo = searchService.count(SearchService.STANDARD_SEARCHABLES, getSearchableQuery());
+                resultInfo = searchService.count(SearchService.STANDARD_SEARCHABLES, getSearchableQuery(form));
             }
         }
         else
@@ -215,7 +206,7 @@ public abstract class SearchActionBase extends IntactSearchAction
         return resultInfo;
     }
 
-    private ActionForward forwardIfNecessary ()
+    private ActionForward forwardIfNecessary (ActionMapping mapping)
     {
         SearchWebappContext webappContext = SearchWebappContext.getCurrentInstance();
 
@@ -263,9 +254,9 @@ public abstract class SearchActionBase extends IntactSearchAction
     /**
      * Search using a <code>SearchableQuery</code> and not the lucene index
      */
-    public ActionForward searchUsingQuery()
+    public ActionForward searchUsingQuery(ActionMapping mapping, ActionForm form)
     {
-        log.debug("Search using query: "+getSearchableQuery());
+        log.debug("Search using query: "+getSearchableQuery(form));
 
         Integer firstResult;
 
@@ -293,13 +284,15 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         List<? extends Searchable> results;
 
-        if (getSearchableTypes() != null)
+        SimpleSearchService searchService = new SimpleSearchService();
+
+        if (getSearchableTypes(form) != null)
         {
-            results = searchService.search(getSearchableTypes(), getSearchableQuery(), firstResult, maxResults);
+            results = searchService.search(getSearchableTypes(form), getSearchableQuery(form), firstResult, maxResults);
         }
         else
         {
-            results = searchService.search(SearchService.STANDARD_SEARCHABLES, getSearchableQuery(), firstResult, maxResults);
+            results = searchService.search(SearchService.STANDARD_SEARCHABLES, getSearchableQuery(form), firstResult, maxResults);
         }
 
         if (results.isEmpty())
@@ -328,14 +321,14 @@ public abstract class SearchActionBase extends IntactSearchAction
 
         //put both the results and also a list of the shortlabels for highlighting into the request
 
-        getIntactContext().getSession().setRequestAttribute(SearchConstants.SEARCH_RESULTS, results);
+        getIntactContext().getSession().setRequestAttribute(SearchConstants.SEARCH_RESULTS, aoResults);
         getIntactContext().getSession().setRequestAttribute(SearchConstants.HIGHLIGHT_LABELS_LIST, labelList);
 
         //set the original search criteria into the session for use by
         //the view action - needed because if the 'back' button is used from
         //single object views, the original search beans are lost
 
-        getIntactContext().getSession().setAttribute(SearchConstants.LAST_VALID_SEARCH, getSearchableQuery());
+        getIntactContext().getSession().setAttribute(SearchConstants.LAST_VALID_SEARCH, getSearchableQuery(form));
 
         return mapping.findForward(SearchConstants.FORWARD_DISPATCHER_ACTION);
     }
@@ -348,27 +341,7 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     public IntactContext getIntactContext()
     {
-        return intactContext;
-    }
-
-    public HttpServletRequest getRequest()
-    {
-        return request;
-    }
-
-    public HttpServletResponse getResponse()
-    {
-        return response;
-    }
-
-    public ActionForm getForm()
-    {
-        return form;
-    }
-
-    public ActionMapping getMapping()
-    {
-        return mapping;
+        return IntactContext.getCurrentInstance();
     }
 
     protected Integer getFirstResult()
@@ -396,12 +369,10 @@ public abstract class SearchActionBase extends IntactSearchAction
     }
 
 
-    public SearchableQuery getSearchableQuery()
+    public SearchableQuery getSearchableQuery(ActionForm form)
     {
-        SearchableQuery searchableQuery = null;
-
-         // create the query
-        searchableQuery = (SearchableQuery) getIntactContext().getSession().getRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY");
+        SearchWebappContext webappContext =  SearchWebappContext.getCurrentInstance();
+        SearchableQuery searchableQuery = webappContext.getCurrentSearchQuery();
 
         if (searchableQuery == null)
         {
@@ -409,15 +380,20 @@ public abstract class SearchActionBase extends IntactSearchAction
 
             // replace percents
 
-            searchableQuery = createSearchableQuery();
+            searchableQuery = createSearchableQuery(form);
 
-            SearchWebappContext.getCurrentInstance().setCurrentSearchQuery(searchableQuery);
+            webappContext.setCurrentSearchQuery(searchableQuery);
             //getIntactContext().getSession().setRequestAttribute("uk.ac.ebi.intact.search.internal.SEARCHABLE_QUERY", searchableQuery);
         }
         return searchableQuery;
     }
 
-    private ActionForward prepareBinaryView(String binaryValue)
+    protected HttpServletRequest getRequest()
+    {
+        return ((WebappSession)IntactContext.getCurrentInstance().getSession()).getRequest();
+    }
+
+    private ActionForward prepareBinaryView(String binaryValue, ActionMapping mapping)
     {
         StandardQueryPhraseConverter converter = new StandardQueryPhraseConverter();
         QueryPhrase phrase = converter.objectToPhrase(binaryValue);
@@ -440,7 +416,7 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     private boolean isGoingToParnerView()
     {
-        String view = request.getParameter("view");
+        String view = getRequest().getParameter("view");
 
         if (view != null)
         {
@@ -454,7 +430,7 @@ public abstract class SearchActionBase extends IntactSearchAction
 
     private boolean isGoingToExperimentInteractionsPage()
     {
-        String view = request.getParameter("view");
+        String view = getRequest().getParameter("view");
 
         if (view != null)
         {
@@ -465,5 +441,4 @@ public abstract class SearchActionBase extends IntactSearchAction
             return false;
         }
     }
-    
 }

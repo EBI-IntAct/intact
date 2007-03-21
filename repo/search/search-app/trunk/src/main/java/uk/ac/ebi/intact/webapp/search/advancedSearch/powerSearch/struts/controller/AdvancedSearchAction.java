@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.webapp.search.advancedSearch.powerSearch.struts.control
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.model.Searchable;
@@ -40,9 +41,9 @@ public class AdvancedSearchAction extends SearchActionBase
 
     private Class<? extends Searchable>[] searchableTypes;
 
-    public Class<? extends Searchable>[] getSearchableTypes()
+    public Class<? extends Searchable>[] getSearchableTypes(ActionForm form)
     {
-        DynaActionForm dyForm = (DynaActionForm) getForm();
+        DynaActionForm dyForm = (DynaActionForm) form;
         String searchClassString = (String) dyForm.get( "searchObject" );
 
         getIntactContext().getSession().setAttribute( SearchConstants.SEARCH_CLASS, searchClassString );
@@ -65,9 +66,9 @@ public class AdvancedSearchAction extends SearchActionBase
         }
     }
 
-    public SearchableQuery createSearchableQuery()
+    public SearchableQuery createSearchableQuery(ActionForm form)
     {
-        DynaActionForm dyForm = (DynaActionForm) getForm();
+        DynaActionForm dyForm = (DynaActionForm) form;
         String ac = (String) dyForm.get( "acNumber" );
         String shortlabel = (String) dyForm.get( "shortlabel" );
         String description = (String) dyForm.get( "description" );
