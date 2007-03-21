@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.webapp.search.struts.controller;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.DynaActionForm;
 import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
@@ -37,13 +38,13 @@ public class NewSearchAction extends SearchActionBase
 
     private static final Log log = LogFactory.getLog(NewSearchAction.class);
 
-    public SearchableQuery createSearchableQuery()
+    public SearchableQuery createSearchableQuery(ActionForm form)
     {
         String searchValue = getParameterFromUrl("searchString");
 
         if (searchValue == null)
         {
-            DynaActionForm dyForm = (DynaActionForm) getForm();
+            DynaActionForm dyForm = (DynaActionForm) form;
             searchValue = (String) dyForm.get( "searchString" );
 
             if (log.isDebugEnabled()) log.debug("Getting 'searchString' from form: "+searchValue);
@@ -82,9 +83,9 @@ public class NewSearchAction extends SearchActionBase
     }
 
     @SuppressWarnings("unchecked")
-    public Class<? extends Searchable>[] getSearchableTypes()
+    public Class<? extends Searchable>[] getSearchableTypes(ActionForm form)
     {
-        DynaActionForm dyForm = (DynaActionForm) getForm();
+        DynaActionForm dyForm = (DynaActionForm) form;
 
         String searchClassName = (String)dyForm.get("searchClass");
 

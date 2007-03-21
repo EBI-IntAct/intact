@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,17 +69,29 @@ public class SearchWebappContext
 
     public static SearchWebappContext getCurrentInstance(IntactContext context)
     {
-        SearchWebappContext swc = currentInstance.get();
+        SearchWebappContext swc = new SearchWebappContext();
+        /*SearchWebappContext swc = currentInstance.get();
 
         if (swc == null)
         {
+            if (log.isDebugEnabled())
+            {
+                log.debug("Creating new instance of SearchWebappContext, with session id: "+((WebappSession)context.getSession()).getSession().getId());
+            }
             swc = new SearchWebappContext();
             currentInstance.set(swc);
         }
+        else
+        {
+            if (log.isDebugEnabled())
+            {
+                log.debug("Using SearchWebappContext, with session id: "+((WebappSession)context.getSession()).getSession().getId());
+            }
+        }  */
 
         swc.setSession(context.getSession());
 
-        return swc;
+        return swc;    
     }
 
     private static ThreadLocal<SearchWebappContext> currentInstance = new ThreadLocal<SearchWebappContext>()
@@ -102,7 +115,13 @@ public class SearchWebappContext
 
     public SearchableQuery getCurrentSearchQuery()
     {
-        return (SearchableQuery) session.getRequestAttribute(SEARCHABLE_QUERY_ATT_NAME);
+        SearchableQuery sq = (SearchableQuery) session.getRequestAttribute(SEARCHABLE_QUERY_ATT_NAME);
+
+        HttpSession s = ((WebappSession)session).getSession();
+
+        log.debug("Getting current search query: ("+sq+") from Session "+s.getId());
+
+        return sq;
     }
 
     public void setCurrentSearchQuery(SearchableQuery query)

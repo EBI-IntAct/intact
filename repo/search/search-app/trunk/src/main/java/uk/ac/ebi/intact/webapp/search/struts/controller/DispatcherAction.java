@@ -11,10 +11,9 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.DynaActionForm;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.SearchClass;
-import uk.ac.ebi.intact.webapp.search.business.IntactUserIF;
 import uk.ac.ebi.intact.webapp.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
@@ -58,10 +57,9 @@ public class DispatcherAction extends IntactBaseAction {
 
         logger.debug( "Enter Dispatcher action" );
 
-        logger.debug( "dispatcher action: analysing user's query..." );
-
-        //not an exisiting page request, so get the search results from the request
-        final Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) request.getAttribute( SearchConstants.SEARCH_RESULTS );
+        //get the search results from the request
+        IntactContext context = IntactContext.getCurrentInstance();
+        final Collection<? extends AnnotatedObject> results = (Collection<? extends AnnotatedObject>) context.getSession().getRequestAttribute( SearchConstants.SEARCH_RESULTS );
 
         final String binaryValue = request.getParameter("binary");
         final String viewSource = request.getParameter("view");
@@ -69,6 +67,7 @@ public class DispatcherAction extends IntactBaseAction {
         logger.debug( "Binary Value " + binaryValue );
         logger.debug( "View Value " + viewSource );
 
+        logger.debug("SESSION id: "+request.getSession().getId());
 
         Object resultItem = results.iterator().next();
         logger.debug( "First item className: " + resultItem.getClass().getName() );
