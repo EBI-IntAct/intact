@@ -36,7 +36,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-9-SNAPSHOT</version>
+            <version>1.5.0-rc2-SNAPSHOT</version>
         </dependency>
 
          <!-- server -->
@@ -54,31 +54,20 @@
         </dependency>
     </dependencies>
 
-    <!-- EBI repository -->
-    <pluginRepositories>
-        <pluginRepository>
+     <!-- EBI repositories -->
+    <repositories>
+       <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
             <releases>
                 <enabled>true</enabled>
             </releases>
-        </pluginRepository>
-        <pluginRepository>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+        </repository>
+    </repositories>
 
     <distributionManagement>
         <site>
@@ -87,5 +76,6 @@
             <url>${site.remote.basedir}/${artifactId}</url>
         </site>
     </distributionManagement>
+
 
 </project>
