@@ -22,7 +22,7 @@ import java.util.List;
  * other cases.
  *
  * @author Michael Kleen
- * @version $Id$
+ * @version $Id:SimpleResultAction.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class SimpleResultAction extends AbstractResultAction {
 
@@ -65,6 +65,7 @@ public class SimpleResultAction extends AbstractResultAction {
         List<SimpleViewBean> interactionList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> proteinList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> nucleicAcidList = new ArrayList<SimpleViewBean>(results.size());
+        List<SimpleViewBean> smallMoleculeList = new ArrayList<SimpleViewBean>(results.size());
         List<SimpleViewBean> cvObjectList = new ArrayList<SimpleViewBean>(results.size());
 
         List<List<SimpleViewBean>> partitionList = new ArrayList<List<SimpleViewBean>>(results.size());   //this will hold the seperate lists as items
@@ -90,6 +91,10 @@ public class SimpleResultAction extends AbstractResultAction {
             {
                 nucleicAcidList.add(new SimpleViewBean(obj));
             }
+            else if (searchClass == SearchClass.SMALL_MOLECULE)
+            {
+                smallMoleculeList.add(new SimpleViewBean(obj));
+            }
             else if (searchClass.isCvObjectSubclass())
             {
                 cvObjectList.add(new SimpleViewBean(obj));
@@ -109,6 +114,9 @@ public class SimpleResultAction extends AbstractResultAction {
         }
         if (!nucleicAcidList.isEmpty()) {
             partitionList.add(nucleicAcidList);
+        }
+        if (!smallMoleculeList.isEmpty()) {
+            partitionList.add(smallMoleculeList);
         }
         if (!cvObjectList.isEmpty()) {
             partitionList.add(cvObjectList);

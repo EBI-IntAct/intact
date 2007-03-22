@@ -4,8 +4,8 @@ import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 
-import java.net.URLEncoder;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @author Michael Kleen
@@ -89,6 +89,9 @@ public class SingleResultViewBean {
         }
         if ( intactType.equalsIgnoreCase( SearchClass.NUCLEIC_ACID.getShortName() ) ) {
             return "Select by Nucleic Acid";
+        }
+        if ( intactType.equalsIgnoreCase( SearchClass.SMALL_MOLECULE.getShortName() ) ) {
+            return "Select by Small Molecule";
         }
         if ( intactType.equalsIgnoreCase( SearchClass.INTERACTION.getShortName() ) ) {
             return "Select by Interaction";

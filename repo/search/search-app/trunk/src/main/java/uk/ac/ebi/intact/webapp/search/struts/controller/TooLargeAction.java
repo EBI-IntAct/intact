@@ -5,14 +5,13 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import uk.ac.ebi.intact.model.SmallMoleculeImpl;
 import uk.ac.ebi.intact.model.Searchable;
 import uk.ac.ebi.intact.searchengine.SearchClass;
+import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.framework.IntactBaseAction;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
 import uk.ac.ebi.intact.webapp.search.struts.view.beans.SingleResultViewBean;
 import uk.ac.ebi.intact.webapp.search.struts.view.beans.TooLargeViewBean;
-import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +63,7 @@ public class TooLargeAction extends IntactBaseAction {
         int nucleicAcidCount = 0;
         int experimentCount = 0;
         int interactionCount = 0;
+        int smallMoleculeCount = 0;
 
         // count for any type of searchable objects in the resultset to generate the statistic
         // this is done by creating from the classname a class and check then for classtype
@@ -94,13 +94,6 @@ public class TooLargeAction extends IntactBaseAction {
 
             logger.debug("tooLarge action: searching for class " + className);
 
-            if (className.equals(SmallMoleculeImpl.class.getName()))
-            {
-                // TODO remove this check when the new type is implemented
-                logger.warn("Found SmallMolecule/s. This is not implemented yet, so ignoring it");
-                continue;
-            }
-
             SearchClass searchClass = SearchClass.valueOfMappedClass(clazz);
 
             if (searchClass == SearchClass.PROTEIN)
@@ -118,6 +111,10 @@ public class TooLargeAction extends IntactBaseAction {
             else if (searchClass == SearchClass.INTERACTION)
             {
                 interactionCount += resultInfo.get(objClass);
+            }
+            else if (searchClass == SearchClass.SMALL_MOLECULE)
+            {
+                smallMoleculeCount += resultInfo.get(objClass);
             }
             else if (searchClass.isCvObjectSubclass())
             {
@@ -156,6 +153,11 @@ public class TooLargeAction extends IntactBaseAction {
         if ( nucleicAcidCount > 0 ) {
             tooLargeViewBean.add( new SingleResultViewBean( SearchClass.NUCLEIC_ACID.getShortName(),
                                                             nucleicAcidCount, query ) );
+        }
+
+        if ( smallMoleculeCount > 0 ) {
+            tooLargeViewBean.add( new SingleResultViewBean( SearchClass.SMALL_MOLECULE.getShortName(),
+                                                            smallMoleculeCount, query ) );
         }
 
         if ( cvCount > 0 ) {
