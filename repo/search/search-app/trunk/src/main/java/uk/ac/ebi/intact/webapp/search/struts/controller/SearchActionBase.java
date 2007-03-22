@@ -57,7 +57,7 @@ public abstract class SearchActionBase extends IntactSearchAction
                             InteractionImpl.class,
                             ProteinImpl.class,
                             NucleicAcidImpl.class,
-                            SmallMolecule.class,
+                            SmallMoleculeImpl.class,
                             CvObject.class };
 
      @Override

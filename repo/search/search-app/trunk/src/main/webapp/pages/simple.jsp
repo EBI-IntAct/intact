@@ -202,7 +202,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             </td>
 
               <%
-                if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
+                if(firstItemSearchClass == SearchClass.PROTEIN ||
+                   firstItemSearchClass == SearchClass.NUCLEIC_ACID ||
+                   firstItemSearchClass == SearchClass.SMALL_MOLECULE) {
             %>
             <td class="headerdarkmid">Gene-Name</td>
             <% } %>
@@ -229,7 +231,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             <td nowrap="nowrap" class="headerdarkmid">Experiment</td>
             <td nowrap="nowrap" class="headerdarkmid">Proteins</td>
             <%
-                } else if (firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) {
+                } else if (firstItemSearchClass == SearchClass.PROTEIN ||
+                           firstItemSearchClass == SearchClass.NUCLEIC_ACID ||
+                           firstItemSearchClass == SearchClass.SMALL_MOLECULE) {
             %>
              <td nowrap="nowrap" class="headerdarkmid">Interactions
             </td>
@@ -284,9 +288,10 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
                 }
             %>
 
-
           <%
-          if(firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID) { %>
+          if(firstItemSearchClass == SearchClass.PROTEIN ||
+             firstItemSearchClass == SearchClass.NUCLEIC_ACID ||
+             firstItemSearchClass == SearchClass.SMALL_MOLECULE)  { %>
 
                <%-- name (ie Intact shortlabel), and linked to a suitable view -
                 need to set a value in the request to identify this JSP, so that the struts
@@ -391,7 +396,9 @@ NB DON'T want buttons for CvObjects...(so put this one inside the loop...)
             %>
 
              <%
-                 if (firstItemSearchClass == SearchClass.PROTEIN || firstItemSearchClass == SearchClass.NUCLEIC_ACID)
+                 if (firstItemSearchClass == SearchClass.PROTEIN ||
+                     firstItemSearchClass == SearchClass.NUCLEIC_ACID ||
+                     firstItemSearchClass == SearchClass.SMALL_MOLECULE)
                  {
 
              %>

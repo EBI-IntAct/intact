@@ -9,9 +9,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.NucleicAcid;
 import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.SmallMolecule;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.searchengine.SearchClass;
 import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.webapp.search.SearchWebappContext;
 import uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants;
@@ -200,31 +203,34 @@ public class PartnersView extends AbstractView
 
 
     private String getInteractorSearchURL(Interactor interactor) {
-        String searchUrl = SearchWebappContext.getCurrentInstance().getSearchUrl();
-
-        if( interactor instanceof Protein ) {
-            return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass=Protein&amp;view=single" +
-                   "&filter=ac";
-        }else
-            return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass=NucleicAcid&amp;view=single" +
-                   "&filter=ac";
-
+        return getInteractorURL(interactor, "single");
     }
 
     private String getInteractorPartnerURL(Interactor interactor) {
+        return getInteractorURL(interactor, "partner");
+    }
+
+    private String getInteractorURL(Interactor interactor, String view)
+    {
         String searchUrl = SearchWebappContext.getCurrentInstance().getSearchUrl();
 
         if (interactor instanceof Protein)
         {
-            return getSimpleSearchURL(searchUrl,interactor) + "&amp;searchClass=Protein&amp;view=partner" +
+            return getSimpleSearchURL(searchUrl,interactor) + "&amp;searchClass="+ SearchClass.PROTEIN.getShortName() +"&amp;view=" + view +
                     "&filter=ac";
         }
-        else
+        else if (interactor instanceof NucleicAcid)
         {
-            return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass=NucleicAcid&amp;view=partner" +
+            return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass="+ SearchClass.NUCLEIC_ACID.getShortName() +"&amp;view=" + view +
+                    "&filter=ac";
+        }
+        else if (interactor instanceof SmallMolecule)
+        {
+            return getSimpleSearchURL(searchUrl,interactor) + "&amp;searchClass="+ SearchClass.SMALL_MOLECULE.getShortName() +"&amp;view=" + view +
                     "&filter=ac";
         }
 
+        return "";
     }
 
     /**
