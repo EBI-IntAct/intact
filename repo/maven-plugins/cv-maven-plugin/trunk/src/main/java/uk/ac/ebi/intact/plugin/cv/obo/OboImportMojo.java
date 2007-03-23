@@ -30,6 +30,7 @@ import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVs;
 import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVsReport;
+import uk.ac.ebi.intact.dbutil.cv.UpdateCVsConfig;
 import uk.ac.ebi.intact.dbutil.cv.model.CvTerm;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -119,6 +120,12 @@ public class OboImportMojo
     private File additionalAnnotationsCsvFile;
 
     /**
+     * If true, don't obsolete the cv term "obsolete"
+     * @parameter expression="${intact.ignoreObsoletionOfObsolete}"
+     */
+    private boolean ignoreObsoletionOfObsolete;
+
+    /**
      * Main execution method, which is called after hibernate has been initialized
      */
     public void executeIntactMojo()
@@ -130,14 +137,18 @@ public class OboImportMojo
         }
 
         getLog().info("Importing CVs from OBO: "+importedOboFile);
-
         UpdateCVsReport report = null;
+
+        getLog().info("Ignore Obsoletion of the Obsolete CV: "+ignoreObsoletionOfObsolete);
+
+        UpdateCVsConfig config = new UpdateCVsConfig();
+        config.setIgnoreObsoletionOfObsolete(ignoreObsoletionOfObsolete);
 
         PrintStream output = getOutputPrintStream();
 
         try
         {
-            report = UpdateCVs.load(importedOboFile, output);
+            report = UpdateCVs.load(importedOboFile, output, config);
         }
         catch (PsiLoaderException e)
         {
@@ -487,5 +498,21 @@ public class OboImportMojo
     public void setAdditionalCreatedFile(File additionalCreatedFile)
     {
         this.additionalCreatedFile = additionalCreatedFile;
+    }
+
+    public File getAdditionalAnnotationsCsvFile() {
+        return additionalAnnotationsCsvFile;
+    }
+
+    public void setAdditionalAnnotationsCsvFile(File additionalAnnotationsCsvFile) {
+        this.additionalAnnotationsCsvFile = additionalAnnotationsCsvFile;
+    }
+
+    public boolean isIgnoreObsoletionOfObsolete() {
+        return ignoreObsoletionOfObsolete;
+    }
+
+    public void setIgnoreObsoletionOfObsolete(boolean ignoreObsoletionOfObsolete) {
+        this.ignoreObsoletionOfObsolete = ignoreObsoletionOfObsolete;
     }
 }
