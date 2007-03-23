@@ -1,5 +1,5 @@
 --
--- Splits the IA_ALIAS table into multiple tables
+-- Splits the IA_XREF table into multiple tables
 --
 create or replace PROCEDURE proc_split_xref AS 
 
@@ -51,37 +51,44 @@ BEGIN
 
       IF(v_count <> 0) THEN
 
-        -- copy Xref into the right table
-        INSERT INTO ia_interactor_xref (
-            AC,
-            DEPRECATED,
-            CREATED,
-            UPDATED,
-            USERSTAMP,
-            QUALIFIER_AC,
-            DATABASE_AC,
-            PARENT_AC,
-            OWNER_AC,
-            PRIMARYID,
-            SECONDARYID,
-            DBRELEASE,
-            CREATED_USER
-        )
-        VALUES (
-            v_xref_rec.AC,
-            v_xref_rec.DEPRECATED,
-            v_xref_rec.CREATED,
-            v_xref_rec.UPDATED,
-            v_xref_rec.USERSTAMP,
-            v_xref_rec.QUALIFIER_AC,
-            v_xref_rec.DATABASE_AC,
-            v_xref_rec.PARENT_AC,
-            v_xref_rec.OWNER_AC,
-            v_xref_rec.PRIMARYID,
-            v_xref_rec.SECONDARYID,
-            v_xref_rec.DBRELEASE,
-            v_xref_rec.CREATED_USER
-        );
+        SELECT COUNT(1)
+        INTO v_count
+        FROM ia_interactor_xref
+        WHERE ac = v_xref_rec.AC;
+
+        IF(v_count = 0) THEN
+          -- copy Xref into the right table if it is not there yet
+          INSERT INTO ia_interactor_xref (
+              AC,
+              DEPRECATED,
+              CREATED,
+              UPDATED,
+              USERSTAMP,
+              QUALIFIER_AC,
+              DATABASE_AC,
+              PARENT_AC,
+              OWNER_AC,
+              PRIMARYID,
+              SECONDARYID,
+              DBRELEASE,
+              CREATED_USER
+          )
+          VALUES (
+              v_xref_rec.AC,
+              v_xref_rec.DEPRECATED,
+              v_xref_rec.CREATED,
+              v_xref_rec.UPDATED,
+              v_xref_rec.USERSTAMP,
+              v_xref_rec.QUALIFIER_AC,
+              v_xref_rec.DATABASE_AC,
+              v_xref_rec.PARENT_AC,
+              v_xref_rec.OWNER_AC,
+              v_xref_rec.PRIMARYID,
+              v_xref_rec.SECONDARYID,
+              v_xref_rec.DBRELEASE,
+              v_xref_rec.CREATED_USER
+          );
+        END IF;
 
       ELSE
 
@@ -95,38 +102,46 @@ BEGIN
 
         IF(v_count <> 0) THEN
 
-            -- copy Xref into the right table
-            INSERT INTO ia_experiment_xref (
-                AC,
-                DEPRECATED,
-                CREATED,
-                UPDATED,
-                USERSTAMP,
-                QUALIFIER_AC,
-                DATABASE_AC,
-                PARENT_AC,
-                OWNER_AC,
-                PRIMARYID,
-                SECONDARYID,
-                DBRELEASE,
-                CREATED_USER
-            )
-            VALUES (
-                v_xref_rec.AC,
-                v_xref_rec.DEPRECATED,
-                v_xref_rec.CREATED,
-                v_xref_rec.UPDATED,
-                v_xref_rec.USERSTAMP,
-                v_xref_rec.QUALIFIER_AC,
-                v_xref_rec.DATABASE_AC,
-                v_xref_rec.PARENT_AC,
-                v_xref_rec.OWNER_AC,
-                v_xref_rec.PRIMARYID,
-                v_xref_rec.SECONDARYID,
-                v_xref_rec.DBRELEASE,
-                v_xref_rec.CREATED_USER
-            );
+          SELECT COUNT(1)
+          INTO v_count
+          FROM ia_experiment_xref
+          WHERE ac = v_xref_rec.AC;
+  
+          IF(v_count = 0) THEN
 
+              -- copy Xref into the right table
+              INSERT INTO ia_experiment_xref (
+                  AC,
+                  DEPRECATED,
+                  CREATED,
+                  UPDATED,
+                  USERSTAMP,
+                  QUALIFIER_AC,
+                  DATABASE_AC,
+                  PARENT_AC,
+                  OWNER_AC,
+                  PRIMARYID,
+                  SECONDARYID,
+                  DBRELEASE,
+                  CREATED_USER
+              )
+              VALUES (
+                  v_xref_rec.AC,
+                  v_xref_rec.DEPRECATED,
+                  v_xref_rec.CREATED,
+                  v_xref_rec.UPDATED,
+                  v_xref_rec.USERSTAMP,
+                  v_xref_rec.QUALIFIER_AC,
+                  v_xref_rec.DATABASE_AC,
+                  v_xref_rec.PARENT_AC,
+                  v_xref_rec.OWNER_AC,
+                  v_xref_rec.PRIMARYID,
+                  v_xref_rec.SECONDARYID,
+                  v_xref_rec.DBRELEASE,
+                  v_xref_rec.CREATED_USER
+              );
+            END IF;
+            
         ELSE
 
           --
@@ -138,6 +153,13 @@ BEGIN
           WHERE ac = v_xref_rec.PARENT_AC;
 
           IF(v_count <> 0) THEN
+          
+            SELECT COUNT(1)
+            INTO v_count
+            FROM ia_controlledvocab_xref
+            WHERE ac = v_xref_rec.AC;
+    
+            IF(v_count = 0) THEN
 
               -- copy Xref into the right table
               INSERT INTO ia_controlledvocab_xref (
@@ -170,6 +192,7 @@ BEGIN
                   v_xref_rec.DBRELEASE,
                   v_xref_rec.CREATED_USER
               );
+            END IF;
 
           ELSE
 
@@ -182,6 +205,13 @@ BEGIN
             WHERE ac = v_xref_rec.PARENT_AC;
 
             IF(v_count <> 0) THEN
+
+              SELECT COUNT(1)
+              INTO v_count
+              FROM ia_biosource_xref
+              WHERE ac = v_xref_rec.AC;
+      
+              IF(v_count = 0) THEN
 
                 -- copy Xref into the right table
                 INSERT INTO ia_biosource_xref (
@@ -214,6 +244,7 @@ BEGIN
                     v_xref_rec.DBRELEASE,
                     v_xref_rec.CREATED_USER
                 );
+              END IF;
 
             ELSE
 
@@ -227,6 +258,13 @@ BEGIN
 
               IF(v_count <> 0) THEN
 
+                SELECT COUNT(1)
+                INTO v_count
+                FROM ia_feature_xref
+                WHERE ac = v_xref_rec.AC;
+        
+                IF(v_count = 0) THEN
+            
                   -- copy Xref into the right table
                   INSERT INTO ia_feature_xref (
                       AC,
@@ -258,6 +296,7 @@ BEGIN
                       v_xref_rec.DBRELEASE,
                       v_xref_rec.CREATED_USER
                   );
+                END IF;
 
               ELSE
 
@@ -270,6 +309,13 @@ BEGIN
                 WHERE ac = v_xref_rec.PARENT_AC;
 
                 IF(v_count <> 0) THEN
+
+                  SELECT COUNT(1)
+                  INTO v_count
+                  FROM ia_publication_xref
+                  WHERE ac = v_xref_rec.AC;
+          
+                  IF(v_count = 0) THEN
 
                     -- copy Xref into the right table
                     INSERT INTO ia_publication_xref (
@@ -302,6 +348,7 @@ BEGIN
                         v_xref_rec.DBRELEASE,
                         v_xref_rec.CREATED_USER
                     );
+                  END IF;
 
                 ELSE
 
@@ -315,6 +362,13 @@ BEGIN
   
                   IF(v_count <> 0) THEN
   
+                    SELECT COUNT(1)
+                    INTO v_count
+                    FROM ia_component_xref
+                    WHERE ac = v_xref_rec.AC;
+            
+                    IF(v_count = 0) THEN
+                  
                       -- copy Xref into the right table
                       INSERT INTO ia_component_xref (
                           AC,
@@ -346,15 +400,14 @@ BEGIN
                           v_xref_rec.DBRELEASE,
                           v_xref_rec.CREATED_USER
                       );
+                    END IF;  
   
                   ELSE
     
                     --
                     -- Nothing found, delete this orphan xref
                     --
-  
-                    DBMS_OUTPUT.PUT_LINE('Deleting orphan Xref...');
-                    DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_xref WHERE ac = ' || v_xref_rec.ac || ''';');
+                    DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_xref WHERE ac = ' || v_xref_rec.ac || '''; -- orphan xref');
 
                   END IF;  -- components
                 END IF;  -- publications
@@ -370,6 +423,4 @@ CLOSE xref_cur;
 
 END;
 /
-
-show error
 
