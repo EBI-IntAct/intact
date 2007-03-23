@@ -133,6 +133,11 @@ PROMPT "Creating IA_UNASSIGNED sequence."
 PROMPT
 @190_create_unassigned_sequence.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Adding missing indexes to the database."
+PROMPT
+@200_add_missing_indexes.sql
+
 
 UPDATE ia_db_info
 set value = '1.3.0'
