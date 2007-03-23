@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.mocks.CvAliasType.GeneNameMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.UniprotMock;
 import uk.ac.ebi.intact.mocks.cvInteractorTypes.ProteinInteractorTypeMock;
+import uk.ac.ebi.intact.util.Crc64;
 
 /**
  * TODO comment this
@@ -47,6 +48,7 @@ public class Q9QXS6Mock {
 
         protein.setSequence(SEQUENCE);
         protein.setFullName(FULLNAME);
+        protein.setCrc64(Crc64.getCrc64(SEQUENCE));
 
         InteractorXref xref = XrefMock.getMock(InteractorXref.class, UniprotMock.getMock(), IdentityMock.getMock(), IDENTITY_XREF_ID);
         protein.addXref(xref);
