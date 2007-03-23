@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -17,19 +18,32 @@
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/trunk</developerConnection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-dbutils/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-dbutils/trunk/</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>dbtest-maven-plugin</artifactId>
-                <version>1.1.2</version>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <!-- This profile is used when running the tests. If
+        maven.test.skip property is true, don't import the H2 test db -->
+        <profile>
+            <id>test</id>
+            <activation>
+                <property>
+                    <name>!maven.test.skip</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>uk.ac.ebi.intact.plugins</groupId>
+                        <artifactId>dbtest-maven-plugin</artifactId>
+                        <version>1.1.2</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>
@@ -74,8 +88,8 @@
     </dependencies>
 
     <repositories>
-       <!-- EBI Repository -->
-       <repository>
+        <!-- EBI Repository -->
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>

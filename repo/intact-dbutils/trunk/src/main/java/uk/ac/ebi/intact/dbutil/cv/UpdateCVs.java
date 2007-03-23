@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.dbutil.cv.model.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
 
 import java.io.*;
@@ -30,7 +31,6 @@ import java.util.*;
  */
 public class UpdateCVs {
 
-
     // TODO Check the highest IntAct ID in the CV file and synchronize the sequence.
     //      eg, create a new sequence: id = 51
     //      load a file which has already IA:250
@@ -40,22 +40,22 @@ public class UpdateCVs {
     /////////////////////////////////
     // Update of the IntAct Data
 
-    public static long searchLastIntactId( IntactOntology ontology ) {
+    public static long searchLastIntactId(IntactOntology ontology) {
 
         long max = 0;
 
         Collection cvTerms = ontology.getCvTerms();
-        for ( Iterator iterator = cvTerms.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvTerms.iterator(); iterator.hasNext();) {
             CvTerm cvTerm = (CvTerm) iterator.next();
 
             final String prefix = "IA:";
 
             String id = cvTerm.getId();
-            if ( id.startsWith( prefix ) ) {
+            if (id.startsWith(prefix)) {
                 // found an intact id
-                String value = id.substring( prefix.length(), id.length() );
+                String value = id.substring(prefix.length(), id.length());
 
-                max = Math.max( max, Long.parseLong( value ) );
+                max = Math.max(max, Long.parseLong(value));
             }
         }
 
@@ -70,25 +70,31 @@ public class UpdateCVs {
      *
      * @throws IntactException upon data access error
      */
-    public static void update( IntactOntology ontology, PrintStream output, UpdateCVsReport report ) throws IntactException {
+    public static void update(IntactOntology ontology,
+                              PrintStream output,
+                              UpdateCVsReport report,
+                              UpdateCVsConfig config
+    ) throws IntactException {
+
+        output.println("Config: " + config);
 
         // try to update class by class
         Collection allTypes = ontology.getTypes();
-        for ( Iterator iterator = allTypes.iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = allTypes.iterator(); iterator.hasNext();) {
             Class aClass = (Class) iterator.next();
 
             // single class update
-            update( ontology, aClass, output, report );
+            update(ontology, aClass, output, report, config);
 
             // commit tx after updating each class
             //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
     }
 
-    private static String getShortClassName( Class clazz ) {
+    private static String getShortClassName(Class clazz) {
 
-        return clazz.getName().substring( clazz.getName().lastIndexOf( '.' ) + 1,
-                                          clazz.getName().length() );
+        return clazz.getName().substring(clazz.getName().lastIndexOf('.') + 1,
+                                         clazz.getName().length());
     }
 
     /**
@@ -101,9 +107,14 @@ public class UpdateCVs {
      *
      * @throws IntactException
      */
-    public static void update( IntactOntology ontology, Class cvObjectClass, PrintStream output, UpdateCVsReport report) throws IntactException {
+    public static void update(IntactOntology ontology,
+                              Class cvObjectClass,
+                              PrintStream output,
+                              UpdateCVsReport report,
+                              UpdateCVsConfig config
+    ) throws IntactException {
 
-        output.println( "Updating " + cvObjectClass.getName() );
+        output.println("Updating " + cvObjectClass.getName());
 
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
@@ -122,259 +133,238 @@ public class UpdateCVs {
          * for each
          *     check children and apply hierarchy to IntAct
          */
-            Collection<CvObject> intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
+        Collection<CvObject> intactTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getAll();
 
-            output.println( "\t " + intactTerms.size() + " term(s) found in IntAct." );
+        output.println("\t " + intactTerms.size() + " term(s) found in IntAct.");
 
-            ///////////////////////////////////////////////////////
-            // 1. Indexing of the IntAct terms by MI number
+        ///////////////////////////////////////////////////////
+        // 1. Indexing of the IntAct terms by MI number
 
         output.println("\nIndexing of the IntAct terms by MI number");
 
-            List<Mi2Cv> intactIndex = new ArrayList<Mi2Cv>( intactTerms.size() );
-            for ( CvObject cvObject : intactTerms ) {
-                String psi = getPsiId( cvObject );
+        List<Mi2Cv> intactIndex = new ArrayList<Mi2Cv>(intactTerms.size());
+        for (CvObject cvObject : intactTerms) {
+            String psi = getPsiId(cvObject);
 
-                // Bear in mind that only CV that already exists are indexed here, newly created ones will be indexed later.
-                if ( psi != null ) {
-                    intactIndex.add( new Mi2Cv(psi, cvObject));
-                    output.println("\tIndexed: "+psi+"\t"+cvObject.getShortLabel());
-                } else {
-                    output.println( "\tWARN: Could not index ( '" + cvObject.getShortLabel() + "' doesn't have an MI ID)." );
+            // Bear in mind that only CV that already exists are indexed here, newly created ones will be indexed later.
+            if (psi != null) {
+                intactIndex.add(new Mi2Cv(psi, cvObject));
+                output.println("\tIndexed: " + psi + "\t" + cvObject.getShortLabel());
+            } else {
+                output.println("\tWARN: Could not index ( '" + cvObject.getShortLabel() + "' doesn't have an MI ID).");
 
-                    // search for an IntAct id
-                    String ia = getIntactId( cvObject );
+                // search for an IntAct id
+                String ia = getIntactId(cvObject);
 
-                    if ( ia == null ) {
+                if (ia == null) {
 
-                        // TODO doing the IA:xxxx update here may cause a problem if the file we are loading
-                        //      contains some IA:xxxx, they may clash.
-                        //      It would be better to update all terms after the file has been loaded.
+                    // TODO doing the IA:xxxx update here may cause a problem if the file we are loading
+                    //      contains some IA:xxxx, they may clash.
+                    //      It would be better to update all terms after the file has been loaded.
 
-                        // add an IA:xxxx
-                        output.println( "\tWARN: Could not find an IntAct id (IA:xxxx), add a new one." );
-                        try {
-                            ia = SequenceManager.getNextId( );
+                    // add an IA:xxxx
+                    output.println("\tWARN: Could not find an IntAct id (IA:xxxx), add a new one.");
+                    try {
+                        ia = SequenceManager.getNextId();
 
-                            CvObjectXref xref = new CvObjectXref( institution, intact, ia, null, null, identity );
-                            cvObject.addXref( xref );
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-                            output.println( "\tAdded: " + xref + " to " );
-                            output.println( "\t\t Created Xref( " + intact.getShortLabel() + ", " +
-                                                identity.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvObject.getShortLabel() + ")" );
+                        CvObjectXref xref = new CvObjectXref(institution, intact, ia, null, null, identity);
+                        cvObject.addXref(xref);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist(xref);
+                        output.println("\tAdded: " + xref + " to ");
+                        output.println("\t\t Created Xref( " + intact.getShortLabel() + ", " +
+                                       identity.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvObject.getShortLabel() + ")");
 
-                        } catch ( Exception e ) {
-                            output.println( "ERROR: An error occured while add the IntAct id, see exception below:" );
-                            e.printStackTrace(output);
-                        } // catch
-                    } // no IA:xxxx found
-                } // no PSI id found
-            } // for
+                    } catch (Exception e) {
+                        output.println("ERROR: An error occured while add the IntAct id, see exception below:");
+                        e.printStackTrace(output);
+                    } // catch
+                } // no IA:xxxx found
+            } // no PSI id found
+        } // for
 
-            ////////////////////////////////////////
-            // 2. update of the terms' content
+        ////////////////////////////////////////
+        // 2. update of the terms' content
         output.println("\nupdate of the terms' content");
 
-            Collection oboTerms = ontology.getCvTerms( cvObjectClass );
-            oboTerms.addAll(ontology.getObsoleteTerms());
-        
-            output.println( "\t " + oboTerms.size() + " term(s) for "+cvObjectClass+" loaded from definition file." );
-            for ( Iterator iterator = oboTerms.iterator(); iterator.hasNext(); ) {
-                CvTerm cvTerm = (CvTerm) iterator.next();
+        Collection oboTerms = ontology.getCvTerms(cvObjectClass);
+        oboTerms.addAll(ontology.getObsoleteTerms());
 
-                CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId() );
+        output.println("\t " + oboTerms.size() + " term(s) for " + cvObjectClass + " loaded from definition file.");
+        for (Iterator iterator = oboTerms.iterator(); iterator.hasNext();) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
 
-                // if a cvterm is obsolete and its not present in the DB, ignore it
-                if (cvObject == null && cvTerm.isObsolete())
-                {
-                    continue;
+            CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId());
+
+            // if a cvterm is obsolete and its not present in the DB, ignore it
+            if (cvObject == null && cvTerm.isObsolete()) {
+                continue;
+            }
+
+            output.println("----------------------------------------------------------------------------------");
+            if (cvObject == null) {
+
+                CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
+
+                String shortLabelName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
+
+                if (!shortLabelName.equals(cvTerm.getShortName())) {
+                    output.println("WARN: Cv Term name trimmed: " + cvTerm.getShortName() + " - to " + shortLabelName);
                 }
 
-                    output.println("----------------------------------------------------------------------------------");
-                    if (cvObject == null)
-                    {
+                // search by shortlabel
+                cvObject = IntactContext.getCurrentInstance().getCvContext()
+                        .getByLabel(cvObjectClass, shortLabelName);
 
-                        CvObjectDao<CvObject> cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class);
+                if (cvObject == null) {
+                    // could not find it, hence create it.
+                    try {
+                        // create a new object using reflection
+                        Constructor constructor =
+                                cvObjectClass.getConstructor(new Class[]{Institution.class, String.class});
 
-                        String shortLabelName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
-
-                        if (!shortLabelName.equals(cvTerm.getShortName()))
-                        {
-                            output.println("WARN: Cv Term name trimmed: " + cvTerm.getShortName() + " - to " + shortLabelName);
-                        }
-
-                        // search by shortlabel
-                        cvObject = IntactContext.getCurrentInstance().getCvContext()
-                                    .getByLabel(cvObjectClass, shortLabelName);
-
-                        if (cvObject == null)
-                        {
-                            // could not find it, hence create it.
-                            try
-                            {
-                                // create a new object using reflection
-                                Constructor constructor =
-                                        cvObjectClass.getConstructor(new Class[]{Institution.class, String.class});
-
-                                cvObject = (CvObject)
-                                        constructor.newInstance(new Object[]{institution, shortLabelName});
-                                cvObject.setFullName(cvTerm.getFullName());
-                            }
-                            catch (Exception e)
-                            {
-                                e.printStackTrace();
-                                continue;
-                            }
-
-                            // persist it
-                            cvObjectDao.persist(cvObject);
-                            String className = getShortClassName(cvObject.getClass());
-                            output.println("\t Creating " + className + "( " + shortLabelName + " )");
-
-                            report.addCreatedTerm(cvObject);
-
-                            // add that new term in the index
-                            intactIndex.add(new Mi2Cv(cvTerm.getId(), cvObject));
-                        }
+                        cvObject = (CvObject)
+                                constructor.newInstance(new Object[]{institution, shortLabelName});
+                        cvObject.setFullName(cvTerm.getFullName());
                     }
-                    else
-                    {
-                        String className = getShortClassName(cvObject.getClass());
-                        output.println("\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )");
-
-                        report.addUpdatedTerm(cvObject);
-                    }
-
-                    // update its content
-                    updateTerm(cvObject, cvTerm, output, report);
-
-            } // end of update of the terms' content
-
-            ///////////////////////////////////////
-            // 3. Update of the hierarchy
-            output.println( "+++++++++++++++++++++++++++++++++++++++++" );
-            output.println( "\t Updating Vocabulary hierarchy..." );
-            boolean stopUpdate = false;
-            for ( Iterator iterator = oboTerms.iterator(); iterator.hasNext() && !stopUpdate; ) {
-                CvTerm cvTerm = (CvTerm) iterator.next();
-
-                // Get the IntAct equivalent from the index (it should have been either created or updated)
-                CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId());
-
-                if (cvObject == null)
-                {
-                    // that should never happen !! Exception
-                    output.println("ERROR: Could not find " + cvTerm.getId() + " - " + cvTerm.getShortName() + ". skipping term.");
-                    continue;
-                }
-
-                // check that the term is a DAG (ie. CvDagObject), if not, skip the hierarchy update.
-                CvDagObject dagObject = null;
-                if (cvObject instanceof CvDagObject)
-                {
-                    dagObject = (CvDagObject) cvObject;
-                }
-                else
-                {
-                    // we do not have heterogeneous collection here, we can stop the hierarchy update here.
-                    output.println("ERROR: " + cvObject.getClass().getName() + " is not a DAG, skip hierarchy update.");
-                    stopUpdate = true;
-                    continue;
-                }
-
-                // keep in that collection the term that haven't been read yet from the obo definition
-                Collection allChildren = new ArrayList(dagObject.getChildren());
-
-                // browse all direct children of the current term
-                for (Iterator iterator2 = cvTerm.getChildren().iterator(); iterator2.hasNext();)
-                {
-                    CvTerm child = (CvTerm) iterator2.next();
-
-                    // get corresponding IntAct child
-                    CvDagObject intactChild = (CvDagObject) getCVWithMi(intactIndex, cvObjectClass, child.getId());
-
-                    if (intactChild == null)
-                    {
-                        output.println("ERROR: Could not find Child term of " + cvTerm.getShortName() + "(" +
-                                cvTerm.getId() + ") in the index (" + child.getId() + ").");
+                    catch (Exception e) {
+                        e.printStackTrace();
                         continue;
                     }
 
-                    // if the relationship doesn't exists, create it
-                    if (!dagObject.getChildren().contains(intactChild))
-                    {
-                        // add that relation
-                        dagObject.addChild(intactChild);
+                    // persist it
+                    cvObjectDao.persist(cvObject);
+                    String className = getShortClassName(cvObject.getClass());
+                    output.println("\t Creating " + className + "( " + shortLabelName + " )");
 
-                        output.println("\t\t Adding Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
-                                " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]");
+                    report.addCreatedTerm(cvObject);
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(dagObject);
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(intactChild);
-                    }
+                    // add that new term in the index
+                    intactIndex.add(new Mi2Cv(cvTerm.getId(), cvObject));
+                }
+            } else {
+                String className = getShortClassName(cvObject.getClass());
+                output.println("\t Updating existing " + className + "( " + cvObject.getShortLabel() + " )");
 
-                    allChildren.remove(intactChild);
+                report.addUpdatedTerm(cvObject);
+            }
+
+            // update its content
+            updateTerm(cvObject, cvTerm, output, report, config);
+
+        } // end of update of the terms' content
+
+        ///////////////////////////////////////
+        // 3. Update of the hierarchy
+        output.println("+++++++++++++++++++++++++++++++++++++++++");
+        output.println("\t Updating Vocabulary hierarchy...");
+        boolean stopUpdate = false;
+        for (Iterator iterator = oboTerms.iterator(); iterator.hasNext() && !stopUpdate;) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
+
+            // Get the IntAct equivalent from the index (it should have been either created or updated)
+            CvObject cvObject = getCVWithMi(intactIndex, cvObjectClass, cvTerm.getId());
+
+            if (cvObject == null) {
+                // that should never happen !! Exception
+                output.println("ERROR: Could not find " + cvTerm.getId() + " - " + cvTerm.getShortName() + ". skipping term.");
+                continue;
+            }
+
+            // check that the term is a DAG (ie. CvDagObject), if not, skip the hierarchy update.
+            CvDagObject dagObject = null;
+            if (cvObject instanceof CvDagObject) {
+                dagObject = (CvDagObject) cvObject;
+            } else {
+                // we do not have heterogeneous collection here, we can stop the hierarchy update here.
+                output.println("WARNING: " + cvObject.getClass().getName() + " is not a DAG, skip hierarchy update.");
+                stopUpdate = true;
+                continue;
+            }
+
+            // keep in that collection the term that haven't been read yet from the obo definition
+            Collection allChildren = new ArrayList(dagObject.getChildren());
+
+            // browse all direct children of the current term
+            for (Iterator iterator2 = cvTerm.getChildren().iterator(); iterator2.hasNext();) {
+                CvTerm child = (CvTerm) iterator2.next();
+
+                // get corresponding IntAct child
+                CvDagObject intactChild = (CvDagObject) getCVWithMi(intactIndex, cvObjectClass, child.getId());
+
+                if (intactChild == null) {
+                    output.println("ERROR: Could not find Child term of " + cvTerm.getShortName() + "(" +
+                                   cvTerm.getId() + ") in the index (" + child.getId() + ").");
+                    continue;
                 }
 
-                // delete all relationships that were not described in the OBO file.
-                for (Iterator iterator2 = allChildren.iterator(); iterator2.hasNext();)
-                {
-                    CvDagObject child = (CvDagObject) iterator2.next();
+                // if the relationship doesn't exists, create it
+                if (!dagObject.getChildren().contains(intactChild)) {
+                    // add that relation
+                    dagObject.addChild(intactChild);
 
-                    try
-                    {
-                        Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
-                        Statement statement = connection.createStatement();
-                        statement.execute("DELETE FROM ia_cv2cv " +
-                                "WHERE parent_ac = '" + dagObject.getAc() + "' AND " +
-                                "      child_ac = '" + child.getAc() + "'");
-                        statement.close();
+                    output.println("\t\t Adding Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
+                                   " ---child---> (" + intactChild.getAc() + ") " + intactChild.getShortLabel() + "]");
 
-                        // BUG: when a CvFeatureType is used in the data, and we try to delete some relationship,
-                        //      OJB deletes the CvObject itself ... which causes a constraint violation on foreign key.
-                        //      P6Spy allowed to debug that.
-                        // WORK AROUND: do that data update at SQL level, dodgy but at least it works :(
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(dagObject);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDagObject.class).persist(intactChild);
+                }
+
+                allChildren.remove(intactChild);
+            }
+
+            // delete all relationships that were not described in the OBO file.
+            for (Iterator iterator2 = allChildren.iterator(); iterator2.hasNext();) {
+                CvDagObject child = (CvDagObject) iterator2.next();
+
+                try {
+                    Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
+                    Statement statement = connection.createStatement();
+                    statement.execute("DELETE FROM ia_cv2cv " +
+                                      "WHERE parent_ac = '" + dagObject.getAc() + "' AND " +
+                                      "      child_ac = '" + child.getAc() + "'");
+                    statement.close();
+
+                    // BUG: when a CvFeatureType is used in the data, and we try to delete some relationship,
+                    //      OJB deletes the CvObject itself ... which causes a constraint violation on foreign key.
+                    //      P6Spy allowed to debug that.
+                    // WORK AROUND: do that data update at SQL level, dodgy but at least it works :(
 
 //                    dagObject.removeChild( child );
 //                    helper.update( dagObject );
 //                    helper.update( child );
 
-                        output.println("\t\t Removing Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
-                                " ---child---> (" + child.getAc() + ") " + child.getShortLabel() + "]");
+                    output.println("\t\t Removing Relationship[(" + dagObject.getAc() + ") " + dagObject.getShortLabel() +
+                                   " ---child---> (" + child.getAc() + ") " + child.getShortLabel() + "]");
 
-                    }
-                    catch (SQLException e)
-                    {
-                        e.printStackTrace();
-                    }
                 }
-            } // end of update of the hierarchy
-
-            ///////////////////////////////////////
-            // 4. Flag root term as hidden
-            Collection roots = ontology.getRoots( cvObjectClass );
-            CvTopic hidden = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.HIDDEN);
-
-            if ( hidden == null ) {
-                output.println( "WARN: The CvTopic(" + CvTopic.HIDDEN + ") could not be found or created in IntAct. " +
-                                    "Skip flagging of the root terms." );
-            } else {
-                for ( Iterator iterator = roots.iterator(); iterator.hasNext(); ) {
-                    CvTerm rootTerm = (CvTerm) iterator.next();
-
-                    // get the intact term
-                    CvObject root = getCVWithMi(intactIndex, cvObjectClass, rootTerm.getId());
-
-                    if (root == null)
-                    {
-                        output.println("ERROR: the term " + rootTerm.getId() + " should have been found in IntAct.");
-                    }
-                    else
-                    {
-                        addUniqueAnnotation(root, hidden, "Root term deprecated during manual curation as too unspecific.", output);
-                    }
+                catch (SQLException e) {
+                    e.printStackTrace();
                 }
             }
+        } // end of update of the hierarchy
+
+        ///////////////////////////////////////
+        // 4. Flag root term as hidden
+        Collection roots = ontology.getRoots(cvObjectClass);
+        CvTopic hidden = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, CvTopic.HIDDEN);
+
+        if (hidden == null) {
+            output.println("WARN: The CvTopic(" + CvTopic.HIDDEN + ") could not be found or created in IntAct. " +
+                           "Skip flagging of the root terms.");
+        } else {
+            for (Iterator iterator = roots.iterator(); iterator.hasNext();) {
+                CvTerm rootTerm = (CvTerm) iterator.next();
+
+                // get the intact term
+                CvObject root = getCVWithMi(intactIndex, cvObjectClass, rootTerm.getId());
+
+                if (root == null) {
+                    output.println("ERROR: the term " + rootTerm.getId() + " should have been found in IntAct.");
+                } else {
+                    addUniqueAnnotation(root, hidden, "Root term deprecated during manual curation as too unspecific.", output);
+                }
+            }
+        }
 
         //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
@@ -388,49 +378,48 @@ public class UpdateCVs {
      *
      * @throws IntactException if something goes wrong
      */
-    public static Collection<CvTerm> listOrphanObsoleteTerms( IntactOntology ontology, PrintStream output, UpdateCVsReport report) throws IntactException {
+    public static Collection<CvTerm> listOrphanObsoleteTerms(IntactOntology ontology, PrintStream output, UpdateCVsReport report) throws IntactException {
 
-        output.println( "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
-        output.println( "Updating Obsolete Terms" );
+        output.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+        output.println("Updating Obsolete Terms");
 
         List<CvTerm> missingTerms = new ArrayList<CvTerm>();
 
+        // note: we don't create term that weren't existing in IntAct before if they are already obsolete in PSI
+        Collection<CvTerm> obsoleteTerms = ontology.getObsoleteTerms();
 
-            // note: we don't create term that weren't existing in IntAct before if they are already obsolete in PSI
-            Collection<CvTerm> obsoleteTerms = ontology.getObsoleteTerms();
+        for (Iterator iterator = obsoleteTerms.iterator(); iterator.hasNext();) {
+            CvTerm cvTerm = (CvTerm) iterator.next();
 
-            for ( Iterator iterator = obsoleteTerms.iterator(); iterator.hasNext(); ) {
-                CvTerm cvTerm = (CvTerm) iterator.next();
+            String id = cvTerm.getId();
+            CvObject cvObject = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref(id);
 
-                String id = cvTerm.getId();
-                CvObject cvObject = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref(id);
-
-                if ( cvObject == null ) {
-                    missingTerms.add( cvTerm );
-                }
+            if (cvObject == null) {
+                missingTerms.add(cvTerm);
+            }
 //            else {
-                // NOTE: this should having been taken care of during the update of the CvTerm.
+            // NOTE: this should having been taken care of during the update of the CvTerm.
 //                CvTopic obsolete = (CvTopic) getCvObject(CvTopic.class, CvTopic.OBSOLETE );
-                // add the annotation obsolete if the term is not obsolete itself.
+            // add the annotation obsolete if the term is not obsolete itself.
 //                if ( ! cvTerm.getId().equals( CvTopic.OBSOLETE_MI_REF ) ) {
 //                    addUniqueAnnotationcvObject, obsolete, cvTerm.getObsoleteMessage() );
 //                }
 //            }
-            }
+        }
 
 
-        if ( ! missingTerms.isEmpty() ) {
+        if (!missingTerms.isEmpty()) {
 
-            output.println( "WARN: ---------------------------------------------------------------------------------------" );
-            output.println( "WARN: WARNING - The list of terms below could not be added to your IntAct node" );
-            output.println( "WARN:           Reason:   These terms are obsolete in PSI-MI and the ontology doesn't keep " );
-            output.println( "WARN:                     track of the root of obsolete terms." );
-            output.println( "WARN:           Solution: if you really want to add these terms into IntAct, you will have to " );
-            output.println( "WARN:                     do it manually and make sure that they get their MI:xxxx." );
-            output.println( "WARN: ---------------------------------------------------------------------------------------" );
-            for ( Iterator iterator = missingTerms.iterator(); iterator.hasNext(); ) {
+            output.println("WARN: ---------------------------------------------------------------------------------------");
+            output.println("WARN: WARNING - The list of terms below could not be added to your IntAct node");
+            output.println("WARN:           Reason:   These terms are obsolete in PSI-MI and the ontology doesn't keep ");
+            output.println("WARN:                     track of the root of obsolete terms.");
+            output.println("WARN:           Solution: if you really want to add these terms into IntAct, you will have to ");
+            output.println("WARN:                     do it manually and make sure that they get their MI:xxxx.");
+            output.println("WARN: ---------------------------------------------------------------------------------------");
+            for (Iterator iterator = missingTerms.iterator(); iterator.hasNext();) {
                 CvTerm cvTerm = (CvTerm) iterator.next();
-                output.println( cvTerm.getId() + " - " + cvTerm.getShortName() );
+                output.println(cvTerm.getId() + " - " + cvTerm.getShortName());
             }
         }
 
@@ -449,15 +438,16 @@ public class UpdateCVs {
      *
      * @throws IntactException if something goes wrong during the update.
      */
-    private static void addUniqueAnnotation( final CvObject cvObject,
-                                             final CvTopic topic,
-                                             final String text,
-                                             PrintStream output) throws IntactException {
+    private static void addUniqueAnnotation(final CvObject cvObject,
+                                            final CvTopic topic,
+                                            final String text,
+                                            PrintStream output
+    ) throws IntactException {
 
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
-        if ( topic == null ) {
-            output.println( "ERROR: You must give a non null topic when updating term " + cvObject.getShortLabel() );
+        if (topic == null) {
+            output.println("ERROR: You must give a non null topic when updating term " + cvObject.getShortLabel());
         } else {
 
             // We allow only one annotation to carry the given topic,
@@ -466,44 +456,44 @@ public class UpdateCVs {
 
             // select all annotation of that object filtered by topic
             Collection annotationByTopic = new ArrayList();
-            for ( Iterator iterator = cvObject.getAnnotations().iterator(); iterator.hasNext(); ) {
+            for (Iterator iterator = cvObject.getAnnotations().iterator(); iterator.hasNext();) {
                 Annotation annot = (Annotation) iterator.next();
-                if ( topic.equals( annot.getCvTopic() ) ) {
-                    annotationByTopic.add( annot );
+                if (topic.equals(annot.getCvTopic())) {
+                    annotationByTopic.add(annot);
                 }
             }
 
             // update annotations
-            if ( annotationByTopic.isEmpty() ) {
+            if (annotationByTopic.isEmpty()) {
 
                 // add a new one
-                Annotation annotation = new Annotation( institution, topic );
-                annotation.setAnnotationText( text );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( annotation );
-                cvObject.addAnnotation( annotation );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-                output.println( "Added Annotation " + topic.getShortLabel() + " to '" + cvObject.getShortLabel() + "'." );
+                Annotation annotation = new Annotation(institution, topic);
+                annotation.setAnnotationText(text);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(annotation);
+                cvObject.addAnnotation(annotation);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                output.println("Added Annotation " + topic.getShortLabel() + " to '" + cvObject.getShortLabel() + "'.");
 
             } else {
 
                 // there's at least one annotation
 
                 // first, check if the annotation we want to have in that CvObject is already in
-                Annotation newAnnotation = new Annotation( institution, topic );
-                newAnnotation.setAnnotationText( text );
+                Annotation newAnnotation = new Annotation(institution, topic);
+                newAnnotation.setAnnotationText(text);
 
-                if ( annotationByTopic.contains( newAnnotation ) ) {
+                if (annotationByTopic.contains(newAnnotation)) {
                     // found it, then we just remove it from the list and we are done.
-                    annotationByTopic.remove( newAnnotation );
+                    annotationByTopic.remove(newAnnotation);
                 } else {
                     // not found, we recycle an existing annotation and delete all others
                     Iterator iterator = annotationByTopic.iterator();
                     Annotation annotation = (Annotation) iterator.next();
                     String oldText = annotation.getAnnotationText();
-                    annotation.setAnnotationText( text );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annotation );
-                    output.println( "Updated " + cvObject.getShortLabel() + ", Annotation(" + topic.getShortLabel() + ")\n" +
-                                        "        updated text from '" + oldText + "' to '" + text + "'." );
+                    annotation.setAnnotationText(text);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update(annotation);
+                    output.println("Updated " + cvObject.getShortLabel() + ", Annotation(" + topic.getShortLabel() + ")\n" +
+                                   "        updated text from '" + oldText + "' to '" + text + "'.");
 
                     // remove it from the list as we are going to delete all other
                     iterator.remove();
@@ -511,14 +501,14 @@ public class UpdateCVs {
             }
 
             // if any annotation left, delete them as we want a unique one.
-            for ( Iterator iterator = annotationByTopic.iterator(); iterator.hasNext(); ) {
+            for (Iterator iterator = annotationByTopic.iterator(); iterator.hasNext();) {
                 Annotation annotation = (Annotation) iterator.next();
                 String _text = annotation.getAnnotationText();
-                cvObject.removeAnnotation( annotation );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
-                output.println( "Deleted redondant Annotation(" + topic.getShortLabel() +
-                                    ", '" + _text + "'), we want it unique and there's already one." );
+                cvObject.removeAnnotation(annotation);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete(annotation);
+                output.println("Deleted redondant Annotation(" + topic.getShortLabel() +
+                               ", '" + _text + "'), we want it unique and there's already one.");
             }
 
         } // topic is not null
@@ -531,12 +521,12 @@ public class UpdateCVs {
      *
      * @return a PSI ID or null is none is found.
      */
-    private static String getPsiId( CvObject cvObject ) {
+    private static String getPsiId(CvObject cvObject) {
 
-        for ( Iterator iterator = cvObject.getXrefs().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvObject.getXrefs().iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
 
-            if ( psi.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
+            if (psi.equals(xref.getCvDatabase()) && identity.equals(xref.getCvXrefQualifier())) {
                 return xref.getPrimaryId();
             }
         }
@@ -551,12 +541,12 @@ public class UpdateCVs {
      *
      * @return a PSI ID or null is none is found.
      */
-    private static String getIntactId( CvObject cvObject ) {
+    private static String getIntactId(CvObject cvObject) {
 
-        for ( Iterator iterator = cvObject.getXrefs().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvObject.getXrefs().iterator(); iterator.hasNext();) {
             Xref xref = (Xref) iterator.next();
 
-            if ( intact.equals( xref.getCvDatabase() ) && identity.equals( xref.getCvXrefQualifier() ) ) {
+            if (intact.equals(xref.getCvDatabase()) && identity.equals(xref.getCvXrefQualifier())) {
                 return xref.getPrimaryId();
             }
         }
@@ -576,15 +566,17 @@ public class UpdateCVs {
      * @throws IntactException          is an error occur while writting on the database.
      * @throws IllegalArgumentException if the class given is not a concrete type of CvObject (eg. CvDatabase)
      */
-    public static CvObject getCvObject( Class clazz,
-                                        String shortlabel, PrintStream output, UpdateCVsReport report) throws IntactException {
-        return getCvObject( clazz, shortlabel, null, output, report );
+    public static CvObject getCvObject(Class clazz,
+                                       String shortlabel, PrintStream output, UpdateCVsReport report
+    ) throws IntactException {
+        return getCvObject(clazz, shortlabel, null, output, report);
     }
 
-    public static CvObject getCvObject( Class clazz,
-                                        String shortlabel,
-                                        String mi, PrintStream output, UpdateCVsReport report) throws IntactException {
-        return getCvObject( clazz, shortlabel, mi, shortlabel, output, report);
+    public static CvObject getCvObject(Class clazz,
+                                       String shortlabel,
+                                       String mi, PrintStream output, UpdateCVsReport report
+    ) throws IntactException {
+        return getCvObject(clazz, shortlabel, mi, shortlabel, output, report);
     }
 
     /**
@@ -601,16 +593,17 @@ public class UpdateCVs {
      * @throws IntactException          is an error occur while writting on the database.
      * @throws IllegalArgumentException if the class given is not a concrete type of CvObject (eg. CvDatabase)
      */
-    public static CvObject getCvObject( Class clazz,
-                                        String shortlabel,
-                                        String mi,
-                                        String defaultFullName,
-                                        PrintStream output,
-                                        UpdateCVsReport report) throws IntactException {
+    public static CvObject getCvObject(Class clazz,
+                                       String shortlabel,
+                                       String mi,
+                                       String defaultFullName,
+                                       PrintStream output,
+                                       UpdateCVsReport report
+    ) throws IntactException {
 
         // Check that the given class is a CvObject or one if its sub-type.
-        if ( !CvObject.class.isAssignableFrom( clazz ) ) {
-            throw new IllegalArgumentException( "The given class (" + getShortClassName( clazz ) + ") must be a sub type of CvObject" );
+        if (!CvObject.class.isAssignableFrom(clazz)) {
+            throw new IllegalArgumentException("The given class (" + getShortClassName(clazz) + ") must be a sub type of CvObject");
         }
 
         // Search by MI
@@ -619,21 +612,21 @@ public class UpdateCVs {
         CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
 
         // if an MI is available, search using it
-        if ( mi != null ) {
-            output.println("Looking up term by mi: "+mi);
+        if (mi != null) {
+            output.println("Looking up term by mi: " + mi);
             cv = cvContext.getByMiRef(clazz, mi);
         }
 
         // if not found by MI, then search by shortlabel
-        if ( cv == null ) {
+        if (cv == null) {
             // Search by Name
-            output.println("Not found. Now, looking up term by short label: "+shortlabel);
+            output.println("Not found. Now, looking up term by short label: " + shortlabel);
 
             cv = cvContext.getByLabel(clazz, shortlabel);
         }
 
         // if still not found, then create it.
-        if ( cv == null ) {
+        if (cv == null) {
 
             output.println("Not found. Then, create it");
 
@@ -641,54 +634,54 @@ public class UpdateCVs {
             try {
 
                 // create a new object using refection
-                Constructor constructor = clazz.getConstructor( new Class[]{ Institution.class, String.class } );
-                cv = (CvObject) constructor.newInstance( IntactContext.getCurrentInstance().getInstitution(), shortlabel );
+                Constructor constructor = clazz.getConstructor(new Class[]{Institution.class, String.class});
+                cv = (CvObject) constructor.newInstance(IntactContext.getCurrentInstance().getInstitution(), shortlabel);
 
                 // by default add the shortLabel as fullName
                 cv.setFullName(defaultFullName);
 
                 // persist it
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                        .getCvObjectDao(clazz).persist( cv );
-                output.println( "Created missing CV Term: " + getShortClassName( clazz ) + "( " + cv.getShortLabel() +" - "+cv.getFullName()+" )." );
+                        .getCvObjectDao(clazz).persist(cv);
+                output.println("Created missing CV Term: " + getShortClassName(clazz) + "( " + cv.getShortLabel() + " - " + cv.getFullName() + " ).");
 
                 report.addCreatedTerm(cv);
 
                 // create MI Xref if necessary
-                if ( mi != null && mi.startsWith( "MI:" ) ) {
+                if (mi != null && mi.startsWith("MI:")) {
 
                     CvDatabase psi = null;
-                    if ( mi.equals( CvDatabase.PSI_MI_MI_REF ) ) {
+                    if (mi.equals(CvDatabase.PSI_MI_MI_REF)) {
                         psi = (CvDatabase) cv;
                     } else {
-                        psi = (CvDatabase) getCvObject( CvDatabase.class,
-                                                        CvDatabase.PSI_MI,
-                                                        CvDatabase.PSI_MI_MI_REF,
-                                                        CvDatabase.PSI_MI,
-                                                        output, report);
+                        psi = (CvDatabase) getCvObject(CvDatabase.class,
+                                                       CvDatabase.PSI_MI,
+                                                       CvDatabase.PSI_MI_MI_REF,
+                                                       CvDatabase.PSI_MI,
+                                                       output, report);
                     }
 
                     CvXrefQualifier identity = null;
-                    if ( mi.equals( CvXrefQualifier.IDENTITY_MI_REF ) ) {
+                    if (mi.equals(CvXrefQualifier.IDENTITY_MI_REF)) {
                         identity = (CvXrefQualifier) cv;
                     } else {
-                        identity = (CvXrefQualifier) getCvObject( CvXrefQualifier.class,
-                                                                  CvXrefQualifier.IDENTITY,
-                                                                  CvXrefQualifier.IDENTITY_MI_REF,
-                                                                  "identical object",
-                                                                  output, report);
+                        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class,
+                                                                 CvXrefQualifier.IDENTITY,
+                                                                 CvXrefQualifier.IDENTITY_MI_REF,
+                                                                 "identical object",
+                                                                 output, report);
                     }
 
-                    CvObjectXref xref = new CvObjectXref( IntactContext.getCurrentInstance().getInstitution(), psi, mi, null, null, identity );
+                    CvObjectXref xref = new CvObjectXref(IntactContext.getCurrentInstance().getInstitution(), psi, mi, null, null, identity);
 
-                    cv.addXref( xref );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-                    output.println( "Added required PSI Xref to " + shortlabel + ": " + mi );
+                    cv.addXref(xref);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist(xref);
+                    output.println("Added required PSI Xref to " + shortlabel + ": " + mi);
                 }
-            } catch ( Exception e ) {
+            } catch (Exception e) {
                 // that's should not happen, but just in case...
-                throw new IntactException( "Error while creating " + getShortClassName( clazz ) + "(" + shortlabel +
-                                           ", " + mi + ").", e );
+                throw new IntactException("Error while creating " + getShortClassName(clazz) + "(" + shortlabel +
+                                          ", " + mi + ").", e);
             }
         }
 
@@ -707,9 +700,9 @@ public class UpdateCVs {
      */
     private static Set loadUniqueCvTopics(PrintStream output, UpdateCVsReport report) throws IntactException {
         Set uniqueTopic = new HashSet();
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.DEFINITION, output, report ));
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report ) );
-        uniqueTopic.add( getCvObject( CvTopic.class, CvTopic.XREF_VALIDATION_REGEXP, CvTopic.XREF_VALIDATION_REGEXP_MI_REF, output, report ) );
+        uniqueTopic.add(getCvObject(CvTopic.class, CvTopic.DEFINITION, output, report));
+        uniqueTopic.add(getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report));
+        uniqueTopic.add(getCvObject(CvTopic.class, CvTopic.XREF_VALIDATION_REGEXP, CvTopic.XREF_VALIDATION_REGEXP_MI_REF, output, report));
         return uniqueTopic;
     }
 
@@ -720,10 +713,10 @@ public class UpdateCVs {
      *
      * @throws IntactException
      */
-    private static Set loadUniqueCvXrefQualifiers( PrintStream output, UpdateCVsReport report ) throws IntactException {
+    private static Set loadUniqueCvXrefQualifiers(PrintStream output, UpdateCVsReport report) throws IntactException {
         Set uniqueQualifier = new HashSet();
-        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, output, report ) );
-        uniqueQualifier.add( getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report ) );
+        uniqueQualifier.add(getCvObject(CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, output, report));
+        uniqueQualifier.add(getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report));
         return uniqueQualifier;
     }
 
@@ -738,18 +731,18 @@ public class UpdateCVs {
      *
      * @return a non null collection of annotation. may be empty.
      */
-    private static Collection select( Collection annotations, CvTopic topic ) {
+    private static Collection select(Collection annotations, CvTopic topic) {
 
-        if ( annotations == null || annotations.isEmpty() ) {
+        if (annotations == null || annotations.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
 
-        Collection selectedAnnotations = new ArrayList( annotations.size() );
+        Collection selectedAnnotations = new ArrayList(annotations.size());
 
-        for ( Iterator iterator1 = annotations.iterator(); iterator1.hasNext(); ) {
+        for (Iterator iterator1 = annotations.iterator(); iterator1.hasNext();) {
             Annotation _annot = (Annotation) iterator1.next();
-            if ( topic.equals( _annot.getCvTopic() ) ) {
-                selectedAnnotations.add( _annot );
+            if (topic.equals(_annot.getCvTopic())) {
+                selectedAnnotations.add(_annot);
             }
         }
 
@@ -765,19 +758,19 @@ public class UpdateCVs {
      *
      * @return a non null collection of xrefs. may be empty.
      */
-    private static Collection select( Collection xrefs, CvDatabase database, CvXrefQualifier qualifier ) {
+    private static Collection select(Collection xrefs, CvDatabase database, CvXrefQualifier qualifier) {
 
-        if ( xrefs == null || xrefs.isEmpty() ) {
+        if (xrefs == null || xrefs.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
 
-        Collection selectedXrefs = new ArrayList( xrefs.size() );
+        Collection selectedXrefs = new ArrayList(xrefs.size());
 
-        for ( Iterator iterator1 = xrefs.iterator(); iterator1.hasNext(); ) {
+        for (Iterator iterator1 = xrefs.iterator(); iterator1.hasNext();) {
             Xref xref = (Xref) iterator1.next();
-            if ( database.equals( xref.getCvDatabase() ) ) {
-                if ( qualifier.equals( xref.getCvXrefQualifier() ) ) {
-                    selectedXrefs.add( xref );
+            if (database.equals(xref.getCvDatabase())) {
+                if (qualifier.equals(xref.getCvXrefQualifier())) {
+                    selectedXrefs.add(xref);
                 }
             }
         }
@@ -794,19 +787,19 @@ public class UpdateCVs {
      *
      * @return a non null collection of xrefs. may be empty.
      */
-    private static Collection select( Collection xrefs, CvDatabase database, String primaryId ) {
+    private static Collection select(Collection xrefs, CvDatabase database, String primaryId) {
 
-        if ( xrefs == null || xrefs.isEmpty() ) {
+        if (xrefs == null || xrefs.isEmpty()) {
             return Collections.EMPTY_LIST;
         }
 
-        Collection selectedXrefs = new ArrayList( xrefs.size() );
+        Collection selectedXrefs = new ArrayList(xrefs.size());
 
-        for ( Iterator iterator1 = xrefs.iterator(); iterator1.hasNext(); ) {
+        for (Iterator iterator1 = xrefs.iterator(); iterator1.hasNext();) {
             Xref xref = (Xref) iterator1.next();
-            if ( database.equals( xref.getCvDatabase() ) ) {
-                if ( primaryId.equals( xref.getPrimaryId() ) ) {
-                    selectedXrefs.add( xref );
+            if (database.equals(xref.getCvDatabase())) {
+                if (primaryId.equals(xref.getPrimaryId())) {
+                    selectedXrefs.add(xref);
                 }
             }
         }
@@ -825,10 +818,12 @@ public class UpdateCVs {
      *
      * @throws IntactException if error occur.
      */
-    private static void updateTerm( CvObject cvObject,
-                                    CvTerm cvTerm,
-                                    PrintStream output,
-                                    UpdateCVsReport report ) throws IntactException {
+    private static void updateTerm(CvObject cvObject,
+                                   CvTerm cvTerm,
+                                   PrintStream output,
+                                   UpdateCVsReport report,
+                                   UpdateCVsConfig config
+    ) throws IntactException {
 
         // TODO unique items: Xref( database, identity ),
         // TODO               Xref( database, primary-reference ),
@@ -856,115 +851,114 @@ public class UpdateCVs {
 
         // we know they have the same ID (either IA:xxxx or MI:xxxx)
         // Note: in IntAct we keep both IA:xxxx and MI:xxxx to they remain searchable.
-        String mi = getPsiId( cvObject );
-        String ia = getIntactId( cvObject );
+        String mi = getPsiId(cvObject);
+        String ia = getIntactId(cvObject);
 
-        boolean hasIntactTermGotPsiIdentifier = ( mi != null );
-        boolean hasIntactTermGotIntactIdentifier = ( ia != null );
+        boolean hasIntactTermGotPsiIdentifier = (mi != null);
+        boolean hasIntactTermGotIntactIdentifier = (ia != null);
 
         String id = cvTerm.getId();
-        boolean hasPsiIdentifier = id.startsWith( "MI:" );
-        boolean hasIntactIdentifier = id.startsWith( "IA:" );
+        boolean hasPsiIdentifier = id.startsWith("MI:");
+        boolean hasIntactIdentifier = id.startsWith("IA:");
 
         String trimmedShortName = AnnotatedObjectUtils.prepareShortLabel(cvTerm.getShortName());
 
         boolean needsUpdate = false;
 
         // shortname
-        if ( !cvObject.getShortLabel().equals( trimmedShortName )) {
-            cvObject.setShortLabel( trimmedShortName );
+        if (!cvObject.getShortLabel().equals(trimmedShortName)) {
+            cvObject.setShortLabel(trimmedShortName);
             needsUpdate = true;
-            output.println( "\t\t Updated shortlabel (" + cvTerm.getShortName() + ")" );
+            output.println("\t\t Updated shortlabel (" + cvTerm.getShortName() + ")");
         }
 
         // fullname
-        if ( cvObject.getFullName() != null ) {
-            if ( !cvObject.getFullName().equals( cvTerm.getFullName() ) ) {
-                cvObject.setFullName( cvTerm.getFullName() );
-                output.println( "\t\t Updated fullname from '"+cvObject.getFullName()+"' to '"+cvTerm.getFullName()+"'. (" + trimmedShortName + ")" );
+        if (cvObject.getFullName() != null) {
+            if (!cvObject.getFullName().equals(cvTerm.getFullName())) {
+                cvObject.setFullName(cvTerm.getFullName());
+                output.println("\t\t Updated fullname from '" + cvObject.getFullName() + "' to '" + cvTerm.getFullName() + "'. (" + trimmedShortName + ")");
                 needsUpdate = true;
             }
         } else {
             // cvObject.getFullName() == null
-            if ( cvTerm.getFullName() != null ) {
-                cvObject.setFullName( cvTerm.getFullName() );
+            if (cvTerm.getFullName() != null) {
+                cvObject.setFullName(cvTerm.getFullName());
                 needsUpdate = true;
-                output.println( "\t\t Updated fullname, from null to '"+cvTerm.getFullName()+"' (" + trimmedShortName + ")" );
+                output.println("\t\t Updated fullname, from null to '" + cvTerm.getFullName() + "' (" + trimmedShortName + ")");
             }
         }
 
-        if (needsUpdate)
-        {
-            output.println( "\t Updating CV: " + trimmedShortName + " (" + id + ")" );
+        if (needsUpdate) {
+            output.println("\t Updating CV: " + trimmedShortName + " (" + id + ")");
         }
 
-       Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Xref psi-mi/identity
-        if ( ! hasIntactTermGotPsiIdentifier && hasPsiIdentifier ) {
+        if (!hasIntactTermGotPsiIdentifier && hasPsiIdentifier) {
             // the intact term doesn't have a PSI Xref although the CvTerm has one, add missing mi Xref.
-            CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report );
-            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report );
+            CvDatabase psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report);
+            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report);
 
-            CvObjectXref xref = new CvObjectXref( institution, psi, id, null, null, identity );
-            cvObject.addXref( xref );
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-            output.println( "\t\t Added PSI Xref (" + id + ")" );
+            CvObjectXref xref = new CvObjectXref(institution, psi, id, null, null, identity);
+            cvObject.addXref(xref);
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist(xref);
+            output.println("\t\t Added PSI Xref (" + id + ")");
         }
 
-        if ( ! hasIntactTermGotIntactIdentifier && hasIntactIdentifier ) {
+        if (!hasIntactTermGotIntactIdentifier && hasIntactIdentifier) {
             // add missing ia Xref
 
             // Search for other terms having that specific IA:xxxx, if we find any, we give them an other one.
             // the IA:xxxx coming from the file has priority
-            CvDatabase intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report );
-            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report );
+            CvDatabase intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report);
+            CvXrefQualifier identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, output, report);
 
             Collection conflictingTerms = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXrefLike(intact, identity, id);
 
-            for ( Iterator iterator = conflictingTerms.iterator(); iterator.hasNext(); ) {
+            for (Iterator iterator = conflictingTerms.iterator(); iterator.hasNext();) {
                 CvObject conflict = (CvObject) iterator.next();
-                output.println( "WARN: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" );
-                output.println( "WARN: Found a CV term using the same IntAct Xref: " + id + " replacing id..." );
-                Collection xrefs = select( conflict.getXrefs(), intact, identity );
-                String newId = SequenceManager.getNextId( );
-                if ( ! xrefs.isEmpty() ) {
+                output.println("WARN: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                output.println("WARN: Found a CV term using the same IntAct Xref: " + id + " replacing id...");
+                Collection xrefs = select(conflict.getXrefs(), intact, identity);
+                String newId = SequenceManager.getNextId();
+                if (!xrefs.isEmpty()) {
                     Iterator it = xrefs.iterator();
                     CvObjectXref xref = (CvObjectXref) it.next();
-                    xref.setPrimaryId( newId );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update( xref );
-                    output.println( "Updated Xref (" + id + ") updated to " + newId + " on term '" + conflict.getShortLabel() + "'." );
+                    xref.setPrimaryId(newId);
+                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().update(xref);
+                    output.println("Updated Xref (" + id + ") updated to " + newId + " on term '" + conflict.getShortLabel() + "'.");
 
-                    while ( it.hasNext() ) {
+                    while (it.hasNext()) {
                         xref = (CvObjectXref) it.next();
-                        conflict.removeXref( xref );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( conflict );
-                        output.println( "Deleted additional Xref:" + xref );
+                        conflict.removeXref(xref);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete(xref);
+                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(conflict);
+                        output.println("Deleted additional Xref:" + xref);
                     }
                 } else {
-                    output.println( "ERROR: no matching Xref found in that term." );
+                    output.println("ERROR: no matching Xref found in that term.");
                 }
             }
 
-            CvObjectXref xref = new CvObjectXref( institution, intact, id, null, null, identity );
-            cvObject.addXref( xref );
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-            output.println( "\t\t Added IntAct Xref (" + id + ")" );
+            CvObjectXref xref = new CvObjectXref(institution, intact, id, null, null, identity);
+            cvObject.addXref(xref);
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist(xref);
+            output.println("\t\t Added IntAct Xref (" + id + ")");
         }
 
-        if ( needsUpdate ) {
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
+        if (needsUpdate) {
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
         }
 
         // Annotations
-        updateAnnotations(cvObject, cvTerm, output, report );
+        updateAnnotations(cvObject, cvTerm, output, report, config);
 
         // Xrefs
-        updateXrefs(cvObject, cvTerm, output, report );
+        updateXrefs(cvObject, cvTerm, output, report);
 
         // Aliases
-        updateAliases(cvObject, cvTerm, output, report );
+        updateAliases(cvObject, cvTerm, output, report);
     }
 
     /**
@@ -975,19 +969,19 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateAnnotations( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report ) throws IntactException {
+    private static void updateAnnotations(CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report, UpdateCVsConfig config) throws IntactException {
 
         // build a copy of the annotation list and add obsolete and definition (if any).
-        List<CvTermAnnotation> annotations = new ArrayList<CvTermAnnotation>( cvTerm.getAnnotations() );
+        List<CvTermAnnotation> annotations = new ArrayList<CvTermAnnotation>(cvTerm.getAnnotations());
 
-        if ( ! cvTerm.getId().equals( CvTopic.OBSOLETE_MI_REF ) ) {
+        if (!cvTerm.getId().equals(CvTopic.OBSOLETE_MI_REF)) {
             // the Obsolete term is not Obsolete in IntAct.
-            output.println("\t\t CvTerm '"+cvTerm.getShortName()+"' is obsolete? "+(cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null));
+            output.println("\t\t CvTerm '" + cvTerm.getShortName() + "' is obsolete? " + (cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null));
 
-            if ( cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null ) {
-                output.println("\t\t Marking as obsolete, adding the annotation 'obsolete' to term: "+cvTerm.getShortName());
+            if (cvTerm.isObsolete() || cvTerm.getObsoleteMessage() != null) {
+                output.println("\t\t Marking as obsolete, adding the annotation 'obsolete' to term: " + cvTerm.getShortName());
 
-                annotations.add( new CvTermAnnotation( CvTopic.OBSOLETE, cvTerm.getObsoleteMessage() ) );
+                annotations.add(new CvTermAnnotation(CvTopic.OBSOLETE, cvTerm.getObsoleteMessage()));
 
                 report.getObsoleteTerms().add(cvTerm);
             }
@@ -996,47 +990,53 @@ public class UpdateCVs {
         // Definition is to be stored as an Annotation in IntAct.
         // If any available in the PSI term, reflect that in the CvTerm before to start to update.
         String def = cvTerm.getDefinition();
-        if ( def != null && def.length() > 0 ) {
-            CvTermAnnotation annot = new CvTermAnnotation( CvTopic.DEFINITION, cvTerm.getDefinition() );
-            annotations.add( annot );
+        if (def != null && def.length() > 0) {
+            CvTermAnnotation annot = new CvTermAnnotation(CvTopic.DEFINITION, cvTerm.getDefinition());
+            annotations.add(annot);
         }
 
-        Set uniqueCvTopics = loadUniqueCvTopics( output, report );
+        Set uniqueCvTopics = loadUniqueCvTopics(output, report);
 
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
         // Start updating ...
-        for (CvTermAnnotation annotation : annotations)
-        {
+        for (CvTermAnnotation annotation : annotations) {
             // the term will be created if it doesn't exist yet.
             CvTopic topic = (CvTopic) getCvObject(CvTopic.class, annotation.getTopic(), output, report);
 
-            if (topic != null)
-            {
+            if (topic != null) {
 
-                if (uniqueCvTopics.contains(topic))
-                {
+                DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+
+                if (uniqueCvTopics.contains(topic)) {
 
                     // only one instance of that topic allowed.
                     Collection annotationsByTopic = select(cvObject.getAnnotations(), topic);
                     output.println("\t\t Select from Annotation with topic '" + topic.getShortLabel() + "' returned " + annotationsByTopic.size() + " hit(s).");
 
-                    if (annotationsByTopic.isEmpty())
-                    {
+                    if (annotationsByTopic.isEmpty()) {
                         // create one
                         Annotation annot = new Annotation(institution, topic, annotation.getAnnotation());
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(annot);
+                        daoFactory.getAnnotationDao().persist(annot);
 
-                        cvObject.addAnnotation(annot);
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                        if (!config.isIgnoreObsoletionOfObsolete()) {
+                            cvObject.addAnnotation(annot);
+                            daoFactory.getCvObjectDao(CvObject.class).update(cvObject);
+                            output.println("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: " + cvObject.getShortLabel() + "(" + cvObject.getAc() + ")");
+                        } else {
+                            boolean obsoleteObjectAndTopic = isObsoleteObjectAndObsoleteTopic(cvObject, topic);
+                            output.println("\t\t 'Obsolete' object and 'obsolete' topic - " + cvObject.getShortLabel() + "," + topic.getShortLabel() + "? " + obsoleteObjectAndTopic);
 
-                        output.println("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: " + cvObject.getShortLabel() + "(" + cvObject.getAc() + ")");
-
-                    }
-                    else
-                    {
-
+                            if (!obsoleteObjectAndTopic) {
+                                cvObject.addAnnotation(annot);
+                                daoFactory.getCvObjectDao(CvObject.class).update(cvObject);
+                                output.println("\t\t Created unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: " + cvObject.getShortLabel() + "(" + cvObject.getAc() + ")");
+                            } else {
+                                output.println("\t\t IGNORING unique Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ) for CVObject: " + cvObject.getShortLabel() + "(" + cvObject.getAc() + ")");
+                            }
+                        }
+                    } else {
                         Iterator i = annotationsByTopic.iterator();
                         Annotation annot = (Annotation) i.next();
 
@@ -1044,50 +1044,53 @@ public class UpdateCVs {
                         String text = (annot.getAnnotationText() == null ? "" : annot.getAnnotationText());
                         String newtext = (annotation.getAnnotation() == null ? "" : annotation.getAnnotation());
 
-                        if (!text.equals(newtext))
-                        {
+                        if (!text.equals(newtext)) {
                             // only update if required.
                             annot.setAnnotationText(annotation.getAnnotation());
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update(annot);
+                            daoFactory.getAnnotationDao().update(annot);
                             output.println("\t\t Updated Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )");
                         }
 
                         // delete all remaining ones as we want to maintain a unique annotation
-                        while (i.hasNext())
-                        {
+                        while (i.hasNext()) {
                             annot = (Annotation) i.next();
 
                             output.println("\t\t Removed Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' )");
                             cvObject.removeAnnotation(annot);
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
-                            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete(annot);
+                            daoFactory.getCvObjectDao(CvObject.class).update(cvObject);
+                            daoFactory.getAnnotationDao().delete(annot);
                         }
                     } // end - at least one annotation
 
-                }
-                else
-                {
+                } else {
 
                     // more than one instance of that topic allowed.
                     Annotation annot = new Annotation(institution, topic, annotation.getAnnotation());
 
-                    if (!cvObject.getAnnotations().contains(annot))
-                    {
+                    if (!cvObject.getAnnotations().contains(annot)) {
                         // add missing annotation
 
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(annot);
+                        daoFactory.getAnnotationDao().persist(annot);
 
                         cvObject.addAnnotation(annot);
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+                        daoFactory.getCvObjectDao(CvObject.class).update(cvObject);
                         output.println("\t\t Created Annotation( " + topic.getShortLabel() + ", '" + annot.getAnnotationText() + "' ). <topic not unique>");
                     }
                 }
-            }
-            else
-            {
+            } else {
                 output.println("ERROR: Could not find or create CvTopic( " + annotation.getTopic() + " ) in IntAct. Skip annotation.");
             }
         }
+    }
+
+    private static boolean isObsoleteObjectAndObsoleteTopic(CvObject object, CvTopic topic) {
+        CvObject obsolete = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvTopic.class, CvTopic.OBSOLETE_MI_REF);
+
+        if (object.getAc().equals(obsolete.getAc()) && topic.getAc().equals(obsolete.getAc())) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1098,14 +1101,14 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateXrefs( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report ) throws IntactException {
+    private static void updateXrefs(CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report) throws IntactException {
 
         // Database Mapping PSI to IntAct
         Map dbMapping = new HashMap();
-        dbMapping.put( "PMID", CvDatabase.PUBMED );
-        dbMapping.put( "RESID", CvDatabase.RESID );
-        dbMapping.put( "SO", CvDatabase.SO );
-        dbMapping.put( "GO", CvDatabase.GO );
+        dbMapping.put("PMID", CvDatabase.PUBMED);
+        dbMapping.put("RESID", CvDatabase.RESID);
+        dbMapping.put("SO", CvDatabase.SO);
+        dbMapping.put("GO", CvDatabase.GO);
 
         XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
@@ -1115,28 +1118,28 @@ public class UpdateCVs {
 //        CvXrefQualifier goDefinitionRef = (CvXrefQualifier) getCvObject(CvXrefQualifier.class,
 //                                                                         CvXrefQualifier.GO_DEFINITION_REF,
 //                                                                         CvXrefQualifier.GO_DEFINITION_REF_MI_REF, output );
-        Set uniqueQualifiers = loadUniqueCvXrefQualifiers( output, report );
+        Set uniqueQualifiers = loadUniqueCvXrefQualifiers(output, report);
 
-        for ( Iterator iterator = cvTerm.getXrefs().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvTerm.getXrefs().iterator(); iterator.hasNext();) {
             CvTermXref cvTermXref = (CvTermXref) iterator.next();
 
-            CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase(), output, report );
-            CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier(), output, report );
+            CvDatabase database = (CvDatabase) getCvObject(CvDatabase.class, cvTermXref.getDatabase(), output, report);
+            CvXrefQualifier qualifier = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, cvTermXref.getQualifier(), output, report);
 
-            CvObjectXref newXref = new CvObjectXref( institution, database, cvTermXref.getId(), null, null, qualifier );
+            CvObjectXref newXref = new CvObjectXref(institution, database, cvTermXref.getId(), null, null, qualifier);
 
-            if ( cvObject.getXrefs().contains( newXref ) ) {
+            if (cvObject.getXrefs().contains(newXref)) {
                 // found it, skip.
                 continue;
             }
 
             boolean updated = false;
 
-            Collection xrefs = select( cvObject.getXrefs(), database, cvTermXref.getId() );
-            if ( ! xrefs.isEmpty() ) {
+            Collection xrefs = select(cvObject.getXrefs(), database, cvTermXref.getId());
+            if (!xrefs.isEmpty()) {
                 // there's at least one Xref matching that Xref( db, id )
-                output.println( "\t\tFound " + xrefs.size() + " Xref" + ( xrefs.size() > 1 ? "s" : "" ) + " having database(" +
-                                    database.getShortLabel() + ") and id(" + cvTermXref.getId() + ")." );
+                output.println("\t\tFound " + xrefs.size() + " Xref" + (xrefs.size() > 1 ? "s" : "") + " having database(" +
+                               database.getShortLabel() + ") and id(" + cvTermXref.getId() + ").");
 
                 // note: Xref( db, id ) must be unique.
                 // 1. update qualifier
@@ -1147,73 +1150,73 @@ public class UpdateCVs {
                 Iterator itx = xrefs.iterator();
                 CvObjectXref xref = (CvObjectXref) itx.next();
                 CvXrefQualifier old = xref.getCvXrefQualifier();
-                xref.setCvXrefQualifier( qualifier );
-                xrefDao.update( xref );
+                xref.setCvXrefQualifier(qualifier);
+                xrefDao.update(xref);
                 updated = true;
 
-                output.println( "\t\tUpdated (" + xref.getAc() + ") Xref's qualifier from " + old.getShortLabel() + " to " + qualifier.getShortLabel() );
+                output.println("\t\tUpdated (" + xref.getAc() + ") Xref's qualifier from " + old.getShortLabel() + " to " + qualifier.getShortLabel());
 
-                if ( itx.hasNext() ) {
-                    output.println( "\t\t Deleting Xrefs having the same Database / ID as only one should be there:" );
+                if (itx.hasNext()) {
+                    output.println("\t\t Deleting Xrefs having the same Database / ID as only one should be there:");
                 }
-                while ( itx.hasNext() ) {
+                while (itx.hasNext()) {
                     xref = (CvObjectXref) itx.next();
-                    cvObject.removeXref( xref );
-                    xrefDao.delete( xref );
+                    cvObject.removeXref(xref);
+                    xrefDao.delete(xref);
                     output.println("\t\t\t Xref( " + database.getShortLabel() + ", " +
-                                        xref.getCvXrefQualifier().getShortLabel() + ", " + xref.getPrimaryId() +
-                                        " ) (" + cvTerm.getShortName() + ")" );
+                                   xref.getCvXrefQualifier().getShortLabel() + ", " + xref.getPrimaryId() +
+                                   " ) (" + cvTerm.getShortName() + ")");
                 }
 
             } else {
 
                 // No match using db / id.
 
-                if ( uniqueQualifiers.contains( qualifier ) ) {
+                if (uniqueQualifiers.contains(qualifier)) {
 
                     // Now try filtering with Xref( db, qualifier )
-                    Collection selectedXrefs = select( cvObject.getXrefs(), database, qualifier );
+                    Collection selectedXrefs = select(cvObject.getXrefs(), database, qualifier);
 
                     // here we may select an Xref that has just been updated in the block above when selecting by db/id.
 
-                    if ( selectedXrefs.isEmpty() ) {
+                    if (selectedXrefs.isEmpty()) {
                         // create missing Xref
-                        cvObject.addXref( newXref );
-                        xrefDao.persist( newXref );
-                        output.println("\t\t Created Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + newXref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")" );
+                        cvObject.addXref(newXref);
+                        xrefDao.persist(newXref);
+                        output.println("\t\t Created Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + newXref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")");
 
                     } else {
                         // update the first one
                         Iterator itXrefs = null;
-                        if ( updated ) {
+                        if (updated) {
                             // remove the Xref and let the others being deleted.
-                            selectedXrefs.remove( newXref );
+                            selectedXrefs.remove(newXref);
                             itXrefs = selectedXrefs.iterator();
                         } else {
                             // no update yet - update the primaryId
                             itXrefs = selectedXrefs.iterator();
                             Xref xref = (Xref) itXrefs.next();
-                            if ( ! xref.equals( newXref ) ) {
-                                xref.setPrimaryId( cvTermXref.getId() );
-                                xrefDao.update( xref );
-                                output.println( "\t\t Updated Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")" );
+                            if (!xref.equals(newXref)) {
+                                xref.setPrimaryId(cvTermXref.getId());
+                                xrefDao.update(xref);
+                                output.println("\t\t Updated Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")");
                             }
                         }
 
                         // delete all remaining xrefs
-                        while ( itXrefs.hasNext() ) {
+                        while (itXrefs.hasNext()) {
                             Xref xref = (Xref) itXrefs.next();
-                            xrefDao.delete( xref );
-                            output.println( "\t\t Deleted Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")" );
+                            xrefDao.delete(xref);
+                            output.println("\t\t Deleted Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + xref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")");
                         }
                     }
 
                 } else {
                     // That Xref can have multiple instances
-                    if ( ! cvObject.getXrefs().contains( newXref ) ) {
-                        cvObject.addXref( newXref );
-                        xrefDao.persist( newXref );
-                        output.println( "\t\t Created Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + newXref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")" );
+                    if (!cvObject.getXrefs().contains(newXref)) {
+                        cvObject.addXref(newXref);
+                        xrefDao.persist(newXref);
+                        output.println("\t\t Created Xref( " + database.getShortLabel() + ", " + qualifier.getShortLabel() + ", " + newXref.getPrimaryId() + " ) (" + cvTerm.getShortName() + ")");
                     }
                 }
             }
@@ -1228,55 +1231,51 @@ public class UpdateCVs {
      *
      * @throws IntactException if an error occurs during the update.
      */
-    private static void updateAliases( CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report) throws IntactException {
+    private static void updateAliases(CvObject cvObject, CvTerm cvTerm, PrintStream output, UpdateCVsReport report) throws IntactException {
 
         CvAliasType defaultAliasType = (CvAliasType) getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM,
-                                                                  CvAliasType.GO_SYNONYM_MI_REF, output, report );
+                                                                 CvAliasType.GO_SYNONYM_MI_REF, output, report);
 
-        if ( defaultAliasType == null ) {
-            throw new IllegalStateException( "Could not find " + CvAliasType.GO_SYNONYM + " in the IntAct node. Abort." );
+        if (defaultAliasType == null) {
+            throw new IllegalStateException("Could not find " + CvAliasType.GO_SYNONYM + " in the IntAct node. Abort.");
         }
 
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
-        for ( Iterator iterator = cvTerm.getSynonyms().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvTerm.getSynonyms().iterator(); iterator.hasNext();) {
             CvTermSynonym synonym = (CvTermSynonym) iterator.next();
 
             CvAliasType specificType = null;
 
-            if ( synonym.hasType() ) {
+            if (synonym.hasType()) {
                 // if the synonym has a type, we use it instead of the default go-synonym.
-                specificType = (CvAliasType) getCvObject(CvAliasType.class, synonym.getType(), output, report );
-                if ( specificType == null ) {
-                    output.println("Error: Could not find or create CvAliasType( '" + synonym.getType() + "' ). skip Alias update." );
-                    output.println("Error: Use '" + defaultAliasType.getShortLabel() + "' instead." );
+                specificType = (CvAliasType) getCvObject(CvAliasType.class, synonym.getType(), output, report);
+                if (specificType == null) {
+                    output.println("Error: Could not find or create CvAliasType( '" + synonym.getType() + "' ). skip Alias update.");
+                    output.println("Error: Use '" + defaultAliasType.getShortLabel() + "' instead.");
                     specificType = defaultAliasType;
                 }
             }
 
-            CvObjectAlias alias = new CvObjectAlias( institution, cvObject, specificType, synonym.getName() );
+            CvObjectAlias alias = new CvObjectAlias(institution, cvObject, specificType, synonym.getName());
 
-            if ( ! alias.getName().equals( synonym.getName() ) ) {
+            if (!alias.getName().equals(synonym.getName())) {
                 // the synonym was truncated, we don't import these.
 
-                if (specificType != null)
-                {
+                if (specificType != null) {
                     output.println("\t\t Skipping Alias( " + specificType.getShortLabel() + ", '" +
-                                    synonym.getName() + "' ) ... the content would be truncated." );
+                                   synonym.getName() + "' ) ... the content would be truncated.");
                 }
                 continue;
             }
 
-            if ( ! cvObject.getAliases().contains( alias ) ) {
-                cvObject.addAlias( alias );
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist( alias );
+            if (!cvObject.getAliases().contains(alias)) {
+                cvObject.addAlias(alias);
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist(alias);
 
-                if (specificType == null)
-                {
+                if (specificType == null) {
                     output.println("WARN: Term without specific type: " + cvTerm.getFullName());
-                }
-                else
-                {
+                } else {
                     output.println("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )");
                 }
             }
@@ -1292,9 +1291,10 @@ public class UpdateCVs {
      *
      * @throws IntactException
      */
-    private static Annotation getUniqueAnnotation( CvObject cvObject,
-                                                   CvTopic topicFilter ) throws IntactException {
-        if ( topicFilter == null ) {
+    private static Annotation getUniqueAnnotation(CvObject cvObject,
+                                                  CvTopic topicFilter
+    ) throws IntactException {
+        if (topicFilter == null) {
             throw new NullPointerException();
         }
 
@@ -1302,26 +1302,26 @@ public class UpdateCVs {
 
         Collection<Annotation> toDelete = new ArrayList<Annotation>();
 
-        for ( Iterator iterator = cvObject.getAnnotations().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cvObject.getAnnotations().iterator(); iterator.hasNext();) {
             Annotation annotation = (Annotation) iterator.next();
 
-            if ( topicFilter.equals( annotation.getCvTopic() ) ) {
+            if (topicFilter.equals(annotation.getCvTopic())) {
 
-                if ( myAnnotation == null ) {
+                if (myAnnotation == null) {
                     myAnnotation = annotation; // we keep the first one and delete all others
                 } else {
-                    toDelete.add( annotation ); // keep track for later deletion
+                    toDelete.add(annotation); // keep track for later deletion
                 }
             }
         } // for all annotations
 
 
-        for ( Annotation annotation : toDelete ) {
-            System.out.println( "Removing extra annotation: Annotation(" + annotation.getCvTopic().getShortLabel() + ", '" +
-                                annotation.getAnnotationText() + "')" );
-            cvObject.removeAnnotation( annotation );
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( cvObject );
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete( annotation );
+        for (Annotation annotation : toDelete) {
+            System.out.println("Removing extra annotation: Annotation(" + annotation.getCvTopic().getShortLabel() + ", '" +
+                               annotation.getAnnotationText() + "')");
+            cvObject.removeAnnotation(annotation);
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(cvObject);
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().delete(annotation);
         }
 
         return myAnnotation;
@@ -1337,47 +1337,47 @@ public class UpdateCVs {
      * @throws uk.ac.ebi.intact.business.IntactException
      *
      */
-    public static void createNecessaryCvTerms( PrintStream output, UpdateCVsReport report ) throws IntactException {
+    public static void createNecessaryCvTerms(PrintStream output, UpdateCVsReport report) throws IntactException {
 
         // Note, these object are being created is they don't exist yet. They are part
         // of psi-mi so they will be updated later.
 
         // CvXrefQualifier( identity )
-        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, "identical object", output, report );
+        identity = (CvXrefQualifier) getCvObject(CvXrefQualifier.class, CvXrefQualifier.IDENTITY, CvXrefQualifier.IDENTITY_MI_REF, "identical object", output, report);
 
         // CvDatabase( psi-mi )
-        psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report );
+        psi = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.PSI_MI, CvDatabase.PSI_MI_MI_REF, output, report);
 
         // CvDatabase( psi-mi )
-        intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report );
+        intact = (CvDatabase) getCvObject(CvDatabase.class, CvDatabase.INTACT, CvDatabase.INTACT_MI_REF, output, report);
 
         // CvDatabase( pubmed )
-        getCvObject(CvDatabase.class, CvDatabase.PUBMED, CvDatabase.PUBMED_MI_REF, output, report );
+        getCvObject(CvDatabase.class, CvDatabase.PUBMED, CvDatabase.PUBMED_MI_REF, output, report);
 
         // CvDatabase( go )
-        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF, "gene ontology definition reference", output, report );
+        getCvObject(CvDatabase.class, CvDatabase.GO, CvDatabase.GO_MI_REF, "gene ontology definition reference", output, report);
 
         // CvDatabase( so )
-        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF, "sequence ontology", output, report );
+        getCvObject(CvDatabase.class, CvDatabase.SO, CvDatabase.SO_MI_REF, "sequence ontology", output, report);
 
         // CvDatabase( resid )
-        getCvObject(CvDatabase.class, CvDatabase.RESID, CvDatabase.RESID_MI_REF, output, report );
+        getCvObject(CvDatabase.class, CvDatabase.RESID, CvDatabase.RESID_MI_REF, output, report);
 
         // CvXrefQualifier( go-definition-ref )
-        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF, output, report );
+        getCvObject(CvXrefQualifier.class, CvXrefQualifier.GO_DEFINITION_REF, output, report);
 
         // CvXrefQualifier( see-also )
-        getCvObject(CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO, CvXrefQualifier.SEE_ALSO_MI_REF, output, report );
+        getCvObject(CvXrefQualifier.class, CvXrefQualifier.SEE_ALSO, CvXrefQualifier.SEE_ALSO_MI_REF, output, report);
 
         // CvAliasType( go synonym )
-        getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM, CvAliasType.GO_SYNONYM_MI_REF, output, report );
+        getCvObject(CvAliasType.class, CvAliasType.GO_SYNONYM, CvAliasType.GO_SYNONYM_MI_REF, output, report);
 
         // CvTopic( comment )
-        getCvObject(CvTopic.class, CvTopic.COMMENT, CvTopic.COMMENT_MI_REF, output, report );
+        getCvObject(CvTopic.class, CvTopic.COMMENT, CvTopic.COMMENT_MI_REF, output, report);
 
         // CvTopic( obsolete )
-        getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report );
-      
+        getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report);
+
         //IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
 
@@ -1395,40 +1395,38 @@ public class UpdateCVs {
      * @throws IntactException if an error occurs during update.
      * @throws IOException     if an error occurs while handling the file.
      */
-    private static void updateAnnotationsFromFile( InputStream is, PrintStream output ) throws IntactException, IOException {
+    private static void updateAnnotationsFromFile(InputStream is, PrintStream output) throws IntactException, IOException {
 
         BufferedReader in = null;
 
         try {
-                try
-                {
-                    output.println( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
-                }
-                catch (SQLException e)
-                {
-                    e.printStackTrace();
-                }
+            try {
+                output.println("Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName());
+            }
+            catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-            in = new BufferedReader( new InputStreamReader( is ) );
+            in = new BufferedReader(new InputStreamReader(is));
             String line;
             int lineCount = 0;
-            while ( ( line = in.readLine() ) != null ) {
+            while ((line = in.readLine()) != null) {
 
                 lineCount++;
                 line = line.trim();
 
                 // skip comments
-                if ( line.startsWith( "#" ) ) {
+                if (line.startsWith("#")) {
                     continue;
                 }
 
                 // skip empty lines
-                if ( line.length() == 0 ) {
+                if (line.length() == 0) {
                     continue;
                 }
 
                 // process line
-                StringTokenizer stringTokenizer = new StringTokenizer( line, "\t" );
+                StringTokenizer stringTokenizer = new StringTokenizer(line, "\t");
 
                 final String shorltabel = stringTokenizer.nextToken();           // 1. shortlabel
                 final String fullname = stringTokenizer.nextToken();             // 2. fullname
@@ -1441,108 +1439,108 @@ public class UpdateCVs {
                 try {
 
                     boolean applyToChildren = false;
-                    if ( "true".equalsIgnoreCase( applyToChildrenValue.trim() ) ) {
+                    if ("true".equalsIgnoreCase(applyToChildrenValue.trim())) {
                         applyToChildren = true;
                     }
 
                     // find the CvObject
                     CvObject cv = null;
-                    if ( mi != null && mi.startsWith( "MI:" ) ) {
+                    if (mi != null && mi.startsWith("MI:")) {
                         cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByXref(mi);
 
-                        if ( cv == null ) {
-                            output.println( "WARN: Could not find the object by the given reference: '" + mi + "'." );
+                        if (cv == null) {
+                            output.println("WARN: Could not find the object by the given reference: '" + mi + "'.");
                         }
                     }
 
-                    if ( cv == null ) {
+                    if (cv == null) {
                         // wasn't found using MI reference, then try shortlabel
-                        if ( shorltabel != null && shorltabel.trim().length() > 0 ) {
+                        if (shorltabel != null && shorltabel.trim().length() > 0) {
                             cv = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).getByShortLabel(shorltabel);
                         } else {
-                            throw new Exception( "Line " + lineCount + ": Neither a valid shortlabel (" + shorltabel + ") " +
-                                                 "nor MI ref (" + mi + ") were given, could not find the corresponding " +
-                                                 "CvObject. Skip line." );
+                            throw new Exception("Line " + lineCount + ": Neither a valid shortlabel (" + shorltabel + ") " +
+                                                "nor MI ref (" + mi + ") were given, could not find the corresponding " +
+                                                "CvObject. Skip line.");
                         }
                     }
 
-                    if ( cv != null ) {
-                        output.println( "-------------------------------------------------------------------------" );
-                        output.println( "Read line " + lineCount + ": " + cv.getShortLabel() + "..." );
+                    if (cv != null) {
+                        output.println("-------------------------------------------------------------------------");
+                        output.println("Read line " + lineCount + ": " + cv.getShortLabel() + "...");
 
                         // if childrenToApply is true and the term is not a CvDagObject, skip and report error
-                        if ( applyToChildren ) {
-                            if ( ! CvDagObject.class.isAssignableFrom( cv.getClass() ) ) {
+                        if (applyToChildren) {
+                            if (!CvDagObject.class.isAssignableFrom(cv.getClass())) {
                                 // error, CvObject that is not CvDagObject doesn't have children terms.
                                 applyToChildren = false;
-                                System.out.println( "Line " + lineCount + ": The specified type (" + cv.getClass() + ") is " +
-                                                    "not hierarchical, though you have requested an updated on children " +
-                                                    "term. set not to apply to children." );
+                                System.out.println("Line " + lineCount + ": The specified type (" + cv.getClass() + ") is " +
+                                                   "not hierarchical, though you have requested an updated on children " +
+                                                   "term. set not to apply to children.");
                             }
                         }
 
                         // we have the object, now build the annotation
                         CvTopic cvTopic = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(topic);
-                        if ( cvTopic == null ) {
-                            throw new Exception( "Line " + lineCount + ": Could not find CvTopic( " + topic + " ). Skip line." );
+                        if (cvTopic == null) {
+                            throw new Exception("Line " + lineCount + ": Could not find CvTopic( " + topic + " ). Skip line.");
                         }
 
                         Set<CvObject> termsToUpdate = new HashSet<CvObject>();
 
                         // add the term itself
-                        termsToUpdate.add( cv );
+                        termsToUpdate.add(cv);
 
                         // if requested, its children
-                        if ( applyToChildren ) {
+                        if (applyToChildren) {
                             // traverse the sub DAG and fill up the collection
-                            collectAllChildren( (CvDagObject) cv, termsToUpdate );
+                            collectAllChildren((CvDagObject) cv, termsToUpdate);
                         }
 
                         // start the update the selected collection of CVs
-                        for ( CvObject aTermToUpdate : termsToUpdate ) {
+                        for (CvObject aTermToUpdate : termsToUpdate) {
 
-                            String termMi = getPsiId( aTermToUpdate );
-                            if ( cv.equals( aTermToUpdate ) ) {
-                                output.println( "Updating term: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")" );
+                            String termMi = getPsiId(aTermToUpdate);
+                            if (cv.equals(aTermToUpdate)) {
+                                output.println("Updating term: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")");
                             } else {
-                                output.println( "Updating child: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")" );
+                                output.println("Updating child: " + aTermToUpdate.getShortLabel() + " (" + termMi + ")");
                             }
                             // now update that single term
-                            Annotation annot = getUniqueAnnotation(aTermToUpdate, cvTopic );
+                            Annotation annot = getUniqueAnnotation(aTermToUpdate, cvTopic);
 
                             Institution institution = IntactContext.getCurrentInstance().getInstitution();
 
-                            Annotation newAnnotation = new Annotation( institution, cvTopic, reason );
-                            if ( annot == null ) {
+                            Annotation newAnnotation = new Annotation(institution, cvTopic, reason);
+                            if (annot == null) {
                                 // then add the new one
-                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist( newAnnotation );
-                                aTermToUpdate.addAnnotation( newAnnotation );
-                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update( aTermToUpdate );
-                                output.println( "\tCREATED new Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().persist(newAnnotation);
+                                aTermToUpdate.addAnnotation(newAnnotation);
+                                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvObject.class).update(aTermToUpdate);
+                                output.println("\tCREATED new Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )");
 
                             } else {
 
                                 // then try to update it
-                                if ( ! newAnnotation.equals( annot ) ) {
+                                if (!newAnnotation.equals(annot)) {
 
-                                    output.println( "\tOLD: " + annot );
-                                    output.println( "\tNEW: " + newAnnotation );
+                                    output.println("\tOLD: " + annot);
+                                    output.println("\tNEW: " + newAnnotation);
 
                                     // do the update.
-                                    annot.setAnnotationText( reason );
-                                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update( annot );
-                                    String myClassName = type.substring( type.lastIndexOf( "." ) + 1, type.length() );
-                                    output.println( "\tUPDATED Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )" );
+                                    annot.setAnnotationText(reason);
+                                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().update(annot);
+                                    String myClassName = type.substring(type.lastIndexOf(".") + 1, type.length());
+                                    output.println("\tUPDATED Annotation( " + cvTopic.getShortLabel() + ", '" + reason + "' )");
                                 }
                             }
                         } // update terms
                     } // if cv found
 
-                } catch ( ClassNotFoundException e ) {
+                } catch (ClassNotFoundException e) {
 
-                    output.println( "ERROR: Line " + lineCount + ": Object Type not supported: '" + type + "'. skipping." );
+                    output.println("ERROR: Line " + lineCount + ": Object Type not supported: '" + type + "'. skipping.");
 
-                } catch ( Exception e ) {
+                } catch (Exception e) {
 
                     e.printStackTrace();
                 }
@@ -1550,7 +1548,7 @@ public class UpdateCVs {
             } // while - reading line by line
 
         } finally {
-            if ( in != null ) {
+            if (in != null) {
                 in.close(); // close() calls close() on encapsulated Reader.
             }
         }
@@ -1562,64 +1560,59 @@ public class UpdateCVs {
      * @param cv
      * @param termsToUpdate
      */
-    private static void collectAllChildren( CvDagObject cv, Collection termsToUpdate ) {
+    private static void collectAllChildren(CvDagObject cv, Collection termsToUpdate) {
 
-        if ( termsToUpdate == null ) {
-            throw new IllegalArgumentException( "You must give a non null collection." );
+        if (termsToUpdate == null) {
+            throw new IllegalArgumentException("You must give a non null collection.");
         }
 
         // note: if no children in the collection, then there is no recursive call ;)
-        for ( Iterator iterator = cv.getChildren().iterator(); iterator.hasNext(); ) {
+        for (Iterator iterator = cv.getChildren().iterator(); iterator.hasNext();) {
             CvDagObject child = (CvDagObject) iterator.next();
-            termsToUpdate.add( child );
-            collectAllChildren( child, termsToUpdate );
+            termsToUpdate.add(child);
+            collectAllChildren(child, termsToUpdate);
         }
     }
 
     //////////////////////////
     // M A I N
 
-    public static void main( String[] args ) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-        if ( args.length != 1 && args.length != 2 ) {
-            System.err.println( "Usage: UpdateCVs <obo file> [<annotation update file>]" );
-            System.exit( 1 );
+        if (args.length != 1 && args.length != 2) {
+            System.err.println("Usage: UpdateCVs <obo file> [<annotation update file>]");
+            System.exit(1);
         }
 
-        String oboFilename = args[ 0 ];
+        String oboFilename = args[0];
         String annotFilename = null;
-        if ( args.length == 2 ) {
-            annotFilename = args[ 1 ];
+        if (args.length == 2) {
+            annotFilename = args[1];
         }
 
         // 2.1 Connect to the database.
         String instanceName = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName();
-        System.out.println( "Database: " + instanceName );
-        System.out.println( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
+        System.out.println("Database: " + instanceName);
+        System.out.println("User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName());
 
-        load(new File(oboFilename), new File(annotFilename), System.out);
+        load(new File(oboFilename), new File(annotFilename), System.out, new UpdateCVsConfig());
 
     }
 
 
-
-    public static UpdateCVsReport load(File oboFile, PrintStream output) throws PsiLoaderException, IOException
-    {
-        return load(new FileInputStream(oboFile), null, output);
+    public static UpdateCVsReport load(File oboFile, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
+        return load(new FileInputStream(oboFile), null, output, config);
     }
 
-    public static UpdateCVsReport load(File oboFile, File annotFile, PrintStream output) throws PsiLoaderException, IOException
-    {
-        return load(new FileInputStream(oboFile), new FileInputStream(annotFile), output);
+    public static UpdateCVsReport load(File oboFile, File annotFile, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
+        return load(new FileInputStream(oboFile), new FileInputStream(annotFile), output, config);
     }
 
-    public static UpdateCVsReport load(InputStream oboFile, PrintStream output) throws PsiLoaderException, IOException
-    {
-        return load(oboFile, null, output);
+    public static UpdateCVsReport load(InputStream oboFile, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
+        return load(oboFile, null, output, config);
     }
 
-    public static UpdateCVsReport load(InputStream oboFile, InputStream annotFile, PrintStream output) throws PsiLoaderException, IOException
-    {
+    public static UpdateCVsReport load(InputStream oboFile, InputStream annotFile, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
         UpdateCVsReport report = new UpdateCVsReport();
 
         /////////////////
@@ -1627,15 +1620,15 @@ public class UpdateCVs {
         output.println("Parsing OBO File...\n");
 
         PSILoader psi = new PSILoader(output);
-        IntactOntology ontology = psi.parseOboFile( oboFile, output );
+        IntactOntology ontology = psi.parseOboFile(oboFile, output);
 
         report.setOntology(ontology);
 
         /////////////////////////////
         // 2.2 Checking on sequence
 
-        long max = searchLastIntactId( ontology );
-        SequenceManager.synchronizeUpTo(max );
+        long max = searchLastIntactId(ontology);
+        SequenceManager.synchronizeUpTo(max);
 
 //        // 2.4 Check that we don't touch a production instance.
 //        if ( instanceName.equalsIgnoreCase( "ZPRO" ) || instanceName.equalsIgnoreCase( "IWEB" ) ) {
@@ -1646,22 +1639,22 @@ public class UpdateCVs {
 
         // 2.4 Create required vocabulary terms
         output.println("\nCreating necessary vocabulary terms...\n");
-        createNecessaryCvTerms( output, report );
+        createNecessaryCvTerms(output, report);
 
         // 2.5 update the CVs
         output.println("\nUpdating CVs...\n");
-        update( ontology, output, report );
+        update(ontology, output, report, config);
 
         // 2.6 Update obsolete terms
         output.println("\nUpdating Obsolete terms...\n");
-        Collection<CvTerm> orphanTerms = listOrphanObsoleteTerms( ontology, output, report );
+        Collection<CvTerm> orphanTerms = listOrphanObsoleteTerms(ontology, output, report);
         report.setOrphanTerms(orphanTerms);
 
-        if ( annotFile != null ) {
+        if (annotFile != null) {
             try {
-                updateAnnotationsFromFile( annotFile, output );
-            } catch ( IOException e ) {
-                output.println( "ERROR: Could not Update CVs' annotations." );
+                updateAnnotationsFromFile(annotFile, output);
+            } catch (IOException e) {
+                output.println("ERROR: Could not Update CVs' annotations.");
                 e.printStackTrace();
             }
         }
@@ -1669,12 +1662,9 @@ public class UpdateCVs {
         return report;
     }
 
-    private static CvObject getCVWithMi(List<Mi2Cv> cvList, Class cvType, String mi)
-    {
-        for (Mi2Cv mi2cv : cvList)
-        {
-            if (mi2cv.getMi().equals(mi) && cvType.equals(mi2cv.getCv().getClass()))
-            {
+    private static CvObject getCVWithMi(List<Mi2Cv> cvList, Class cvType, String mi) {
+        for (Mi2Cv mi2cv : cvList) {
+            if (mi2cv.getMi().equals(mi) && cvType.equals(mi2cv.getCv().getClass())) {
                 return mi2cv.getCv();
             }
         }
@@ -1682,54 +1672,45 @@ public class UpdateCVs {
         return null;
     }
 
-    private static class Mi2Cv
-    {
+    private static class Mi2Cv {
+
         private String mi;
         private CvObject cv;
 
-        public Mi2Cv(String mi, CvObject cv)
-        {
+        public Mi2Cv(String mi, CvObject cv) {
             this.mi = mi;
             this.cv = cv;
         }
 
-        public String getMi()
-        {
+        public String getMi() {
             return mi;
         }
 
-        public CvObject getCv()
-        {
+        public CvObject getCv() {
             return cv;
         }
 
-        public boolean equals(Object o)
-        {
-            if (this == o)
-            {
+        public boolean equals(Object o) {
+            if (this == o) {
                 return true;
             }
-            if (o == null || getClass() != o.getClass())
-            {
+            if (o == null || getClass() != o.getClass()) {
                 return false;
             }
 
             Mi2Cv mi2Cv = (Mi2Cv) o;
 
-            if (cv != null ? !cv.equals(mi2Cv.cv) : mi2Cv.cv != null)
-            {
+            if (cv != null ? !cv.equals(mi2Cv.cv) : mi2Cv.cv != null) {
                 return false;
             }
-            if (mi != null ? !mi.equals(mi2Cv.mi) : mi2Cv.mi != null)
-            {
+            if (mi != null ? !mi.equals(mi2Cv.mi) : mi2Cv.mi != null) {
                 return false;
             }
 
             return true;
         }
 
-        public int hashCode()
-        {
+        public int hashCode() {
             int result;
             result = (mi != null ? mi.hashCode() : 0);
             result = 31 * result + (cv != null ? cv.hashCode() : 0);
