@@ -93,7 +93,7 @@ public class NucleicAcidIdentity  implements Rule {
         return NO_IDENTITY_SUGGESTION;
     }
 
-    public static String getNON_ALLOWED_IDENTITY_DESCRIPTION() {
+    public static String getNonAllowedIdentityDescription() {
         return NON_ALLOWED_IDENTITY_DESCRIPTION;
     }
 
