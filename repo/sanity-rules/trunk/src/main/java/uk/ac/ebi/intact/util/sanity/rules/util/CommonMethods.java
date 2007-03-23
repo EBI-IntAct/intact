@@ -5,10 +5,7 @@
  */
 package uk.ac.ebi.intact.util.sanity.rules.util;
 
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 
@@ -48,6 +45,16 @@ public class CommonMethods {
         for(Annotation annotation : annotations){
             if(CvTopic.ACCEPTED.equals(annotation.getCvTopic().getShortLabel())){
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isNoUniprotUpdate(Protein protein){
+        Collection<Annotation> annotations = protein.getAnnotations();
+        for(Annotation annotation : annotations){
+            if(CvTopic.NON_UNIPROT.equals(annotation.getCvTopic().getShortLabel())){
+                return true ;
             }
         }
         return false;
