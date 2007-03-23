@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetP
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.dbutil.cv.PsiLoaderException;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVs;
+import uk.ac.ebi.intact.dbutil.cv.UpdateCVsConfig;
 import uk.ac.ebi.intact.dbutil.cv.UpdateCVsReport;
 import uk.ac.ebi.intact.util.UrlUtils;
 import uk.ac.ebi.intact.util.filter.UrlFilter;
@@ -47,107 +48,93 @@ import java.util.List;
  * @author Bruno Aranda (latest modification by $Author$)
  * @version $Revision$ $Date$
  */
-public class DbUtils
-{
+public class DbUtils {
+
     private static final Logger log = Logger.getLogger(DbUtils.class);
 
     /**
      * Creates or updates the CvObjects in a database from a default intact.obo file included in this package
      */
-    public static UpdateCVsReport createOrUpdateCvObjects(PrintStream output) throws PsiLoaderException, IOException
-    {
-        return createOrUpdateCvObjects(DbUtils.class.getResourceAsStream("intact.obo"), output);
+    public static UpdateCVsReport createOrUpdateCvObjects(PrintStream output) throws PsiLoaderException, IOException {
+        return createOrUpdateCvObjects(DbUtils.class.getResourceAsStream("intact.obo"), output, new UpdateCVsConfig());
     }
 
     /**
      * Creates or updates the CvObjects in a database from the url provided
+     *
      * @param oboFileUrl a URL pointing to an OBO file
      */
-    public static UpdateCVsReport createOrUpdateCvObjects(URL oboFileUrl, PrintStream output) throws PsiLoaderException, IOException
-    {
-        return createOrUpdateCvObjects(oboFileUrl.openStream(), output);
+    public static UpdateCVsReport createOrUpdateCvObjects(URL oboFileUrl, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
+        return createOrUpdateCvObjects(oboFileUrl.openStream(), output, config);
     }
 
     /**
      * Creates or updates the CvObjects in a database from an input stream with OBO format
+     *
      * @param inputStream
      */
-    public static UpdateCVsReport createOrUpdateCvObjects(InputStream inputStream, PrintStream output) throws PsiLoaderException, IOException
-    {
-        return UpdateCVs.load(inputStream, output);
+    public static UpdateCVsReport createOrUpdateCvObjects(InputStream inputStream, PrintStream output, UpdateCVsConfig config) throws PsiLoaderException, IOException {
+        return UpdateCVs.load(inputStream, output, config);
     }
 
-    public static void importPsi1Xml(URL psiXmlUrl) throws SAXException, IOException
-    {
+    public static void importPsi1Xml(URL psiXmlUrl) throws SAXException, IOException {
         importPsi1Xml(psiXmlUrl.openStream());
     }
 
-    public static List<URL> importPsi1XmlFromFolderUrl(URL folderUrl, UrlFilter filter, boolean recursive) throws SAXException, IOException
-    {
+    public static List<URL> importPsi1XmlFromFolderUrl(URL folderUrl, UrlFilter filter, boolean recursive) throws SAXException, IOException {
         List<URL> urlsToImport = UrlUtils.listFilesFromFolderUrl(folderUrl, filter, recursive);
 
-        for (URL url : urlsToImport)
-        {
+        for (URL url : urlsToImport) {
             importPsi1Xml(url.openStream());
         }
 
         return urlsToImport;
     }
 
-    public static void importPsi1Xml(InputStream is) throws SAXException, IOException
-    {
+    public static void importPsi1Xml(InputStream is) throws SAXException, IOException {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         MessageHolder messages = MessageHolder.getInstance();
 
         // Parse the PSI file
         DocumentBuilder builder = null;
 
-        try
-        {
+        try {
             builder = factory.newDocumentBuilder();
         }
-        catch (ParserConfigurationException e)
-        {
+        catch (ParserConfigurationException e) {
             throw new SAXException(e);
         }
 
-        Document document = builder.parse( is );
+        Document document = builder.parse(is);
         Element rootElement = document.getDocumentElement();
 
         EntrySetParser entrySetParser = new EntrySetParser();
-        EntrySetTag entrySet = entrySetParser.process( rootElement );
+        EntrySetTag entrySet = entrySetParser.process(rootElement);
 
         UpdateProteinsI proteinFactory = new UpdateProteins();
         BioSourceFactory bioSourceFactory = new BioSourceFactory();
 
-        ControlledVocabularyRepository.check( );
+        ControlledVocabularyRepository.check();
 
         // check the parsed model
         EntrySetChecker.check(entrySet, proteinFactory, bioSourceFactory);
 
-        if (messages.checkerMessageExists())
-        {
+        if (messages.checkerMessageExists()) {
             // display checker messages.
             MessageHolder.getInstance().printCheckerReport(System.err);
-        }
-        else
-        {
+        } else {
             EntrySetPersister.persist(entrySet);
 
-            if (messages.checkerMessageExists())
-            {
+            if (messages.checkerMessageExists()) {
                 // display persister messages.
                 MessageHolder.getInstance().printPersisterReport(System.err);
-            }
-            else
-            {
+            } else {
                 log.debug("The data have been successfully saved in your Intact node.");
             }
         }
     }
 
-    public static void main(String[] args) throws Exception
-    {
+    public static void main(String[] args) throws Exception {
         URL url = new URL("ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/");
         //URLConnection conn = url.openConnection();
 
@@ -156,9 +143,8 @@ public class DbUtils
 
         BufferedReader r = new BufferedReader(new InputStreamReader(is));
         String line;
-        while ((line = r.readLine())!= null)
-        {
-            System.out.println(line+"\n");
+        while ((line = r.readLine()) != null) {
+            System.out.println(line + "\n");
         }
     }
 
