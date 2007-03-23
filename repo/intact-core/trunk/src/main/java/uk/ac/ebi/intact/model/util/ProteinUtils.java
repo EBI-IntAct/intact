@@ -16,11 +16,10 @@
 package uk.ac.ebi.intact.model.util;
 
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * Utility methods for Proteins
@@ -58,5 +57,34 @@ public class ProteinUtils {
         }
 
         return isFromUniprot;
+    }
+
+    /**
+     * Return the xref of the protein having as cvQualifier, the CvQualifier with psi-mi equal to
+     * CvXrefQualifier.IDENTITY_MI_REF and as cvDatabase, the CvDatabase with psi-mi equal to CvDatabase.UNIPROT_MI_REF
+     * and returns it. Return null otherwise.
+     * @param protein a non null Protein object.
+     * @return the uniprotkb identity xref if the protein has one, null otherwise.
+     */
+
+    public static InteractorXref getUniprotXref(Protein protein){
+        if(protein == null){
+            throw new NullPointerException("Protein is null, shouldn't be null");
+        }
+        Collection<InteractorXref> xrefs = protein.getXrefs();
+        for(InteractorXref xref : xrefs){
+            CvXrefQualifier qualifier = xref.getCvXrefQualifier();
+            if(qualifier != null){
+                CvObjectXref qualifierIdentityXref = CvObjectUtils.getPsiMiIdentityXref(qualifier);
+                if(qualifierIdentityXref!= null && CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierIdentityXref.getPrimaryId())){
+                    CvDatabase database = xref.getCvDatabase();
+                    CvObjectXref databaseIdentityXref = CvObjectUtils.getPsiMiIdentityXref(database);
+                    if(databaseIdentityXref != null && CvDatabase.UNIPROT_MI_REF.equals(databaseIdentityXref.getPrimaryId())){
+                        return xref;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
