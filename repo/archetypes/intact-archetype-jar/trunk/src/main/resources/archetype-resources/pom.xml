@@ -102,6 +102,11 @@
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
+            <!-- When the archetype plugin supports it (that is when they include the escapeTool in VelocityContext)
+                 the statement below should work:
+
+                 <url>${esc.dollar}{site.remote.basedir}/${artifactId}</url>
+            -->
             <url>${site.remote.basedir}/${artifactId}</url>
         </site>
     </distributionManagement>
