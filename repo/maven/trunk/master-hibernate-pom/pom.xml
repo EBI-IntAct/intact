@@ -18,12 +18,9 @@
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom
-        </connection>
-        <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/master-hibernate-pom
-        </developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/master-hibernate-pom</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/master-hibernate-pom/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/master-hibernate-pom/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/master-hibernate-pom/trunk</url>
     </scm>
 
     <properties>
