@@ -26,7 +26,6 @@
 
     <ciManagement>
         <system>continuum</system>
-        <url>http://faldor.ebi.ac.uk:8080/continuum</url>
         <notifiers>
             <notifier>
                 <type>mail</type>
