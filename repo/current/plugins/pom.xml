@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
 /**
  * Copyright (c) 2006 The European Bioinformatics Institute, and others.
  * All rights reserved.
  */
--->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -43,7 +39,8 @@
         <module>psixml-generator-maven-plugin</module>
         <module>reactome-maven-plugin</module>
         <module>uniprotexport-maven-plugin</module>
-    </modules>
+        <module>dataminer-export-maven-plugin</module>
+  </modules>
 
     <distributionManagement>
         <site>
