@@ -18,13 +18,10 @@ import java.io.IOException;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id:IntactCleanMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
- * @since 0.1
- *
  * @goal clean
- *
+ * @since 0.1
  */
-public class IntactCleanMojo extends IntactAbstractMojo
-{
+public class IntactCleanMojo extends IntactAbstractMojo {
 
     /**
      * Project instance
@@ -35,25 +32,20 @@ public class IntactCleanMojo extends IntactAbstractMojo
      */
     private MavenProject project;
 
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         File builddir = getDirectory();
 
-         if (builddir.exists())
-         {
-             try
-             {
-                 FileUtils.deleteDirectory( builddir );
-             }
-             catch (IOException e)
-             {
-                 throw new MojoExecutionException("Problem deleting folder: "+builddir);
-             }
-         }
+        if ( builddir.exists() ) {
+            try {
+                FileUtils.deleteDirectory( builddir );
+            }
+            catch ( IOException e ) {
+                throw new MojoExecutionException( "Problem deleting folder: " + builddir );
+            }
+        }
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 }

@@ -24,17 +24,17 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     /**
      * Standard output file
      *
-     * @parameter  expression="${intact.outputFile}
-                   default-value="${project.build.directory}/output.log"
+     * @parameter expression="${intact.outputFile}
+     * default-value="${project.build.directory}/output.log"
      * @required
-     **/
+     */
     private File outputFile;
 
     /**
      * Standard error file
      *
      * @parameter expression="${intact.errorFile}
-     *            default-value="${project.build.directory}/error.log"
+     * default-value="${project.build.directory}/error.log"
      * @required
      */
     private File errorFile;
@@ -42,48 +42,40 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     private Writer outputWriter;
     private Writer errorWriter;
 
-    protected void writeOutputln(String line) throws IOException
-    {
-        if (line == null)
-        {
+    protected void writeOutputln( String line ) throws IOException {
+        if ( line == null ) {
             return;
         }
 
-        getOutputWriter().write(line+NEW_LINE);
+        getOutputWriter().write( line + NEW_LINE );
 
     }
 
-    protected void writeErrorln(String line) throws IOException
-    {
-        if (line == null)
-        {
+    protected void writeErrorln( String line ) throws IOException {
+        if ( line == null ) {
             return;
         }
 
-        getErrorWriter().write(line+NEW_LINE);
+        getErrorWriter().write( line + NEW_LINE );
 
     }
 
-    public Writer getOutputWriter() throws IOException
-    {
-        if (outputWriter == null)
-        {
-            MojoUtils.prepareFile(getOutputFile(), true);
-            MojoUtils.writeStandardHeaderToFile("Standard output", "Default error file", getProject(), outputFile);
+    public Writer getOutputWriter() throws IOException {
+        if ( outputWriter == null ) {
+            MojoUtils.prepareFile( getOutputFile(), true );
+            MojoUtils.writeStandardHeaderToFile( "Standard output", "Default error file", getProject(), outputFile );
 
-            outputWriter = new FileWriter(outputFile);
+            outputWriter = new FileWriter( outputFile );
         }
         return outputWriter;
     }
 
-    public Writer getErrorWriter() throws IOException
-    {
-        if (errorWriter == null)
-        {
-            MojoUtils.prepareFile(getErrorFile(), true);
-            MojoUtils.writeStandardHeaderToFile("Standard error", "Default error file", getProject(), errorFile);
+    public Writer getErrorWriter() throws IOException {
+        if ( errorWriter == null ) {
+            MojoUtils.prepareFile( getErrorFile(), true );
+            MojoUtils.writeStandardHeaderToFile( "Standard error", "Default error file", getProject(), errorFile );
 
-            errorWriter = new FileWriter(errorFile);
+            errorWriter = new FileWriter( errorFile );
         }
 
         return errorWriter;
@@ -91,69 +83,51 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     public abstract MavenProject getProject();
 
-    public File getOutputFile()
-    {
-        if (outputFile == null)
-        {
-            outputFile = new File(getDirectory(), "output.log");
+    public File getOutputFile() {
+        if ( outputFile == null ) {
+            outputFile = new File( getDirectory(), "output.log" );
         }
 
         return outputFile;
     }
 
-    public File getErrorFile()
-    {
-        if (errorFile == null)
-        {
-            errorFile = new File(getDirectory(), "error.log");
+    public File getErrorFile() {
+        if ( errorFile == null ) {
+            errorFile = new File( getDirectory(), "error.log" );
         }
 
         return errorFile;
     }
 
-    public PrintStream getOutputPrintStream() throws IOException
-    {
-        return new PrintStream(getOutputFile());
+    public PrintStream getOutputPrintStream() throws IOException {
+        return new PrintStream( getOutputFile() );
     }
 
-    public PrintStream getErrorPrintStream() throws IOException
-    {
-        return new PrintStream(getErrorFile());
+    public PrintStream getErrorPrintStream() throws IOException {
+        return new PrintStream( getErrorFile() );
     }
 
-    public File getDirectory()
-    {
-        if (getProject() != null)
-        {
-            return new File(getProject().getBuild().getDirectory());
-        }
-        else
-        {
-            return new File("target");
+    public File getDirectory() {
+        if ( getProject() != null ) {
+            return new File( getProject().getBuild().getDirectory() );
+        } else {
+            return new File( "target" );
         }
     }
 
-    public File getOutputDirectory()
-    {
-        if (getProject() != null)
-        {
-            return new File(getProject().getBuild().getOutputDirectory());
-        }
-        else
-        {
-            return new File("target/classes");
+    public File getOutputDirectory() {
+        if ( getProject() != null ) {
+            return new File( getProject().getBuild().getOutputDirectory() );
+        } else {
+            return new File( "target/classes" );
         }
     }
 
-    public File getTestOutputDirectory()
-    {
-        if (getProject() != null)
-        {
-            return new File(getProject().getBuild().getTestOutputDirectory());
-        }
-        else
-        {
-            return new File("target/classes-test");
+    public File getTestOutputDirectory() {
+        if ( getProject() != null ) {
+            return new File( getProject().getBuild().getTestOutputDirectory() );
+        } else {
+            return new File( "target/classes-test" );
         }
     }
 }
