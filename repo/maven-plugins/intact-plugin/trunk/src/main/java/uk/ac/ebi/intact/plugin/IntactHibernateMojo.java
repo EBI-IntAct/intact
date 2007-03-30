@@ -24,7 +24,6 @@ import uk.ac.ebi.intact.context.impl.StandaloneSession;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * Base class for plugins that require hibernate access
@@ -51,6 +50,9 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
 
     public void execute() throws MojoExecutionException, MojoFailureException
     {
+
+        // TODO transaction is not opened here !!!
+
         initializeHibernate();
 
         try
@@ -122,16 +124,22 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
         testConfig.initialize();
         IntactContext.initContext(testConfig, session);
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         try
         {
+
             getLog().info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
+
         }
-        catch (SQLException e)
+        catch (Exception e)
         {
             throw new MojoExecutionException("Error loading database name", e);
         }
 
         getLog().info( "User: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         initialized = true;
     }
