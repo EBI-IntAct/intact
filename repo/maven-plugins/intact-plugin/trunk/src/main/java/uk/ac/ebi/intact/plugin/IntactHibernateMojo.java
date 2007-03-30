@@ -31,11 +31,10 @@ import java.io.IOException;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class IntactHibernateMojo extends IntactAbstractMojo
-{
+public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
     /**
-     * @parameter 
+     * @parameter
      */
     private boolean dryRun;
 
@@ -48,93 +47,77 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
 
     private boolean initialized;
 
-    public void execute() throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
 
         // TODO transaction is not opened here !!!
 
         initializeHibernate();
 
-        try
-        {
+        try {
             executeIntactMojo();
         }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problems executing Mojo", e);
+        catch ( IOException e ) {
+            throw new MojoExecutionException( "Problems executing Mojo", e );
         }
 
         IntactContext context = IntactContext.getCurrentInstance();
         context.getDataContext().commitAllActiveTransactions();
 
-        if (closeSessionFactory)
-        {
+        if ( closeSessionFactory ) {
             context.getConfig().getDefaultDataConfig().closeSessionFactory();
         }
     }
 
     protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException;
 
-    protected void initializeHibernate() throws MojoExecutionException
-    {
-        if (initialized)
-        {
+    protected void initializeHibernate() throws MojoExecutionException {
+        if ( initialized ) {
             return;
         }
 
         File hibernateConfig = getHibernateConfig();
 
-        if (hibernateConfig == null)
-        {
-            if (getProject() != null)
-            {
-                hibernateConfig = new File(getDirectory(), "hibernate/config/hibernate.cfg.xml");
-            }
-            else
-            {
-                hibernateConfig = new File("target/hibernate/config/hibernate.cfg.xml");
+        if ( hibernateConfig == null ) {
+            if ( getProject() != null ) {
+                hibernateConfig = new File( getDirectory(), "hibernate/config/hibernate.cfg.xml" );
+            } else {
+                hibernateConfig = new File( "target/hibernate/config/hibernate.cfg.xml" );
             }
 
-            try
-            {
-                if (!hibernateConfig.exists())
-                {
-                    MojoUtils.prepareFile(hibernateConfig);
+            try {
+                if ( !hibernateConfig.exists() ) {
+                    MojoUtils.prepareFile( hibernateConfig );
                 }
             }
-            catch (IOException e)
-            {
-                throw new MojoExecutionException("Problem creating folder for hibernate config", e);
+            catch ( IOException e ) {
+                throw new MojoExecutionException( "Problem creating folder for hibernate config", e );
             }
         }
 
-        getLog().info("Using hibernate cfg file: "+hibernateConfig);
+        getLog().info( "Using hibernate cfg file: " + hibernateConfig );
 
-        if (!hibernateConfig.exists())
-        {
-            throw new MojoExecutionException("No hibernate config file found: "+hibernateConfig+". Provide a hibernate config" +
-                    " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add the <hibernateConfig> configuration element for " +
-                    "the plugin");
+        if ( !hibernateConfig.exists() ) {
+            throw new MojoExecutionException( "No hibernate config file found: " + hibernateConfig + ". Provide a hibernate config" +
+                                              " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add the <hibernateConfig> configuration element for " +
+                                              "the plugin" );
         }
 
         // configure the context
         IntactSession session = new StandaloneSession();
 
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig("PluginHibernateConfig", hibernateConfig, session);
+        CustomCoreDataConfig testConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
         testConfig.initialize();
-        IntactContext.initContext(testConfig, session);
+        IntactContext.initContext( testConfig, session );
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
-        try
-        {
+        try {
 
             getLog().info( "Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
 
         }
-        catch (Exception e)
-        {
-            throw new MojoExecutionException("Error loading database name", e);
+        catch ( Exception e ) {
+            throw new MojoExecutionException( "Error loading database name", e );
         }
 
         getLog().info( "User: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
@@ -146,13 +129,11 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo
 
     public abstract File getHibernateConfig();
 
-    public boolean isDryRun()
-    {
+    public boolean isDryRun() {
         return dryRun;
     }
 
-    public void setDryRun(boolean dryRun)
-    {
+    public void setDryRun( boolean dryRun ) {
         this.dryRun = dryRun;
     }
 }

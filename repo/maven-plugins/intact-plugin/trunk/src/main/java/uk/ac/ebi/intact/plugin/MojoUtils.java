@@ -31,123 +31,117 @@ import java.util.Date;
  * @version $Id$
  * @since 0.1
  */
-public class MojoUtils
-{
+public class MojoUtils {
+
     private static final String NEW_LINE = System.getProperty( "line.separator" );
 
-    private MojoUtils(){}
-
-    /**
-     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
-     * If the file exists, it will be overriden
-     * @param file the file to check
-     * @throws IOException
-     */
-    public static void prepareFile(File file) throws IOException
-    {
-        prepareFile(file, true, true);
+    private MojoUtils() {
     }
 
     /**
      * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
      * If the file exists, it will be overriden
+     *
      * @param file the file to check
-     * @param createParentFolder if the parent of the file does not exist, it will create it
+     *
      * @throws IOException
      */
-    public static void prepareFile(File file, boolean createParentFolder) throws IOException
-    {
-        prepareFile(file, createParentFolder, true);
+    public static void prepareFile( File file ) throws IOException {
+        prepareFile( file, true, true );
+    }
+
+    /**
+     * Prepares a file to be used, checking if it exists and creating the parent folder if necessary.
+     * If the file exists, it will be overriden
+     *
+     * @param file               the file to check
+     * @param createParentFolder if the parent of the file does not exist, it will create it
+     *
+     * @throws IOException
+     */
+    public static void prepareFile( File file, boolean createParentFolder ) throws IOException {
+        prepareFile( file, createParentFolder, true );
     }
 
     /**
      * Prepares a file to be used, checking if it exists and creating the parent folder if necessary
-     * @param file the file to check
+     *
+     * @param file               the file to check
      * @param createParentFolder if the parent of the file does not exist, it will create it
-     * @param overwrite remove the file if it already exists
+     * @param overwrite          remove the file if it already exists
+     *
      * @throws IOException
      */
-    public static void prepareFile(File file, boolean createParentFolder, boolean overwrite) throws IOException
-    {
-        if (file == null)
-        {
-            throw new NullPointerException("file cannot be null");
+    public static void prepareFile( File file, boolean createParentFolder, boolean overwrite ) throws IOException {
+        if ( file == null ) {
+            throw new NullPointerException( "file cannot be null" );
         }
 
-        if (file.exists())
-        {
-            if (overwrite)
-            {
+        if ( file.exists() ) {
+            if ( overwrite ) {
                 file.delete();
             }
             return;
         }
 
-        if (createParentFolder)
-        {
-            if (file.isDirectory())
-            {
+        if ( createParentFolder ) {
+            if ( file.isDirectory() ) {
                 file.mkdirs();
-            }
-            else
-            {
+            } else {
                 file.getParentFile().mkdirs();
             }
         }
     }
 
-    public static void writeHeaderToFile(String title, String description, File file) throws IOException
-    {
-        FileWriter writer = new FileWriter(file);
+    public static void writeHeaderToFile( String title, String description, File file ) throws IOException {
+        FileWriter writer = new FileWriter( file );
 
-        writer.write("# "+title+" - "+new Date()+NEW_LINE);
-        writer.write("#"+NEW_LINE);
-        writer.write("# "+description+NEW_LINE);
-        writer.write(NEW_LINE);
+        writer.write( "# " + title + " - " + new Date() + NEW_LINE );
+        writer.write( "#" + NEW_LINE );
+        writer.write( "# " + description + NEW_LINE );
+        writer.write( NEW_LINE );
 
         writer.close();
     }
 
-    public static void writeStandardHeaderToFile(String prefix, String description, MavenProject project, File file) throws IOException
-    {
+    public static void writeStandardHeaderToFile( String prefix, String description, MavenProject project, File file ) throws IOException {
         String additionalInfo = "";
 
-        if (project != null) // project can be null when testing using the plugin test logic
+        if ( project != null ) // project can be null when testing using the plugin test logic
         {
-            additionalInfo = " - "+project.getArtifactId()+", v. "+project.getVersion();
+            additionalInfo = " - " + project.getArtifactId() + ", v. " + project.getVersion();
         }
 
-        String title = prefix+additionalInfo; 
-        writeHeaderToFile(title, description, file);
+        String title = prefix + additionalInfo;
+        writeHeaderToFile( title, description, file );
     }
 
     /**
      * Creates a temporary file from a resource. This is useful to avoid classloading issues
+     *
      * @param resourceUrl The stream to write in a file
-     * @param prefix prefix of the temporary file created
-     * @param suffix suffix of the temporary file created
+     * @param prefix      prefix of the temporary file created
+     * @param suffix      suffix of the temporary file created
+     *
      * @return the temporary file, with the content written
+     *
      * @throws java.io.IOException if there are problems writting the file
      */
-    public static File createTempFileFromResource(URL resourceUrl, String prefix, String suffix) throws IOException
-    {
-        File temporaryFile = File.createTempFile(prefix,suffix);
+    public static File createTempFileFromResource( URL resourceUrl, String prefix, String suffix ) throws IOException {
+        File temporaryFile = File.createTempFile( prefix, suffix );
         //temporaryFile.deleteOnExit();
 
         FileWriter writer = null;
 
-        try
-        {
-            writer = new FileWriter(temporaryFile);
-            IOUtil.copy(resourceUrl.openStream(), writer, "utf-8", 2048);
+        try {
+            writer = new FileWriter( temporaryFile );
+            IOUtil.copy( resourceUrl.openStream(), writer, "utf-8", 2048 );
         }
-        catch (IOException e)
-        {
+        catch ( IOException e ) {
             e.printStackTrace();
         }
-        finally
-        {
-            if (writer != null)
+        finally {
+            if ( writer != null )
                 writer.close();
         }
 
