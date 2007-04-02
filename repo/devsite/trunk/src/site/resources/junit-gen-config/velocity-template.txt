@@ -38,7 +38,7 @@ public class $testClass {
     // Compatibility with JUnit 3
 
     public static junit.framework.Test suite() {
-         return new JUnit4TestAdapter( Junit4Test.class );
+         return new JUnit4TestAdapter( $testClass.class );
     }
 
     //////////////////////////
