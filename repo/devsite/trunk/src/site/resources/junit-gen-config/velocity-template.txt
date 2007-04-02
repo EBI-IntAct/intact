@@ -1,0 +1,65 @@
+########################################################################################
+##
+## Available variables:
+##         $entryList.methodList - ArrayList of method names
+##         $entryList.fieldList - ArrayList of class scope field names
+##         $entryList.className - class name
+##         $entryList.packageName - package name
+##         $today - Todays date in MM/dd/yyyy format
+##
+## You can configure the output class name using "testClass" variable below.
+## Here are some examples:
+## Test${entry.ClassName} - will produce TestSomeClass
+## ${entry.className}Test - will produce SomeClassTest
+##
+########################################################################################
+##
+#macro (cap $strIn)$strIn.valueOf($strIn.charAt(0)).toUpperCase()$strIn.substring(1)#end
+## Iterate through the list and generate testcase for every entry.
+#foreach ($entry in $entryList)
+#set( $testClass="${entry.className}Test")
+##
+package $entry.packageName;
+
+import static org.junit.Assert.*;
+import junit.framework.JUnit4TestAdapter;
+import org.junit.*;
+
+/**
+ * ${entry.className} Tester.
+ *
+ * @author Developer's name goes here (email adress)
+ * @since TODO artifact version
+ * @version $Id$
+ */
+public class $testClass {
+
+    ////////////////////////////////
+    // Compatibility with JUnit 3
+
+    public static junit.framework.Test suite() {
+         return new JUnit4TestAdapter( Junit4Test.class );
+    }
+
+    //////////////////////////
+    // Initialisation
+
+    @Before
+    public void setUp() throws Exception {
+    }
+
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    ////////////////////
+    // Tests
+#foreach($method in $entry.methodList)
+
+    @Test
+    public void ${method}() throws Exception {
+        fail( "Not yet implemented." );
+    }
+#end
+}
+#end

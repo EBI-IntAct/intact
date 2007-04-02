@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<faqs title="Maven tips for IntAct developers">
+<part id="about">
+    <faq>
+      <question>Is there an IntelliJ plugin repository out there ?</question>
+      <answer>
+        <p>
+        There is a web site only for that purpose, check it out:
+        <a href="http://plugins.intellij.net/" target="_blank">http://plugins.intellij.net/</a>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to do ease the pain of writing JUnit test ?</question>
+      <answer>
+        <p>
+        Most of IntAct developers use the JUnit generator plugin that allows to generate a skeleton class based on
+        the existing class you are trying to test. It essentially generates a test method per method in that target
+        class.
+        More information on the plugin here:
+        Here is the configuration we use in the team: <a href="junit-gen-config/velocity-template.txt" target="_blank">velocity template</a>
+        and <a href="junit-gen-config/output-pattern.txt" target="_blank">output pattern</a>.
+        </p>
+      </answer>
+    </faq>
+  </part>
+</faqs>
