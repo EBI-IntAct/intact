@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +62,11 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
         }
 
         IntactContext context = IntactContext.getCurrentInstance();
-        context.getDataContext().commitAllActiveTransactions();
+        try {
+            context.getDataContext().commitAllActiveTransactions();
+        } catch ( IntactTransactionException e ) {
+            throw new MojoExecutionException( "Failed to commit active transactions.", e );
+        }
 
         if ( closeSessionFactory ) {
             context.getConfig().getDefaultDataConfig().closeSessionFactory();
@@ -98,8 +103,8 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
         if ( !hibernateConfig.exists() ) {
             throw new MojoExecutionException( "No hibernate config file found: " + hibernateConfig + ". Provide a hibernate config" +
-                                              " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add the <hibernateConfig> configuration element for " +
-                                              "the plugin" );
+                                              " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add " +
+                                              "the <hibernateConfig> configuration element for the plugin" );
         }
 
         // configure the context
@@ -122,7 +127,11 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
         getLog().info( "User: " + IntactContext.getCurrentInstance().getUserContext().getUserId() );
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new MojoExecutionException( "Failed to commit transaction.", e );
+        }
 
         initialized = true;
     }
