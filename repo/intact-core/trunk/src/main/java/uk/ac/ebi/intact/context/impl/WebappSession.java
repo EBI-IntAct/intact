@@ -63,7 +63,7 @@ public class WebappSession extends IntactSession {
 
     public void setApplicationAttribute( String name, Object attribute ) {
         if ( log.isDebugEnabled() ) {
-            log.debug( "APP: " + name + "=" + attribute +" (sessionid="+session.getId()+")");
+            log.debug( "APP: " + name + "=" + attribute);
         }
         servletContext.setAttribute( name, attribute );
     }
