@@ -73,7 +73,6 @@ public abstract class AbstractEditBean implements Serializable {
      * @return the link to display a read only version of window.
      */
     public static String getLink(String type, String label) {
-        label = "\"" + label + "\"";
         String link = "<a href=\"" + "javascript:show('" + type + "', '" + label + "')\""
                 + ">" + label + "</a>";
         return link;
