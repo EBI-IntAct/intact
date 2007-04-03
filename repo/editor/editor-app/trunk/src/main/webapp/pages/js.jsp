@@ -24,8 +24,8 @@
 <script language="JavaScript" type="text/javascript">
     // Will be invoked when the user selects on a link.
     function show(type, label) {
-        var link = "<%=service.getSearchURL(request)%>" + "?searchString=" + label
-           + "&searchClass=" + type;
+        var link = "<%=service.getSearchURL(request)%>" + "?searchString=\"" + label
+           + "\"&searchClass=" + type;
         //window.alert(link);
         makeNewWindow(link);
     }
