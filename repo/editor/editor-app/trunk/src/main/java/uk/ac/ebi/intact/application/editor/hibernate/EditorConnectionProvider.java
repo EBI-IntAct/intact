@@ -34,6 +34,7 @@ public class EditorConnectionProvider implements ConnectionProvider
 
     public Connection getConnection() throws SQLException
     {
+        log.debug("Getting connection for user: " + currentUser);
         Connection connection;
 
         if (IntactContext.currentInstanceExists())
@@ -43,8 +44,6 @@ public class EditorConnectionProvider implements ConnectionProvider
             currentUser = IntactContext.getCurrentInstance().getUserContext().getUserId();
             String currentUserPassword = IntactContext.getCurrentInstance().getUserContext().getUserPassword();
             String url = configuration.getProperty(Environment.URL);
-
-            log.debug("Getting connection for user: " + currentUser);
 
             if (!driverLoaded)
             {
