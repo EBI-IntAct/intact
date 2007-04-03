@@ -257,16 +257,10 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
      * @exception IntactException
      * due to an invalid user.
      */
-    public EditUser(String user, String password) throws AuthenticateException {
-       myUserName = user;
+    public EditUser(String user, String password, String databaseName) throws AuthenticateException {
+        myUserName = user;
         myPassword = password;
-        try {
-            myDatabaseName = DaoProvider.getDaoFactory().getBaseDao().getDbName();
-        } catch (Exception e) {
-            log.debug("Couldn't get the database name, must be an error of login");
-            throw new AuthenticateException("Wrong login or password.");
-        }
-        log.debug("Database name is " + myDatabaseName);
+        myDatabaseName = databaseName;
     }
 
     // Methods to handle special serialization issues.
