@@ -80,18 +80,14 @@ public class LoginAction extends AbstractEditorAction {
         String username = theForm.getUsername();
         String password = theForm.getPassword();
 
-        // Validate the user.
-        EditUserI user = UserAuthenticator.authenticate(username, password);
+        // Validate the user, if this fail it will sent and AuthenticateException. The web.xml is configured so that
+        // those type of Expeption are displayed in a nice message ('Wrong login or password')
+        EditUserI user = UserAuthenticator.authenticate(username, password, request);
 
         // Must have a valid user.
         assert user != null: "User must exist!";
 
-//        // Create an instance of EditorService.
-//        EditUserI user = new EditUser(username, password);
-
         HttpSession session = request.getSession();
-
-        //LOGGER.info("Created a new session");
 
         // Set the status for the filter to let logged in users to get through.
         session.setAttribute(EditorConstants.LOGGED_IN, Boolean.TRUE);

@@ -55,7 +55,7 @@
         <param-name>uk.ac.ebi.intact.AUTO_BEGIN_TRANSACTION</param-name>
         <param-value>true</param-value>
         <description>
-            If true, don't open a transaction automatically when DataContext.getDaoFactory() is called.
+            If true, do open a transaction automatically when DataContext.getDaoFactory() is called.
         </description>
     </context-param>
 
@@ -74,7 +74,7 @@
 
         <init-param>
             <param-name>uk.ac.ebi.intact.filter.EXCLUDED_EXTENSIONS</param-name>
-            <param-value>*.jpg,*.gif</param-value>
+            <param-value>*.jpg,*.gif,*login</param-value>
             <description>
                 List of extensions. If the request URL ends with one of the params provided,
                 it won't be filtered by the IntactSessionRequestFilter and no IntactContext
