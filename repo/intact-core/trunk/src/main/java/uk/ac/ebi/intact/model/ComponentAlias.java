@@ -36,8 +36,8 @@ public class ComponentAlias extends Alias {
     public ComponentAlias() {
     }
 
-    public ComponentAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public ComponentAlias( Institution anOwner, Component component, CvAliasType cvAliasType, String name ) {
+        super( anOwner, component, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = Component.class )

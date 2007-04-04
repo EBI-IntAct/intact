@@ -36,8 +36,8 @@ public class InteractorAlias extends Alias {
     public InteractorAlias() {
     }
 
-    public InteractorAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public InteractorAlias( Institution anOwner, Interactor interactor, CvAliasType cvAliasType, String name ) {
+        super( anOwner, interactor, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = InteractorImpl.class )

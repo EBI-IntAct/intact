@@ -36,8 +36,8 @@ public class PublicationAlias extends Alias {
     public PublicationAlias() {
     }
 
-    public PublicationAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public PublicationAlias( Institution anOwner, Publication publication, CvAliasType cvAliasType, String name ) {
+        super( anOwner, publication, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = Publication.class, fetch = FetchType.LAZY )
