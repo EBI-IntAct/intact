@@ -36,8 +36,8 @@ public class ExperimentAlias extends Alias {
     public ExperimentAlias() {
     }
 
-    public ExperimentAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public ExperimentAlias( Institution anOwner, Experiment experiment, CvAliasType cvAliasType, String name ) {
+        super( anOwner, experiment, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = Experiment.class )

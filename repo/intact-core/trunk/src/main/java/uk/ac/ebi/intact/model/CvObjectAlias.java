@@ -36,8 +36,8 @@ public class CvObjectAlias extends Alias {
     public CvObjectAlias() {
     }
 
-    public CvObjectAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public CvObjectAlias( Institution anOwner, CvObject cvObject, CvAliasType cvAliasType, String name ) {
+        super( anOwner, cvObject, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = CvObject.class )

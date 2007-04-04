@@ -36,8 +36,8 @@ public class FeatureAlias extends Alias {
     public FeatureAlias() {
     }
 
-    public FeatureAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public FeatureAlias( Institution anOwner, Feature feature, CvAliasType cvAliasType, String name ) {
+        super( anOwner, feature, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = Feature.class )

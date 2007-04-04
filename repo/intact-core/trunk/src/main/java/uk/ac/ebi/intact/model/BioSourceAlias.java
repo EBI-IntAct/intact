@@ -36,8 +36,8 @@ public class BioSourceAlias extends Alias {
     public BioSourceAlias() {
     }
 
-    public BioSourceAlias( Institution anOwner, AnnotatedObject annotatedObject, CvAliasType cvAliasType, String name ) {
-        super( anOwner, annotatedObject, cvAliasType, name );
+    public BioSourceAlias( Institution anOwner, BioSource bioSource, CvAliasType cvAliasType, String name ) {
+        super( anOwner, bioSource, cvAliasType, name );
     }
 
     @ManyToOne( targetEntity = BioSource.class )
