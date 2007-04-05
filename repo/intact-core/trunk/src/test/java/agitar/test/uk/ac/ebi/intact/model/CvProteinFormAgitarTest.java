@@ -9,8 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class CvProteinFormAgitarTest extends AgitarTestCase {
 
