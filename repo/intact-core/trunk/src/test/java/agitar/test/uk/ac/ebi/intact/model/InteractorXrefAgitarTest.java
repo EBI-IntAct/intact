@@ -9,8 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class InteractorXrefAgitarTest extends AgitarTestCase {
 
@@ -28,31 +27,31 @@ public class InteractorXrefAgitarTest extends AgitarTestCase {
         assertSame( "interactorXref.getOwner()", anOwner, interactorXref.getOwner() );
     }
 
-    public void testConstructor1() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        InteractorXref interactorXref = new InteractorXref( anOwner, aDatabase, "1", aCvXrefQualifier );
-        assertEquals( "interactorXref.getPrimaryId()", "1", interactorXref.getPrimaryId() );
-        assertEquals( "interactorXref.getEvidences().size()", 0, interactorXref.getEvidences().size() );
-        assertSame( "interactorXref.getCvDatabase()", aDatabase, interactorXref.getCvDatabase() );
-        assertSame( "interactorXref.getCvXrefQualifier()", aCvXrefQualifier, interactorXref.getCvXrefQualifier() );
-        assertSame( "interactorXref.getOwner()", anOwner, interactorXref.getOwner() );
-    }
-
-    public void testConstructor2() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        InteractorXref interactorXref = new InteractorXref( anOwner, aDatabase, "testInteractorXrefAPrimaryId1", aCvXrefQualifier );
-        assertEquals( "interactorXref.getPrimaryId()", "testInteractorXrefAPrimaryId1", interactorXref.getPrimaryId() );
-        assertEquals( "interactorXref.getEvidences().size()", 0, interactorXref.getEvidences().size() );
-        assertSame( "interactorXref.getCvDatabase()", aDatabase, interactorXref.getCvDatabase() );
-        assertSame( "interactorXref.getCvXrefQualifier()", aCvXrefQualifier, interactorXref.getCvXrefQualifier() );
-        assertSame( "interactorXref.getOwner()", anOwner, interactorXref.getOwner() );
-    }
+//    public void testConstructor1() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        InteractorXref interactorXref = new InteractorXref( anOwner, aDatabase, "1", aCvXrefQualifier );
+//        assertEquals( "interactorXref.getPrimaryId()", "1", interactorXref.getPrimaryId() );
+//        assertEquals( "interactorXref.getEvidences().size()", 0, interactorXref.getEvidences().size() );
+//        assertSame( "interactorXref.getCvDatabase()", aDatabase, interactorXref.getCvDatabase() );
+//        assertSame( "interactorXref.getCvXrefQualifier()", aCvXrefQualifier, interactorXref.getCvXrefQualifier() );
+//        assertSame( "interactorXref.getOwner()", anOwner, interactorXref.getOwner() );
+//    }
+//
+//    public void testConstructor2() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        InteractorXref interactorXref = new InteractorXref( anOwner, aDatabase, "testInteractorXrefAPrimaryId1", aCvXrefQualifier );
+//        assertEquals( "interactorXref.getPrimaryId()", "testInteractorXrefAPrimaryId1", interactorXref.getPrimaryId() );
+//        assertEquals( "interactorXref.getEvidences().size()", 0, interactorXref.getEvidences().size() );
+//        assertSame( "interactorXref.getCvDatabase()", aDatabase, interactorXref.getCvDatabase() );
+//        assertSame( "interactorXref.getCvXrefQualifier()", aCvXrefQualifier, interactorXref.getCvXrefQualifier() );
+//        assertSame( "interactorXref.getOwner()", anOwner, interactorXref.getOwner() );
+//    }
 
     public void testConstructor3() throws Throwable {
         CvXrefQualifier aCvXrefQualifier = new CvXrefQualifier( new Institution( "testInteractorXrefShortLabel" ), "testInteractorXrefShortLabel" );
@@ -124,15 +123,15 @@ public class InteractorXrefAgitarTest extends AgitarTestCase {
         assertSame( "result", parent, result );
     }
 
-    public void testGetParentAc() throws Throwable {
-        InteractorXref interactorXref = new InteractorXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testInteractorXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        interactorXref.setParentAc( "testInteractorXrefParentAc" );
-        Mockingbird.enterTestMode();
-        String result = interactorXref.getParentAc();
-        assertEquals( "result", "testInteractorXrefParentAc", result );
-        assertEquals( "interactorXref.parentAc", "testInteractorXrefParentAc", getPrivateField( interactorXref, "parentAc" ) );
-        assertNull( "interactorXref.getParent()", interactorXref.getParent() );
-    }
+//    public void testGetParentAc() throws Throwable {
+//        InteractorXref interactorXref = new InteractorXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testInteractorXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        interactorXref.setParentAc( "testInteractorXrefParentAc" );
+//        Mockingbird.enterTestMode();
+//        String result = interactorXref.getParentAc();
+//        assertEquals( "result", "testInteractorXrefParentAc", result );
+//        assertEquals( "interactorXref.parentAc", "testInteractorXrefParentAc", getPrivateField( interactorXref, "parentAc" ) );
+//        assertNull( "interactorXref.getParent()", interactorXref.getParent() );
+//    }
 
     public void testGetParentAc1() throws Throwable {
         Institution owner = new Institution( "testInteractorXrefShortLabel" );
@@ -165,19 +164,19 @@ public class InteractorXrefAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testConstructorThrowsNullPointerException() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        try {
-            new InteractorXref( anOwner, aDatabase, null, aCvXrefQualifier );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertEquals( "ex.getMessage()", "valid Xref must have a primary ID!", ex.getMessage() );
-            assertThrownBy( Xref.class, ex );
-        }
-    }
+//    public void testConstructorThrowsNullPointerException() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        try {
+//            new InteractorXref( anOwner, aDatabase, null, aCvXrefQualifier );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertEquals( "ex.getMessage()", "valid Xref must have a primary ID!", ex.getMessage() );
+//            assertThrownBy( Xref.class, ex );
+//        }
+//    }
 
     public void testConstructorThrowsNullPointerException1() throws Throwable {
         try {

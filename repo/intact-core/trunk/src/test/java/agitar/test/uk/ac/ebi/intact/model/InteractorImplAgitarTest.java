@@ -9,8 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
+
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,17 +19,17 @@ public class InteractorImplAgitarTest extends AgitarTestCase {
 
     static Class TARGET_CLASS = InteractorImpl.class;
 
-    public void testAddActiveInstance() throws Throwable {
-        InteractorImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractorImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-        Collection someActiveInstance = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-        interactionImpl.setActiveInstances( someActiveInstance );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( false, someActiveInstance, "contains(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
-        Mockingbird.enterTestMode();
-        interactionImpl.addActiveInstance( null );
-        assertSame( "(InteractionImpl) interactionImpl.getActiveInstances()", someActiveInstance, interactionImpl.getActiveInstances() );
-        assertInvoked( someActiveInstance, "contains", new Object[]{null} );
-    }
+//    public void testAddActiveInstance() throws Throwable {
+//        InteractorImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractorImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+//        Collection someActiveInstance = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+//        interactionImpl.setActiveInstances( someActiveInstance );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( false, someActiveInstance, "contains(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
+//        Mockingbird.enterTestMode();
+//        interactionImpl.addActiveInstance( null );
+//        assertSame( "(InteractionImpl) interactionImpl.getActiveInstances()", someActiveInstance, interactionImpl.getActiveInstances() );
+//        assertInvoked( someActiveInstance, "contains", new Object[]{null} );
+//    }
 
     public void testEquals() throws Throwable {
         boolean result = new Complex().equals( new Integer( 68 ) );
@@ -42,12 +42,12 @@ public class InteractorImplAgitarTest extends AgitarTestCase {
         assertTrue( "result", result );
     }
 
-    public void testGetAliases() throws Throwable {
-        InteractorImpl smallMoleculeImpl = new SmallMoleculeImpl( "testInteractorImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class ) );
-        Mockingbird.enterTestMode();
-        ArrayList result = ( ArrayList ) smallMoleculeImpl.getAliases();
-        assertEquals( "result.size()", 0, result.size() );
-    }
+//    public void testGetAliases() throws Throwable {
+//        InteractorImpl smallMoleculeImpl = new SmallMoleculeImpl( "testInteractorImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class ) );
+//        Mockingbird.enterTestMode();
+//        ArrayList result = ( ArrayList ) smallMoleculeImpl.getAliases();
+//        assertEquals( "result.size()", 0, result.size() );
+//    }
 
     public void testGetAnnotations() throws Throwable {
         ArrayList result = ( ArrayList ) new Complex().getAnnotations();
@@ -215,18 +215,18 @@ public class InteractorImplAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testRemoveProductThrowsNullPointerException() throws Throwable {
-        InteractorImpl proteinImpl = new ProteinImpl( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( BioSource ) Mockingbird.getProxyObject( BioSource.class ), "testInteractorImplShortLabel" );
-        Mockingbird.enterTestMode();
-        try {
-            proteinImpl.removeProduct( null );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( InteractorImpl.class, ex );
-            assertNull( "(ProteinImpl) proteinImpl.products", getPrivateField( proteinImpl, "products" ) );
-        }
-    }
+//    public void testRemoveProductThrowsNullPointerException() throws Throwable {
+//        InteractorImpl proteinImpl = new ProteinImpl( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( BioSource ) Mockingbird.getProxyObject( BioSource.class ), "testInteractorImplShortLabel" );
+//        Mockingbird.enterTestMode();
+//        try {
+//            proteinImpl.removeProduct( null );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( InteractorImpl.class, ex );
+//            assertNull( "(ProteinImpl) proteinImpl.products", getPrivateField( proteinImpl, "products" ) );
+//        }
+//    }
 
     public void testSetActiveInstancesThrowsIllegalArgumentException() throws Throwable {
         InteractorImpl complex = new Complex();

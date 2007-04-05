@@ -9,27 +9,27 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+
 
 public class FeatureXrefAgitarTest extends AgitarTestCase {
 
     static Class TARGET_CLASS = FeatureXref.class;
 
-    public void testConstructor() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "  X", "testFeatureXrefASecondaryId", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "X", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-        assertEquals( "featureXref.getSecondaryId()", "testFeatureXrefASecondaryId", featureXref.getSecondaryId() );
-    }
+//    public void testConstructor() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "  X", "testFeatureXrefASecondaryId", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "X", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//        assertEquals( "featureXref.getSecondaryId()", "testFeatureXrefASecondaryId", featureXref.getSecondaryId() );
+//    }
 
     public void testConstructor1() throws Throwable {
         CvDatabase aDatabase = ( CvDatabase ) new CvDatabase( new Institution( "testFeatureXrefShortLabel" ), "testFeatureXrefShortLabel" ).clone();
@@ -45,61 +45,61 @@ public class FeatureXrefAgitarTest extends AgitarTestCase {
         assertEquals( "featureXref.getSecondaryId()", "testFeatureXrefASecondaryId", featureXref.getSecondaryId() );
     }
 
-    public void testConstructor2() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "testFeatureXrefAPrimaryId", "XXXXXXXX\tXXXXXXXXXXX# X XXXXX\r", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "testFeatureXrefAPrimaryId", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-        assertEquals( "featureXref.getSecondaryId()", "XXXXXXXX\tXXXXXXXXXXX# X XXXXX", featureXref.getSecondaryId() );
-    }
-
-    public void testConstructor3() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "testFeatureXrefAPrimaryId", "30CharactersXXXXXXXXXXXXXXXXXX", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "testFeatureXrefAPrimaryId", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-        assertEquals( "featureXref.getSecondaryId()", "30CharactersXXXXXXXXXXXXXXXXXX", featureXref.getSecondaryId() );
-    }
-
-    public void testConstructor4() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "1", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "1", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-    }
-
-    public void testConstructor5() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "XXXXXXXXXXXX\nXXXXXXXXXXXXXXXX \r\r", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "XXXXXXXXXXXX\nXXXXXXXXXXXXXXXX", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-    }
+//    public void testConstructor2() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "testFeatureXrefAPrimaryId", "XXXXXXXX\tXXXXXXXXXXX# X XXXXX\r", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "testFeatureXrefAPrimaryId", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//        assertEquals( "featureXref.getSecondaryId()", "XXXXXXXX\tXXXXXXXXXXX# X XXXXX", featureXref.getSecondaryId() );
+//    }
+//
+//    public void testConstructor3() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "testFeatureXrefAPrimaryId", "30CharactersXXXXXXXXXXXXXXXXXX", "testFeatureXrefADatabaseRelease", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "testFeatureXrefAPrimaryId", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertEquals( "featureXref.getDbRelease()", "testFeatureXrefADatabaseRelease", featureXref.getDbRelease() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//        assertEquals( "featureXref.getSecondaryId()", "30CharactersXXXXXXXXXXXXXXXXXX", featureXref.getSecondaryId() );
+//    }
+//
+//    public void testConstructor4() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "1", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "1", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//    }
+//
+//    public void testConstructor5() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, "XXXXXXXXXXXX\nXXXXXXXXXXXXXXXX \r\r", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "XXXXXXXXXXXX\nXXXXXXXXXXXXXXXX", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//    }
 
     public void testConstructor6() throws Throwable {
         CvDatabase aDatabase = new CvDatabase( new Institution( "testFeatureXrefShortLabel" ), "testFeatureXrefShortLabel" );
@@ -113,18 +113,18 @@ public class FeatureXrefAgitarTest extends AgitarTestCase {
         assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
     }
 
-    public void testConstructor7() throws Throwable {
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, " \rXX XXXXXXXXXXXXX#XXXXXXXXXX\tXXX\t\t \t", aCvXrefQualifier );
-        assertEquals( "featureXref.getPrimaryId()", "XX XXXXXXXXXXXXX#XXXXXXXXXX\tXX", featureXref.getPrimaryId() );
-        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
-        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
-        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
-        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
-    }
+//    public void testConstructor7() throws Throwable {
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        FeatureXref featureXref = new FeatureXref( anOwner, aDatabase, " \rXX XXXXXXXXXXXXX#XXXXXXXXXX\tXXX\t\t \t", aCvXrefQualifier );
+//        assertEquals( "featureXref.getPrimaryId()", "XX XXXXXXXXXXXXX#XXXXXXXXXX\tXX", featureXref.getPrimaryId() );
+//        assertEquals( "featureXref.getEvidences().size()", 0, featureXref.getEvidences().size() );
+//        assertSame( "featureXref.getCvDatabase()", aDatabase, featureXref.getCvDatabase() );
+//        assertSame( "featureXref.getCvXrefQualifier()", aCvXrefQualifier, featureXref.getCvXrefQualifier() );
+//        assertSame( "featureXref.getOwner()", anOwner, featureXref.getOwner() );
+//    }
 
     public void testGetParent() throws Throwable {
         Institution owner = new Institution( "testFeatureXrefShortLabel1" );
@@ -190,17 +190,17 @@ public class FeatureXrefAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testGetParentThrowsClassCastException() throws Throwable {
-        FeatureXref featureXref = new FeatureXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testFeatureXrefAPrimaryId", "testFeatureXrefASecondaryId", "testFeatureXrefADatabaseRelease", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        featureXref.setParent( ( AnnotatedObject ) Mockingbird.getProxyObject( AnnotatedObject.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            featureXref.getParent();
-            fail( "Expected ClassCastException to be thrown" );
-        } catch ( ClassCastException ex ) {
-            assertEquals( "ex.getClass()", ClassCastException.class, ex.getClass() );
-            assertThrownBy( FeatureXref.class, ex );
-        }
-    }
+//    public void testGetParentThrowsClassCastException() throws Throwable {
+//        FeatureXref featureXref = new FeatureXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testFeatureXrefAPrimaryId", "testFeatureXrefASecondaryId", "testFeatureXrefADatabaseRelease", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        featureXref.setParent( ( AnnotatedObject ) Mockingbird.getProxyObject( AnnotatedObject.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            featureXref.getParent();
+//            fail( "Expected ClassCastException to be thrown" );
+//        } catch ( ClassCastException ex ) {
+//            assertEquals( "ex.getClass()", ClassCastException.class, ex.getClass() );
+//            assertThrownBy( FeatureXref.class, ex );
+//        }
+//    }
 }
 
