@@ -9,19 +9,17 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class NucleicAcidImplAgitarTest extends AgitarTestCase {
 
     static Class TARGET_CLASS = NucleicAcidImpl.class;
 
     public void testConstructor() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        BioSource source = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        CvInteractorType type = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-        Mockingbird.enterTestMode();
+        Institution owner = new Institution( "test" );
+        BioSource source = new BioSource( owner, "test", "1" );
+        CvInteractorType type = new CvInteractorType( owner, "type" );
         NucleicAcidImpl nucleicAcidImpl = new NucleicAcidImpl( owner, source, "testNucleicAcidImplShortLabel", type );
         assertEquals( "nucleicAcidImpl.xrefs.size()", 0, nucleicAcidImpl.xrefs.size() );
         assertSame( "nucleicAcidImpl.getBioSource()", source, nucleicAcidImpl.getBioSource() );
@@ -37,10 +35,9 @@ public class NucleicAcidImplAgitarTest extends AgitarTestCase {
     }
 
     public void testConstructorThrowsIllegalArgumentException() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        BioSource source = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        CvInteractorType type = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-        Mockingbird.enterTestMode();
+        Institution owner = new Institution( "test" );
+        BioSource source = new BioSource( owner, "test", "1" );
+        CvInteractorType type = new CvInteractorType( owner, "type" );
         try {
             new NucleicAcidImpl( owner, source, "", type );
             fail( "Expected IllegalArgumentException to be thrown" );
@@ -51,10 +48,9 @@ public class NucleicAcidImplAgitarTest extends AgitarTestCase {
     }
 
     public void testConstructorThrowsNullPointerException() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        BioSource source = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        CvInteractorType type = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-        Mockingbird.enterTestMode();
+        Institution owner = new Institution( "test" );
+        BioSource source = new BioSource( owner, "test", "1" );
+        CvInteractorType type = new CvInteractorType( owner, "type" );
         try {
             new NucleicAcidImpl( owner, source, null, type );
             fail( "Expected NullPointerException to be thrown" );

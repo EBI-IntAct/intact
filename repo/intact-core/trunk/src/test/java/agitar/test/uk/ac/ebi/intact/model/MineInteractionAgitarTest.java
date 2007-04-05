@@ -9,8 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 import java.util.ArrayList;
 
@@ -926,13 +925,13 @@ public class MineInteractionAgitarTest extends AgitarTestCase {
         assertSame( "mineInteraction.getDetectionMethod()", detectionMethod, mineInteraction.getDetectionMethod() );
     }
 
-    public void testSetExperiment() throws Throwable {
-        MineInteraction mineInteraction = new MineInteraction();
-        Experiment experiment = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
-        Mockingbird.enterTestMode();
-        mineInteraction.setExperiment( experiment );
-        assertSame( "mineInteraction.getExperiment()", experiment, mineInteraction.getExperiment() );
-    }
+//    public void testSetExperiment() throws Throwable {
+//        MineInteraction mineInteraction = new MineInteraction();
+//        Experiment experiment = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
+//        Mockingbird.enterTestMode();
+//        mineInteraction.setExperiment( experiment );
+//        assertSame( "mineInteraction.getExperiment()", experiment, mineInteraction.getExperiment() );
+//    }
 
     public void testSetGraphId() throws Throwable {
         MineInteraction mineInteraction = new MineInteraction();
@@ -995,21 +994,21 @@ public class MineInteractionAgitarTest extends AgitarTestCase {
         assertEquals( "mineInteraction.getWeight()", 100.0, mineInteraction.getWeight(), 1.0E-6 );
     }
 
-    public void testConstructorThrowsNullPointerException() throws Throwable {
-        ProteinImpl protein1 = ( ProteinImpl ) Mockingbird.getProxyObject( ProteinImpl.class );
-        InteractionImpl interaction = ( InteractionImpl ) Mockingbird.getProxyObject( InteractionImpl.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( protein1.getShortLabel(), "testString" );
-        Mockingbird.enterTestMode();
-        try {
-            new MineInteraction( protein1, null, interaction );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( MineInteraction.class, ex );
-            assertInvoked( protein1, "getShortLabel" );
-        }
-    }
+//    public void testConstructorThrowsNullPointerException() throws Throwable {
+//        ProteinImpl protein1 = ( ProteinImpl ) Mockingbird.getProxyObject( ProteinImpl.class );
+//        InteractionImpl interaction = ( InteractionImpl ) Mockingbird.getProxyObject( InteractionImpl.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( protein1.getShortLabel(), "testString" );
+//        Mockingbird.enterTestMode();
+//        try {
+//            new MineInteraction( protein1, null, interaction );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( MineInteraction.class, ex );
+//            assertInvoked( protein1, "getShortLabel" );
+//        }
+//    }
 
     public void testConstructorThrowsNullPointerException1() throws Throwable {
         try {
