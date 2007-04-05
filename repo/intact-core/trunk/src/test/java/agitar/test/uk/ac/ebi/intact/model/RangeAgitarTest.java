@@ -9,8 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class RangeAgitarTest extends AgitarTestCase {
 
@@ -100,24 +99,24 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertNull( "range.getSequence()", range.getSequence() );
     }
 
-    public void testConstructor6() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Y<", new Integer( 1 )} );
-        Mockingbird.setReturnValue( sequenceStartingFrom, "" );
-        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 0 );
-        Mockingbird.enterTestMode();
-        Range range = new Range( owner, 1, 1, 1, 100, "Y<" );
-        assertEquals( "range.getToIntervalEnd()", 100, range.getToIntervalEnd() );
-        assertTrue( "range.isLinked()", range.isLinked() );
-        assertFalse( "range.isUndetermined()", range.isUndetermined() );
-        assertEquals( "range.getEvidences().size()", 0, range.getEvidences().size() );
-        assertEquals( "range.getFromIntervalEnd()", 1, range.getFromIntervalEnd() );
-        assertEquals( "range.getFromIntervalStart()", 1, range.getFromIntervalStart() );
-        assertEquals( "range.getToIntervalStart()", 1, range.getToIntervalStart() );
-        assertSame( "range.getOwner()", owner, range.getOwner() );
-        assertEquals( "range.getSequence()", "", range.getSequence() );
-    }
+//    public void testConstructor6() throws Throwable {
+//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Y<", new Integer( 1 )} );
+//        Mockingbird.setReturnValue( sequenceStartingFrom, "" );
+//        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 0 );
+//        Mockingbird.enterTestMode();
+//        Range range = new Range( owner, 1, 1, 1, 100, "Y<" );
+//        assertEquals( "range.getToIntervalEnd()", 100, range.getToIntervalEnd() );
+//        assertTrue( "range.isLinked()", range.isLinked() );
+//        assertFalse( "range.isUndetermined()", range.isUndetermined() );
+//        assertEquals( "range.getEvidences().size()", 0, range.getEvidences().size() );
+//        assertEquals( "range.getFromIntervalEnd()", 1, range.getFromIntervalEnd() );
+//        assertEquals( "range.getFromIntervalStart()", 1, range.getFromIntervalStart() );
+//        assertEquals( "range.getToIntervalStart()", 1, range.getToIntervalStart() );
+//        assertSame( "range.getOwner()", owner, range.getOwner() );
+//        assertEquals( "range.getSequence()", "", range.getSequence() );
+//    }
 
     public void testConstructor7() throws Throwable {
         Institution owner = new Institution( "testRangeShortLabel" );
@@ -175,24 +174,24 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertEquals( "range.getSequence()", " ", range.getSequence() );
     }
 
-    public void testConstructor11() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( -100 )} );
-        Mockingbird.setReturnValue( sequenceStartingFrom, "1" );
-        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 8 );
-        Mockingbird.enterTestMode();
-        Range range = new Range( owner, -100, 100, "1" );
-        assertEquals( "range.getEvidences().size()", 0, range.getEvidences().size() );
-        assertFalse( "range.isUndetermined()", range.isUndetermined() );
-        assertTrue( "range.isLinked()", range.isLinked() );
-        assertEquals( "range.getToIntervalEnd()", 100, range.getToIntervalEnd() );
-        assertEquals( "range.getFromIntervalEnd()", -100, range.getFromIntervalEnd() );
-        assertEquals( "range.getFromIntervalStart()", -100, range.getFromIntervalStart() );
-        assertEquals( "range.getToIntervalStart()", 100, range.getToIntervalStart() );
-        assertSame( "range.getOwner()", owner, range.getOwner() );
-        assertEquals( "range.getSequence()", "1", range.getSequence() );
-    }
+//    public void testConstructor11() throws Throwable {
+//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( -100 )} );
+//        Mockingbird.setReturnValue( sequenceStartingFrom, "1" );
+//        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 8 );
+//        Mockingbird.enterTestMode();
+//        Range range = new Range( owner, -100, 100, "1" );
+//        assertEquals( "range.getEvidences().size()", 0, range.getEvidences().size() );
+//        assertFalse( "range.isUndetermined()", range.isUndetermined() );
+//        assertTrue( "range.isLinked()", range.isLinked() );
+//        assertEquals( "range.getToIntervalEnd()", 100, range.getToIntervalEnd() );
+//        assertEquals( "range.getFromIntervalEnd()", -100, range.getFromIntervalEnd() );
+//        assertEquals( "range.getFromIntervalStart()", -100, range.getFromIntervalStart() );
+//        assertEquals( "range.getToIntervalStart()", 100, range.getToIntervalStart() );
+//        assertSame( "range.getOwner()", owner, range.getOwner() );
+//        assertEquals( "range.getSequence()", "1", range.getSequence() );
+//    }
 
     public void testConstructor12() throws Throwable {
         Institution owner = new Institution( "testRangeShortLabel" );
@@ -241,14 +240,14 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertEquals( "result.getSequence()", "testRangeSeq", result.getSequence() );
     }
 
-    public void testEquals() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), -1, 100, "testRangeSeq" );
-        range.setFromIntervalStart( 0 );
-        Range o = ( Range ) Mockingbird.getProxyObject( Range.class );
-        Mockingbird.enterTestMode();
-        boolean result = range.equals( o );
-        assertFalse( "result", result );
-    }
+//    public void testEquals() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), -1, 100, "testRangeSeq" );
+//        range.setFromIntervalStart( 0 );
+//        Range o = ( Range ) Mockingbird.getProxyObject( Range.class );
+//        Mockingbird.enterTestMode();
+//        boolean result = range.equals( o );
+//        assertFalse( "result", result );
+//    }
 
     public void testEquals1() throws Throwable {
         Range range = new Range( new Institution( "testRangeShortLabel" ), -100, -100, -100, 100, "" );
@@ -353,12 +352,12 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertEquals( "range.getSequence()", "testRangeSequence", range.getSequence() );
     }
 
-    public void testHashCode1() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 10, 100, "" );
-        Mockingbird.enterTestMode();
-        int result = range.hashCode();
-        assertEquals( "result", 255300, result );
-    }
+//    public void testHashCode1() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 10, 100, "" );
+//        Mockingbird.enterTestMode();
+//        int result = range.hashCode();
+//        assertEquals( "result", 255300, result );
+//    }
 
     public void testPrepareSequence() throws Throwable {
         Range range = new Range( new Institution( "testRangeShortLabel1" ), 0, 100, "testRangeSeq" );
@@ -420,65 +419,65 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertNull( "result", result );
     }
 
-    public void testPrepareSequence8() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        range.setFromIntervalStart( -1 );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.isCTerminal(), false );
-        Mockingbird.setReturnValue( type.isNTerminal(), false );
-        Mockingbird.setReturnValue( type.isUndetermined(), false );
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"c-termina", new Integer( -1 )} );
-        Mockingbird.setReturnValue( sequenceStartingFrom, "c-termina" );
-        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 35 );
-        Mockingbird.enterTestMode();
-        String result = range.prepareSequence( "c-termina" );
-        assertEquals( "range.getSequence()", "c-termina", range.getSequence() );
-        assertEquals( "result", "c-termina", result );
-        assertInvoked( type, "isCTerminal" );
-        assertInvoked( type, "isNTerminal" );
-        assertInvoked( type, "isUndetermined" );
-    }
+//    public void testPrepareSequence8() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        range.setFromIntervalStart( -1 );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.isCTerminal(), false );
+//        Mockingbird.setReturnValue( type.isNTerminal(), false );
+//        Mockingbird.setReturnValue( type.isUndetermined(), false );
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"c-termina", new Integer( -1 )} );
+//        Mockingbird.setReturnValue( sequenceStartingFrom, "c-termina" );
+//        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 35 );
+//        Mockingbird.enterTestMode();
+//        String result = range.prepareSequence( "c-termina" );
+//        assertEquals( "range.getSequence()", "c-termina", range.getSequence() );
+//        assertEquals( "result", "c-termina", result );
+//        assertInvoked( type, "isCTerminal" );
+//        assertInvoked( type, "isNTerminal" );
+//        assertInvoked( type, "isUndetermined" );
+//    }
 
-    public void testPrepareSequence9() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( 0 )} );
-        Mockingbird.setReturnValue( sequenceStartingFrom, "1" );
-        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 35 );
-        Mockingbird.enterTestMode();
-        String result = range.prepareSequence( "1" );
-        assertEquals( "range.getSequence()", "1", range.getSequence() );
-        assertEquals( "result", "1", result );
-    }
+//    public void testPrepareSequence9() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( 0 )} );
+//        Mockingbird.setReturnValue( sequenceStartingFrom, "1" );
+//        Mockingbird.setReturnValue( Range.getMaxSequenceSize(), 35 );
+//        Mockingbird.enterTestMode();
+//        String result = range.prepareSequence( "1" );
+//        assertEquals( "range.getSequence()", "1", range.getSequence() );
+//        assertEquals( "result", "1", result );
+//    }
+//
+//    public void testPrepareSequence10() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 29, 100, "testRangeSeq" );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.isCTerminal(), false );
+//        Mockingbird.setReturnValue( type.isNTerminal(), false );
+//        Mockingbird.setReturnValue( type.isUndetermined(), false );
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Y", new Integer( 29 )} );
+//        Mockingbird.setReturnValue( sequenceStartingFrom, null );
+//        Mockingbird.enterTestMode();
+//        String result = range.prepareSequence( "Y" );
+//        assertNull( "result", result );
+//        assertNull( "range.getSequence()", range.getSequence() );
+//        assertInvoked( type, "isCTerminal" );
+//        assertInvoked( type, "isNTerminal" );
+//        assertInvoked( type, "isUndetermined" );
+//    }
 
-    public void testPrepareSequence10() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 29, 100, "testRangeSeq" );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.isCTerminal(), false );
-        Mockingbird.setReturnValue( type.isNTerminal(), false );
-        Mockingbird.setReturnValue( type.isUndetermined(), false );
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Y", new Integer( 29 )} );
-        Mockingbird.setReturnValue( sequenceStartingFrom, null );
-        Mockingbird.enterTestMode();
-        String result = range.prepareSequence( "Y" );
-        assertNull( "result", result );
-        assertNull( "range.getSequence()", range.getSequence() );
-        assertInvoked( type, "isCTerminal" );
-        assertInvoked( type, "isNTerminal" );
-        assertInvoked( type, "isUndetermined" );
-    }
-
-    public void testSetFeature() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        Feature feature = ( Feature ) Mockingbird.getProxyObject( Feature.class );
-        Mockingbird.enterTestMode();
-        range.setFeature( feature );
-        assertSame( "range.getFeature()", feature, range.getFeature() );
-    }
+//    public void testSetFeature() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        Feature feature = ( Feature ) Mockingbird.getProxyObject( Feature.class );
+//        Mockingbird.enterTestMode();
+//        range.setFeature( feature );
+//        assertSame( "range.getFeature()", feature, range.getFeature() );
+//    }
 
     public void testSetFromCvFuzzyType() throws Throwable {
         Range range = new Range( new Institution( "testRangeShortLabel" ), 0, 100, "testRangeSeq" );
@@ -557,13 +556,13 @@ public class RangeAgitarTest extends AgitarTestCase {
         assertFalse( "range.isUndetermined()", range.isUndetermined() );
     }
 
-    public void testSetUndetermined3() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 100, 1000, "testRangeSeq" );
-        range.setFromCvFuzzyType( ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class ) );
-        Mockingbird.enterTestMode();
-        range.setUndetermined();
-        assertFalse( "range.isUndetermined()", range.isUndetermined() );
-    }
+//    public void testSetUndetermined3() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 100, 1000, "testRangeSeq" );
+//        range.setFromCvFuzzyType( ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class ) );
+//        Mockingbird.enterTestMode();
+//        range.setUndetermined();
+//        assertFalse( "range.isUndetermined()", range.isUndetermined() );
+//    }
 
     public void testToString() throws Throwable {
         String result = new Range( new Institution( "testRangeShortLabel" ), 100, 100, 101, 1000, "testRangeSeq" ).toString();
@@ -624,33 +623,33 @@ public class RangeAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testConstructorThrowsStringIndexOutOfBoundsException() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( -1 )} );
-        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            new Range( owner, -1, 100, "1" );
-            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
-        } catch ( StringIndexOutOfBoundsException ex ) {
-            assertTrue( "Test completed without Exception", true );
-        }
-    }
-
-    public void testConstructorThrowsStringIndexOutOfBoundsException1() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( 1 )} );
-        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            new Range( owner, 1, 2, 10, 100, "1" );
-            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
-        } catch ( StringIndexOutOfBoundsException ex ) {
-            assertTrue( "Test completed without Exception", true );
-        }
-    }
+//    public void testConstructorThrowsStringIndexOutOfBoundsException() throws Throwable {
+//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( -1 )} );
+//        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            new Range( owner, -1, 100, "1" );
+//            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
+//        } catch ( StringIndexOutOfBoundsException ex ) {
+//            assertTrue( "Test completed without Exception", true );
+//        }
+//    }
+//
+//    public void testConstructorThrowsStringIndexOutOfBoundsException1() throws Throwable {
+//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"1", new Integer( 1 )} );
+//        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            new Range( owner, 1, 2, 10, 100, "1" );
+//            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
+//        } catch ( StringIndexOutOfBoundsException ex ) {
+//            assertTrue( "Test completed without Exception", true );
+//        }
+//    }
 
     public void testGetRangeThrowsNullPointerException() throws Throwable {
         try {
@@ -662,97 +661,97 @@ public class RangeAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testPrepareSequenceThrowsStringIndexOutOfBoundsException() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), -100, 100, 171, 1000, "testRangeSeq" );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.isCTerminal(), false );
-        Mockingbird.setReturnValue( type.isNTerminal(), false );
-        Mockingbird.setReturnValue( type.isUndetermined(), false );
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"undetermined", new Integer( -100 )} );
-        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            range.prepareSequence( "undetermined" );
-            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
-        } catch ( StringIndexOutOfBoundsException ex ) {
-            assertEquals( "range.getSequence()", "testRangeSeq", range.getSequence() );
-            assertInvoked( type, "isCTerminal" );
-            assertInvoked( type, "isNTerminal" );
-            assertInvoked( type, "isUndetermined" );
-        }
-    }
+//    public void testPrepareSequenceThrowsStringIndexOutOfBoundsException() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), -100, 100, 171, 1000, "testRangeSeq" );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.isCTerminal(), false );
+//        Mockingbird.setReturnValue( type.isNTerminal(), false );
+//        Mockingbird.setReturnValue( type.isUndetermined(), false );
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"undetermined", new Integer( -100 )} );
+//        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            range.prepareSequence( "undetermined" );
+//            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
+//        } catch ( StringIndexOutOfBoundsException ex ) {
+//            assertEquals( "range.getSequence()", "testRangeSeq", range.getSequence() );
+//            assertInvoked( type, "isCTerminal" );
+//            assertInvoked( type, "isNTerminal" );
+//            assertInvoked( type, "isUndetermined" );
+//        }
+//    }
+//
+//    public void testPrepareSequenceThrowsStringIndexOutOfBoundsException1() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 30, 100, "testRangeSeq" );
+//        Mockingbird.enterRecordingMode();
+//        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Vq;bf\rxX|{*8$G\f7H8QqsFJ:S^N?\">\fqHWQ\\A(tQg8$B,&^Q^.ew6\\?*PdH^um9}S$7Q8I", new Integer( 30 )} );
+//        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            range.prepareSequence( "Vq;bf\rxX|{*8$G\f7H8QqsFJ:S^N?\">\fqHWQ\\A(tQg8$B,&^Q^.ew6\\?*PdH^um9}S$7Q8I" );
+//            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
+//        } catch ( StringIndexOutOfBoundsException ex ) {
+//            assertNull( "range.getSequence()", range.getSequence() );
+//        }
+//    }
+//
+//    public void testSetUndeterminedThrowsNullPointerException() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        range.setToCvFuzzyType( ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class ) );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.getShortLabel(), null );
+//        Mockingbird.enterTestMode();
+//        try {
+//            range.setUndetermined();
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( Range.class, ex );
+//            assertFalse( "range.isUndetermined()", range.isUndetermined() );
+//            assertInvoked( type, "getShortLabel" );
+//        }
+//    }
 
-    public void testPrepareSequenceThrowsStringIndexOutOfBoundsException1() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 30, 100, "testRangeSeq" );
-        Mockingbird.enterRecordingMode();
-        Object sequenceStartingFrom = callPrivateMethod( "uk.ac.ebi.intact.model.Range", "getSequenceStartingFrom", new Class[]{String.class, int.class}, null, new Object[]{"Vq;bf\rxX|{*8$G\f7H8QqsFJ:S^N?\">\fqHWQ\\A(tQg8$B,&^Q^.ew6\\?*PdH^um9}S$7Q8I", new Integer( 30 )} );
-        Mockingbird.setException( sequenceStartingFrom, ( Throwable ) Mockingbird.getProxyObject( StringIndexOutOfBoundsException.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            range.prepareSequence( "Vq;bf\rxX|{*8$G\f7H8QqsFJ:S^N?\">\fqHWQ\\A(tQg8$B,&^Q^.ew6\\?*PdH^um9}S$7Q8I" );
-            fail( "Expected StringIndexOutOfBoundsException to be thrown" );
-        } catch ( StringIndexOutOfBoundsException ex ) {
-            assertNull( "range.getSequence()", range.getSequence() );
-        }
-    }
-
-    public void testSetUndeterminedThrowsNullPointerException() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        range.setToCvFuzzyType( ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class ) );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.getShortLabel(), null );
-        Mockingbird.enterTestMode();
-        try {
-            range.setUndetermined();
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( Range.class, ex );
-            assertFalse( "range.isUndetermined()", range.isUndetermined() );
-            assertInvoked( type, "getShortLabel" );
-        }
-    }
-
-    public void testToStringThrowsNullPointerException() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        CvFuzzyType type2 = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setToCvFuzzyType( type2 );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.getShortLabel(), "20CharactersXXXXXXXX" );
-        Mockingbird.setReturnValue( type2.getShortLabel(), null );
-        Mockingbird.enterTestMode();
-        try {
-            range.toString();
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( CvFuzzyType.class, ex );
-            assertInvoked( type, "getShortLabel" );
-            assertInvoked( type2, "getShortLabel" );
-        }
-    }
-
-    public void testToStringThrowsNullPointerException1() throws Throwable {
-        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
-        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
-        range.setFromCvFuzzyType( type );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( type.getShortLabel(), null );
-        Mockingbird.enterTestMode();
-        try {
-            range.toString();
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( CvFuzzyType.class, ex );
-            assertInvoked( type, "getShortLabel" );
-        }
-    }
+//    public void testToStringThrowsNullPointerException() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        CvFuzzyType type2 = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setToCvFuzzyType( type2 );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.getShortLabel(), "20CharactersXXXXXXXX" );
+//        Mockingbird.setReturnValue( type2.getShortLabel(), null );
+//        Mockingbird.enterTestMode();
+//        try {
+//            range.toString();
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( CvFuzzyType.class, ex );
+//            assertInvoked( type, "getShortLabel" );
+//            assertInvoked( type2, "getShortLabel" );
+//        }
+//    }
+//
+//    public void testToStringThrowsNullPointerException1() throws Throwable {
+//        Range range = new Range( ( Institution ) Mockingbird.getProxyObject( Institution.class ), 0, 100, "testRangeSeq" );
+//        CvFuzzyType type = ( CvFuzzyType ) Mockingbird.getProxyObject( CvFuzzyType.class );
+//        range.setFromCvFuzzyType( type );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( type.getShortLabel(), null );
+//        Mockingbird.enterTestMode();
+//        try {
+//            range.toString();
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( CvFuzzyType.class, ex );
+//            assertInvoked( type, "getShortLabel" );
+//        }
+//    }
 }
 
