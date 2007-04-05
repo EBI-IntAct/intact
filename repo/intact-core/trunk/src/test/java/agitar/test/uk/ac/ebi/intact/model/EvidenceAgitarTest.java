@@ -9,7 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import com.agitar.lib.junit.AgitarTestCase;
+import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class EvidenceAgitarTest extends AgitarTestCase {
 
