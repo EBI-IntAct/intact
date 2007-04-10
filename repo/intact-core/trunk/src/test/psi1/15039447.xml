@@ -1,6 +1,6 @@
    <entrySet level="1" version="1" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
      <entry>
-       <source releaseDate="2007-02-16">
+       <source releaseDate="2007-03-30">
          <names>
            <shortLabel>European Bioinformatics Institute</shortLabel>
          </names>
@@ -321,11 +321,12 @@
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -357,11 +358,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -393,11 +395,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -429,11 +432,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -466,11 +470,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -502,11 +507,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
@@ -540,11 +546,12 @@ DIP1c long isoform was obtained from the cDNA library.</attribute>
            </participantList>
            <interactionType>
              <names>
-               <shortLabel>aggregation</shortLabel>
-               <fullName>aggregation</fullName>
+               <shortLabel>direct interaction</shortLabel>
+               <fullName>direct interaction</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
+               <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </interactionType>
            <xref>
