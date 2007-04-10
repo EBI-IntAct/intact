@@ -36,13 +36,13 @@
           We advise to use the Maven Archetype we have developped to create the base structure of the module you are
           about to create. Running the command below should do the job: <br/>
           <pre>
-          mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar \            <br/>
-                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \         <br/>
-                               -DarchetypeVersion=1.1.0 \                              <br/>
-                               -Dversion=1.0-SNAPSHOT \                                <br/>
-                               -DgroupId=uk.ac.ebi.intact.mygroup \                    <br/>
-                               -DartifactId=myTest \                                   <br/>
-                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo <br/>
+          mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar \
+                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \
+                               -DarchetypeVersion=1.1.0 \
+                               -Dversion=1.0-SNAPSHOT \
+                               -DgroupId=uk.ac.ebi.intact.mygroup \
+                               -DartifactId=myTest \
+                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo
           </pre>
         </p>
       </answer>
@@ -54,14 +54,53 @@
           We advise to use the Maven Archetype we have developped to create the base structure of the module you are
           about to create. Running the command below should do the job: <br/>
           <pre>
-          mvn archetype:create -DarchetypeArtifactId=intact-archetype-mojo \           <br/>
-                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \         <br/>
-                               -DarchetypeVersion=1.1.1 \                              <br/>
-                               -Dversion=1.0-SNAPSHOT \                                <br/>
-                               -DgroupId=uk.ac.ebi.intact.mygroup \                    <br/>
-                               -DartifactId=myTest \                                   <br/>
-                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo <br/>
+          mvn archetype:create -DarchetypeArtifactId=intact-archetype-mojo \
+                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \
+                               -DarchetypeVersion=1.1.1 \
+                               -Dversion=1.0-SNAPSHOT \
+                               -DgroupId=uk.ac.ebi.intact.mygroup \
+                               -DartifactId=myTest \
+                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo 
           </pre>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to install a Jar file onto my local maven repository ?</question>
+      <answer>
+        <p>
+          We advise to use the Maven install plugin for this task.
+          <br/>
+          Running the command below should do the job: <br/>
+          <pre>
+          mvn install:install-file -Dfile=file.jar \
+                                   -DgroupId=myGroup \
+                                   -DartifactId=myArtifact \
+                                   -Dversion=1.0 \
+                                   -Dpackaging=jar \
+          </pre>
+          More information can be found on the <a href="http://maven.apache.org/plugins/maven-install-plugin/install-file-mojo.html" target="_blank">plugin page</a>
+        </p>
+      </answer>
+    </faq>
+    <faq>
+      <question>How to deploy a Jar file onto a maven repository ?</question>
+      <answer>
+        <p>
+          We advise to use the Maven Deploy plugin for this task.
+          <br/>
+          Running the command below should do the job: <br/>
+          <pre>
+          mvn deploy:deploy-file -Dfile=file.jar \
+                                 -DgroupId=myGroup \
+                                 -DartifactId=myArtifact \
+                                 -Dversion=1.0 \
+                                 -Dpackaging=jar \
+                                 -DrepositoryId=my-repo \
+                                 -Durl=scp_command \
+                                 -DpomFile=my-pom.xml
+          </pre>
+          More information can be found on the <a href="http://maven.apache.org/plugins/maven-deploy-plugin/deploy-file-mojo.html" target="_blank">plugin page</a>
         </p>
       </answer>
     </faq>
