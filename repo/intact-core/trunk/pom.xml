@@ -75,6 +75,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>com.agitar</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0.4-000276</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.agitar</groupId>
+            <artifactId>mockingbird</artifactId>
+            <version>1.0.4-000276</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
             <version>20070104</version>
@@ -96,13 +108,11 @@
             <artifactId>intact-apt</artifactId>
             <version>0.1</version>
         </dependency>
-
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.13</version>
         </dependency>
-
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
@@ -123,7 +133,6 @@
             <artifactId>commons-codec</artifactId>
             <version>20041127.091804</version>
         </dependency>
-
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
