@@ -9,7 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 import java.util.List;

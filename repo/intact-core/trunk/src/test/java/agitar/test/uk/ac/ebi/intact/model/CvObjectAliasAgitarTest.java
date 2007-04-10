@@ -9,28 +9,29 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 
 public class CvObjectAliasAgitarTest extends AgitarTestCase {
 
     static Class TARGET_CLASS = CvObjectAlias.class;
 
-//    public void testConstructor() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        CvObject cvObject = ( CvObject ) Mockingbird.getProxyObject( CvObject.class );
-//        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( cvObject.getAc(), "testString" );
-//        Mockingbird.enterTestMode();
-//        CvObjectAlias cvObjectAlias = new CvObjectAlias( anOwner, cvObject, cvAliasType, "31CharactersXXXXXXXXXXXXXXXXXXX" );
-//        assertEquals( "cvObjectAlias.getEvidences().size()", 0, cvObjectAlias.getEvidences().size() );
-//        assertSame( "cvObjectAlias.getCvAliasType()", cvAliasType, cvObjectAlias.getCvAliasType() );
-//        assertEquals( "cvObjectAlias.getName()", "31CharactersXXXXXXXXXXXXXXXXXX", cvObjectAlias.getName() );
-//        assertSame( "cvObjectAlias.getOwner()", anOwner, cvObjectAlias.getOwner() );
-//        assertEquals( "cvObjectAlias.parentAc", "testString", getPrivateField( cvObjectAlias, "parentAc" ) );
-//        assertInvoked( cvObject, "getAc" );
-//    }
+    public void testConstructor() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        CvObject cvObject = ( CvObject ) Mockingbird.getProxyObject( CvObject.class );
+        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( cvObject.getAc(), "testString" );
+        Mockingbird.enterTestMode();
+        CvObjectAlias cvObjectAlias = new CvObjectAlias( anOwner, cvObject, cvAliasType, "31CharactersXXXXXXXXXXXXXXXXXXX" );
+        assertEquals( "cvObjectAlias.getEvidences().size()", 0, cvObjectAlias.getEvidences().size() );
+        assertSame( "cvObjectAlias.getCvAliasType()", cvAliasType, cvObjectAlias.getCvAliasType() );
+        assertEquals( "cvObjectAlias.getName()", "31CharactersXXXXXXXXXXXXXXXXXX", cvObjectAlias.getName() );
+        assertSame( "cvObjectAlias.getOwner()", anOwner, cvObjectAlias.getOwner() );
+        assertEquals( "cvObjectAlias.parentAc", "testString", getPrivateField( cvObjectAlias, "parentAc" ) );
+        assertInvoked( cvObject, "getAc" );
+    }
 
     public void testConstructor1() throws Throwable {
         Institution anOwner = new Institution( "testCvObjectAliasShortLabel1" );

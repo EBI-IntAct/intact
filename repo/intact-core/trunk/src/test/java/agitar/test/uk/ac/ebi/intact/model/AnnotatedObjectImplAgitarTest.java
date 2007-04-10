@@ -9,7 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -299,20 +300,20 @@ public class AnnotatedObjectImplAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testCloneThrowsNullPointerException1() throws Throwable {
-//        AnnotatedObjectImpl cvInteractionType = new CvInteractionType((Institution) Mockingbird.getProxyObject(Institution.class), "testAnnotatedObjectImplShortLabel");
-//        cvInteractionType.setAliases(null);
-//        Mockingbird.enterTestMode();
-//        try {
-//            cvInteractionType.clone();
-//            fail("Expected NullPointerException to be thrown");
-//        } catch (NullPointerException ex) {
-//            assertNull("ex.getMessage()", ex.getMessage());
-//            assertThrownBy(AnnotatedObjectImpl.class, ex);
-//            assertEquals("(CvInteractionType) cvInteractionType.shortLabel", "testAnnotatedObjectI", ((CvInteractionType) cvInteractionType).shortLabel);
-//            assertEquals("(CvInteractionType) cvInteractionType.annotations.size()", 0, ((CvInteractionType) cvInteractionType).annotations.size());
-//        }
-//    }
+    public void testCloneThrowsNullPointerException1() throws Throwable {
+        AnnotatedObjectImpl cvInteractionType = new CvInteractionType((Institution) Mockingbird.getProxyObject(Institution.class), "testAnnotatedObjectImplShortLabel");
+        cvInteractionType.setAliases(null);
+        Mockingbird.enterTestMode();
+        try {
+            cvInteractionType.clone();
+            fail("Expected NullPointerException to be thrown");
+        } catch (NullPointerException ex) {
+            assertNull("ex.getMessage()", ex.getMessage());
+            assertThrownBy(AnnotatedObjectImpl.class, ex);
+            assertEquals("(CvInteractionType) cvInteractionType.shortLabel", "testAnnotatedObjectI", ((CvInteractionType) cvInteractionType).shortLabel);
+            assertEquals("(CvInteractionType) cvInteractionType.annotations.size()", 0, ((CvInteractionType) cvInteractionType).annotations.size());
+        }
+    }
 
     public void testCloneThrowsNullPointerException2() throws Throwable {
         AnnotatedObjectImpl cvInteraction = new CvInteraction( new Institution( "testAnnotatedObjectImplShortLabel" ), "testAnnotatedObjectImplShortLabel" );

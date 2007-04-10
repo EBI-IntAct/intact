@@ -9,7 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 import org.apache.commons.logging.Log;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -55,12 +56,12 @@ public class AnnotationAgitarTest extends AgitarTestCase {
         assertFalse( "result", result );
     }
 
-//    public void testEquals1() throws Throwable {
-//        Annotation annotation = new Annotation((Institution) Mockingbird.getProxyObject(Institution.class), (CvTopic) Mockingbird.getProxyObject(CvTopic.class), "testAnnotationAnnotationText");
-//        Mockingbird.enterTestMode();
-//        boolean result = annotation.equals("");
-//        assertFalse("result", result);
-//    }
+    public void testEquals1() throws Throwable {
+        Annotation annotation = new Annotation((Institution) Mockingbird.getProxyObject(Institution.class), (CvTopic) Mockingbird.getProxyObject(CvTopic.class), "testAnnotationAnnotationText");
+        Mockingbird.enterTestMode();
+        boolean result = annotation.equals("");
+        assertFalse("result", result);
+    }
 
     public void testEquals2() throws Throwable {
         Annotation o = new Annotation( null, new CvTopic( new Institution( "testAnnotationShortLabel" ), "testAnnotationShortLabel" ) );
@@ -99,21 +100,21 @@ public class AnnotationAgitarTest extends AgitarTestCase {
         assertEquals( "annotation.ac", "testAnnotationAc", annotation.ac );
     }
 
-//    public void testHashCode3() throws Throwable {
-//        Institution owner = (Institution) Mockingbird.getProxyObject(Institution.class);
-//        Mockingbird.enterTestMode();
-//        CvTopic cvTopic = new CvTopic(owner, "testAnnotationShortLabel");
-//        Institution owner2 = (Institution) Mockingbird.getProxyObject(Institution.class);
-//        CvTopic topic = (CvTopic) Mockingbird.getProxyObject(CvTopic.class);
-//        Mockingbird.enterTestMode();
-//        Annotation annotation = new Annotation(owner2, topic);
-//        annotation.setAnnotationText("testAnnotationAnnotationText");
-//        annotation.setAc(null);
-//        annotation.setCvTopic(cvTopic);
-//        annotation.hashCode();
-//        assertSame("annotation.getCvTopic()", cvTopic, annotation.getCvTopic());
-//        assertEquals("annotation.getAnnotationText()", "testAnnotationAnnotationText", annotation.getAnnotationText());
-//    }
+    public void testHashCode3() throws Throwable {
+        Institution owner = (Institution) Mockingbird.getProxyObject(Institution.class);
+        Mockingbird.enterTestMode();
+        CvTopic cvTopic = new CvTopic(owner, "testAnnotationShortLabel");
+        Institution owner2 = (Institution) Mockingbird.getProxyObject(Institution.class);
+        CvTopic topic = (CvTopic) Mockingbird.getProxyObject(CvTopic.class);
+        Mockingbird.enterTestMode();
+        Annotation annotation = new Annotation(owner2, topic);
+        annotation.setAnnotationText("testAnnotationAnnotationText");
+        annotation.setAc(null);
+        annotation.setCvTopic(cvTopic);
+        annotation.hashCode();
+        assertSame("annotation.getCvTopic()", cvTopic, annotation.getCvTopic());
+        assertEquals("annotation.getAnnotationText()", "testAnnotationAnnotationText", annotation.getAnnotationText());
+    }
 
     public void testSetAnnotationText() throws Throwable {
         Annotation annotation = new Annotation( new Institution( "testAnnotationShortLabel1" ), new CvTopic( new Institution( "testAnnotationShortLabel" ), "testAnnotationShortLabel" ) );

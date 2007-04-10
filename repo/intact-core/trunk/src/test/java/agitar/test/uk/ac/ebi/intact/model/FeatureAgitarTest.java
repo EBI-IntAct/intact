@@ -9,7 +9,9 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -74,26 +76,26 @@ public class FeatureAgitarTest extends AgitarTestCase {
         assertFalse( "result", result );
     }
 
-//    public void testEquals1() throws Throwable {
-//        Feature o = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Mockingbird.enterTestMode();
-//        boolean result = o.equals( o );
-//        assertTrue( "result", result );
-//    }
-//
-//    public void testGetAliases() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Mockingbird.enterTestMode();
-//        ArrayList result = ( ArrayList ) feature.getAliases();
-//        assertEquals( "result.size()", 0, result.size() );
-//    }
-//
-//    public void testGetAnnotations() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Mockingbird.enterTestMode();
-//        ArrayList result = ( ArrayList ) feature.getAnnotations();
-//        assertEquals( "result.size()", 0, result.size() );
-//    }
+    public void testEquals1() throws Throwable {
+        Feature o = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Mockingbird.enterTestMode();
+        boolean result = o.equals( o );
+        assertTrue( "result", result );
+    }
+
+    public void testGetAliases() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Mockingbird.enterTestMode();
+        ArrayList result = ( ArrayList ) feature.getAliases();
+        assertEquals( "result.size()", 0, result.size() );
+    }
+
+    public void testGetAnnotations() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Mockingbird.enterTestMode();
+        ArrayList result = ( ArrayList ) feature.getAnnotations();
+        assertEquals( "result.size()", 0, result.size() );
+    }
 
     public void testGetXrefs() throws Throwable {
         Interaction interaction = new InteractionImpl( new ArrayList(), null, "testFeatureShortLabel", new Institution( "testFeatureShortLabel" ) );
@@ -101,13 +103,13 @@ public class FeatureAgitarTest extends AgitarTestCase {
         assertEquals( "result.size()", 0, result.size() );
     }
 
-//    public void testRemoveRange() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
-//        Mockingbird.enterTestMode();
-//        feature.removeRange( range );
-//        assertEquals( "feature.getRanges().size()", 0, feature.getRanges().size() );
-//    }
+    public void testRemoveRange() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
+        Mockingbird.enterTestMode();
+        feature.removeRange( range );
+        assertEquals( "feature.getRanges().size()", 0, feature.getRanges().size() );
+    }
 
     public void testSetBoundDomain() throws Throwable {
         Interaction interaction = new InteractionImpl( new ArrayList(), null, "testFeatureShortLabel", new Institution( "testFeatureShortLabel1" ) );
@@ -119,13 +121,13 @@ public class FeatureAgitarTest extends AgitarTestCase {
         assertSame( "feature.getBoundDomain()", feature2, feature.getBoundDomain() );
     }
 
-//    public void testSetComponent() throws Throwable {
-//        Feature feature = new Feature( null, "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
-//        Mockingbird.enterTestMode();
-//        feature.setComponent( component );
-//        assertSame( "feature.getComponent()", component, feature.getComponent() );
-//    }
+    public void testSetComponent() throws Throwable {
+        Feature feature = new Feature( null, "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
+        Mockingbird.enterTestMode();
+        feature.setComponent( component );
+        assertSame( "feature.getComponent()", component, feature.getComponent() );
+    }
 
     public void testSetComponentForClone() throws Throwable {
         CvInteractorType type = new CvInteractorType( null, "testFeatureShortLabel" );
@@ -143,27 +145,27 @@ public class FeatureAgitarTest extends AgitarTestCase {
         assertSame( "feature.getComponent()", component, feature.getComponent() );
     }
 
-//    public void testSetRanges() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        Collection ranges = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        Mockingbird.enterTestMode();
-//        feature.setRanges( ranges );
-//        assertSame( "feature.getRanges()", ranges, feature.getRanges() );
-//    }
-//
-//    public void testConstructorThrowsIllegalArgumentException() throws Throwable {
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
-//        CvFeatureType type = ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new Feature( owner, "", component, type );
-//            fail( "Expected IllegalArgumentException to be thrown" );
-//        } catch ( IllegalArgumentException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
+    public void testSetRanges() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        Collection ranges = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        Mockingbird.enterTestMode();
+        feature.setRanges( ranges );
+        assertSame( "feature.getRanges()", ranges, feature.getRanges() );
+    }
+
+    public void testConstructorThrowsIllegalArgumentException() throws Throwable {
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
+        CvFeatureType type = ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class );
+        Mockingbird.enterTestMode();
+        try {
+            new Feature( owner, "", component, type );
+            fail( "Expected IllegalArgumentException to be thrown" );
+        } catch ( IllegalArgumentException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
 
     public void testConstructorThrowsNullPointerException() throws Throwable {
         try {
@@ -175,47 +177,47 @@ public class FeatureAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testConstructorThrowsNullPointerException1() throws Throwable {
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new Feature( owner, "testFeatureShortLabel", component, null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Must have a CvFeatureType to create a Feature!", ex.getMessage() );
-//            assertThrownBy( Feature.class, ex );
-//        }
-//    }
-//
-//    public void testAddRangeThrowsNullPointerException() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        feature.setRanges( null );
-//        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            feature.addRange( range );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( Feature.class, ex );
-//            assertNull( "feature.getRanges()", feature.getRanges() );
-//        }
-//    }
-//
-//    public void testRemoveRangeThrowsNullPointerException() throws Throwable {
-//        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
-//        feature.setRanges( null );
-//        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            feature.removeRange( range );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( Feature.class, ex );
-//            assertNull( "feature.getRanges()", feature.getRanges() );
-//        }
-//    }
+    public void testConstructorThrowsNullPointerException1() throws Throwable {
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
+        Mockingbird.enterTestMode();
+        try {
+            new Feature( owner, "testFeatureShortLabel", component, null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Must have a CvFeatureType to create a Feature!", ex.getMessage() );
+            assertThrownBy( Feature.class, ex );
+        }
+    }
+
+    public void testAddRangeThrowsNullPointerException() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        feature.setRanges( null );
+        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
+        Mockingbird.enterTestMode();
+        try {
+            feature.addRange( range );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( Feature.class, ex );
+            assertNull( "feature.getRanges()", feature.getRanges() );
+        }
+    }
+
+    public void testRemoveRangeThrowsNullPointerException() throws Throwable {
+        Feature feature = new Feature( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testFeatureShortLabel", ( Component ) Mockingbird.getProxyObject( Component.class ), ( CvFeatureType ) Mockingbird.getProxyObject( CvFeatureType.class ) );
+        feature.setRanges( null );
+        Range range = ( Range ) Mockingbird.getProxyObject( Range.class );
+        Mockingbird.enterTestMode();
+        try {
+            feature.removeRange( range );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( Feature.class, ex );
+            assertNull( "feature.getRanges()", feature.getRanges() );
+        }
+    }
 }
 

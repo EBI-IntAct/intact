@@ -9,7 +9,7 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
 import com.mchange.v2.c3p0.impl.AuthMaskingProperties;
 import org.apache.commons.logging.Log;
 import org.hibernate.dialect.DB2400Dialect;
