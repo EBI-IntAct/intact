@@ -9,11 +9,14 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 public class InteractionImplAgitarTest extends AgitarTestCase {
 
@@ -99,17 +102,17 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         assertEquals( "interactionImpl.getActiveInstances().size()", 0, interactionImpl.getActiveInstances().size() );
     }
 
-//    public void testClone() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Mockingbird.enterTestMode();
-//        InteractionImpl result = ( InteractionImpl ) interactionImpl.clone();
-//        assertNull( "result.getCvInteractionTypeAc()", result.getCvInteractionTypeAc() );
-//        assertEquals( "interactionImpl.shortLabel", "testInteractionImplS", interactionImpl.shortLabel );
-//        assertEquals( "interactionImpl.getComponents().size()", 0, interactionImpl.getComponents().size() );
-//        assertSame( "interactionImpl.getExperiments()", experiments, interactionImpl.getExperiments() );
-//        assertEquals( "interactionImpl.annotations.size()", 0, interactionImpl.annotations.size() );
-//    }
+    public void testClone() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Mockingbird.enterTestMode();
+        InteractionImpl result = ( InteractionImpl ) interactionImpl.clone();
+        assertNull( "result.getCvInteractionTypeAc()", result.getCvInteractionTypeAc() );
+        assertEquals( "interactionImpl.shortLabel", "testInteractionImplS", interactionImpl.shortLabel );
+        assertEquals( "interactionImpl.getComponents().size()", 0, interactionImpl.getComponents().size() );
+        assertSame( "interactionImpl.getExperiments()", experiments, interactionImpl.getExperiments() );
+        assertEquals( "interactionImpl.annotations.size()", 0, interactionImpl.annotations.size() );
+    }
 
     public void testEquals() throws Throwable {
         InteractionImpl interactionImpl = new InteractionImpl( new ArrayList(), ( CvInteractionType ) null, new CvInteractorType( new Institution( "testInteractionImplShortLabel" ), "testInteractionImplShortLabel" ), "testInteractionImplShortLabel", new Institution( "testInteractionImplShortLabel1" ) );
@@ -147,41 +150,41 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         assertNull( "interactionImpl.getCvInteractorType()", interactionImpl.getCvInteractorType() );
     }
 
-//    public void testHashCode1() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        interactionImpl.setKD( new Float( 0.0F ) );
-//        Mockingbird.enterTestMode();
-//        int result = interactionImpl.hashCode();
-//        assertEquals( "result", 696940332, result );
-//        assertEquals( "interactionImpl.xrefs.size()", 0, interactionImpl.xrefs.size() );
-//        assertNull( "interactionImpl.getBioSource()", interactionImpl.getBioSource() );
-//        assertEquals( "interactionImpl.shortLabel", "testInteractionImplS", interactionImpl.shortLabel );
-//        assertNull( "interactionImpl.ac", interactionImpl.ac );
-//        assertNull( "interactionImpl.fullName", interactionImpl.fullName );
-//        assertNull( "interactionImpl.getCvInteractorType()", interactionImpl.getCvInteractorType() );
-//    }
+    public void testHashCode1() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        interactionImpl.setKD( new Float( 0.0F ) );
+        Mockingbird.enterTestMode();
+        int result = interactionImpl.hashCode();
+        assertEquals( "result", 696940332, result );
+        assertEquals( "interactionImpl.xrefs.size()", 0, interactionImpl.xrefs.size() );
+        assertNull( "interactionImpl.getBioSource()", interactionImpl.getBioSource() );
+        assertEquals( "interactionImpl.shortLabel", "testInteractionImplS", interactionImpl.shortLabel );
+        assertNull( "interactionImpl.ac", interactionImpl.ac );
+        assertNull( "interactionImpl.fullName", interactionImpl.fullName );
+        assertNull( "interactionImpl.getCvInteractorType()", interactionImpl.getCvInteractorType() );
+    }
 
-//    public void testRemoveComponent() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Collection someComponent = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        interactionImpl.setComponents( someComponent );
-//        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( false, someComponent, "remove(Ljava/lang/Object;)Z", new Object[]{component}, Boolean.TRUE, 1 );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.removeComponent( component );
-//        assertSame( "interactionImpl.getComponents()", someComponent, interactionImpl.getComponents() );
-//        assertInvoked( someComponent, "remove", new Object[]{component} );
-//        assertInvoked( component, "setInteraction", new Object[]{null} );
-//    }
-//
-//    public void testRemoveComponent1() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.removeComponent( component );
-//        assertEquals( "interactionImpl.getComponents().size()", 0, interactionImpl.getComponents().size() );
-//    }
+    public void testRemoveComponent() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Collection someComponent = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        interactionImpl.setComponents( someComponent );
+        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( false, someComponent, "remove(Ljava/lang/Object;)Z", new Object[]{component}, Boolean.TRUE, 1 );
+        Mockingbird.enterTestMode();
+        interactionImpl.removeComponent( component );
+        assertSame( "interactionImpl.getComponents()", someComponent, interactionImpl.getComponents() );
+        assertInvoked( someComponent, "remove", new Object[]{component} );
+        assertInvoked( component, "setInteraction", new Object[]{null} );
+    }
+
+    public void testRemoveComponent1() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Component component = ( Component ) Mockingbird.getProxyObject( Component.class );
+        Mockingbird.enterTestMode();
+        interactionImpl.removeComponent( component );
+        assertEquals( "interactionImpl.getComponents().size()", 0, interactionImpl.getComponents().size() );
+    }
 
     public void testSetComponents() throws Throwable {
         InteractionImpl interactionImpl = new InteractionImpl( new ArrayList( 100 ), new ArrayList( 1000 ), new CvInteractionType( new Institution( "testInteractionImplShortLabel" ), "testInteractionImplShortLabel" ), "testInteractionImplShortLabel", new Institution( "testInteractionImplShortLabel1" ) );
@@ -190,21 +193,21 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         assertSame( "interactionImpl.getComponents()", someComponent, interactionImpl.getComponents() );
     }
 
-//    public void testSetCvInteractionType() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        CvInteractionType cvInteractionType = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.setCvInteractionType( cvInteractionType );
-//        assertSame( "interactionImpl.getCvInteractionType()", cvInteractionType, interactionImpl.getCvInteractionType() );
-//    }
-//
-//    public void testSetCvInteractionTypeAc() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.setCvInteractionTypeAc( "testInteractionImplAc" );
-//        assertEquals( "interactionImpl.getCvInteractionTypeAc()", "testInteractionImplAc", interactionImpl.getCvInteractionTypeAc() );
-//    }
+    public void testSetCvInteractionType() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        CvInteractionType cvInteractionType = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        Mockingbird.enterTestMode();
+        interactionImpl.setCvInteractionType( cvInteractionType );
+        assertSame( "interactionImpl.getCvInteractionType()", cvInteractionType, interactionImpl.getCvInteractionType() );
+    }
+
+    public void testSetCvInteractionTypeAc() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Mockingbird.enterTestMode();
+        interactionImpl.setCvInteractionTypeAc( "testInteractionImplAc" );
+        assertEquals( "interactionImpl.getCvInteractionTypeAc()", "testInteractionImplAc", interactionImpl.getCvInteractionTypeAc() );
+    }
 
     public void testSetExperiments() throws Throwable {
         Collection someExperiment = new ArrayList( 100 );
@@ -213,80 +216,80 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         assertSame( "interactionImpl.getExperiments()", someExperiment, interactionImpl.getExperiments() );
     }
 
-//    public void testSetKD() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.setKD( new Float( 1.0F ) );
-//        assertEquals( "interactionImpl.getKD()", 1.0F, interactionImpl.getKD().floatValue(), 1.0E-6F );
-//    }
-//
-//    public void testSetReleased() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        Mockingbird.enterTestMode();
-//        interactionImpl.setReleased( someReleased );
-//        assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
-//    }
-//
-//    public void testConstructorThrowsIllegalArgumentException() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( experiments, type, "", owner );
-//            fail( "Expected IllegalArgumentException to be thrown" );
-//        } catch ( IllegalArgumentException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
-//
-//    public void testConstructorThrowsIllegalArgumentException1() throws Throwable {
-//        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( null, components, type, interactorType, "", owner );
-//            fail( "Expected IllegalArgumentException to be thrown" );
-//        } catch ( IllegalArgumentException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
-//
-//    public void testConstructorThrowsIllegalArgumentException2() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( experiments, type, interactorType, "", owner );
-//            fail( "Expected IllegalArgumentException to be thrown" );
-//        } catch ( IllegalArgumentException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
-//
-//    public void testConstructorThrowsIllegalArgumentException3() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( experiments, components, type, "", owner );
-//            fail( "Expected IllegalArgumentException to be thrown" );
-//        } catch ( IllegalArgumentException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
+    public void testSetKD() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Mockingbird.enterTestMode();
+        interactionImpl.setKD( new Float( 1.0F ) );
+        assertEquals( "interactionImpl.getKD()", 1.0F, interactionImpl.getKD().floatValue(), 1.0E-6F );
+    }
+
+    public void testSetReleased() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        Mockingbird.enterTestMode();
+        interactionImpl.setReleased( someReleased );
+        assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
+    }
+
+    public void testConstructorThrowsIllegalArgumentException() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( experiments, type, "", owner );
+            fail( "Expected IllegalArgumentException to be thrown" );
+        } catch ( IllegalArgumentException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
+
+    public void testConstructorThrowsIllegalArgumentException1() throws Throwable {
+        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( null, components, type, interactorType, "", owner );
+            fail( "Expected IllegalArgumentException to be thrown" );
+        } catch ( IllegalArgumentException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
+
+    public void testConstructorThrowsIllegalArgumentException2() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( experiments, type, interactorType, "", owner );
+            fail( "Expected IllegalArgumentException to be thrown" );
+        } catch ( IllegalArgumentException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
+
+    public void testConstructorThrowsIllegalArgumentException3() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( experiments, components, type, "", owner );
+            fail( "Expected IllegalArgumentException to be thrown" );
+        } catch ( IllegalArgumentException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non empty short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
 
     public void testConstructorThrowsNullPointerException() throws Throwable {
         try {
@@ -298,65 +301,65 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testConstructorThrowsNullPointerException1() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( experiments, components, type, interactorType, null, owner );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Must define a non null short label", ex.getMessage() );
-//            assertThrownBy( AnnotatedObjectUtils.class, ex );
-//        }
-//    }
-//
-//    public void testConstructorThrowsNullPointerException2() throws Throwable {
-//        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( null, components, type, interactorType, "testInteractionImplShortLabel", owner );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Cannot create an Interaction without an Experiment!", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//        }
-//    }
-//
-//    public void testConstructorThrowsNullPointerException3() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( experiments, null, type, interactorType, "testInteractionImplShortLabel", owner );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Cannot create an Interaction without any Components!", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//        }
-//    }
+    public void testConstructorThrowsNullPointerException1() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( experiments, components, type, interactorType, null, owner );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Must define a non null short label", ex.getMessage() );
+            assertThrownBy( AnnotatedObjectUtils.class, ex );
+        }
+    }
 
-//    public void testConstructorThrowsNullPointerException4() throws Throwable {
-//        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
-//        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
-//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new InteractionImpl( ( Collection ) null, type, interactorType, "testInteractionImplShortLabel", owner );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Cannot create an Interaction without an Experiment!", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//        }
-//    }
+    public void testConstructorThrowsNullPointerException2() throws Throwable {
+        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( null, components, type, interactorType, "testInteractionImplShortLabel", owner );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Cannot create an Interaction without an Experiment!", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+        }
+    }
+
+    public void testConstructorThrowsNullPointerException3() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( experiments, null, type, interactorType, "testInteractionImplShortLabel", owner );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Cannot create an Interaction without any Components!", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+        }
+    }
+
+    public void testConstructorThrowsNullPointerException4() throws Throwable {
+        CvInteractionType type = ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class );
+        CvInteractorType interactorType = ( CvInteractorType ) Mockingbird.getProxyObject( CvInteractorType.class );
+        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        Mockingbird.enterTestMode();
+        try {
+            new InteractionImpl( ( Collection ) null, type, interactorType, "testInteractionImplShortLabel", owner );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Cannot create an Interaction without an Experiment!", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+        }
+    }
 
     public void testConstructorThrowsNullPointerException5() throws Throwable {
         Institution owner = new Institution( "testInteractionImplShortLabel" );
@@ -395,25 +398,25 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testAddReleasedThrowsNullPointerException1() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        interactionImpl.setReleased( someReleased );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( false, someReleased, "contains(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.FALSE, 1 );
-//        Mockingbird.setReturnValue( false, someReleased, "add(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
-//        Mockingbird.enterTestMode();
-//        try {
-//            interactionImpl.addReleased( null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//            assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
-//            assertInvoked( someReleased, "contains", new Object[]{null} );
-//            assertInvoked( someReleased, "add", new Object[]{null} );
-//        }
-//    }
+    public void testAddReleasedThrowsNullPointerException1() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), null, "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        interactionImpl.setReleased( someReleased );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( false, someReleased, "contains(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.FALSE, 1 );
+        Mockingbird.setReturnValue( false, someReleased, "add(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
+        Mockingbird.enterTestMode();
+        try {
+            interactionImpl.addReleased( null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+            assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
+            assertInvoked( someReleased, "contains", new Object[]{null} );
+            assertInvoked( someReleased, "add", new Object[]{null} );
+        }
+    }
 
     public void testCloneThrowsNullPointerException() throws Throwable {
         Collection experiments = new ArrayList( 100 );
@@ -449,70 +452,70 @@ public class InteractionImplAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testRemoveExperimentThrowsNullPointerException() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Collection someExperiment = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        interactionImpl.setExperiments( someExperiment );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( false, someExperiment, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
-//        Mockingbird.enterTestMode();
-//        try {
-//            interactionImpl.removeExperiment( null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//            assertSame( "interactionImpl.getExperiments()", someExperiment, interactionImpl.getExperiments() );
-//            assertInvoked( someExperiment, "remove", new Object[]{null} );
-//        }
-//    }
-//
-//    public void testRemoveReleasedThrowsNullPointerException() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", null );
-//        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        interactionImpl.setReleased( someReleased );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( false, someReleased, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
-//        Mockingbird.enterTestMode();
-//        try {
-//            interactionImpl.removeReleased( null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//            assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
-//            assertInvoked( someReleased, "remove", new Object[]{null} );
-//        }
-//    }
-//
-//    public void testRemoveReleasedThrowsNullPointerException1() throws Throwable {
-//        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Mockingbird.enterTestMode();
-//        try {
-//            interactionImpl.removeReleased( null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//            assertNull( "interactionImpl.getReleased()", interactionImpl.getReleased() );
-//        }
-//    }
+    public void testRemoveExperimentThrowsNullPointerException() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        InteractionImpl interactionImpl = new InteractionImpl( experiments, ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Collection someExperiment = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        interactionImpl.setExperiments( someExperiment );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( false, someExperiment, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
+        Mockingbird.enterTestMode();
+        try {
+            interactionImpl.removeExperiment( null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+            assertSame( "interactionImpl.getExperiments()", someExperiment, interactionImpl.getExperiments() );
+            assertInvoked( someExperiment, "remove", new Object[]{null} );
+        }
+    }
 
-//    public void testSetComponentsThrowsNullPointerException() throws Throwable {
-//        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-//        InteractionImpl interactionImpl = new InteractionImpl( experiments, components, ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
-//        Mockingbird.enterTestMode();
-//        try {
-//            interactionImpl.setComponents( null );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "Cannot create an Interaction without any Components!", ex.getMessage() );
-//            assertThrownBy( InteractionImpl.class, ex );
-//            assertSame( "interactionImpl.getComponents()", components, interactionImpl.getComponents() );
-//        }
-//    }
+    public void testRemoveReleasedThrowsNullPointerException() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", null );
+        Collection someReleased = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        interactionImpl.setReleased( someReleased );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( false, someReleased, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
+        Mockingbird.enterTestMode();
+        try {
+            interactionImpl.removeReleased( null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+            assertSame( "interactionImpl.getReleased()", someReleased, interactionImpl.getReleased() );
+            assertInvoked( someReleased, "remove", new Object[]{null} );
+        }
+    }
+
+    public void testRemoveReleasedThrowsNullPointerException1() throws Throwable {
+        InteractionImpl interactionImpl = new InteractionImpl( ( Collection ) Mockingbird.getProxyObject( Collection.class ), ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Mockingbird.enterTestMode();
+        try {
+            interactionImpl.removeReleased( null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+            assertNull( "interactionImpl.getReleased()", interactionImpl.getReleased() );
+        }
+    }
+
+    public void testSetComponentsThrowsNullPointerException() throws Throwable {
+        Collection experiments = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        Collection components = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+        InteractionImpl interactionImpl = new InteractionImpl( experiments, components, ( CvInteractionType ) Mockingbird.getProxyObject( CvInteractionType.class ), "testInteractionImplShortLabel", ( Institution ) Mockingbird.getProxyObject( Institution.class ) );
+        Mockingbird.enterTestMode();
+        try {
+            interactionImpl.setComponents( null );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "Cannot create an Interaction without any Components!", ex.getMessage() );
+            assertThrownBy( InteractionImpl.class, ex );
+            assertSame( "interactionImpl.getComponents()", components, interactionImpl.getComponents() );
+        }
+    }
 
     public void testSetExperimentsThrowsNullPointerException() throws Throwable {
         Collection experiments = new ArrayList( 100 );

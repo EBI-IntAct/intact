@@ -9,7 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 public class BioSourceAliasAgitarTest extends AgitarTestCase {
 
@@ -37,21 +38,21 @@ public class BioSourceAliasAgitarTest extends AgitarTestCase {
         assertNull( "bioSourceAlias.parentAc", getPrivateField( bioSourceAlias, "parentAc" ) );
     }
 
-//    public void testConstructor2() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-//        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( bioSource.getAc(), "hdoQq-BW?" );
-//        Mockingbird.enterTestMode();
-//        BioSourceAlias bioSourceAlias = new BioSourceAlias( anOwner, bioSource, cvAliasType, "29CharactersXXXXXXXXXXXXXXXXX" );
-//        assertEquals( "bioSourceAlias.getEvidences().size()", 0, bioSourceAlias.getEvidences().size() );
-//        assertSame( "bioSourceAlias.getCvAliasType()", cvAliasType, bioSourceAlias.getCvAliasType() );
-//        assertEquals( "bioSourceAlias.getName()", "29CharactersXXXXXXXXXXXXXXXXX", bioSourceAlias.getName() );
-//        assertSame( "bioSourceAlias.getOwner()", anOwner, bioSourceAlias.getOwner() );
-//        assertEquals( "bioSourceAlias.parentAc", "hdoQq-BW?", getPrivateField( bioSourceAlias, "parentAc" ) );
-//        assertInvoked( bioSource, "getAc" );
-//    }
+    public void testConstructor2() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( bioSource.getAc(), "hdoQq-BW?" );
+        Mockingbird.enterTestMode();
+        BioSourceAlias bioSourceAlias = new BioSourceAlias( anOwner, bioSource, cvAliasType, "29CharactersXXXXXXXXXXXXXXXXX" );
+        assertEquals( "bioSourceAlias.getEvidences().size()", 0, bioSourceAlias.getEvidences().size() );
+        assertSame( "bioSourceAlias.getCvAliasType()", cvAliasType, bioSourceAlias.getCvAliasType() );
+        assertEquals( "bioSourceAlias.getName()", "29CharactersXXXXXXXXXXXXXXXXX", bioSourceAlias.getName() );
+        assertSame( "bioSourceAlias.getOwner()", anOwner, bioSourceAlias.getOwner() );
+        assertEquals( "bioSourceAlias.parentAc", "hdoQq-BW?", getPrivateField( bioSourceAlias, "parentAc" ) );
+        assertInvoked( bioSource, "getAc" );
+    }
 
     public void testGetParent() throws Throwable {
         BioSourceAlias alias = new BioSourceAlias( new Institution( "testBioSourceAliasShortLabel1" ), new BioSource( new Institution( "testBioSourceAliasShortLabel2" ), "testBioSourceAliasShortLabel", "-66834" ), new CvAliasType( new Institution( "testBioSourceAliasShortLabel" ), "testBioSourceAliasShortLabel" ), "testBioSourceAliasName" );
@@ -74,21 +75,21 @@ public class BioSourceAliasAgitarTest extends AgitarTestCase {
         assertNull( "bioSourceAlias.parentAc", getPrivateField( bioSourceAlias, "parentAc" ) );
     }
 
-//    public void testGetParentAc1() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-//        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
-//        Mockingbird.enterRecordingMode();
-//        Mockingbird.setReturnValue( bioSource.getAc(), "testString" );
-//        Mockingbird.enterTestMode();
-//        BioSourceAlias bioSourceAlias = new BioSourceAlias( anOwner, bioSource, cvAliasType, "testBioSourceAliasName" );
-//        Mockingbird.enterTestMode();
-//        String result = bioSourceAlias.getParentAc();
-//        assertEquals( "result", "testString", result );
-//        assertNull( "bioSourceAlias.getParent()", bioSourceAlias.getParent() );
-//        assertEquals( "bioSourceAlias.parentAc", "testString", getPrivateField( bioSourceAlias, "parentAc" ) );
-//        assertInvoked( bioSource, "getAc" );
-//    }
+    public void testGetParentAc1() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+        CvAliasType cvAliasType = ( CvAliasType ) Mockingbird.getProxyObject( CvAliasType.class );
+        Mockingbird.enterRecordingMode();
+        Mockingbird.setReturnValue( bioSource.getAc(), "testString" );
+        Mockingbird.enterTestMode();
+        BioSourceAlias bioSourceAlias = new BioSourceAlias( anOwner, bioSource, cvAliasType, "testBioSourceAliasName" );
+        Mockingbird.enterTestMode();
+        String result = bioSourceAlias.getParentAc();
+        assertEquals( "result", "testString", result );
+        assertNull( "bioSourceAlias.getParent()", bioSourceAlias.getParent() );
+        assertEquals( "bioSourceAlias.parentAc", "testString", getPrivateField( bioSourceAlias, "parentAc" ) );
+        assertInvoked( bioSource, "getAc" );
+    }
 
     public void testConstructorThrowsNullPointerException() throws Throwable {
         try {

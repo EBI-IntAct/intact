@@ -9,7 +9,8 @@
 
 package uk.ac.ebi.intact.model;
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 
 public class PublicationXrefAgitarTest extends AgitarTestCase {
@@ -82,31 +83,31 @@ public class PublicationXrefAgitarTest extends AgitarTestCase {
         assertSame( "publicationXref.getOwner()", anOwner, publicationXref.getOwner() );
     }
 
-//    public void testConstructor5() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-//        Mockingbird.enterTestMode();
-//        PublicationXref publicationXref = new PublicationXref( anOwner, aDatabase, "testPublicationXrefAPrimaryId1", aCvXrefQualifier );
-//        assertEquals( "publicationXref.getPrimaryId()", "testPublicationXrefAPrimaryId1", publicationXref.getPrimaryId() );
-//        assertEquals( "publicationXref.getEvidences().size()", 0, publicationXref.getEvidences().size() );
-//        assertSame( "publicationXref.getCvDatabase()", aDatabase, publicationXref.getCvDatabase() );
-//        assertSame( "publicationXref.getCvXrefQualifier()", aCvXrefQualifier, publicationXref.getCvXrefQualifier() );
-//        assertSame( "publicationXref.getOwner()", anOwner, publicationXref.getOwner() );
-//    }
-//
-//    public void testConstructor6() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-//        Mockingbird.enterTestMode();
-//        PublicationXref publicationXref = new PublicationXref( anOwner, aDatabase, "1", aCvXrefQualifier );
-//        assertEquals( "publicationXref.getPrimaryId()", "1", publicationXref.getPrimaryId() );
-//        assertEquals( "publicationXref.getEvidences().size()", 0, publicationXref.getEvidences().size() );
-//        assertSame( "publicationXref.getCvDatabase()", aDatabase, publicationXref.getCvDatabase() );
-//        assertSame( "publicationXref.getCvXrefQualifier()", aCvXrefQualifier, publicationXref.getCvXrefQualifier() );
-//        assertSame( "publicationXref.getOwner()", anOwner, publicationXref.getOwner() );
-//    }
+    public void testConstructor5() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+        Mockingbird.enterTestMode();
+        PublicationXref publicationXref = new PublicationXref( anOwner, aDatabase, "testPublicationXrefAPrimaryId1", aCvXrefQualifier );
+        assertEquals( "publicationXref.getPrimaryId()", "testPublicationXrefAPrimaryId1", publicationXref.getPrimaryId() );
+        assertEquals( "publicationXref.getEvidences().size()", 0, publicationXref.getEvidences().size() );
+        assertSame( "publicationXref.getCvDatabase()", aDatabase, publicationXref.getCvDatabase() );
+        assertSame( "publicationXref.getCvXrefQualifier()", aCvXrefQualifier, publicationXref.getCvXrefQualifier() );
+        assertSame( "publicationXref.getOwner()", anOwner, publicationXref.getOwner() );
+    }
+
+    public void testConstructor6() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+        Mockingbird.enterTestMode();
+        PublicationXref publicationXref = new PublicationXref( anOwner, aDatabase, "1", aCvXrefQualifier );
+        assertEquals( "publicationXref.getPrimaryId()", "1", publicationXref.getPrimaryId() );
+        assertEquals( "publicationXref.getEvidences().size()", 0, publicationXref.getEvidences().size() );
+        assertSame( "publicationXref.getCvDatabase()", aDatabase, publicationXref.getCvDatabase() );
+        assertSame( "publicationXref.getCvXrefQualifier()", aCvXrefQualifier, publicationXref.getCvXrefQualifier() );
+        assertSame( "publicationXref.getOwner()", anOwner, publicationXref.getOwner() );
+    }
 
     public void testGetParent() throws Throwable {
         Institution owner = new Institution( "testPublicationXrefShortLabel" );
@@ -172,18 +173,18 @@ public class PublicationXrefAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testConstructorThrowsNullPointerException1() throws Throwable {
-//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-//        Mockingbird.enterTestMode();
-//        try {
-//            new PublicationXref( anOwner, aDatabase, null, aCvXrefQualifier );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertEquals( "ex.getMessage()", "valid Xref must have a primary ID!", ex.getMessage() );
-//            assertThrownBy( Xref.class, ex );
-//        }
-//    }
+    public void testConstructorThrowsNullPointerException1() throws Throwable {
+        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+        Mockingbird.enterTestMode();
+        try {
+            new PublicationXref( anOwner, aDatabase, null, aCvXrefQualifier );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertEquals( "ex.getMessage()", "valid Xref must have a primary ID!", ex.getMessage() );
+            assertThrownBy( Xref.class, ex );
+        }
+    }
 }
 

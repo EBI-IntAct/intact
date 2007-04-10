@@ -10,7 +10,8 @@
 package uk.ac.ebi.intact.model;
 
 
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
 
 import java.util.Date;
 
@@ -57,12 +58,12 @@ public class SubmissionRefAgitarTest extends AgitarTestCase {
         assertSame( "submissionRef.getHoldDate()", holdDate, submissionRef.getHoldDate() );
     }
 
-//    public void testSetReference() throws Throwable {
-//        SubmissionRef submissionRef = new SubmissionRef( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testSubmissionRefTitle", "testSubmissionRefAuthors", ( Reference ) Mockingbird.getProxyObject( Reference.class ), ( Date ) Mockingbird.getProxyObject( Date.class ) );
-//        Mockingbird.enterTestMode();
-//        submissionRef.setReference( null );
-//        assertNull( "submissionRef.getReference()", submissionRef.getReference() );
-//    }
+    public void testSetReference() throws Throwable {
+        SubmissionRef submissionRef = new SubmissionRef( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testSubmissionRefTitle", "testSubmissionRefAuthors", ( Reference ) Mockingbird.getProxyObject( Reference.class ), ( Date ) Mockingbird.getProxyObject( Date.class ) );
+        Mockingbird.enterTestMode();
+        submissionRef.setReference( null );
+        assertNull( "submissionRef.getReference()", submissionRef.getReference() );
+    }
 
     public void testSetReference1() throws Throwable {
         Reference reference = new Reference();

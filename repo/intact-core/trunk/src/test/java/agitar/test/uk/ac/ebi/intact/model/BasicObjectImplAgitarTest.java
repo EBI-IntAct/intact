@@ -9,10 +9,11 @@
 
 package uk.ac.ebi.intact.model;
 
+import com.agitar.lib.junit.AgitarTestCase;
+import com.agitar.lib.mockingbird.Mockingbird;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import agitar.test.uk.ac.ebi.intact.model.AgitarTestCase;
 
 public class BasicObjectImplAgitarTest extends AgitarTestCase {
 
@@ -59,13 +60,13 @@ public class BasicObjectImplAgitarTest extends AgitarTestCase {
         assertEquals( "(FeatureXref) featureXref.getOwnerAc()", "testBasicObjectImplAc", featureXref.getOwnerAc() );
     }
 
-//    public void testToString() throws Throwable {
-//        BasicObjectImpl intactNode = new IntactNode();
-//        intactNode.setOwner( new Institution( "testBasicObjectImplShortLabel" ) );
-//        Mockingbird.enterTestMode();
-//        String result = intactNode.toString();
-//        assertEquals( "result", "null; owner=null", result );
-//    }
+    public void testToString() throws Throwable {
+        BasicObjectImpl intactNode = new IntactNode();
+        intactNode.setOwner( new Institution( "testBasicObjectImplShortLabel" ) );
+        Mockingbird.enterTestMode();
+        String result = intactNode.toString();
+        assertEquals( "result", "null; owner=null", result );
+    }
 
     public void testAddEvidenceThrowsNullPointerException() throws Throwable {
         BasicObjectImpl cvComponentRole = new CvComponentRole( null, "testBasicObjectImplShortLabel" );
@@ -80,31 +81,31 @@ public class BasicObjectImplAgitarTest extends AgitarTestCase {
         }
     }
 
-//    public void testRemoveEvidenceThrowsNullPointerException() throws Throwable {
-//        BasicObjectImpl intactNode = new IntactNode();
-//        Evidence evidence = new Evidence();
-//        intactNode.setEvidences( null );
-//        Mockingbird.enterTestMode();
-//        try {
-//            intactNode.removeEvidence( evidence );
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( BasicObjectImpl.class, ex );
-//            assertNull( "(IntactNode) intactNode.getEvidences()", intactNode.getEvidences() );
-//        }
-//    }
+    public void testRemoveEvidenceThrowsNullPointerException() throws Throwable {
+        BasicObjectImpl intactNode = new IntactNode();
+        Evidence evidence = new Evidence();
+        intactNode.setEvidences( null );
+        Mockingbird.enterTestMode();
+        try {
+            intactNode.removeEvidence( evidence );
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( BasicObjectImpl.class, ex );
+            assertNull( "(IntactNode) intactNode.getEvidences()", intactNode.getEvidences() );
+        }
+    }
 
-//    public void testToStringThrowsNullPointerException() throws Throwable {
-//        BasicObjectImpl intactNode = new IntactNode();
-//        Mockingbird.enterTestMode();
-//        try {
-//            intactNode.toString();
-//            fail( "Expected NullPointerException to be thrown" );
-//        } catch ( NullPointerException ex ) {
-//            assertNull( "ex.getMessage()", ex.getMessage() );
-//            assertThrownBy( BasicObjectImpl.class, ex );
-//        }
-//    }
+    public void testToStringThrowsNullPointerException() throws Throwable {
+        BasicObjectImpl intactNode = new IntactNode();
+        Mockingbird.enterTestMode();
+        try {
+            intactNode.toString();
+            fail( "Expected NullPointerException to be thrown" );
+        } catch ( NullPointerException ex ) {
+            assertNull( "ex.getMessage()", ex.getMessage() );
+            assertThrownBy( BasicObjectImpl.class, ex );
+        }
+    }
 }
 
