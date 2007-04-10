@@ -10,8 +10,6 @@
 package uk.ac.ebi.intact.model;
 
 import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
-import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 import java.util.ArrayList;
@@ -39,24 +37,24 @@ public class BioSourceAgitarTest extends AgitarTestCase {
         assertFalse( "result", result );
     }
 
-    public void testEquals1() throws Throwable {
-        BioSource bioSource = new BioSource( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testString", "-52002" );
-        BioSource o = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( o.getAc(), "line.separator" );
-        Mockingbird.setReturnValue( o.getShortLabel(), "testString" );
-        Mockingbird.setReturnValue( o.getFullName(), null );
-        Collection arrayList = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-        Mockingbird.setReturnValue( o.getXrefs(), arrayList );
-        Mockingbird.setReturnValue( true, CollectionUtils.isEqualCollection( null, arrayList ), false );
-        Mockingbird.enterTestMode();
-        boolean result = bioSource.equals( o );
-        assertFalse( "result", result );
-        assertInvoked( o, "getAc" );
-        assertInvoked( o, "getShortLabel" );
-        assertInvoked( o, "getFullName" );
-        assertInvoked( o, "getXrefs" );
-    }
+//    public void testEquals1() throws Throwable {
+//        BioSource bioSource = new BioSource( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testString", "-52002" );
+//        BioSource o = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( o.getAc(), "line.separator" );
+//        Mockingbird.setReturnValue( o.getShortLabel(), "testString" );
+//        Mockingbird.setReturnValue( o.getFullName(), null );
+//        Collection arrayList = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+//        Mockingbird.setReturnValue( o.getXrefs(), arrayList );
+//        Mockingbird.setReturnValue( true, CollectionUtils.isEqualCollection( null, arrayList ), false );
+//        Mockingbird.enterTestMode();
+//        boolean result = bioSource.equals( o );
+//        assertFalse( "result", result );
+//        assertInvoked( o, "getAc" );
+//        assertInvoked( o, "getShortLabel" );
+//        assertInvoked( o, "getFullName" );
+//        assertInvoked( o, "getXrefs" );
+//    }
 
     public void testEquals2() throws Throwable {
         boolean result = new BioSource( new Institution( "testBioSourceShortLabel" ), "testBioSourceShortLabel", "-52002" ).equals( new Object() );

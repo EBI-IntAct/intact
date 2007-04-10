@@ -11,7 +11,6 @@ package uk.ac.ebi.intact.model;
 
 import com.agitar.lib.junit.AgitarTestCase;
 import com.agitar.lib.mockingbird.Mockingbird;
-import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 
 import java.util.ArrayList;
@@ -156,115 +155,115 @@ public class ExperimentAgitarTest extends AgitarTestCase {
         assertSame( "shallowCopy.getRelatedExperiment()", experiment, shallowCopy.getRelatedExperiment() );
     }
 
-    public void testToString() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
-        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
-        experiment.setCvInteraction( cvInteraction );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "identity" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: -\nCvInteraction: identity\n]", result );
-        assertInvoked( cvInteraction, "getShortLabel" );
-    }
+//    public void testToString() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
+//        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
+//        experiment.setCvInteraction( cvInteraction );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "identity" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: -\nCvInteraction: identity\n]", result );
+//        assertInvoked( cvInteraction, "getShortLabel" );
+//    }
 
-    public void testToString1() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
-        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        experiment.setBioSource( bioSource );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( bioSource.getShortLabel(), "19CharactersXXXXXXX" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: 19CharactersXXXXXXX\nCvIdentification: -\nCvInteraction: NOT SPECIFIED\n]", result );
-        assertInvoked( bioSource, "getShortLabel" );
-    }
+//    public void testToString1() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
+//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+//        experiment.setBioSource( bioSource );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( bioSource.getShortLabel(), "19CharactersXXXXXXX" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: 19CharactersXXXXXXX\nCvIdentification: -\nCvInteraction: NOT SPECIFIED\n]", result );
+//        assertInvoked( bioSource, "getShortLabel" );
+//    }
 
-    public void testToString2() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
-        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
-        experiment.setCvIdentification( cvIdentification );
-        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        experiment.setBioSource( bioSource );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( bioSource.getShortLabel(), "20CharactersXXXXXXXX" );
-        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: 20CharactersXXXXXXXX\nCvIdentification: :\nCvInteraction: NOT SPECIFIED\n]", result );
-        assertInvoked( bioSource, "getShortLabel" );
-        assertInvoked( cvIdentification, "getShortLabel" );
-    }
+//    public void testToString2() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
+//        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
+//        experiment.setCvIdentification( cvIdentification );
+//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+//        experiment.setBioSource( bioSource );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( bioSource.getShortLabel(), "20CharactersXXXXXXXX" );
+//        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: 20CharactersXXXXXXXX\nCvIdentification: :\nCvInteraction: NOT SPECIFIED\n]", result );
+//        assertInvoked( bioSource, "getShortLabel" );
+//        assertInvoked( cvIdentification, "getShortLabel" );
+//    }
 
-    public void testToString3() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
-        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
-        experiment.setCvIdentification( cvIdentification );
-        experiment.setBioSource( null );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: :\nCvInteraction: NOT SPECIFIED\n]", result );
-        assertInvoked( cvIdentification, "getShortLabel" );
-    }
+//    public void testToString3() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
+//        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
+//        experiment.setCvIdentification( cvIdentification );
+//        experiment.setBioSource( null );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: :\nCvInteraction: NOT SPECIFIED\n]", result );
+//        assertInvoked( cvIdentification, "getShortLabel" );
+//    }
 
-    public void testToString4() throws Throwable {
-        String result = Experiment.getShallowCopy( Experiment.getShallowCopy( new Experiment( null, "testExperimentShortLabel", null ) ) ).toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: -\nCvInteraction: NOT SPECIFIED\n]", result );
-    }
+//    public void testToString4() throws Throwable {
+//        String result = Experiment.getShallowCopy( Experiment.getShallowCopy( new Experiment( null, "testExperimentShortLabel", null ) ) ).toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: -\nCvInteraction: NOT SPECIFIED\n]", result );
+//    }
 
-    public void testToString5() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
-        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        experiment.setBioSource( bioSource );
-        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
-        experiment.setCvInteraction( cvInteraction );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( bioSource.getShortLabel(), "; fullnIme=" );
-        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "Illegal Capacity:" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: ; fullnIme=\nCvIdentification: -\nCvInteraction: Illegal Capacity:\n]", result );
-        assertInvoked( bioSource, "getShortLabel" );
-        assertInvoked( cvInteraction, "getShortLabel" );
-    }
+//    public void testToString5() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
+//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+//        experiment.setBioSource( bioSource );
+//        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
+//        experiment.setCvInteraction( cvInteraction );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( bioSource.getShortLabel(), "; fullnIme=" );
+//        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "Illegal Capacity:" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: ; fullnIme=\nCvIdentification: -\nCvInteraction: Illegal Capacity:\n]", result );
+//        assertInvoked( bioSource, "getShortLabel" );
+//        assertInvoked( cvInteraction, "getShortLabel" );
+//    }
 
-    public void testToString6() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
-        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
-        experiment.setCvIdentification( cvIdentification );
-        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
-        experiment.setBioSource( bioSource );
-        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
-        experiment.setCvInteraction( cvInteraction );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( bioSource.getShortLabel(), "; fullnIme=" );
-        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
-        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "Illegal Capacity:" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: ; fullnIme=\nCvIdentification: :\nCvInteraction: Illegal Capacity:\n]", result );
-        assertInvoked( bioSource, "getShortLabel" );
-        assertInvoked( cvInteraction, "getShortLabel" );
-        assertInvoked( cvIdentification, "getShortLabel" );
-    }
+//    public void testToString6() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", ( BioSource ) Mockingbird.getProxyObject( BioSource.class ) );
+//        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
+//        experiment.setCvIdentification( cvIdentification );
+//        BioSource bioSource = ( BioSource ) Mockingbird.getProxyObject( BioSource.class );
+//        experiment.setBioSource( bioSource );
+//        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
+//        experiment.setCvInteraction( cvInteraction );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( bioSource.getShortLabel(), "; fullnIme=" );
+//        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), ":" );
+//        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "Illegal Capacity:" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: ; fullnIme=\nCvIdentification: :\nCvInteraction: Illegal Capacity:\n]", result );
+//        assertInvoked( bioSource, "getShortLabel" );
+//        assertInvoked( cvInteraction, "getShortLabel" );
+//        assertInvoked( cvIdentification, "getShortLabel" );
+//    }
 
-    public void testToString7() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
-        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
-        experiment.setCvIdentification( cvIdentification );
-        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
-        experiment.setCvInteraction( cvInteraction );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), null );
-        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "identity" );
-        Mockingbird.enterTestMode();
-        String result = experiment.toString();
-        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: null\nCvInteraction: identity\n]", result );
-        assertInvoked( cvInteraction, "getShortLabel" );
-        assertInvoked( cvIdentification, "getShortLabel" );
-    }
+//    public void testToString7() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testExperimentShortLabel", null );
+//        CvIdentification cvIdentification = ( CvIdentification ) Mockingbird.getProxyObject( CvIdentification.class );
+//        experiment.setCvIdentification( cvIdentification );
+//        CvInteraction cvInteraction = ( CvInteraction ) Mockingbird.getProxyObject( CvInteraction.class );
+//        experiment.setCvInteraction( cvInteraction );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvIdentification.getShortLabel(), null );
+//        Mockingbird.setReturnValue( cvInteraction.getShortLabel(), "identity" );
+//        Mockingbird.enterTestMode();
+//        String result = experiment.toString();
+//        assertEquals( "result", "Experiment [AC: null Shortlabel: testExperimentShortL BioSource: -\nCvIdentification: null\nCvInteraction: identity\n]", result );
+//        assertInvoked( cvInteraction, "getShortLabel" );
+//        assertInvoked( cvIdentification, "getShortLabel" );
+//    }
 
     public void testConstructorThrowsIllegalArgumentException() throws Throwable {
         Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
@@ -289,48 +288,48 @@ public class ExperimentAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testEqualsThrowsNullPointerException() throws Throwable {
-        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testString", null );
-        Experiment o = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( o.getAc(), null );
-        Mockingbird.setReturnValue( o.getShortLabel(), "testString" );
-        Mockingbird.setReturnValue( o.getFullName(), null );
-        Collection arrayList = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-        Mockingbird.setReturnValue( o.getXrefs(), arrayList );
-        Mockingbird.setReturnValue( true, CollectionUtils.isEqualCollection( null, arrayList ), true );
-        Mockingbird.enterTestMode();
-        try {
-            experiment.equals( o );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( Experiment.class, ex );
-            assertInvoked( o, "getClass" );
-            assertInvoked( o, "getAc" );
-            assertInvoked( o, "getShortLabel" );
-            assertInvoked( o, "getFullName" );
-            assertInvoked( o, "getXrefs" );
-        }
-    }
+//    public void testEqualsThrowsNullPointerException() throws Throwable {
+//        Experiment experiment = new Experiment( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testString", null );
+//        Experiment o = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( o.getAc(), null );
+//        Mockingbird.setReturnValue( o.getShortLabel(), "testString" );
+//        Mockingbird.setReturnValue( o.getFullName(), null );
+//        Collection arrayList = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+//        Mockingbird.setReturnValue( o.getXrefs(), arrayList );
+//        Mockingbird.setReturnValue( true, CollectionUtils.isEqualCollection( null, arrayList ), true );
+//        Mockingbird.enterTestMode();
+//        try {
+//            experiment.equals( o );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( Experiment.class, ex );
+//            assertInvoked( o, "getClass" );
+//            assertInvoked( o, "getAc" );
+//            assertInvoked( o, "getShortLabel" );
+//            assertInvoked( o, "getFullName" );
+//            assertInvoked( o, "getXrefs" );
+//        }
+//    }
 
-    public void testGetShallowCopyThrowsNullPointerException() throws Throwable {
-        Experiment experiment = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( experiment.getOwner(), Mockingbird.getProxyObject( Institution.class ) );
-        Mockingbird.setReturnValue( experiment.getShortLabel(), null );
-        Mockingbird.setReturnValue( experiment.getBioSource(), Mockingbird.getProxyObject( BioSource.class ) );
-        Mockingbird.setConstructorForException( Experiment.class, "uk.ac.ebi.intact.model.Experiment.<init>(uk.ac.ebi.intact.model.Institution,java.lang.String,uk.ac.ebi.intact.model.BioSource)", ( Throwable ) Mockingbird.getProxyObject( NullPointerException.class ) );
-        Mockingbird.enterTestMode();
-        try {
-            Experiment.getShallowCopy( experiment );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertInvoked( experiment, "getOwner" );
-            assertInvoked( experiment, "getShortLabel" );
-            assertInvoked( experiment, "getBioSource" );
-        }
-    }
+//    public void testGetShallowCopyThrowsNullPointerException() throws Throwable {
+//        Experiment experiment = ( Experiment ) Mockingbird.getProxyObject( Experiment.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( experiment.getOwner(), Mockingbird.getProxyObject( Institution.class ) );
+//        Mockingbird.setReturnValue( experiment.getShortLabel(), null );
+//        Mockingbird.setReturnValue( experiment.getBioSource(), Mockingbird.getProxyObject( BioSource.class ) );
+//        Mockingbird.setConstructorForException( Experiment.class, "uk.ac.ebi.intact.model.Experiment.<init>(uk.ac.ebi.intact.model.Institution,java.lang.String,uk.ac.ebi.intact.model.BioSource)", ( Throwable ) Mockingbird.getProxyObject( NullPointerException.class ) );
+//        Mockingbird.enterTestMode();
+//        try {
+//            Experiment.getShallowCopy( experiment );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertInvoked( experiment, "getOwner" );
+//            assertInvoked( experiment, "getShortLabel" );
+//            assertInvoked( experiment, "getBioSource" );
+//        }
+//    }
 
     public void testHashCodeThrowsNullPointerException() throws Throwable {
         Experiment shallowCopy = Experiment.getShallowCopy( new Experiment( null, "testExperimentShortLabel", null ) );

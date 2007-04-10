@@ -99,31 +99,34 @@ public class ComponentAgitarTest extends AgitarTestCase {
         assertEquals( "component.getBindingDomains().size()", 0, component.getBindingDomains().size() );
     }
 
-    public void testEquals() throws Throwable {
-        Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( Interaction ) Mockingbird.getProxyObject( Interaction.class ), ( Interactor ) Mockingbird.getProxyObject( Interactor.class ), ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
-        Component o = ( Component ) Mockingbird.getProxyObject( Component.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( o.getInteractor(), Mockingbird.getProxyObject( Interactor.class ) );
-        Mockingbird.enterTestMode();
-        boolean result = component.equals( o );
-        assertFalse( "result", result );
-        assertInvoked( o, "getInteractor" );
-    }
+//    public void testEquals() throws Throwable {
+//        Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ),
+//                                             ( Interaction ) Mockingbird.getProxyObject( Interaction.class ),
+//                                             ( Interactor ) Mockingbird.getProxyObject( Interactor.class ),
+//                                             ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
+//        Component o = ( Component ) Mockingbird.getProxyObject( Component.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( o.getInteractor(), Mockingbird.getProxyObject( Interactor.class ) );
+//        Mockingbird.enterTestMode();
+//        boolean result = component.equals( o );
+//        assertFalse( "result", result );
+//        assertInvoked( o, "getInteractor" );
+//    }
 
-    public void testEquals1() throws Throwable {
-        Interaction interaction = ( Interaction ) Mockingbird.getProxyObject( Interaction.class );
-        Interactor interactor = ( Interactor ) Mockingbird.getProxyObject( Interactor.class );
-        Component component = new Component( null, "testComponentShortLabel", interaction, interactor, ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
-        Component o = ( Component ) Mockingbird.getProxyObject( Component.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( o.getInteractor(), interactor );
-        Mockingbird.setReturnValue( o.getInteraction(), interaction );
-        Mockingbird.enterTestMode();
-        boolean result = component.equals( o );
-        assertFalse( "result", result );
-        assertInvoked( o, "getInteractor" );
-        assertInvoked( o, "getInteraction" );
-    }
+//    public void testEquals1() throws Throwable {
+//        Interaction interaction = ( Interaction ) Mockingbird.getProxyObject( Interaction.class );
+//        Interactor interactor = ( Interactor ) Mockingbird.getProxyObject( Interactor.class );
+//        Component component = new Component( null, "testComponentShortLabel", interaction, interactor, ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
+//        Component o = ( Component ) Mockingbird.getProxyObject( Component.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( o.getInteractor(), interactor );
+//        Mockingbird.setReturnValue( o.getInteraction(), interaction );
+//        Mockingbird.enterTestMode();
+//        boolean result = component.equals( o );
+//        assertFalse( "result", result );
+//        assertInvoked( o, "getInteractor" );
+//        assertInvoked( o, "getInteraction" );
+//    }
 
     public void testGetAliases() throws Throwable {
         Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ), "testComponentShortLabel", ( Interaction ) Mockingbird.getProxyObject( Interaction.class ), ( Interactor ) Mockingbird.getProxyObject( Interactor.class ), ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
@@ -335,23 +338,23 @@ public class ComponentAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testRemoveBindingDomainThrowsNullPointerException() throws Throwable {
-        Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( Interaction ) Mockingbird.getProxyObject( Interaction.class ), ( Interactor ) Mockingbird.getProxyObject( Interactor.class ), ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
-        Collection someBindingDomain = ( Collection ) Mockingbird.getProxyObject( Collection.class );
-        component.setBindingDomains( someBindingDomain );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( false, someBindingDomain, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
-        Mockingbird.enterTestMode();
-        try {
-            component.removeBindingDomain( null );
-            fail( "Expected NullPointerException to be thrown" );
-        } catch ( NullPointerException ex ) {
-            assertNull( "ex.getMessage()", ex.getMessage() );
-            assertThrownBy( Component.class, ex );
-            assertSame( "component.getBindingDomains()", someBindingDomain, component.getBindingDomains() );
-            assertInvoked( someBindingDomain, "remove", new Object[]{null} );
-        }
-    }
+//    public void testRemoveBindingDomainThrowsNullPointerException() throws Throwable {
+//        Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( Interaction ) Mockingbird.getProxyObject( Interaction.class ), ( Interactor ) Mockingbird.getProxyObject( Interactor.class ), ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );
+//        Collection someBindingDomain = ( Collection ) Mockingbird.getProxyObject( Collection.class );
+//        component.setBindingDomains( someBindingDomain );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( false, someBindingDomain, "remove(Ljava/lang/Object;)Z", new Object[]{null}, Boolean.TRUE, 1 );
+//        Mockingbird.enterTestMode();
+//        try {
+//            component.removeBindingDomain( null );
+//            fail( "Expected NullPointerException to be thrown" );
+//        } catch ( NullPointerException ex ) {
+//            assertNull( "ex.getMessage()", ex.getMessage() );
+//            assertThrownBy( Component.class, ex );
+//            assertSame( "component.getBindingDomains()", someBindingDomain, component.getBindingDomains() );
+//            assertInvoked( someBindingDomain, "remove", new Object[]{null} );
+//        }
+//    }
 
     public void testSetBindingDomainsThrowsIllegalArgumentException() throws Throwable {
         Component component = new Component( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( Interaction ) Mockingbird.getProxyObject( Interaction.class ), ( Interactor ) Mockingbird.getProxyObject( Interactor.class ), ( CvComponentRole ) Mockingbird.getProxyObject( CvComponentRole.class ) );

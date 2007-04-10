@@ -11,7 +11,6 @@ package uk.ac.ebi.intact.model;
 
 import com.agitar.lib.junit.AgitarTestCase;
 import com.mchange.v2.c3p0.impl.AuthMaskingProperties;
-import org.apache.commons.logging.Log;
 import org.hibernate.dialect.DB2400Dialect;
 import org.hibernate.dialect.DerbyDialect;
 import org.hibernate.dialect.MckoiDialect;
@@ -21,8 +20,6 @@ import org.hibernate.type.CharArrayType;
 import org.hibernate.type.TextType;
 import org.hibernate.type.Type;
 import org.hibernate.util.PropertiesHelper;
-import uk.ac.ebi.intact.config.ConfigurationException;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 
 import java.util.Properties;
 
@@ -99,17 +96,17 @@ public class IntactIdGeneratorAgitarTest extends AgitarTestCase {
         }
     }
 
-    public void testGenerateThrowsConfigurationException() throws Throwable {
-        IntactIdGenerator intactIdGenerator = new IntactIdGenerator();
-        try {
-            intactIdGenerator.generate( null, "WOd5B& DPfqYpz?.>M\rZ" );
-            fail( "Expected ConfigurationException to be thrown" );
-        } catch ( ConfigurationException ex ) {
-            assertEquals( "ex.getMessage()", "Couldn't configure hibernate using default file", ex.getMessage() );
-            assertThrownBy( AbstractHibernateDataConfig.class, ex );
-            assertFalse( "intactIdGeneratorIntactIdGenerator.log.isDebugEnabled()", ( ( Log ) getPrivateField( IntactIdGenerator.class, "log" ) ).isDebugEnabled() );
-            assertFalse( "intactIdGeneratorSequenceGenerator.log.isDebugEnabled()", ( ( Log ) getPrivateField( IntactIdGenerator.class, "log" ) ).isDebugEnabled() );
-        }
-    }
+//    public void testGenerateThrowsConfigurationException() throws Throwable {
+//        IntactIdGenerator intactIdGenerator = new IntactIdGenerator();
+//        try {
+//            intactIdGenerator.generate( null, "WOd5B& DPfqYpz?.>M\rZ" );
+//            fail( "Expected ConfigurationException to be thrown" );
+//        } catch ( ConfigurationException ex ) {
+//            assertEquals( "ex.getMessage()", "Couldn't configure hibernate using default file", ex.getMessage() );
+//            assertThrownBy( AbstractHibernateDataConfig.class, ex );
+//            assertFalse( "intactIdGeneratorIntactIdGenerator.log.isDebugEnabled()", ( ( Log ) getPrivateField( IntactIdGenerator.class, "log" ) ).isDebugEnabled() );
+//            assertFalse( "intactIdGeneratorSequenceGenerator.log.isDebugEnabled()", ( ( Log ) getPrivateField( IntactIdGenerator.class, "log" ) ).isDebugEnabled() );
+//        }
+//    }
 }
 
