@@ -39,6 +39,7 @@
         <module>data-conversion</module>
         <module>intact-devsite</module>
         <module>intact-imex-central</module>
+        <module>intact-imex-id-assigner</module>
     </modules>
 
     <build>
@@ -68,8 +69,8 @@
                 <module>tools</module>
                 <module>archetypes</module>
                 <!--    <module>intact-dbutils</module>     -->
-                <module>graph2mif-server</module>
-                <module>graph2mif-client</module>
+                <!--    <module>graph2mif-server</module>   -->
+                <!--    <module>graph2mif-client</module>   -->
                 <module>intact-biosource-update</module>
                 <module>intact-cdb</module>
                 <module>intact-msd</module>
