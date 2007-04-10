@@ -9,10 +9,7 @@ package uk.ac.ebi.intact.imex.idassigner.keyassigner;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.application.imex.id.IMExRange;
-import uk.ac.ebi.intact.application.imex.keyassigner.DummyKeyAssignerService;
-import uk.ac.ebi.intact.application.imex.keyassigner.KeyAssignerServiceException;
-import uk.ac.ebi.intact.application.imex.keyassigner.KeyAssignerServiceI;
+import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
 
 /**
  * DummyKeyAssignerService Tester.
