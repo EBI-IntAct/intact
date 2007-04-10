@@ -41,19 +41,19 @@ public class PolymerImplAgitarTest extends AgitarTestCase {
         assertEquals( "(ProteinImpl) proteinImpl.getActiveInstances().size()", 0, proteinImpl.getActiveInstances().size() );
     }
 
-    public void testEquals1() throws Throwable {
-        PolymerImpl proteinImpl = new ProteinImpl( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( BioSource ) Mockingbird.getProxyObject( BioSource.class ), "testPolymerImplShortLabel" );
-        NucleicAcidImpl obj = ( NucleicAcidImpl ) Mockingbird.getProxyObject( NucleicAcidImpl.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( obj.getAc(), null );
-        Mockingbird.setReturnValue( obj.getShortLabel(), "testString" );
-        Mockingbird.enterTestMode();
-        boolean result = proteinImpl.equals( obj );
-        assertFalse( "result", result );
-        assertEquals( "(ProteinImpl) proteinImpl.getActiveInstances().size()", 0, proteinImpl.getActiveInstances().size() );
-        assertInvoked( obj, "getAc" );
-        assertInvoked( obj, "getShortLabel" );
-    }
+//    public void testEquals1() throws Throwable {
+//        PolymerImpl proteinImpl = new ProteinImpl( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( BioSource ) Mockingbird.getProxyObject( BioSource.class ), "testPolymerImplShortLabel" );
+//        NucleicAcidImpl obj = ( NucleicAcidImpl ) Mockingbird.getProxyObject( NucleicAcidImpl.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( obj.getAc(), null );
+//        Mockingbird.setReturnValue( obj.getShortLabel(), "testString" );
+//        Mockingbird.enterTestMode();
+//        boolean result = proteinImpl.equals( obj );
+//        assertFalse( "result", result );
+//        assertEquals( "(ProteinImpl) proteinImpl.getActiveInstances().size()", 0, proteinImpl.getActiveInstances().size() );
+//        assertInvoked( obj, "getAc" );
+//        assertInvoked( obj, "getShortLabel" );
+//    }
 
     public void testEquals2() throws Throwable {
         PolymerImpl obj = new ProteinImpl( new Institution( "testPolymerImplShortLabel1" ), null, "testPolymerImplShortLabel", new CvInteractorType( new Institution( "testPolymerImplShortLabel" ), "testPolymerImplShortLabel" ) );

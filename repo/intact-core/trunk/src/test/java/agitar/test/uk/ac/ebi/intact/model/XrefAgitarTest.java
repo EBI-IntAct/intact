@@ -177,80 +177,80 @@ public class XrefAgitarTest extends AgitarTestCase {
         assertEquals( "(ComponentXref) componentXref.getSecondaryId()", "testXrefASecondaryId", componentXref.getSecondaryId() );
     }
 
-    public void testToString() throws Throwable {
-        Xref interactorXref = new InteractorXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", "testXrefASecondaryId", "testXrefADatabaseRelease", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        interactorXref.setCvXrefQualifier( null );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        interactorXref.setCvDatabase( cvDatabase );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "shortLacbel" );
-        Mockingbird.enterTestMode();
-        String result = interactorXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=shortLacbel, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='testXrefADatabaseRelease'}", result );
-        assertInvoked( cvDatabase, "getShortLabel" );
-    }
+//    public void testToString() throws Throwable {
+//        Xref interactorXref = new InteractorXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", "testXrefASecondaryId", "testXrefADatabaseRelease", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        interactorXref.setCvXrefQualifier( null );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        interactorXref.setCvDatabase( cvDatabase );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "shortLacbel" );
+//        Mockingbird.enterTestMode();
+//        String result = interactorXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=shortLacbel, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='testXrefADatabaseRelease'}", result );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//    }
 
-    public void testToString1() throws Throwable {
-        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        experimentXref.setCvXrefQualifier( null );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        experimentXref.setCvDatabase( cvDatabase );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "shortLacbel" );
-        Mockingbird.enterTestMode();
-        String result = experimentXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=shortLacbel, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='-'}", result );
-        assertInvoked( cvDatabase, "getShortLabel" );
-    }
+//    public void testToString1() throws Throwable {
+//        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        experimentXref.setCvXrefQualifier( null );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        experimentXref.setCvDatabase( cvDatabase );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "shortLacbel" );
+//        Mockingbird.enterTestMode();
+//        String result = experimentXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=shortLacbel, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='-'}", result );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//    }
 
-    public void testToString2() throws Throwable {
-        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        experimentXref.setCvXrefQualifier( null );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        experimentXref.setCvDatabase( cvDatabase );
-        experimentXref.setSecondaryId( "testXrefASecondaryId" );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "MI:04/5" );
-        Mockingbird.enterTestMode();
-        String result = experimentXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=MI:04/5, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='-'}", result );
-        assertInvoked( cvDatabase, "getShortLabel" );
-    }
+//    public void testToString2() throws Throwable {
+//        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        experimentXref.setCvXrefQualifier( null );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        experimentXref.setCvDatabase( cvDatabase );
+//        experimentXref.setSecondaryId( "testXrefASecondaryId" );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "MI:04/5" );
+//        Mockingbird.enterTestMode();
+//        String result = experimentXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=MI:04/5, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='-'}", result );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//    }
 
-    public void testToString3() throws Throwable {
-        Xref componentXref = new ComponentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
-        CvXrefQualifier cvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        componentXref.setCvXrefQualifier( cvXrefQualifier );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        componentXref.setCvDatabase( cvDatabase );
-        componentXref.setSecondaryId( "testXrefASecondaryId" );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "\u0014<%X}-H+k60\u0001]U$\n\u0013c1a" );
-        Mockingbird.setReturnValue( cvXrefQualifier.getShortLabel(), "testString" );
-        Mockingbird.enterTestMode();
-        String result = componentXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=\u0014<%X}-H+k60\u0001]U$\n\u0013c1a, cvXrefQualifier=testString, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='-'}", result );
-        assertInvoked( cvDatabase, "getShortLabel" );
-        assertInvoked( cvXrefQualifier, "getShortLabel" );
-    }
+//    public void testToString3() throws Throwable {
+//        Xref componentXref = new ComponentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class ) );
+//        CvXrefQualifier cvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        componentXref.setCvXrefQualifier( cvXrefQualifier );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        componentXref.setCvDatabase( cvDatabase );
+//        componentXref.setSecondaryId( "testXrefASecondaryId" );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "\u0014<%X}-H+k60\u0001]U$\n\u0013c1a" );
+//        Mockingbird.setReturnValue( cvXrefQualifier.getShortLabel(), "testString" );
+//        Mockingbird.enterTestMode();
+//        String result = componentXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=\u0014<%X}-H+k60\u0001]U$\n\u0013c1a, cvXrefQualifier=testString, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='-'}", result );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//        assertInvoked( cvXrefQualifier, "getShortLabel" );
+//    }
 
     public void testToString4() throws Throwable {
         String result = new BioSourceXref( new Institution( "testXrefShortLabel2" ), new CvDatabase( new Institution( "testXrefShortLabel1" ), "testXrefShortLabel" ), "testXrefAPrimaryId", new CvXrefQualifier( new Institution( "testXrefShortLabel" ), "testXrefShortLabel" ) ).toString();
         assertEquals( "result", "Xref{cvDatabase=testXrefShortLabel, cvXrefQualifier=testXrefShortLabel, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='-'}", result );
     }
 
-    public void testToString5() throws Throwable {
-        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", "testXrefASecondaryId", "testXrefADatabaseRelease", null );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        experimentXref.setCvDatabase( cvDatabase );
-        experimentXref.setSecondaryId( null );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), null );
-        Mockingbird.enterTestMode();
-        String result = experimentXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=null, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='testXrefADatabaseRelease'}", result );
-        assertInvoked( cvDatabase, "getShortLabel" );
-    }
+//    public void testToString5() throws Throwable {
+//        Xref experimentXref = new ExperimentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", "testXrefASecondaryId", "testXrefADatabaseRelease", null );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        experimentXref.setCvDatabase( cvDatabase );
+//        experimentXref.setSecondaryId( null );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), null );
+//        Mockingbird.enterTestMode();
+//        String result = experimentXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=null, cvXrefQualifier=-, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='testXrefADatabaseRelease'}", result );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//    }
 
     public void testToString6() throws Throwable {
         Institution owner = new Institution( "testXrefShortLabel" );
@@ -258,21 +258,21 @@ public class XrefAgitarTest extends AgitarTestCase {
         assertEquals( "result", "Xref{cvDatabase=testXrefShortLabel, cvXrefQualifier=testXrefShortLabel, primaryId='testXrefAPrimaryId', secondaryId='testXrefASecondaryId', dbRelease='testXrefADatabaseRelease'}", result );
     }
 
-    public void testToString7() throws Throwable {
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Xref componentXref = new ComponentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", aCvXrefQualifier );
-        componentXref.setDbRelease( "testXrefADbRelease" );
-        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        componentXref.setCvDatabase( cvDatabase );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "MI:04/5" );
-        Mockingbird.setReturnValue( aCvXrefQualifier.getShortLabel(), "testString" );
-        Mockingbird.enterTestMode();
-        String result = componentXref.toString();
-        assertEquals( "result", "Xref{cvDatabase=MI:04/5, cvXrefQualifier=testString, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='testXrefAD'}", result );
-        assertInvoked( aCvXrefQualifier, "getShortLabel" );
-        assertInvoked( cvDatabase, "getShortLabel" );
-    }
+//    public void testToString7() throws Throwable {
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Xref componentXref = new ComponentXref( ( Institution ) Mockingbird.getProxyObject( Institution.class ), ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class ), "testXrefAPrimaryId", aCvXrefQualifier );
+//        componentXref.setDbRelease( "testXrefADbRelease" );
+//        CvDatabase cvDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        componentXref.setCvDatabase( cvDatabase );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvDatabase.getShortLabel(), "MI:04/5" );
+//        Mockingbird.setReturnValue( aCvXrefQualifier.getShortLabel(), "testString" );
+//        Mockingbird.enterTestMode();
+//        String result = componentXref.toString();
+//        assertEquals( "result", "Xref{cvDatabase=MI:04/5, cvXrefQualifier=testString, primaryId='testXrefAPrimaryId', secondaryId='-', dbRelease='testXrefAD'}", result );
+//        assertInvoked( aCvXrefQualifier, "getShortLabel" );
+//        assertInvoked( cvDatabase, "getShortLabel" );
+//    }
 
     public void testHasValidPrimaryIdThrowsNullPointerException() throws Throwable {
         CvDatabase cvDatabase = new CvDatabase( new Institution( "testXrefShortLabel1" ), "testXrefShortLabel1" );

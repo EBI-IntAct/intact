@@ -11,7 +11,6 @@ package uk.ac.ebi.intact.model;
 
 
 import com.agitar.lib.junit.AgitarTestCase;
-import com.agitar.lib.mockingbird.Mockingbird;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import java.util.ArrayList;
@@ -38,19 +37,19 @@ public class AliasAgitarTest extends AgitarTestCase {
         assertFalse( "result", result );
     }
 
-    public void testEquals1() throws Throwable {
-        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
-        Feature feature = (Feature) Mockingbird.getProxyObject(Feature.class);
-        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue(feature.getAc(), "testString");
-        Mockingbird.enterTestMode();
-        Alias featureAlias = new FeatureAlias(anOwner, feature, cvAliasType, "testAliasName");
-        Mockingbird.enterTestMode();
-        boolean result = featureAlias.equals("");
-        assertFalse("result", result);
-        assertInvoked(feature, "getAc");
-    }
+//    public void testEquals1() throws Throwable {
+//        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
+//        Feature feature = (Feature) Mockingbird.getProxyObject(Feature.class);
+//        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue(feature.getAc(), "testString");
+//        Mockingbird.enterTestMode();
+//        Alias featureAlias = new FeatureAlias(anOwner, feature, cvAliasType, "testAliasName");
+//        Mockingbird.enterTestMode();
+//        boolean result = featureAlias.equals("");
+//        assertFalse("result", result);
+//        assertInvoked(feature, "getAc");
+//    }
 
     public void testEquals2() throws Throwable {
         Institution owner = new Institution( "testAliasShortLabel" );
@@ -95,23 +94,23 @@ public class AliasAgitarTest extends AgitarTestCase {
         assertTrue( "result", result );
     }
 
-    public void testHashCode() throws Throwable {
-        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
-        Feature feature = (Feature) Mockingbird.getProxyObject(Feature.class);
-        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue(feature.getAc(), "testString");
-        Mockingbird.enterTestMode();
-        Alias featureAlias = new FeatureAlias(anOwner, feature, cvAliasType, "testAliasName");
-        featureAlias.setCvAliasType(null);
-        featureAlias.setName(null);
-        Mockingbird.enterTestMode();
-        int result = featureAlias.hashCode();
-        assertEquals("result", 29, result);
-        assertNull("(FeatureAlias) featureAlias.getCvAliasType()", featureAlias.getCvAliasType());
-        assertNull("(FeatureAlias) featureAlias.getName()", featureAlias.getName());
-        assertInvoked(feature, "getAc");
-    }
+//    public void testHashCode() throws Throwable {
+//        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
+//        Feature feature = (Feature) Mockingbird.getProxyObject(Feature.class);
+//        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue(feature.getAc(), "testString");
+//        Mockingbird.enterTestMode();
+//        Alias featureAlias = new FeatureAlias(anOwner, feature, cvAliasType, "testAliasName");
+//        featureAlias.setCvAliasType(null);
+//        featureAlias.setName(null);
+//        Mockingbird.enterTestMode();
+//        int result = featureAlias.hashCode();
+//        assertEquals("result", 29, result);
+//        assertNull("(FeatureAlias) featureAlias.getCvAliasType()", featureAlias.getCvAliasType());
+//        assertNull("(FeatureAlias) featureAlias.getName()", featureAlias.getName());
+//        assertInvoked(feature, "getAc");
+//    }
 
     public void testHashCode1() throws Throwable {
         CvAliasType cvAliasType = new CvAliasType( new Institution( "testAliasShortLabel2" ), "testAliasShortLabel" );
@@ -179,24 +178,24 @@ public class AliasAgitarTest extends AgitarTestCase {
         assertEquals( "(BioSourceAlias) bioSourceAlias.parentAc", "testAliasParentAc", getPrivateField( bioSourceAlias, "parentAc" ) );
     }
 
-    public void testToString() throws Throwable {
-        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
-        Publication publication = (Publication) Mockingbird.getProxyObject(Publication.class);
-        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue(publication.getAc(), "");
-        Mockingbird.enterTestMode();
-        Alias publicationAlias = new PublicationAlias(anOwner, publication, cvAliasType, "testAliasName");
-        CvAliasType cvAliasType2 = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
-        publicationAlias.setCvAliasType(cvAliasType2);
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue(cvAliasType2.getShortLabel(), "19CharactersXXXXXXX");
-        Mockingbird.enterTestMode();
-        String result = publicationAlias.toString();
-        assertEquals("result", "Alias[name: testAliasName, type: 19CharactersXXXXXXX]", result);
-        assertInvoked(cvAliasType2, "getShortLabel");
-        assertInvoked(publication, "getAc");
-    }
+//    public void testToString() throws Throwable {
+//        Institution anOwner = (Institution) Mockingbird.getProxyObject(Institution.class);
+//        Publication publication = (Publication) Mockingbird.getProxyObject(Publication.class);
+//        CvAliasType cvAliasType = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue(publication.getAc(), "");
+//        Mockingbird.enterTestMode();
+//        Alias publicationAlias = new PublicationAlias(anOwner, publication, cvAliasType, "testAliasName");
+//        CvAliasType cvAliasType2 = (CvAliasType) Mockingbird.getProxyObject(CvAliasType.class);
+//        publicationAlias.setCvAliasType(cvAliasType2);
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue(cvAliasType2.getShortLabel(), "19CharactersXXXXXXX");
+//        Mockingbird.enterTestMode();
+//        String result = publicationAlias.toString();
+//        assertEquals("result", "Alias[name: testAliasName, type: 19CharactersXXXXXXX]", result);
+//        assertInvoked(cvAliasType2, "getShortLabel");
+//        assertInvoked(publication, "getAc");
+//    }
 
     public void testToString1() throws Throwable {
         Institution owner = new Institution( "testAliasShortLabel" );

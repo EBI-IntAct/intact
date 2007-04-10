@@ -32,20 +32,20 @@ public class CvObjectAgitarTest extends AgitarTestCase {
         assertTrue( "result", result );
     }
 
-    public void testEquals2() throws Throwable {
-        CvObject cvAliasType = new CvAliasType( null, "testCvObjectShortLabel" );
-        cvAliasType.setAc( "testString" );
-        CvCellCycle obj = ( CvCellCycle ) Mockingbird.getProxyObject( CvCellCycle.class );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( obj.getAc(), "testString" );
-        Mockingbird.setReturnValue( obj.getAc(), "testString" );
-        Mockingbird.setReturnValue( obj.getAc(), "testString" );
-        Mockingbird.setReturnValue( obj.getAc(), "testString" );
-        Mockingbird.enterTestMode();
-        boolean result = cvAliasType.equals( obj );
-        assertTrue( "result", result );
-        assertInvoked( obj, "getAc", 4 );
-    }
+//    public void testEquals2() throws Throwable {
+//        CvObject cvAliasType = new CvAliasType( null, "testCvObjectShortLabel" );
+//        cvAliasType.setAc( "testString" );
+//        CvCellCycle obj = ( CvCellCycle ) Mockingbird.getProxyObject( CvCellCycle.class );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( obj.getAc(), "testString" );
+//        Mockingbird.setReturnValue( obj.getAc(), "testString" );
+//        Mockingbird.setReturnValue( obj.getAc(), "testString" );
+//        Mockingbird.setReturnValue( obj.getAc(), "testString" );
+//        Mockingbird.enterTestMode();
+//        boolean result = cvAliasType.equals( obj );
+//        assertTrue( "result", result );
+//        assertInvoked( obj, "getAc", 4 );
+//    }
 
     public void testEquals3() throws Throwable {
         boolean result = new CvXrefQualifier( null, "testCvObject\rShortLabel" ).equals( new CvTopic( new Institution( "testCvObjectShortLabel" ), "testCvObjectShortLabel" ) );
@@ -124,42 +124,42 @@ public class CvObjectAgitarTest extends AgitarTestCase {
         assertNull( "(CvIdentification) cvIdentification.fullName", ( ( CvIdentification ) cvIdentification ).fullName );
     }
 
-    public void testHashCode2() throws Throwable {
-        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterTestMode();
-        CvObject cvComponentRole = new CvComponentRole( owner, "testCvObjectShortLabel" );
-        Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.enterTestMode();
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( CvObjectUtils.getPsiMiIdentityXref( cvComponentRole ), null );
-        Mockingbird.enterTestMode();
-        cvComponentRole.hashCode();
-        Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.getProxyObject( CvDatabase.class );
-        Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        Mockingbird.getProxyObject( Institution.class );
-        Mockingbird.getProxyObject( CvDatabase.class );
-        Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
-        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
-        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
-        Mockingbird.enterTestMode();
-        Xref cvObjectXref = new CvObjectXref( anOwner, aDatabase, "testCvObjectAPrimaryId", aCvXrefQualifier );
-        Mockingbird.enterRecordingMode();
-        Mockingbird.setReturnValue( cvObjectXref.getPrimaryId(), "20\u001B,72:GT{z4*\u001B\u000EgR/17[" );
-        Mockingbird.setReturnValue( CvObjectUtils.getPsiMiIdentityXref( cvComponentRole ), cvObjectXref );
-        Mockingbird.enterTestMode();
-        int result = cvComponentRole.hashCode();
-        assertEquals( "result", 858403292, result );
-        assertEquals( "(CvComponentRole) cvComponentRole.xrefs.size()", 0, ( ( CvComponentRole ) cvComponentRole ).xrefs.size() );
-        assertEquals( "(CvComponentRole) cvComponentRole.shortLabel", "testCvObjectShortLab", ( ( CvComponentRole ) cvComponentRole ).shortLabel );
-        assertNull( "(CvComponentRole) cvComponentRole.ac", ( ( CvComponentRole ) cvComponentRole ).ac );
-        assertNull( "(CvComponentRole) cvComponentRole.fullName", ( ( CvComponentRole ) cvComponentRole ).fullName );
-        assertInvoked( cvObjectXref, "setOwner", new Object[]{anOwner} );
-        assertInvoked( cvObjectXref, "getPrimaryId" );
-    }
+//    public void testHashCode2() throws Throwable {
+//        Institution owner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterTestMode();
+//        CvObject cvComponentRole = new CvComponentRole( owner, "testCvObjectShortLabel" );
+//        Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.enterTestMode();
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( CvObjectUtils.getPsiMiIdentityXref( cvComponentRole ), null );
+//        Mockingbird.enterTestMode();
+//        cvComponentRole.hashCode();
+//        Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.getProxyObject( CvDatabase.class );
+//        Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        Mockingbird.getProxyObject( Institution.class );
+//        Mockingbird.getProxyObject( CvDatabase.class );
+//        Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        Institution anOwner = ( Institution ) Mockingbird.getProxyObject( Institution.class );
+//        CvDatabase aDatabase = ( CvDatabase ) Mockingbird.getProxyObject( CvDatabase.class );
+//        CvXrefQualifier aCvXrefQualifier = ( CvXrefQualifier ) Mockingbird.getProxyObject( CvXrefQualifier.class );
+//        Mockingbird.enterTestMode();
+//        Xref cvObjectXref = new CvObjectXref( anOwner, aDatabase, "testCvObjectAPrimaryId", aCvXrefQualifier );
+//        Mockingbird.enterRecordingMode();
+//        Mockingbird.setReturnValue( cvObjectXref.getPrimaryId(), "20\u001B,72:GT{z4*\u001B\u000EgR/17[" );
+//        Mockingbird.setReturnValue( CvObjectUtils.getPsiMiIdentityXref( cvComponentRole ), cvObjectXref );
+//        Mockingbird.enterTestMode();
+//        int result = cvComponentRole.hashCode();
+//        assertEquals( "result", 858403292, result );
+//        assertEquals( "(CvComponentRole) cvComponentRole.xrefs.size()", 0, ( ( CvComponentRole ) cvComponentRole ).xrefs.size() );
+//        assertEquals( "(CvComponentRole) cvComponentRole.shortLabel", "testCvObjectShortLab", ( ( CvComponentRole ) cvComponentRole ).shortLabel );
+//        assertNull( "(CvComponentRole) cvComponentRole.ac", ( ( CvComponentRole ) cvComponentRole ).ac );
+//        assertNull( "(CvComponentRole) cvComponentRole.fullName", ( ( CvComponentRole ) cvComponentRole ).fullName );
+//        assertInvoked( cvObjectXref, "setOwner", new Object[]{anOwner} );
+//        assertInvoked( cvObjectXref, "getPrimaryId" );
+//    }
 
     public void testSetObjClass() throws Throwable {
         CvObject cvInteraction = new CvInteraction( new Institution( "testCvObjectShortLabel" ), "testCvObjectShortLabel" );
