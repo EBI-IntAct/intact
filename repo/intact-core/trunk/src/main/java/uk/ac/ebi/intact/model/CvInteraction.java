@@ -23,6 +23,9 @@ public class CvInteraction extends CvDagObject {
 
     public static final String EXPERIMENTAL_INTERACTION = "experimental interac";
 
+    public static final String COSEDIMENTATION = "cosedimentation";
+    public static final String COSEDIMENTATION_MI_REF = "MI:0027";
+
 
     /**
      * Cache a Vector of all shortLabels of the class, e.g. for menus. This should not be here as it has no model
