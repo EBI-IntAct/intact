@@ -11,16 +11,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>predict-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
 
     <name>Plugin - predict-maven-plugin</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/predict-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/tags/predict-maven-plugin-1.0</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/tags/predict-maven-plugin-1.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/predict-maven-plugin/tags/predict-maven-plugin-1.0</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/predict-maven-plugin/trunk/</url>
     </scm>
 
     <build>
