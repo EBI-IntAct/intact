@@ -26,7 +26,7 @@ import java.util.List;
  * @version $Id$
  */
 public class CvObjectDaoTest  extends DatabaseTestCase {
-     private static final Log log = LogFactory.getLog(DaoFactoryTestBis.class);
+     private static final Log log = LogFactory.getLog(CvObjectDaoTest.class);
 
 
     public CvObjectDaoTest(String name) {
