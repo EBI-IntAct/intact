@@ -40,6 +40,8 @@
         <module>reactome-maven-plugin</module>
         <module>uniprotexport-maven-plugin</module>
         <module>dataminer-export-maven-plugin</module>
+        <module>psimitab-indexer-maven-plugin</module>
+        <module>predict-maven-plugin</module>
   </modules>
 
     <distributionManagement>
