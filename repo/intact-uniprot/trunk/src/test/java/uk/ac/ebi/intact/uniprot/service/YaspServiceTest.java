@@ -47,12 +47,12 @@ public class YaspServiceTest extends TestCase {
     //////////////////////////
     // Utility
 
-    private UniprotService getBridgeAdapter() {
+    private UniprotService getUniprotService() {
         return new YaspService();
     }
 
-    private UniprotService getBridgeAdapter( IntactCrossReferenceFilter filter ) {
-        AbstractUniprotService service = ( AbstractUniprotService ) getBridgeAdapter();
+    private UniprotService getUniprotService( IntactCrossReferenceFilter filter ) {
+        AbstractUniprotService service = ( AbstractUniprotService ) getUniprotService();
         service.setCrossReferenceSelector( filter );
         return service;
     }
@@ -74,7 +74,7 @@ public class YaspServiceTest extends TestCase {
 
         // TODO not a good idea to run test on data available online ... data can change, internet can be down ... find an other way !!
 
-        UniprotService uniprot = getBridgeAdapter();
+        UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
 
         assertNotNull( proteins );
@@ -132,7 +132,7 @@ public class YaspServiceTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "20-FEB-2007" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "03-APR-2007" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
@@ -162,7 +162,7 @@ public class YaspServiceTest extends TestCase {
     }
 
     public void testRetreiveMultipleProteins() throws UniprotServiceException {
-        UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
+        UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P21181" );
 
         assertNotNull( proteins );
@@ -180,7 +180,7 @@ public class YaspServiceTest extends TestCase {
 
     public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
-        UniprotService uniprot = getBridgeAdapter();
+        UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retreive( "Q24208" );
 
         assertNotNull( proteins );
@@ -260,7 +260,7 @@ public class YaspServiceTest extends TestCase {
     }
 
     public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
-        UniprotService uniprot = getBridgeAdapter( new IntactCrossReferenceFilter() );
+        UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
 
         assertNotNull( proteins );
