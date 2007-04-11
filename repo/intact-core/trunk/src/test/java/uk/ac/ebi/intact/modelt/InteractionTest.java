@@ -98,6 +98,8 @@ public class InteractionTest extends TestCase {
             assertEquals( originalRangeCount, copyRangeCount );
             assertEquals( originalAnnot, copyAnnot );
             assertEquals( originalXref, copyXref );
+
+            interactionDao.delete(copy);
         }
     }
 }
