@@ -20,16 +20,20 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/psimitab-indexer-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk</developerConnection>
+        <connection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk/</url>
     </scm>
 
     <dependencies>
         <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psimitab-search</artifactId>
-            <version>1.0</version>
+            <groupId>uk.ac.ebi.intact.util</groupId>
+            <artifactId>intact-psimitab</artifactId>
+            <version>1.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -76,7 +80,7 @@
 
     <!-- EBI repositories -->
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>

@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.plugins;
+package uk.ac.ebi.intact.plugins.psimitab.index;
 
+import org.apache.lucene.store.FSDirectory;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Test;
+import psidev.psi.mi.search.SearchResult;
+import psidev.psi.mi.search.Searcher;
 
 import java.io.File;
 
-public class MyMojoTest extends AbstractMojoTestCase
-{
+public class IndexerMojoTest extends AbstractMojoTestCase {
 
-    public void testSimpleGeneration() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+    @Test
+    public void testIndex() throws Exception {
+        File pluginXmlFile = new File(getBasedir(), "src/test/plugin-configs/index-config.xml");
 
-        MyMojo mojo = (MyMojo) lookupMojo( "mygoal", pluginXmlFile );
-        mojo.setLog( new SystemStreamLog() );
+        IndexerMojo mojo = (IndexerMojo) lookupMojo("index", pluginXmlFile);
+        mojo.setLog(new SystemStreamLog());
 
         mojo.execute();
+
+        SearchResult result = Searcher.search("P38974", FSDirectory.getDirectory(mojo.getIndexDirectory()));
+        assertEquals(1, result.getInteractions().size());
     }
 }
