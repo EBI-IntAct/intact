@@ -9,10 +9,11 @@ import uk.ac.ebi.intact.context.IntactContext;
  * FillPredictTables Tester.
  *
  * @author <Authors name>
- * @since <pre>11/15/2006</pre>
  * @version 1.0
+ * @since <pre>11/15/2006</pre>
  */
 public class FillPredictTablesTest extends TestCase {
+
     public FillPredictTablesTest(String name) {
         super(name);
     }
@@ -34,8 +35,8 @@ public class FillPredictTablesTest extends TestCase {
     ////////////////////
     // Tests
 
-    public void testMain() throws Exception {
+    public void testRunTask() throws Exception {
 
-        FillPredictTables.main( new String[]{} );
+        FillPredictTables.runTask(System.out);
     }
 }

@@ -49,10 +49,11 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20061206</version>
+            <version>1.3-20070410</version>
             <type>zip</type>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
