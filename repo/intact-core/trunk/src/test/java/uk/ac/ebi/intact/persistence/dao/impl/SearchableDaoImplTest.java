@@ -9,6 +9,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import uk.ac.ebi.intact.DatabaseTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.SearchableDao;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 import uk.ac.ebi.intact.persistence.dao.query.QueryPhrase;
 import uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery;
 import uk.ac.ebi.intact.persistence.dao.query.impl.StandardQueryPhraseConverter;
@@ -30,6 +31,9 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
     }
 
     private SearchableDao dao;
+    private String proteinAc1 = null;
+    private String proteinAc2 = null;
+
     private StandardQueryPhraseConverter converter;
 
     public void setUp() throws Exception {
@@ -46,7 +50,8 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
 
     public void testCountByQuery_ac() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc( converter.objectToPhrase( "TEST-5153" ) );
+        setProteinAcs();
+        query.setAc( converter.objectToPhrase( proteinAc1 ) );
 
         int count = dao.countByQuery( InteractorImpl.class, query );
         assertEquals( 1, count );
@@ -54,7 +59,8 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
 
     public void testCountByQuery_2ac() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc( converter.objectToPhrase( "TEST-5153,TEST-5169" ) );
+        setProteinAcs();
+        query.setAc( converter.objectToPhrase( proteinAc1 + ","+ proteinAc2 ) );
 
         int count = dao.countByQuery( InteractorImpl.class, query );
         assertEquals( 2, count );
@@ -62,7 +68,8 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
 
     public void testCountByQuery_2ac_self() throws Exception {
         SearchableQuery query = new SearchableQuery();
-        query.setAc( converter.objectToPhrase( "TEST-5153,TEST-5153" ) );
+        setProteinAcs();
+        query.setAc( converter.objectToPhrase( proteinAc1 + ","+ proteinAc1 ) );
 
         int count = dao.countByQuery( InteractorImpl.class, query );
         assertEquals( 1, count );
@@ -93,7 +100,7 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
 
         List<InteractorImpl> results = dao.getByQuery( InteractorImpl.class, query, 0, 50 );
 
-        assertEquals( 19, results.size() );
+        assertEquals( 18, results.size() );
     }
 
     public void testGetByQuery_description() throws Exception {
@@ -116,9 +123,9 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
     public void testGetByQuery_annotation_and_topic() throws Exception {
         SearchableQuery query = new SearchableQuery();
         query.setCvTopicLabel( converter.objectToPhrase( CvTopic.COMMENT ) );
-        query.setAnnotationText( converter.objectToPhrase( "%tumour%" ) );
+        query.setAnnotationText( converter.objectToPhrase( "%\"tagged DIP\"%" ) );
 
-        List<? extends Searchable> results = dao.getByQuery( CvObject.class, query, 0, 50 );
+        List<? extends Searchable> results = dao.getByQuery( InteractorImpl.class, query, 0, 50 );
 
         assertEquals( 1, results.size() );
     }
@@ -197,7 +204,18 @@ public class SearchableDaoImplTest extends DatabaseTestCase {
         query.setShortLabel( search );
         query.setXref( search );
 
-        assertEquals( Integer.valueOf( 2 ), dao.countByQuery( InteractionImpl.class, query ) );
+        assertEquals( Integer.valueOf( 1 ), dao.countByQuery( InteractionImpl.class, query ) );
+
+    }
+
+    public void setProteinAcs(){
+        InteractorDao interactorDao = getDaoFactory().getInteractorDao();
+        Interactor protein = (Interactor) interactorDao.getByShortLabel("cara_ecoli");
+        proteinAc1 = protein.getAc();
+
+        protein = (Interactor) interactorDao.getByShortLabel("ubx_drome");
+        proteinAc2 = protein.getAc();
+
 
     }
 }
