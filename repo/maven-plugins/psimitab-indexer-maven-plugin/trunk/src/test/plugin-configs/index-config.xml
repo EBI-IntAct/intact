@@ -1,0 +1,15 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psimitab-indexer-maven-plugin</artifactId>
+                <configuration>
+                    <indexDirectory>target/index-test</indexDirectory>
+                    <psimitabFile>src/test/resources/10026281.txt</psimitabFile>
+                    <createIndex>true</createIndex>
+                    <containsHeader>true</containsHeader>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
