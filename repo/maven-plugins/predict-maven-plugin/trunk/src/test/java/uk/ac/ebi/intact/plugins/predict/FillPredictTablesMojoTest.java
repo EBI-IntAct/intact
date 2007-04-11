@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.plugins;
+package uk.ac.ebi.intact.plugins.predict;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class MyMojoTest extends AbstractMojoTestCase
+import uk.ac.ebi.intact.plugins.predict.FillPredictTablesMojo;
+
+public class FillPredictTablesMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
 
-        MyMojo mojo = (MyMojo) lookupMojo( "mygoal", pluginXmlFile );
+        FillPredictTablesMojo mojo = (FillPredictTablesMojo) lookupMojo( "fill-predict", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
