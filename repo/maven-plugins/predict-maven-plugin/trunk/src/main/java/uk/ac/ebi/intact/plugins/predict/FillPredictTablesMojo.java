@@ -13,25 +13,25 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.plugins;
+package uk.ac.ebi.intact.plugins.predict;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.dbutil.predict.FillPredictTables;
 
 import java.io.File;
 import java.io.IOException;
 
 /**
- * Example mojo. This mojo is executed when the goal "mygoal" is called.
- * Change this comments and the goal name accordingly
+ * Fills the Predict tables
  *
- * @goal mygoal
+ * @goal fill-predict
  *
  * @phase process-resources
  */
-public class MyMojo
+public class FillPredictTablesMojo
         extends IntactHibernateMojo
 {
 
@@ -51,21 +51,16 @@ public class MyMojo
     protected File hibernateConfig;
 
     /**
-     * An example file
-     *
-     * @parameter default-value="${project.build.directory}/dummy.txt"
-     */
-    private File dummyFile;
-
-    /**
      * Main execution method, which is called after hibernate has been initialized
      */
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
     {
-        File outputDir = super.getDirectory();
-
-        // TODO: put your logic here
+        try {
+            FillPredictTables.runTask(getOutputPrintStream());
+        } catch (Exception e) {
+            throw new MojoExecutionException("Problem filling predict tables", e);
+        }
     }
 
     /**
