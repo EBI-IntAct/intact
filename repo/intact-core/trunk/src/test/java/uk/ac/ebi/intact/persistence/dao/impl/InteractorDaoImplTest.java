@@ -43,7 +43,9 @@ public class InteractorDaoImplTest extends TestCase {
     // Tests
 
     public void testGetGeneNamesByInteractorAc() throws Exception {
-        List<String> geneNames = dao.getGeneNamesByInteractorAc( "TEST-5153" );
+//        List<String> geneNames = dao.getGeneNamesByInteractorAc( "TEST-5153" );
+        Interactor protein = (Interactor) dao.getByShortLabel("cara_ecoli");
+        List<String> geneNames = dao.getGeneNamesByInteractorAc( protein.getAc() );
         assertEquals( 3, geneNames.size() );
         assertTrue( geneNames.contains( "carA" ) );
         assertTrue( geneNames.contains( "b0032" ) );
