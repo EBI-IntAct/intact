@@ -50,9 +50,11 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
     public void execute() throws MojoExecutionException, MojoFailureException {
 
-        // TODO transaction is not opened here !!!
-
         initializeHibernate();
+
+        // start a transaction
+        IntactContext context = IntactContext.getCurrentInstance();
+        context.getDataContext().beginTransaction();
 
         try {
             executeIntactMojo();
@@ -61,7 +63,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
             throw new MojoExecutionException( "Problems executing Mojo", e );
         }
 
-        IntactContext context = IntactContext.getCurrentInstance();
+
         try {
             context.getDataContext().commitAllActiveTransactions();
         } catch ( IntactTransactionException e ) {
