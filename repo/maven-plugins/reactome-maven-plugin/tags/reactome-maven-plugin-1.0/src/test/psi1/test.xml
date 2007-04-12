@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entrySet level="1" version="1" xmlns="net:sf:psidev:mi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+    <entry>
+        <source releaseDate="2006-11-22">
+            <names>
+                <shortLabel>European Bioinformatics Institute</shortLabel>
+            </names>
+            <bibref>
+                <xref>
+
+                    <primaryRef db="pubmed" id="14681455"/>
+                </xref>
+            </bibref>
+            <xref>
+                <primaryRef db="psi-mi" id="MI:0469"/>
+            </xref>
+            <attributeList>
+                <attribute name="postalAddress">Wellcome Trust Genome
+                    Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+
+                <attribute name="url">http://www.ebi.ac.uk</attribute>
+            </attributeList>
+        </source>
+        <experimentList>
+            <experimentDescription id="EBI-706540">
+                <names>
+                    <shortLabel>hermjakob-2004-1</shortLabel>
+                    <fullName>IntAct: an open source molecular
+                        interaction database.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="14681455"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-706540" secondary="hermjakob-2004-1"/>
+                    <secondaryRef db="newt" id="9606" secondary="human"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="9606">
+                    <names>
+                        <shortLabel>human</shortLabel>
+                        <fullName>Homo sapiens</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>inferred by curator</shortLabel>
+                        <fullName>inferred by curator</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0364"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="author-list">Hermjakob H.,
+                        Montecchi-Palazzi L., Lewington C., Mudali S.,
+                        Kerrien S., Orchard S., Vingron M., Roechert B.,
+                        Roepstorff P., Valencia A., Margalit H.,
+                        Armstrong J., Bairoch A., Cesareni G., Sherman
+                        D., Apweiler R.</attribute>
+                    <attribute name="journal">Nucleic Acids Res. (0305-1048)</attribute>
+                    <attribute name="publication-year">2004</attribute>
+
+                    <attribute name="contact-email">hhe@ebi.ac.uk</attribute>
+                    <attribute name="comment">A collection of
+                        literature-mined stable and functionally defined
+                        human molecular complexes of known stoichiometry
+                        and biological role.</attribute>
+                </attributeList>
+            </experimentDescription>
+        </experimentList>
+        <interactorList>
+            <proteinInteractor id="EBI-375096">
+                <names>
+
+                    <shortLabel>cdk2_human</shortLabel>
+                    <fullName>Cell division protein kinase 2</fullName>
+                </names>
+                <xref>
+                    <primaryRef db="uniprotkb" id="P24941"
+                        secondary="cdk2_human" version="SP_48"/>
+                    <secondaryRef db="go" id="GO:0005737" secondary="C:cytoplasm"/>
+                    <secondaryRef db="go" id="GO:0005634" secondary="C:nucleus"/>
+                    <secondaryRef db="go" id="GO:0004693" secondary="F:cyclin-dependent protein kin"/>
+
+                    <secondaryRef db="go" id="GO:0004672" secondary="F:protein kinase activity"/>
+                    <secondaryRef db="go" id="GO:0000086" secondary="P:G2/M transition of mitotic c"/>
+                    <secondaryRef db="go" id="GO:0008284" secondary="P:positive regulation of cell"/>
+                    <secondaryRef db="go" id="GO:0006275" secondary="P:regulation of DNA replicatio"/>
+                    <secondaryRef db="go" id="GO:0007089" secondary="P:traversing start control poi"/>
+                    <secondaryRef db="interpro" id="IPR000719" secondary="Prot_kinase"/>
+                    <secondaryRef db="interpro" id="IPR008271" secondary="Ser_thr_pkin_AS"/>
+                    <secondaryRef db="reactome protein" id="P24941"/>
+                    <secondaryRef db="intact" id="EBI-375096" secondary="cdk2_human"/>
+
+                </xref>
+                <organism ncbiTaxId="9606">
+                    <names>
+                        <shortLabel>human</shortLabel>
+                        <fullName>Homo sapiens</fullName>
+                    </names>
+                </organism>
+                <sequence>MENFQKVEKIGEGTYGVVYKARNKLTGEVVALKKIRLDTETEGVPSTAIREISLLKELNHPNIVKLLDVIHTENKLYLVFEFLHQDLKKFMDASALTGIPLPLIKSYLFQLLQGLAFCHSHRVLHRDLKPQNLLINTEGAIKLADFGLARAFGVPVRTYTHEVVTLWYRAPEILLGCKYYSTAVDIWSLGCIFAEMVTRRALFPGDSEIDQLFRIFRTLGTPDEVVWPGVTSMPDYKPSFPKWARQDFSKVVPPLDEDGRSLLSQMLHYDPNKRISAKAALAHPFFQDVTKPVPHLRL</sequence>
+
+            </proteinInteractor>
+            <proteinInteractor id="EBI-375033">
+                <names>
+                    <shortLabel>ccne2_human</shortLabel>
+                    <fullName>G1/S-specific cyclin E2</fullName>
+                </names>
+                <xref>
+                    <primaryRef db="uniprotkb" id="O96020"
+                        secondary="ccne2_human" version="SP_48"/>
+
+                    <secondaryRef db="go" id="GO:0000075" secondary="P:cell cycle checkpoint"/>
+                    <secondaryRef db="go" id="GO:0000079" secondary="P:regulation of CDK activity"/>
+                    <secondaryRef db="interpro" id="IPR004367" secondary="Cyclin_Cterm"/>
+                    <secondaryRef db="interpro" id="IPR006671" secondary="Cyclin_N"/>
+                    <secondaryRef db="reactome protein" id="O96020"/>
+                    <secondaryRef db="uniprotkb" id="O95439"
+                        secondary="ccne2_human" version="SP_48"/>
+                    <secondaryRef db="go" id="GO:0005515" secondary="F:protein binding"/>
+                    <secondaryRef db="intact" id="EBI-375033" secondary="ccne2_human"/>
+                </xref>
+
+                <organism ncbiTaxId="9606">
+                    <names>
+                        <shortLabel>human</shortLabel>
+                        <fullName>Homo sapiens</fullName>
+                    </names>
+                </organism>
+                <sequence>MSRRSSRLQAKQQPQPSQTESPQEAQIIQAKKRKTTQDVKKRREEVTKKHQYEIRNCWPPVLSGGISPCIIIETPHKEIGTSDFSRFTNYRFKNLFINPSPLPDLSWGCSKEVWLNMLKKESRYVHDKHFEVLHSDLEPQMRSILLDWLLEVCEVYTLHRETFYLAQDFFDRFMLTQKDINKNMLQLIGITSLFIASKLEEIYAPKLQEFAYVTDGACSEEDILRMELIILKALKWELCPVTIISWLNLFLQVDALKDAPKVLLPQYSQETFIQIAQLLDLCILAIDSLEFQYRILTAAALCHFTSIEVVKKASGLEWDSISECVDWMVPFVNVVKSTSPVKLKTFKKIPMEDRHNIQTHTNYLAMLEEVNYINTFRKGGQLSPVCNGGIMTPPKSTEKPPGKH</sequence>
+
+            </proteinInteractor>
+        </interactorList>
+        <interactionList>
+            <interaction>
+                <names>
+                    <shortLabel>cycline2_cdk2_human</shortLabel>
+                    <fullName>Cyclin E2: CDK2</fullName>
+                </names>
+
+                <experimentList>
+                    <experimentRef ref="EBI-706540"/>
+                </experimentList>
+                <participantList>
+                    <proteinParticipant>
+                        <proteinInteractorRef ref="EBI-375096"/>
+                        <role>neutral</role>
+                    </proteinParticipant>
+
+                    <proteinParticipant>
+                        <proteinInteractorRef ref="EBI-375033"/>
+                        <role>neutral</role>
+                    </proteinParticipant>
+                </participantList>
+                <interactionType>
+                    <names>
+                        <shortLabel>direct interaction</shortLabel>
+
+                        <fullName>direct interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0407"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-768489" secondary="cycline2_cdk2_human"/>
+                    <secondaryRef db="go" id="GO:0000307" secondary="cyclin-dependent protein kinas"/>
+                    <secondaryRef db="go" id="GO:0000082" secondary="G1/S transition of mitotic cel"/>
+                    <secondaryRef db="reactome complex" id="REACT_3967.1"/>
+                    <secondaryRef db="reactome complex" id="REACT_5296.1"/>
+                    <secondaryRef db="reactome complex" id="REACT_4967.1"/>
+                    <secondaryRef db="intact" id="EBI-375320"/>
+                    <secondaryRef db="pubmed" id="15838514"/>
+                </xref>
+
+                <attributeList>
+                    <attribute name="curated-complex">Required for G1 to
+                        S phase transition of the mitotic cell cycle.
+                        Hyper-phosphorylation of Rb proteins by cyclin
+                        E:CDK2 complexes leads to their inactivation
+                        which allows transcription of E2F-controlled
+                        genes such as cyclin E1 itself. Additional
+                        substrates include the p27 cell cycle inhibitor
+                        and the NPAT/p220 transcription factor Complex
+                        formation enables substrate binding to the kinase.</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+        </interactionList>
+    </entry>
+</entrySet>
+
