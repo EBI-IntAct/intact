@@ -6,9 +6,9 @@
 
 package uk.ac.ebi.intact.imex.idassigner.id;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.JUnit4TestAdapter;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,27 +21,25 @@ import java.util.Iterator;
  * @version $Id: IMExRangeTest.java 4871 2006-05-18 08:21:32Z skerrien $
  * @since <pre>05/15/2006</pre>
  */
-public class IMExRangeTest extends TestCase {
-    public IMExRangeTest( String name ) {
-        super( name );
-    }
+public class IMExRangeTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+    ////////////////////////////////
+    // Compatibility with JUnit 3
 
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( IMExRangeTest.class );
+    public static junit.framework.Test suite() {
+         return new JUnit4TestAdapter( IMExRangeTest.class );
     }
 
     /////////////////////
     // Tests
 
+    @Test
     public void testImexRangeFromTo() {
+
+        new IMExRange( 1, 13, 13, "IntAct" );
+        new IMExRange( 1, 13, 100000, "IntAct" );
+        new IMExRange( 1, 2, 3, "Foo" );
+
         try {
             new IMExRange( 1, 14, 13, "IntAct" );
             fail();
@@ -50,47 +48,46 @@ public class IMExRangeTest extends TestCase {
         }
 
         try {
-            new IMExRange( 1, 13, 13, "IntAct" );
-            fail();
-        } catch ( Exception e ) {
-            // ok
-        }
-
-        try {
-            new IMExRange( 13, 13 );
+            new IMExRange( 1, 1498259287, 13, "IntAct" );
             fail();
         } catch ( Exception e ) {
             // ok
         }
     }
 
-    public void testGetTimestamp() {
+    @Test
+    public void getTimestamp() {
         assertNotNull( new IMExRange( 1, 10, 13, "IntAct" ).getTimestamp() );
         assertNull( new IMExRange( 10, 13 ).getTimestamp() );
     }
 
-    public void testGetSubmissionId() {
-        assertEquals( 1, new IMExRange( 1, 10, 13, "IntAct" ).getSubmissionId() );
+    @Test
+    public void getSubmissionId() {
+        assertEquals( 1L, new IMExRange( 1, 10, 13, "IntAct" ).getSubmissionId() );
 
-        assertEquals( -1, new IMExRange( 10, 13 ).getSubmissionId() );
+        assertEquals( -1L, new IMExRange( 10, 13 ).getSubmissionId() );
     }
 
-    public void testGetPartner() {
+    @Test
+    public void getPartner() {
         assertEquals( "IntAct", new IMExRange( 1, 10, 13, "IntAct" ).getPartner() );
         assertNull( new IMExRange( 10, 13 ).getPartner() );
     }
 
-    public void testGetFrom() {
-        assertEquals( 10, new IMExRange( 1, 10, 13, "IntAct" ).getFrom() );
-        assertEquals( 10, new IMExRange( 10, 13 ).getFrom() );
+    @Test
+    public void getFrom() {
+        assertEquals( 10L, new IMExRange( 1, 10, 13, "IntAct" ).getFrom() );
+        assertEquals( 10L, new IMExRange( 10, 13 ).getFrom() );
     }
 
-    public void testGetTo() {
-        assertEquals( 13, new IMExRange( 1, 10, 13, "IntAct" ).getTo() );
-        assertEquals( 13, new IMExRange( 10, 13 ).getTo() );
+    @Test
+    public void getTo() {
+        assertEquals( 13L, new IMExRange( 1, 10, 13, "IntAct" ).getTo() );
+        assertEquals( 13L, new IMExRange( 10, 13 ).getTo() );
     }
 
-    public void testIterator() {
+    @Test
+    public void iterator() {
         IMExRange range = new IMExRange( 1, 10, 13, "IntAct" );
 
         Collection<Long> values = new ArrayList<Long>();
