@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.uniprot.service;
 
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Map;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>15-Sep-2006</pre>
+ * @since 1.0
  */
 public interface UniprotService {
 
@@ -24,7 +25,9 @@ public interface UniprotService {
      * Retreive a Uniprot protein based on its ID, AC or splice variant ID.
      *
      * @param ac ID, AC or splice variant ID of the protein we are searching for.
+     *
      * @return a collection of protein found.
+     *
      * @throws UniprotServiceException
      */
     public Collection<UniprotProtein> retreive( String ac );
@@ -33,13 +36,16 @@ public interface UniprotService {
      * Retreive a set of Uniprot proteins based on their ID, AC or splice variant ID.
      *
      * @param acs list of ID, AC or splice variant ID of the proteins we are searching for.
+     *
      * @return an associative structure where each given ac is an entry and associated is a collection of protein found.
+     *
      * @throws UniprotServiceException
      */
     public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs );
 
     /**
      * Error messages encountered during retreival of proteins.
+     *
      * @return an associative structure where each given ac is an entry and associated a message.
      */
     public Map<String, UniprotServiceReport> getErrors();
@@ -48,4 +54,18 @@ public interface UniprotService {
      * Clear existing error messages.
      */
     public void clearErrors();
+
+    /**
+     * Allow the user to define which Uniprot CrossReference should be selected.
+     *
+     * @param crossReferenceFilter
+     */
+    public void setCrossReferenceSelector( CrossReferenceFilter crossReferenceFilter );
+
+    /**
+     * Getter for property 'crossReferenceSelector'.
+     *
+     * @return Value for property 'crossReferenceSelector'.
+     */
+    public CrossReferenceFilter getCrossReferenceSelector();
 }
