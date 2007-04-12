@@ -6,9 +6,9 @@
 
 package uk.ac.ebi.intact.imex.idassigner.id;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.JUnit4TestAdapter;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,27 +21,20 @@ import java.util.List;
  * @version $Id: IMExIdTransformerTest.java 4871 2006-05-18 08:21:32Z skerrien $
  * @since <pre>05/15/2006</pre>
  */
-public class IMExIdTransformerTest extends TestCase {
-    public IMExIdTransformerTest( String name ) {
-        super( name );
-    }
+public class IMExIdTransformerTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+    ////////////////////////////////
+    // Compatibility with JUnit 3
 
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( IMExIdTransformerTest.class );
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter( IMExIdTransformerTest.class );
     }
 
     /////////////////////
     // Tests
 
-    public void testFormatIMExId() {
+    @Test
+    public void formatIMExId() {
 
         assertEquals( "IM-1", IMExIdTransformer.formatIMExId( 1 ) );
         assertEquals( "IM-999", IMExIdTransformer.formatIMExId( 999 ) );
@@ -54,10 +47,11 @@ public class IMExIdTransformerTest extends TestCase {
         }
     }
 
-    public void testParseIMExId() {
+    @Test
+    public void parseIMExId() {
 
-        assertEquals( 1, IMExIdTransformer.parseIMExId( "IM-1" ) );
-        assertEquals( 123, IMExIdTransformer.parseIMExId( "IM-123" ) );
+        assertEquals( 1L, IMExIdTransformer.parseIMExId( "IM-1" ) );
+        assertEquals( 123L, IMExIdTransformer.parseIMExId( "IM-123" ) );
         assertEquals( 1234567890L, IMExIdTransformer.parseIMExId( "IM-1234567890" ) );
 
         try {
@@ -69,7 +63,8 @@ public class IMExIdTransformerTest extends TestCase {
 
     }
 
-    public void testFormatSimpleRange() {
+    @Test
+    public void formatSimpleRange() {
 
         assertEquals( "2..10", IMExIdTransformer.formatSimpleRange( new IMExRange( 2, 10 ) ) );
         assertEquals( "12..1234567890", IMExIdTransformer.formatSimpleRange( new IMExRange( 12, 1234567890 ) ) );
@@ -82,7 +77,8 @@ public class IMExIdTransformerTest extends TestCase {
         }
     }
 
-    public void testParseSimpleRange() {
+    @Test
+    public void parseSimpleRange() {
 
         assertEquals( new IMExRange( 3, 11 ), IMExIdTransformer.parseSimpleRange( "3..11" ) );
         assertEquals( new IMExRange( 36, 1234567890 ), IMExIdTransformer.parseSimpleRange( "36..1234567890" ) );
@@ -95,7 +91,8 @@ public class IMExIdTransformerTest extends TestCase {
         }
     }
 
-    public void testGetFormattedIMExIds() {
+    @Test
+    public void getFormattedIMExIds() {
         Collection<String> ids = IMExIdTransformer.getFormattedIMExIds( new IMExRange( 3, 8 ) );
 
         assertEquals( 6, ids.size() );
@@ -108,7 +105,8 @@ public class IMExIdTransformerTest extends TestCase {
         assertTrue( ids.contains( "IM-8" ) );
     }
 
-    public void testGetUnformattedIMExIds( IMExRange range ) {
+    @Test
+    public void getUnformattedIMExIds() {
 
         Collection<Long> ids = IMExIdTransformer.getUnformattedIMExIds( new IMExRange( 3, 8 ) );
 
@@ -122,8 +120,9 @@ public class IMExIdTransformerTest extends TestCase {
         assertTrue( ids.contains( 8L ) );
     }
 
-    public void testGetUnformattedIMExIds( Collection<String> ids ) {
-        ids = new ArrayList<String>();
+    @Test
+    public void parseIMExIds() {
+        Collection ids = new ArrayList<String>();
 
         ids.add( "IM-1" );
         ids.add( "IM-2" );
@@ -140,7 +139,8 @@ public class IMExIdTransformerTest extends TestCase {
         assertTrue( unformattedIMExIds.contains( 4L ) );
     }
 
-    public void testBuildRanges_continuous() {
+    @Test
+    public void buildRanges_continuous() {
 
         Collection<Long> ids = new ArrayList<Long>();
 
@@ -156,7 +156,8 @@ public class IMExIdTransformerTest extends TestCase {
         assertTrue( imexRanges.contains( new IMExRange( 1, 5 ) ) );
     }
 
-    public void testBuildRanges_discontinuous() {
+    @Test
+    public void buildRanges_discontinuous() {
 
         Collection<Long> ids = new ArrayList<Long>();
 
@@ -183,5 +184,4 @@ public class IMExIdTransformerTest extends TestCase {
         assertTrue( imexRanges.contains( new IMExRange( 21, 25 ) ) );
         assertTrue( imexRanges.contains( new IMExRange( 30, 30 ) ) );
     }
-
 }

@@ -6,9 +6,10 @@
 
 package uk.ac.ebi.intact.imex.idassigner.keyassigner;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import junit.framework.JUnit4TestAdapter;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
 
 /**
@@ -18,47 +19,39 @@ import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
  * @version $Id: DummyKeyAssignerServiceTest.java 4871 2006-05-18 08:21:32Z skerrien $
  * @since <pre>05/16/2006</pre>
  */
-public class DummyKeyAssignerServiceTest extends TestCase {
+public class DummyKeyAssignerServiceTest {
 
-    public DummyKeyAssignerServiceTest( String name ) {
-        super( name );
-    }
+    ////////////////////////////////
+    // Compatibility with JUnit 3
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( DummyKeyAssignerServiceTest.class );
+    public static junit.framework.Test suite() {
+        return new JUnit4TestAdapter( DummyKeyAssignerServiceTest.class );
     }
 
     /////////////////////
     // Tests
 
-    public void testGetAccessions() {
+    @Test
+    public void getAccessions() {
         KeyAssignerServiceI service = new DummyKeyAssignerService( 1, 1 );
         try {
             IMExRange range = service.getAccessions( 5 );
 
-            assertEquals( 1, range.getSubmissionId() );
-            assertEquals( 1, range.getFrom() );
-            assertEquals( 5, range.getTo() );
+            assertEquals( 1L, range.getSubmissionId() );
+            assertEquals( 1L, range.getFrom() );
+            assertEquals( 5L, range.getTo() );
 
             range = service.getAccessions( 2 );
 
-            assertEquals( 2, range.getSubmissionId() );
-            assertEquals( 6, range.getFrom() );
-            assertEquals( 7, range.getTo() );
+            assertEquals( 2L, range.getSubmissionId() );
+            assertEquals( 6L, range.getFrom() );
+            assertEquals( 7L, range.getTo() );
 
             range = service.getAccessions( 10 );
 
-            assertEquals( 3, range.getSubmissionId() );
-            assertEquals( 8, range.getFrom() );
-            assertEquals( 17, range.getTo() );
+            assertEquals( 3L, range.getSubmissionId() );
+            assertEquals( 8L, range.getFrom() );
+            assertEquals( 17L, range.getTo() );
 
         } catch ( KeyAssignerServiceException e ) {
             fail();
