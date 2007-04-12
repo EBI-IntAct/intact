@@ -58,7 +58,7 @@
                <fullName>full identification by sequencing</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0056"/>
+               <primaryRef db="psi-mi" id="MI:0833"/>
                <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </participantDetection>
@@ -204,7 +204,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -239,7 +239,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -274,7 +274,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>

@@ -144,7 +144,7 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         assertTrue( id1 != id3 );
         assertTrue( id2 != id3 );
     }
-
+     /*
     public void testgetFeatureIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
@@ -189,8 +189,8 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         } catch ( Exception e ) {
             //ok
         }
-    }
-
+    }  */
+     /*
     public void testgetInteractorIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
@@ -228,8 +228,8 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         } catch ( Exception e ) {
             //ok
         }
-    }
-
+    } */
+    /*
     public void testgetInteractionIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
@@ -267,5 +267,5 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         } catch ( Exception e ) {
             //ok
         }
-    }
+    } */
 }

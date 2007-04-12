@@ -103,6 +103,8 @@ public class PsiDownloadTest extends TestCase {
         addPsiReference( prey, "MI:0498" );
         addPsiReference( neutral, "MI:0498" );
 
+        addPsiReference( aggregation, "MI:0407" );
+
         addPsiReference( uniprot, CvDatabase.UNIPROT_MI_REF );
         addPsiReference( intact, CvDatabase.INTACT_MI_REF );
         addPsiReference( psi, CvDatabase.PSI_MI_MI_REF );
