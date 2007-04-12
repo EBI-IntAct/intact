@@ -14,6 +14,7 @@ import uk.ac.ebi.intact.bridge.model.UniprotProtein;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -404,7 +405,7 @@ public class UpdateDeadProteins {
         }
     }
 
-    public void remapProteins( Map<String, Collection<RemappingEntry>> remapping ) throws UniprotBridgeException {
+    public void remapProteins( Map<String, Collection<RemappingEntry>> remapping ) throws UniprotBridgeException, IntactTransactionException {
 
         printDatabaseConnectionDetails();
         int count = 0;
