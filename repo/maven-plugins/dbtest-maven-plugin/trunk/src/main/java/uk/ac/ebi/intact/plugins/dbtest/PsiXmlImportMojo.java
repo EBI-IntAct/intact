@@ -34,6 +34,7 @@ import uk.ac.ebi.intact.plugins.dbtest.xmlimport.XmlFileset;
 import uk.ac.ebi.intact.util.protein.BioSourceFactory;
 import uk.ac.ebi.intact.util.protein.UpdateProteins;
 import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -153,7 +154,11 @@ public class PsiXmlImportMojo
             }
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
 
         // close the connection
         IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
