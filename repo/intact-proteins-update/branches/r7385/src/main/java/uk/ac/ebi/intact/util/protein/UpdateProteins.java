@@ -11,6 +11,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.aristotle.model.sptr.AristotleSPTRException;
 import uk.ac.ebi.aristotle.util.interfaces.AlternativeSplicingAdapter;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AliasDao;
@@ -845,7 +846,11 @@ public class UpdateProteins extends UpdateProteinsI {
                     }
 
                     if ( localTransactionControl ) {
-                        tx.commit();
+                        try {
+                            tx.commit();
+                        } catch (IntactTransactionException e) {
+                            e.printStackTrace();
+                        }
                     }
                     log.debug( "Transaction complete" );
 
@@ -870,7 +875,11 @@ public class UpdateProteins extends UpdateProteinsI {
                         }
 
                         if ( localTransactionControl ) {
-                            tx.commit();
+                            try {
+                                tx.commit();
+                            } catch (IntactTransactionException e) {
+                                e.printStackTrace();
+                            }
                             log.debug( "Transaction complete" );
                         }
 
@@ -1013,7 +1022,11 @@ public class UpdateProteins extends UpdateProteinsI {
                                     }
 
                                     if ( localTransactionControl ) {
-                                        tx.commit();
+                                        try {
+                                            tx.commit();
+                                        } catch (IntactTransactionException e) {
+                                            e.printStackTrace();
+                                        }
                                         log.debug( "Transaction complete" );
                                     }
                                 } else {
@@ -1036,7 +1049,11 @@ public class UpdateProteins extends UpdateProteinsI {
                                     log.debug( "creation sucessfully done" );
                                 }
                                 if ( localTransactionControl ) {
-                                    tx.commit();
+                                    try {
+                                        tx.commit();
+                                    } catch (IntactTransactionException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                                 log.debug( "Transaction complete" );
                             }
@@ -1073,7 +1090,11 @@ public class UpdateProteins extends UpdateProteinsI {
             writeEntry2file( entryIterator );
 
             // Try to rollback
-            tx.rollback();
+            try {
+                tx.rollback();
+            } catch (IntactTransactionException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -2501,7 +2522,11 @@ public class UpdateProteins extends UpdateProteinsI {
         }
 
         if ( localTransactionControl ) {
-            tx.commit();
+            try {
+                tx.commit();
+            } catch (IntactTransactionException e) {
+                e.printStackTrace();
+            }
         }
 
         return targetProtein;
