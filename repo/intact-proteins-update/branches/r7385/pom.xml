@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>7</version>
+        <version>9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -38,29 +38,9 @@
 
         <plugins>
             <plugin>
-                <groupId>org.apache.myfaces.tobago</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
-                <version>1.0.3</version>
-
-                <configuration>
-                    <imports>
-                        <xmlFilesets>
-                            <xmlFileset>
-                                <version>1</version>
-                                <urls>
-                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml
-                                    </url>
-                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10206341.xml
-                                    </url>
-                                </urls>
-                            </xmlFileset>
-                        </xmlFilesets>
-                    </imports>
-                </configuration>
+                <version>1.1.2</version>
             </plugin>
         </plugins>
     </build>
@@ -69,7 +49,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-8</version>
+            <version>1.5.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
@@ -79,7 +59,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20061123</version>
+            <version>1.3-20070410</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>

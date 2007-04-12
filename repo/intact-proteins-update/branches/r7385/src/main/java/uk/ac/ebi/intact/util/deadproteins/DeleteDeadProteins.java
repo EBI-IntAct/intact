@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class DeleteDeadProteins {
     ////////////////////////
     // Initialisation
 
-    private void initControlledVocabularies() {
+    private void initControlledVocabularies() throws IntactTransactionException {
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -102,7 +103,7 @@ public class DeleteDeadProteins {
     //////////////////////////
     // Business logic
 
-    public int process() throws IOException {
+    public int process() throws IOException, IntactTransactionException {
         int count = 0;
 
         initControlledVocabularies();
@@ -117,7 +118,7 @@ public class DeleteDeadProteins {
         return count;
     }
 
-    public int processFromFile() throws IOException {
+    public int processFromFile() throws IOException, IntactTransactionException {
 
         // 1. load the list of proteins
         Collection<String> proteinsIds = parse( proteinFilterFile );
@@ -151,7 +152,7 @@ public class DeleteDeadProteins {
 
     public static final int CHUNK_SIZE = 500;
 
-    public int processWholeDatabase() {
+    public int processWholeDatabase() throws IntactTransactionException {
         int count = 0;
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
