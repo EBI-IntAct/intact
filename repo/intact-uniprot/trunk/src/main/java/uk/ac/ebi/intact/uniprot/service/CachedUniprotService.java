@@ -11,6 +11,7 @@ import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 
 import java.net.URL;
 import java.util.Collection;
@@ -101,6 +102,14 @@ public class CachedUniprotService implements UniprotService {
 
     public void clearErrors() {
         service.clearErrors();
+    }
+
+    public void setCrossReferenceSelector( CrossReferenceFilter crossReferenceFilter ) {
+        service.setCrossReferenceSelector( crossReferenceFilter );
+    }
+
+    public CrossReferenceFilter getCrossReferenceSelector() {
+        return service.getCrossReferenceSelector();
     }
 
     /////////////////////////
