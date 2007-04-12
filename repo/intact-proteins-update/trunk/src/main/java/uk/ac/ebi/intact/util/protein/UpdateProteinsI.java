@@ -115,6 +115,8 @@ public abstract class UpdateProteinsI {
             logger.warn("Proxy configuration not found: "+ proxyConfigurationNotFound.getMessage());
         }
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         collectDefaultObject( );
 
         bioSourceFactory = new BioSourceFactory(  );
