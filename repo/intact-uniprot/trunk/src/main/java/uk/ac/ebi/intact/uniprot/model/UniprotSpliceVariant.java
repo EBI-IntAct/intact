@@ -110,6 +110,15 @@ public class UniprotSpliceVariant {
     }
 
     /**
+     * Setter for property 'secondaryAcs'.
+     *
+     * @param secondaryAcs Value to set for property 'secondaryAcs'.
+     */
+    public void setSecondaryAcs( List<String> secondaryAcs ) {
+        this.secondaryAcs = secondaryAcs;
+    }
+
+    /**
      * Getter for property 'organism'.
      *
      * @return Value for property 'organism'.
@@ -140,6 +149,15 @@ public class UniprotSpliceVariant {
             synomyms = new ArrayList<String>();
         }
         return synomyms;
+    }
+
+    /**
+     * Setter for property 'synomyms'.
+     *
+     * @param synomyms Value to set for property 'synomyms'.
+     */
+    public void setSynomyms( Collection<String> synomyms ) {
+        this.synomyms = synomyms;
     }
 
     /**
@@ -248,7 +266,7 @@ public class UniprotSpliceVariant {
             return false;
         }
 
-        UniprotSpliceVariant that = (UniprotSpliceVariant) o;
+        UniprotSpliceVariant that = ( UniprotSpliceVariant ) o;
 
         if ( !primaryAc.equals( that.primaryAc ) ) {
             return false;
@@ -282,7 +300,9 @@ public class UniprotSpliceVariant {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append( "SpliceVariant" );
-        sb.append( "{sequence='" ).append( sequence ).append( '\'' );
+        sb.append( "{primaryAC='" ).append( primaryAc ).append( '\'' );
+        sb.append( ",secondaryAcs=" ).append( secondaryAcs );
+        sb.append( ",sequence='" ).append( sequence ).append( '\'' );
         sb.append( ", start=" ).append( start );
         sb.append( ", end=" ).append( end );
         sb.append( ", note='" ).append( note ).append( '\'' );
