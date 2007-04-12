@@ -7,10 +7,10 @@ package uk.ac.ebi.intact.uniprot.service;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
-import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.intact.uniprot.model.Organism;
 import uk.ac.ebi.intact.uniprot.model.*;
+import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
+import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.ChainFeature;
@@ -20,6 +20,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
 import uk.ac.ebi.kraken.model.uniprot.util.SplicedSequenceCalculator;
+import uk.ac.ebi.kraken.util.IndexField;
 import uk.ac.ebi.kraken.uuw.services.remoting.Query;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
@@ -109,10 +110,17 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private Iterator<UniProtEntry> getUniProtEntryForProteinEntry( String ac ) {
         UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
         UniProtQueryService uniProtQueryService = factory.getUniProtQueryService();
-        return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( "ac:" + ac ) );
+        // the Lucene field identifier copes with primary and secondary ACs.
+//        String query = "identifier:" + ac;
+
+        // search for primary and secondary ACs
+        String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
+                       " OR " +
+                       IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac;
+        return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( query ) );
     }
 
-    private UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
+    protected UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
 
         int organismCount = uniProtEntry.getOrganisms().size();
 
@@ -159,7 +167,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             uniprotProtein.setSource( UniprotProteinType.SWISSPROT );
         } else if ( UniProtEntryType.TREMBL.equals( uniProtEntry.getType() ) ) {
             uniprotProtein.setSource( UniprotProteinType.TREMBL );
-        } else if( UniProtEntryType.UNKNOWN.equals( uniProtEntry.getType() ) ) {
+        } else if ( UniProtEntryType.UNKNOWN.equals( uniProtEntry.getType() ) ) {
             uniprotProtein.setSource( UniprotProteinType.UNKNOWN );
         } else {
             throw new IllegalStateException( "Only SWISSPROT, TREMBL and UNKNOWN source are supported: " +
@@ -217,7 +225,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private String getSPTREntryReleaseVersion( UniProtEntry sptrEntry ) {
         String version = null;
         String uniprotRelease = String.valueOf( sptrEntry.getEntryAudit().getEntryVersion() );
-
+        System.out.println( "uniprotRelease = " + uniprotRelease );
         if ( sptrEntry.getType().equals( UniProtEntryType.SWISSPROT ) ) {
             version = SWISS_PROT_PREFIX + uniprotRelease;
         } else if ( sptrEntry.getType().equals( UniProtEntryType.TREMBL ) ) {
@@ -347,12 +355,17 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                 List<IsoformId> isoIDs = isoform.getIds();
                 for ( IsoformId isoID : isoIDs ) {
-                    log.debug( "isoID.getValue() = " + isoID.getValue() );
+
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "isoID.getValue() = " + isoID.getValue() );
+                    }
 
                     // TODO remove this once the API is fixed, currently when multiple ids are present they are returned as a comma separated value :(
                     for ( int i = 0; i < isoID.getValue().split( "," ).length; i++ ) {
                         String id = isoID.getValue().split( "," )[i].trim();
-                        log.debug( "Found ID " + i + ":" + id );
+                        if ( log.isDebugEnabled() ) {
+                            log.debug( "Found ID " + i + ":" + id );
+                        }
                         ids.add( id );
                     }
                 }
@@ -373,7 +386,10 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                     // then we need to load an external protein entry
                     log.warn( "The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein );
-                    log.debug( "Loading external parent protein: " + parentProtein );
+
+                    if ( log.isDebugEnabled() ) {
+                        log.debug( "Loading external parent protein: " + parentProtein );
+                    }
                     Iterator<UniProtEntry> it = getUniProtEntry( parentProtein );
 
                     boolean multipleProteinFound = false;
@@ -382,7 +398,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
                         if ( protEntry == null ) {
 
                             protEntry = it.next();
-                            log.debug( "Loaded " + protEntry.getUniProtId() );
+                            if ( log.isDebugEnabled() ) {
+                                log.debug( "Loaded " + protEntry.getUniProtId() );
+                            }
 
                         } else {
 
@@ -400,7 +418,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                     if ( !multipleProteinFound ) {
                         sequence = SplicedSequenceCalculator.getSplicedSequenceForIsoId( protEntry, isoIDs.get( 0 ).getValue() );
-                        log.debug( "sequence = " + sequence );
+                        if ( log.isDebugEnabled() ) {
+                            log.debug( "sequence = " + sequence );
+                        }
                     }
                 }
 
