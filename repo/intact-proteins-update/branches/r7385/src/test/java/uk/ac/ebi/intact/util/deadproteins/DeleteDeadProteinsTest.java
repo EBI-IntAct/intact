@@ -7,6 +7,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 
@@ -69,6 +70,10 @@ public class DeleteDeadProteinsTest extends TestCase {
             System.err.println( "ERROR - Could not find protein by ac: " + ac );
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
     }
 }
