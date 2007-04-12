@@ -279,7 +279,7 @@ public class UpdateDeadProteins {
 
     private void closeOpenedFiles() {
          if ( proteinsToUpdate != null ) {
-             if ( proteinsToUpdateBuffer == null ) {
+             if ( proteinsToUpdateBuffer != null ) {
                  try {
                      log.info( "Closing File containing the list of proteins to update." );
                      proteinsToUpdateBuffer.flush();
