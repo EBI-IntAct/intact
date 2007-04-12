@@ -36,6 +36,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.ook.model.implementation.TermBean;
 
 /**
@@ -155,7 +156,13 @@ public class OboImportMojo
             throw new MojoExecutionException("Problem importing OBO file", e);
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         writeUpdatedTermsFile(report);
         writeCreatedTermsFile(report);
@@ -179,7 +186,11 @@ public class OboImportMojo
             }
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -198,7 +209,11 @@ public class OboImportMojo
             }
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+        }
     }
 
     private void importAdditionalCVs() throws IOException, SQLException
