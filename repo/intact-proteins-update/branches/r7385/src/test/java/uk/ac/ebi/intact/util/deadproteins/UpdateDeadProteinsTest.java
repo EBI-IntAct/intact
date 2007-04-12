@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 
+import uk.ac.ebi.intact.context.IntactContext;
+
 /**
  * UpdateDeadProteins Tester.
  *
@@ -22,10 +24,12 @@ public class UpdateDeadProteinsTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
     public void tearDown() throws Exception {
         super.tearDown();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public static Test suite() {
@@ -36,7 +40,7 @@ public class UpdateDeadProteinsTest extends TestCase {
     // Tests
     
     public void testParse() throws Exception {
-        File inputFile = new File( DeleteDeadProteinsTest.class.getResource( "/deadProteins/full-remapping.txt" ).getFile() );
+        File inputFile = new File( getClass().getResource( "/deadProteins/full-remapping.txt" ).getFile() );
         assertNotNull( inputFile );
 
         UpdateDeadProteins updator = new UpdateDeadProteins();
@@ -56,7 +60,7 @@ public class UpdateDeadProteinsTest extends TestCase {
     }
 
     public void testUpdate() throws Exception {
-        File inputFile = new File( DeleteDeadProteinsTest.class.getResource( "/deadProteins/full-remapping.txt" ).getFile() );
+        File inputFile = new File( getClass().getResource( "/deadProteins/full-remapping.txt" ).getFile() );
         assertNotNull( inputFile );
 
         File proteinToUpdateFile = new File( inputFile.getParent() + File.separator + "protein-to-update.txt" );
