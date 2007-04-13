@@ -7,18 +7,19 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.application.editor.struts.action.interaction;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.framework.EditorFormI;
 import uk.ac.ebi.intact.application.editor.struts.view.feature.FeatureBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.view.interaction.ComponentBean;
+import uk.ac.ebi.intact.model.Interaction;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The action class to handle events related to delete/link/unlink of a feature.
@@ -34,6 +35,7 @@ import java.util.Map;
  *      parameter="dispatch"
  */
 public class FeatureLinkAction extends AbstractEditorDispatchAction {
+    private static final Log log = LogFactory.getLog(FeatureLinkAction.class);
 
     protected Map getKeyMethodMap() {
         Map map = new HashMap();
@@ -51,6 +53,9 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
+
+        log.debug("\n\n\n\n\nFeatureLinkAction.delete");
+
         // Handler to the Intact User.
         EditUserI user = getIntactUser(request);
 
@@ -67,6 +72,7 @@ public class FeatureLinkAction extends AbstractEditorDispatchAction {
             // No longer checked.
             fb.setChecked(false);
         }
+      
         return updateForm(mapping, form, request);
     }
 
