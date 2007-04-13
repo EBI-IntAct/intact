@@ -372,7 +372,6 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
      * @return <code>AnnotatedObject</code> this instace is wrapped around.
      */
     public final T getAnnotatedObject() {
-        log.debug("This is the new recompiled editor");
         // If myAnnotObject is contained in the session, we don't reload it but return it directly, otherwise continue.
         if(getSession().isOpen() && getSession().getTransaction().isActive() && getSession().contains(myAnnotObject)){
             if((myAnnotObject != null
@@ -1324,7 +1323,6 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         }
 
         // Delete annotations and remove them from CV object.
-        log.debug("Size of the annotations to del : " + getAnnotationsToDel().size());
         for (CommentBean commentBean : getAnnotationsToDel())
         {
             Annotation annot = commentBean.getAnnotation();
@@ -1363,7 +1361,6 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
         // Create xrefs and add them to CV object.
         XrefDao xrefDao = DaoProvider.getDaoFactory().getXrefDao();
         Collection<XreferenceBean> xrefBeans = getXrefsToAdd();
-        log.debug("The size of the xrefBeans to add is " + xrefBeans.size());
         for (XreferenceBean xreferenceBean : getXrefsToAdd())
         {
             Xref xref = xreferenceBean.getXref(getAnnotatedObject());

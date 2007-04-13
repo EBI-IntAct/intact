@@ -7,6 +7,8 @@
 package uk.ac.ebi.intact.application.editor.struts.action.feature;
 
 import org.apache.struts.action.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.business.EditorService;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
@@ -54,6 +56,8 @@ import java.util.regex.Matcher;
  */
 public class FeatureDispatchAction extends CommonDispatchAction {
 
+    protected static Log log = LogFactory.getLog(FeatureDispatchAction.class);
+
     /**
      * Overrides the super's submit action to handle Feature editor specific
      * behaviour.
@@ -73,6 +77,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
     public ActionForward submit(ActionMapping mapping, ActionForm form,
                                 HttpServletRequest request, HttpServletResponse response)
             throws Exception {
+        log.debug("\n\n\n\n\nFeatureDispatchAction.submit");
         EditUserI user = getIntactUser(request);
 
         // The current view.
@@ -190,10 +195,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
             // Create a Feature in a separate transaction.
             try {
 
-//                user.startTransaction();
                 featureDao.persist(feature);
-//                helper.create(feature);
-//                helper.finishTransaction();
             }
             catch (IntactException ie) {
                 // Log the stack trace.

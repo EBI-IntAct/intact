@@ -119,6 +119,15 @@ public class FeatureDispatchAction extends CommonDispatchAction {
                              HttpServletRequest request,
                              HttpServletResponse response)
             throws Exception {
+
+        log.debug("\n\n\n\n\nFeatureDispatchAction.add");
+        // The form.
+        InteractionActionForm intform = (InteractionActionForm) form;
+        
+        // The selected component from the form.
+        ComponentBean selectedComp = intform.getSelectedComponent();
+        log.debug("The selected component shortlabel is : " + selectedComp.getFullName());
+        
         // Save the interaction first.
         ActionForward forward = super.save(mapping, form, request, response);
 
@@ -142,12 +151,7 @@ public class FeatureDispatchAction extends CommonDispatchAction {
         // The feature view bean.
         FeatureViewBean featureView = (FeatureViewBean) user.getView();
 
-        // The form.
-        InteractionActionForm intform = (InteractionActionForm) form;
 
-        // The selected component from the form.
-
-        ComponentBean selectedComp = intform.getSelectedComponent();
         // The component for the feature.
         featureView.setComponent(selectedComp.getComponent());
         return mapping.findForward(SUCCESS);

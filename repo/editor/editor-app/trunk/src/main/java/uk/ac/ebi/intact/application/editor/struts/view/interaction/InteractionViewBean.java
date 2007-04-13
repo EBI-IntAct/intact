@@ -139,6 +139,10 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         // Prepare for Proteins and Experiments for display.
         makeExperimentRows(intact.getExperiments());
+        Collection<Component> components = intact.getComponents();
+        if(components != null){
+            log.debug("reset method, component size : " + components.size());
+        }
         makeProteinBeans(intact.getComponents());
     }
 
@@ -166,6 +170,12 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             myComponentsToUpdate.add(cb);
         }
     }
+
+
+    public Set<ComponentBean> getMyComponentsToUpdate() {
+        return myComponentsToUpdate;
+    }
+
 
     // Override the super to persist others.
     @Override
@@ -546,6 +556,10 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         return myComponents;
     }
 
+//    public void removeAllComponentsToUpdate(){
+//        myComponentsToUpdate.clear();
+//    }
+
     // Override super to add extra.
     @Override
     public void clearTransactions() {
@@ -597,6 +611,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         String compAc = feature.getComponent().getAc();
 
         // Find the component bean this feature bean belongs to.
+        log.debug("myComponents.size()" + myComponents.size());
         for (ComponentBean cb : myComponents)
         {
             if(cb == null){
@@ -630,14 +645,17 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         // Feature bean can be null for a new feature.
         if (featureBean == null) {
+            log.debug("No featureBean found attach to this component.");
             featureBean = new FeatureBean(feature);
             // Update this component for it to persist correctly.
             addPolymerToUpdate(compBean);
         }
         else {
+            log.debug("FeatureBean found attach to this component.");
             // The flag is based on the short label of the bean and updated Feature
             labelChanged = !featureBean.getShortLabel().equals(feature.getShortLabel());
             // New bean based on the same key as the existing one.
+//            log.debug("The featureBean key is :" + featureBean.getKey());
             featureBean = new FeatureBean(feature, featureBean.getKey());
         }
         // Should have this feature.
@@ -1061,6 +1079,8 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         // No need to test whether this 'intact' persistent or not because we
         // know it has been already persisted by persist() call.
         InteractionDao interactionDao = DaoProvider.getDaoFactory().getInteractionDao();
+
+        log.debug("we have updated the components, now we save the interaction, it has " + intact.getComponents().size() + " components");
         interactionDao.update((InteractionImpl) intact);
     }
 
@@ -1239,9 +1259,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         RangeDao rangeDao = DaoProvider.getDaoFactory().getRangeDao();
         ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
         // Update components.
-        for (ComponentBean cb : myComponentsToUpdate)
-        {
-
+        for(ComponentBean cb : myComponentsToUpdate){
             cb.setInteraction(getAnnotatedObject());
 
             // Disconnect any links between features in the component which are
@@ -1274,11 +1292,58 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
                 comp.addBindingDomain(feature);
                 comp.setInteraction(intact);
             }
+
+            Iterator<FeatureBean> fbIterator = cb.getFeaturesToDelete().iterator();
+            while(fbIterator.hasNext()){
+                FeatureBean featureBean = fbIterator.next();
+                if(featureBean.getAc() != null){
+                    Iterator<Feature> iterator = comp.getBindingDomains().iterator();
+                    while(iterator.hasNext()){
+                        Feature feature = iterator.next();
+                        if(featureBean.getAc().equals(feature.getAc())){
+                            featureDao.delete(feature);
+                            iterator.remove();
+                        }
+                    }
+                   fbIterator.remove(); 
+                }
+            }
+
+
+            if(comp.getAc()!= null){
+                log.debug("comp.getAc() =" + comp.getAc() + ".");
+                Iterator<Component> compIterator = intact.getComponents().iterator();
+                log.debug("intact.getComponents().size() =" + intact.getComponents().size());
+                while(compIterator.hasNext()){
+                    Component component = compIterator.next();
+                    System.out.println("component.getAc()=" + component.getAc() + ".");
+                    if(comp.getAc().equals(component.getAc())){
+                        log.debug("Removing the component =" + comp.getAc());
+                        compIterator.remove();
+                    }
+                }
+            }
+
             intact.addComponent(comp);
 
             componentDao.saveOrUpdate(comp);
+
+//            iterator.remove();
         }
     }
+
+    public Component interactionContainsComp(Interaction interaction, Component comp){
+        if(comp.getAc() != null){
+            Collection<Component> components = interaction.getComponents();
+            for(Component component : components){
+                if(comp.getAc().equals(component.getAc())){
+                    return component;
+                }
+            }
+        }
+        return null;
+    }
+
 
     /**
      * Links features.

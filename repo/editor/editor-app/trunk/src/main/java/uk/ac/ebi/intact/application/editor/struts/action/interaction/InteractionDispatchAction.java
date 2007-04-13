@@ -15,9 +15,11 @@ import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentView
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 /**
  * An action to handle when an Interaction is submitted. This action overrides
@@ -56,6 +58,8 @@ public class InteractionDispatchAction extends CommonDispatchAction {
                                 HttpServletRequest request,
                                 HttpServletResponse response)
             throws Exception {
+        log.debug("\n\n\n\nInteractionDispatchAction.submit");
+
         // Submit the form. Analyze the forward path.
         ActionForward forward = submitForm(mapping, form, request, true);
 
@@ -109,6 +113,7 @@ public class InteractionDispatchAction extends CommonDispatchAction {
         // Handler to the user.
         EditUserI user = getIntactUser(request);
 
+//  interactionViewBean.removeAllComponentsToUpdate();
 //        Interaction interaction = (Interaction) user.getView().getAnnotatedObject();
 //        // We reset the view with the saved interaction so that the ac are reset as well.
 //        // !!!!BE CAREFULL !!!! when you reset the view all the isSelected boolean are reset to false, so you won't know anymore
