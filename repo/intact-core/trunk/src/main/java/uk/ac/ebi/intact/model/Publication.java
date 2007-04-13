@@ -9,84 +9,90 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Collections;
 
 /**
  * Models a scientific paper and its relationship to (potentialy) many intact Experiments.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>11-May-2006</pre>
+ * @since 1.5
  */
 @Entity
 @Table( name = "ia_publication" )
 public class Publication extends AnnotatedObjectImpl<PublicationXref, PublicationAlias> implements Editable {
 
     /**
-     * PubMed Id of the publication.
-     */
-    private String pmid;
-
-    /**
      * List of experiments related to that publication.
      */
-    Collection<Experiment> experiments = new ArrayList<Experiment>();
+    private Collection<Experiment> experiments = new ArrayList<Experiment>();
 
     ///////////////////////////
     // Constructors
-    public Publication() {
+
+    /**
+     * Necessary constructor for hibernate to instanciate a bean.
+     */
+    protected Publication() {
     }
 
-    public Publication( Institution owner, String pmid ) {
-        super( pmid, owner );
-        setPmid( pmid );
-    }
-
-    ////////////////////////////
-    // Getter and Setter
-    @Column( name = "pmid" )
-    public String getPmid() {
-        return pmid;
-    }
-
-    public void setPmid( String pmid ) {
-        if ( pmid == null ) {
-            throw new IllegalArgumentException( "You must give a non null PubMed ID." );
-        }
-
-        try {
-            Integer.parseInt( pmid );
-        } catch ( NumberFormatException e ) {
-            throw e;
-        }
-
-        this.pmid = pmid;
+    public Publication( Institution owner, String name ) {
+        super( name, owner );
     }
 
     //////////////////////////////
     // Experiment handling
 
     public void addExperiment( Experiment experiment ) {
+        if ( experiment == null ) {
+            throw new NullPointerException( "experiment must not be null." );
+        }
         if ( !experiments.contains( experiment ) ) {
+            if ( experiment.getPublication() != this ) {
+                throw new IllegalStateException( "You cannot overwrite an Experiment's publication (experiment:"+ experiment.getAc() +"). " +
+                                                 "You must first unlink the underlying experiments from their publication" );
+            } else {
+                experiment.setPublication( this );
+            }
             experiments.add( experiment );
         }
     }
 
     public void removeExperiment( Experiment experiment ) {
-        experiments.remove( experiment );
+        if ( experiment == null ) {
+            throw new NullPointerException( "experiment must not be null." );
+        }
+        if ( !experiments.contains( experiment ) ) {
+            experiments.remove( experiment );
+            if ( experiment.getPublication() != null && experiment.getPublication() != this ) {
+                throw new IllegalStateException( "The experiment ("+ experiment.getAc() +
+                                                 ") you are trying to remove is linked to an other publication ("+
+                                                 experiment.getPublication().getAc() +")." );
+            } else {
+                experiment.setPublication( null );
+            }
+        }
     }
 
     @OneToMany( mappedBy = "publication" )
+    /**
+     * Returns an unmodifiable collection of experiment.
+     */
     public Collection<Experiment> getExperiments() {
-        return experiments;
+        return Collections.unmodifiableCollection( experiments );
     }
 
-    public void setExperiments( Collection<Experiment> experiments ) {
-        if ( experiments == null ) {
-            throw new IllegalArgumentException( "Experiments cannot be null." );
-        }
+    /**
+     * Only meant to be used by hibernate. Users of the API should be using addExperiment.
+     *
+     * @param experiments
+     */
+    protected void setExperiments( Collection<Experiment> experiments ) {
         this.experiments = experiments;
     }
 
+    ///////////////////////////////
+    // Override AnnotatedObject
 
     @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
@@ -117,7 +123,20 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref, Publicatio
     public String toString() {
         final StringBuffer sb = new StringBuffer();
         sb.append( "Publication" );
-        sb.append( "{ac='" + ac + "', pmid='" ).append( pmid ).append( '\'' );
+        sb.append( "{ac='" ).append( ac ); // + "', pmid='" ).append( pmid ).append( '\'' );
+
+        if ( !xrefs.isEmpty() ) {
+            sb.append( ", xrefs={" );
+            for ( Iterator<PublicationXref> iterator = xrefs.iterator(); iterator.hasNext(); ) {
+                Xref xref = iterator.next();
+                sb.append( "xref('" + xref.getCvDatabase().getShortLabel() + "', '" + xref.getPrimaryId() + "', '" +
+                           ( xref.getCvXrefQualifier() == null ? "-" : xref.getCvXrefQualifier().getShortLabel() ) + "')" );
+                if ( iterator.hasNext() ) {
+                    sb.append( ", " );
+                }
+            }
+            sb.append( "}" );
+        }
 
         if ( !annotations.isEmpty() ) {
             sb.append( ", annotations={" );
@@ -147,19 +166,15 @@ public class Publication extends AnnotatedObjectImpl<PublicationXref, Publicatio
             return false;
         }
 
-        final Publication that = ( Publication ) o;
-
-        if ( !pmid.equals( that.pmid ) ) {
-            return false;
-        }
+        // shouldn't we be relying on the Xrefs solely ??
+        // annotated object's equals relies on shortlabel, fullname and xrefs !!
+        // one publication Xref in common should be enough ! either pmid, doi as primary-reference
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 29 * result + pmid.hashCode();
-        return result;
+        return 29 * super.hashCode();
     }
 }
