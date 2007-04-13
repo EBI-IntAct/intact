@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
@@ -141,10 +140,20 @@ public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDa
     }
 
     public int deleteByAc( String ac ) {
-        Query deleteQuery = getSession().createQuery( "delete " + getEntityClass() + " item where item.ac = :ac" );
-        deleteQuery.setParameter( "ac", ac );
 
-        return deleteQuery.executeUpdate();
+        T o = getByAc( ac );
+        if ( o == null ) {
+            return 0;
+        }
+        delete( o );
+        return 1;
+
+        // this doesn't work for annoated object or dependencies.
+        // to get thit to work for annotatedObject, we need to overload the method in AnnotatedObjectDaoImpl and
+        // delete manually xrefs and aliases before to call super.deleteByAc().
+//        Query deleteQuery = getSession().createQuery( "delete " + getEntityClass().getName() + " item where item.ac = :ac" );
+//        deleteQuery.setParameter( "ac", ac );
+//        return deleteQuery.executeUpdate();
     }
 
     public void deleteAll( Collection<T> objsToDelete ) {
