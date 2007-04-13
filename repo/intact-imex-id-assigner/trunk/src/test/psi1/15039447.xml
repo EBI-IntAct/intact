@@ -52,11 +52,12 @@
            </interactionDetection>
            <participantDetection>
              <names>
-               <shortLabel>full dna sequence</shortLabel>
-               <fullName>full identification by sequencing</fullName>
+               <shortLabel>predetermined</shortLabel>
+               <fullName>predetermined participant</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0056"/>
+               <primaryRef db="psi-mi" id="MI:0396"/>
+               <secondaryRef db="pubmed" id="7940758"/>
                <secondaryRef db="pubmed" id="14755292"/>
              </xref>
            </participantDetection>
