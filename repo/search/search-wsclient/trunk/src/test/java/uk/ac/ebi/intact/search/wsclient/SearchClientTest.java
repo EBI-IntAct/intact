@@ -9,7 +9,7 @@ import java.util.List;
 public class SearchClientTest extends TestCase
 {
 
-    private static final String LOCALHOST_URL = "http://localhost:8081/search-ws/search?wsdl";
+    private static final String LOCALHOST_URL = "http://localhost:8080/search-ws-1.5.1-SNAPSHOT/search";
 
     private SearchServiceClient client;
 
@@ -65,6 +65,6 @@ public class SearchClientTest extends TestCase
 
     public void testCountExperiments() throws Exception
     {
-        System.out.println(client.getSearchPort().countExperimentsUsingIntactQuery("*"));
+        System.out.println(client.getSearchPort().countExperimentsUsingIntactQuery("brca2"));
     }
 }

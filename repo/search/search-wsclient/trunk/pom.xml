@@ -21,7 +21,7 @@
     <groupId>uk.ac.ebi.intact.app.search</groupId>
     <artifactId>search-wsclient</artifactId>
     <packaging>jar</packaging>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.5.0-SNAPSHOT</version>
 
     <name>Search WS Client</name>
     <description>Client for the Search Web Services</description>
@@ -44,7 +44,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
-                <version>1.0-beta-1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <goals>
