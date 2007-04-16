@@ -976,7 +976,9 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         // Clear any existing menus first.
         myMenus.clear();
-        myMenus.putAll(super.getMenus());
+        myMenus.putAll(super.getMenus(Interaction.class));
+
+//        myMenus.putAll(super.getMenus());
 //        myMenus.putAll(super.getMenus(Interaction.class.getName()));
 
         // The organism menu

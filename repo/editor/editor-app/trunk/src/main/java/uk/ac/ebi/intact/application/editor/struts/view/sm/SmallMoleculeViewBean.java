@@ -140,9 +140,10 @@ public class SmallMoleculeViewBean extends AbstractEditViewBean<SmallMolecule>  
     public void loadMenus() throws IntactException {
         myMenus.clear();
 
+        myMenus.putAll(super.getMenus(SmallMolecule.class));
 
         //LOGGER.info("help tag : " + this.getHelpTag());
-       myMenus = super.getMenus();
+//       myMenus = super.getMenus();
 //        myMenus = super.getMenus(CvObject.class.getName());//EditorMenuFactory.TOPIC);
     }
 

@@ -249,6 +249,45 @@ public class EditorMenuFactory {
         return menu;
     }
 
+
+    /**
+     * Returns a menu for given name.
+     * @param key the name of the menu; the valid values are: {@link #TOPIC},
+     * {@link #DATABASE}, {@link #QUALIFIER}, {@link #ORGANISM},
+     * {@link #INTERACTION}, {@link #IDENTIFICATION}, {@link #INTERACTION_TYPE},
+     * {@link #EXPERIMENT} and {@link #ROLE}.
+     * @param editedClass, the class of the Object beeing edited, to know how to filter the menu (Experiment.class,
+     * Protein.class, NucleicAcid.class, Feature class, Interaction class, Experiment class, CvObject class).
+     * @param mode 0 for and edit menu and 1 for an add menu; the difference is
+     * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
+     * @return a list of menu items for given <code>name</code>.
+     * @throws IntactException for errors in contructing the menu or unable to
+     * create an Intact helper to access persistent system.
+     */
+    /**
+     *
+     * @param key
+     * @param mode
+     * @param editedClass
+     * @return
+     * @throws IntactException
+     */
+     public List<String> getTopicMenu(String key, int mode, Class editedClass) throws IntactException {
+        // The class associated with the key.
+        Class clazz = ourNameToType.get(key);
+//        List<String> menu = getMenuList(clazz, menuClazz);
+        List<String> menu = getTopicMenuList(clazz, editedClass);
+        if (menu.isEmpty()) {
+            // Special list when we don't have any menu items.
+            menu.add(SELECT_LIST_ITEM);
+            return menu;
+        }
+        if (mode == 1) {
+            menu = convertToAddMenu(menu);
+        }
+        return menu;
+    }
+
     /**
      * Returns a list of menu itsm for the NucleicAcid editor.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
@@ -300,6 +339,39 @@ public class EditorMenuFactory {
             menu.add(annobj.getShortLabel());
         }
         return menu;
+    }
+
+    /**
+     * Return a List of all shortLabels of the class, e.g. for menus.
+     *
+     * @return a List of short labels as Strings.
+     */
+    private List<String> getTopicMenuList(Class targetClass, Class menuClass) throws IntactException {
+        // The menu to return.
+        List<String> menu = new ArrayList<String>();
+
+        // The query factory to get a query.
+        AnnotatedObjectDao annotatedObjectDao = DaoProvider.getDaoFactory(targetClass);
+        Collection<AnnotatedObject> annotatedObjects = annotatedObjectDao.getAll(true, true);
+        for(AnnotatedObject annobj : annotatedObjects){
+            CvTopic topic = (CvTopic) annobj;
+            Annotation annotation = getUsedInClassAnnotation(topic);
+            if(annotation != null && annotation.getAnnotationText() != null && annotation.getAnnotationText().contains(menuClass.getName())){
+                menu.add(annobj.getShortLabel());
+            }
+        }
+        return menu;
+    }
+
+    public Annotation getUsedInClassAnnotation(CvTopic cvTopic){
+        Collection<Annotation> annotations = cvTopic.getAnnotations();
+        for(Annotation annotation : annotations){
+            CvTopic topic = annotation.getCvTopic();
+            if(topic != null && CvTopic.USED_IN_CLASS.equals(topic.getShortLabel())){
+                return annotation;
+            }
+        }
+        return null;
     }
 
     /**

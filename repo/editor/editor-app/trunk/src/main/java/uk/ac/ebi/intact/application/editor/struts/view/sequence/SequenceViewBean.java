@@ -139,11 +139,11 @@ public abstract class SequenceViewBean extends AbstractEditViewBean<Polymer> {
      * annotation/xref and organism (add or edit).
      */
     @Override
-    protected Map<String,List<String>> getMenus() throws IntactException {
+    protected Map<String,List<String>> getMenus(Class editedObject) throws IntactException {
         // The map containing the menus.
         Map<String,List<String>> map = new HashMap<String,List<String>>();
 
-        map.putAll(super.getMenus());
+        map.putAll(super.getMenus(editedObject));
 //        map.putAll(super.getMenus(Protein.class.getName()));
 
         String name = EditorMenuFactory.ORGANISM;

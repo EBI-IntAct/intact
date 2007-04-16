@@ -984,6 +984,44 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
     /**
      * Returns the map of menus which are common to all the editors. It calls the removeFromMenu method to remove the
      * non-relevent term in the menu (see javadoc for this method).
+     * @param editedClass, the class of the object beeing edited to know how to filter the menu. Must be on of those class :
+     * Experiment, Interaction, Protein, SmallMolecule, NucleicAcid, CvObject or Feature.
+     * @return map of menus. This consists of edit/add menus for Topic, Database
+     * and Qualifiers.
+     * @throws IntactException for errors in accessing the persistent system.
+     */
+    protected Map<String,List<String>> getMenus(Class editedClass) throws IntactException {
+        // The map containing the menus.
+        Map<String,List<String>> map = new HashMap<String,List<String>>();
+
+        // Handler to the menu factory.
+        EditorMenuFactory menuFactory = EditorMenuFactory.getInstance();
+
+        // The topic edit/add menu
+
+        String name = EditorMenuFactory.TOPIC;
+        List<String> menu = menuFactory.getTopicMenu(name, 0, editedClass);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        // The database edit/add menu.
+        name = EditorMenuFactory.DATABASE;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        // The qualifier edit/add menu.
+        name = EditorMenuFactory.QUALIFIER;
+        menu = menuFactory.getMenu(name, 0);
+        map.put(name, menu);
+        map.put(name + "_", menuFactory.convertToAddMenu(menu));
+
+        return map;
+    }
+
+    /**
+     * Returns the map of menus which are common to all the editors. It calls the removeFromMenu method to remove the
+     * non-relevent term in the menu (see javadoc for this method).
      * @return map of menus. This consists of edit/add menus for Topic, Database
      * and Qualifiers.
      * @throws IntactException for errors in accessing the persistent system.
