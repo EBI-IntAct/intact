@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvCellType;
 import uk.ac.ebi.intact.model.CvTissue;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 
@@ -214,8 +215,7 @@ public class BioSourceViewBean extends AbstractEditViewBean<BioSource> {
         // Clear any existing menus first.
         //myMenus.clear();
 
-//        myMenus.putAll(super.getMenus(BioSource.class.getName()));
-        myMenus.putAll(super.getMenus());
+        myMenus.putAll(super.getMenus(BioSource.class));
 
         // The cell type menu
         String name = EditorMenuFactory.CELL;

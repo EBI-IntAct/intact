@@ -448,7 +448,8 @@ public class FeatureViewBean extends AbstractEditViewBean<Feature> {
 
         myMenus.clear();
         
-        myMenus.putAll(super.getMenus());
+//        myMenus.putAll(super.getMenus());
+        myMenus.putAll(super.getMenus(Feature.class));
 
         // The feature type menu
         String name = EditorMenuFactory.FEATURE_TYPE;

@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.application.editor.struts.view.sequence;
 
 import uk.ac.ebi.intact.application.editor.struts.framework.util.EditorMenuFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.model.NucleicAcid;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,9 @@ public class NucleicAcidViewBean extends SequenceViewBean {
     @Override
     public void loadMenus() throws IntactException {
         myMenus.clear();
-        myMenus.putAll(super.getMenus());
+        myMenus.putAll(super.getMenus(NucleicAcid.class));
+
+//        myMenus.putAll(super.getMenus());
 
         int mode = (getInteractorType() == null) ? 1 : 0;
         myMenus.put("Polymer", EditorMenuFactory.getInstance().getNucleicAcidMenu(mode));

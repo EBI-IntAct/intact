@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.BioSource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -100,7 +101,9 @@ public class CvViewBean extends AbstractEditViewBean<CvObject> {
 
 
         //LOGGER.info("help tag : " + this.getHelpTag());
-       myMenus = super.getMenus();
+        myMenus.putAll(super.getMenus(CvObject.class));
+
+//        myMenus = super.getMenus();
 //        myMenus = super.getMenus(CvObject.class.getName());//EditorMenuFactory.TOPIC);
     }
 }
