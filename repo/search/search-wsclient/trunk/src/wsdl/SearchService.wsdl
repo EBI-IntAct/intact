@@ -6,7 +6,7 @@
     <types>
         <xsd:schema>
             <xsd:import namespace="http://ebi.ac.uk/intact/search/wsclient/generated"
-                        schemaLocation="http://localhost:8080/search-ws-1.5.1-SNAPSHOT/search?xsd=1"></xsd:import>
+                        schemaLocation="http://www.ebi.ac.uk/intact/search-ws/search?xsd=1"></xsd:import>
         </xsd:schema>
     </types>
     <message name="getInteractionInfoUsingUniprotIds">
@@ -358,7 +358,7 @@
     </binding>
     <service name="SearchService">
         <port name="SearchPort" binding="tns:SearchPortBinding">
-            <soap:address location="http://localhost:8080/search-ws-1.5.1-SNAPSHOT/search"></soap:address>
+            <soap:address location="http://www.ebi.ac.uk/intact/search-ws/search"></soap:address>
         </port>
     </service>
 </definitions>
