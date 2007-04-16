@@ -52,32 +52,39 @@ BEGIN
       WHERE ac = v_alias_rec.PARENT_AC;
 
       IF(v_count <> 0) THEN
-
-        -- copy Alias into the right table
-        INSERT INTO ia_interactor_alias (
-            AC,
-            DEPRECATED,
-            CREATED,
-            UPDATED,
-            USERSTAMP,
-            ALIASTYPE_AC,
-            PARENT_AC,
-            OWNER_AC,
-            NAME,
-            CREATED_USER
-        )
-        VALUES (
-            v_alias_rec.AC,
-            v_alias_rec.DEPRECATED,
-            v_alias_rec.CREATED,
-            v_alias_rec.UPDATED,
-            v_alias_rec.USERSTAMP,
-            v_alias_rec.ALIASTYPE_AC,
-            v_alias_rec.PARENT_AC,
-            v_alias_rec.OWNER_AC,
-            v_alias_rec.NAME,
-            v_alias_rec.CREATED_USER
-        );
+      
+        SELECT COUNT(1)
+        INTO v_count
+        FROM ia_interactor_alias
+        WHERE ac = v_alias_rec.AC;
+  
+        IF(v_count = 0) THEN
+          -- copy Alias into the right table
+          INSERT INTO ia_interactor_alias (
+              AC,
+              DEPRECATED,
+              CREATED,
+              UPDATED,
+              USERSTAMP,
+              ALIASTYPE_AC,
+              PARENT_AC,
+              OWNER_AC,
+              NAME,
+              CREATED_USER
+          )
+          VALUES (
+              v_alias_rec.AC,
+              v_alias_rec.DEPRECATED,
+              v_alias_rec.CREATED,
+              v_alias_rec.UPDATED,
+              v_alias_rec.USERSTAMP,
+              v_alias_rec.ALIASTYPE_AC,
+              v_alias_rec.PARENT_AC,
+              v_alias_rec.OWNER_AC,
+              v_alias_rec.NAME,
+              v_alias_rec.CREATED_USER
+          );
+        END IF;
 
       ELSE
 
@@ -90,46 +97,15 @@ BEGIN
         WHERE ac = v_alias_rec.PARENT_AC;
 
         IF(v_count <> 0) THEN
-
-            -- copy Alias into the right table
-            INSERT INTO ia_experiment_alias (
-                AC,
-                DEPRECATED,
-                CREATED,
-                UPDATED,
-                USERSTAMP,
-                ALIASTYPE_AC,
-                PARENT_AC,
-                OWNER_AC,
-                NAME,
-                CREATED_USER
-            )
-            VALUES (
-                v_alias_rec.AC,
-                v_alias_rec.DEPRECATED,
-                v_alias_rec.CREATED,
-                v_alias_rec.UPDATED,
-                v_alias_rec.USERSTAMP,
-                v_alias_rec.ALIASTYPE_AC,
-                v_alias_rec.PARENT_AC,
-                v_alias_rec.OWNER_AC,
-                v_alias_rec.NAME,
-                v_alias_rec.CREATED_USER
-            );
-        ELSE
-
-          --
-          -- Look for controlled vocabulary
-          --
-          SELECT COUNT(1)
-          INTO v_count
-          FROM ia_controlledvocab
-          WHERE ac = v_alias_rec.PARENT_AC;
-
-          IF(v_count <> 0) THEN
-
-              -- copy Alias into the right table
-              INSERT INTO ia_controlledvocab_alias (
+        
+            SELECT COUNT(1)
+            INTO v_count
+            FROM ia_experiment_alias
+            WHERE ac = v_alias_rec.AC;
+      
+            IF(v_count = 0) THEN        
+                -- copy Alias into the right table
+                INSERT INTO ia_experiment_alias (
                     AC,
                     DEPRECATED,
                     CREATED,
@@ -153,6 +129,52 @@ BEGIN
                     v_alias_rec.NAME,
                     v_alias_rec.CREATED_USER
                 );
+            END IF;
+
+        ELSE
+
+          --
+          -- Look for controlled vocabulary
+          --
+          SELECT COUNT(1)
+          INTO v_count
+          FROM ia_controlledvocab
+          WHERE ac = v_alias_rec.PARENT_AC;
+
+          IF(v_count <> 0) THEN
+
+              SELECT COUNT(1)
+              INTO v_count
+              FROM ia_controlledvocab_alias
+              WHERE ac = v_alias_rec.AC;
+        
+              IF(v_count = 0) THEN 
+                -- copy Alias into the right table
+                INSERT INTO ia_controlledvocab_alias (
+                      AC,
+                      DEPRECATED,
+                      CREATED,
+                      UPDATED,
+                      USERSTAMP,
+                      ALIASTYPE_AC,
+                      PARENT_AC,
+                      OWNER_AC,
+                      NAME,
+                      CREATED_USER
+                  )
+                  VALUES (
+                      v_alias_rec.AC,
+                      v_alias_rec.DEPRECATED,
+                      v_alias_rec.CREATED,
+                      v_alias_rec.UPDATED,
+                      v_alias_rec.USERSTAMP,
+                      v_alias_rec.ALIASTYPE_AC,
+                      v_alias_rec.PARENT_AC,
+                      v_alias_rec.OWNER_AC,
+                      v_alias_rec.NAME,
+                      v_alias_rec.CREATED_USER
+                  );
+              END IF;
 
           ELSE
 
@@ -166,46 +188,14 @@ BEGIN
 
             IF(v_count <> 0) THEN
 
-                -- copy Alias into the right table
-                INSERT INTO ia_biosource_alias (
-                    AC,
-                    DEPRECATED,
-                    CREATED,
-                    UPDATED,
-                    USERSTAMP,
-                    ALIASTYPE_AC,
-                    PARENT_AC,
-                    OWNER_AC,
-                    NAME,
-                    CREATED_USER
-                )
-                VALUES (
-                    v_alias_rec.AC,
-                    v_alias_rec.DEPRECATED,
-                    v_alias_rec.CREATED,
-                    v_alias_rec.UPDATED,
-                    v_alias_rec.USERSTAMP,
-                    v_alias_rec.ALIASTYPE_AC,
-                    v_alias_rec.PARENT_AC,
-                    v_alias_rec.OWNER_AC,
-                    v_alias_rec.NAME,
-                    v_alias_rec.CREATED_USER
-                );
-
-            ELSE
-
-              --
-              -- Look for feature
-              --
-              SELECT COUNT(1)
-              INTO v_count
-              FROM ia_feature
-              WHERE ac = v_alias_rec.PARENT_AC;
-
-              IF(v_count <> 0) THEN
-
-                  -- copy Alias into the right table
-                  INSERT INTO ia_feature_alias (
+                SELECT COUNT(1)
+                INTO v_count
+                FROM ia_biosource_alias
+                WHERE ac = v_alias_rec.AC;
+            
+                IF(v_count = 0) THEN 
+                    -- copy Alias into the right table
+                    INSERT INTO ia_biosource_alias (
                         AC,
                         DEPRECATED,
                         CREATED,
@@ -229,6 +219,52 @@ BEGIN
                         v_alias_rec.NAME,
                         v_alias_rec.CREATED_USER
                     );
+                END IF;
+
+            ELSE
+
+              --
+              -- Look for feature
+              --
+              SELECT COUNT(1)
+              INTO v_count
+              FROM ia_feature
+              WHERE ac = v_alias_rec.PARENT_AC;
+    
+              IF(v_count <> 0) THEN
+    
+                  SELECT COUNT(1)
+                  INTO v_count
+                  FROM ia_feature_alias
+                  WHERE ac = v_alias_rec.AC;
+              
+                  IF(v_count = 0) THEN 
+                    -- copy Alias into the right table
+                    INSERT INTO ia_feature_alias (
+                          AC,
+                          DEPRECATED,
+                          CREATED,
+                          UPDATED,
+                          USERSTAMP,
+                          ALIASTYPE_AC,
+                          PARENT_AC,
+                          OWNER_AC,
+                          NAME,
+                          CREATED_USER
+                      )
+                      VALUES (
+                          v_alias_rec.AC,
+                          v_alias_rec.DEPRECATED,
+                          v_alias_rec.CREATED,
+                          v_alias_rec.UPDATED,
+                          v_alias_rec.USERSTAMP,
+                          v_alias_rec.ALIASTYPE_AC,
+                          v_alias_rec.PARENT_AC,
+                          v_alias_rec.OWNER_AC,
+                          v_alias_rec.NAME,
+                          v_alias_rec.CREATED_USER
+                      );
+                  END IF;
               ELSE
 
                 --
@@ -241,40 +277,45 @@ BEGIN
 
                 IF(v_count <> 0) THEN
 
-                    -- copy Alias into the right table
-                    INSERT INTO ia_publication_alias (
-                        AC,
-                        DEPRECATED,
-                        CREATED,
-                        UPDATED,
-                        USERSTAMP,
-                        ALIASTYPE_AC,
-                        PARENT_AC,
-                        OWNER_AC,
-                        NAME,
-                        CREATED_USER
-                    )
-                    VALUES (
-                        v_alias_rec.AC,
-                        v_alias_rec.DEPRECATED,
-                        v_alias_rec.CREATED,
-                        v_alias_rec.UPDATED,
-                        v_alias_rec.USERSTAMP,
-                        v_alias_rec.ALIASTYPE_AC,
-                        v_alias_rec.PARENT_AC,
-                        v_alias_rec.OWNER_AC,
-                        v_alias_rec.NAME,
-                        v_alias_rec.CREATED_USER
-                    );
+                  SELECT COUNT(1)
+                  INTO v_count
+                  FROM ia_publication_alias
+                  WHERE ac = v_alias_rec.AC;
+              
+                  IF(v_count = 0) THEN 
+                      -- copy Alias into the right table
+                      INSERT INTO ia_publication_alias (
+                          AC,
+                          DEPRECATED,
+                          CREATED,
+                          UPDATED,
+                          USERSTAMP,
+                          ALIASTYPE_AC,
+                          PARENT_AC,
+                          OWNER_AC,
+                          NAME,
+                          CREATED_USER
+                      )
+                      VALUES (
+                          v_alias_rec.AC,
+                          v_alias_rec.DEPRECATED,
+                          v_alias_rec.CREATED,
+                          v_alias_rec.UPDATED,
+                          v_alias_rec.USERSTAMP,
+                          v_alias_rec.ALIASTYPE_AC,
+                          v_alias_rec.PARENT_AC,
+                          v_alias_rec.OWNER_AC,
+                          v_alias_rec.NAME,
+                          v_alias_rec.CREATED_USER
+                      );
+                  END IF;
 
                 ELSE
 
                   --
                   -- Nothing found, delete this orphan alias
                   --
-
-                  DBMS_OUTPUT.PUT_LINE('Deleting orphan Alias...');
-                  DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_alias WHERE ac = ' || v_alias_rec.ac || ''';');
+                  DBMS_OUTPUT.PUT_LINE('DELETE FROM ia_alias WHERE ac = ' || v_alias_rec.ac || '''; -- orphan alias');
 
                 END IF;  -- publications
               END IF;  -- feature
@@ -291,5 +332,6 @@ END;
 /
 
 show error
+
 
 
