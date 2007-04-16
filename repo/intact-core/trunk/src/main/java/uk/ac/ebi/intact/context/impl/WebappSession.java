@@ -82,14 +82,14 @@ public class WebappSession extends IntactSession {
     public Object getRequestAttribute( String name ) {
         if (log.isDebugEnabled())
         {
-            log.debug("REQ - Get '"+name+"' (sessionid="+session.getId()+")");
+            log.debug("REQ - Get '"+name+"'");
         }
         return request.getAttribute( name );
     }
 
     public void setRequestAttribute( String name, Object value ) {
         if ( log.isDebugEnabled() ) {
-            log.debug( "REQ - Set " + name + "=" + value +" (sessionid="+session.getId()+")");
+            log.debug( "REQ - Set " + name + "=" + value);
         }
         request.setAttribute( name, value );
     }
