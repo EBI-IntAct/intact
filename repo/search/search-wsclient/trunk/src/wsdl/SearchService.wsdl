@@ -1,4 +1,4 @@
-<?xml version="1.0" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
              xmlns:tns="http://ebi.ac.uk/intact/search/wsclient/generated" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
              xmlns="http://schemas.xmlsoap.org/wsdl/"
@@ -6,15 +6,9 @@
     <types>
         <xsd:schema>
             <xsd:import namespace="http://ebi.ac.uk/intact/search/wsclient/generated"
-                        schemaLocation="http://www.ebi.ac.uk:80/intact/search-ws/search?xsd=1"></xsd:import>
+                        schemaLocation="http://localhost:8080/search-ws-1.5.1-SNAPSHOT/search?xsd=1"></xsd:import>
         </xsd:schema>
     </types>
-    <message name="getVersion">
-        <part name="parameters" element="tns:getVersion"></part>
-    </message>
-    <message name="getVersionResponse">
-        <part name="parameters" element="tns:getVersionResponse"></part>
-    </message>
     <message name="getInteractionInfoUsingUniprotIds">
         <part name="parameters" element="tns:getInteractionInfoUsingUniprotIds"></part>
     </message>
@@ -117,11 +111,13 @@
     <message name="searchUsingQueryResponse">
         <part name="parameters" element="tns:searchUsingQueryResponse"></part>
     </message>
+    <message name="getVersion">
+        <part name="parameters" element="tns:getVersion"></part>
+    </message>
+    <message name="getVersionResponse">
+        <part name="parameters" element="tns:getVersionResponse"></part>
+    </message>
     <portType name="Search">
-        <operation name="getVersion">
-            <input message="tns:getVersion"></input>
-            <output message="tns:getVersionResponse"></output>
-        </operation>
         <operation name="getInteractionInfoUsingUniprotIds">
             <input message="tns:getInteractionInfoUsingUniprotIds"></input>
             <output message="tns:getInteractionInfoUsingUniprotIdsResponse"></output>
@@ -190,18 +186,13 @@
             <input message="tns:searchUsingQuery"></input>
             <output message="tns:searchUsingQueryResponse"></output>
         </operation>
+        <operation name="getVersion">
+            <input message="tns:getVersion"></input>
+            <output message="tns:getVersionResponse"></output>
+        </operation>
     </portType>
     <binding name="SearchPortBinding" type="tns:Search">
         <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
-        <operation name="getVersion">
-            <soap:operation soapAction=""></soap:operation>
-            <input>
-                <soap:body use="literal"></soap:body>
-            </input>
-            <output>
-                <soap:body use="literal"></soap:body>
-            </output>
-        </operation>
         <operation name="getInteractionInfoUsingUniprotIds">
             <soap:operation soapAction=""></soap:operation>
             <input>
@@ -355,10 +346,19 @@
                 <soap:body use="literal"></soap:body>
             </output>
         </operation>
+        <operation name="getVersion">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+        </operation>
     </binding>
     <service name="SearchService">
         <port name="SearchPort" binding="tns:SearchPortBinding">
-            <soap:address location="http://www.ebi.ac.uk:80/intact/search-ws/search"></soap:address>
+            <soap:address location="http://localhost:8080/search-ws-1.5.1-SNAPSHOT/search"></soap:address>
         </port>
     </service>
 </definitions>
