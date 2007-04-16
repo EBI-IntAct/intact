@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entrySet level="1" version="1" xmlns="net:sf:psidev:mi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+    <entry>
+        <source releaseDate="2006-11-23">
+            <names>
+                <shortLabel>European Bioinformatics Institute</shortLabel>
+            </names>
+            <bibref>
+                <xref>
+
+                    <primaryRef db="pubmed" id="14681455"/>
+                </xref>
+            </bibref>
+            <xref>
+                <primaryRef db="psi-mi" id="MI:0469"/>
+            </xref>
+            <attributeList>
+                <attribute name="postalAddress">Wellcome Trust Genome
+                    Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+
+                <attribute name="url">http://www.ebi.ac.uk</attribute>
+            </attributeList>
+        </source>
+        <experimentList>
+            <experimentDescription id="EBI-853117">
+                <names>
+                    <shortLabel>foster-2006-1</shortLabel>
+                    <fullName>Insulin-dependent interactions of proteins
+                        with GLUT4 revealed through stable isotope
+                        labeling by amino acids in cell culture (SILAC).</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="16396496"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-853117" secondary="foster-2006-1"/>
+                    <secondaryRef db="newt" id="10116" secondary="rat"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="10116">
+                    <names>
+                        <shortLabel>rat-l6</shortLabel>
+                        <fullName>Rattus norvegicus</fullName>
+                    </names>
+                    <cellType>
+                        <names>
+
+                            <shortLabel>l6</shortLabel>
+                            <fullName>Rat L6 myotube cell line</fullName>
+                        </names>
+                        <xref>
+                            <primaryRef db="cabri" id="ECACC 92102117"/>
+                            <secondaryRef db="intact" id="IA:0170"/>
+                        </xref>
+                    </cellType>
+
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>mass spectrometry</shortLabel>
+                        <fullName>mass spectrometry</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0427"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="author-list">Foster LJ., Rudich A.,
+                        Talior I., Patel N., Huang X., Furtado LM.,
+                        Bilan PJ., Mann M., Klip A.</attribute>
+                    <attribute name="contact-email">amira@sickkids.ca</attribute>
+
+                    <attribute name="publication-year">2006</attribute>
+                    <attribute name="journal">J. Proteome Res. (1535-3893)</attribute>
+                    <attribute name="exp-modification">A stable isotope
+                        labelling by amino acids in cell culture (SILAC)
+                        methodology was used in this study. Myc-tagged
+                        GLUT4 (GLUT4 myc) stably expressed in L6
+                        myotubes (skeletal muscle) was
+                        immunoprecipitated via the myc epitope from
+                        total membranes isolated from basal and
+                        insulin-stimulated cells grown in medium
+                        containing normal isotopic abundance leucine or
+                        deuterated leucine, respectively.</attribute>
+                    <attribute name="figure legend">1 table 1 &amp;
+                        Supplementary table 1</attribute>
+                    <attribute name="exp-modification">Isolated immune
+                        complexes are eluted, resolved by
+                        one-dimensional SDS-PAGE and digested to
+                        peptides for analysis  by LC/MS.</attribute>
+
+                </attributeList>
+            </experimentDescription>
+        </experimentList>
+        <interactorList/>
+        <interactionList>
+            <interaction>
+                <names>
+                    <shortLabel>glut4-suclg2</shortLabel>
+
+                    <fullName>GLUT4 interacting proteins</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-853117"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-921030" secondary="glut4-suclg2"/>
+                </xref>
+                <attributeList>
+                    <attribute name="agonist">Insulin was shown to
+                        increase or decrease GLUT4 protein interactions
+                        in specific cases.</attribute>
+                    <attribute name="comment">Insulin decreased GLUT4
+                        interactions with the following proteins: Q9ER30
+                        (Sarcosin), P09527 (Rab-7), O88960
+                        (N-ethylmaleimide sensitive), P09456 (PKA I
+                        regulatory subunit), P27881 (Hexokinase type
+                        II), P07872 (Acyl-coenzyme A oxidase), Q6DGF1
+                        (Isocitrate dehydrogenase), Q9EQX9
+                        (Ubiquitin-conjugating), Q63446 (Polyubiquitin),
+                        P24268 (Cathepsin D), Q91XW0 (Heat shock protein
+                        86), Q5FVH0 (unknown), P58405 (Striatin 3),
+                        Q62667 (Major vault protein), Q66H50 (unknown),
+                        Q09167 (splicing factor), Q9JHU5 (Arfaptin 1).</attribute>
+                    <attribute name="comment">Insulin increased GLUT4
+                        interaction with the following proteins:Q9Z1P2
+                        (R-actinin-1), P45592 (Cofilin), Q9QXQ0
+                        (R-actinin-4), P26473 (ADP-ribosylation factor),
+                        P26437 (ADP-ribosylation factor),   Q7TNP1
+                        (Basigin 2), Q6P6R2 (Dihydrolipoamide
+                        dehydrogenase),   P04797 (GAPDH), Q63081
+                        (Protein disulfide isomerase), P29457 (47 kDa
+                        heat shock protein), Q9R1J8 (Leprecan), O88638
+                        (Putative eps protein),   Q64375 (Synaptonemal complex).</attribute>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+        </interactionList>
+    </entry>
+</entrySet>
+
