@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entrySet level="1" version="1" xmlns="net:sf:psidev:mi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+    <entry>
+        <source releaseDate="2006-11-23">
+            <names>
+                <shortLabel>European Bioinformatics Institute</shortLabel>
+            </names>
+            <bibref>
+                <xref>
+
+                    <primaryRef db="pubmed" id="14681455"/>
+                </xref>
+            </bibref>
+            <xref>
+                <primaryRef db="psi-mi" id="MI:0469"/>
+            </xref>
+            <attributeList>
+                <attribute name="postalAddress">Wellcome Trust Genome
+                    Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+
+                <attribute name="url">http://www.ebi.ac.uk</attribute>
+            </attributeList>
+        </source>
+        <experimentList>
+            <experimentDescription id="EBI-626218">
+                <names>
+                    <shortLabel>fankhauser-1999-2</shortLabel>
+                    <fullName>PKS1, a substrate phosphorylated by
+                        phytochrome that modulates light signaling in Arabidopsis.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="10348744"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626218" secondary="fankhauser-1999-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">chory@salk.edu</attribute>
+
+                    <attribute name="figure legend">Figure 1 (a).</attribute>
+                    <attribute name="exp-modification">Direced yeast two
+                        hybrid assay.</attribute>
+                    <attribute name="author-list">Fankhauser C., Yeh
+                        KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+                    <attribute name="publication-year">1999</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+
+            </experimentDescription>
+            <experimentDescription id="EBI-626233">
+                <names>
+                    <shortLabel>fankhauser-1999-3</shortLabel>
+                    <fullName>PKS1, a substrate phosphorylated by
+                        phytochrome that modulates light signaling in Arabidopsis.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+
+                        <primaryRef db="pubmed" id="10348744"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626233" secondary="fankhauser-1999-3"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>pull down</shortLabel>
+                        <fullName>pull down</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0096"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+
+                <attributeList>
+                    <attribute name="contact-email">chory@salk.edu</attribute>
+                    <attribute name="figure legend">Figure 1 (b).</attribute>
+                    <attribute name="author-list">Fankhauser C., Yeh
+                        KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+                    <attribute name="publication-year">1999</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-626155">
+                <names>
+                    <shortLabel>fankhauser-1999-1</shortLabel>
+                    <fullName>PKS1, a substrate phosphorylated by
+                        phytochrome that modulates light signaling in Arabidopsis.</fullName>
+                </names>
+                <bibref>
+
+                    <xref>
+                        <primaryRef db="pubmed" id="10348744"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626155" secondary="fankhauser-1999-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>nucleotide sequence</shortLabel>
+                        <fullName>nucleotide sequence identification</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0078"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">chory@salk.edu</attribute>
+                    <attribute name="author-list">Fankhauser C., Yeh
+                        KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+                    <attribute name="publication-year">1999</attribute>
+
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+            </experimentDescription>
+        </experimentList>
+        <interactorList/>
+        <interactionList>
+            <interaction>
+                <names>
+
+                    <shortLabel>phyb-pks1</shortLabel>
+                    <fullName>Yeast two hybrid reveals interaction
+                        between the  PHYB protein and PKS1 protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626218"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626225" secondary="phyb-pks1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+            <interaction>
+                <names>
+                    <shortLabel>phya-pks1-2</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the  PHYA protein and PKS1 protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626233"/>
+                </experimentList>
+
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626243" secondary="phya-pks1-2"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phya-pks1</shortLabel>
+                    <fullName>Yeast two hybrid reveals interaction
+                        between the  PHYA protein and PKS1 protein</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-626155"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626207" secondary="phya-pks1"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-pks1-1</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the  PHYB protein and PKS1 protein</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626233"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-626235" secondary="phyb-pks1-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>phya-pks1-1</shortLabel>
+                    <fullName>Yeast two hybrid reveals interaction
+                        between the  PHYA protein and PKS1 protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626218"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626220" secondary="phya-pks1-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+        </interactionList>
+    </entry>
+</entrySet>
+

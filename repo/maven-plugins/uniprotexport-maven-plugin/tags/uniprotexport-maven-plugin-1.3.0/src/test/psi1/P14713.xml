@@ -1,0 +1,2535 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entrySet level="1" version="1" xmlns="net:sf:psidev:mi"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/xml/src/MIF.xsd">
+    <entry>
+        <source releaseDate="2006-11-23">
+            <names>
+                <shortLabel>European Bioinformatics Institute</shortLabel>
+            </names>
+            <bibref>
+                <xref>
+
+                    <primaryRef db="pubmed" id="14681455"/>
+                </xref>
+            </bibref>
+            <xref>
+                <primaryRef db="psi-mi" id="MI:0469"/>
+            </xref>
+            <attributeList>
+                <attribute name="postalAddress">Wellcome Trust Genome
+                    Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+
+                <attribute name="url">http://www.ebi.ac.uk</attribute>
+            </attributeList>
+        </source>
+        <experimentList>
+            <experimentDescription id="EBI-631620">
+                <names>
+                    <shortLabel>khanna-2004-1</shortLabel>
+                    <fullName>A novel molecular recognition motif
+                        necessary for targeting photoactivated
+                        phytochrome signaling to specific basic
+                        helix-loop-helix transcription factors.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="15486100"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-631620" secondary="khanna-2004-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 1 (a) to (c).
+                        Figure 4 (a) and (b). Figure 5 (a) and (b)</attribute>
+                    <attribute name="author-list">Khanna R., Huq E.,
+                        Kikis EA., Al-Sady B., Lanzatella C., Quail PH.</attribute>
+
+                    <attribute name="publication-year">2004</attribute>
+                    <attribute name="journal">Plant Cell (1040-4651)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-300689">
+                <names>
+                    <shortLabel>jarillo-2001-1</shortLabel>
+
+                    <fullName>An Arabidopsis circadian clock component
+                        interacts with both CRY1 and phyB.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="11260718"/>
+                    </xref>
+                </bibref>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-300689" secondary="jarillo-2001-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+
+                <interactionDetection>
+                    <names>
+                        <shortLabel>coip</shortLabel>
+                        <fullName>coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0019"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="author-list">Jarillo JA., Capel J.,
+                        Tang RH., Yang HQ., Alonso JM., Ecker JR.,
+                        Cashmore AR.</attribute>
+                    <attribute name="publication-year">2001</attribute>
+
+                    <attribute name="journal">Nature (0028-0836)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625877">
+                <names>
+                    <shortLabel>huq-2002-1</shortLabel>
+                    <fullName>PIF4, a phytochrome-interacting bHLH
+                        factor, functions as a negative regulator of
+                        phytochrome B signaling in Arabidopsis.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="12006496"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625877" secondary="huq-2002-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 4 (b) to (d).</attribute>
+                    <attribute name="author-list">Huq E., Quail PH.</attribute>
+
+                    <attribute name="publication-year">2002</attribute>
+                    <attribute name="journal">EMBO J. (0261-4189)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-630828">
+                <names>
+                    <shortLabel>huq-2004-1</shortLabel>
+
+                    <fullName>Phytochrome-interacting factor 1 is a
+                        critical bHLH regulator of chlorophyll biosynthesis.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="15448264"/>
+                    </xref>
+                </bibref>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-630828" secondary="huq-2004-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 4 (a).</attribute>
+
+                    <attribute name="author-list">Huq E., Al-Sady B.,
+                        Hudson M., Kim C., Apel K., Quail PH.</attribute>
+                    <attribute name="publication-year">2004</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-630390">
+                <names>
+
+                    <shortLabel>oh-2004-1</shortLabel>
+                    <fullName>PIL5, a phytochrome-interacting basic
+                        helix-loop-helix protein, is a key negative
+                        regulator of seed germination in Arabidopsis thaliana.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="15486102"/>
+                    </xref>
+                </bibref>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-630390" secondary="oh-2004-1"/>
+                    <secondaryRef db="newt" id="4498" secondary="avesa"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>pull down</shortLabel>
+                        <fullName>pull down</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0096"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">gchoi@kiast.ac.kr</attribute>
+
+                    <attribute name="figure legend">Figure 1 (a) and (b).</attribute>
+                    <attribute name="exp-modification">Phytochrome
+                        proteins were expressed in Pichia pastoris then
+                        purified and mixed with chromophore. The
+                        phytochromes were then treated with R or FR
+                        light to produce Pfr or Pr forms.</attribute>
+                    <attribute name="author-list">Oh E., Kim J., Park
+                        E., Kim JI., Kang C., Choi G.</attribute>
+                    <attribute name="publication-year">2004</attribute>
+                    <attribute name="journal">Plant Cell (1040-4651)</attribute>
+                </attributeList>
+
+            </experimentDescription>
+            <experimentDescription id="EBI-626024">
+                <names>
+                    <shortLabel>fairchild-2000-2</shortLabel>
+                    <fullName>HFR1 encodes an atypical bHLH protein that
+                        acts in phytochrome A signal transduction.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+
+                        <primaryRef db="pubmed" id="10995393"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626024" secondary="fairchild-2000-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 7 (b) and 8
+                        (b) and (c).</attribute>
+                    <attribute name="exp-modification">For experiments
+                        testing the interaction of PIF3 and / or HFR1
+                        with biologically active or inactive forms of
+                        the photoreceptor the phororeceptor proteins
+                        were in vitro translated and then mixed with
+                        chropmophore and treated to Red or Far Red light
+                        to produce Pr or Pfr forms of the photoreceptor.</attribute>
+                    <attribute name="author-list">Fairchild CD.,
+                        Schumaker MA., Quail PH.</attribute>
+                    <attribute name="publication-year">2000</attribute>
+
+                    <attribute name="journal">Genes Dev. (0890-9369)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-624438">
+                <names>
+                    <shortLabel>sharrock-2004-2</shortLabel>
+                    <fullName>Heterodimerization of type II phytochromes
+                        in Arabidopsis.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="15273290"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624438" secondary="sharrock-2004-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="3702">
+                    <names>
+                        <shortLabel>arath</shortLabel>
+                        <fullName>Arabidopsis thaliana</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>molecular sieving</shortLabel>
+                        <fullName>molecular sieving</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0071"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">sharrock@montana.edu</attribute>
+                    <attribute name="figure legend">Figure 5</attribute>
+                    <attribute name="exp-modification">Crude extracts
+                        from transgenic arabidopsis seedlings (phyB null
+                        mutant line) expressing a myC tagged PhyB fusion
+                        construct were used for these studies.</attribute>
+
+                    <attribute name="author-list">Sharrock RA., Clack T.</attribute>
+                    <attribute name="publication-year">2004</attribute>
+                    <attribute name="journal">Proc. Natl. Acad. Sci.
+                        U.S.A. (0027-8424)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625980">
+                <names>
+
+                    <shortLabel>fairchild-2000-1</shortLabel>
+                    <fullName>HFR1 encodes an atypical bHLH protein that
+                        acts in phytochrome A signal transduction.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="10995393"/>
+                    </xref>
+                </bibref>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-625980" secondary="fairchild-2000-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+
+                <attributeList>
+                    <attribute name="exp-modification">Directed yeast
+                        two hybrid</attribute>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 7 (a).</attribute>
+                    <attribute name="author-list">Fairchild CD.,
+                        Schumaker MA., Quail PH.</attribute>
+                    <attribute name="publication-year">2000</attribute>
+
+                    <attribute name="journal">Genes Dev. (0890-9369)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-300745">
+                <names>
+                    <shortLabel>jarillo-2001-2</shortLabel>
+                    <fullName>An Arabidopsis circadian clock component
+                        interacts with both CRY1 and phyB.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="11260718"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-300745" secondary="jarillo-2001-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="exp-modification">Directed yeast
+                        two hybrid</attribute>
+
+                    <attribute name="author-list">Jarillo JA., Capel J.,
+                        Tang RH., Yang HQ., Alonso JM., Ecker JR.,
+                        Cashmore AR.</attribute>
+                    <attribute name="publication-year">2001</attribute>
+                    <attribute name="journal">Nature (0028-0836)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-624357">
+                <names>
+
+                    <shortLabel>sharrock-2004-1</shortLabel>
+                    <fullName>Heterodimerization of type II phytochromes
+                        in Arabidopsis.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="15273290"/>
+                    </xref>
+                </bibref>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-624357" secondary="sharrock-2004-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="3702">
+                    <names>
+                        <shortLabel>arath</shortLabel>
+                        <fullName>Arabidopsis thaliana</fullName>
+
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">sharrock@montana.edu</attribute>
+
+                    <attribute name="figure legend">Figure 2 and 3</attribute>
+                    <attribute name="exp-modification">Crude extracts
+                        from transgenic arabidopsis seedlings (phyB null
+                        mutant line) expressing a myC tagged PhyB fusion
+                        construct were used for these studies.</attribute>
+                    <attribute name="comment">The same protein protein
+                        interactions were observed when the extract
+                        source was dark grown or light grown arabidopsis seedlings.</attribute>
+                    <attribute name="author-list">Sharrock RA., Clack T.</attribute>
+                    <attribute name="publication-year">2004</attribute>
+                    <attribute name="journal">Proc. Natl. Acad. Sci.
+                        U.S.A. (0027-8424)</attribute>
+
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-531576">
+                <names>
+                    <shortLabel>mas-2000-2</shortLabel>
+                    <fullName>Functional interaction of phytochrome B
+                        and cryptochrome 2.</fullName>
+                </names>
+                <bibref>
+
+                    <xref>
+                        <primaryRef db="pubmed" id="11089975"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-531576" secondary="mas-2000-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="4097">
+
+                    <names>
+                        <shortLabel>tobac-leaf</shortLabel>
+                        <fullName>Nicotiana tabacum (tobacco) leaf</fullName>
+                    </names>
+                    <tissue>
+                        <names>
+                            <shortLabel>leaf</shortLabel>
+
+                            <fullName>leaf</fullName>
+                        </names>
+                        <xref>
+                            <primaryRef db="intact" id="IA:0218"/>
+                        </xref>
+                    </tissue>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>coloc fluoresc probe</shortLabel>
+                        <fullName>colocalization by fluorescent probes cloning</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0021"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="exp-modification">Tobacco BY-2
+                        protoplasts were treated with 8 hours darkness
+                        followed by red and blue light treatments to
+                        induce localisation of the photoreceptors to the nucleus</attribute>
+                    <attribute name="author-list">Mas P., Devlin PF.,
+                        Panda S., Kay SA.</attribute>
+                    <attribute name="publication-year">2000</attribute>
+
+                    <attribute name="journal">Nature (0028-0836)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625212">
+                <names>
+                    <shortLabel>sweere-2001-1</shortLabel>
+                    <fullName>Interaction of the response regulator ARR4
+                        with phytochrome B in modulating red light signaling.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="11691995"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625212" secondary="sweere-2001-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+
+                        <shortLabel>anti bait coip</shortLabel>
+                        <fullName>anti bait coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0006"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">harterkl@uni-freiburg.de</attribute>
+                    <attribute name="figure legend">Figure 2 (a).</attribute>
+                    <attribute name="exp-modification">Phytochrome B
+                        protein were expressed in yeast and functional
+                        photoreceptors obtained by self assembly with
+                        the chromophore in crude yeast extracts followed
+                        by red/far red light treatment to produce active
+                        /inactive forms of the photoreceptor.</attribute>
+                    <attribute name="author-list">Sweere U., Eichenberg
+                        K., Lohrmann J., Mira-Rodado V., Baurle I.,
+                        Kudla J., Nagy F., Schafer E., Harter K.</attribute>
+
+                    <attribute name="publication-year">2001</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625824">
+                <names>
+                    <shortLabel>ni-1998-3</shortLabel>
+
+                    <fullName>PIF3, a phytochrome-interacting factor
+                        necessary for normal photoinduced signal
+                        transduction, is a novel basic helix-loop-helix protein.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="9845368"/>
+                    </xref>
+                </bibref>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-625824" secondary="ni-1998-3"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+                </hostOrganism>
+
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti tag coip</shortLabel>
+                        <fullName>anti tag coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0007"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="figure legend">Figure 1 (d).</attribute>
+
+                    <attribute name="author-list">Ni M., Tepperman JM.,
+                        Quail PH.</attribute>
+                    <attribute name="publication-year">1998</attribute>
+                    <attribute name="journal">Cell (0092-8674)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625790">
+                <names>
+
+                    <shortLabel>ni-1998-2</shortLabel>
+                    <fullName>PIF3, a phytochrome-interacting factor
+                        necessary for normal photoinduced signal
+                        transduction, is a novel basic helix-loop-helix protein.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="9845368"/>
+                    </xref>
+                </bibref>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-625790" secondary="ni-1998-2"/>
+                    <secondaryRef db="newt" id="4530" secondary="orysa-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+
+                    <names>
+                        <shortLabel>nucleotide sequence</shortLabel>
+                        <fullName>nucleotide sequence identification</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0078"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="exp-modification">Directed yeast
+                        two hybrid assay. Beta-galactosidase activity
+                        measured (Miller units).</attribute>
+                    <attribute name="figure legend">Figure 1 (b) and
+                        (c).Figure 2 (b) to (d).</attribute>
+                    <attribute name="author-list">Ni M., Tepperman JM.,
+                        Quail PH.</attribute>
+                    <attribute name="publication-year">1998</attribute>
+
+                    <attribute name="journal">Cell (0092-8674)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625253">
+                <names>
+                    <shortLabel>sweere-2001-3</shortLabel>
+                    <fullName>Interaction of the response regulator ARR4
+                        with phytochrome B in modulating red light signaling.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="11691995"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625253" secondary="sweere-2001-3"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">harterkl@uni-freiburg.de</attribute>
+
+                    <attribute name="figure legend">Figure 2 (c).</attribute>
+                    <attribute name="author-list">Sweere U., Eichenberg
+                        K., Lohrmann J., Mira-Rodado V., Baurle I.,
+                        Kudla J., Nagy F., Schafer E., Harter K.</attribute>
+                    <attribute name="publication-year">2001</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-626233">
+
+                <names>
+                    <shortLabel>fankhauser-1999-3</shortLabel>
+                    <fullName>PKS1, a substrate phosphorylated by
+                        phytochrome that modulates light signaling in Arabidopsis.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="10348744"/>
+                    </xref>
+
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626233" secondary="fankhauser-1999-3"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>pull down</shortLabel>
+                        <fullName>pull down</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0096"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">chory@salk.edu</attribute>
+
+                    <attribute name="figure legend">Figure 1 (b).</attribute>
+                    <attribute name="author-list">Fankhauser C., Yeh
+                        KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+                    <attribute name="publication-year">1999</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625232">
+
+                <names>
+                    <shortLabel>sweere-2001-2</shortLabel>
+                    <fullName>Interaction of the response regulator ARR4
+                        with phytochrome B in modulating red light signaling.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="11691995"/>
+                    </xref>
+
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625232" secondary="sweere-2001-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="3702">
+                    <names>
+                        <shortLabel>arath</shortLabel>
+
+                        <fullName>Arabidopsis thaliana</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti bait coip</shortLabel>
+                        <fullName>anti bait coimmunoprecipitation</fullName>
+
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0006"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+
+                        <fullName>western blot</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+
+                    <attribute name="contact-email">harterkl@uni-freiburg.de</attribute>
+                    <attribute name="figure legend">Figure 2 (b).</attribute>
+                    <attribute name="exp-modification">Crude protein
+                        extracts from transgenic arabidopsis plants
+                        overexpressing the ARR4 protein were used in
+                        this study.</attribute>
+                    <attribute name="author-list">Sweere U., Eichenberg
+                        K., Lohrmann J., Mira-Rodado V., Baurle I.,
+                        Kudla J., Nagy F., Schafer E., Harter K.</attribute>
+                    <attribute name="publication-year">2001</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-531600">
+                <names>
+                    <shortLabel>mas-2000-3</shortLabel>
+                    <fullName>Functional interaction of phytochrome B
+                        and cryptochrome 2.</fullName>
+                </names>
+                <bibref>
+
+                    <xref>
+                        <primaryRef db="pubmed" id="11089975"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-531600" secondary="mas-2000-3"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="4097">
+
+                    <names>
+                        <shortLabel>tobac-leaf</shortLabel>
+                        <fullName>Nicotiana tabacum (tobacco) leaf</fullName>
+                    </names>
+                    <tissue>
+                        <names>
+                            <shortLabel>leaf</shortLabel>
+
+                            <fullName>leaf</fullName>
+                        </names>
+                        <xref>
+                            <primaryRef db="intact" id="IA:0218"/>
+                        </xref>
+                    </tissue>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>fret</shortLabel>
+                        <fullName>fluorescent resonance energy transfer</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0055"/>
+                        <secondaryRef db="pubmed" id="11558993"/>
+                    </xref>
+
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="exp-modification">Tobacco BY-2
+                        protoplasts were treated with 8 hours darkness
+                        followed by red and blue light treatments to
+                        induce localisation of the photoreceptors to the nucleus</attribute>
+                    <attribute name="author-list">Mas P., Devlin PF.,
+                        Panda S., Kay SA.</attribute>
+                    <attribute name="publication-year">2000</attribute>
+
+                    <attribute name="journal">Nature (0028-0836)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-625782">
+                <names>
+                    <shortLabel>ni-1998-1</shortLabel>
+                    <fullName>PIF3, a phytochrome-interacting factor
+                        necessary for normal photoinduced signal
+                        transduction, is a novel basic helix-loop-helix protein.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="9845368"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625782" secondary="ni-1998-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>nucleotide sequence</shortLabel>
+                        <fullName>nucleotide sequence identification</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0078"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">quail@nature.berkeley.edu</attribute>
+                    <attribute name="library-used">Tissue and
+                        developmental stage of source of arabidopsis
+                        cDNA library not specified.</attribute>
+
+                    <attribute name="author-list">Ni M., Tepperman JM.,
+                        Quail PH.</attribute>
+                    <attribute name="publication-year">1998</attribute>
+                    <attribute name="journal">Cell (0092-8674)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-307172">
+                <names>
+
+                    <shortLabel>tian-2003-1</shortLabel>
+                    <fullName>Regulation of Arabidopsis SHY2/IAA3
+                        protein turnover.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="14617065"/>
+                    </xref>
+                </bibref>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-307172" secondary="tian-2003-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="-1">
+                    <names>
+                        <shortLabel>in vitro</shortLabel>
+                    </names>
+
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>pull down</shortLabel>
+                        <fullName>pull down</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0096"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="author-list">Tian Q., Nagpal P.,
+                        Reed JW.</attribute>
+                    <attribute name="publication-year">2003</attribute>
+
+                    <attribute name="journal">Plant J. (0960-7412)</attribute>
+                </attributeList>
+            </experimentDescription>
+            <experimentDescription id="EBI-626218">
+                <names>
+                    <shortLabel>fankhauser-1999-2</shortLabel>
+                    <fullName>PKS1, a substrate phosphorylated by
+                        phytochrome that modulates light signaling in Arabidopsis.</fullName>
+
+                </names>
+                <bibref>
+                    <xref>
+                        <primaryRef db="pubmed" id="10348744"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626218" secondary="fankhauser-1999-2"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+
+                </xref>
+                <hostOrganism ncbiTaxId="4932">
+                    <names>
+                        <shortLabel>yeast</shortLabel>
+                        <fullName>Saccharomyces cerevisiae</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+
+                    <names>
+                        <shortLabel>two hybrid</shortLabel>
+                        <fullName>two hybrid</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0018"/>
+                        <secondaryRef db="pubmed" id="12634794"/>
+                        <secondaryRef db="pubmed" id="10967325"/>
+
+                        <secondaryRef db="pubmed" id="1946372"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+                    <names>
+                        <shortLabel>predetermined</shortLabel>
+                        <fullName>predetermined participant</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0396"/>
+                        <secondaryRef db="pubmed" id="7940758"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </participantDetection>
+                <attributeList>
+                    <attribute name="contact-email">chory@salk.edu</attribute>
+
+                    <attribute name="figure legend">Figure 1 (a).</attribute>
+                    <attribute name="exp-modification">Direced yeast two
+                        hybrid assay.</attribute>
+                    <attribute name="author-list">Fankhauser C., Yeh
+                        KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+                    <attribute name="publication-year">1999</attribute>
+                    <attribute name="journal">Science (0036-8075)</attribute>
+                </attributeList>
+
+            </experimentDescription>
+            <experimentDescription id="EBI-531553">
+                <names>
+                    <shortLabel>mas-2000-1</shortLabel>
+                    <fullName>Functional interaction of phytochrome B
+                        and cryptochrome 2.</fullName>
+                </names>
+                <bibref>
+                    <xref>
+
+                        <primaryRef db="pubmed" id="11089975"/>
+                    </xref>
+                </bibref>
+                <xref>
+                    <primaryRef db="intact" id="EBI-531553" secondary="mas-2000-1"/>
+                    <secondaryRef db="newt" id="3702" secondary="arath"/>
+                </xref>
+                <hostOrganism ncbiTaxId="3702">
+                    <names>
+
+                        <shortLabel>arath</shortLabel>
+                        <fullName>Arabidopsis thaliana</fullName>
+                    </names>
+                </hostOrganism>
+                <interactionDetection>
+                    <names>
+                        <shortLabel>anti bait coip</shortLabel>
+
+                        <fullName>anti bait coimmunoprecipitation</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0006"/>
+                        <secondaryRef db="pubmed" id="7708014"/>
+                    </xref>
+                </interactionDetection>
+                <participantDetection>
+
+                    <names>
+                        <shortLabel>western blot</shortLabel>
+                        <fullName>western blot</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0113"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </participantDetection>
+                <attributeList>
+                    <attribute name="exp-modification">Transgenic
+                        arabidopsis thaliana plants over-expressing cry2
+                        were used in this study</attribute>
+                    <attribute name="author-list">Mas P., Devlin PF.,
+                        Panda S., Kay SA.</attribute>
+                    <attribute name="publication-year">2000</attribute>
+                    <attribute name="journal">Nature (0028-0836)</attribute>
+                </attributeList>
+
+            </experimentDescription>
+        </experimentList>
+        <interactorList/>
+        <interactionList>
+            <interaction>
+                <names>
+                    <shortLabel>pif5-phyb</shortLabel>
+                    <fullName>Anti tag CoIP assay reveals in vivo
+                        interaction between PIF5 protein and the PHYB
+                        photoreceptor protein.</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-631620"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-631630" secondary="pif5-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">Pif5 preferentially
+                        interacted with the Pfr form of PHYB</attribute>
+                    <attribute name="comment">All listed amino acid
+                        alterations within the PIF5 protein abolished
+                        interaction with PHYB.</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>lkp1-phyb-1</shortLabel>
+                    <fullName>Complex detected by coIP</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-300689"/>
+
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-300742" secondary="lkp1-phyb-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif4-phyb</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation reveals
+                        interaction between PIF4 protein and the PHYB protein</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-625877"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625890" secondary="pif4-phyb"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="comment">PIF4 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif4-phyb-1</shortLabel>
+
+                    <fullName>Anti tag coimmunoprecipitation reveals
+                        interaction between PIF4 protein and the PHYB protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630828"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-630843" secondary="pif4-phyb-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF4 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+            <interaction>
+                <names>
+                    <shortLabel>pil3-phyb</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the PIL5 protein and the phytochrome B</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630390"/>
+                </experimentList>
+
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-630438" secondary="pil3-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIL3 interacted with the
+                        Pfr form of PHYB only</attribute>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif3-phyb-2</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PIF3 protein and the PHYB
+                        photoreceptor protein</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626024"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-626097" secondary="pif3-phyb-2"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF3 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+
+                <names>
+                    <shortLabel>phyb-phyc-1</shortLabel>
+                    <fullName>Size exclusion chromotography reveals PHYB
+                        and PHYC interaction</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624438"/>
+                </experimentList>
+                <participantList/>
+
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624481" secondary="phyb-phyc-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif1-phyb-4</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PIF1 protein and the PHYB
+                        photoreceptor protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630828"/>
+
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-630883" secondary="pif1-phyb-4"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF1 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-phye-1</shortLabel>
+                    <fullName>Size exclusion chromotography reveals PHYB
+                        and PHYE interaction</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624438"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-624490" secondary="phyb-phye-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>pif3-phyb-4</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PIF3 protein and the PHYB
+                        photoreceptor protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-631620"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-631654" secondary="pif3-phyb-4"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF3 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="comment">Gyl 37 ala and glu 31 ala
+                        mutations abolished interaction between PIF4 and PHYB.</attribute>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif6-phyb-1</shortLabel>
+                    <fullName>Anti tag CoIP assay reveals in vivo
+                        interaction between PIF6 protein and the PHYB
+                        photoreceptor protein.</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-631620"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-631647" secondary="pif6-phyb-1"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="comment">PIF6 preferentially
+                        interacted with the Pfr form of PHYB.</attribute>
+                    <attribute name="comment">Alteration of amino acid
+                        sequence abolished interaction between PIF6 and PHYB.</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>pil5-phyb</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the PIL5 protein and the phytochrome B</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630390"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-630431" secondary="pil5-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIL5 interacted with the
+                        Pfr form of PHYB only</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif3-phyb-1</shortLabel>
+                    <fullName>Directed yeast 2 hybrid analysis reveals
+                        interaction between the PIF3 protein and the
+                        PHYB photoreceptor protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-625980"/>
+
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625989" secondary="pif3-phyb-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-phyd-1</shortLabel>
+                    <fullName>Size exclusion chromotography reveals PHYB
+                        and PHYD interaction</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-624438"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624485" secondary="phyb-phyd-1"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>lkp1-phyb-2</shortLabel>
+                    <fullName>Interaction detected by Y2D</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-300745"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-300754" secondary="lkp1-phyb-2"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>phyb-phyc</shortLabel>
+                    <fullName>Anti-tag coimmunoprecipitaion reveals PHYB
+                        and PHYC interaction</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624357"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624362" secondary="phyb-phyc"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+            <interaction>
+                <names>
+                    <shortLabel>phyb-cry2-1</shortLabel>
+                    <fullName>Colocalisation analysis reveals
+                        interaction between phytochrome B (phyB) and
+                        crypotochrome 2 (cry2)</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-531576"/>
+                </experimentList>
+
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>colocalization</shortLabel>
+                        <fullName>colocalization</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0403"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-531579" secondary="phyb-cry2-1"/>
+                    <secondaryRef db="go" id="GO:0005634" secondary="nucleus"/>
+                    <secondaryRef db="go" id="GO:0009640" secondary="photomorphogenesis"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="comment">The photoreceptors
+                        colocalised to the nucleus</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>arr4-phyb</shortLabel>
+
+                    <fullName>Anti bait coimmunoprecipitaion reveals
+                        interaction between the two-component response
+                        regulator ARR4 protein and phytochrome B</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-625212"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-625225" secondary="arr4-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">Recombinant ARR4 protein
+                        was used in this study - source not stated in
+                        the text - presumed ecoli.</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+            <interaction>
+                <names>
+                    <shortLabel>phyb-phyd</shortLabel>
+                    <fullName>Anti-tag coimmunoprecipitaion reveals PHYB
+                        and PHYD interaction</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624357"/>
+                </experimentList>
+
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624398" secondary="phyb-phyd"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-pif3-3</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PHYB photoreceptor  protein
+                        and the PIF3 protein</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-625824"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625826" secondary="phyb-pif3-3"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pil3-phya</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the PIL5 protein and the phytochrome A
+                        type 3 (Oat)</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630390"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-630446" secondary="pil3-phya"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIL3 interacted with the
+                        Pfr form of PHYA only</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+
+                <names>
+                    <shortLabel>phyb-pif3-1</shortLabel>
+                    <fullName>Directed yeast 2 hybrid analysis reveals
+                        interaction between  PHYB photoreceptor  protein
+                        and the PIF3 protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-625790"/>
+                </experimentList>
+                <participantList/>
+
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625792" secondary="phyb-pif3-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyd-phyb</shortLabel>
+                    <fullName>Anti-tag coimmunoprecipitaion reveals PHYD
+                        and PHYB interaction</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624357"/>
+
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-624423" secondary="phyd-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>arr4-phyb-2</shortLabel>
+                    <fullName>Directed yeast two hybrid reveals
+                        interaction between the two-component response
+                        regulator ARR4 protein and phytochrome B</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-625253"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625257" secondary="arr4-phyb-2"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-pks1-1</shortLabel>
+                    <fullName>GST pulldown analysis reveals interaction
+                        between the  PHYB protein and PKS1 protein</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626233"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-626235" secondary="phyb-pks1-1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>hfr1-pif3-3</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitaion analysis
+                        reveals interaction between the HFR1 protein,
+                        PIF3 protein and PHYB photoreceptor</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626024"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-626082" secondary="hfr1-pif3-3"/>
+                </xref>
+                <attributeList>
+                    <attribute name="complex-properties">The presence of
+                        PIF3 is essential for formation of this complex.</attribute>
+                    <attribute name="complex-properties">This complex is
+                        preferentially formed with the biologically
+                        active form (Pfr form) of the PHYB photoreceptor.</attribute>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>arr4-phyb-1</shortLabel>
+                    <fullName>Anti bait coimmunoprecipitaion reveals
+                        interaction between the two-component response
+                        regulator ARR4 protein and phytochrome B</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-625232"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625241" secondary="arr4-phyb-1"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-cry2-2</shortLabel>
+                    <fullName>Colocalisation analysis reveals
+                        interaction between phytochrome B (phyB) and
+                        crypotochrome 2 (cry2)</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-531600"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>direct interaction</shortLabel>
+
+                        <fullName>direct interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0407"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-531605" secondary="phyb-cry2-2"/>
+                    <secondaryRef db="go" id="GO:0005634" secondary="nucleus"/>
+                    <secondaryRef db="go" id="GO:0009640" secondary="photomorphogenesis"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">The photoreceptors
+                        colocalised to the nucleus</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-pif3</shortLabel>
+                    <fullName>Yeast 2 hybrid analysis reveals
+                        interaction between  PHYB photoreceptor  protein
+                        and the PIF3 protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-625782"/>
+
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625783" secondary="phyb-pif3"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>iaa3-phyb-1</shortLabel>
+                    <fullName>Interaction detected by CBD (Chitin
+                        binding domain) pull down</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-307172"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-307197" secondary="iaa3-phyb-1"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="comment">IAA3-intein-CBD was
+                        expressed in E coli and Phytochrome B-myc was
+                        expressed in Arabidopsis.</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>pif3-phyb-3</shortLabel>
+
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PIF3 protein and the PHYB
+                        photoreceptor protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-630828"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+
+                <xref>
+                    <primaryRef db="intact" id="EBI-630831" secondary="pif3-phyb-3"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF3 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+
+            <interaction>
+                <names>
+                    <shortLabel>pif3-phyb</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation  reveals
+                        interaction between  PIF3 protein and the PHYB
+                        photoreceptor protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-625877"/>
+                </experimentList>
+
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-625879" secondary="pif3-phyb"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF3 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-pks1</shortLabel>
+                    <fullName>Yeast two hybrid reveals interaction
+                        between the  PHYB protein and PKS1 protein</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-626218"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-626225" secondary="phyb-pks1"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+
+                    <shortLabel>pif4-phyb-2</shortLabel>
+                    <fullName>Anti tag coimmunoprecipitation reveals
+                        interaction between PIF4 protein and the PHYB protein</fullName>
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-631620"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-631726" secondary="pif4-phyb-2"/>
+                </xref>
+                <attributeList>
+                    <attribute name="comment">PIF4 preferentially
+                        interacts with the Pfr (biologically active)
+                        form of PhyB</attribute>
+                    <attribute name="comment">Amino acid alterations to
+                        PIF4 abolished PIF4 interaction with PHYB.</attribute>
+                    <attribute name="kd">0.0</attribute>
+
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-cry2</shortLabel>
+                    <fullName>Coimmunoprecipitation reveals interaction
+                        between phytochrome B (phyB) and crypotochrome 2 (cry2)</fullName>
+                </names>
+                <experimentList>
+
+                    <experimentRef ref="EBI-531553"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+                        <fullName>physical interaction</fullName>
+                    </names>
+
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+                    <primaryRef db="intact" id="EBI-531571" secondary="phyb-cry2"/>
+                </xref>
+                <attributeList>
+
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+            <interaction>
+                <names>
+                    <shortLabel>phyb-phye</shortLabel>
+                    <fullName>Anti-tag coimmunoprecipitaion reveals PHYB
+                        and PHYE interaction</fullName>
+
+                </names>
+                <experimentList>
+                    <experimentRef ref="EBI-624357"/>
+                </experimentList>
+                <participantList/>
+                <interactionType>
+                    <names>
+                        <shortLabel>physical interaction</shortLabel>
+
+                        <fullName>physical interaction</fullName>
+                    </names>
+                    <xref>
+                        <primaryRef db="psi-mi" id="MI:0218"/>
+                        <secondaryRef db="pubmed" id="14755292"/>
+                    </xref>
+                </interactionType>
+                <xref>
+
+                    <primaryRef db="intact" id="EBI-624417" secondary="phyb-phye"/>
+                </xref>
+                <attributeList>
+                    <attribute name="kd">0.0</attribute>
+                </attributeList>
+            </interaction>
+        </interactionList>
+    </entry>
+
+</entrySet>
+
