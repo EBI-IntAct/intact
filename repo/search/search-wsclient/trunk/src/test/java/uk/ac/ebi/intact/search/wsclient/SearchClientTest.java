@@ -22,7 +22,7 @@ public class SearchClientTest extends TestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        client = new SearchServiceClient(LOCALHOST_URL);
+        client = new SearchServiceClient();
     }
 
     public void testFindPartnersUsingUniprotIds() throws Exception
