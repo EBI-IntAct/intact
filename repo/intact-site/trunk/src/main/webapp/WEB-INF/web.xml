@@ -17,13 +17,16 @@
         <param-name>uk.ac.ebi.intact.DATASET_OF_THE_MONTH_URL</param-name>
         <param-value>http://www.ebi.ac.uk/~intact/site/dotm/dotm-1.1.xml</param-value>
     </context-param>
+
+    <!-- when changing this value, replace also the values in the plugins/openSearch/openSearch.xml file -->
     <context-param>
         <description>
             URL to do a search query
         </description>
         <param-name>uk.ac.ebi.intact.SEARCH_QUERY_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/intact/search/do/search?searchString=</param-value>
+        <param-value>http://www.ebi.ac.uk/tc-test/intact/binary-search/remote.jsf?query=</param-value>
     </context-param>
+
     <context-param>
         <description>
             URL to the annotation manual
@@ -43,7 +46,7 @@
             Where to find the Menu XML file
         </description>
         <param-name>uk.ac.ebi.faces.MENU_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu.xml</param-value>
+        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu-test.xml</param-value>
     </context-param>
      <context-param>
         <description>
@@ -162,6 +165,10 @@
             Validate managed beans, navigation rules and ensure that forms are not nested.
         </description>
         <param-name>org.apache.myfaces.VALIDATE</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>facelets.SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
 
