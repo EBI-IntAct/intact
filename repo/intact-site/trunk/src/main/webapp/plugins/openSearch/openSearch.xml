@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+   <ShortName>IntAct</ShortName>
+   <Description>Use IntAct search engine to search for biological interactions.</Description>
+   <Tags>protein interaction search biology</Tags>
+   <Url type="text/html"
+      template="http://www.ebi.ac.uk/tc-test/intact/binary-search/remote.jsf?query={searchTerms}"/>
+   <Image height="75" width="50" type="image/gif">http://www.ebi.ac.uk/tc-test/intact/site/images/logo_intact_small.gif</Image>
+   <InputEncoding>UTF-8</InputEncoding>
+   <OutputEncoding>UTF-8</OutputEncoding>
+</OpenSearchDescription>

@@ -7,6 +7,8 @@
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:s="http://myfaces.apache.org/sandbox"
       xmlns:ebi="http://ebi.ac.uk/faces/components">
 <head>
     <title></title>
@@ -16,10 +18,19 @@
 <f:view>
 
     <ui:composition>
-        <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif"/>
+        <h:outputLink value="http://www.ebi.ac.uk/intact">
+            <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif" style="border:0"/>
+        </h:outputLink>
 
-        <ebi:panelBox id="searchbox" title="Search IntAct"
-                      expanded="#{initiallyExpandSearchBox}">
+        <script type="text/javascript">
+            function intact_clearAndFocusField(id) {
+                var elem = document.getElementById(id);
+                elem.value = '';
+                elem.focus();
+            }
+        </script>
+
+        <ebi:panelBox id="searchbox" title="Search IntAct">
             <h:inputText id="search" value="#{searchBean.searchQuery}" size="12"/>
 
             <h:panelGrid columns="2">

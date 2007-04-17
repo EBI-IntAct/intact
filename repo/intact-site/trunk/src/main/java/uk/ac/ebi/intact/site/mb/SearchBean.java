@@ -34,7 +34,6 @@ import java.util.Random;
 public class SearchBean implements Serializable
 {
     private static final String SEARCH_QUERY_URL = "uk.ac.ebi.intact.SEARCH_QUERY_URL";
-    private static final String SEARCH_WS_URL = "uk.ac.ebi.intact.SEARCH_WS_URL";
 
     private String searchQuery;
 
