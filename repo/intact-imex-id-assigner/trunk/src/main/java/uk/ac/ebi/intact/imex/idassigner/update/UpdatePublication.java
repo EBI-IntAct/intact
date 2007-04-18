@@ -9,26 +9,28 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.imex.idassigner.keyassigner.KeyAssignerServiceException;
-import uk.ac.ebi.intact.imex.idassigner.keyassigner.KeyAssignerService;
-import uk.ac.ebi.intact.imex.idassigner.helpers.InteractionHelper;
-import uk.ac.ebi.intact.imex.idassigner.helpers.ExperimentHelper;
-import uk.ac.ebi.intact.imex.idassigner.helpers.CvHelper;
-import uk.ac.ebi.intact.imex.idassigner.helpers.PublicationHelper;
-import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
-import uk.ac.ebi.intact.imex.idassigner.id.IMExIdTransformer;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.imex.idassigner.helpers.CvHelper;
+import uk.ac.ebi.intact.imex.idassigner.helpers.ExperimentHelper;
+import uk.ac.ebi.intact.imex.idassigner.helpers.InteractionHelper;
+import uk.ac.ebi.intact.imex.idassigner.helpers.PublicationHelper;
+import uk.ac.ebi.intact.imex.idassigner.id.IMExIdTransformer;
+import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
+import uk.ac.ebi.intact.imex.idassigner.keyassigner.KeyAssignerService;
+import uk.ac.ebi.intact.imex.idassigner.keyassigner.KeyAssignerServiceException;
+import uk.ac.ebi.intact.imex.idassigner.keyassigner.KeyAssignerServiceI;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.PublicationDao;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.PublicationDao;
+import uk.ac.ebi.intact.persistence.dao.XrefDao;
 
 import java.util.*;
 
 /**
  * Update of a Publication.
  * <p/>
- * It updated all interactions with an IMEx id.
+ * It updates all interactions of a given publication with a range of IMEx IDs.
  * <p/>
  * Imex IDs are retreived using a tool called IMEx Key Assigner (accessible via web service)
  * <p/>
@@ -56,6 +58,16 @@ public class UpdatePublication {
     private static final int LARGE_PUBLICATION_THRESHOLD = 1000;
     private static final int SMALL_PUBLICATION_MARGIN = 10;
     private static final int LARGE_PUBLICATION_MARGIN = 50;
+
+
+    private final KeyAssignerServiceI keyAssignerService;
+
+    public UpdatePublication( KeyAssignerServiceI keyAssignerService ) {
+        if ( keyAssignerService == null ) {
+            throw new NullPointerException( "keyAssignerService must not be null." );
+        }
+        this.keyAssignerService = keyAssignerService;
+    }
 
     ///////////////////////////////
     // Utility methods
@@ -151,14 +163,14 @@ public class UpdatePublication {
 //            log.debug( "Database: " + helper.getDbName() );
 
             // load necessary CVs - if one is not found, the program stops here...
-            final CvDatabase pubmed = CvHelper.getPubmed(  );
-            final CvDatabase imex = CvHelper.getImex(  );
-            final CvDatabase intact = CvHelper.getIntact(  );
-            final CvXrefQualifier primaryReference = CvHelper.getPrimaryReference(  );
-            final CvXrefQualifier imexPrimary = CvHelper.getImexPrimary(  );
-            final CvInteractorType proteinType = CvHelper.getProteinType(  );
-            final CvTopic imexRangeRequested = CvHelper.getImexRangeRequested(  );
-            final CvTopic imexRangeAssigned = CvHelper.getImexRangeAssigned(  );
+            final CvDatabase pubmed = CvHelper.getPubmed();
+            final CvDatabase imex = CvHelper.getImex();
+            final CvDatabase intact = CvHelper.getIntact();
+            final CvXrefQualifier primaryReference = CvHelper.getPrimaryReference();
+            final CvXrefQualifier imexPrimary = CvHelper.getImexPrimary();
+            final CvInteractorType proteinType = CvHelper.getProteinType();
+            final CvTopic imexRangeRequested = CvHelper.getImexRangeRequested();
+            final CvTopic imexRangeAssigned = CvHelper.getImexRangeAssigned();
 
             // load the publication
             Publication publication = PublicationHelper.loadPublication( pmid );
@@ -176,6 +188,12 @@ public class UpdatePublication {
                 PublicationDao dao = daoFactory.getPublicationDao();
                 dao.persist( publication );
                 log.debug( "done." );
+
+                // add Xref to it too
+                PublicationXref xref = new PublicationXref( owner, pubmed, pmid, primaryReference );
+                publication.addXref( xref );
+                XrefDao xdao = daoFactory.getXrefDao();
+                xdao.persist( xref );
             }
 
             // Retreive related experiments
@@ -200,7 +218,7 @@ public class UpdatePublication {
             // Check that all of these experiments have been accepted
             boolean allAccepted = ExperimentHelper.areAccepted( experiments, true );
 
-            if ( ! allAccepted ) {
+            if ( !allAccepted ) {
                 log.debug( "Not all experiment were accepted. abort." );
 
                 // terminate the process
@@ -230,7 +248,7 @@ public class UpdatePublication {
             // Note: initialy, we only export interaction involving proteins.
             // Sort Interactions so PPI come first, that way, the exported set to IMEx is continuous (eg. 33..56)
             List<InteractionClassifier> sortedClassifier = new ArrayList<InteractionClassifier>( map.keySet() );
-            Collections.sort( (List) sortedClassifier, new Comparator<InteractionClassifier>() {
+            Collections.sort( ( List ) sortedClassifier, new Comparator<InteractionClassifier>() {
 
                 /**
                  * Sets with proteins only should come out first.
@@ -269,7 +287,7 @@ public class UpdatePublication {
                     }
 
                     for ( Interactor interactor : set ) {
-                        if ( ! proteinType.equals( interactor.getCvInteractorType() ) ) {
+                        if ( !proteinType.equals( interactor.getCvInteractorType() ) ) {
                             return false;
                         }
                     }
@@ -304,10 +322,10 @@ public class UpdatePublication {
 
                         } else {
 
-                            if ( ! classifier.getImexId().equals( imexId ) ) {
+                            if ( !classifier.getImexId().equals( imexId ) ) {
 
                                 log.debug( "ERROR - More than one IMEx ID assigned to that set of interactor: " +
-                                                    imexId + " and " + classifier.getImexId() );
+                                           imexId + " and " + classifier.getImexId() );
                                 displayInteractors( classifier.getDistinctInteractors() );
 
                                 moreThanOneImexId = true; // processing will stop after that loop.
@@ -317,7 +335,7 @@ public class UpdatePublication {
                 } // interactions
 
                 // if none of the interaction has an IMEx ID, we need to request one.
-                if ( ! foundImexId ) {
+                if ( !foundImexId ) {
                     imexIdMissing++;
                 }
             } // entries of the map
@@ -358,22 +376,21 @@ public class UpdatePublication {
 
                 // Request ID from Key Assigner
                 log.debug( "We need to request " + howManyToRequestFromKeyAssigner + " IMEx ID" +
-                                    ( howManyToRequestFromKeyAssigner > 1 ? "sortedClassifier" : "" ) + " from the Key Assigner." );
+                           ( howManyToRequestFromKeyAssigner > 1 ? "sortedClassifier" : "" ) + " from the Key Assigner." );
 
                 // Extend slightly the IMEx Range so we keep a margin in case we add interactions later.
                 if ( interactionCount < LARGE_PUBLICATION_THRESHOLD ) {
                     log.debug( "Dataset has less than " + LARGE_PUBLICATION_THRESHOLD + " interactions, request " +
-                                        SMALL_PUBLICATION_MARGIN + " additional IDs" );
+                               SMALL_PUBLICATION_MARGIN + " additional IDs" );
                     howManyToRequestFromKeyAssigner += SMALL_PUBLICATION_MARGIN;
                 } else {
                     log.debug( "Dataset has at least " + LARGE_PUBLICATION_THRESHOLD + " interactions, request " +
-                                        LARGE_PUBLICATION_MARGIN + " additional IDs" );
+                               LARGE_PUBLICATION_MARGIN + " additional IDs" );
                     howManyToRequestFromKeyAssigner += LARGE_PUBLICATION_MARGIN;
                 }
 
                 // Request IMEx IDs from Key Assigner
-                KeyAssignerService kas = new KeyAssignerService();
-                IMExRange imexRange = kas.getAccessions( howManyToRequestFromKeyAssigner );
+                IMExRange imexRange = keyAssignerService.getAccessions( howManyToRequestFromKeyAssigner );
 
                 // Update Publication: store the Key Assigner range requested
                 PublicationHelper.addRequestedAnnotation( publication, imexRange );
@@ -422,14 +439,14 @@ public class UpdatePublication {
                     } else {
 
                         log.debug( "Interaction " + interaction.getAc() + " " + interaction.getShortLabel() +
-                                            " had already an IMEx ID: " + id + "." );
+                                   " had already an IMEx ID: " + id + "." );
                         assignedIMExIds.add( id );
                     }
                 } // interactions
             } // classifiers
 
             log.debug( "There are " + freeImexIds.size() + " ID" + ( freeImexIds.size() > 1 ? "s" : "" ) +
-                                " non assigned after finishing updating the publication." );
+                       " non assigned after finishing updating the publication." );
 
             // Update Publication: store the Key Assigner range assigned
             log.debug( "Updating the assigned IDs on the publication..." );
@@ -440,7 +457,7 @@ public class UpdatePublication {
                 PublicationHelper.addAssignedAnnotation( publication, assignedRange );
             }
 
-            log.debug( "Publication( " + publication.getPmid() + " ) update completed." );
+            log.debug( "Publication( " + PublicationHelper.getPubmedId( publication ) + " ) update completed." );
 
         } finally {
         }
@@ -453,7 +470,7 @@ public class UpdatePublication {
 
     public static void main( String[] args ) throws IntactException, KeyAssignerServiceException {
 
-        UpdatePublication updator = new UpdatePublication();
+        UpdatePublication updator = new UpdatePublication( new KeyAssignerService() );
 
         // First IMEx export
 //        updator.update( "16470656" );
