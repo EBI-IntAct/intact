@@ -93,8 +93,8 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-rc2-SNAPSHOT</version>
-            <!--<version>1.5.0-rc1-SNAPSHOT</version>  -->
+            <version>1.5.0-rc2</version>
+            <!--<version>1.5.0-rc2-SNAPSHOT</version>-->
         </dependency>
 
         <dependency>
@@ -182,7 +182,7 @@
             <version>2.1.2-1.1-2.3</version>
             <scope>test</scope>
         </dependency>
-
+          
     </dependencies>
 
     <!-- EBI repositories -->
