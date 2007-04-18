@@ -104,6 +104,8 @@ public abstract class IMExIdTransformer {
 
     /**
      * Converts an IMExRange into a simple range.
+     * <p/>
+     * Note: repeated ids will be used only once, that is 1, 2, 2, 3, 4 will give 1..4. 
      *
      * @param ids the range to convert in a simple representation.
      *
@@ -137,7 +139,7 @@ public abstract class IMExIdTransformer {
         while ( iterator.hasNext() ) {
             long id = iterator.next();
 
-            if ( id == ( previous + 1 ) ) {
+            if ( id == ( previous + 1 ) || id == previous ) {
                 // the range is continuous ... keep going ...
             } else {
                 // the range is discontinuous, warning !

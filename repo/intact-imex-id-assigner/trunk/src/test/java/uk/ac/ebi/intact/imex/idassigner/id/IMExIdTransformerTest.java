@@ -157,6 +157,25 @@ public class IMExIdTransformerTest {
     }
 
     @Test
+    public void buildRanges_continuous_redundant() {
+
+        Collection<Long> ids = new ArrayList<Long>();
+
+        ids.add( 5L );
+        ids.add( 2L );
+        ids.add( 3L );
+        ids.add( 3L );
+        ids.add( 1L );
+        ids.add( 1L );
+        ids.add( 4L );
+
+        List<IMExRange> imexRanges = IMExIdTransformer.buildRanges( ids );
+
+        assertEquals( 1, imexRanges.size() );
+        assertTrue( imexRanges.contains( new IMExRange( 1, 5 ) ) );
+    }
+
+    @Test
     public void buildRanges_discontinuous() {
 
         Collection<Long> ids = new ArrayList<Long>();
