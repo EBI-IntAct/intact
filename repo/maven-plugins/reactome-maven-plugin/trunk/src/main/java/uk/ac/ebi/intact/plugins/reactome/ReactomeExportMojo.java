@@ -18,10 +18,6 @@ package uk.ac.ebi.intact.plugins.reactome;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.dbutil.reactome.ReactomeBean;
-import uk.ac.ebi.intact.dbutil.reactome.ReactomeException;
-import uk.ac.ebi.intact.dbutil.reactome.ReactomeExport;
-import uk.ac.ebi.intact.dbutil.reactome.ReactomeValidationReport;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 
@@ -52,7 +48,7 @@ public class ReactomeExportMojo
     private MavenProject project;
 
     /**
-     * @parameter expression="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     private File hibernateConfig;
