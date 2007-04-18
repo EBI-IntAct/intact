@@ -1,0 +1,29 @@
+<project>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>psixml-generator-maven-plugin</artifactId>
+                <configuration>
+                    <targetPath>target/psixml-classification-test</targetPath>
+
+                    <speciesFilename>classification_by_species.txt</speciesFilename>
+                    <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+                    <datasetsFilename>classification_by_datasets.txt</datasetsFilename>
+
+                    <searchPattern>%</searchPattern>
+
+                    <updateTargetSpecies>true</updateTargetSpecies>
+
+                    <overwrite>true</overwrite>
+                    <experimentErrorFile>target/psixml-classification-test/experiment-error.log</experimentErrorFile>
+                    <negativeExperimentsFile>target/psixml-classification-test/negative-experiments.log</negativeExperimentsFile>
+                    <filteredExperimentsFile>target/psixml-classification-test/filtered-experiments.log</filteredExperimentsFile>
+
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
