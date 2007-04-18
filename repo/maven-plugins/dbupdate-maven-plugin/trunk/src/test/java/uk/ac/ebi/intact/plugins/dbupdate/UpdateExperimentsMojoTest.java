@@ -28,7 +28,7 @@ public class UpdateExperimentsMojoTest extends AbstractMojoTestCase
 
         UpdateExperimentsMojo mojo = (UpdateExperimentsMojo) lookupMojo( "experiments", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
-        mojo.setDryRun(true);
+        mojo.setDryRun(false);
 
         mojo.execute();
     }
