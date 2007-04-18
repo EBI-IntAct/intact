@@ -169,7 +169,7 @@
                <fullName>colocalization/visualisation technologies</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0023"/>
+               <primaryRef db="psi-mi" id="MI:0001"/>
              </xref>
            </interactionDetection>
            <participantDetection>
@@ -868,7 +868,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -962,7 +962,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -1004,7 +1004,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -1045,7 +1045,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
@@ -1082,7 +1082,7 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
