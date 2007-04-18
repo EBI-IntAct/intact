@@ -267,6 +267,8 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     }
 
     private static void writeItems( File itemsFile, Collection<ExperimentListItem> items ) throws IOException {
+        MojoUtils.prepareFile(itemsFile);
+
         Writer writer = new FileWriter( itemsFile );
 
         for ( ExperimentListItem item : items ) {
@@ -281,6 +283,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
         getLog().info( "Negative experiments: " + negativeExperiments.size() );
 
         try {
+            MojoUtils.prepareFile(negativeExperimentsFile);
             MojoUtils.writeStandardHeaderToFile("Negative experiments", "Processed experiments declared as negative", getProject(), negativeExperimentsFile);
 
             Writer writer = new FileWriter( negativeExperimentsFile, true );
@@ -305,6 +308,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
         getLog().info( "Filtered experiments: " + filteredExperiments.size() );
 
         try {
+            MojoUtils.prepareFile(filteredExperimentsFile);
             MojoUtils.writeStandardHeaderToFile("Filtered experiments", "Processed experiments that have been filtered because" +
                     "didn't have a pubmed id", getProject(), filteredExperimentsFile);
 
@@ -332,6 +336,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
 
 
         try {
+            MojoUtils.prepareFile(experimentErrorFile);
             MojoUtils.writeStandardHeaderToFile("Experiments with errors", "Errors have occurred while processing these experiments", getProject(), experimentErrorFile);
 
             Writer writer = new FileWriter( experimentErrorFile, true );
