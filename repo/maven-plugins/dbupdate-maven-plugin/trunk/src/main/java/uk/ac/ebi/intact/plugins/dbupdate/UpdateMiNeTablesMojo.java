@@ -8,9 +8,9 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFill;
-import uk.ac.ebi.intact.dbutil.mine.MineDatabaseFillReport;
 import uk.ac.ebi.intact.plugin.MojoUtils;
+import uk.ac.ebi.intact.plugins.dbupdate.mine.MineDatabaseFill;
+import uk.ac.ebi.intact.plugins.dbupdate.mine.MineDatabaseFillReport;
 
 import java.io.File;
 import java.io.FileWriter;

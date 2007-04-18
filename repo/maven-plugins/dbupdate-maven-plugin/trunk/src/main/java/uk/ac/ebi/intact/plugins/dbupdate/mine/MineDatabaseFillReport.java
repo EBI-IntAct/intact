@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.dbutil.mine;
+package uk.ac.ebi.intact.plugins.dbupdate.mine;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this!
