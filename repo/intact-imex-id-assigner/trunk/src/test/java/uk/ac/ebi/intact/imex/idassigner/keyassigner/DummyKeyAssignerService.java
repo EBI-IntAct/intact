@@ -58,4 +58,12 @@ public class DummyKeyAssignerService implements KeyAssignerServiceI {
 
         return new IMExRange( subId, from, to, "testPartner" );
     }
+
+    public long getLastAccessionReturned() {
+        return currentId - 1;
+    }
+
+    public long getLastSubmissionId() {
+        return submissionId - 1;
+    }
 }
