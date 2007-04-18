@@ -11,11 +11,10 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.imex.idassigner.id.IMExIdTransformer;
 import uk.ac.ebi.intact.imex.idassigner.id.IMExRange;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Publication;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.AnnotationDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.PublicationDao;
 
@@ -49,7 +48,7 @@ public class PublicationHelper {
         PublicationDao dao = daoFactory.getPublicationDao();
 
         log.debug( "Searching for Publication by pmid: " + pmid );
-        Collection<Publication> publications = dao.getColByPropertyName( "pmid", pmid );
+        Collection<Publication> publications = dao.getByXrefLike( CvHelper.getPubmed(), pmid );
 
         log.debug( publications.size() + " publication(s) found." );
         if ( publications.size() > 1 ) {
@@ -107,7 +106,34 @@ public class PublicationHelper {
             pDao.update( publication );
 
             System.out.println( "Added Annotation(" + imexRangeRequested.getShortLabel() + ", " + simpleRange +
-                                ") to Publication(" + publication.getPmid() + ")" );
+                                ") to Publication(" + getPubmedId( publication ) + ")" );
+        }
+    }
+
+    /**
+     * Return a publication pubmed id if available.
+     *
+     * @param publication the publication we are searching on.
+     *
+     * @return a string representation of one or many pubmed ids or null if none id found.
+     */
+    public static String getPubmedId( Publication publication ) {
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        CvObjectDao<CvObject> cvObjectDao = daoFactory.getCvObjectDao();
+        CvDatabase pubmed = CvHelper.getPubmed();
+        Collection<Xref> pubmeds = AnnotatedObjectUtils.searchXrefs( publication, pubmed );
+        if ( pubmeds.isEmpty() ) {
+            return null;
+        } else {
+            StringBuilder sb = new StringBuilder();
+            for ( Iterator<Xref> iterator = pubmeds.iterator(); iterator.hasNext(); ) {
+                Xref xref = iterator.next();
+                sb.append( xref.getPrimaryId() );
+                if ( iterator.hasNext() ) {
+                    sb.append( ", " );
+                }
+            }
+            return sb.toString();
         }
     }
 
@@ -195,7 +221,7 @@ public class PublicationHelper {
             pubDao.update( publication );
 
             log.debug( "Added Annotation(" + imexRangeAssigned.getShortLabel() + ", " + simpleRange +
-                       ") to Publication(" + publication.getPmid() + ")" );
+                       ") to Publication(" + getPubmedId( publication ) + ")" );
         }
     }
 
