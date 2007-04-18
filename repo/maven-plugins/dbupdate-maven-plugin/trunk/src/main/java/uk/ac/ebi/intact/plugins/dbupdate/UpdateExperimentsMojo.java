@@ -17,10 +17,10 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.dbutil.update.UpdateExperiments;
-import uk.ac.ebi.intact.dbutil.update.UpdateSingleExperimentReport;
-import uk.ac.ebi.intact.dbutil.update.UpdatedValue;
 import uk.ac.ebi.intact.plugin.MojoUtils;
+import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdateSingleExperimentReport;
+import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdateExperiments;
+import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdatedValue;
 
 import java.io.*;
 import java.sql.SQLException;
