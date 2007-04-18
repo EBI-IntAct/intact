@@ -19,7 +19,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.dbutil.fasta.FastaExporter;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.util.Utilities;
 
