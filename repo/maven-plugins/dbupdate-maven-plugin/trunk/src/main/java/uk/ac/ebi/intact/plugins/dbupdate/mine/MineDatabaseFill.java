@@ -2,7 +2,7 @@
  * Created on 27.05.2004
  */
 
-package uk.ac.ebi.intact.dbutil.mine;
+package uk.ac.ebi.intact.plugins.dbupdate.mine;
 
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -346,7 +346,12 @@ public class MineDatabaseFill {
                 prey = (InteractorData) interactors.get( i );
                 insertDataStatement.setString( 3, prey.ac );
                 insertDataStatement.setString( 4, prey.shortLabel );
-                insertDataStatement.executeUpdate();
+
+                try {
+                    insertDataStatement.executeUpdate();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
             // if there are more than one bait the interaction between the used
             // bait and the rest baits are inserted into the table
