@@ -17,9 +17,9 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpeciesReport;
 import uk.ac.ebi.intact.plugin.MojoUtils;
+import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpeciesReport;
+import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpecies;
 
 import java.io.File;
 import java.io.IOException;
