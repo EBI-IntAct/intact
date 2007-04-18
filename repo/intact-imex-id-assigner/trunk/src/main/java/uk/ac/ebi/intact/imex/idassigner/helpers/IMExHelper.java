@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class IMExHelper {
 
-    public static final String IMEX_PROPERTIES_FILE = "/config/imex.properties";
+    public static final String IMEX_PROPERTIES_FILE = "/imex.properties";
 
     ////////////////////////////////
     // Properties name
