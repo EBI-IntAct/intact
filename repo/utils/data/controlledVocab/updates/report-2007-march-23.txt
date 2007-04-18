@@ -71,3 +71,59 @@ MI:0839	mole per second	parameter unit
 
 Term obsoleted :
 MI:0587	inhibited no remapping necessary
+MI:0021     colocalization by fluorescent probes cloning	Manual remapping of the experiment below
+
+EBI-624345, delaval-2004-2, EBI-624347
+EBI-640021, nishihama-2002-2, EBI-640023
+EBI-636627, abe-2005-3, EBI-636635
+EBI-693041, qi-2005-4, EBI-693043
+EBI-698630, ralser-2005-6, EBI-698636
+EBI-698630, ralser-2005-6, EBI-698640
+EBI-698744, ralser-2005a-3, EBI-698747
+EBI-698649, ralser-2005-7, EBI-698780
+EBI-698649, ralser-2005-7, EBI-698784
+EBI-684925, lee-2004e-4, EBI-685170
+EBI-764863, ye-2004a-3, EBI-764866
+EBI-697144, leung-1998-3, EBI-697149
+EBI-604681, tsuji-2002-3
+EBI-626913, maita-2005-6
+EBI-446465, oksvold-2004-2
+zfira-2004-2 bifc/physical
+tzfira-2004-3 bifc/physical
+cole-2006-3 bifc/physical
+akhmanova-2001-3  fluorescent imaging/coloc
+EBI-368267    li-2004a-3    EBI-368269 fluorescent imaging/coloc
+EBI-1163322    butkevich-2004-2EBI-478645 fluorescent imaging/coloc
+EBI-531576    mas-2000-2    EBI-531579 fluorescent imaging/coloc
+EBI-531705    immink-2002-2    EBI-531707 fluorescent imaging/coloc
+EBI-531705    immink-2002-2    EBI-531723 fluorescent imaging/coloc
+EBI-531705    immink-2002-2    EBI-531733 fluorescent imaging/coloc
+EBI-528239    shin-2002-3    EBI-528249 fluorescent imaging/coloc
+EBI-624755    conte-2003-7    EBI-624759 fluorescent imaging/coloc
+EBI-620807    preisinger-2004-6EBI-620812 fluorescent imaging/coloc **
+EBI-607935    li-2005-1    EBI-607937 bifc/physical
+EBI-607935    li-2005-1    EBI-607965 bifc/physical
+EBI-603073    heese-2001-3    EBI-603075 fluorescent imaging/coloc
+EBI-607935    li-2005-1    EBI-607973 bifc/physical
+EBI-626845    maita-2005-5    EBI-626897 fluorescent imaging/coloc
+EBI-630336    maita-2005-7    EBI-630350 fluorescent imaging/coloc
+EBI-706565    baynton-2003-6    EBI-706570 fluorescent imaging/coloc
+EBI-708304    sharma-2004a-2    EBI-708308 fluorescent imaging/coloc
+EBI-780200    ort-2000-3    EBI-780209 fluorescent imaging/coloc ** (cannot access the paper I suspect participant detection should be changed to antibody detection)
+EBI-768928    gillingham-2004-3 EBI-768932 fluorescent imaging/coloc
+EBI-975937    warren-2002-3    EBI-975958 fluorescent imaging/coloc
+EBI-990971    urushitani-2006-4    EBI-990975  fluorescent imaging/coloc (** missing location where the coloc occured)
+EBI-991290    urushitani-2006-5    EBI-991295 fluorescent imaging/coloc (** missing location where the coloc occured)
+EBI-1003982    hori-2003-2    EBI-1003987 fluorescent imaging/coloc (** added interaction full name)
+EBI-996063    tsubouchi-2002-1    EBI-996114 fluorescent imaging/coloc (added interaction full name and coloc chromatin location, changed participant detection from immunostaining to predetermined)
+EBI-997269    agarwal-2000-3    EBI-997284 fluorescent imaging/coloc (missing interaction full name)
+EBI-997269    agarwal-2000-3    EBI-997292
+EBI-997269    agarwal-2000-3    EBI-997322
+EBI-997269    agarwal-2000-3    EBI-997376
+EBI-1148854    busch-2004-2    EBI-1148842 fluorescent imaging/coloc (missing interaction full name or location of coloc)
+EBI-1148854    busch-2004-2    EBI-1148953
+EBI-1168148    milkereit-2001-2    EBI-1168150 fluorescent imaging/coloc added interaction full name
+EBI-1185882    zhou-2004c-4    EBI-1185894 fluorescent imaging/coloc (changed participant detection from immunostaining to predetermined)
+EBI-1200760    wang-2002d-1    EBI-1200762 fluorescent imaging/coloc (added full name with location no GO term appropriate)
+
+
