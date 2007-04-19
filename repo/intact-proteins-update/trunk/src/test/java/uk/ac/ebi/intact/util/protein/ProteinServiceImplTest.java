@@ -3,10 +3,12 @@ package uk.ac.ebi.intact.util.protein;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
@@ -47,7 +49,13 @@ public class ProteinServiceImplTest extends TestCase {
         return new TestSuite( ProteinServiceImplTest.class );
     }
 
-    MockAlarmProcessor alarmProcessor = new MockAlarmProcessor();
+    /////////////////////
+    // Instance variable
+
+    private final MockAlarmProcessor alarmProcessor = new MockAlarmProcessor();
+
+    //////////////////////
+    // Helper methods
 
     private ProteinService buildProteinService() {
         UniprotService uniprotService = new MockUniprotService();
@@ -71,6 +79,39 @@ public class ProteinServiceImplTest extends TestCase {
             }
         }
         return null;
+    }
+
+    private void clearProteinsFromDatabase() throws IntactTransactionException {
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        // delete all interactors
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        InteractorDao idao = daoFactory.getInteractorDao();
+        List all = idao.getAll();
+        System.out.println( "Searching for objects to delete, found " + all.size() + " interactor(s)." );
+
+        if ( !all.isEmpty() ) {
+            System.out.println( "Now deleting them all..." );
+            idao.deleteAll( all );
+
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+            // check that interactor count is 0
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+            daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+            idao = daoFactory.getInteractorDao();
+
+            List list = idao.getAll();
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            assertNotNull( list );
+            assertTrue( list.isEmpty() );
+            list = null;
+        } else {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            System.out.println( "Database was already cleared of any interactor." );
+        }
     }
 
     ////////////////////
@@ -255,5 +296,110 @@ public class ProteinServiceImplTest extends TestCase {
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, synonym, "s" ) ) );
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, orf, "o" ) ) );
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, locus, "l" ) ) );
+    }
+
+    public void testRetrieve_sequenceUpdate() throws ProteinServiceException, IntactTransactionException {
+
+        // clear database content.
+        clearProteinsFromDatabase();
+        
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( "P60952", canfa );
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        service.setAlarmProcessor( alarmProcessor );
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        Collection<Protein> proteins = service.retrieve( "P60952" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+        Protein protein = proteins.iterator().next();
+        String proteinSeq = protein.getSequence();
+        String proteinCrc = protein.getCrc64();
+
+        // Update the seqence/CRC of the protein
+        assertTrue( proteinSeq.length() > 20 );
+        String newSequence = proteinSeq.substring( 2, 20 );
+        canfa.setSequence( newSequence );
+        canfa.setSequenceLength( canfa.getSequence().length() );
+        canfa.setCrc64( Crc64.getCrc64( canfa.getSequence() ) );
+
+        protein = null;
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        proteins = service.retrieve( "P60952" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+        protein = proteins.iterator().next();
+
+        // check that we have retrieved the exact same protein.
+        assertEquals( newSequence, protein.getSequence() );
+        assertEquals( Crc64.getCrc64( newSequence ), protein.getCrc64() );
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+    }
+
+    public void testRetrieve_TrEMBL_to_SP() throws Exception {
+        // checks that protein moving from TrEMBL to SP are detected and updated accordingly.
+        // Essentially, that means having a new Primary AC and the current on in the databse becoming secondary.
+
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        // TODO spelling of 'retrieve' in UniprotService is wrong ! Fix it.
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        //  ACs are P60952, P21181, P25763
+        uniprotService.add( "P60952", canfa );
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        service.setAlarmProcessor( alarmProcessor );
+
+        Collection<Protein> proteins = service.retrieve( "P60952" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+        Protein protein = proteins.iterator().next();
+        String proteinAc = protein.getAc();
+        String proteinSeq = protein.getSequence();
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        // Set a new primary Id
+        canfa.getSecondaryAcs().add( 0, "P60952" );
+        canfa.setPrimaryAc( "P12345" );
+        canfa.setSequence( "XXXX" );
+        canfa.setSequenceLength( canfa.getSequence().length() );
+        canfa.setCrc64( "YYYYYYYYYYYYYY" );
+
+        uniprotService.clear();
+        uniprotService.add( "P12345", canfa );
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        proteins = service.retrieve( "P12345" );
+        assertNotNull( proteins );
+        assertEquals( 1, proteins.size() );
+        protein = proteins.iterator().next();
+
+        // check that we have retrieved the exact same protein.
+        assertEquals( proteinAc, protein.getAc() );
+        assertEquals( "XXXX", protein.getSequence() );
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+    }
+
+    public void testX() {
+
     }
 }
