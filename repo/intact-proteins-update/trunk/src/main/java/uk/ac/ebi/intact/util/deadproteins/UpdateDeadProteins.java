@@ -270,25 +270,25 @@ public class UpdateDeadProteins {
                 proteinsToUpdateBuffer.flush();
 
             }
-        } catch( Exception e ) {
-             // ignore
+        } catch ( Exception e ) {
+            // ignore
         } finally {
             log.warn( "TODO - run update on that protein: " + uniprotId );
         }
     }
 
     private void closeOpenedFiles() {
-         if ( proteinsToUpdate != null ) {
-             if ( proteinsToUpdateBuffer != null ) {
-                 try {
-                     log.info( "Closing File containing the list of proteins to update." );
-                     proteinsToUpdateBuffer.flush();
-                     proteinsToUpdateBuffer.close();
-                 } catch ( IOException e ) {
-                     // ignore
-                 }
-             }
-         }
+        if ( proteinsToUpdate != null ) {
+            if ( proteinsToUpdateBuffer == null ) {
+                try {
+                    log.info( "Closing File containing the list of proteins to update." );
+                    proteinsToUpdateBuffer.flush();
+                    proteinsToUpdateBuffer.close();
+                } catch ( IOException e ) {
+                    // ignore
+                }
+            }
+        }
     }
 
     //////////////////////
@@ -429,7 +429,11 @@ public class UpdateDeadProteins {
                 log.info( "Could not find protein matching uniprot id: " + id + ". It might have been remapped already. skip." );
 
                 // close transaction before to go to next entry
-                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                } catch ( IntactTransactionException e ) {
+                    throw new UniprotBridgeException( e );
+                }
                 continue;
             }
 
@@ -508,7 +512,11 @@ public class UpdateDeadProteins {
                 updateToUniparc( deadProtein, upi, daoFactory );
             }
 
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new UniprotBridgeException( e );
+            }
 
         } // for remapping entry
 

@@ -7,20 +7,20 @@ package uk.ac.ebi.intact.util.deadproteins;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
-import uk.ac.ebi.intact.business.IntactTransactionException;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * TODO comment this
@@ -97,7 +97,11 @@ public class DeleteDeadProteins {
             throw new IllegalStateException( "Could not find CvDatabase( intact ) in the database. abort." );
         }
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new RuntimeException( e );
+        }
     }
 
     //////////////////////////
@@ -145,7 +149,11 @@ public class DeleteDeadProteins {
             } // proteins
         } // ids
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new RuntimeException( e );
+        }
 
         return proteinDeletedCount;
     }
@@ -161,7 +169,11 @@ public class DeleteDeadProteins {
         ProteinDao proteinDao = daoFactory.getProteinDao();
         final int proteinCount = proteinDao.countAll();
         proteinDao = null;
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new RuntimeException( e );
+        }
 
         // iterate over all proteins
         System.out.println( proteinCount + " proteins to process..." );
@@ -179,7 +191,7 @@ public class DeleteDeadProteins {
 
             for ( ProteinImpl protein : proteins ) {
 
-                log.debug( "- "+ i +"/"+ proteinCount +" ---------------------------------------------------------" );
+                log.debug( "- " + i + "/" + proteinCount + " ---------------------------------------------------------" );
                 process( protein, proteinDao );
 
                 i++;
@@ -189,7 +201,11 @@ public class DeleteDeadProteins {
             proteins = null;
 
             // release the memory for that chunk of data.
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new RuntimeException( e );
+            }
 
         } // while
 

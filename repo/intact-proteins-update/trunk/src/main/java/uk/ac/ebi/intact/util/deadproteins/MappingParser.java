@@ -41,20 +41,20 @@ public class MappingParser {
                 // we haven't hit a blank line yet
                 String[] values = line.split( "\\t" );
 
-                String upi = values[ 0 ];
+                String upi = values[0];
                 RemappingEntry entry = new RemappingEntry( identifier, upi );
 
-                String[] ids = values[ 1 ].split( "\\s" );// split on space
+                String[] ids = values[1].split( "\\s" );// split on space
                 for ( int j = 0; j < ids.length; j++ ) {
-                    String id = ids[ j ].trim();
+                    String id = ids[j].trim();
                     entry.addIdentifier( id );
                 }
 
                 // keep the UPI without prefix
-                entry.setUpi( values[ 2 ].trim() );
+                entry.setUpi( values[2].trim() );
 
                 // sequence length
-                int sequenceLength = Integer.parseInt( values[ 3 ].trim() );
+                int sequenceLength = Integer.parseInt( values[3].trim() );
                 entry.setSequenceLength( sequenceLength );
 
                 if ( !remapping.containsKey( identifier ) ) {
