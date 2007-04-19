@@ -12,7 +12,6 @@
     </testResources>
     <resources>
         <resource>src/test/psi1/10360579.xml</resource>
-        <resource>src/test-db/resources/intact.properties</resource>
         <resource>LICENSE</resource>
     </resources>
     <siteResources>
