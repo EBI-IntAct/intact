@@ -1,5 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>9</version>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.util.sanity.rules</groupId>
     <artifactId>sanity-rules</artifactId>
@@ -14,9 +21,19 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity-rules/trunk</url>
     </scm>
 
-    <profiles>
-        <!-- This profile is used when running the tests. If
-        maven.test.skip property is true, don't import the H2 test db -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.myfaces.tobago</groupId>
+                <artifactId>maven-apt-plugin</artifactId>
+                <version>1.0.7</version>
+            </plugin>
+        </plugins>
+    </build>
+
+    <!--<profiles>
+        --><!-- This profile is used when running the tests. If
+        maven.test.skip property is true, don't import the H2 test db --><!--
         <profile>
             <id>test</id>
             <activation>
@@ -34,7 +51,7 @@
                 </plugins>
             </build>
         </profile>
-    </profiles>
+    </profiles>-->
 
     <dependencies>
         <dependency>
@@ -43,9 +60,21 @@
             <version>1.5.0-rc2-SNAPSHOT</version>
         </dependency>
         <dependency>
+            <groupId>uk.ac.ebi.intact.util.sanity</groupId>
+            <artifactId>intact-sanity-apt</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.templates</groupId>
+            <artifactId>h2db-with-cv</artifactId>
+            <version>1.3-20070410-test</version>
+            <type>zip</type>
             <scope>test</scope>
         </dependency>
     </dependencies>
