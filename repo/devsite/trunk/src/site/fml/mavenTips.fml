@@ -38,7 +38,7 @@
           <pre>
           mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar \
                                -DarchetypeGroupId=uk.ac.ebi.intact.archetype \
-                               -DarchetypeVersion=1.1.0 \
+                               -DarchetypeVersion=1.2.0 \
                                -Dversion=1.0-SNAPSHOT \
                                -DgroupId=uk.ac.ebi.intact.mygroup \
                                -DartifactId=myTest \
