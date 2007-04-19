@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.util.sanity.rules.experiment;
 
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
@@ -22,6 +23,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Experiment.class)
+
 public class ExperimentWithNoCvIdentification implements Rule {
     private static final String DESCRIPTION = "This/those experiments have no cvIdentification";
     private static final String SUGGESTION = "Edit the experiment and add the cvIdentification";
