@@ -48,7 +48,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
-            <version>20070410</version>
+            <version>1.3-20070410</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
