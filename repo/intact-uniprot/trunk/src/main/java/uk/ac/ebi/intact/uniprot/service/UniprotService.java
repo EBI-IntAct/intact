@@ -21,6 +21,8 @@ import java.util.Map;
  */
 public interface UniprotService {
 
+    // TODO REFACTORING IDEA return the result and the report in the same object so we don't have to call getErrors
+
     /**
      * Retreive a Uniprot protein based on its ID, AC or splice variant ID.
      *
