@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.uniprot.service;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.Organism;
 
-import java.util.Collection;
-import java.util.Map;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This adapter should be solely used for testing purpose. It creates proteins in a predictable manner without ever
@@ -21,7 +21,7 @@ import java.util.HashMap;
  * @version $Id$
  * @since <pre>08-Feb-2007</pre>
  */
-public class DummyUniprotService extends AbstractUniprotService {
+public class DummyUniprotService extends UniprotRemoteService {
 
     // TODO build a static list of proteins that the service can serve.
     // TODO each protein will have specific properties such as given ac being a secondary AC, having splice variant...
