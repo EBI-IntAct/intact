@@ -117,7 +117,7 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
     protected boolean zipXml;
 
     /**
-     * @parameter default-value="${project.build.outputDirectory}/hibernate/config/hibernate.cfg.xml"
+     * @parameter default-value="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
     protected File hibernateConfig;
