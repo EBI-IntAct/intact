@@ -21,6 +21,9 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.VelocityContext;
+import org.apache.velocity.Template;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.app.VelocityEngine;
 import psidev.psi.mi.annotations.PsiXmlElement;
 import uk.ac.ebi.intact.annotation.AnnotationUtil;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
@@ -29,6 +32,7 @@ import java.io.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
@@ -58,19 +62,20 @@ public class ValidatorGeneratorMojo
     private MavenProjectHelper helper;
 
     /**
-     * An example file
-     *
-     * @parameter default-value="${project.build.directory}/dummy.txt"
-     */
-    private File dummyFile;
-
-    /**
      * Path where the classes will be generated
      *
      * @parameter default-value="${project.build.directory}/target/generated"
      * @required
      */
     private String targetPath;
+
+    /**
+     * Path where the classes will be generated
+     *
+     * @parameter default-value="uk.ac.ebi.intact.psixml.generated"
+     * @required
+     */
+    private String generatedPackage;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -92,78 +97,63 @@ public class ValidatorGeneratorMojo
             context.put("version", project.getVersion());
         }
 
-        // going through the dependencies
-        for (Artifact artifact : (Collection<Artifact>) project.getArtifacts()) {
-            String depJar = artifact.getFile().toString();
+        context.put("packageName", generatedPackage);
 
-            System.out.println("Processing artifact: " + depJar);
+        File outputDir = createOutputDir();
 
+        List<Class> modelClasses = getModelClasses();
+
+        for (Class modelClass : modelClasses) {
+
+            String validatorClassName = validatorNameForClass(modelClass);
+            String validatorClassFile = filenameForClass(modelClass);
+
+            context.put("modelClass", modelClass);
+            context.put("type", validatorClassName);
+
+            File outputFile = new File(outputDir, validatorClassFile);
+
+            // create a temporary copy of the template, so we avoid classpath issues later
+            File templateFile = null;
             try {
-                // Looking for the annotation
-                List<Class> classes = AnnotationUtil.getClassesWithAnnotationFromJar(PsiXmlElement.class, depJar);
-
-                for (Class clazz : classes) {
-                    System.out.println(clazz);
-
-                }
-
+                templateFile = createTempFileFromTemplate();
             }
             catch (IOException e) {
                 e.printStackTrace();
+                throw new MojoExecutionException("Problem creating temporary copy of the template", e);
+            }
+
+            Template template = null;
+            try {
+                Properties props = new Properties();
+                props.setProperty(VelocityEngine.RESOURCE_LOADER, "file");
+                props.setProperty("file." + VelocityEngine.RESOURCE_LOADER + ".path",
+                                  templateFile.getParent());
+
+                Velocity.init(props);
+
+                template = Velocity.getTemplate(templateFile.getName());
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new MojoExecutionException("Couldn't get template: " + templateFile);
+            }
+
+            // write the resulting file with velocity
+            try {
+                Writer writer = new FileWriter(outputFile);
+                template.merge(context, writer);
+                writer.close();
+            }
+            catch (IOException e) {
+                throw new MojoExecutionException("Problem writing to file with name: " + outputFile, e);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                throw new MojoExecutionException("Couldn't create generated classes", e);
             }
 
         }
-
-        /*
-        File outputFile = new File(tempDir, filename);
-
-         // create a temporary copy of the template, so we avoid classpath issues later
-        File templateFile = null;
-        try
-        {
-            templateFile = createTempFileFromTemplate();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-            throw new MojoExecutionException("Problem creating temporary copy of the template", e);
-        }
-
-        Template template = null;
-        try
-        {
-            Properties props = new Properties();
-            props.setProperty( VelocityEngine.RESOURCE_LOADER, "file" );
-            props.setProperty( "file."+VelocityEngine.RESOURCE_LOADER+".path",
-                        templateFile.getParent() );
-
-            Velocity.init(props);
-
-            template = Velocity.getTemplate(templateFile.getName());
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new MojoExecutionException("Couldn't get template: " + templateFile);
-        }
-
-        // write the resulting file with velocity
-        try
-        {
-            Writer writer = new FileWriter(outputFile);
-            template.merge(context, writer);
-            writer.close();
-        }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException("Problem writing to file with name: " + outputFile, e);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            throw new MojoExecutionException("Couldn't create generated classes", e);
-        }
-         */
 
         if (targetPath != null) {
             // Adding the resources
@@ -173,6 +163,35 @@ public class ValidatorGeneratorMojo
             helper.addResource(project, targetPath, includes, excludes);
         }
 
+    }
+
+    protected List<Class> getModelClasses() {
+        List<Class> modelClasses = null;
+
+        // going through the dependencies
+        for (Artifact artifact : (Collection<Artifact>) project.getArtifacts()) {
+            String depJar = artifact.getFile().toString();
+
+            try {
+                // Looking for the annotation
+                modelClasses = AnnotationUtil.getClassesWithAnnotationFromJar(PsiXmlElement.class, depJar);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        return modelClasses;
+    }
+
+    private File createOutputDir() {
+        String packageDir = generatedPackage.replaceAll("\\.", "/");
+
+        File outputDir = new File(targetPath, packageDir);
+        outputDir.mkdirs();
+
+        return outputDir;
     }
 
     private File createTempFileFromTemplate() throws IOException {
@@ -202,6 +221,15 @@ public class ValidatorGeneratorMojo
         return temporaryFile;
     }
 
+    private String validatorNameForClass(Class modelClass)
+    {
+        return modelClass.getSimpleName()+"Validator";
+    }
+
+    private String filenameForClass(Class modelClass)
+    {
+        return validatorNameForClass(modelClass)+".java";
+    }
 
     /**
      * Implementation of abstract method from superclass
