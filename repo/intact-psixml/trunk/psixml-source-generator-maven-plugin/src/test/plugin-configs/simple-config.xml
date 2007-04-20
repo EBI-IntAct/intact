@@ -4,10 +4,12 @@
             <plugin>
                 <artifactId>psixml-source-generator-maven-plugin</artifactId>
                 <configuration>
-                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/myOutput.log</outputFile>
+                    <targetPath>target/generated</targetPath>
+                    <project implementation="uk.ac.ebi.intact.psixml.generator.StubProject"/>
                 </configuration>
             </plugin>
         </plugins>
-     </build>
+    </build>
+
 </project>
