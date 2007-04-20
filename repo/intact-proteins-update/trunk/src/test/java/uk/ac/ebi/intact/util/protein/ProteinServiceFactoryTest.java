@@ -3,7 +3,11 @@ package uk.ac.ebi.intact.util.protein;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.uniprot.service.DummyUniprotService;
+import uk.ac.ebi.intact.uniprot.service.AbstractUniprotService;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * ProteinLoaderServiceFactory Tester.
@@ -42,6 +46,17 @@ public class ProteinServiceFactoryTest extends TestCase {
 
         // the factory is a singleton
         assertTrue( "The factory is not a singleton", f1 == f2 );
+    }
+
+    // implementation of the service for the sake of the test below.
+    protected class DummyUniprotService extends AbstractUniprotService {
+        public Collection<UniprotProtein> retreive( String ac ) {
+            throw new UnsupportedOperationException();
+        }
+
+        public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public void testBuildProteinService() {
