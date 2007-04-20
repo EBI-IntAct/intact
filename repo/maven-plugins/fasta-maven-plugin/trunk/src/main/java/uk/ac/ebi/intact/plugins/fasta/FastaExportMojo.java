@@ -53,13 +53,14 @@ public class FastaExportMojo
 
     /**
      * Name of the fasta file to be created
-     * @property default-value="${maven.build.directory}/intact.fasta"
+     * @property default-value="${project.build.directory}/intact.fasta"
+     * @required
      */
     private File exportedFile;
 
     /**
      * Gzip the fasta file before finishing
-     * @property default-value="${maven.build.directory}/intact.fasta"
+     * @property default-value="true"
      */
     private boolean gzip;
 
