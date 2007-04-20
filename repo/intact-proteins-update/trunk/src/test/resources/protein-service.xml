@@ -7,12 +7,11 @@
          Spring configuration for the uniprot service in test environment.
     </description>
 
+    <!-- Bean definition -->
     <bean id="yasp" class="uk.ac.ebi.intact.uniprot.service.YaspService"/>
     <bean id="remote" class="uk.ac.ebi.intact.uniprot.service.UniprotRemoteService"/>
-    <bean id="dummy" class="uk.ac.ebi.intact.uniprot.service.DummyUniprotService"/>
 
-    <!--<bean id="UniprotBridgeAdapter" class="remote"/>-->
-
+    <!-- Configuration of the ProteinServiceImpl with one specific implementation of UniprotService -->
     <bean id="proteinLoaderBean" class="uk.ac.ebi.intact.util.protein.ProteinServiceImpl">
         <constructor-arg>
             <ref bean="remote"/>
