@@ -5,20 +5,13 @@
  */
 package uk.ac.ebi.intact.plugin.uniprotexport;
 
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactEnvironment;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.util.uniprotExport.LineExportConfig;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * Base class with the common attributes for the Uniprot export mojos
@@ -27,22 +20,24 @@ import java.sql.SQLException;
  * @version $Id$
  * @since <pre>14-Aug-2006</pre>
  */
-public abstract class UniprotExportAbstractMojo extends IntactHibernateMojo
-{
+public abstract class UniprotExportAbstractMojo extends IntactHibernateMojo {
+
     protected static final String NEW_LINE = System.getProperty("line.separator");
 
     /**
-    * Project instance
-    * @parameter default-value="${project}"
-    * @readonly
-    */
+     * Project instance
+     *
+     * @parameter default-value="${project}"
+     * @readonly
+     */
     protected MavenProject project;
 
     /**
-    * File containing the species
-    * @parameter default-value="target/uniprot-export"
-    * @required
-    */
+     * File containing the species
+     *
+     * @parameter default-value="target/uniprot-export"
+     * @required
+     */
     protected File targetPath;
 
     /**
@@ -74,69 +69,68 @@ public abstract class UniprotExportAbstractMojo extends IntactHibernateMojo
      */
     private File uniprotLinksFile;
 
-    protected File getUniprotLinksFile()
-    {
-        if (uniprotLinksFile != null && uniprotLinksFile.exists())
-        {
+    /**
+     * @parameter default-value="false"
+     */
+    private boolean ignoreNoUniprotDrExport;
+
+    protected LineExportConfig getConfig() {
+        LineExportConfig config = new LineExportConfig();
+        config.isIgnoreUniprotDrExportAnnotation();
+
+        return config;
+    }
+
+    protected File getUniprotLinksFile() {
+        if (uniprotLinksFile != null && uniprotLinksFile.exists()) {
             return uniprotLinksFile;
         }
 
-        return new File(targetPath,uniprotLinksFilename);
+        return new File(targetPath, uniprotLinksFilename);
     }
 
 
-    public void setUniprotLinksFile(File uniprotLinksFile)
-    {
+    public void setUniprotLinksFile(File uniprotLinksFile) {
         this.uniprotLinksFile = uniprotLinksFile;
     }
 
-    public void setUniprotLinksFilename(String uniprotLinksFilename)
-    {
+    public void setUniprotLinksFilename(String uniprotLinksFilename) {
         this.uniprotLinksFilename = uniprotLinksFilename;
     }
 
-    protected void writeLineToSummary(String line) throws IOException
-    {
+    protected void writeLineToSummary(String line) throws IOException {
         FileWriter writer = new FileWriter(summaryFile, true);
-        writer.write(line+NEW_LINE);
+        writer.write(line + NEW_LINE);
         writer.close();
     }
 
-    protected void mkParentDirs(File file)
-    {
-        if (!file.getParentFile().exists())
-        {
+    protected void mkParentDirs(File file) {
+        if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
-    public File getTargetPath()
-    {
+    public File getTargetPath() {
         return targetPath;
     }
 
-    public File getHibernateConfig()
-    {
+    public File getHibernateConfig() {
         return hibernateConfig;
     }
 
-    public File getSummaryFile()
-    {
+    public File getSummaryFile() {
         return summaryFile;
     }
 
-    public boolean isOverwrite()
-    {
+    public boolean isOverwrite() {
         return overwrite;
     }
 
-    public String getUniprotLinksFilename()
-    {
+    public String getUniprotLinksFilename() {
         return uniprotLinksFilename;
     }
 }

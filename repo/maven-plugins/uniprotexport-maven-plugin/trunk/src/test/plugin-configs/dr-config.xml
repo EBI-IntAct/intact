@@ -9,9 +9,10 @@
                     <summaryFile>target/uniprotexport-test/line_exported_summary.log</summaryFile>
                     <maxProteinsToExport>2</maxProteinsToExport>
                     <overwrite>true</overwrite>
+                    <ignoreNoUniprotDrExport>true</ignoreNoUniprotDrExport>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                 </configuration>
             </plugin>
         </plugins>
-     </build>
+    </build>
 </project>
