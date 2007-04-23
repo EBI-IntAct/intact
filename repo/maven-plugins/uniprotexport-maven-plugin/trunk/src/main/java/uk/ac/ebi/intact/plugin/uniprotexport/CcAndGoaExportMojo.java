@@ -95,7 +95,7 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo {
             BufferedWriter ccWriter = new BufferedWriter(new FileWriter(ccExportFile));
             BufferedWriter goaWriter = new BufferedWriter(new FileWriter(goaExportFile));
 
-            CCLineExport exporter = new CCLineExport(ccWriter, goaWriter, getConfig());
+            CCLineExport exporter = new CCLineExport(ccWriter, goaWriter, getConfig(), getOutputPrintStream());
 
             // thread to check progress
             CcLineExportProgressThread progressThread = new CcLineExportProgressThread(exporter, uniprotIDs.size(), System.out);
