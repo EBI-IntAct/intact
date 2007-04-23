@@ -21,6 +21,8 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import psidev.psi.mi.annotations.PsiXmlElement;
 import uk.ac.ebi.intact.annotation.AnnotationUtil;
+import uk.ac.ebi.intact.psixml.generator.builder.metadata.ModelClassMetadata;
+import uk.ac.ebi.intact.psixml.generator.builder.metadata.ModelClassMetadataFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -64,6 +66,9 @@ public class AnnotationSourceBuilder implements SourceBuilder {
         context.put("modelClass", modelClass);
         context.put("type", validatorClassName);
 
+        ModelClassMetadata modelClassMetadata = ModelClassMetadataFactory.createModelClassMetadata(sbHelper, modelClass);
+        context.put("mcm", modelClassMetadata);
+
         File outputFile = sbHelper.getValidatorFileForClass(modelClass);
 
         // create a temporary copy of the template, so we avoid classpath issues later
@@ -84,8 +89,6 @@ public class AnnotationSourceBuilder implements SourceBuilder {
         Writer writer = new FileWriter(outputFile);
         template.merge(context, writer);
         writer.close();
-
-        System.out.println(writer.toString());
     }
 
     private File createTempFileFromTemplate() throws IOException {
@@ -95,7 +98,7 @@ public class AnnotationSourceBuilder implements SourceBuilder {
 
         FileWriter writer = null;
 
-        InputStream is = AnnotationSourceBuilder.class.getResourceAsStream("/"+templateFilename);
+        InputStream is = AnnotationSourceBuilder.class.getResourceAsStream("/" + templateFilename);
         writer = new FileWriter(temporaryFile);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -112,8 +115,7 @@ public class AnnotationSourceBuilder implements SourceBuilder {
     protected List<Class> getModelClassesFromJars(File[] jarFiles) {
         List<Class> modelClasses = new ArrayList<Class>();
 
-        for (File jarFile : jarFiles)
-        {
+        for (File jarFile : jarFiles) {
             modelClasses.addAll(getModelClassesFromJar(jarFile));
         }
 
@@ -123,13 +125,13 @@ public class AnnotationSourceBuilder implements SourceBuilder {
     protected List<Class> getModelClassesFromJar(File jarFile) {
         List<Class> modelClasses = null;
 
-            try {
-                // Looking for the annotation
-                modelClasses = AnnotationUtil.getClassesWithAnnotationFromJar(PsiXmlElement.class, jarFile.toString());
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            // Looking for the annotation
+            modelClasses = AnnotationUtil.getClassesWithAnnotationFromJar(PsiXmlElement.class, jarFile.toString());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return modelClasses;
     }
