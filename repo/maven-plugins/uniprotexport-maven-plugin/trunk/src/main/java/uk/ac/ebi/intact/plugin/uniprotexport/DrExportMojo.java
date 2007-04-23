@@ -75,7 +75,7 @@ public class DrExportMojo extends UniprotExportAbstractMojo {
 
                 IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
-                DRLineExport exporter = new DRLineExport(getConfig());
+                DRLineExport exporter = new DRLineExport(getConfig(), getOutputPrintStream());
                 proteinEligible = exporter.getEligibleProteins(firstResult, maxResults);
 
                 if (proteinEligible != null) {
