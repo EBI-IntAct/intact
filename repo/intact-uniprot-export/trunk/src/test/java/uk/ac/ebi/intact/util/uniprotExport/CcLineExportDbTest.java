@@ -47,7 +47,7 @@ public class CcLineExportDbTest extends TestCase {
         LineExportConfig config = new LineExportConfig();
         config.setIgnoreUniprotDrExportAnnotation(true);
 
-        CCLineExport ccLineExport = new CCLineExport(ccWriter, goaWriter, config);
+        CCLineExport ccLineExport = new CCLineExport(ccWriter, goaWriter, config, System.out);
 
         //new CcLineExportProgressThread(ccLineExport, uniprotIds.size()).start();
 
