@@ -6,8 +6,6 @@
 package uk.ac.ebi.intact.util.uniprotExport;
 
 import org.apache.commons.cli.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
@@ -32,8 +30,6 @@ import java.util.regex.Pattern;
  * @version $Id$
  */
 public class CCLineExport extends LineExport {
-
-    private static final Log log = LogFactory.getLog(CCLineExport.class);
 
     ///////////////////////////////
     // Inner class
@@ -90,12 +86,12 @@ public class CCLineExport extends LineExport {
     // Constructor
     public CCLineExport(Writer ccWriter, Writer goWriter) throws IntactException,
                                                                  DatabaseContentException {
-        this(ccWriter, goWriter, new LineExportConfig());
+        this(ccWriter, goWriter, new LineExportConfig(), System.out);
     }
 
-    public CCLineExport(Writer ccWriter, Writer goWriter, LineExportConfig config) throws IntactException,
-                                                                                          DatabaseContentException {
-        super(config);
+    public CCLineExport(Writer ccWriter, Writer goWriter, LineExportConfig config, PrintStream out) throws IntactException,
+                                                                                                           DatabaseContentException {
+        super(config, out);
 
         if (ccWriter == null) {
             throw new NullPointerException("You must give a CC Line writer.");
@@ -226,7 +222,7 @@ public class CCLineExport extends LineExport {
 
             String ccs = sb.toString();
 
-            log.debug(ccs);
+            getOut().println(ccs);
 
             // write the content in the output file.
             ccWriter.write(ccs);
@@ -263,7 +259,7 @@ public class CCLineExport extends LineExport {
             Protein proteinMaster1 = getMasterProtein(protein1);
 
             if (proteinMaster1 == null) {
-                log.error("Could not export a CC line related to the master of " + uniprotID1);
+                getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID1);
             } else {
                 master1 = getUniprotID(proteinMaster1);
             }
@@ -278,7 +274,7 @@ public class CCLineExport extends LineExport {
             Protein proteinMaster2 = getMasterProtein(protein2);
 
             if (proteinMaster2 == null) {
-                log.error("Could not export a CC line related to the master of " + uniprotID2);
+                getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID2);
             } else {
                 master2 = getUniprotID(proteinMaster2);
             }
@@ -365,7 +361,7 @@ public class CCLineExport extends LineExport {
         buffer.append(';').append(' ').append("NbExp=").append(experimentCount).append(';').append(' ');
         buffer.append("IntAct=").append(protein1.getAc()).append(',').append(' ').append(protein2.getAc()).append(';');
 
-        log.debug("\t\t\t" + buffer.toString());
+        getOut().println("\t\t\t" + buffer.toString());
 
         buffer.append(NEW_LINE);
 
@@ -391,8 +387,8 @@ public class CCLineExport extends LineExport {
             } // xref
 
             if (found == false) {
-                log.error(experiment.getShortLabel() + " " + CvDatabase.PUBMED +
-                          " has no (" + CvXrefQualifier.PRIMARY_REFERENCE + ") assigned.");
+                getOut().println("ERROR: " + experiment.getShortLabel() + " " + CvDatabase.PUBMED +
+                                 " has no (" + CvXrefQualifier.PRIMARY_REFERENCE + ") assigned.");
             }
         } // experiments
 
@@ -413,7 +409,7 @@ public class CCLineExport extends LineExport {
             Protein proteinMaster1 = getMasterProtein(protein1);
 
             if (proteinMaster1 == null) {
-                log.error("Could not export a CC line related to the master of " + uniprotID_1);
+                getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID_1);
                 master1 = uniprotID_1;
             } else {
                 master1 = getUniprotID(proteinMaster1);
@@ -429,7 +425,7 @@ public class CCLineExport extends LineExport {
             Protein proteinMaster2 = getMasterProtein(protein2);
 
             if (proteinMaster2 == null) {
-                log.error("Could not export a CC line related to the master of " + uniprotID_2);
+                getOut().println("ERROR: Could not export a CC line related to the master of " + uniprotID_2);
                 master2 = uniprotID_2;
             } else {
                 master2 = getUniprotID(proteinMaster2);
@@ -440,7 +436,7 @@ public class CCLineExport extends LineExport {
 
         Set pubmeds = getPumedIds(eligibleExperiments);
         if (pubmeds.isEmpty()) {
-            log.error("No PubMed ID found in that set of experiments. ");
+            getOut().println("ERROR: No PubMed ID found in that set of experiments. ");
             return;
         }
 
@@ -567,34 +563,34 @@ public class CCLineExport extends LineExport {
 
             Interaction interaction = (Interaction) interactions.get(i);
 
-            log.debug("\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc());
+            getOut().println("\t\t Interaction: Shortlabel:" + interaction.getShortLabel() + "  AC: " + interaction.getAc());
 
             if (isNegative(interaction)) {
 
-                log.debug("\t\t\t That interaction or at least one of its experiments is negative, skip it.");
+                getOut().println("\t\t\t That interaction or at least one of its experiments is negative, skip it.");
                 continue; // skip that interaction
             }
 
             Collection experiments = interaction.getExperiments();
 
             int expCount = experiments.size();
-            log.debug("\t\t\t interaction related to " + expCount + " experiment" + (expCount > 1 ? "s" : "") + ".");
+            getOut().println("\t\t\t interaction related to " + expCount + " experiment" + (expCount > 1 ? "s" : "") + ".");
 
             for (Iterator iterator2 = experiments.iterator(); iterator2.hasNext();) {
                 Experiment experiment = (Experiment) iterator2.next();
 
                 boolean experimentExport = false;
-                log.debug("\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc());
+                getOut().println("\t\t\t\t Experiment: Shortlabel:" + experiment.getShortLabel() + "  AC: " + experiment.getAc());
 
                 ExperimentStatus experimentStatus = getCCLineExperimentExportStatus(experiment, "\t\t\t\t\t");
                 if (experimentStatus.doNotExport()) {
                     // forbid export for all interactions of that experiment (and their proteins).
-                    log.debug("\t\t\t\t\t No interactions of that experiment will be exported.");
+                    getOut().println("\t\t\t\t\t No interactions of that experiment will be exported.");
 
                 } else if (experimentStatus.doExport()) {
                     // Authorise export for all interactions of that experiment (and their proteins),
                     // This overwrite the setting of the CvInteraction concerning the export.
-                    log.debug("\t\t\t\t\t All interaction of that experiment will be exported.");
+                    getOut().println("\t\t\t\t\t All interaction of that experiment will be exported.");
 
                     experimentExport = true;
 
@@ -614,7 +610,7 @@ public class CCLineExport extends LineExport {
                         if (authorConfidenceTopic.equals(annotation.getCvTopic())) {
                             String text = annotation.getAnnotationText();
 
-                            log.debug("\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'");
+                            getOut().println("\t\t\t Interaction has " + authorConfidenceTopic.getShortLabel() + ": '" + text + "'");
 
                             if (text != null) {
                                 text = text.trim();
@@ -624,11 +620,11 @@ public class CCLineExport extends LineExport {
                                 String kw = (String) iterator4.next();
                                 // NOT case sensitive
 
-                                log.debug("\t\t\t\t Compare it with '" + kw + "'");
+                                getOut().println("\t\t\t\t Compare it with '" + kw + "'");
 
                                 if (kw.equalsIgnoreCase(text)) {
                                     annotationFound = true;
-                                    log.debug("\t\t\t\t\t Equals !");
+                                    getOut().println("\t\t\t\t\t Equals !");
                                 }
                             }
                         }
@@ -643,16 +639,16 @@ public class CCLineExport extends LineExport {
                         */
 
                         experimentExport = true;
-                        log.debug("\t\t\t that interaction is eligible for export in the context of a large scale experiment");
+                        getOut().println("\t\t\t that interaction is eligible for export in the context of a large scale experiment");
 
                     } else {
 
-                        log.debug("\t\t\t interaction not eligible");
+                        getOut().println("\t\t\t interaction not eligible");
                     }
 
                 } else if (experimentStatus.isNotSpecified()) {
 
-                    log.debug("\t\t\t\t No experiment status, check the experimental method.");
+                    getOut().println("\t\t\t\t No experiment status, check the experimental method.");
 
                     // Then check the experimental method (CvInteraction)
                     // Nothing specified at the experiment level, check for the method (CvInteraction)
@@ -680,7 +676,7 @@ public class CCLineExport extends LineExport {
 
                     } else if (methodStatus.isConditionalExport()) {
 
-                        log.debug("\t\t\t\t As conditional export, check the count of distinct experiment for that method.");
+                        getOut().println("\t\t\t\t As conditional export, check the count of distinct experiment for that method.");
 
                         // if the threshold is not reached, iterates over all available interactions to check if
                         // there is (are) one (many) that could allow to reach the threshold.
@@ -696,7 +692,7 @@ public class CCLineExport extends LineExport {
                         for (Iterator iterator = experiments.iterator(); iterator.hasNext();) {
                             Experiment experiment1 = (Experiment) iterator.next();
 
-                            log.debug("\t\t\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc());
+                            getOut().println("\t\t\t\t Experiment: Shortlabel:" + experiment1.getShortLabel() + "  AC: " + experiment1.getAc());
 
                             CvInteraction method = experiment1.getCvInteraction();
 
@@ -708,7 +704,7 @@ public class CCLineExport extends LineExport {
                             }
                         }
 
-                        log.debug("\t\t\tLooking for other interactions that support that method in other experiments...");
+                        getOut().println("\t\t\tLooking for other interactions that support that method in other experiments...");
 
                         for (int j = 0; j < interactionCount && !enoughExperimentFound; j++) {
 
@@ -728,14 +724,14 @@ public class CCLineExport extends LineExport {
 
                             Interaction interaction2 = (Interaction) interactions.get(j);
 
-                            log.debug("\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc());
+                            getOut().println("\t\t Interaction: Shortlabel:" + interaction2.getShortLabel() + "  AC: " + interaction2.getAc());
 
                             Collection experiments2 = interaction2.getExperiments();
 
                             for (Iterator iterator6 = experiments2.iterator(); iterator6.hasNext() && !enoughExperimentFound;)
                             {
                                 Experiment experiment2 = (Experiment) iterator6.next();
-                                log.debug("\t\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc());
+                                getOut().println("\t\t\t\t Experiment: Shortlabel:" + experiment2.getShortLabel() + "  AC: " + experiment2.getAc());
 
                                 CvInteraction method = experiment2.getCvInteraction();
 
@@ -746,16 +742,16 @@ public class CCLineExport extends LineExport {
                                 }
                             } // j's experiments
 
-                            log.debug("\t\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
-                                      threshold + " #experiment: " +
-                                      (experimentAcs == null ? "none" : "" + experimentAcs.size()));
+                            getOut().println("\t\t\t\t " + cvInteraction.getShortLabel() + ", threshold: " +
+                                             threshold + " #experiment: " +
+                                             (experimentAcs == null ? "none" : "" + experimentAcs.size()));
                         } // j
 
                         if (enoughExperimentFound) {
-                            log.debug("\t\t\t\t Enough experiemnt found");
+                            getOut().println("\t\t\t\t Enough experiemnt found");
                             experimentExport = true;
                         } else {
-                            log.debug("\t\t\t\t Not enough experiemnt found");
+                            getOut().println("\t\t\t\t Not enough experiemnt found");
                         }
 
                     } // conditional status
@@ -815,17 +811,17 @@ public class CCLineExport extends LineExport {
                 System.out.print("..." + idProcessed);
 
                 if ((idProcessed % 500) == 0) {
-                    log.info("");
+                    getOut().println("");
                 } else {
                     System.out.flush();
                 }
             }
 
-            log.debug("Protein selected: " + uniprot_ID);
+            getOut().println("Protein selected: " + uniprot_ID);
 
             percentProteinProcessed = (int) (((float) idProcessed / (float) count) * 100);
-            log.debug("Protein processed: " + percentProteinProcessed + "% (" + idProcessed + " out of " + count + ")");
-            log.debug("Interaction processed: " + alreadyProcessedInteraction.size());
+            getOut().println("Protein processed: " + percentProteinProcessed + "% (" + idProcessed + " out of " + count + ")");
+            getOut().println("Interaction processed: " + alreadyProcessedInteraction.size());
 
             // get the protein's and splice variants related to that Uniprot ID
             Collection<ProteinImpl> proteinSet_1 = getProteinFromIntact(uniprot_ID);
@@ -845,14 +841,14 @@ public class CCLineExport extends LineExport {
                 //     get from the interaction set all interaction that have both interactor (remove them)
                 //     run algo
 
-                //log.debug("\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s).");
+                //getOut().println("\t" + uniprotID_1 + "(" + protein1.getBioSource().getShortLabel() + ")" + " has " + interactionP1.size() + " interaction(s).");
 
 
                 while (!interactionP1.isEmpty()) {
                     Iterator iterator = interactionP1.iterator(); // can't be ouside the loop
                     Interaction interaction = (Interaction) iterator.next();
 
-                    log.debug("\t Process interaction : " + interaction.getShortLabel() + " (" + interaction.getAc() + ")");
+                    getOut().println("\t Process interaction : " + interaction.getShortLabel() + " (" + interaction.getAc() + ")");
 
                     // Let's say we process P1 and P2, the subset of the interactions of P1 if then stored in
                     // the cache of already processed interactions. There is no reason why those interaction
@@ -860,7 +856,7 @@ public class CCLineExport extends LineExport {
                     // So when we process P2 and load again those same interactions from the DB, we can skip them.
                     if (alreadyProcessedInteraction.contains(interaction.getAc())) {
 
-                        log.debug("\t\t That interaction has been processed already ... skip it.");
+                        getOut().println("\t\t That interaction has been processed already ... skip it.");
                         iterator.remove(); // remove it.
 
                     } else {
@@ -890,7 +886,7 @@ public class CCLineExport extends LineExport {
                                 component2 = (Component) iteratorC.next();
                             }
 
-                            log.debug("\t\t Interaction has exactly 2 interactors.");
+                            getOut().println("\t\t Interaction has exactly 2 interactors.");
 
                             // now get the other protein ( other than uniprotID )
 
@@ -903,15 +899,15 @@ public class CCLineExport extends LineExport {
                              */
 
                             // we assume that Component carry only Protein as Interactor.
-                            log.debug("\t\t Check what is the partner of " + uniprotID_1);
+                            getOut().println("\t\t Check what is the partner of " + uniprotID_1);
 
                             // TODO what happen is uniprot_ID = P12345 and protein1 is its splice variant: P12345-2 ?
 
                             Protein p1 = (Protein) component1.getInteractor();
-                            log.debug("\t\t 1st Partner found: " + p1.getShortLabel());
+                            getOut().println("\t\t 1st Partner found: " + p1.getShortLabel());
 
                             Protein p2 = (Protein) component2.getInteractor();
-                            log.debug("\t\t 2nd Partner found: " + p2.getShortLabel());
+                            getOut().println("\t\t 2nd Partner found: " + p2.getShortLabel());
 
                             if (protein1.equals(p1)) {
                                 protein2 = p2;
@@ -935,12 +931,12 @@ public class CCLineExport extends LineExport {
                             // Note: if it is a splice variant, we check on its master protein.
                             if (!uniprotIDs.contains(uniprotID_2_check)) {
 
-                                log.debug("\t\t " + uniprotID_2 + " was not eligible for DR export, because it was not found in the uniprot ID list");
+                                getOut().println("\t\t " + uniprotID_2 + " was not eligible for DR export, because it was not found in the uniprot ID list");
                                 iterator.remove();
 
                             } else {
 
-                                log.debug("\n\t\t Look for interactions amongst " + protein1.getShortLabel() + " and " + protein2.getShortLabel() + ".");
+                                getOut().println("\n\t\t Look for interactions amongst " + protein1.getShortLabel() + " and " + protein2.getShortLabel() + ".");
 
                                 // extract all interactions have partner in protein1 and proteins2
                                 potentiallyEligibleInteraction.clear();
@@ -948,15 +944,15 @@ public class CCLineExport extends LineExport {
                                 // add the current one
                                 potentiallyEligibleInteraction.add(interaction);
                                 iterator.remove();
-                                log.debug("\t\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")");
+                                getOut().println("\t\t\t Add the current one: " + interaction.getShortLabel() + "(" + interaction.getAc() + ")");
 
                                 for (Iterator iterator2 = interactionP1.iterator(); iterator2.hasNext();) {
                                     Interaction interaction1 = (Interaction) iterator2.next();
 
                                     if (alreadyProcessedInteraction.contains(interaction1.getAc())) {
 
-                                        log.debug("\t\t\t That interaction " + interaction1.getShortLabel() + "(" +
-                                                  interaction1.getAc() + ") has been processed already ... skip it.");
+                                        getOut().println("\t\t\t That interaction " + interaction1.getShortLabel() + "(" +
+                                                         interaction1.getAc() + ") has been processed already ... skip it.");
                                         iterator2.remove(); // remove it.
 
                                     } else {
@@ -995,13 +991,13 @@ public class CCLineExport extends LineExport {
                                                 potentiallyEligibleInteraction.add(interaction1);
                                                 iterator2.remove();
 
-                                                log.debug("\t\t\t Add: " + interaction1.getShortLabel() + "(" + interaction1.getAc() + ")");
+                                                getOut().println("\t\t\t Add: " + interaction1.getShortLabel() + "(" + interaction1.getAc() + ")");
                                             }
                                         } // else
                                     } // else
                                 } // selection of the interactions
 
-                                log.debug("\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common");
+                                getOut().println("\t\t They have " + potentiallyEligibleInteraction.size() + " interaction(s) in common");
 
                                 // run the algo
                                 // we need to output
@@ -1045,7 +1041,7 @@ public class CCLineExport extends LineExport {
             fireDrLineProcessedEvent(new DrLineProcessedEvent(this, uniprot_ID));
             drProcessedCount++;
 
-            log.debug("Committing transaction");
+            getOut().println("Committing transaction");
             //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         } // i (all eligible uniprot IDs)
@@ -1054,9 +1050,9 @@ public class CCLineExport extends LineExport {
         if (null != ccWriter) {
             try {
                 ccWriter.close();
-                log.info("Output file closed.");
+                getOut().println("Output file closed.");
             } catch (IOException e) {
-                log.error("Could not close the output file.");
+                getOut().println("ERROR: Could not close the output file.");
             }
         }
     }
@@ -1105,8 +1101,6 @@ public class CCLineExport extends LineExport {
             if (matcher.find()) {
                 String uniprotID = matcher.group();
                 proteins.add(uniprotID);
-            } else {
-                log.error("Could not find uniprotId in line " + count + ":" + line);
             }
         }
 
@@ -1219,7 +1213,7 @@ public class CCLineExport extends LineExport {
 
             displayUsage(options);
 
-            log.error("Parsing failed.  Reason: " + exp.getMessage());
+            System.out.println("ERROR: Parsing failed.  Reason: " + exp.getMessage());
             System.exit(1);
         }
 
@@ -1241,16 +1235,16 @@ public class CCLineExport extends LineExport {
             ccExportFilename = line.getOptionValue("ccExport");
         }
 
-        log.info("Try to open: " + drExportFilename);
+        System.out.println("Try to open: " + drExportFilename);
         Set<String> uniprotIDs = getEligibleProteinsFromFile(drExportFilename);
-        log.info(uniprotIDs.size() + " DR protein(s) loaded from drFile: " + drExportFilename);
+        System.out.println(uniprotIDs.size() + " DR protein(s) loaded from drFile: " + drExportFilename);
 
         // create a database access
         try {
-            log.info("Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName());
-            log.info("User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName());
+            System.out.println("Database instance: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName());
+            System.out.println("User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName());
         } catch (SQLException e) {
-            log.error("Could not get database information (instance name and username).");
+            System.out.println("ERROR: Could not get database information (instance name and username).");
         }
 
         // Prepare CC output goFile.
@@ -1259,8 +1253,8 @@ public class CCLineExport extends LineExport {
             try {
                 ccFile = new File(ccExportFilename);
                 if (ccFile.exists()) {
-                    log.error("Please give a new file name for the CC output file: " + ccFile.getAbsoluteFile());
-                    log.error("We will use the default filename instead (instead of overwritting the existing file).");
+                    System.out.println("ERROR: Please give a new file name for the CC output file: " + ccFile.getAbsoluteFile());
+                    System.out.println("ERROR: We will use the default filename instead (instead of overwritting the existing file).");
                     ccExportFilename = null;
                     ccFile = null;
                 }
@@ -1271,7 +1265,7 @@ public class CCLineExport extends LineExport {
 
         if (ccExportFilename == null || ccFile == null) {
             String filename = "CCLineExport_" + TIME + ".txt";
-            log.info("Using default filename for the CC export: " + filename);
+            System.out.println("Using default filename for the CC export: " + filename);
             ccFile = new File(filename);
         }
 
@@ -1281,8 +1275,8 @@ public class CCLineExport extends LineExport {
             try {
                 goFile = new File(goExportFilename);
                 if (goFile.exists()) {
-                    log.error("Please give a new file name for the GO output file: " + goFile.getAbsoluteFile());
-                    log.error("We will use the default filename instead (instead of overwritting the existing file).");
+                    System.out.println("ERROR: Please give a new file name for the GO output file: " + goFile.getAbsoluteFile());
+                    System.out.println("ERROR: We will use the default filename instead (instead of overwritting the existing file).");
                     goExportFilename = null;
                     goFile = null;
                 }
@@ -1293,7 +1287,7 @@ public class CCLineExport extends LineExport {
 
         if (goExportFilename == null || goFile == null) {
             String filename = "GOExport_" + TIME + ".txt";
-            log.info("Using default filename for the GO export: " + filename);
+            System.out.println("Using default filename for the GO export: " + filename);
             goFile = new File(filename);
         }
 
@@ -1312,7 +1306,7 @@ public class CCLineExport extends LineExport {
 
         } catch (IOException e) {
             e.printStackTrace();
-            log.error("Could not create the output goFile:" + goFile.getAbsolutePath());
+            System.out.println("ERROR: Could not create the output goFile:" + goFile.getAbsolutePath());
             System.exit(1);
 
         } finally {
