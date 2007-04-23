@@ -14,10 +14,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -28,8 +25,6 @@ import java.util.*;
  * @version $Id$
  */
 public class LineExport {
-
-    private static final Log log = LogFactory.getLog(LineExport.class);
 
     protected static String TIME;
 
@@ -223,6 +218,8 @@ public class LineExport {
      */
     protected static class CloseFileOnShutdownHook extends Thread {
 
+        private static final Log log = LogFactory.getLog(CloseFileOnShutdownHook.class);
+
         private FileWriter outputFileWriter;
 
         public CloseFileOnShutdownHook(BufferedWriter outputBufferedWriter, FileWriter outputFileWriter) {
@@ -246,7 +243,7 @@ public class LineExport {
                 try {
                     outputFileWriter.close();
                 } catch (IOException e) {
-                    log.info("An error occured when trying to close the output file");
+                    log.error("ERROR: " + "An error occured when trying to close the output file");
                     return;
                 }
             }
@@ -275,13 +272,21 @@ public class LineExport {
     protected FileWriter outputFileWriter;
 
     private LineExportConfig config;
+    private PrintStream out;
 
     public LineExport() {
         this.config = new LineExportConfig();
+        this.out = System.out;
     }
 
     public LineExport(LineExportConfig config) {
         this.config = config;
+        this.out = System.out;
+    }
+
+    public LineExport(LineExportConfig config, PrintStream out) {
+        this.config = config;
+        this.out = out;
     }
 
     /////////////////////////////
@@ -331,7 +336,7 @@ public class LineExport {
         if (mi != null) {
             cv = IntactContext.getCurrentInstance().getCvContext().getByMiRef(clazz, mi);
             if (cv == null) {
-                log.error("The MI reference you gave doesn't exists. Using the shortlabel instead.");
+                out.println("ERROR: The MI reference you gave doesn't exists. Using the shortlabel instead.");
             }
         }
 
@@ -374,7 +379,7 @@ public class LineExport {
             // create the output file if the user requested it.
             String filename = "export2uniprot_verboseOutput_" + TIME + ".txt";
             File file = new File(filename);
-            log.info("Save verbose output to: " + file.getAbsolutePath());
+            out.println("Save verbose output to: " + file.getAbsolutePath());
             outputBufferedWriter = null;
             outputFileWriter = null;
             try {
@@ -479,15 +484,15 @@ public class LineExport {
                 if (!proteins.isEmpty()) {
                     master = proteins.iterator().next();
                 } else {
-                    log.error("Could not find the master protein (AC: " + ac +
-                              " ) of the splice variant AC: " + protein.getAc());
+                    out.println("ERROR: Could not find the master protein (AC: " + ac +
+                                " ) of the splice variant AC: " + protein.getAc());
                 }
             } else {
-                log.error("An error occured when searching the IntAct database for Protein having the AC: " + ac);
+                out.println("ERROR: An error occured when searching the IntAct database for Protein having the AC: " + ac);
             }
         } else {
-            log.error("Could not find a master protein AC in the Xrefs of the protein: " +
-                      protein.getAc() + ", " + protein.getShortLabel());
+            out.println("ERROR: Could not find a master protein AC in the Xrefs of the protein: " +
+                        protein.getAc() + ", " + protein.getShortLabel());
         }
 
         return master;
@@ -505,8 +510,8 @@ public class LineExport {
         List<Interaction> interactions = new ArrayList<Interaction>(components.size());
         Set<String> acs = new HashSet<String>(components.size());
 
-        log.debug("Found " + components.size() + " components for protein " + protein.getShortLabel()
-                  + ". Starting to get the interactions from those components.");
+        out.println("Found " + components.size() + " components for protein " + protein.getShortLabel()
+                    + ". Starting to get the interactions from those components.");
 
         for (Component component : components) {
             Interaction interaction = component.getInteraction();
@@ -548,10 +553,8 @@ public class LineExport {
 
         isBinaryInteraction = InteractionUtils.isBinaryInteraction(interaction);
 
-        if (log.isDebugEnabled()) {
-            if (!isBinaryInteraction) {
-                log.debug("\t\tInteraction NOT binary");
-            }
+        if (!isBinaryInteraction) {
+            out.println("\t\tInteraction NOT binary");
         }
 
         if (isBinaryInteraction) {
@@ -570,24 +573,24 @@ public class LineExport {
                     if (uniprotID == null) {
                         isBinaryInteraction = false; // stop the loop, involve a protein without uniprot ID
 
-                        log.debug("\t\t\t Interaction is binary but doesn't involve only UniProt proteins (eg. " +
-                                  protein.getAc() + " / " + protein.getShortLabel() + "). ");
+                        out.println("\t\t\t Interaction is binary but doesn't involve only UniProt proteins (eg. " +
+                                    protein.getAc() + " / " + protein.getShortLabel() + "). ");
                     } else {
 
                         // check that the protein doesn't have a no-uniprot-update annotation
                         if (!needsUniprotUpdate(protein)) {
                             isBinaryInteraction = false; // stop the loop, Protein having no-uniprot-update involved
 
-                            log.debug("\t\t\t Interaction is binary but at least one UniProt protein is flagged '" +
-                                      CvTopic.NON_UNIPROT + "' (eg. " + protein.getAc() + " / " + protein.getShortLabel() + "). ");
+                            out.println("\t\t\t Interaction is binary but at least one UniProt protein is flagged '" +
+                                        CvTopic.NON_UNIPROT + "' (eg. " + protein.getAc() + " / " + protein.getShortLabel() + "). ");
                         }
                     }
 
                 } else {
                     isBinaryInteraction = false; // stop the loop, that component doesn't involve a Protein
 
-                    log.debug("\t\t\t Interaction is binary but at least one partner is not a Protein (ie. " +
-                              interactor.getAc() + " / " + interactor.getShortLabel() + " / " + component.getClass() + "). ");
+                    out.println("\t\t\t Interaction is binary but at least one partner is not a Protein (ie. " +
+                                interactor.getAc() + " / " + interactor.getShortLabel() + " / " + component.getClass() + "). ");
                 }
             } // components
         }
@@ -624,7 +627,7 @@ public class LineExport {
             CvInteractionStatus cache = cvInteractionExportStatusCache.get(cvInteraction.getAc());
             if (null != cache) {
 
-//                log.debug( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
+//                out.println( logPrefix + "\t\t\t\t CvInteraction: Status already processed, retreived from cache." );
                 status = cache;
 
             } else {
@@ -639,10 +642,10 @@ public class LineExport {
 
                     annotations = cvInteraction.getAnnotations();
 
-                    log.debug(logPrefix + "\t\t\t " + annotations.size() + " annotations found.");
+                    out.println(logPrefix + "\t\t\t " + annotations.size() + " annotations found.");
 
                     if (config.isIgnoreUniprotDrExportAnnotation()) {
-                        log.debug(logPrefix + "\t\t\tIGNORING uniprot-dr-export check");
+                        out.println(logPrefix + "\t\t\tIGNORING uniprot-dr-export check");
                         status = new CvInteractionStatus(CvInteractionStatus.EXPORT);
                     } else {
 
@@ -651,18 +654,17 @@ public class LineExport {
                         {
                             Annotation _annotation = iterator.next();
 
-                            if (log.isDebugEnabled())
-                                log.debug("\t\t\t\tAnnotation CvTopic: " + _annotation.getCvTopic());
+                            out.println("\t\t\t\tAnnotation CvTopic: " + _annotation.getCvTopic());
 
                             if (getCvContext().getByLabel(CvTopic.class, CvTopic.UNIPROT_DR_EXPORT).equals(_annotation.getCvTopic())) {
 
-                                log.debug(logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation);
+                                out.println(logPrefix + "\t\t\t\t Found uniprot-dr-export annotation: " + _annotation);
 
                                 if (found) {
                                     multipleAnnotationFound = true;
-                                    log.error("There are multiple annotation having Topic:" + CvTopic.UNIPROT_DR_EXPORT +
-                                              " in CvInteraction: " + cvInteraction.getShortLabel() +
-                                              ". \nWe do not export.");
+                                    out.println("ERROR: There are multiple annotation having Topic:" + CvTopic.UNIPROT_DR_EXPORT +
+                                                " in CvInteraction: " + cvInteraction.getShortLabel() +
+                                                ". \nWe do not export.");
                                 } else {
                                     found = true;
                                     annotation = _annotation;
@@ -674,7 +676,7 @@ public class LineExport {
                         if (multipleAnnotationFound) {
 
                             status = new CvInteractionStatus(CvInteractionStatus.DO_NOT_EXPORT);
-                            log.debug(logPrefix + "\t\t\t multiple annotation found: do not export ");
+                            out.println(logPrefix + "\t\t\t multiple annotation found: do not export ");
 
                         } else {
 
@@ -688,16 +690,16 @@ public class LineExport {
                                 if (METHOD_EXPORT_KEYWORK_EXPORT.equals(annotation.getAnnotationText())) {
 
                                     status = new CvInteractionStatus(CvInteractionStatus.EXPORT);
-                                    log.debug(logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export ");
+                                    out.println(logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_EXPORT + " found: export ");
 
                                 } else if (METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT.equals(annotation.getAnnotationText())) {
 
                                     status = new CvInteractionStatus(CvInteractionStatus.DO_NOT_EXPORT);
-                                    log.debug(logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export ");
+                                    out.println(logPrefix + "\t\t\t " + METHOD_EXPORT_KEYWORK_DO_NOT_EXPORT + " found: do not export ");
 
                                 } else {
 
-                                    log.debug(logPrefix + "\t\t\t neither YES or NO found: should be an integer value... ");
+                                    out.println(logPrefix + "\t\t\t neither YES or NO found: should be an integer value... ");
 
                                     // it must be an integer value, let's check it.
                                     try {
@@ -708,17 +710,17 @@ public class LineExport {
 
                                             // value is >= 2
                                             status = new CvInteractionStatus(CvInteractionStatus.CONDITIONAL_EXPORT, i);
-                                            log.debug(logPrefix + "\t\t\t " + i + " found: conditional export ");
+                                            out.println(logPrefix + "\t\t\t " + i + " found: conditional export ");
 
                                         } else if (i == 1) {
 
                                             String err = cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
                                                          ") has an annotationText like <integer value>. Value was: " + i +
                                                          ", We consider it as to be exported.";
-                                            log.debug(err);
+                                            out.println(err);
 
                                             status = new CvInteractionStatus(CvInteractionStatus.EXPORT);
-                                            log.debug(logPrefix + "\t\t\t integer == " + i + " found: export ");
+                                            out.println(logPrefix + "\t\t\t integer == " + i + " found: export ");
 
                                         } else {
                                             // i < 1
@@ -726,27 +728,27 @@ public class LineExport {
                                             String err = cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
                                                          ") has an annotationText like <integer value>. Value was: " + i +
                                                          " However, having a value < 1 is not valid, We consider it as to be NOT exported.";
-                                            log.error(err);
+                                            out.println("ERROR: " + err);
 
                                             status = new CvInteractionStatus(CvInteractionStatus.DO_NOT_EXPORT);
-                                            log.debug(logPrefix + "\t\t\t integer < 1 (" + i + ") found: do not export ");
+                                            out.println(logPrefix + "\t\t\t integer < 1 (" + i + ") found: do not export ");
                                         }
 
                                     } catch (NumberFormatException e) {
                                         // not an integer !
-                                        log.error(cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
-                                                  ") has an annotationText different from yes/no/<integer value> !!!" +
-                                                  " value was: '" + text + "'.");
-                                        log.debug(logPrefix + "\t\t\t not an integer:(" + text + ") found: do not export ");
+                                        out.println("ERROR: " + cvInteraction.getShortLabel() + " having annotation (" + CvTopic.UNIPROT_DR_EXPORT +
+                                                    ") has an annotationText different from yes/no/<integer value> !!!" +
+                                                    " value was: '" + text + "'.");
+                                        out.println(logPrefix + "\t\t\t not an integer:(" + text + ") found: do not export ");
 
                                         status = new CvInteractionStatus(CvInteractionStatus.DO_NOT_EXPORT);
                                     }
                                 }
                             } else {
                                 // no annotation implies NO EXPORT !
-                                log.error(cvInteraction.getShortLabel() +
-                                          " doesn't have an annotation: " + CvTopic.UNIPROT_DR_EXPORT);
-                                log.debug(logPrefix + "\t\t\t not annotation found: do not export ");
+                                out.println("ERROR: " + cvInteraction.getShortLabel() +
+                                            " doesn't have an annotation: " + CvTopic.UNIPROT_DR_EXPORT);
+                                out.println(logPrefix + "\t\t\t not annotation found: do not export ");
 
                                 status = new CvInteractionStatus(CvInteractionStatus.DO_NOT_EXPORT);
                             }
@@ -759,7 +761,7 @@ public class LineExport {
             }
         }
 
-        log.debug("\t\t CvInteractionExport status: " + status);
+        out.println("\t\t CvInteractionExport status: " + status);
 
         return status;
     }
@@ -794,7 +796,7 @@ public class LineExport {
             for (Annotation _annotation : annotations) {
                 if (uniprotCcExport.equals(_annotation.getCvTopic())) {
 
-                    log.debug(logPrefix + _annotation);
+                    out.println(logPrefix + _annotation);
 
                     String text = _annotation.getAnnotationText();
                     if (text != null) {
@@ -803,16 +805,16 @@ public class LineExport {
 
                     if (EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals(text)) {
                         yesFound = true;
-                        log.debug(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
+                        out.println(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
 
                     } else {
                         if (EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals(text)) {
                             noFound = true;
-                            log.debug(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
+                            out.println(logPrefix + "\t\t\t\t '" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
 
                         } else {
 
-                            log.debug(logPrefix + "\t\t\t\t '" + text + "' found, that keyword wasn't recognised.");
+                            out.println(logPrefix + "\t\t\t\t '" + text + "' found, that keyword wasn't recognised.");
                         }
                     }
                 }
@@ -873,12 +875,12 @@ public class LineExport {
             Collection<String> keywords = null;
 
             Collection<Annotation> annotations = experiment.getAnnotations();
-            log.debug(logPrefix + annotations.size() + " annotation(s) found");
+            out.println(logPrefix + annotations.size() + " annotation(s) found");
 
             for (Annotation annotation : annotations) {
                 if (getCvContext().getByLabel(CvTopic.class, CvTopic.UNIPROT_DR_EXPORT).equals(annotation.getCvTopic())) {
 
-                    log.debug(logPrefix + annotation);
+                    out.println(logPrefix + annotation);
 
                     String text = annotation.getAnnotationText();
                     if (text != null) {
@@ -887,12 +889,12 @@ public class LineExport {
 
                     if (EXPERIMENT_EXPORT_KEYWORK_EXPORT.equals(text)) {
                         yesFound = true;
-                        log.debug(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
+                        out.println(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_EXPORT + "' found");
 
                     } else {
                         if (EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT.equals(text)) {
                             noFound = true;
-                            log.debug(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
+                            out.println(logPrefix + "'" + EXPERIMENT_EXPORT_KEYWORK_DO_NOT_EXPORT + "' found");
 
                         } else {
                             if (keywords == null) {
@@ -900,7 +902,7 @@ public class LineExport {
                             }
                             keywordFound = true;
 
-                            log.debug(logPrefix + "'" + text + "' keyword found");
+                            out.println(logPrefix + "'" + text + "' keyword found");
                             keywords.add(text);
                         }
                     }
@@ -923,7 +925,7 @@ public class LineExport {
             experimentExportStatusCache.put(experiment.getAc(), status);
         }
 
-        log.debug(logPrefix + "Experiment status: " + status);
+        out.println(logPrefix + "Experiment status: " + status);
         return status;
     }
 
@@ -1135,5 +1137,9 @@ public class LineExport {
 
     public CvContext getCvContext() {
         return IntactContext.getCurrentInstance().getCvContext();
+    }
+
+    protected PrintStream getOut() {
+        return out;
     }
 }
