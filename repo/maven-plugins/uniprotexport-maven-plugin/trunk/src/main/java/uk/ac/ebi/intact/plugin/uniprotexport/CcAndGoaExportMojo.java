@@ -92,6 +92,9 @@ public class CcAndGoaExportMojo extends UniprotExportAbstractMojo {
             Set<String> uniprotIDs = CCLineExport.getEligibleProteinsFromFile(drExportFile.toString());
             getLog().info(uniprotIDs.size() + " DR protein IDs loaded.");
 
+            MojoUtils.prepareFile(ccExportFile);
+            MojoUtils.prepareFile(goaExportFile);
+
             BufferedWriter ccWriter = new BufferedWriter(new FileWriter(ccExportFile));
             BufferedWriter goaWriter = new BufferedWriter(new FileWriter(goaExportFile));
 
