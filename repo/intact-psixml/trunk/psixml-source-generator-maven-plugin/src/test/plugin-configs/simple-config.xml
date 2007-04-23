@@ -7,6 +7,7 @@
                     <outputFile>target/myOutput.log</outputFile>
                     <targetPath>target/generated</targetPath>
                     <generatedPackage>uk.ac.ebi.intact.psixml.generated</generatedPackage>
+                    <sourceBuilderClass>uk.ac.ebi.intact.psixml.generator.builder.AnnotationSourceBuilder</sourceBuilderClass>
                     <project implementation="uk.ac.ebi.intact.psixml.generator.StubProject"/>
                 </configuration>
             </plugin>
