@@ -20,6 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.util.Utilities;
 
 import java.io.File;
@@ -53,7 +54,7 @@ public class FastaExportMojo
 
     /**
      * Name of the fasta file to be created
-     * @property default-value="${project.build.directory}/intact.fasta"
+     * @parameter default-value="${project.build.directory}/intact.fasta"
      * @required
      */
     private File exportedFile;
@@ -73,7 +74,9 @@ public class FastaExportMojo
         PrintStream ps = new PrintStream(getOutputFile());
 
         getLog().info("Starting export");
+        getLog().info("   Exported file: "+exportedFile);
         try {
+            MojoUtils.prepareFile(exportedFile);
             FastaExporter.exportToFastaFile(ps, exportedFile);
         } catch (IntactTransactionException e) {
             throw new MojoExecutionException("Exception exporting to fasta file", e);
