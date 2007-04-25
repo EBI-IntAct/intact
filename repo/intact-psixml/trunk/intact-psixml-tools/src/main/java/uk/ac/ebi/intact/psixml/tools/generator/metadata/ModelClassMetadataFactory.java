@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
 import psidev.psi.mi.annotations.PsiXmlElement;
-import uk.ac.ebi.intact.psixml.tools.generator.SourceBuilderHelper;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -27,11 +27,11 @@ import java.util.List;
  * Creates instances of ModelClassMetadata
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:ModelClassMetadataFactory.java 8272 2007-04-25 10:20:12Z baranda $
  */
 public class ModelClassMetadataFactory {
 
-    public static ModelClassMetadata createModelClassMetadata(SourceBuilderHelper helper, Class modelClass) {
+    public static ModelClassMetadata createModelClassMetadata(SourceGeneratorHelper helper, Class modelClass) {
         ModelClassMetadata mcm = new ModelClassMetadata(modelClass);
         mcm.setCollections(collectionsFrom(helper, mcm));
 
@@ -41,7 +41,7 @@ public class ModelClassMetadataFactory {
     /**
      * Using reflection, gets the collections from the model class provided and create CollectionMetaData
      */
-    private static List<CollectionMetadata> collectionsFrom(SourceBuilderHelper helper, ModelClassMetadata modelClassMetadata) {
+    private static List<CollectionMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
         List<CollectionMetadata> collections = new ArrayList<CollectionMetadata>();
 
         for (Field field : modelClassMetadata.getModelClass().getDeclaredFields()) {

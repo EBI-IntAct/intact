@@ -19,10 +19,10 @@ package uk.ac.ebi.intact.psixml.tools.generator;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:SourceBuilder.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public interface SourceBuilder {
+public interface SourceGenerator {
 
-    void generateClasses(SourceBuilderContext sbContext) throws Exception;
+    void generateClasses(SourceGeneratorContext sgContext) throws Exception;
 
 }
