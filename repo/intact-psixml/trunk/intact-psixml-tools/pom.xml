@@ -30,6 +30,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-annotations</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml</artifactId>
             <version>1.0-beta4-SNAPSHOT</version>
