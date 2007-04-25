@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.generator.metadata;
+package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
 /**
  * TODO comment this
