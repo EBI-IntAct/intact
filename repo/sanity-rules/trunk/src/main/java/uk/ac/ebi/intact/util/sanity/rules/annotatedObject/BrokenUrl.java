@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.rules.messages.AnnotationMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -30,6 +31,9 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Annotation.class)
+
 public class BrokenUrl  implements Rule {
     private static final String DESCRIPTION = "This/those Url(s) is/are not valid";
     private static final String SUGGESTION = "Could be just momentarily broken";

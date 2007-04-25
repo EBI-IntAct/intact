@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
@@ -21,6 +22,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = CvObject.class)
+
 public class CvInteractionWithoutUniprotDrExport implements Rule {
 
     private static final String DESCRIPTION = "This/those CvInteraction have uniprot-dr-export annotation";

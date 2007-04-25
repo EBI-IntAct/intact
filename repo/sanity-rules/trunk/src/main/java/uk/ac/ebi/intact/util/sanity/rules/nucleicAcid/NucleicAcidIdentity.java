@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -22,6 +23,10 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = NucleicAcid.class)
+
+
 public class NucleicAcidIdentity  implements Rule {
 
     private static String NON_ALLOWED_IDENTITY_DESCRIPTION = "This/those NucleicAcid(s) have a not allowed " +
@@ -57,13 +62,15 @@ public class NucleicAcidIdentity  implements Rule {
         Collection<InteractorXref> xrefs = nucleicAcid.getXrefs();
         int identityCount = 0;
         for(InteractorXref xref : xrefs){
-            CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier());
-            if(CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierIdentity.getPrimaryId())){
-                CvObjectXref databaseIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvDatabase());
-                if(cvDatabaseMis.contains(databaseIdentity.getPrimaryId())){
-                    identityCount++;
-                }else{
-                    messages.add(new GeneralMessage(NON_ALLOWED_IDENTITY_DESCRIPTION, GeneralMessage.AVERAGE_LEVEL,NON_ALLOWED_IDENTITY_SUGGESTION,nucleicAcid));
+            if(xref.getCvXrefQualifier() != null){
+                CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier());
+                if( qualifierIdentity!= null && CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierIdentity.getPrimaryId())){
+                    CvObjectXref databaseIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvDatabase());
+                    if(cvDatabaseMis.contains(databaseIdentity.getPrimaryId())){
+                        identityCount++;
+                    }else{
+                        messages.add(new GeneralMessage(NON_ALLOWED_IDENTITY_DESCRIPTION, GeneralMessage.AVERAGE_LEVEL,NON_ALLOWED_IDENTITY_SUGGESTION,nucleicAcid));
+                    }
                 }
             }
         }
