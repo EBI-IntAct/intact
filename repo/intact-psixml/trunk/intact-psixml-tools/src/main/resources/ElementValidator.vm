@@ -37,6 +37,24 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
     {
         ValidationReportImpl report = new ValidationReportImpl();
 
+        // boolean checks
+
+        #foreach( $fieldMetadata in ${mcm.booleansWithMetadata} )
+        #set ( $clause = "model.${fieldMetadata.getterMethodName}()" )
+        #if ( ${fieldMetadata.failIfTrue} )
+        if ($clause) {
+           System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+        }
+        #end
+        #if ( ${fieldMetadata.failIfFalse} )
+        if (!${clause}) {
+           System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+        }
+        #end
+        #end
+
+        // other psi xml element checks
+
         #foreach( $fieldMetadata in ${mcm.individuals} )
         #set ( $validatorVarName = "validator$velocityCount" )
         #set ( $reportVarName = "report$velocityCount" )
@@ -47,9 +65,15 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         
         #end
 
-        #foreach( $fieldMetadata in ${mcm.collections} )
+        // collection checks
 
-        for (${fieldMetadata.type.simpleName} elem : model.${fieldMetadata.getterMethodName}()) {
+        #foreach( $fieldMetadata in ${mcm.collections} )
+        #set ( $colVarName = "col$velocityCount" )
+        Collection<${fieldMetadata.type.simpleName}> $colVarName = model.${fieldMetadata.getterMethodName}();
+
+        //if (${colVarName}.size() < 
+
+        for (${fieldMetadata.type.simpleName} elem : $colVarName) {
             ${fieldMetadata.validatorClassName} validator = new ${fieldMetadata.validatorClassName}();
             ValidationReport subReport = validator.validate(elem);
             report.mergeWith(subReport);

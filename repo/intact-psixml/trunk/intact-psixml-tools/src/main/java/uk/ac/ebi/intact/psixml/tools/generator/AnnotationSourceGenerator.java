@@ -24,7 +24,10 @@ import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadataFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -70,11 +73,6 @@ public class AnnotationSourceGenerator implements SourceGenerator {
 
         File outputFile = sbHelper.getValidatorFileForClass(modelClass);
 
-        // create a temporary copy of the template, so we avoid classpath issues later
-        if (templateFile == null) {
-            templateFile = createTempFileFromTemplate();
-        }
-
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
         props.setProperty("class." + VelocityEngine.RESOURCE_LOADER + ".class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -87,28 +85,6 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         Writer writer = new FileWriter(outputFile);
         template.merge(context, writer);
         writer.close();
-    }
-
-    private File createTempFileFromTemplate() throws IOException {
-        String templateFilename = "ElementValidator.vm";
-        File temporaryFile = File.createTempFile("ElementValidator", ".vm");
-        temporaryFile.deleteOnExit();
-
-        FileWriter writer = null;
-
-        InputStream is = AnnotationSourceGenerator.class.getResourceAsStream("/" + templateFilename);
-        writer = new FileWriter(temporaryFile);
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            writer.write(line + "\n");
-
-        }
-
-        writer.close();
-
-        return temporaryFile;
     }
 
     protected List<Class> getModelClassesFromJars(File[] jarFiles) {
