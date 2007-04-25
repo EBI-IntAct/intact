@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.persistence.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.annotation.AnnotationUtil;
+import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 
 import javax.persistence.Entity;
 import java.io.File;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Reads the hibernate annotated files from the classpath
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
