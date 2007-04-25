@@ -15,20 +15,19 @@
  */
 package uk.ac.ebi.intact.psixml.generator;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.artifact.Artifact;
 import org.apache.velocity.VelocityContext;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
-import uk.ac.ebi.intact.psixml.generator.builder.SourceBuilder;
-import uk.ac.ebi.intact.psixml.generator.builder.SourceBuilderContext;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGenerator;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -77,10 +76,10 @@ public class ValidatorGeneratorMojo
     /**
      * Path where the classes will be generated
      *
-     * @parameter default-value="uk.ac.ebi.intact.psixml.generator.AnnotationSourceBuilder"
+     * @parameter default-value="uk.ac.ebi.intact.psixml.tools.generator.AnnotationSourceGenerator"
      * @required
      */
-    private String sourceBuilderClass;
+    private String sourceGeneratorClass;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -99,18 +98,18 @@ public class ValidatorGeneratorMojo
         context.put("artifactId", project.getArtifactId());
         context.put("version", project.getVersion());
 
-        SourceBuilderContext sbContext = new SourceBuilderContext(context, generatedPackage, new File(targetPath));
+        SourceGeneratorContext sbContext = new SourceGeneratorContext(context, generatedPackage, new File(targetPath));
         sbContext.setDependencyJars(getDependencyJars());
 
-        SourceBuilder builder = null;
+        SourceGenerator generator = null;
         try {
-            builder = newInstanceOfSourceBuilder(sourceBuilderClass);
+            generator = newInstanceOfSourceGenerator(sourceGeneratorClass);
         } catch (Exception e) {
-            throw new MojoExecutionException("Problem instantiating class for name: " + sourceBuilderClass, e);
+            throw new MojoExecutionException("Problem instantiating class for name: " + sourceGeneratorClass, e);
         }
 
         try {
-            builder.generateClasses(sbContext);
+            generator.generateClasses(sbContext);
         } catch (Exception e) {
             throw new MojoExecutionException("Problem creating class from template", e);
         }
@@ -125,21 +124,19 @@ public class ValidatorGeneratorMojo
 
     }
 
-    private static SourceBuilder newInstanceOfSourceBuilder(String sourceBuilderClassName) throws Exception {
+    private static SourceGenerator newInstanceOfSourceGenerator(String sourceBuilderClassName) throws Exception {
         Class sourceBuilderClass = Class.forName(sourceBuilderClassName);
 
-        return (SourceBuilder) sourceBuilderClass.newInstance();
+        return (SourceGenerator) sourceBuilderClass.newInstance();
     }
 
-    private File[] getDependencyJars()
-    {
+    private File[] getDependencyJars() {
         Set<Artifact> artifacts = project.getArtifacts();
 
         File[] dependencyJars = new File[artifacts.size()];
-        int i=0;
+        int i = 0;
 
-        for (Artifact artifact : artifacts)
-        {
+        for (Artifact artifact : artifacts) {
             dependencyJars[i] = artifact.getFile();
             i++;
         }
@@ -162,7 +159,7 @@ public class ValidatorGeneratorMojo
         this.targetPath = targetPath;
     }
 
-    public String getSourceBuilderClass() {
-        return sourceBuilderClass;
+    public String getSourceGeneratorClass() {
+        return sourceGeneratorClass;
     }
 }
