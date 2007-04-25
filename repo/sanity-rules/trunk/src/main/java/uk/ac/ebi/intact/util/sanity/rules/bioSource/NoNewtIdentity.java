@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -22,6 +23,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = BioSource.class)
+
 public class NoNewtIdentity  implements Rule {
     // The 2 next Collection are not usefull yet as for now all bioSources should have at least 1 xref identity to newt.
     // But, in case this rule would evolve and be changed to "All bioSource should have at least 1 xref identity

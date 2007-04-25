@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -22,6 +23,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Feature.class)
+
 public class MutationAnalysisFeature implements Rule{
 
     private static final String DESCRIPTION = "This/those Feature(s) are characterizing deletion of more then 2 " +

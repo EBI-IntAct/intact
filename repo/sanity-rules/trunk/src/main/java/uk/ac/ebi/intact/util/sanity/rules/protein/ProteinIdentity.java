@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.util.CommonMethods;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
@@ -23,6 +24,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Protein.class)
+
 public class ProteinIdentity implements Rule {
 
     private static final String NO_UNIPROT_DESCRIPTION = "This those Proteins have no xref identity to UniProt.";
@@ -45,9 +49,9 @@ public class ProteinIdentity implements Rule {
                 CvXrefQualifier qualifier = xref.getCvXrefQualifier();
                 if(qualifier != null){
                     CvObjectXref qualifierPsiMiXref = CvObjectUtils.getPsiMiIdentityXref(qualifier);
-                    if(CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierPsiMiXref.getPrimaryId())){
+                    if(qualifierPsiMiXref != null && CvXrefQualifier.IDENTITY_MI_REF.equals(qualifierPsiMiXref.getPrimaryId())){
                         CvObjectXref databasePsiMiXref = CvObjectUtils.getPsiMiIdentityXref(xref.getCvDatabase());
-                        if(CvDatabase.UNIPROT_MI_REF.equals(databasePsiMiXref.getPrimaryId())){
+                        if(databasePsiMiXref != null && CvDatabase.UNIPROT_MI_REF.equals(databasePsiMiXref.getPrimaryId())){
                             uniprotIdentityCount++;
                         }
                     }

@@ -10,6 +10,7 @@ import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.util.CommonMethods;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Experiment;
 
@@ -22,6 +23,9 @@ import java.util.*;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Experiment.class)
+
 public class ExperimentNotSuperCurated  implements Rule {
     private static final String DESCRIPTION = "This/those experiments have not been super curated";
     private static final String SUGGESTION = "Ask a super-creator to add and accepted or to-be-reviewed stamp on it.";

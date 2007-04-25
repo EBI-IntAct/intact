@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.util.sanity.rules.Rule;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Experiment;
@@ -23,6 +24,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Interaction.class)
+
 public class InteractionWithNoExperiment implements Rule {
 
     private static final String DESCRIPTION = "This/those Interaction(s) are not attached to any experiment. ";

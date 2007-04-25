@@ -10,10 +10,8 @@ import uk.ac.ebi.intact.util.sanity.rules.messages.GeneralMessage;
 import uk.ac.ebi.intact.util.sanity.rules.messages.AnnotationMessage;
 import uk.ac.ebi.intact.util.sanity.rules.util.MethodArgumentValidator;
 import uk.ac.ebi.intact.util.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +25,9 @@ import java.util.ArrayList;
  * @version $Id$
  * @since TODO
  */
+
+@SanityRule(target = Annotation.class)
+
 public class AnnotationNotUsingAnApropriateCvTopic implements Rule {
 
     private static final String CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION = "This/those object(s) have annotation using CvTopic which are hidden or obsolete Cvs";
