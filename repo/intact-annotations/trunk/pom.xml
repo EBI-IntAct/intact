@@ -41,9 +41,23 @@
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-annotations/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-annotations/trunk</developerConnection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-annotations/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-annotations/trunk/</url>
     </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.13</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.0.4</version>
+        </dependency>
+    </dependencies>
 
     <!-- EBI repositories -->
     <repositories>
