@@ -20,7 +20,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import psidev.psi.mi.annotations.PsiXmlElement;
-import uk.ac.ebi.intact.annotation.AnnotationUtil;
+import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadataFactory;
 
@@ -33,11 +33,10 @@ import java.util.Properties;
  * Creates source validator files using the Annotations in the PSI XML model classes
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:AnnotationSourceBuilder.java 8272 2007-04-25 10:20:12Z baranda $
  */
 public class AnnotationSourceBuilder implements SourceBuilder {
 
-    private String[] jarFiles;
     private File templateFile;
 
     /**
