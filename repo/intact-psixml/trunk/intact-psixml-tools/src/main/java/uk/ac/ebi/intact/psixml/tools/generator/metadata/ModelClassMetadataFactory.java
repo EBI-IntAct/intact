@@ -18,7 +18,10 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 import psidev.psi.mi.annotations.PsiXmlElement;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 
-import java.lang.reflect.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,32 +36,48 @@ public class ModelClassMetadataFactory {
 
     public static ModelClassMetadata createModelClassMetadata(SourceGeneratorHelper helper, Class modelClass) {
         ModelClassMetadata mcm = new ModelClassMetadata(modelClass);
+        mcm.setIndividuals(individualsFrom(helper, mcm));
         mcm.setCollections(collectionsFrom(helper, mcm));
-
         return mcm;
     }
+
+    private static List<FieldMetadata> individualsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
+        List<FieldMetadata> individuals = new ArrayList<FieldMetadata>();
+
+        for (Field field : fieldsWithModelClasses(modelClassMetadata)) {
+            Class clazz = field.getType();
+
+            Method getterMethod = getGetterMethodForIndividual(clazz, modelClassMetadata);
+
+            if (getterMethod != null) {
+                FieldMetadata fm = new FieldMetadata(clazz, helper.getValidatorNameForClass(clazz), getterMethod.getName());
+                individuals.add(fm);
+            }
+        }
+
+        return individuals;
+    }
+
 
     /**
      * Using reflection, gets the collections from the model class provided and create CollectionMetaData
      */
-    private static List<CollectionMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
-        List<CollectionMetadata> collections = new ArrayList<CollectionMetadata>();
+    private static List<FieldMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
+        List<FieldMetadata> collections = new ArrayList<FieldMetadata>();
 
-        for (Field field : modelClassMetadata.getModelClass().getDeclaredFields()) {
-            Class type = field.getType();
+        for (Field field : fieldsOfType(modelClassMetadata, Collection.class)) {
+            Type genType = field.getGenericType();
 
-            if (type.isAssignableFrom(Collection.class)) {
-                Type genType = field.getGenericType();
+            if (genType instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) genType;
 
-                if (genType instanceof ParameterizedType) {
-                    ParameterizedType pt = (ParameterizedType) genType;
+                Class typeOfCollection = (Class) pt.getActualTypeArguments()[0];
 
-                    Class typeOfCollection = (Class) pt.getActualTypeArguments()[0];
+                if (typeOfCollection.getAnnotation(PsiXmlElement.class) != null) {
+                    Method getterMethod = getGetterMethodForCollection(typeOfCollection, modelClassMetadata);
 
-                    if (typeOfCollection.getAnnotation(PsiXmlElement.class) != null) {
-                        String getterMethodName = getGetterMethodNameForCollection(typeOfCollection, modelClassMetadata);
-
-                        CollectionMetadata cm = new CollectionMetadata(typeOfCollection, helper.getValidatorNameForClass(typeOfCollection), getterMethodName);
+                    if (getterMethod != null) {
+                        FieldMetadata cm = new FieldMetadata(typeOfCollection, helper.getValidatorNameForClass(typeOfCollection), getterMethod.getName());
                         collections.add(cm);
                     }
                 }
@@ -68,10 +87,24 @@ public class ModelClassMetadataFactory {
         return collections;
     }
 
-    private static String getGetterMethodNameForCollection(Class type, ModelClassMetadata modelClassMetadata) {
+    private static Method getGetterMethodForIndividual(Class type, ModelClassMetadata modelClassMetadata) {
         for (Method m : modelClassMetadata.getModelClass().getMethods()) {
             if (m.getName().startsWith("get")) {
 
+                Type retType = m.getReturnType();
+
+                if (type.equals(retType)) {
+                    return m;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private static Method getGetterMethodForCollection(Class genericType, ModelClassMetadata modelClassMetadata) {
+        for (Method m : modelClassMetadata.getModelClass().getMethods()) {
+            if (m.getName().startsWith("get")) {
                 Type genType = m.getGenericReturnType();
 
                 if (genType instanceof ParameterizedType) {
@@ -79,8 +112,8 @@ public class ModelClassMetadataFactory {
 
                     Class typeOfCollection = (Class) pt.getActualTypeArguments()[0];
 
-                    if (typeOfCollection.equals(type)) {
-                        return m.getName();
+                    if (typeOfCollection.equals(genericType)) {
+                        return m;
                     }
                 }
             }
@@ -89,83 +122,30 @@ public class ModelClassMetadataFactory {
         return null;
     }
 
-    private static void print
-            (TypeVariable
-                    v
-            ) {
-        System.out.println("Type variable");
-        System.out.println("Name: " + v.getName());
-        System.out.println("Declaration: " +
-                           v.getGenericDeclaration());
-        System.out.println("Bounds:");
-        for (Type t : v.getBounds()) {
-            print(t);
-        }
-    }
+    private static List<Field> fieldsOfType(ModelClassMetadata modelClassMetadata, Class type) {
+        List<Field> fields = new ArrayList<Field>();
 
-    // Prints information about a wildcard type
-    private static void print
-            (WildcardType
-                    wt
-            ) {
-        System.out.println("Wildcard type");
-        System.out.println("Lower bounds:");
-        for (Type b : wt.getLowerBounds()) {
-            print(b);
+        for (Field field : modelClassMetadata.getModelClass().getDeclaredFields()) {
+            if (type.equals(field.getType())) {
+                fields.add(field);
+            }
         }
 
-        System.out.println("Upper bounds:");
-        for (Type b : wt.getUpperBounds()) {
-            print(b);
+        return fields;
+    }
+
+    private static List<Field> fieldsWithModelClasses(ModelClassMetadata modelClassMetadata) {
+        List<Field> fields = new ArrayList<Field>();
+
+        for (Field field : modelClassMetadata.getModelClass().getDeclaredFields()) {
+            Class clazz = field.getType();
+
+            if (clazz.getAnnotation(PsiXmlElement.class) != null) {
+                fields.add(field);
+            }
         }
+
+        return fields;
     }
 
-    // Prints information about a parameterized type
-    private static void print
-            (ParameterizedType
-                    pt
-            ) {
-        System.out.println("Parameterized type");
-        System.out.println("Owner: " + pt.getOwnerType());
-        System.out.println("Raw type: " + pt.getRawType());
-
-        for (Type actualType : pt.getActualTypeArguments()) {
-            print(actualType);
-        }
-    }
-
-    // Prints information about a generic array type
-    private static void print
-            (GenericArrayType
-                    gat
-            ) {
-        System.out.println("Generic array type");
-        System.out.println("Type of array: ");
-        print(gat.getGenericComponentType());
-    }
-
-    /**
-     * Prints information about a type. The nested
-     * if/else-if chain calls the
-     * appropriate overloaded print method for the
-     * type. If t is just a Class,
-     * we print it directly.
-     */
-
-    private static void print
-            (Type
-                    t
-            ) {
-        if (t instanceof TypeVariable) {
-            print((TypeVariable) t);
-        } else if (t instanceof WildcardType) {
-            print((WildcardType) t);
-        } else if (t instanceof ParameterizedType) {
-            print((ParameterizedType) t);
-        } else if (t instanceof GenericArrayType) {
-            print((GenericArrayType) t);
-        } else {
-            System.out.println(t);
-        }
-    }
 }

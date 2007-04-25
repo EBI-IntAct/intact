@@ -19,15 +19,15 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:CollectionMetadata.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public class CollectionMetadata {
+public class FieldMetadata {
 
     private Class type;
     private String validatorClassName;
     private String getterMethodName;
 
-    public CollectionMetadata(Class type, String validatorClassName, String getterMethodName) {
+    public FieldMetadata(Class type, String validatorClassName, String getterMethodName) {
         this.type = type;
         this.validatorClassName = validatorClassName;
         this.getterMethodName = getterMethodName;

@@ -76,13 +76,12 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         }
 
         Properties props = new Properties();
-        props.setProperty(VelocityEngine.RESOURCE_LOADER, "file");
-        props.setProperty("file." + VelocityEngine.RESOURCE_LOADER + ".path",
-                          templateFile.getParent());
+        props.setProperty("resource.loader", "class");
+        props.setProperty("class." + VelocityEngine.RESOURCE_LOADER + ".class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
 
         Velocity.init(props);
 
-        Template template = Velocity.getTemplate(templateFile.getName());
+        Template template = Velocity.getTemplate("ElementValidator.vm");
 
         // write the resulting file with velocity
         Writer writer = new FileWriter(outputFile);
@@ -104,6 +103,7 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         String line;
         while ((line = reader.readLine()) != null) {
             writer.write(line + "\n");
+
         }
 
         writer.close();
