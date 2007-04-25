@@ -15,35 +15,33 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.io.File;
 
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:SourceBuilderHelper.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public class SourceBuilderHelper {
+public class SourceGeneratorHelper {
 
-    private Map<Class,String> modelClassToValidatorName;
-    private Map<Class,String> modelClassToValidatorFilename;
+    private Map<Class, String> modelClassToValidatorName;
+    private Map<Class, String> modelClassToValidatorFilename;
 
-    private SourceBuilderContext sbContext;
+    private SourceGeneratorContext sgContext;
 
-    public SourceBuilderHelper(List<Class> modelClasses, SourceBuilderContext sbContext)
-    {
-        this.sbContext = sbContext;
+    public SourceGeneratorHelper(List<Class> modelClasses, SourceGeneratorContext sgContext) {
+        this.sgContext = sgContext;
 
         File outputDir = createOutputDir();
-        
+
         modelClassToValidatorName = new HashMap(modelClasses.size());
         modelClassToValidatorFilename = new HashMap(modelClasses.size());
 
-        for (Class modelClass : modelClasses)
-        {
+        for (Class modelClass : modelClasses) {
             String validatorClassName = validatorNameForClass(modelClass);
             String validatorClassFile = filenameForClass(modelClass);
 
@@ -52,8 +50,7 @@ public class SourceBuilderHelper {
         }
     }
 
-    public String getValidatorNameForClass(Class modelClass)
-    {
+    public String getValidatorNameForClass(Class modelClass) {
         return modelClassToValidatorName.get(modelClass);
     }
 
@@ -61,24 +58,21 @@ public class SourceBuilderHelper {
         return modelClassToValidatorFilename.get(modelClass);
     }
 
-    public File getValidatorFileForClass(Class modelClass)
-    {
-        return new File(sbContext.getOutputDir(), getValidatorFilenameForClass(modelClass));
+    public File getValidatorFileForClass(Class modelClass) {
+        return new File(sgContext.getOutputDir(), getValidatorFilenameForClass(modelClass));
     }
 
-    private String validatorNameForClass(Class modelClass)
-    {
-        return modelClass.getSimpleName()+"Validator";
+    private String validatorNameForClass(Class modelClass) {
+        return modelClass.getSimpleName() + "Validator";
     }
 
-    private String filenameForClass(Class modelClass)
-    {
-        return validatorNameForClass(modelClass)+".java";
+    private String filenameForClass(Class modelClass) {
+        return validatorNameForClass(modelClass) + ".java";
     }
 
     private File createOutputDir() {
-        sbContext.getOutputDir().mkdirs();
+        sgContext.getOutputDir().mkdirs();
 
-        return sbContext.getOutputDir();
+        return sgContext.getOutputDir();
     }
 }

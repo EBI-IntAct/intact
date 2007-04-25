@@ -35,33 +35,33 @@ import java.util.Properties;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id:AnnotationSourceBuilder.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public class AnnotationSourceBuilder implements SourceBuilder {
+public class AnnotationSourceGenerator implements SourceGenerator {
 
     private File templateFile;
 
     /**
      * Constructor
      */
-    public AnnotationSourceBuilder() {
+    public AnnotationSourceGenerator() {
     }
 
-    public void generateClasses(SourceBuilderContext sbContext) throws Exception {
+    public void generateClasses(SourceGeneratorContext sgContext) throws Exception {
 
-        List<Class> modelClasses = getModelClassesFromJars(sbContext.getDependencyJars());
+        List<Class> modelClasses = getModelClassesFromJars(sgContext.getDependencyJars());
 
-        SourceBuilderHelper sourceBuilderHelper = new SourceBuilderHelper(modelClasses, sbContext);
+        SourceGeneratorHelper sourceBuilderHelper = new SourceGeneratorHelper(modelClasses, sgContext);
 
         for (Class modelClass : modelClasses) {
-            create(sbContext, sourceBuilderHelper, modelClass);
+            create(sgContext, sourceBuilderHelper, modelClass);
         }
     }
 
-    public void create(SourceBuilderContext sbContext, SourceBuilderHelper sbHelper, Class modelClass) throws Exception {
+    public void create(SourceGeneratorContext sgContext, SourceGeneratorHelper sbHelper, Class modelClass) throws Exception {
         String validatorClassName = sbHelper.getValidatorNameForClass(modelClass);
 
-        VelocityContext context = sbContext.getVelocityContext();
+        VelocityContext context = sgContext.getVelocityContext();
 
-        context.put("packageName", sbContext.getGeneratedPackage());
+        context.put("packageName", sgContext.getGeneratedPackage());
         context.put("modelClass", modelClass);
         context.put("type", validatorClassName);
 
@@ -97,7 +97,7 @@ public class AnnotationSourceBuilder implements SourceBuilder {
 
         FileWriter writer = null;
 
-        InputStream is = AnnotationSourceBuilder.class.getResourceAsStream("/" + templateFilename);
+        InputStream is = AnnotationSourceGenerator.class.getResourceAsStream("/" + templateFilename);
         writer = new FileWriter(temporaryFile);
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));

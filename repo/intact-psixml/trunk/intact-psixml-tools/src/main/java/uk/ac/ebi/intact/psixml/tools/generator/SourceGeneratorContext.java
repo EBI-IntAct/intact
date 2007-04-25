@@ -23,24 +23,22 @@ import java.io.File;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:SourceBuilderContext.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public class SourceBuilderContext {
+public class SourceGeneratorContext {
 
     private File[] dependencyJars;
     private String generatedPackage;
     private File targetPath;
     private VelocityContext velocityContext;
 
-    public SourceBuilderContext(VelocityContext context, String generatedPackage, File targetPath)
-    {
+    public SourceGeneratorContext(VelocityContext context, String generatedPackage, File targetPath) {
         this.velocityContext = context;
         this.generatedPackage = generatedPackage;
         this.targetPath = targetPath;
     }
 
-    public File getOutputDir()
-    {
+    public File getOutputDir() {
         String packageDir = generatedPackage.replaceAll("\\.", "/");
         File outputDir = new File(targetPath, packageDir);
 
@@ -51,7 +49,7 @@ public class SourceBuilderContext {
         return dependencyJars;
     }
 
-    public void setDependencyJars(File[] dependencyJars) {
+    public void setDependencyJars(File... dependencyJars) {
         this.dependencyJars = dependencyJars;
     }
 

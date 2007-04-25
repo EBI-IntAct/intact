@@ -39,7 +39,6 @@ public class ${type} implements Validator<$modelClass.simpleName}> {
         ValidationReportImpl report = new ValidationReportImpl();
 
         #foreach( $colMetadata in ${mcm.collections} )
-        #
         for (${colMetadata.type.simpleName} elem : model.${colMetadata.getterMethodName}()) {
             ${colMetadata.validatorClassName} validator = new ${colMetadata.validatorClassName}();
             ValidationReport subReport = validator.validate(elem);
