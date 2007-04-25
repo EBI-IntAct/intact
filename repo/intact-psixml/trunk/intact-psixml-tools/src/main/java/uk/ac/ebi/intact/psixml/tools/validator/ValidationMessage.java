@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator;
+package uk.ac.ebi.intact.psixml.tools.validator;
 
 /**
  * TODO comment this
@@ -21,10 +21,27 @@ package uk.ac.ebi.intact.psixml.generator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public enum MessageType {
+public class ValidationMessage {
 
-    ERROR,
-    WARNING,
-    INFO,
-    DEBUG;
+    private String message;
+    private MessageType type;
+    private Class elementClass;
+
+    public ValidationMessage(Class elementClass, String message, MessageType type) {
+        this.elementClass = elementClass;
+        this.message = message;
+        this.type = type;
+    }
+
+    public Class getElementClass() {
+        return elementClass;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public MessageType getType() {
+        return type;
+    }
 }

@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder;
-
-import org.apache.velocity.VelocityContext;
-
-import java.io.File;
+package uk.ac.ebi.intact.psixml.tools.validator;
 
 /**
  * TODO comment this
@@ -25,8 +21,8 @@ import java.io.File;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface SourceBuilder {
+public interface Validator<T> {
 
-    void generateClasses(SourceBuilderContext sbContext) throws Exception;
+    ValidationReport validate(T elementToValidate);
 
 }

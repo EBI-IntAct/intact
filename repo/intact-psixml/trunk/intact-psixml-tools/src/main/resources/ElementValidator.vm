@@ -16,7 +16,7 @@
 package ${packageName};
 
 import java.util.*;
-import uk.ac.ebi.intact.psixml.generator.*;
+import uk.ac.ebi.intact.psixml.tools.validator.*;
 
 #foreach( $importedClass in ${mcm.importedClasses} )
 import ${importedClass.name};
