@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder.metadata;
+package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
 import java.util.ArrayList;
 import java.util.HashSet;

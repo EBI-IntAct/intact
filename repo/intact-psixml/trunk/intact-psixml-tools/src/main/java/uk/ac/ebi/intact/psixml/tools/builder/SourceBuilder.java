@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder.metadata;
+package uk.ac.ebi.intact.psixml.tools.generator;
 
 /**
  * TODO comment this
@@ -21,27 +21,8 @@ package uk.ac.ebi.intact.psixml.generator.builder.metadata;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CollectionMetadata {
+public interface SourceBuilder {
 
-    private Class type;
-    private String validatorClassName;
-    private String getterMethodName;
+    void generateClasses(SourceBuilderContext sbContext) throws Exception;
 
-    public CollectionMetadata(Class type, String validatorClassName, String getterMethodName) {
-        this.type = type;
-        this.validatorClassName = validatorClassName;
-        this.getterMethodName = getterMethodName;
-    }
-
-    public Class getType() {
-        return type;
-    }
-
-    public String getValidatorClassName() {
-        return validatorClassName;
-    }
-
-    public String getGetterMethodName() {
-        return getterMethodName;
-    }
 }

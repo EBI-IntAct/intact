@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder;
-
-import org.apache.velocity.VelocityContext;
+package uk.ac.ebi.intact.psixml.tools.generator;
 
 import java.util.List;
 import java.util.Map;

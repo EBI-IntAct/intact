@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator;
+package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
 /**
  * TODO comment this
@@ -21,27 +21,27 @@ package uk.ac.ebi.intact.psixml.generator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ValidationMessage {
+public class CollectionMetadata {
 
-    private String message;
-    private MessageType type;
-    private Class elementClass;
+    private Class type;
+    private String validatorClassName;
+    private String getterMethodName;
 
-    public ValidationMessage(Class elementClass, String message, MessageType type) {
-        this.elementClass = elementClass;
-        this.message = message;
+    public CollectionMetadata(Class type, String validatorClassName, String getterMethodName) {
         this.type = type;
+        this.validatorClassName = validatorClassName;
+        this.getterMethodName = getterMethodName;
     }
 
-    public Class getElementClass() {
-        return elementClass;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public MessageType getType() {
+    public Class getType() {
         return type;
+    }
+
+    public String getValidatorClassName() {
+        return validatorClassName;
+    }
+
+    public String getGetterMethodName() {
+        return getterMethodName;
     }
 }

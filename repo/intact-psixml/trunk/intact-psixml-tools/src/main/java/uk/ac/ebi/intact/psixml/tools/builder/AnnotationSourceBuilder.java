@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder;
+package uk.ac.ebi.intact.psixml.tools.generator;
 
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -21,8 +21,8 @@ import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import psidev.psi.mi.annotations.PsiXmlElement;
 import uk.ac.ebi.intact.annotation.AnnotationUtil;
-import uk.ac.ebi.intact.psixml.generator.builder.metadata.ModelClassMetadata;
-import uk.ac.ebi.intact.psixml.generator.builder.metadata.ModelClassMetadataFactory;
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadataFactory;
 
 import java.io.*;
 import java.util.ArrayList;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.generator.builder.metadata;
+package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
 import psidev.psi.mi.annotations.PsiXmlElement;
-import uk.ac.ebi.intact.psixml.generator.builder.SourceBuilderHelper;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceBuilderHelper;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
