@@ -24,10 +24,10 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 public class CollectionFieldMetadata extends FieldMetadata {
 
     private int min;
-    private int max;
+    private int max = Integer.MAX_VALUE;
     private boolean disabled;
 
-    public CollectionFieldMetadata(Class type, String validatorClassName, String getterMethodName) {
+    CollectionFieldMetadata(Class type, String validatorClassName, String getterMethodName) {
         super(type, validatorClassName, getterMethodName);
     }
 

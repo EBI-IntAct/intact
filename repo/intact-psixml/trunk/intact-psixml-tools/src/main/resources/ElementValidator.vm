@@ -69,9 +69,20 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 
         #foreach( $fieldMetadata in ${mcm.collections} )
         #set ( $colVarName = "col$velocityCount" )
+
         Collection<${fieldMetadata.type.simpleName}> $colVarName = model.${fieldMetadata.getterMethodName}();
 
-        //if (${colVarName}.size() < 
+        #if ( ${fieldMetadata.min} > 0 )
+        if (${colVarName}.size() < ${fieldMetadata.min}) {
+            System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+        }
+        #end
+
+        #if ( ${fieldMetadata.max} > 0 && ${fieldMetadata.max} != 2147483647 )
+        if (${colVarName}.size() > ${fieldMetadata.max}) {
+            System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+        }
+        #end
 
         for (${fieldMetadata.type.simpleName} elem : $colVarName) {
             ${fieldMetadata.validatorClassName} validator = new ${fieldMetadata.validatorClassName}();

@@ -18,10 +18,7 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.util;
 import psidev.psi.mi.annotations.PsiXmlElement;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.BooleanFieldMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.FieldMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.FieldMetadataFactory;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.MetadataException;
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -43,7 +40,7 @@ public class PsiReflectionUtils {
         List<BooleanFieldMetadata> simpleFields = new ArrayList<BooleanFieldMetadata>();
 
         for (Field field : fieldsOfType(modelClassMetadata, Boolean.class)) {
-            BooleanFieldMetadata bfMetadata = FieldMetadataFactory.newBooleanFieldMetadata(field, modelClassMetadata);
+            BooleanFieldMetadata bfMetadata = AnnotationFieldMetadataFactory.newBooleanFieldMetadata(field, modelClassMetadata);
             simpleFields.add(bfMetadata);
         }
 
@@ -72,8 +69,8 @@ public class PsiReflectionUtils {
     /**
      * Using reflection, gets the collections from the model class provided and create CollectionMetaData
      */
-    public static List<FieldMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
-        List<FieldMetadata> collections = new ArrayList<FieldMetadata>();
+    public static List<CollectionFieldMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
+        List<CollectionFieldMetadata> collections = new ArrayList<CollectionFieldMetadata>();
 
         for (Field field : fieldsOfType(modelClassMetadata, Collection.class)) {
             Type genType = field.getGenericType();
@@ -84,12 +81,9 @@ public class PsiReflectionUtils {
                 Class typeOfCollection = (Class) pt.getActualTypeArguments()[0];
 
                 if (typeOfCollection.isAnnotationPresent(PsiXmlElement.class)) {
-                    Method getterMethod = getReadMethodForProperty(field, modelClassMetadata.getModelClass());
 
-                    if (getterMethod != null) {
-                        FieldMetadata cm = new FieldMetadata(typeOfCollection, helper.getValidatorNameForClass(typeOfCollection), getterMethod.getName());
-                        collections.add(cm);
-                    }
+                    CollectionFieldMetadata cm = AnnotationFieldMetadataFactory.newCollectionFieldMetadata(typeOfCollection, field, helper, modelClassMetadata);
+                    collections.add(cm);
                 }
             }
         }

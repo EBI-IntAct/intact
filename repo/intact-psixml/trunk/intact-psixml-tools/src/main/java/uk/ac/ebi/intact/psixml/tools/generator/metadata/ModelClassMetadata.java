@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.BooleanFieldMetadata;
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.CollectionFieldMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.FieldMetadata;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import java.util.Set;
 public class ModelClassMetadata {
 
     private Class modelClass;
-    private List<FieldMetadata> collections;
+    private List<CollectionFieldMetadata> collections;
     private Set<Class> importedClasses;
     private List<FieldMetadata> individuals;
     private List<BooleanFieldMetadata> booleansWithMetadata;
@@ -40,7 +41,7 @@ public class ModelClassMetadata {
     public ModelClassMetadata(Class modelClass) {
         this.modelClass = modelClass;
 
-        this.collections = new ArrayList<FieldMetadata>();
+        this.collections = new ArrayList<CollectionFieldMetadata>();
         this.individuals = new ArrayList<FieldMetadata>();
         this.importedClasses = new HashSet<Class>();
 
@@ -51,14 +52,14 @@ public class ModelClassMetadata {
         return modelClass;
     }
 
-    public List<FieldMetadata> getCollections() {
+    public List<CollectionFieldMetadata> getCollections() {
         return collections;
     }
 
-    public void setCollections(List<FieldMetadata> collections) {
+    public void setCollections(List<CollectionFieldMetadata> collections) {
         this.collections = collections;
 
-        for (FieldMetadata col : collections) {
+        for (CollectionFieldMetadata col : collections) {
             addImportedClass(col.getType());
         }
     }

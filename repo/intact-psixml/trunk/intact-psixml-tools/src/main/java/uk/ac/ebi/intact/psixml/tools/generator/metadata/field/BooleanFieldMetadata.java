@@ -26,7 +26,7 @@ public class BooleanFieldMetadata extends FieldMetadata {
     private boolean failIfTrue;
     private boolean failIfFalse;
 
-    public BooleanFieldMetadata(String getterMethodName) {
+    BooleanFieldMetadata(String getterMethodName) {
         super(Boolean.class, null, getterMethodName);
     }
 
