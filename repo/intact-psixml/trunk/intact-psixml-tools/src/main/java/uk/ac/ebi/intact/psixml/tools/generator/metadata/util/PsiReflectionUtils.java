@@ -15,7 +15,10 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.util;
 
+import psidev.psi.mi.annotations.PsiExtension;
+import psidev.psi.mi.annotations.PsiExtensionMethod;
 import psidev.psi.mi.annotations.PsiXmlElement;
+import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
@@ -85,6 +88,27 @@ public class PsiReflectionUtils {
         }
 
         return collections;
+    }
+
+    public static List<Method> discoverPsiExtensionMethodsForClass(Class modelClass) {
+        List<Class> psiExtensionClasses = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(PsiExtension.class);
+
+        // get the methods with the @PsiExtensionMethods
+        List<Method> psiExtensionMethods = new ArrayList<Method>();
+
+        for (Class psiExtensionClass : psiExtensionClasses) {
+            PsiExtension psiExtension = (PsiExtension) psiExtensionClass.getAnnotation(PsiExtension.class);
+
+            if (psiExtension.forClass().equals(modelClass)) {
+                for (Method method : psiExtensionClass.getDeclaredMethods()) {
+                    if (method.getAnnotation(PsiExtensionMethod.class) != null) {
+                        psiExtensionMethods.add(method);
+                    }
+                }
+            }
+        }
+
+        return psiExtensionMethods;
     }
 
     public static Method getReadMethodForProperty(Field field) {

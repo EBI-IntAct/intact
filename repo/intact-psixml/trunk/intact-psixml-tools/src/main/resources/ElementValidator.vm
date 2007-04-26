@@ -108,6 +108,13 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         #end
         #end
 
+        // extensions
+        #foreach( $extMethod in ${mcm.extensions} )
+        #set ( $extVarName = "extension$velocityCount" )
+        ${extMethod.declaringClass.name} ${extVarName} = new ${extMethod.declaringClass.name}();
+        ${extVarName}.${extMethod.name}(model);
+        #end
+
 
         return report;
     }

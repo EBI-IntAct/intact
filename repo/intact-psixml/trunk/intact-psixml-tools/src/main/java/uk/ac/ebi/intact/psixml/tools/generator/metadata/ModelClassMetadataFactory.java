@@ -18,6 +18,9 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.util.PsiReflectionUtils;
 
+import java.lang.reflect.Method;
+import java.util.List;
+
 /**
  * Creates instances of ModelClassMetadata
  *
@@ -31,8 +34,30 @@ public class ModelClassMetadataFactory {
         mcm.setBooleansWithMetadata(PsiReflectionUtils.booleanFieldsFrom(mcm));
         mcm.setIndividuals(PsiReflectionUtils.individualsFrom(helper, mcm));
         mcm.setCollections(PsiReflectionUtils.collectionsFrom(helper, mcm));
+
+        List<Method> extensionMethods = PsiReflectionUtils.discoverPsiExtensionMethodsForClass(modelClass);
+        for (Method extMethos : extensionMethods) {
+            checkPsiExtensionMethod(extMethos, modelClass);
+        }
+        mcm.setExtensions(extensionMethods);
+
         return mcm;
     }
 
+    private static void checkPsiExtensionMethod(Method method, Class modelClass) {
+        if (!method.getReturnType().toString().equals("void")) {
+            throw new RuntimeException("PsiExtensionMethod must return void: " + method);
+        }
+
+        if (method.getParameterTypes().length != 1) {
+            throw new RuntimeException("PsiExtensionMethod must accept only one parameter: " + method);
+        }
+
+        Class paramType = method.getParameterTypes()[0];
+
+        if (!paramType.isAssignableFrom(modelClass)) {
+            throw new RuntimeException("PsiExtensionMethod parameter must be assignable from '" + modelClass.getName() + "': " + method);
+        }
+    }
 
 }
