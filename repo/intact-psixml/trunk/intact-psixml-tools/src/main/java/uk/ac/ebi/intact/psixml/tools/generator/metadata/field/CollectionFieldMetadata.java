@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
+import java.lang.reflect.Field;
+
 /**
  * TODO comment this
  *
@@ -26,9 +28,11 @@ public class CollectionFieldMetadata extends FieldMetadata {
     private int min;
     private int max = Integer.MAX_VALUE;
     private boolean disabled;
+    private Class genericType;
 
-    CollectionFieldMetadata(Class type, String validatorClassName, String getterMethodName) {
-        super(type, validatorClassName, getterMethodName);
+    CollectionFieldMetadata(Class genericType, Field field, String validatorClassName) {
+        super(field, validatorClassName);
+        this.genericType = genericType;
     }
 
     public boolean isDisabled() {
@@ -53,5 +57,9 @@ public class CollectionFieldMetadata extends FieldMetadata {
 
     public void setMin(int min) {
         this.min = min;
+    }
+
+    public Class getGenericType() {
+        return genericType;
     }
 }

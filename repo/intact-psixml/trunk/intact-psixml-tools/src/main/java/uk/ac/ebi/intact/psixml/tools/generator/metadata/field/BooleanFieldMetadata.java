@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
+import java.lang.reflect.Field;
+
 /**
  * TODO comment this
  *
@@ -26,8 +28,8 @@ public class BooleanFieldMetadata extends FieldMetadata {
     private boolean failIfTrue;
     private boolean failIfFalse;
 
-    BooleanFieldMetadata(String getterMethodName) {
-        super(Boolean.class, null, getterMethodName);
+    BooleanFieldMetadata(Field field) {
+        super(field, null);
     }
 
     public boolean isFailIfFalse() {

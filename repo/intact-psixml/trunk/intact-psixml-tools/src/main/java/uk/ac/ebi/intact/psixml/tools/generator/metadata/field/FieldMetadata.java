@@ -15,6 +15,10 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.util.PsiReflectionUtils;
+
+import java.lang.reflect.Field;
+
 /**
  * TODO comment this
  *
@@ -23,25 +27,28 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
  */
 public class FieldMetadata {
 
-    private Class type;
     private String validatorClassName;
-    private String getterMethodName;
+    private Field field;
 
-    public FieldMetadata(Class type, String validatorClassName, String getterMethodName) {
-        this.type = type;
+    public FieldMetadata(Field field, String validatorClassName) {
         this.validatorClassName = validatorClassName;
-        this.getterMethodName = getterMethodName;
-    }
-
-    public Class getType() {
-        return type;
+        this.field = field;
     }
 
     public String getValidatorClassName() {
         return validatorClassName;
     }
 
-    public String getGetterMethodName() {
-        return getterMethodName;
+    public Field getField() {
+        return field;
     }
+
+    public String getGetterMethodName() {
+        return PsiReflectionUtils.getReadMethodForProperty(field).getName();
+    }
+
+    public Class getType() {
+        return field.getDeclaringClass();
+    }
+
 }

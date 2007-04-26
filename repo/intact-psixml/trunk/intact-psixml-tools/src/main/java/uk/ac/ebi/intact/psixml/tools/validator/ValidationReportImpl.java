@@ -23,7 +23,7 @@ import java.util.List;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:ValidationReportImpl.java 8272 2007-04-25 10:20:12Z baranda $
  */
 public class ValidationReportImpl implements ValidationReport {
 
@@ -65,6 +65,10 @@ public class ValidationReportImpl implements ValidationReport {
     public void addMessage(ValidationMessage message) {
         if (messages == null) {
             messages = new ArrayList<ValidationMessage>();
+
+            if (message.getType() == MessageType.ERROR) {
+                setValid(false);
+            }
         }
 
         messages.add(message);

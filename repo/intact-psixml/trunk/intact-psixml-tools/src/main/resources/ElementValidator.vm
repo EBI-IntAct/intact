@@ -43,12 +43,14 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         #set ( $clause = "model.${fieldMetadata.getterMethodName}()" )
         #if ( ${fieldMetadata.failIfTrue} )
         if ($clause) {
-           System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'false': "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+           report.addMessage(message);
         }
         #end
         #if ( ${fieldMetadata.failIfFalse} )
         if (!${clause}) {
-           System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'true': "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+           report.addMessage(message);
         }
         #end
         #end
@@ -74,17 +76,23 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 
         #if ( ${fieldMetadata.min} > 0 )
         if (${colVarName}.size() < ${fieldMetadata.min}) {
-            System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have more than "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            report.addMessage(message);
         }
         #end
 
         #if ( ${fieldMetadata.max} > 0 && ${fieldMetadata.max} != 2147483647 )
         if (${colVarName}.size() > ${fieldMetadata.max}) {
-            System.out.println("SHOULD INVALIDATE REPORT AND ADD A MESSAGE");
+            #if ( ${fieldMetadata.max} == 0 )
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            #else
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have less than "+${fieldMetadata.min}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            #end
+            report.addMessage(message);
         }
         #end
 
-        for (${fieldMetadata.type.simpleName} elem : $colVarName) {
+        for (${fieldMetadata.genericType.simpleName} elem : $colVarName) {
             ${fieldMetadata.validatorClassName} validator = new ${fieldMetadata.validatorClassName}();
             ValidationReport subReport = validator.validate(elem);
             report.mergeWith(subReport);
@@ -93,4 +101,5 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 
         return report;
     }
+
 }
