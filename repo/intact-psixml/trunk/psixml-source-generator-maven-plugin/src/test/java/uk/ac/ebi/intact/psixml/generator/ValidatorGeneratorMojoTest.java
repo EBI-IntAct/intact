@@ -25,7 +25,7 @@ public class ValidatorGeneratorMojoTest extends AbstractMojoTestCase {
     public void testSimpleGeneration() throws Exception {
         File pluginXmlFile = new File(getBasedir(), "src/test/plugin-configs/simple-config.xml");
 
-        ValidatorGeneratorMojo mojo = (ValidatorGeneratorMojo) lookupMojo("generate-validators", pluginXmlFile);
+        PsiSourceGeneratorMojo mojo = (PsiSourceGeneratorMojo) lookupMojo("generate-psi-sources", pluginXmlFile);
         mojo.setLog(new SystemStreamLog());
 
         mojo.execute();
