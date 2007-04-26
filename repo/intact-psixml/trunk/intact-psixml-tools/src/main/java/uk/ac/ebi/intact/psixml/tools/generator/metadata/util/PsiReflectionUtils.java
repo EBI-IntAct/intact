@@ -55,12 +55,8 @@ public class PsiReflectionUtils {
         for (Field field : fieldsWithModelClasses(modelClassMetadata)) {
             Class clazz = field.getType();
 
-            Method getterMethod = getReadMethodForProperty(field, modelClassMetadata.getModelClass());
-
-            if (getterMethod != null) {
-                FieldMetadata fm = new FieldMetadata(clazz, helper.getValidatorNameForClass(clazz), getterMethod.getName());
-                individuals.add(fm);
-            }
+            FieldMetadata fm = new FieldMetadata(field, helper.getValidatorNameForClass(clazz));
+            individuals.add(fm);
         }
 
         return individuals;
@@ -91,8 +87,8 @@ public class PsiReflectionUtils {
         return collections;
     }
 
-    public static Method getReadMethodForProperty(Field field, Class beanClazz) {
-        return getReadMethodForProperty(field.getName(), beanClazz);
+    public static Method getReadMethodForProperty(Field field) {
+        return getReadMethodForProperty(field.getName(), field.getDeclaringClass());
     }
 
     public static Method getReadMethodForProperty(String propName, Class beanClazz) {

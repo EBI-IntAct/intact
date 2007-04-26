@@ -20,7 +20,6 @@ import psidev.psi.mi.annotations.PsiBooleanField;
 import psidev.psi.mi.annotations.PsiCollectionField;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.util.PsiReflectionUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -35,9 +34,7 @@ import java.lang.reflect.Method;
 public class AnnotationFieldMetadataFactory {
 
     public static BooleanFieldMetadata newBooleanFieldMetadata(Field booleanField, ModelClassMetadata modelClassMd) throws MetadataException {
-        Method getterMethodName = PsiReflectionUtils.getReadMethodForProperty(booleanField, modelClassMd.getModelClass());
-
-        BooleanFieldMetadata fieldMetadata = new BooleanFieldMetadata(getterMethodName.getName());
+        BooleanFieldMetadata fieldMetadata = new BooleanFieldMetadata(booleanField);
 
         Annotation annot = booleanField.getAnnotation(PsiBooleanField.class);
         if (annot != null) {
@@ -48,10 +45,9 @@ public class AnnotationFieldMetadataFactory {
     }
 
     public static CollectionFieldMetadata newCollectionFieldMetadata(Class type, Field colField, SourceGeneratorHelper helper, ModelClassMetadata modelClassMd) throws MetadataException {
-        Method getterMethodName = PsiReflectionUtils.getReadMethodForProperty(colField, modelClassMd.getModelClass());
         String validatorName = helper.getValidatorNameForClass(type);
 
-        CollectionFieldMetadata fieldMetadata = new CollectionFieldMetadata(type, validatorName, getterMethodName.getName());
+        CollectionFieldMetadata fieldMetadata = new CollectionFieldMetadata(type, colField, validatorName);
 
         Annotation annot = colField.getAnnotation(PsiCollectionField.class);
         if (annot != null) {

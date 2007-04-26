@@ -60,7 +60,7 @@ public class ModelClassMetadata {
         this.collections = collections;
 
         for (CollectionFieldMetadata col : collections) {
-            addImportedClass(col.getType());
+            addImportedClass(col.getGenericType());
         }
     }
 
