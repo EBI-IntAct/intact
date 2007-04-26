@@ -43,13 +43,13 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         #set ( $clause = "model.${fieldMetadata.getterMethodName}()" )
         #if ( ${fieldMetadata.failIfTrue} )
         if ($clause) {
-           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'false': "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'false': " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
            report.addMessage(message);
         }
         #end
         #if ( ${fieldMetadata.failIfFalse} )
         if (!${clause}) {
-           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'true': "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+           ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be 'true': " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
            report.addMessage(message);
         }
         #end
@@ -72,11 +72,11 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         #foreach( $fieldMetadata in ${mcm.collections} )
         #set ( $colVarName = "col$velocityCount" )
 
-        Collection<${fieldMetadata.type.simpleName}> $colVarName = model.${fieldMetadata.getterMethodName}();
+        Collection<${fieldMetadata.genericType.simpleName}> $colVarName = model.${fieldMetadata.getterMethodName}();
 
         #if ( ${fieldMetadata.min} > 0 )
         if (${colVarName}.size() < ${fieldMetadata.min}) {
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have more than "+${fieldMetadata.min}+" elements": +model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have more than "+${fieldMetadata.min}+" elements: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
             report.addMessage(message);
         }
         #end
@@ -86,18 +86,28 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
             #if ( ${fieldMetadata.max} == 0 )
             ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
             #else
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have less than "+${fieldMetadata.min}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have less than "+${fieldMetadata.max}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
             #end
             report.addMessage(message);
         }
         #end
 
+        #if ( ${fieldMetadata.disabled} )
+        if (!${colVarName}.isEmpty()) {
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            report.addMessage(message);
+        }
+        #end
+
+        #if ( !${fieldMetadata.disabled} )
         for (${fieldMetadata.genericType.simpleName} elem : $colVarName) {
             ${fieldMetadata.validatorClassName} validator = new ${fieldMetadata.validatorClassName}();
             ValidationReport subReport = validator.validate(elem);
             report.mergeWith(subReport);
         }
         #end
+        #end
+
 
         return report;
     }
