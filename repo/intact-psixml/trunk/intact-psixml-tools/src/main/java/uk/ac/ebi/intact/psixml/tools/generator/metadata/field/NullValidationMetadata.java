@@ -23,28 +23,28 @@ import java.lang.reflect.Field;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class BooleanFieldMetadata extends FieldMetadata {
+public class NullValidationMetadata extends FieldMetadata {
 
-    private boolean failIfTrue;
-    private boolean failIfFalse;
+    private boolean failIfNull;
+    private boolean failIfNotNull;
 
-    public BooleanFieldMetadata(Field field) {
-        super(field, null);
+    public NullValidationMetadata(Field field) {
+        super(field);
     }
 
-    public boolean isFailIfFalse() {
-        return failIfFalse;
+    public boolean isFailIfNotNull() {
+        return failIfNotNull;
     }
 
-    public void setFailIfFalse(boolean failIfFalse) {
-        this.failIfFalse = failIfFalse;
+    public void setFailIfNotNull(boolean failIfNotNull) {
+        this.failIfNotNull = failIfNotNull;
     }
 
-    public boolean isFailIfTrue() {
-        return failIfTrue;
+    public boolean isFailIfNull() {
+        return failIfNull;
     }
 
-    public void setFailIfTrue(boolean failIfTrue) {
-        this.failIfTrue = failIfTrue;
+    public void setFailIfNull(boolean failIfNull) {
+        this.failIfNull = failIfNull;
     }
 }

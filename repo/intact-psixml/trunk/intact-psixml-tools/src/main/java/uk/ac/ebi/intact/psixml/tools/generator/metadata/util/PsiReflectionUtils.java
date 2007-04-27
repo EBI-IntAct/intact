@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.util;
 
-import psidev.psi.mi.annotations.PsiExtension;
-import psidev.psi.mi.annotations.PsiExtensionMethod;
-import psidev.psi.mi.annotations.PsiXmlElement;
+import psidev.psi.mi.annotations.*;
 import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -40,35 +39,38 @@ import java.util.List;
  */
 public class PsiReflectionUtils {
 
-    public static List<BooleanFieldMetadata> booleanFieldsFrom(ModelClassMetadata modelClassMetadata) {
-        List<BooleanFieldMetadata> booleanFields = new ArrayList<BooleanFieldMetadata>();
+    public static <M extends FieldMetadata> List<M> fieldsFrom(Class<M> metadataClass, Class fieldType,
+                                                               Class<? extends Annotation> annotationClass,
+                                                               ModelClassMetadata modelClassMetadata,
+                                                               SourceGeneratorHelper helper
+    ) {
+        List<M> fields = new ArrayList<M>();
 
-        for (Field field : fieldsOfType(modelClassMetadata, Boolean.class)) {
-            BooleanFieldMetadata bfMetadata = AnnotationFieldMetadataFactory.newBooleanFieldMetadata(field, modelClassMetadata);
-            booleanFields.add(bfMetadata);
+        for (Field field : fieldsOfType(modelClassMetadata, fieldType)) {
+            M fieldMetadata = AnnotationFieldMetadataFactory.newFieldMetadata(metadataClass, annotationClass, field, helper, modelClassMetadata);
+            fields.add(fieldMetadata);
         }
 
-        return booleanFields;
+        return fields;
+    }
+
+    public static List<BooleanFieldMetadata> booleanFieldsFrom(ModelClassMetadata modelClassMetadata) {
+        return fieldsFrom(BooleanFieldMetadata.class, Boolean.class, PsiBooleanField.class, modelClassMetadata, null);
     }
 
     public static List<NamesFieldMetadata> namesFieldsFrom(ModelClassMetadata modelClassMetadata) {
-        List<NamesFieldMetadata> fieldsMetadata = new ArrayList<NamesFieldMetadata>();
+        return fieldsFrom(NamesFieldMetadata.class, Names.class, PsiNamesField.class, modelClassMetadata, null);
+    }
 
-        for (Field field : fieldsOfType(modelClassMetadata, Names.class)) {
-            NamesFieldMetadata fieldMetadata = AnnotationFieldMetadataFactory.newNamesFieldMetadata(field, modelClassMetadata);
-            fieldsMetadata.add(fieldMetadata);
-        }
-
-        return fieldsMetadata;
+    public static List<NullValidationMetadata> nullValidationFieldsFrom(ModelClassMetadata modelClassMetadata) {
+        return fieldsFrom(NullValidationMetadata.class, null, NullValidation.class, modelClassMetadata, null);
     }
 
     public static List<FieldMetadata> individualsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
         List<FieldMetadata> individuals = new ArrayList<FieldMetadata>();
 
         for (Field field : fieldsWithModelClasses(modelClassMetadata)) {
-            Class clazz = field.getType();
-
-            FieldMetadata fm = new FieldMetadata(field, helper.getValidatorNameForClass(clazz));
+            FieldMetadata fm = AnnotationFieldMetadataFactory.newFieldMetadata(FieldMetadata.class, PsiField.class, field, helper, modelClassMetadata);
             individuals.add(fm);
         }
 
@@ -158,10 +160,23 @@ public class PsiReflectionUtils {
         return readMethod;
     }
 
+    /**
+     * Creates a List with the Fields of a certain type.
+     *
+     * @param modelClassMetadata
+     * @param type               if null is passes, all the fields will be retrieved
+     *
+     * @return
+     */
     public static List<Field> fieldsOfType(ModelClassMetadata modelClassMetadata, Class type) {
         List<Field> fields = new ArrayList<Field>();
 
         for (Field field : modelClassMetadata.getModelClass().getDeclaredFields()) {
+            if (type == null) {
+                fields.add(field);
+                continue;
+            }
+
             if (type.equals(field.getType())) {
                 fields.add(field);
             }

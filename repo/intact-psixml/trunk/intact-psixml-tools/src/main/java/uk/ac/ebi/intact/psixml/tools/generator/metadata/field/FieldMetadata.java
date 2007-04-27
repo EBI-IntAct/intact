@@ -30,6 +30,10 @@ public class FieldMetadata {
     private String validatorClassName;
     private Field field;
 
+    public FieldMetadata(Field field) {
+        this.field = field;
+    }
+
     public FieldMetadata(Field field, String validatorClassName) {
         this.validatorClassName = validatorClassName;
         this.field = field;
@@ -37,6 +41,10 @@ public class FieldMetadata {
 
     public String getValidatorClassName() {
         return validatorClassName;
+    }
+
+    public void setValidatorClassName(String validatorClassName) {
+        this.validatorClassName = validatorClassName;
     }
 
     public Field getField() {
@@ -50,5 +58,4 @@ public class FieldMetadata {
     public Class getType() {
         return field.getDeclaringClass();
     }
-
 }

@@ -16,9 +16,7 @@
 package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
 import org.apache.commons.beanutils.BeanUtils;
-import psidev.psi.mi.annotations.PsiBooleanField;
 import psidev.psi.mi.annotations.PsiCollectionField;
-import psidev.psi.mi.annotations.PsiNamesField;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 
@@ -34,39 +32,49 @@ import java.lang.reflect.Method;
  */
 public class AnnotationFieldMetadataFactory {
 
-    public static BooleanFieldMetadata newBooleanFieldMetadata(Field booleanField, ModelClassMetadata modelClassMd) throws MetadataException {
-        BooleanFieldMetadata fieldMetadata = new BooleanFieldMetadata(booleanField);
-
-        Annotation annot = booleanField.getAnnotation(PsiBooleanField.class);
-        if (annot != null) {
-            populateFieldMetadataWithAnnotation(fieldMetadata, annot);
-        }
-
-        return fieldMetadata;
+    public static <M extends FieldMetadata, A extends Annotation> M newFieldMetadata(Class<M> metadataClass,
+                                                                                     Class<A> annotationClass,
+                                                                                     Field field
+    ) throws MetadataException {
+        return newFieldMetadata(metadataClass, annotationClass, field, null, null);
     }
 
-    public static NamesFieldMetadata newNamesFieldMetadata(Field field, ModelClassMetadata modelClassMd) throws MetadataException {
-        NamesFieldMetadata fieldMetadata = new NamesFieldMetadata(field);
+    public static <M extends FieldMetadata, A extends Annotation> M newFieldMetadata(Class<M> metadataClass,
+                                                                                     Class<A> annotationClass,
+                                                                                     Field field,
+                                                                                     SourceGeneratorHelper helper,
+                                                                                     ModelClassMetadata modelClassMd
+    ) throws MetadataException {
+        String validatorName = null;
 
-        Annotation annot = field.getAnnotation(PsiNamesField.class);
-        if (annot != null) {
-            populateFieldMetadataWithAnnotation(fieldMetadata, annot);
+        if (modelClassMd != null && helper != null) {
+            validatorName = helper.getValidatorNameForClass(modelClassMd.getModelClass());
         }
+
+        M fieldMetadata;
+        try {
+            fieldMetadata = metadataClass.getConstructor(Field.class).newInstance(field);
+            fieldMetadata.setValidatorClassName(validatorName);
+        } catch (Exception e) {
+            throw new MetadataException(e);
+        }
+        populateFieldMetadataWithAnnotation(fieldMetadata, annotationClass);
 
         return fieldMetadata;
     }
 
     public static CollectionFieldMetadata newCollectionFieldMetadata(Class type, Field colField, SourceGeneratorHelper helper, ModelClassMetadata modelClassMd) throws MetadataException {
-        String validatorName = helper.getValidatorNameForClass(type);
+        CollectionFieldMetadata fieldMetadata = newFieldMetadata(CollectionFieldMetadata.class, PsiCollectionField.class, colField, helper, modelClassMd);
+        fieldMetadata.setGenericType(type);
 
-        CollectionFieldMetadata fieldMetadata = new CollectionFieldMetadata(type, colField, validatorName);
+        return fieldMetadata;
+    }
 
-        Annotation annot = colField.getAnnotation(PsiCollectionField.class);
+    private static void populateFieldMetadataWithAnnotation(FieldMetadata fieldMetadata, Class<? extends Annotation> annotClass) throws MetadataException {
+        Annotation annot = fieldMetadata.getField().getAnnotation(annotClass);
         if (annot != null) {
             populateFieldMetadataWithAnnotation(fieldMetadata, annot);
         }
-
-        return fieldMetadata;
     }
 
     private static void populateFieldMetadataWithAnnotation(FieldMetadata fieldMeta, Annotation annotation) throws MetadataException {

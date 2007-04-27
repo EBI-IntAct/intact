@@ -30,7 +30,11 @@ public class CollectionFieldMetadata extends FieldMetadata {
     private boolean disabled;
     private Class genericType;
 
-    CollectionFieldMetadata(Class genericType, Field field, String validatorClassName) {
+    public CollectionFieldMetadata(Field field) {
+        super(field);
+    }
+
+    public CollectionFieldMetadata(Class genericType, Field field, String validatorClassName) {
         super(field, validatorClassName);
         this.genericType = genericType;
     }
@@ -61,5 +65,9 @@ public class CollectionFieldMetadata extends FieldMetadata {
 
     public Class getGenericType() {
         return genericType;
+    }
+
+    public void setGenericType(Class genericType) {
+        this.genericType = genericType;
     }
 }

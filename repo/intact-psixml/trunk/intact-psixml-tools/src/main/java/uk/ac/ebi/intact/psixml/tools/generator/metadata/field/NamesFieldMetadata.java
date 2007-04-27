@@ -27,7 +27,7 @@ public class NamesFieldMetadata extends FieldMetadata {
 
     private String[] validNames;
 
-    NamesFieldMetadata(Field field) {
+    public NamesFieldMetadata(Field field) {
         super(field, null);
     }
 
