@@ -19,10 +19,24 @@ package uk.ac.ebi.intact.psixml.tools.validator;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:Validator.java 8272 2007-04-25 10:20:12Z baranda $
+ * @version $Id$
  */
-public interface Validator<T> {
+public class ValidationException extends Exception {
 
-    ValidationReport validate(T elementToValidate) throws ValidationException;
+    public ValidationException() {
+        super();
+    }
+
+    public ValidationException(Throwable cause) {
+        super(cause);
+    }
+
+    public ValidationException(String message) {
+        super(message);
+    }
+
+    public ValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

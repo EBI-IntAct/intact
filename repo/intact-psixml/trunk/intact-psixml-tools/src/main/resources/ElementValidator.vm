@@ -33,7 +33,7 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         // empty constructor
     }
 
-    public ValidationReport validate(${modelClass.simpleName} model)
+    public ValidationReport validate(${modelClass.simpleName} model) throws ValidationException
     {
         ValidationReportImpl report = new ValidationReportImpl();
 
@@ -109,10 +109,16 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         #end
 
         // extensions
-        #foreach( $extMethod in ${mcm.extensions} )
-        #set ( $extVarName = "extension$velocityCount" )
-        ${extMethod.declaringClass.name} ${extVarName} = new ${extMethod.declaringClass.name}();
-        ${extVarName}.${extMethod.name}(model);
+        #if ( !${mcm.extensions.empty} )
+        try {
+            #foreach( $extMethod in ${mcm.extensions} )
+            #set ( $extVarName = "extension$velocityCount" )
+            ${extMethod.declaringClass.name} ${extVarName} = new ${extMethod.declaringClass.name}();
+            ${extVarName}.${extMethod.name}(model);
+            #end
+        } catch (Throwable t) {
+            throw new ValidationException("Exception executing PsiExtension", t);
+        }
         #end
 
 
