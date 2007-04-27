@@ -34,8 +34,10 @@ public class PsiExtension2 {
     }
 
     @PsiExtensionMethod
-    public void aThirdMethod(Object interaction) {
+    public void aThirdMethod(Object interaction) throws Exception {
         System.out.println("MyMethod Extension");
+
+        throw new Exception();
     }
 
 }
