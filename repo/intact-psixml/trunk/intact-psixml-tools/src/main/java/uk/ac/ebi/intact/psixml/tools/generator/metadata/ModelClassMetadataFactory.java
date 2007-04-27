@@ -41,11 +41,13 @@ public class ModelClassMetadataFactory {
         }
         mcm.setExtensions(extensionMethods);
 
+        mcm.setNames(PsiReflectionUtils.namesFieldsFrom(mcm));
+
         return mcm;
     }
 
     private static void checkPsiExtensionMethod(Method method, Class modelClass) {
-        if (!method.getReturnType().toString().equals("void")) {
+        if (!method.getReturnType().equals(void.class)) {
             throw new RuntimeException("PsiExtensionMethod must return void: " + method);
         }
 

@@ -37,7 +37,10 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
     {
         ValidationReportImpl report = new ValidationReportImpl();
 
-        // boolean checks
+
+## --------------------------------------
+## validation of booleans
+## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.booleansWithMetadata} )
 #set ( $clause = "model.${fieldMetadata.getterMethodName}()" )
@@ -55,7 +58,10 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 #end
 #end
 
-        // other psi xml element checks
+
+## --------------------------------------
+## validation of psi elements (not in collections)
+## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.individuals} )
 #set ( $validatorVarName = "validator$velocityCount" )
@@ -67,7 +73,35 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         
 #end
 
-        // collection checks
+
+## --------------------------------------
+## validation of names
+## --------------------------------------
+
+
+#foreach ( $fieldMetadata in ${mcm.names} )
+#if ( ${fieldMetadata.validNamesSize} > 0 )
+#set ( $namesVarName = "names$velocityCount" )
+       Names $namesVarName = model.${fieldMetadata.getterMethodName}();
+
+       if (
+#foreach ( $name in ${fieldMetadata.validNames} )
+           #if ( $velocityCount > 1 ) || #end
+           ${namesVarName}.getShortLabel().equals("$name")
+#end
+       ) {
+       // nothing
+       } else {
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Name '"+${namesVarName}.getShortLabel()+"' is invalid: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            report.addMessage(message);
+       }
+#end
+#end
+
+
+## --------------------------------------
+## validation of collections
+## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.collections} )
 #set ( $colVarName = "col$velocityCount" )
@@ -99,6 +133,7 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
         }
 #end
 
+
 #if ( !${fieldMetadata.disabled} )
         for (${fieldMetadata.genericType.simpleName} elem : $colVarName) {
             ${fieldMetadata.validatorClassName} validator = new ${fieldMetadata.validatorClassName}();
@@ -108,7 +143,11 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 #end
 #end
 
-        // extensions
+
+## --------------------------------------
+## psi extensions
+## --------------------------------------
+
 #if ( !${mcm.extensions.empty} )
         try {
 #foreach( $extMethod in ${mcm.extensions} )

@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.util;
 import psidev.psi.mi.annotations.PsiExtension;
 import psidev.psi.mi.annotations.PsiExtensionMethod;
 import psidev.psi.mi.annotations.PsiXmlElement;
+import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
@@ -40,16 +41,25 @@ import java.util.List;
 public class PsiReflectionUtils {
 
     public static List<BooleanFieldMetadata> booleanFieldsFrom(ModelClassMetadata modelClassMetadata) {
-        List<BooleanFieldMetadata> simpleFields = new ArrayList<BooleanFieldMetadata>();
+        List<BooleanFieldMetadata> booleanFields = new ArrayList<BooleanFieldMetadata>();
 
         for (Field field : fieldsOfType(modelClassMetadata, Boolean.class)) {
             BooleanFieldMetadata bfMetadata = AnnotationFieldMetadataFactory.newBooleanFieldMetadata(field, modelClassMetadata);
-            simpleFields.add(bfMetadata);
+            booleanFields.add(bfMetadata);
         }
 
-        // TODO add other types here: String, int...
+        return booleanFields;
+    }
 
-        return simpleFields;
+    public static List<NamesFieldMetadata> namesFieldsFrom(ModelClassMetadata modelClassMetadata) {
+        List<NamesFieldMetadata> fieldsMetadata = new ArrayList<NamesFieldMetadata>();
+
+        for (Field field : fieldsOfType(modelClassMetadata, Names.class)) {
+            NamesFieldMetadata fieldMetadata = AnnotationFieldMetadataFactory.newNamesFieldMetadata(field, modelClassMetadata);
+            fieldsMetadata.add(fieldMetadata);
+        }
+
+        return fieldsMetadata;
     }
 
     public static List<FieldMetadata> individualsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
@@ -140,7 +150,7 @@ public class PsiReflectionUtils {
 
         // check if exists
         try {
-            readMethod = beanClazz.getDeclaredMethod(methodName, null);
+            readMethod = beanClazz.getMethod(methodName, null);
         } catch (NoSuchMethodException e) {
             throw new MetadataException("Read method for property '" + propName + "' was expected and does not exist: " + beanClazz.getName() + "." + methodName, e);
         }

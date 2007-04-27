@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 import org.apache.commons.beanutils.BeanUtils;
 import psidev.psi.mi.annotations.PsiBooleanField;
 import psidev.psi.mi.annotations.PsiCollectionField;
+import psidev.psi.mi.annotations.PsiNamesField;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 
@@ -37,6 +38,17 @@ public class AnnotationFieldMetadataFactory {
         BooleanFieldMetadata fieldMetadata = new BooleanFieldMetadata(booleanField);
 
         Annotation annot = booleanField.getAnnotation(PsiBooleanField.class);
+        if (annot != null) {
+            populateFieldMetadataWithAnnotation(fieldMetadata, annot);
+        }
+
+        return fieldMetadata;
+    }
+
+    public static NamesFieldMetadata newNamesFieldMetadata(Field field, ModelClassMetadata modelClassMd) throws MetadataException {
+        NamesFieldMetadata fieldMetadata = new NamesFieldMetadata(field);
+
+        Annotation annot = field.getAnnotation(PsiNamesField.class);
         if (annot != null) {
             populateFieldMetadataWithAnnotation(fieldMetadata, annot);
         }
