@@ -15,10 +15,7 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.BooleanFieldMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.CollectionFieldMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.FieldMetadata;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.NamesFieldMetadata;
+import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -41,6 +38,7 @@ public class ModelClassMetadata {
     private List<BooleanFieldMetadata> booleansWithMetadata;
     private List<Method> extensions;
     private List<NamesFieldMetadata> names;
+    private List<NullValidationMetadata> nullValidationFields;
 
     public ModelClassMetadata(Class modelClass) {
         this.modelClass = modelClass;
@@ -114,5 +112,13 @@ public class ModelClassMetadata {
         for (NamesFieldMetadata name : names) {
             addImportedClass(name.getField().getType());
         }
+    }
+
+    public List<NullValidationMetadata> getNullValidationFields() {
+        return nullValidationFields;
+    }
+
+    public void setNullValidationFields(List<NullValidationMetadata> nullValidationFields) {
+        this.nullValidationFields = nullValidationFields;
     }
 }

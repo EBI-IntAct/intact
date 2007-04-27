@@ -42,6 +42,7 @@ public class ModelClassMetadataFactory {
         mcm.setExtensions(extensionMethods);
 
         mcm.setNames(PsiReflectionUtils.namesFieldsFrom(mcm));
+        mcm.setNullValidationFields(PsiReflectionUtils.nullValidationFieldsFrom(mcm));
 
         return mcm;
     }

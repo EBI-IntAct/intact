@@ -39,6 +39,27 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 
 
 ## --------------------------------------
+## null check validation
+## --------------------------------------
+
+#foreach( $fieldMetadata in ${mcm.nullValidationFields} )
+#set ( $varName = "ncvar$velocityCount" )
+
+#if ( ${fieldMetadata.failIfNull} )
+     if ($varName == null) {
+        ValidationMessage message = new ValidationMessage(model.getClass(), "Value cannot be null: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+        report.addMessage(message);
+     }
+#end
+#if ( ${fieldMetadata.failIfNotNull} )
+     if ($varName != null) {
+        ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be null: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+        report.addMessage(message);
+     }
+#end
+#end
+
+## --------------------------------------
 ## validation of booleans
 ## --------------------------------------
 
@@ -110,7 +131,7 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 
 #if ( ${fieldMetadata.min} > 0 )
         if (${colVarName}.size() < ${fieldMetadata.min}) {
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have more than "+${fieldMetadata.min}+" elements: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection cannot have less than "+${fieldMetadata.min}+" elements: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
             report.addMessage(message);
         }
 #end
@@ -120,7 +141,7 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
     #if ( ${fieldMetadata.max} == 0 )
             ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
     #else
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must have less than "+${fieldMetadata.max}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection cannot have more than "+${fieldMetadata.max}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
     #end
             report.addMessage(message);
         }
