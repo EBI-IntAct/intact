@@ -7,7 +7,7 @@
  *
  */
 
-package uk.ac.ebi.intact.modelt;
+package agitar.uk.ac.ebi.intact.modelt;
 
 import uk.ac.ebi.intact.model.*;
 
