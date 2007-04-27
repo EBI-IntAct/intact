@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * This class handles Intact graph routines which were previouslt part of
  * IntactHelper
@@ -20,6 +23,8 @@ import java.util.Iterator;
  * @version $Id$
  */
 public class IntactGraphHelper {
+
+    private static final Log log = LogFactory.getLog(IntactGraphHelper.class);
 
     private CvTopic negativeTopic;
     private boolean negativeAlreadySearched = false;
@@ -62,10 +67,12 @@ public class IntactGraphHelper {
     {
         if (startNode instanceof Interaction) {
             if (!isNegative((Interaction) startNode)) {
+                if (log.isDebugEnabled()) log.debug("Start node is an Interaction");
                 graph = subGraphPartial((Interaction) startNode, graphDepth, experiments, complexExpansion, graph);
             }
         }
         else if (startNode instanceof Interactor) {
+            if (log.isDebugEnabled()) log.debug("Start node is an Interactor");
             graph = subGraphPartial(startNode, graphDepth, experiments, complexExpansion, graph);
         }
 
@@ -166,6 +173,8 @@ public class IntactGraphHelper {
             return partialGraph;
         }
 
+        if (log.isDebugEnabled()) log.debug("Getting components for interactor");
+
         Iterator i = startNode.getActiveInstances().iterator();
 
         Component current = null;
@@ -180,6 +189,8 @@ public class IntactGraphHelper {
 
             // Don't take into account the negative interaction.
             if (!isNegative(interaction)) {
+                if (log.isDebugEnabled())
+                    log.debug("Creating partial graph for component interaction: "+interaction.getShortLabel());
 
                 /* Explore the next Interaction if not negative */
                 partialGraph = subGraphPartial(current.getInteraction(),
