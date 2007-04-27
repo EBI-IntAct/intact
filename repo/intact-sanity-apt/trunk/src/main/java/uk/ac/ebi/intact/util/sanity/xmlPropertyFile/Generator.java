@@ -5,19 +5,27 @@
  */
 package uk.ac.ebi.intact.util.sanity.xmlPropertyFile;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.SchemaFactoryLoader;
+import javax.xml.XMLConstants;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.Iterator;
 import java.io.File;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URL;
+import java.net.MalformedURLException;
 
 /**
  * TODO comment this
@@ -27,26 +35,31 @@ import java.io.File;
  * @since TODO
  */
 public class Generator {
-   public Document createBlankDocumnent(){
+
+
+
+    public Document createBlankDocumnent(){
         System.out.println("Creating blank Document...");
         Document doc = null;
         try{
             //Create instance of DocumentBuilderFactory
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            //Get the DocumentBuilder
             DocumentBuilder parser = factory.newDocumentBuilder();
             //Create blank DOM Document
-                doc = parser.newDocument();
+            doc = parser.newDocument();
+
 
         }catch(Exception e){
-              System.out.println(e.getMessage());
-            }
+            System.out.println(e.getMessage());
+        }
         return doc;
 
     }
 
     public Element createRootNode(Document doc){
         Element root = doc.createElement("targetList");
+        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance");
+        root.setAttribute("xsi:noNamespaceSchemaLocation","http://www.ebi.ac.uk/~cleroy/sanityRule.xsd");
         return root;
     }
 
@@ -54,9 +67,8 @@ public class Generator {
 
         Element domTarget = doc.createElement("target");
         domTarget.setAttribute("id",target);
-//        Element domTargetName = doc.createElement("targetName");
-//        domTargetName.setTextContent(target);
-//        domTarget.appendChild(domTargetName);
+
+        domTarget.setIdAttribute("id", true);
 
         Element domRuleList = doc.createElement("ruleList");
         for(String rule : rules){
@@ -80,6 +92,7 @@ public class Generator {
 
         Document doc = createBlankDocumnent();
 
+        NodeList roots = doc.getElementsByTagName("targetList");
         Element root = createRootNode(doc);
 
         Set keySet = target2rules.keySet();
@@ -99,18 +112,20 @@ public class Generator {
 
     public void writeDomDocToXmlFile(Document doc, String fileName) throws TransformerException {
 
-            // Prepare the DOM document for writing
-            Source source = new DOMSource(doc);
 
-            // Prepare the output file
-            File file = new File(fileName);
+        // Prepare the DOM document for writing
+        Source source = new DOMSource(doc);
+
+        // Prepare the output file
+        File file = new File(fileName);
         System.out.println("file.getAbsolutePath() = " + file.getAbsolutePath());
         System.out.println("file.getPath() = " + file.getPath());
-            Result result = new StreamResult(file);
+        Result result = new StreamResult(file);
 
-            // Write the DOM document to the file
-            Transformer xformer = TransformerFactory.newInstance().newTransformer();
-            xformer.transform(source, result);
+        // Write the DOM document to the file
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+         xformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        xformer.transform(source, result);
     }
 
 
