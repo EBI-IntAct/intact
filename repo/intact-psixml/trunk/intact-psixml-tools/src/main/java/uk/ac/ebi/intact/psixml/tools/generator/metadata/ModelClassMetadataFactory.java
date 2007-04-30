@@ -52,14 +52,8 @@ public class ModelClassMetadataFactory {
             throw new RuntimeException("PsiExtensionMethod must return void: " + method);
         }
 
-        if (method.getParameterTypes().length != 1) {
-            throw new RuntimeException("PsiExtensionMethod must accept only one parameter: " + method);
-        }
-
-        Class paramType = method.getParameterTypes()[0];
-
-        if (!paramType.isAssignableFrom(modelClass)) {
-            throw new RuntimeException("PsiExtensionMethod parameter must be assignable from '" + modelClass.getName() + "': " + method);
+        if (method.getParameterTypes().length != 0) {
+            throw new RuntimeException("PsiExtensionMethod must not accept any argument: " + method);
         }
     }
 

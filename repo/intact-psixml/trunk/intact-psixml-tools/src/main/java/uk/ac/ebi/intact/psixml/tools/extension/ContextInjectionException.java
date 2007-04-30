@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.generator;
-
-import psidev.psi.mi.xml.model.Interaction;
-import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
-import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
+package uk.ac.ebi.intact.psixml.tools.extension;
 
 /**
  * TODO comment this
@@ -25,19 +21,30 @@ import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@PsiExtension(forClass = Interaction.class)
-public class PsiExtension2 {
+public class ContextInjectionException extends Exception {
 
-    @PsiExtensionMethod
-    public void insertIntoDatabase() {
-        System.out.println("MyMethod Extension");
+    private Object extension;
+
+    public ContextInjectionException(Object extension) {
+        this.extension = extension;
     }
 
-    @PsiExtensionMethod
-    public void aThirdMethod() throws Exception {
-        System.out.println("MyMethod Extension");
-
-        throw new Exception();
+    public ContextInjectionException(Throwable cause, Object extension) {
+        super(cause);
+        this.extension = extension;
     }
 
+    public ContextInjectionException(String message, Object extension) {
+        super(message);
+        this.extension = extension;
+    }
+
+    public ContextInjectionException(String message, Throwable cause, Object extension) {
+        super(message, cause);
+        this.extension = extension;
+    }
+
+    public Object getExtension() {
+        return extension;
+    }
 }

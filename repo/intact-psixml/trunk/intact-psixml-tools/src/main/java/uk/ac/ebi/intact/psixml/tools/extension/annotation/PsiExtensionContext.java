@@ -13,13 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.generator;
+package uk.ac.ebi.intact.psixml.tools.extension.annotation;
 
-import psidev.psi.mi.xml.model.Interaction;
-import uk.ac.ebi.intact.psixml.tools.extension.ExtensionContext;
-import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
-import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
-import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * TODO comment this
@@ -27,15 +26,8 @@ import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@PsiExtension(forClass = Interaction.class)
-public class PsiExtension1 {
-
-    @PsiExtensionContext
-    private ExtensionContext<Interaction> extensionContext;
-
-    @PsiExtensionMethod
-    public void myMethod() {
-        System.out.println("MyMethod Extension for: " + extensionContext.getElement().getClass());
-    }
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface PsiExtensionContext {
 
 }
