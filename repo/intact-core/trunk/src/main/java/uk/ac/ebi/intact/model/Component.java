@@ -75,7 +75,30 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      */
     private CvComponentRole cvComponentRole;
 
-    public Component() {
+    /**
+     * Experimental role of that component (eg. bait, prey, ...).
+     */
+    // TODO create a dedicated class once the data has been updated in the database.!
+    private CvComponentRole experimentalRole;
+
+    /**
+     * Biological role of this component (eg. enzyme, target...).
+     */
+    private CvBiologicalRole biologicalRole;
+
+    /**
+     * Participant identification method that can override the one defined in the experiment.
+     * If not specified, the experiment's is to be considered. 
+     */
+    private CvIdentification particiantIdentification;
+
+    ///////////////////////
+    // Constructor
+
+    /**
+     * Necessary for hibernate, yet set to private as it should not be used for any other purpose.
+     */
+    private Component() {
         //super call sets creation time data
         super();
     }
@@ -125,7 +148,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
     public Component( Institution owner, String shortLabel, Interaction interaction, Interactor interactor,
-                      CvComponentRole role ) {
+                      CvComponentRole role
+    ) {
 
         //super call sets creation time data
         super( shortLabel, owner );
@@ -149,7 +173,67 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     }
 
     ///////////////////////////////////////
-    //access methods for attributes
+    // getters and setters
+
+    /**
+     * Getter for property 'biologicalRole'.
+     *
+     * @return Value for property 'biologicalRole'.
+     */
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "biologicalrole_ac" )
+    public CvBiologicalRole getBiologicalRole() {
+        return biologicalRole;
+    }
+
+    /**
+     * Setter for property 'biologicalRole'.
+     *
+     * @param biologicalRole Value to set for property 'biologicalRole'.
+     */
+    public void setBiologicalRole( CvBiologicalRole biologicalRole ) {
+        this.biologicalRole = biologicalRole;
+    }
+
+    /**
+     * Getter for property 'experimentalRole'.
+     *
+     * @return Value for property 'experimentalRole'.
+     */
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "role" )
+    public CvComponentRole getExperimentalRole() {
+        return experimentalRole;
+    }
+
+    /**
+     * Setter for property 'experimentalRole'.
+     *
+     * @param experimentalRole Value to set for property 'experimentalRole'.
+     */
+    public void setExperimentalRole( CvComponentRole experimentalRole ) {
+        this.experimentalRole = experimentalRole;
+    }
+
+    /**
+     * Getter for property 'particiantIdentification'.
+     *
+     * @return Value for property 'particiantIdentification'.
+     */
+    @ManyToOne( fetch = FetchType.LAZY )
+    @JoinColumn( name = "identmethod_ac" )
+    public CvIdentification getParticiantIdentification() {
+        return particiantIdentification;
+    }
+
+    /**
+     * Setter for property 'particiantIdentification'.
+     *
+     * @param particiantIdentification Value to set for property 'particiantIdentification'.
+     */
+    public void setParticiantIdentification( CvIdentification particiantIdentification ) {
+        this.particiantIdentification = particiantIdentification;
+    }
 
     /**
      * Answers the question: "is the stoichiometry of the component defined ?".
@@ -160,20 +244,40 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         return ( stoichiometry != STOICHIOMETRY_NOT_DEFINED );
     }
 
+    /**
+     * Getter for property 'stoichiometry'.
+     *
+     * @return Value for property 'stoichiometry'.
+     */
     public float getStoichiometry() {
         return stoichiometry;
     }
 
+    /**
+     * Setter for property 'stoichiometry'.
+     *
+     * @param stoichiometry Value to set for property 'stoichiometry'.
+     */
     public void setStoichiometry( float stoichiometry ) {
         this.stoichiometry = stoichiometry;
     }
 
+    /**
+     * Getter for property 'expressedIn'.
+     *
+     * @return Value for property 'expressedIn'.
+     */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn( name = "expressedin_ac" )
     public BioSource getExpressedIn() {
         return expressedIn;
     }
 
+    /**
+     * Setter for property 'expressedIn'.
+     *
+     * @param expressedIn Value to set for property 'expressedIn'.
+     */
     public void setExpressedIn( BioSource expressedIn ) {
         this.expressedIn = expressedIn;
     }
@@ -181,6 +285,11 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     ///////////////////////////////////////
     // access methods for associations
 
+    /**
+     * Getter for property 'interactor'.
+     *
+     * @return Value for property 'interactor'.
+     */
     @ManyToOne( targetEntity = InteractorImpl.class )
     @JoinColumn( name = "interactor_ac" )
     public Interactor getInteractor() {
@@ -194,16 +303,31 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         this.interactor = interactor;
     }
 
+    /**
+     * Getter for property 'interaction'.
+     *
+     * @return Value for property 'interaction'.
+     */
     @ManyToOne( targetEntity = InteractionImpl.class, fetch = FetchType.LAZY )
     @JoinColumn( name = "interaction_ac" )
     public Interaction getInteraction() {
         return interaction;
     }
 
+    /**
+     * Setter for property 'interaction'.
+     *
+     * @param interaction Value to set for property 'interaction'.
+     */
     public void setInteraction( Interaction interaction ) {
         this.interaction = interaction;
     }
 
+    /**
+     * Setter for property 'bindingDomains'.
+     *
+     * @param someBindingDomain Value to set for property 'bindingDomains'.
+     */
     public void setBindingDomains( Collection<Feature> someBindingDomain ) {
         if ( someBindingDomain == null ) {
             throw new IllegalArgumentException( "features cannot be null." );
@@ -211,6 +335,11 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         this.bindingDomains = someBindingDomain;
     }
 
+    /**
+     * Getter for property 'bindingDomains'.
+     *
+     * @return Value for property 'bindingDomains'.
+     */
     @OneToMany( mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     public Collection<Feature> getBindingDomains() {
         return bindingDomains;
@@ -230,16 +359,29 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         }
     }
 
-    @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( name = "role" )
+    /**
+     * Getter for property 'cvComponentRole'.
+     *
+     * @return Value for property 'cvComponentRole'.
+     */
+    @Deprecated
     public CvComponentRole getCvComponentRole() {
-        return cvComponentRole;
+        return getExperimentalRole();
     }
 
+    /**
+     * Setter for property 'cvComponentRole'.
+     *
+     * @param cvComponentRole Value to set for property 'cvComponentRole'.
+     */
+    @Deprecated
     public void setCvComponentRole( CvComponentRole cvComponentRole ) {
-        this.cvComponentRole = cvComponentRole;
+        setExperimentalRole( cvComponentRole );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @ManyToMany( cascade = {CascadeType.PERSIST} )
     @JoinTable(
             name = "ia_component2annot",
@@ -252,12 +394,18 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     }
 
 
+    /**
+     * {@inheritDoc}
+     */
     @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<ComponentXref> getXrefs() {
         return super.getXrefs();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @OneToMany( mappedBy = "parent", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     @Override
     public Collection<ComponentAlias> getAliases() {
@@ -353,39 +501,78 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         return copy;
     }
 
-    //attributes used for mapping BasicObjects
+    /**
+     * Getter for property 'interactorAc'.
+     *
+     * @return Value for property 'interactorAc'.
+     */ //attributes used for mapping BasicObjects
     @Column( name = "interactor_ac", insertable = false, updatable = false )
     public String getInteractorAc() {
         return this.interactorAc;
     }
 
+    /**
+     * Setter for property 'interactorAc'.
+     *
+     * @param ac Value to set for property 'interactorAc'.
+     */
     public void setInteractorAc( String ac ) {
         this.interactorAc = ac;
     }
 
+    /**
+     * Getter for property 'interactionAc'.
+     *
+     * @return Value for property 'interactionAc'.
+     */
     @Column( name = "interaction_ac", insertable = false, updatable = false )
     public String getInteractionAc() {
         return this.interactionAc;
     }
 
+    /**
+     * Setter for property 'interactionAc'.
+     *
+     * @param ac Value to set for property 'interactionAc'.
+     */
     public void setInteractionAc( String ac ) {
         this.interactionAc = ac;
     }
 
+    /**
+     * Getter for property 'cvComponentRoleAc'.
+     *
+     * @return Value for property 'cvComponentRoleAc'.
+     */
     @Column( name = "role", insertable = false, updatable = false )
     public String getCvComponentRoleAc() {
         return this.cvComponentRoleAc;
     }
 
+    /**
+     * Setter for property 'cvComponentRoleAc'.
+     *
+     * @param ac Value to set for property 'cvComponentRoleAc'.
+     */
     public void setCvComponentRoleAc( String ac ) {
         this.cvComponentRoleAc = ac;
     }
 
+    /**
+     * Getter for property 'expressedInAc'.
+     *
+     * @return Value for property 'expressedInAc'.
+     */
     @Column( name = "expressedin_ac", insertable = false, updatable = false )
     public String getExpressedInAc() {
         return this.expressedInAc;
     }
 
+    /**
+     * Setter for property 'expressedInAc'.
+     *
+     * @param ac Value to set for property 'expressedInAc'.
+     */
     public void setExpressedInAc( String ac ) {
         this.expressedInAc = ac;
     }
