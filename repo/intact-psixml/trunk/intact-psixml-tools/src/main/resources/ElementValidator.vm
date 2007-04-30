@@ -16,6 +16,7 @@
 package ${packageName};
 
 import java.util.*;
+import uk.ac.ebi.intact.psixml.tools.extension.*;
 import uk.ac.ebi.intact.psixml.tools.validator.*;
 
 #foreach( $importedClass in ${mcm.importedClasses} )
@@ -170,11 +171,16 @@ public class ${type} implements Validator<${modelClass.simpleName}> {
 ## --------------------------------------
 
 #if ( !${mcm.extensions.empty} )
+
+        ExtensionContext extensionContext = new ExtensionContext(model,report);
+
         try {
 #foreach( $extMethod in ${mcm.extensions} )
 #set ( $extVarName = "extension$velocityCount" )
             ${extMethod.declaringClass.name} ${extVarName} = new ${extMethod.declaringClass.name}();
-            ${extVarName}.${extMethod.name}(model);
+            ${extVarName}.${extMethod.name}();
+            extensionContext.injectInto(${extVarName});
+
 #end
         } catch (Throwable t) {
             throw new ValidationException("Exception executing PsiExtension", t);

@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.util;
 import psidev.psi.mi.annotations.*;
 import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
+import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
+import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
@@ -197,6 +199,37 @@ public class PsiReflectionUtils {
         }
 
         return fields;
+    }
+
+    /**
+     * Gets the fields of a class with a certain annotation
+     */
+    public static List<Field> fieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Field> fields = new ArrayList<Field>();
+
+        for (Field field : clazz.getFields()) {
+            if (field.getAnnotation(annotationClass) != null) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+
+    /**
+     * Gets the methods of a class with a certain annotation
+     */
+    public static List<Method> methodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Method> methods = new ArrayList<Method>();
+
+        for (Method method : clazz.getMethods()) {
+            if (method.getAnnotation(annotationClass) != null) {
+                methods.add(method);
+            }
+        }
+
+        return methods;
     }
 
     /**
