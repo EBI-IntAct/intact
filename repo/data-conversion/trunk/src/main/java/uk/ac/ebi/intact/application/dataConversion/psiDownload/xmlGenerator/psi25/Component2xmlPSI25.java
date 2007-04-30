@@ -49,7 +49,7 @@ public class Component2xmlPSI25 implements Component2xmlI {
     /**
      * get the value what will be used as ID of the experiment.
      *
-     * @param experiment the experiment for which we need an ID.
+     * @param component the component for which we need an ID.
      *
      * @return the ID of the experiment.
      */
