@@ -13,6 +13,8 @@ import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -247,5 +249,36 @@ public class AnnotationUtil {
 
         // if the file does not have the annotation return null
         return null;
+    }
+
+    /**
+     * Gets the fields of a class with a certain annotation
+     */
+    public static List<Field> fieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Field> fields = new ArrayList<Field>();
+
+        for (Field field : clazz.getFields()) {
+            if (field.getAnnotation(annotationClass) != null) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
+
+    /**
+     * Gets the methods of a class with a certain annotation
+     */
+    public static List<Method> methodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Method> methods = new ArrayList<Method>();
+
+        for (Method method : clazz.getMethods()) {
+            if (method.getAnnotation(annotationClass) != null) {
+                methods.add(method);
+            }
+        }
+
+        return methods;
     }
 }
