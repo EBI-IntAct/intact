@@ -13,23 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.validator;
-
-import java.util.Collection;
+package uk.ac.ebi.intact.psixml.tools;
 
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:ValidationReport.java 8272 2007-04-25 10:20:12Z baranda $
+ * @version $Id$
  */
-public interface ValidationReport {
+public class PsiProcessException extends Exception {
 
-    boolean isValid();
+    public PsiProcessException() {
+        super();
+    }
 
-    Collection<ValidationMessage> getMessages();
+    public PsiProcessException(Throwable cause) {
+        super(cause);
+    }
 
-    Collection<ValidationMessage> getMessages(MessageType type);
+    public PsiProcessException(String message) {
+        super(message);
+    }
 
-    void mergeWith(ValidationReport report);
+    public PsiProcessException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }

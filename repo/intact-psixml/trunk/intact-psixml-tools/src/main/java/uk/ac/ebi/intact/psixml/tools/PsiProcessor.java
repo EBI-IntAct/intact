@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.validator;
+package uk.ac.ebi.intact.psixml.tools;
 
 /**
  * TODO comment this
@@ -21,8 +21,8 @@ package uk.ac.ebi.intact.psixml.tools.validator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id:Validator.java 8272 2007-04-25 10:20:12Z baranda $
  */
-public interface Validator<T> {
+public interface PsiProcessor<T> {
 
-    ValidationReport validate(T elementToValidate) throws ValidationException;
+    PsiProcessReport process(T elementToProcess) throws PsiProcessException;
 
 }

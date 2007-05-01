@@ -79,7 +79,7 @@ public class AnnotationSourceGenerator implements SourceGenerator {
 
         Velocity.init(props);
 
-        Template template = Velocity.getTemplate("ElementValidator.vm");
+        Template template = Velocity.getTemplate("PsiProcessor.vm");
 
         // write the resulting file with velocity
         Writer writer = new FileWriter(outputFile);

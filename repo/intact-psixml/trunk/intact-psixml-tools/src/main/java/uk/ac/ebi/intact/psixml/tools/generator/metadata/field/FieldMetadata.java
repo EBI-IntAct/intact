@@ -27,24 +27,24 @@ import java.lang.reflect.Field;
  */
 public class FieldMetadata {
 
-    private String validatorClassName;
+    private String processorClassName;
     private Field field;
 
     public FieldMetadata(Field field) {
         this.field = field;
     }
 
-    public FieldMetadata(Field field, String validatorClassName) {
-        this.validatorClassName = validatorClassName;
+    public FieldMetadata(Field field, String processorClassName) {
+        this.processorClassName = processorClassName;
         this.field = field;
     }
 
-    public String getValidatorClassName() {
-        return validatorClassName;
+    public String getProcessorClassName() {
+        return processorClassName;
     }
 
-    public void setValidatorClassName(String validatorClassName) {
-        this.validatorClassName = validatorClassName;
+    public void setProcessorClassName(String processorClassName) {
+        this.processorClassName = processorClassName;
     }
 
     public Field getField() {

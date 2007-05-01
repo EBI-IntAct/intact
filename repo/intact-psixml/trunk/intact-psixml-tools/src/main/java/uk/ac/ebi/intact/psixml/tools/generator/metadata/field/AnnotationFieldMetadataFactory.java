@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 
 /**
  * TODO comment this
@@ -47,20 +48,31 @@ public class AnnotationFieldMetadataFactory {
     ) throws MetadataException {
         String validatorName = null;
 
-        if (modelClassMd != null && helper != null) {
-            validatorName = helper.getValidatorNameForClass(modelClassMd.getModelClass());
+        if (helper != null) {
+            validatorName = getValidatorNameForField(field, helper);
         }
 
         M fieldMetadata;
         try {
             fieldMetadata = metadataClass.getConstructor(Field.class).newInstance(field);
-            fieldMetadata.setValidatorClassName(validatorName);
+            fieldMetadata.setProcessorClassName(validatorName);
         } catch (Exception e) {
             throw new MetadataException(e);
         }
         populateFieldMetadataWithAnnotation(fieldMetadata, annotationClass);
 
         return fieldMetadata;
+    }
+
+    private static String getValidatorNameForField(Field field, SourceGeneratorHelper helper) {
+        String validatorName = helper.getValidatorNameForClass(field.getType());
+
+        if (validatorName == null) {
+            ParameterizedType pt = (ParameterizedType) field.getGenericType();
+            validatorName = helper.getValidatorNameForClass((Class) pt.getActualTypeArguments()[0]);
+        }
+
+        return validatorName;
     }
 
     public static CollectionFieldMetadata newCollectionFieldMetadata(Class type, Field colField, SourceGeneratorHelper helper, ModelClassMetadata modelClassMd) throws MetadataException {
