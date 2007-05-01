@@ -28,8 +28,8 @@ import java.util.Map;
  */
 public class SourceGeneratorHelper {
 
-    private Map<Class, String> modelClassToValidatorName;
-    private Map<Class, String> modelClassToValidatorFilename;
+    private Map<Class, String> modelClassToProcessorName;
+    private Map<Class, String> modelClassToProcessorFilename;
 
     private SourceGeneratorContext sgContext;
 
@@ -38,24 +38,24 @@ public class SourceGeneratorHelper {
 
         File outputDir = createOutputDir();
 
-        modelClassToValidatorName = new HashMap(modelClasses.size());
-        modelClassToValidatorFilename = new HashMap(modelClasses.size());
+        modelClassToProcessorName = new HashMap(modelClasses.size());
+        modelClassToProcessorFilename = new HashMap(modelClasses.size());
 
         for (Class modelClass : modelClasses) {
             String validatorClassName = validatorNameForClass(modelClass);
             String validatorClassFile = filenameForClass(modelClass);
 
-            modelClassToValidatorName.put(modelClass, validatorClassName);
-            modelClassToValidatorFilename.put(modelClass, validatorClassFile);
+            modelClassToProcessorName.put(modelClass, validatorClassName);
+            modelClassToProcessorFilename.put(modelClass, validatorClassFile);
         }
     }
 
     public String getValidatorNameForClass(Class modelClass) {
-        return modelClassToValidatorName.get(modelClass);
+        return modelClassToProcessorName.get(modelClass);
     }
 
     public String getValidatorFilenameForClass(Class modelClass) {
-        return modelClassToValidatorFilename.get(modelClass);
+        return modelClassToProcessorFilename.get(modelClass);
     }
 
     public File getValidatorFileForClass(Class modelClass) {
@@ -63,7 +63,7 @@ public class SourceGeneratorHelper {
     }
 
     private String validatorNameForClass(Class modelClass) {
-        return modelClass.getSimpleName() + "Validator";
+        return modelClass.getSimpleName() + "Processor";
     }
 
     private String filenameForClass(Class modelClass) {
