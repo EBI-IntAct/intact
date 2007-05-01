@@ -19,7 +19,7 @@ import java.util.Collection;
  * However, simple multimers should be expressed by the relativeQuantity attribute.
  *
  * @author hhe
- * @version $Id$
+ * @version $Id: Component.java 8310 2007-04-30 15:50:46Z skerrien $
  */
 @Entity
 @Table( name = "ia_component" )
@@ -73,6 +73,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     /**
      * TODO comments
      */
+    @Deprecated
     private CvComponentRole cvComponentRole;
 
     /**
@@ -169,7 +170,13 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         this.interaction = interaction;
         this.interactor = interactor;
 
-        this.cvComponentRole = role;
+        this.experimentalRole = role;
+    }
+
+    public Component(Institution owner, String shortLabel, Interaction interaction, Interactor interactor,
+                      CvComponentRole experimentalRole, CvBiologicalRole bioRole){
+        this(owner,shortLabel, interaction, interactor, experimentalRole);
+        this.biologicalRole = bioRole;
     }
 
     ///////////////////////////////////////
@@ -365,6 +372,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * @return Value for property 'cvComponentRole'.
      */
     @Deprecated
+    @Transient
     public CvComponentRole getCvComponentRole() {
         return getExperimentalRole();
     }
