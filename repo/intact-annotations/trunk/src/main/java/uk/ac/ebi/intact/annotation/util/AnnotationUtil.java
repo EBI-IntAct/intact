@@ -43,7 +43,21 @@ public class AnnotationUtil {
      * @throws IOException thrown if something goes wrong when reading the jar
      */
     public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath) throws IOException {
-        return getClassesWithAnnotationFromJar(annotationClass, jarPath, null);
+        return getClassesWithAnnotationFromJar(annotationClass, jarPath, null, null);
+    }
+
+    /**
+     * Gathers a list of classes with a defined Annotation
+     *
+     * @param annotationClass The annotation to look for
+     * @param jarPath         The path to the jar
+     *
+     * @return The list of classes with the annotation
+     *
+     * @throws IOException thrown if something goes wrong when reading the jar
+     */
+    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, ClassLoader classLoader) throws IOException {
+        return getClassesWithAnnotationFromJar(annotationClass, jarPath, null, classLoader);
     }
 
     /**
@@ -57,6 +71,20 @@ public class AnnotationUtil {
      * @throws IOException thrown if something goes wrong when reading the jar
      */
     public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName) throws IOException {
+        return getClassesWithAnnotationFromJar(annotationClass, jarPath, packageName, null);
+    }
+
+    /**
+     * Gathers a list of classes with a defined Annotation in a package
+     *
+     * @param annotationClass The annotation to look for
+     * @param jarPath         The path to the jar
+     *
+     * @return The list of classes with the annotation
+     *
+     * @throws IOException thrown if something goes wrong when reading the jar
+     */
+    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName, ClassLoader classLoader) throws IOException {
         List<Class> annotatedClasses = new ArrayList<Class>();
 
         JarFile jarFile = new JarFile(jarPath);
@@ -66,7 +94,7 @@ public class AnnotationUtil {
         while (e.hasMoreElements()) {
             JarEntry entry = e.nextElement();
 
-            Class clazz = getAnnotatedClass(annotationClass, entry.getName());
+            Class clazz = getAnnotatedClass(annotationClass, entry.getName(), classLoader);
 
             if (clazz != null) {
 
@@ -204,7 +232,6 @@ public class AnnotationUtil {
         return classesFromDir;
     }
 
-
     /**
      * Returns the Class if the provided String is a FQN class that contains the annotation
      *
@@ -214,6 +241,19 @@ public class AnnotationUtil {
      * @return the Class if contains the annotation, otherwise returns null.
      */
     public static Class getAnnotatedClass(Class<? extends Annotation> annotationClass, String classFilename) {
+        return getAnnotatedClass(annotationClass, classFilename, null);
+    }
+
+
+    /**
+     * Returns the Class if the provided String is a FQN class that contains the annotation
+     *
+     * @param annotationClass The annotation to look for
+     * @param classFilename   The fully qualified name of the class as a String
+     *
+     * @return the Class if contains the annotation, otherwise returns null.
+     */
+    public static Class getAnnotatedClass(Class<? extends Annotation> annotationClass, String classFilename, ClassLoader classLoader) {
         if (classFilename.endsWith(".class")) {
 
             String fileDir;
@@ -232,10 +272,16 @@ public class AnnotationUtil {
             if (packageName.startsWith("."))
                 packageName = packageName.substring(1, fileDir.length());
 
-            // removes the .class extension
             try {
-                // Try to create an instance of the object
-                Class clazz = Class.forName(packageName + "." + className);
+                // Try to get the class from the entry
+                String completeClassName = packageName + "." + className;
+                Class clazz;
+
+                if (classLoader != null) {
+                    clazz = classLoader.loadClass(completeClassName);
+                } else {
+                    clazz = Class.forName(completeClassName);
+                }
 
                 // check for the annotation is present, and if present, return the class
                 if (clazz.isAnnotationPresent(annotationClass)) {
