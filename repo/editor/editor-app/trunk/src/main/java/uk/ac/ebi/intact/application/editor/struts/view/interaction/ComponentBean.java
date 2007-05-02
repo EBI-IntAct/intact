@@ -80,6 +80,11 @@ public class ComponentBean extends AbstractEditKeyBean {
     private String myRole;
 
     /**
+     * The biological role of the protein
+     */
+    private String myBioRole;
+
+    /**
      * The stoichiometry.
      */
     private float myStoichiometry = 0;//1.0f;
@@ -195,23 +200,26 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     public Component getComponent(boolean create) throws IntactException {
         CvComponentRole newrole = getCvRole();
+        CvBiologicalRole newBioRole = getCvBioRole();
         // Must have a non null role and interaction for a valid component
-        if ((newrole == null) || (myInteraction == null)) {
+        if ((newBioRole == null) || (newrole == null) || (myInteraction == null)) {
             return null;
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
-            myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(),    myInteraction,
-                    myInteractor, newrole);
+            myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(), myInteraction,
+                    myInteractor, newrole, newBioRole);
         }else if (myComponent.getAc() != null){
             ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
             myComponent.setCvComponentRole(newrole);
+            myComponent.setBiologicalRole(newBioRole);
         }
         
         myComponent.setStoichiometry(getStoichiometry());
 
         myComponent.setCvComponentRole(newrole);
+        myComponent.setBiologicalRole(newBioRole);
 
         // The expressed in to set in the component.
         BioSource expressedIn = null;
@@ -264,6 +272,15 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     public void setRole(String role) {
         myRole = EditorMenuFactory.normalizeMenuItem(role);
+    }
+
+    public String getBioRole() {
+        return myBioRole;
+    }
+
+    public void setBioRole(String bioRole) {
+        log.debug("bioRole = " + bioRole);
+        myBioRole = EditorMenuFactory.normalizeMenuItem(bioRole);
     }
 
     public float getStoichiometry() {
@@ -423,6 +440,7 @@ public class ComponentBean extends AbstractEditKeyBean {
         myInteractor = component.getInteractor();
         mySPAc = getSPAc();
         myRole = component.getCvComponentRole().getShortLabel();
+        myBioRole = component.getBiologicalRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
         if(component.getInteractor() instanceof Protein){
             setType(PROTEIN);
@@ -509,6 +527,14 @@ public class ComponentBean extends AbstractEditKeyBean {
         CvObjectDao<CvComponentRole> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
         if (myRole != null) {
             return cvObjectDao.getByShortLabel(myRole);
+        }
+        return null;
+    }
+
+    private CvBiologicalRole getCvBioRole() throws IntactException  {
+        CvObjectDao<CvBiologicalRole> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvBiologicalRole.class);
+        if (myBioRole != null) {
+            return cvObjectDao.getByShortLabel(myBioRole);
         }
         return null;
     }

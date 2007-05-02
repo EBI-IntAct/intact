@@ -446,6 +446,9 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             if(!component.getCvComponentRole().getShortLabel().equals(cb.getRole())){
                 continue;
             }
+            if(!component.getBiologicalRole().getShortLabel().equals(cb.getRole())){
+                continue;
+            }
             if(component.getBindingDomains().size() != cb.getFeatures().size()){
                 continue;
             }

@@ -93,6 +93,8 @@ public class EditorMenuFactory {
      */
     public static final String ROLE = "Role";
 
+    public static final String BIOROLE = "BioRole";
+
     /**
      * The name for the CV cell list.
      */
@@ -153,6 +155,7 @@ public class EditorMenuFactory {
         ourNameToType.put(INTERACTION_TYPE, CvInteractionType.class);
         ourNameToType.put(EXPERIMENT, Experiment.class);
         ourNameToType.put(ROLE, CvComponentRole.class);
+        ourNameToType.put(BIOROLE, CvBiologicalRole.class);
         ourNameToType.put(CELL, CvCellType.class);
         ourNameToType.put(TISSUE, CvTissue.class);
         ourNameToType.put(FEATURE_TYPE, CvFeatureType.class);
@@ -222,6 +225,28 @@ public class EditorMenuFactory {
         return modMenu;
     }
 
+    public List<String> convertToAddMenu(List<String> menu, String firstPositionCvShortlabel) {
+
+        //todo:check firstPosistionShortlabel not null
+        // The menu to return.
+        List<String> modMenu = new LinkedList<String>(menu);
+        Iterator<String> modMenuIterator = modMenu.iterator();
+        if(modMenuIterator.hasNext()){
+            String shortLabel = modMenuIterator.next();
+            System.out.println("shortLabel = " + shortLabel);
+            if(firstPositionCvShortlabel.equals(shortLabel)){
+                modMenuIterator.remove();
+                //todo : if not found, send error message.
+            }
+        }
+        // The default value for add menu.
+        String  defvalue = SELECT_LIST_ITEM;
+        // Add as the first item in the list.
+        modMenu.add(0, defvalue);
+        modMenu.add(1,firstPositionCvShortlabel);
+        return modMenu;
+    }
+
     /**
      * Returns a menu for given name.
      * @param key the name of the menu; the valid values are: {@link #TOPIC},
@@ -249,6 +274,20 @@ public class EditorMenuFactory {
         return menu;
     }
 
+    public List<String> getMenu(String key, int mode, String firstCvShortlabel) throws IntactException {
+        // The class associated with the key.
+        Class clazz = ourNameToType.get(key);
+        List<String> menu = getMenuList(clazz);
+        if (menu.isEmpty()) {
+            // Special list when we don't have any menu items.
+            menu.add(SELECT_LIST_ITEM);
+            return menu;
+        }
+        if (mode == 1) {
+            menu = convertToAddMenu(menu,firstCvShortlabel);
+        }
+        return menu;
+    }
 
     /**
      * Returns a menu for given name.
