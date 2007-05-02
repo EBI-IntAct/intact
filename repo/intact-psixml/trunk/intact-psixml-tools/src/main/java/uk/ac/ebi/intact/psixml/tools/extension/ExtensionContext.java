@@ -16,9 +16,9 @@
 package uk.ac.ebi.intact.psixml.tools.extension;
 
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
+import uk.ac.ebi.intact.psixml.tools.PsiProcessReport;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
-import uk.ac.ebi.intact.psixml.tools.validator.ValidationReport;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -32,11 +32,11 @@ import java.util.List;
 public class ExtensionContext<T> {
 
     private T element;
-    private ValidationReport validationReport;
+    private PsiProcessReport processReport;
 
-    public ExtensionContext(T element, ValidationReport validationReport) {
+    public ExtensionContext(T element, PsiProcessReport processReport) {
         this.element = element;
-        this.validationReport = validationReport;
+        this.processReport = processReport;
     }
 
     public void injectIntoExtension(Object extension) throws ContextInjectionException {
@@ -46,10 +46,11 @@ public class ExtensionContext<T> {
             throw new ContextInjectionException("Class " + extensionClass + " is not a valid PSI extension, since it does not have the @PsiExtension annotation");
         }
 
-        List<Field> extensionContextFields = AnnotationUtil.fieldsWithAnnotation(extensionClass, PsiExtensionContext.class);
+        List<Field> extensionContextFields = AnnotationUtil.declaredFieldsWithAnnotation(extensionClass, PsiExtensionContext.class);
 
         for (Field extensionContextField : extensionContextFields) {
             try {
+                extensionContextField.setAccessible(true);
                 extensionContextField.set(extension, this);
             } catch (IllegalAccessException e) {
                 throw new ContextInjectionException(e, extension);
@@ -65,11 +66,11 @@ public class ExtensionContext<T> {
         this.element = element;
     }
 
-    public ValidationReport getValidationReport() {
-        return validationReport;
+    public PsiProcessReport getProcessReport() {
+        return processReport;
     }
 
-    public void setValidationReport(ValidationReport validationReport) {
-        this.validationReport = validationReport;
+    public void setProcessReport(PsiProcessReport processReport) {
+        this.processReport = processReport;
     }
 }

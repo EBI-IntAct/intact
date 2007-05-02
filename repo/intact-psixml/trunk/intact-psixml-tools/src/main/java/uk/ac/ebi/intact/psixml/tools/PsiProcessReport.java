@@ -58,4 +58,8 @@ public class PsiProcessReport {
             validationReport = subReport.getValidationReport();
         }
     }
+
+    public List<PsiProcessReport> getChildReports() {
+        return childReports;
+    }
 }

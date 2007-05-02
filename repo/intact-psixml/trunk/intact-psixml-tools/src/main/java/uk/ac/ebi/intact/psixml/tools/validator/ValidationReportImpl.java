@@ -32,6 +32,7 @@ public class ValidationReportImpl implements ValidationReport {
 
     public ValidationReportImpl() {
         valid = true;
+        this.messages = new ArrayList<ValidationMessage>();
     }
 
     public boolean isValid() {
@@ -40,6 +41,7 @@ public class ValidationReportImpl implements ValidationReport {
 
     public void setValid(boolean valid) {
         this.valid = valid;
+        System.out.println("INncalidating report");
     }
 
     public void setMessages(Collection<ValidationMessage> messages) {
@@ -79,7 +81,7 @@ public class ValidationReportImpl implements ValidationReport {
      */
     public void mergeWith(ValidationReport report) {
         if (!report.isValid()) {
-            valid = false;
+            setValid(false);
         }
 
         for (ValidationMessage message : report.getMessages()) {
