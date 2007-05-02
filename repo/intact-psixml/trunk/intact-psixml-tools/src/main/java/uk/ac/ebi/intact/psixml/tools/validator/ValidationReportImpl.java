@@ -41,7 +41,6 @@ public class ValidationReportImpl implements ValidationReport {
 
     public void setValid(boolean valid) {
         this.valid = valid;
-        System.out.println("INncalidating report");
     }
 
     public void setMessages(Collection<ValidationMessage> messages) {
@@ -67,10 +66,10 @@ public class ValidationReportImpl implements ValidationReport {
     public void addMessage(ValidationMessage message) {
         if (messages == null) {
             messages = new ArrayList<ValidationMessage>();
+        }
 
-            if (message.getType() == MessageType.ERROR) {
-                setValid(false);
-            }
+        if (message.getType() == MessageType.ERROR) {
+            setValid(false);
         }
 
         messages.add(message);
