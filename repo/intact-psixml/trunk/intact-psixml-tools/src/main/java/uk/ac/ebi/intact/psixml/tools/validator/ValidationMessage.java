@@ -19,7 +19,7 @@ package uk.ac.ebi.intact.psixml.tools.validator;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:ValidationMessage.java 8272 2007-04-25 10:20:12Z baranda $
  */
 public class ValidationMessage {
 
@@ -43,5 +43,14 @@ public class ValidationMessage {
 
     public MessageType getType() {
         return type;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[").append(type).append("] ");
+        sb.append(message);
+
+        return sb.toString();
     }
 }

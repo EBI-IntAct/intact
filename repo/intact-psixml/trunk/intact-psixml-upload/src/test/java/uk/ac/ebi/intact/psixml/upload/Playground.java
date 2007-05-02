@@ -17,8 +17,9 @@ package uk.ac.ebi.intact.psixml.upload;
 
 import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.model.EntrySet;
+import uk.ac.ebi.intact.psixml.generated.EntrySetProcessor;
+import uk.ac.ebi.intact.psixml.tools.PsiProcessReport;
 
-import java.net.URL;
 import java.io.InputStream;
 
 /**
@@ -39,5 +40,8 @@ public class Playground {
 
         System.out.println(entrySet.getEntries().iterator().next().getInteractions().size());
 
+
+        EntrySetProcessor processor = new EntrySetProcessor();
+        PsiProcessReport report = processor.process(entrySet);
     }
 }

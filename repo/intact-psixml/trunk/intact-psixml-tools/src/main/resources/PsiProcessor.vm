@@ -16,6 +16,7 @@
 package ${packageName};
 
 import java.util.*;
+import java.lang.reflect.Field;
 import uk.ac.ebi.intact.psixml.tools.*;
 import uk.ac.ebi.intact.psixml.tools.extension.*;
 import uk.ac.ebi.intact.psixml.tools.validator.*;
@@ -40,22 +41,25 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
         ValidationReportImpl validationReport = new ValidationReportImpl();
         PsiProcessReport report = new PsiProcessReport(validationReport);
 
+        if (model == null) {
+            return report;
+        }
 
 ## --------------------------------------
 ## null check validation
 ## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.nullValidationFields} )
-#set ( $varName = "ncvar$velocityCount" )
+#set ( $var = "model.${fieldMetadata.getterMethodName}()" )
 
 #if ( ${fieldMetadata.failIfNull} )
-     if ($varName == null) {
+     if ($var == null) {
         ValidationMessage message = new ValidationMessage(model.getClass(), "Value cannot be null: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
         validationReport.addMessage(message);
      }
 #end
 #if ( ${fieldMetadata.failIfNotNull} )
-     if ($varName != null) {
+     if ($var != null) {
         ValidationMessage message = new ValidationMessage(model.getClass(), "Value has to be null: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
         validationReport.addMessage(message);
      }
@@ -116,7 +120,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
        ) {
        // nothing
        } else {
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Name '"+${namesVarName}.getShortLabel()+"' is invalid: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Name '"+${namesVarName}.getShortLabel()+"' is invalid: " + model.getClass()+".${fieldMetadata.field.name} ["+getId(model)+"]", MessageType.ERROR);
             validationReport.addMessage(message);
        }
 #end
@@ -134,7 +138,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 #if ( ${fieldMetadata.min} > 0 )
         if (${colVarName}.size() < ${fieldMetadata.min}) {
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection cannot have less than "+${fieldMetadata.min}+" elements: " + model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection cannot have less than "+${fieldMetadata.min}+" elements: " + model.getClass()+".${fieldMetadata.field.name} ["+getId(model)+"]", MessageType.ERROR);
             validationReport.addMessage(message);
         }
 #end
@@ -142,7 +146,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 #if ( ${fieldMetadata.max} > 0 && ${fieldMetadata.max} != 2147483647 )
         if (${colVarName}.size() > ${fieldMetadata.max}) {
     #if ( ${fieldMetadata.max} == 0 )
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element, and it contains "+${colVarName}.size()+": "+model.getClass()+".${fieldMetadata.field.name} ["+getId(model)+"]", MessageType.ERROR);
     #else
             ValidationMessage message = new ValidationMessage(model.getClass(), "Collection cannot have more than "+${fieldMetadata.max}+" elements: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
     #end
@@ -152,7 +156,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 #if ( ${fieldMetadata.disabled} )
         if (!${colVarName}.isEmpty()) {
-            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element: "+model.getClass()+".${fieldMetadata.field.name}", MessageType.ERROR);
+            ValidationMessage message = new ValidationMessage(model.getClass(), "Collection must not contain any element, and it contains "+${colVarName}.size()+": "+model.getClass()+".${fieldMetadata.field.name} ["+getId(model)+"]", MessageType.ERROR);
             validationReport.addMessage(message);
         }
 #end
@@ -174,7 +178,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 #if ( !${mcm.extensions.empty} )
 
-        ExtensionContext extensionContext = new ExtensionContext(model,validationReport);
+        ExtensionContext extensionContext = new ExtensionContext(model,report);
 
         try {
 #foreach( $extMethod in ${mcm.extensions} )
@@ -191,6 +195,22 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 
         return report;
+    }
+
+    private String getId(Object element) {
+        String id = "";
+
+        try {
+            Field idField = getClass().getDeclaredField("id");
+            Object idObj = idField.get(element);
+            if (idObj != null) {
+                id = idObj.toString();
+            }
+        } catch (Exception e) {
+            // nothing
+        }
+
+        return id;
     }
 
 }
