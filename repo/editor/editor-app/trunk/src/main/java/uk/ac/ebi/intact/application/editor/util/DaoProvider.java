@@ -70,6 +70,9 @@ public class DaoProvider {
             }else if(CvXrefQualifier.class.isAssignableFrom(clazz)){
                 return DaoProvider.getDaoFactory().getCvObjectDao(CvXrefQualifier.class);
 
+            }else if(CvBiologicalRole.class.isAssignableFrom(clazz)){
+                return DaoProvider.getDaoFactory().getCvObjectDao(CvBiologicalRole.class);
+
             }else{
                 return DaoProvider.getDaoFactory().getCvObjectDao(CvObject.class);
             }
