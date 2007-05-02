@@ -327,6 +327,21 @@ public class AnnotationUtil {
         return fields;
     }
 
+    /**
+     * Gets the methods of a class with a certain annotation
+     */
+    public static List<Method> methodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Method> methods = new ArrayList<Method>();
+
+        for (Method method : clazz.getDeclaredMethods()) {
+            if (method.getAnnotation(annotationClass) != null) {
+                methods.add(method);
+            }
+        }
+
+        return methods;
+    }
+
 
     /**
      * Gets the declared methods of a class with a certain annotation
