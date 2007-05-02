@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.extension.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+package uk.ac.ebi.intact.psixml.tools.extension;
 
 /**
  * TODO comment this
@@ -26,9 +21,21 @@ import java.lang.annotation.Target;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface PsiExtensionMethod {
+public class ExtensionExecutionException extends Exception {
 
-    boolean onlyExecuteIfValid() default false;
+    public ExtensionExecutionException() {
+        super();
+    }
+
+    public ExtensionExecutionException(Throwable cause) {
+        super(cause);
+    }
+
+    public ExtensionExecutionException(String message) {
+        super(message);
+    }
+
+    public ExtensionExecutionException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
