@@ -20,7 +20,7 @@ import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
-import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.field.*;
 
@@ -44,12 +44,12 @@ public class PsiReflectionUtils {
     public static <M extends FieldMetadata> List<M> fieldsFrom(Class<M> metadataClass, Class fieldType,
                                                                Class<? extends Annotation> annotationClass,
                                                                ModelClassMetadata modelClassMetadata,
-                                                               SourceGeneratorHelper helper
+                                                               SourceGeneratorContext context
     ) {
         List<M> fields = new ArrayList<M>();
 
         for (Field field : fieldsOfType(modelClassMetadata, fieldType)) {
-            M fieldMetadata = AnnotationFieldMetadataFactory.newFieldMetadata(metadataClass, annotationClass, field, helper, modelClassMetadata);
+            M fieldMetadata = AnnotationFieldMetadataFactory.newFieldMetadata(metadataClass, annotationClass, field, context, modelClassMetadata);
             fields.add(fieldMetadata);
         }
 
@@ -68,11 +68,11 @@ public class PsiReflectionUtils {
         return fieldsFrom(NullValidationMetadata.class, null, NullValidation.class, modelClassMetadata, null);
     }
 
-    public static List<FieldMetadata> individualsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
+    public static List<FieldMetadata> individualsFrom(SourceGeneratorContext context, ModelClassMetadata modelClassMetadata) {
         List<FieldMetadata> individuals = new ArrayList<FieldMetadata>();
 
         for (Field field : fieldsWithModelClasses(modelClassMetadata)) {
-            FieldMetadata fm = AnnotationFieldMetadataFactory.newFieldMetadata(FieldMetadata.class, PsiField.class, field, helper, modelClassMetadata);
+            FieldMetadata fm = AnnotationFieldMetadataFactory.newFieldMetadata(FieldMetadata.class, PsiField.class, field, context, modelClassMetadata);
             individuals.add(fm);
         }
 
@@ -82,7 +82,7 @@ public class PsiReflectionUtils {
     /**
      * Using reflection, gets the collections from the model class provided and create CollectionMetaData
      */
-    public static List<CollectionFieldMetadata> collectionsFrom(SourceGeneratorHelper helper, ModelClassMetadata modelClassMetadata) {
+    public static List<CollectionFieldMetadata> collectionsFrom(SourceGeneratorContext context, ModelClassMetadata modelClassMetadata) {
         List<CollectionFieldMetadata> collections = new ArrayList<CollectionFieldMetadata>();
 
         for (Field field : fieldsOfType(modelClassMetadata, Collection.class)) {
@@ -95,7 +95,7 @@ public class PsiReflectionUtils {
 
                 if (typeOfCollection.isAnnotationPresent(PsiXmlElement.class)) {
 
-                    CollectionFieldMetadata cm = AnnotationFieldMetadataFactory.newCollectionFieldMetadata(typeOfCollection, field, helper, modelClassMetadata);
+                    CollectionFieldMetadata cm = AnnotationFieldMetadataFactory.newCollectionFieldMetadata(typeOfCollection, field, context, modelClassMetadata);
                     collections.add(cm);
                 }
             }
@@ -104,26 +104,25 @@ public class PsiReflectionUtils {
         return collections;
     }
 
-    public static List<Method> discoverPsiExtensionMethodsForClass(Class modelClass) {
-        List<Class> psiExtensionClasses = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(PsiExtension.class);
+    public static List<Method> discoverPsiExtensionMethodsForClass(Class modelClass, SourceGeneratorContext context) {
+
+        List<Class> psiExtensionClasses = PsiExtensionsCache.getPsiExtensionClasses(context);
 
         // get the methods with the @PsiExtensionMethods
         List<Method> psiExtensionMethods = new ArrayList<Method>();
 
         for (Class psiExtensionClass : psiExtensionClasses) {
-            PsiExtension psiExtension = (PsiExtension) psiExtensionClass.getAnnotation(PsiExtension.class);
 
-            if (psiExtension.forClass().equals(modelClass)) {
-                for (Method method : psiExtensionClass.getDeclaredMethods()) {
-                    if (method.getAnnotation(PsiExtensionMethod.class) != null) {
-                        psiExtensionMethods.add(method);
-                    }
-                }
+            PsiExtension psiExtensionAnnot = (PsiExtension) psiExtensionClass.getAnnotation(PsiExtension.class);
+
+            if (psiExtensionAnnot.forClass().equals(modelClass)) {
+                psiExtensionMethods.addAll(AnnotationUtil.methodsWithAnnotation(psiExtensionClass, PsiExtensionMethod.class));
             }
         }
 
         return psiExtensionMethods;
     }
+
 
     public static Method getReadMethodForProperty(Field field) {
         return getReadMethodForProperty(field.getName(), field.getDeclaringClass());
@@ -202,37 +201,6 @@ public class PsiReflectionUtils {
     }
 
     /**
-     * Gets the fields of a class with a certain annotation
-     */
-    public static List<Field> fieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
-        List<Field> fields = new ArrayList<Field>();
-
-        for (Field field : clazz.getFields()) {
-            if (field.getAnnotation(annotationClass) != null) {
-                fields.add(field);
-            }
-        }
-
-        return fields;
-    }
-
-
-    /**
-     * Gets the methods of a class with a certain annotation
-     */
-    public static List<Method> methodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
-        List<Method> methods = new ArrayList<Method>();
-
-        for (Method method : clazz.getMethods()) {
-            if (method.getAnnotation(annotationClass) != null) {
-                methods.add(method);
-            }
-        }
-
-        return methods;
-    }
-
-    /**
      * Returns a String which capitalizes the first letter of the string.
      */
     public static String capitalize(String name) {
@@ -241,4 +209,5 @@ public class PsiReflectionUtils {
         }
         return name.substring(0, 1).toUpperCase() + name.substring(1);
     }
+
 }

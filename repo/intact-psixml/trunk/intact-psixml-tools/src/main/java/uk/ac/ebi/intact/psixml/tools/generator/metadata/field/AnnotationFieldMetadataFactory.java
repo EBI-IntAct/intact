@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.psixml.tools.generator.metadata.field;
 
 import org.apache.commons.beanutils.BeanUtils;
 import psidev.psi.mi.annotations.PsiCollectionField;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 
@@ -43,13 +44,13 @@ public class AnnotationFieldMetadataFactory {
     public static <M extends FieldMetadata, A extends Annotation> M newFieldMetadata(Class<M> metadataClass,
                                                                                      Class<A> annotationClass,
                                                                                      Field field,
-                                                                                     SourceGeneratorHelper helper,
+                                                                                     SourceGeneratorContext context,
                                                                                      ModelClassMetadata modelClassMd
     ) throws MetadataException {
         String validatorName = null;
 
-        if (helper != null) {
-            validatorName = getValidatorNameForField(field, helper);
+        if (context != null) {
+            validatorName = getValidatorNameForField(field, context);
         }
 
         M fieldMetadata;
@@ -64,7 +65,9 @@ public class AnnotationFieldMetadataFactory {
         return fieldMetadata;
     }
 
-    private static String getValidatorNameForField(Field field, SourceGeneratorHelper helper) {
+    private static String getValidatorNameForField(Field field, SourceGeneratorContext context) {
+        SourceGeneratorHelper helper = context.getHelper();
+
         String validatorName = helper.getValidatorNameForClass(field.getType());
 
         if (validatorName == null) {
@@ -75,8 +78,8 @@ public class AnnotationFieldMetadataFactory {
         return validatorName;
     }
 
-    public static CollectionFieldMetadata newCollectionFieldMetadata(Class type, Field colField, SourceGeneratorHelper helper, ModelClassMetadata modelClassMd) throws MetadataException {
-        CollectionFieldMetadata fieldMetadata = newFieldMetadata(CollectionFieldMetadata.class, PsiCollectionField.class, colField, helper, modelClassMd);
+    public static CollectionFieldMetadata newCollectionFieldMetadata(Class type, Field colField, SourceGeneratorContext context, ModelClassMetadata modelClassMd) throws MetadataException {
+        CollectionFieldMetadata fieldMetadata = newFieldMetadata(CollectionFieldMetadata.class, PsiCollectionField.class, colField, context, modelClassMd);
         fieldMetadata.setGenericType(type);
 
         return fieldMetadata;

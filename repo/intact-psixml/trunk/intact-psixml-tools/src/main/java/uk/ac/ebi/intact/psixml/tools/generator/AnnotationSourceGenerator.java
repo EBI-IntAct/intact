@@ -24,10 +24,7 @@ import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadata;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadataFactory;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -40,7 +37,7 @@ import java.util.Properties;
  */
 public class AnnotationSourceGenerator implements SourceGenerator {
 
-    private File templateFile;
+    private PrintStream out;
 
     /**
      * Constructor
@@ -49,29 +46,40 @@ public class AnnotationSourceGenerator implements SourceGenerator {
     }
 
     public void generateClasses(SourceGeneratorContext sgContext) throws Exception {
+        generateClasses(sgContext, System.out);
+    }
+
+    public void generateClasses(SourceGeneratorContext sgContext, PrintStream out) throws Exception {
+        this.out = out;
 
         List<Class> modelClasses = getModelClassesFromJars(sgContext.getDependencyJars());
 
-        SourceGeneratorHelper sourceBuilderHelper = new SourceGeneratorHelper(modelClasses, sgContext);
+        sgContext.createNewHelper(modelClasses);
 
         for (Class modelClass : modelClasses) {
-            create(sgContext, sourceBuilderHelper, modelClass);
+            create(sgContext, modelClass);
+        }
+
+        if (modelClasses.isEmpty()) {
+            out.println("No processors were generated");
         }
     }
 
-    public void create(SourceGeneratorContext sgContext, SourceGeneratorHelper sbHelper, Class modelClass) throws Exception {
-        String validatorClassName = sbHelper.getValidatorNameForClass(modelClass);
+    public void create(SourceGeneratorContext sgContext, Class modelClass) throws Exception {
+        SourceGeneratorHelper helper = sgContext.getHelper();
+
+        String processorClassName = helper.getValidatorNameForClass(modelClass);
 
         VelocityContext context = sgContext.getVelocityContext();
 
         context.put("packageName", sgContext.getGeneratedPackage());
         context.put("modelClass", modelClass);
-        context.put("type", validatorClassName);
+        context.put("type", processorClassName);
 
-        ModelClassMetadata modelClassMetadata = ModelClassMetadataFactory.createModelClassMetadata(sbHelper, modelClass);
+        ModelClassMetadata modelClassMetadata = ModelClassMetadataFactory.createModelClassMetadata(sgContext, modelClass);
         context.put("mcm", modelClassMetadata);
 
-        File outputFile = sbHelper.getValidatorFileForClass(modelClass);
+        File outputFile = helper.getValidatorFileForClass(modelClass);
 
         Properties props = new Properties();
         props.setProperty("resource.loader", "class");
@@ -85,13 +93,21 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         Writer writer = new FileWriter(outputFile);
         template.merge(context, writer);
         writer.close();
+
+        out.println("Generated processor: " + processorClassName);
     }
 
     protected List<Class> getModelClassesFromJars(File[] jarFiles) {
         List<Class> modelClasses = new ArrayList<Class>();
 
         for (File jarFile : jarFiles) {
-            modelClasses.addAll(getModelClassesFromJar(jarFile));
+            List<Class> modelClassesInJar = getModelClassesFromJar(jarFile);
+
+            if (!modelClassesInJar.isEmpty()) {
+                out.println(modelClassesInJar.size() + " PsiXmlElemnt classes found in jar: " + jarFile);
+            }
+
+            modelClasses.addAll(modelClassesInJar);
         }
 
         return modelClasses;

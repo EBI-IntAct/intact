@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.tools.generator;
+package uk.ac.ebi.intact.psixml.upload.extensions;
 
-import java.io.PrintStream;
+import psidev.psi.mi.xml.model.Entry;
+import uk.ac.ebi.intact.psixml.tools.extension.ExtensionContext;
+import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
+import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
+import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
 
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id:SourceBuilder.java 8272 2007-04-25 10:20:12Z baranda $
+ * @version $Id$
  */
-public interface SourceGenerator {
+@PsiExtension(forClass = Entry.class)
+public class PsiTestExtension {
 
-    void generateClasses(SourceGeneratorContext sgContext) throws Exception;
+    @PsiExtensionContext
+    ExtensionContext extensionContext;
 
-    void generateClasses(SourceGeneratorContext sgContext, PrintStream out) throws Exception;
+    @PsiExtensionMethod
+    public void executeMyTestExtension() {
+        System.out.println("TEST EXTENSION");
+    }
 }

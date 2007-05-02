@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.tools.generator;
 import org.apache.velocity.VelocityContext;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -28,14 +29,21 @@ import java.io.File;
 public class SourceGeneratorContext {
 
     private File[] dependencyJars;
+    private ClassLoader dependencyClassLoader;
+
     private String generatedPackage;
     private File targetPath;
     private VelocityContext velocityContext;
+    private SourceGeneratorHelper helper;
 
     public SourceGeneratorContext(VelocityContext context, String generatedPackage, File targetPath) {
         this.velocityContext = context;
         this.generatedPackage = generatedPackage;
         this.targetPath = targetPath;
+    }
+
+    public void createNewHelper(List<Class> modelClasses) {
+        this.helper = new SourceGeneratorHelper(modelClasses, this);
     }
 
     public File getOutputDir() {
@@ -63,5 +71,27 @@ public class SourceGeneratorContext {
 
     public VelocityContext getVelocityContext() {
         return velocityContext;
+    }
+
+    public SourceGeneratorHelper getHelper() {
+        if (helper == null) {
+            throw new RuntimeException("SourceGeneratorHElper has not been created. Call createNewHelper first.");
+        }
+        return helper;
+    }
+
+    public void setHelper(SourceGeneratorHelper helper) {
+        this.helper = helper;
+    }
+
+    public ClassLoader getDependencyClassLoader() {
+        if (dependencyClassLoader == null) {
+            return Thread.currentThread().getContextClassLoader();
+        }
+        return dependencyClassLoader;
+    }
+
+    public void setDependencyClassLoader(ClassLoader dependencyClassLoader) {
+        this.dependencyClassLoader = dependencyClassLoader;
     }
 }

@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.psixml.tools.generator.metadata;
 
-import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorHelper;
+import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 import uk.ac.ebi.intact.psixml.tools.generator.metadata.util.PsiReflectionUtils;
 
 import java.lang.reflect.Method;
@@ -29,13 +29,13 @@ import java.util.List;
  */
 public class ModelClassMetadataFactory {
 
-    public static ModelClassMetadata createModelClassMetadata(SourceGeneratorHelper helper, Class modelClass) {
+    public static ModelClassMetadata createModelClassMetadata(SourceGeneratorContext context, Class modelClass) {
         ModelClassMetadata mcm = new ModelClassMetadata(modelClass);
         mcm.setBooleansWithMetadata(PsiReflectionUtils.booleanFieldsFrom(mcm));
-        mcm.setIndividuals(PsiReflectionUtils.individualsFrom(helper, mcm));
-        mcm.setCollections(PsiReflectionUtils.collectionsFrom(helper, mcm));
+        mcm.setIndividuals(PsiReflectionUtils.individualsFrom(context, mcm));
+        mcm.setCollections(PsiReflectionUtils.collectionsFrom(context, mcm));
 
-        List<Method> extensionMethods = PsiReflectionUtils.discoverPsiExtensionMethodsForClass(modelClass);
+        List<Method> extensionMethods = PsiReflectionUtils.discoverPsiExtensionMethodsForClass(modelClass, context);
         for (Method extMethos : extensionMethods) {
             checkPsiExtensionMethod(extMethos, modelClass);
         }
