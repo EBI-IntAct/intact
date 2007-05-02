@@ -67,7 +67,7 @@ public class CvBiologicalRole extends CvObject implements Editable {
     /**
      * Necessary for hibernate, yet set to private as it should not be used for any other purpose.
      */
-    private CvBiologicalRole() {
+    public CvBiologicalRole() {
         //super call sets creation time data
         super();
     }
