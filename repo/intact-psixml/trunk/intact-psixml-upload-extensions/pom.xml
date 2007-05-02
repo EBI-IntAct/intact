@@ -10,10 +10,10 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>intact-psixml-upload</artifactId>
+    <artifactId>intact-psixml-upload-extensions</artifactId>
     <packaging>jar</packaging>
 
-    <name>IntAct PSIXML Uploader</name>
+    <name>IntAct PSIXML PSI Extensions</name>
     <description>Uploads PSIXML files to the database</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-upload</url>
 
@@ -27,49 +27,7 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/intact-psixml-upload/trunk/</url>
     </scm>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>dbtest-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.psixml</groupId>
-                <artifactId>psixml-source-generator-maven-plugin</artifactId>
-                <configuration>
-                    <generatedPackage>uk.ac.ebi.intact.psixml.generated</generatedPackage>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate-processors</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
-        <!--
-        h2 database used for testing, with the cvs preloaded
-        -->
-        <dependency>
-            <groupId>uk.ac.ebi.intact.templates</groupId>
-            <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20070410</version>
-            <type>zip</type>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
@@ -77,7 +35,7 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.psixml</groupId>
-            <artifactId>intact-psixml-upload-extensions</artifactId>
+            <artifactId>intact-psixml-tools</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

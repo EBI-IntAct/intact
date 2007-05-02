@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.psixml.tools.extension;
 
+import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
-import uk.ac.ebi.intact.psixml.tools.generator.metadata.util.PsiReflectionUtils;
 import uk.ac.ebi.intact.psixml.tools.validator.ValidationReport;
 
 import java.lang.reflect.Field;
@@ -46,7 +46,7 @@ public class ExtensionContext<T> {
             throw new ContextInjectionException("Class " + extensionClass + " is not a valid PSI extension, since it does not have the @PsiExtension annotation");
         }
 
-        List<Field> extensionContextFields = PsiReflectionUtils.fieldsWithAnnotation(extensionClass, PsiExtensionContext.class);
+        List<Field> extensionContextFields = AnnotationUtil.fieldsWithAnnotation(extensionClass, PsiExtensionContext.class);
 
         for (Field extensionContextField : extensionContextFields) {
             try {

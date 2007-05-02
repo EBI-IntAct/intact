@@ -33,7 +33,7 @@ public class SourceGeneratorHelper {
 
     private SourceGeneratorContext sgContext;
 
-    public SourceGeneratorHelper(List<Class> modelClasses, SourceGeneratorContext sgContext) {
+    SourceGeneratorHelper(List<Class> modelClasses, SourceGeneratorContext sgContext) {
         this.sgContext = sgContext;
 
         File outputDir = createOutputDir();
