@@ -99,7 +99,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     /**
      * Necessary for hibernate, yet set to private as it should not be used for any other purpose.
      */
-    private Component() {
+    public Component() {
         //super call sets creation time data
         super();
     }
@@ -126,6 +126,11 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     public Component( Institution owner, Interaction interaction, Interactor interactor, CvComponentRole role ) {
 
         this( owner, NON_APPLICABLE, interaction, interactor, role );
+    }
+
+    public Component( Institution owner, Interaction interaction, Interactor interactor, CvComponentRole experimentRole, CvBiologicalRole bioRole ) {
+
+        this( owner, NON_APPLICABLE, interaction, interactor, experimentRole, bioRole);
     }
 
     /**
