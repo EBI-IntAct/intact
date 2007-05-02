@@ -42,7 +42,7 @@ public class PsiTestExtension {
                            " - is valid: " + extensionContext.getProcessReport().getValidationReport().isValid());
 
         for (ValidationMessage msg : extensionContext.getProcessReport().getValidationReport().getMessages()) {
-            System.out.println(msg);
+            System.out.println("\t" + msg);
         }
     }
 }
