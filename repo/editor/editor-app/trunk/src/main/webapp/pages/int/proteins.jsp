@@ -25,8 +25,14 @@
 
 <%-- Menus to edit a Protein --%>
 <c:set var="rolelist" value="${menus['Role']}"/>
+<%-- Menus to edit a Protein --%>
+<c:set var="biorolelist" value="${menus['BioRole']}"/>
+
 <%-- Menu to add a new Protein --%>
 <c:set var="rolelist_" value="${menus['Role_']}"/>
+<%-- Menu to add a new Protein --%>
+<c:set var="biorolelist_" value="${menus['BioRole_']}"/>
+
 <%-- BioSource menu --%>
 <c:set var="biosrclist_" value="${menus['Organism']}"/>
 
@@ -106,6 +112,7 @@
         </tr>
         <tr class="tableRowHeader">
             <th class="tableCellHeader">Role*</th>
+            <th class="tableCellHeader">BioRole</th>
             <th class="tableCellHeader">Stoichiometry</th>
             <th class="tableCellHeader">ExpressedIn</th>
             <th class="tableCellHeader">Organism</th>
@@ -236,6 +243,9 @@
                         <nested:write property="role"/>
                     </td>
                     <td class="tableCell">
+                        <nested:write property="bioRole"/>
+                    </td>
+                    <td class="tableCell">
                         <nested:write property="stoichiometry"/>
                     </td>
                     <td class="tableCell">
@@ -249,12 +259,22 @@
                             <html:options name="rolelist" />
                         </nested:select>
                     </td>
+                    <td class="tableCell">
+                        <nested:select property="bioRole" styleClass="inputRequired">
+                            <html:options name="biorolelist" />
+                        </nested:select>
+                    </td>
                 </c:if>
 
                 <c:if test="${saveNew or error}">
                     <td class="tableCell">
-                        <nested:select property="role" styleClass="inputRequired">
+                        <nested:select styleId="expRole" property="role" styleClass="inputRequired" onchange="updateBiologicalRole()">
                             <html:options name="rolelist_" />
+                        </nested:select>
+                    </td>
+                    <td class="tableCell">
+                        <nested:select styleId="bioRole" property="bioRole" styleClass="inputRequired" onchange="updateExperimentalRole()">
+                            <html:options name="biorolelist_" />
                         </nested:select>
                     </td>
                 </c:if>
