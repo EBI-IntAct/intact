@@ -312,14 +312,29 @@ public class AnnotationUtil {
         return fields;
     }
 
+    /**
+     * Gets the declared fields of a class with a certain annotation
+     */
+    public static List<Field> declaredfieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+        List<Field> fields = new ArrayList<Field>();
+
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.getAnnotation(annotationClass) != null) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
+    }
+
 
     /**
-     * Gets the methods of a class with a certain annotation
+     * Gets the declared methods of a class with a certain annotation
      */
-    public static List<Method> methodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+    public static List<Method> declaredMethodsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
         List<Method> methods = new ArrayList<Method>();
 
-        for (Method method : clazz.getMethods()) {
+        for (Method method : clazz.getDeclaredMethods()) {
             if (method.getAnnotation(annotationClass) != null) {
                 methods.add(method);
             }
