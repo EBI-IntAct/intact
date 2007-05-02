@@ -315,7 +315,7 @@ public class AnnotationUtil {
     /**
      * Gets the declared fields of a class with a certain annotation
      */
-    public static List<Field> declaredfieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
+    public static List<Field> declaredFieldsWithAnnotation(Class clazz, Class<? extends Annotation> annotationClass) {
         List<Field> fields = new ArrayList<Field>();
 
         for (Field field : clazz.getDeclaredFields()) {
