@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.generator;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.velocity.VelocityContext;
@@ -26,19 +27,25 @@ import uk.ac.ebi.intact.psixml.tools.generator.SourceGenerator;
 import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.io.PrintStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
  * Change this comments and the goal name accordingly
  *
- * @goal generate-psi-sources
+ * @goal generate-processors
  * @phase generate-sources
+ * @requiresDependencyResolution compile
  */
-public class PsiSourceGeneratorMojo
+public class PsiProcessorGeneratorMojo
         extends IntactAbstractMojo {
+
+    private static final List<String> DEFAULT_EXCLUDED_GROUPIDS = Arrays.asList(
+            new String[]{"commons-logging", "commons-collections",
+                         "log4j", "org.hibernate", "xerces"});
 
     /**
      * Project instance
@@ -60,7 +67,7 @@ public class PsiSourceGeneratorMojo
     /**
      * Path where the classes will be generated
      *
-     * @parameter default-value="${project.build.directory}/target/generated"
+     * @parameter default-value="${project.build.directory}/generated"
      * @required
      */
     private String targetPath;
@@ -98,8 +105,15 @@ public class PsiSourceGeneratorMojo
         context.put("artifactId", project.getArtifactId());
         context.put("version", project.getVersion());
 
+        // create the sourceGeneratorContext, using the dependencies of the project
+        File[] depJars = getDependencyJars();
+        ClassLoader classLoader = createClassLoaderwithJars(depJars);
+
         SourceGeneratorContext sbContext = new SourceGeneratorContext(context, generatedPackage, new File(targetPath));
-        sbContext.setDependencyJars(getDependencyJars());
+        sbContext.setDependencyJars(depJars);
+        sbContext.setDependencyClassLoader(classLoader);
+
+        getLog().info("Going to look for model classes in " + sbContext.getDependencyJars().length + " jars");
 
         SourceGenerator generator = null;
         try {
@@ -109,8 +123,9 @@ public class PsiSourceGeneratorMojo
         }
 
         try {
-            generator.generateClasses(sbContext);
+            generator.generateClasses(sbContext, new MavenLogPrintStream(getLog()));
         } catch (Exception e) {
+            e.printStackTrace();
             throw new MojoExecutionException("Problem creating class from template", e);
         }
 
@@ -133,15 +148,36 @@ public class PsiSourceGeneratorMojo
     private File[] getDependencyJars() {
         Set<Artifact> artifacts = project.getArtifacts();
 
-        File[] dependencyJars = new File[artifacts.size()];
+        List<File> dependencyJars = new ArrayList<File>();
         int i = 0;
 
         for (Artifact artifact : artifacts) {
-            dependencyJars[i] = artifact.getFile();
-            i++;
+            File artFile = artifact.getFile();
+
+            if (artFile != null &&
+                !DEFAULT_EXCLUDED_GROUPIDS.contains(artifact.getGroupId()) &&
+                !artFile.getName().equals("tools.jar")) {
+                dependencyJars.add(artFile);
+            }
         }
 
-        return dependencyJars;
+        return dependencyJars.toArray(new File[dependencyJars.size()]);
+    }
+
+    private ClassLoader createClassLoaderwithJars(File[] jarsFiles) {
+        URL[] jarsUrls = new URL[jarsFiles.length];
+
+        for (int i = 0; i < jarsFiles.length; i++) {
+            try {
+                jarsUrls[i] = new URL("jar:file://" + jarsFiles[i].toString() + "!/");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        PsiClassLoader urlClassLoader = new PsiClassLoader(jarsUrls, PsiProcessorGeneratorMojo.class.getClassLoader());
+
+        return urlClassLoader;
     }
 
     /**
@@ -161,5 +197,25 @@ public class PsiSourceGeneratorMojo
 
     public String getSourceGeneratorClass() {
         return sourceGeneratorClass;
+    }
+
+    private class MavenLogPrintStream extends PrintStream {
+
+        private Log log;
+
+        public MavenLogPrintStream(Log log) {
+            super(System.out);
+            this.log = log;
+        }
+
+        public void print(String str) {
+            String lineSeparator = System.getProperty("line.separator");
+
+            if (!str.equals(lineSeparator)) {
+                log.info(str.replaceAll(lineSeparator, ""));
+            }
+
+        }
+
     }
 }
