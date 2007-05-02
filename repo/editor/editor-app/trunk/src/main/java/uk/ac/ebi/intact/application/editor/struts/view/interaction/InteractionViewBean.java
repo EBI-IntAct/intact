@@ -992,13 +992,23 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
 
         // Protein role edit menu
         name = EditorMenuFactory.ROLE;
-        menu = menuFactory.getMenu(name, 0);
+        menu = menuFactory.getMenu(name, 0, CvComponentRole.NEUTRAL);
+        myMenus.put(name, menu);
+
+        // Protein role edit menu
+        name = EditorMenuFactory.BIOROLE;
+        menu = menuFactory.getMenu(name, 0, CvComponentRole.UNSPECIFIED);
         myMenus.put(name, menu);
 
         // Add the Role add menu.
         name = EditorMenuFactory.ROLE;
         menu = myMenus.get(name);
-        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu));
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvComponentRole.NEUTRAL));
+
+          // Add the Role add menu.
+        name = EditorMenuFactory.BIOROLE;
+        menu = myMenus.get(name);
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvComponentRole.UNSPECIFIED));
     }
 
     private void makeProteinBeans(Collection<Component> components) {

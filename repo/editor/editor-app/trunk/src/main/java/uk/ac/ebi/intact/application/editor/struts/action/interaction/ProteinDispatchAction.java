@@ -104,6 +104,21 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
             // Display the error in the editor.
             return mapping.getInputForward();
         }
+        if (cb.getBioRole() == null) {
+            log.debug("cb.getBioRole() = " + cb.getBioRole());
+
+            ActionMessages errors = new ActionMessages();
+            errors.add("int.prot.role",
+                    new ActionMessage("error.int.interact.edit.biorole"));
+            saveErrors(request, errors);
+            cb.setEditState(AbstractEditBean.ERROR);
+
+            // Set the anchor for the page to scroll.
+            setAnchor(request, intform);
+
+            // Display the error in the editor.
+            return mapping.getInputForward();
+        }
         // The protein to update.
         view.addPolymerToUpdate(cb);
 
