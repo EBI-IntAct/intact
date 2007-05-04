@@ -229,16 +229,17 @@ public class EditorMenuFactory {
 
         //todo:check firstPosistionShortlabel not null
         // The menu to return.
-        List<String> modMenu = new LinkedList<String>(menu);
-        Iterator<String> modMenuIterator = modMenu.iterator();
-        if(modMenuIterator.hasNext()){
+        Iterator<String> modMenuIterator = menu.iterator();
+        while(modMenuIterator.hasNext()){
             String shortLabel = modMenuIterator.next();
-            System.out.println("shortLabel = " + shortLabel);
+            LOGGER.debug("shortLabel = " + shortLabel);
             if(firstPositionCvShortlabel.equals(shortLabel)){
+                LOGGER.debug("removing " + shortLabel + " from list");
                 modMenuIterator.remove();
                 //todo : if not found, send error message.
             }
         }
+        List<String> modMenu = new LinkedList<String>(menu);
         // The default value for add menu.
         String  defvalue = SELECT_LIST_ITEM;
         // Add as the first item in the list.
@@ -278,6 +279,8 @@ public class EditorMenuFactory {
         // The class associated with the key.
         Class clazz = ourNameToType.get(key);
         List<String> menu = getMenuList(clazz);
+        Iterator iterator = menu.iterator();
+
         if (menu.isEmpty()) {
             // Special list when we don't have any menu items.
             menu.add(SELECT_LIST_ITEM);
