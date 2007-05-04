@@ -109,14 +109,14 @@
             <th class="tableCellHeader" width="50%">
                 <bean:message key="label.fullname"/>
             </th>
+            <th class="tableCellHeader" width="10%">Interactor Type</th>
         </tr>
         <tr class="tableRowHeader">
-            <th class="tableCellHeader">Role*</th>
+            <th class="tableCellHeader">ExpRole</th>
             <th class="tableCellHeader">BioRole</th>
             <th class="tableCellHeader">Stoichiometry</th>
             <th class="tableCellHeader">ExpressedIn</th>
-            <th class="tableCellHeader">Organism</th>
-            <th class="tableCellHeader">Interactor Type</th>
+            <th class="tableCellHeader" colspan="2">Organism</th>
         </tr>
 
         <%-- Feature headings --%>
@@ -128,7 +128,7 @@
             <th class="tableCellHeader" width="10%">Feature AC</th>
             <th class="tableCellHeader" width="10%" rowspan="2">Range</th>
             <th class="tableCellHeader" width="10%" rowspan="2">Interacts With</th>
-            <th class="tableCellHeader" width="50%" rowspan="2">Feature Full Name</th>
+            <th class="tableCellHeader" width="50%" rowspan="2" colspan="2">Feature Full Name</th>
         </tr>
         <tr class="tableFeatureRowHeader">
             <th class="tableCellHeader">Feature Type</th>
@@ -200,6 +200,9 @@
                 </td>
                 <td class="tableCell">
                     <nested:write property="fullName"/>
+                </td>
+                <td class="tableCell">
+                    <nested:write property="type"/>
                 </td>
             </tr>
 
@@ -302,11 +305,8 @@
                         </c:if>
                     </td>
                 </c:if>
-                <td class="tableCell">
-                    <nested:write property="organism"/>
-                </td>
-                <td class="tableCell">
-                    <nested:write property="type"/>
+                <td class="tableCell" colspan="2">
+                    <nested:write property="organism" />
                 </td>
             </tr>
 
@@ -344,7 +344,7 @@
                 </td>
 
                 <%-- Empty cell spanning many cells --%>
-                <td class="tableCell"  colspan="5"/>
+                <td class="tableCell"  colspan="6"/>
                 </tr>
 
 
@@ -385,7 +385,7 @@
                     <td class="tableCell" rowspan="2">
                         <nested:write property="boundDomain"/>
                     </td>
-                    <td class="tableCell" rowspan="2">
+                    <td class="tableCell" rowspan="2" colspan="2">
                         <nested:write property="fullName"/>
                     </td>
                 </tr>
