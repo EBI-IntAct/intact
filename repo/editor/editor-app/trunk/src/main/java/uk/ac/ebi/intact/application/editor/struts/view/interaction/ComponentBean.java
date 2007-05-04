@@ -512,12 +512,14 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     private String getSPAc() {
-        for (Xref xref : myInteractor.getXrefs())
-        {
-            // Only consider SwissProt database entries.
-            if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT))
+        if((Protein.class.isAssignableFrom(myInteractor.getClass()))){
+            for (Xref xref : myInteractor.getXrefs())
             {
-                return xref.getPrimaryId();
+                // Only consider SwissProt database entries.
+                if (xref.getCvDatabase().getShortLabel().equals(CvDatabase.UNIPROT))
+                {
+                    return xref.getPrimaryId();
+                }
             }
         }
         return "";
