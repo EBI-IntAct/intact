@@ -91,7 +91,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * Participant identification method that can override the one defined in the experiment.
      * If not specified, the experiment's is to be considered. 
      */
-    private CvIdentification particiantIdentification;
+    private CvIdentification participantIdentification;
 
     ///////////////////////
     // Constructor
@@ -234,8 +234,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn( name = "identmethod_ac" )
-    public CvIdentification getParticiantIdentification() {
-        return particiantIdentification;
+    public CvIdentification getParticipantIdentification() {
+        return participantIdentification;
     }
 
     /**
@@ -243,8 +243,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @param particiantIdentification Value to set for property 'particiantIdentification'.
      */
-    public void setParticiantIdentification( CvIdentification particiantIdentification ) {
-        this.particiantIdentification = particiantIdentification;
+    public void setParticipantIdentification( CvIdentification particiantIdentification ) {
+        this.participantIdentification = particiantIdentification;
     }
 
     /**
