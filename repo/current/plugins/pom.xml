@@ -42,6 +42,7 @@
         <module>dataminer-export-maven-plugin</module>
         <module>psimitab-indexer-maven-plugin</module>
         <module>predict-maven-plugin</module>
+        <module>update-component-role-maven-plugin</module>
   </modules>
 
     <distributionManagement>
