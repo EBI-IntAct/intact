@@ -36,7 +36,6 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
 
     private String interactorAc;
     private String interactionAc;
-    private String cvComponentRoleAc;
     private String expressedInAc;
 
 
@@ -71,16 +70,9 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     private Collection<Feature> bindingDomains = new ArrayList<Feature>();
 
     /**
-     * TODO comments
-     */
-    @Deprecated
-    private CvComponentRole cvComponentRole;
-
-    /**
      * Experimental role of that component (eg. bait, prey, ...).
      */
-    // TODO create a dedicated class once the data has been updated in the database.!
-    private CvComponentRole experimentalRole;
+    private CvExperimentalRole experimentalRole;
 
     /**
      * Biological role of this component (eg. enzyme, target...).
@@ -89,7 +81,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
 
     /**
      * Participant identification method that can override the one defined in the experiment.
-     * If not specified, the experiment's is to be considered. 
+     * If not specified, the experiment's is to be considered.
      */
     private CvIdentification participantIdentification;
 
@@ -104,59 +96,36 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         super();
     }
 
-    /**
-     * Creates a valid Component instance. To be valid, a Component must have at least: <ul> <li>An onwer
-     * (Institution)</li> <li>a biological source that the interaaction was expressed in</li> <li>an Interaction that
-     * this instance is a Component of</li> <li>an Interactor which defines the entity (eg Protein) which takes part in
-     * the Interaction and is therefore the 'core' of this Component</li> <li>the biological role that this Component
-     * plays in the Interaction (eg bait/prey etc)</li> </ul>
-     * <p/>
-     * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
-     * instance to the current time.
-     *
-     * @param owner       The Institution owner of this Component (non-null)
-     * @param interaction The Interaction this Component is a part of (non-null)
-     * @param interactor  The 'wrapped active entity' (eg a Protein) that this Component represents in the Interaction
-     *                    (non-null)
-     * @param role        The biological/experimental role played by this Component in the Interaction experiment (eg
-     *                    bait/prey). This is a controlled vocabulary term (non-null)
-     *
-     * @throws NullPointerException thrown if any of the parameters are not specified.
-     */
-    public Component( Institution owner, Interaction interaction, Interactor interactor, CvComponentRole role ) {
+    public Component( Institution owner, Interaction interaction, Interactor interactor,
+                      CvExperimentalRole experimentRole, CvBiologicalRole biologicalRole ) {
 
-        this( owner, NON_APPLICABLE, interaction, interactor, role );
-    }
-
-    public Component( Institution owner, Interaction interaction, Interactor interactor, CvComponentRole experimentRole, CvBiologicalRole bioRole ) {
-
-        this( owner, NON_APPLICABLE, interaction, interactor, experimentRole, bioRole);
+        this( owner, NON_APPLICABLE, interaction, interactor, experimentRole, biologicalRole );
     }
 
     /**
      * Creates a valid Component instance. To be valid, a Component must have at least: <ul> <li>An onwer
      * (Institution)</li> <li>a biological source that the interaaction was expressed in</li> <li>an Interaction that
      * this instance is a Component of</li> <li>an Interactor which defines the entity (eg Protein) which takes part in
-     * the Interaction and is therefore the 'core' of this Component</li> <li>the biological role that this Component
+     * the Interaction and is therefore the 'core' of this Component</li> <li>the biological experimentalRole that this Component
      * plays in the Interaction (eg bait/prey etc)</li> </ul>
      * <p/>
      * A side-effect of this constructor is to set the <code>created</code> and <code>updated</code> fields of the
      * instance to the current time.
      *
-     * @param owner       The Institution owner of this Component (non-null)
-     * @param shortLabel  Label for this component
-     * @param interaction The Interaction this Component is a part of (non-null)
-     * @param interactor  The 'wrapped active entity' (eg a Protein) that this Component represents in the Interaction
-     *                    (non-null)
-     * @param role        The biological/experimental role played by this Component in the Interaction experiment (eg
-     *                    bait/prey). This is a controlled vocabulary term (non-null)
+     * @param owner            The Institution owner of this Component (non-null)
+     * @param shortLabel       Label for this component
+     * @param interaction      The Interaction this Component is a part of (non-null)
+     * @param interactor       The 'wrapped active entity' (eg a Protein) that this Component represents in the Interaction
+     *                         (non-null)
+     * @param experimentalRole The experimental role played by this Component in the Interaction experiment (eg
+     *                         bait/prey). This is a controlled vocabulary term (non-null)
+     * @param biologicalRole   The biological role played by this Component in the Interaction experiment (eg
+     *                         enzyme/target). This is a controlled vocabulary term (non-null)
      *
      * @throws NullPointerException thrown if any of the parameters are not specified.
      */
     public Component( Institution owner, String shortLabel, Interaction interaction, Interactor interactor,
-                      CvComponentRole role
-    ) {
-
+                      CvExperimentalRole experimentalRole, CvBiologicalRole biologicalRole ) {
         //super call sets creation time data
         super( shortLabel, owner );
 
@@ -168,20 +137,18 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         if ( interactor == null ) {
             throw new NullPointerException( "valid Component must have an Interactor (eg Protein) set!" );
         }
-        if ( role == null ) {
-            throw new NullPointerException( "valid Component must have a role set (ie a CvComponentRole)!" );
+        if ( experimentalRole == null ) {
+            throw new NullPointerException( "valid Component must have a non null experimentalRole." );
+        }
+        if ( biologicalRole == null ) {
+            throw new NullPointerException( "valid Component must have a non null biologicalRole." );
         }
 
         this.interaction = interaction;
         this.interactor = interactor;
 
-        this.experimentalRole = role;
-    }
-
-    public Component(Institution owner, String shortLabel, Interaction interaction, Interactor interactor,
-                      CvComponentRole experimentalRole, CvBiologicalRole bioRole){
-        this(owner,shortLabel, interaction, interactor, experimentalRole);
-        this.biologicalRole = bioRole;
+        this.experimentalRole = experimentalRole;
+        this.biologicalRole = biologicalRole;
     }
 
     ///////////////////////////////////////
@@ -213,8 +180,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * @return Value for property 'experimentalRole'.
      */
     @ManyToOne( fetch = FetchType.LAZY )
-    @JoinColumn( name = "role" )
-    public CvComponentRole getExperimentalRole() {
+    @JoinColumn( name = "experimentalrole_ac" )
+    public CvExperimentalRole getExperimentalRole() {
         return experimentalRole;
     }
 
@@ -223,7 +190,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @param experimentalRole Value to set for property 'experimentalRole'.
      */
-    public void setExperimentalRole( CvComponentRole experimentalRole ) {
+    public void setExperimentalRole( CvExperimentalRole experimentalRole ) {
         this.experimentalRole = experimentalRole;
     }
 
@@ -372,27 +339,6 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     }
 
     /**
-     * Getter for property 'cvComponentRole'.
-     *
-     * @return Value for property 'cvComponentRole'.
-     */
-    @Deprecated
-    @Transient
-    public CvComponentRole getCvComponentRole() {
-        return getExperimentalRole();
-    }
-
-    /**
-     * Setter for property 'cvComponentRole'.
-     *
-     * @param cvComponentRole Value to set for property 'cvComponentRole'.
-     */
-    @Deprecated
-    public void setCvComponentRole( CvComponentRole cvComponentRole ) {
-        setExperimentalRole( cvComponentRole );
-    }
-
-    /**
      * {@inheritDoc}
      */
     @ManyToMany( cascade = {CascadeType.PERSIST} )
@@ -453,7 +399,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         // so "==" can be used instead of "equals".
         return this.interactor == component.getInteractor() &&
                this.interaction == component.getInteraction() &&
-               this.cvComponentRole == component.cvComponentRole;
+               this.experimentalRole == component.experimentalRole &&
+               this.biologicalRole == component.biologicalRole;
     }
 
     /**
@@ -475,8 +422,11 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         if ( interaction != null ) {
             code = code * 29 + interaction.hashCode();
         }
-        if ( cvComponentRole != null ) {
-            code = code * 29 + cvComponentRole.hashCode();
+        if ( experimentalRole != null ) {
+            code = code * 29 + experimentalRole.hashCode();
+        }
+        if ( biologicalRole != null ) {
+            code = code * 29 + biologicalRole.hashCode();
         }
 
         return code;
@@ -553,25 +503,6 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     }
 
     /**
-     * Getter for property 'cvComponentRoleAc'.
-     *
-     * @return Value for property 'cvComponentRoleAc'.
-     */
-    @Column( name = "role", insertable = false, updatable = false )
-    public String getCvComponentRoleAc() {
-        return this.cvComponentRoleAc;
-    }
-
-    /**
-     * Setter for property 'cvComponentRoleAc'.
-     *
-     * @param ac Value to set for property 'cvComponentRoleAc'.
-     */
-    public void setCvComponentRoleAc( String ac ) {
-        this.cvComponentRoleAc = ac;
-    }
-
-    /**
      * Getter for property 'expressedInAc'.
      *
      * @return Value for property 'expressedInAc'.
@@ -608,8 +539,4 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     protected void setInteractorForClone( Interactor interactor ) {
         this.interactor = interactor;
     }
-} // end Component
-
-
-
-
+}
