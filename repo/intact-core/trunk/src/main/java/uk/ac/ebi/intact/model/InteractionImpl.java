@@ -333,7 +333,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     @Transient
     public Component getBait() {
         for ( Component component : components ) {
-            CvComponentRole role = component.getCvComponentRole();
+            CvExperimentalRole role = component.getCvExperimentalRole();
             if ( null == role ) {
                 return null;
             }
