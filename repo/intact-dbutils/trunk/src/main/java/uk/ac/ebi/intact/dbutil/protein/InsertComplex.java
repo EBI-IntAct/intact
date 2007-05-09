@@ -120,7 +120,8 @@ public final class InsertComplex {
      */
     public final void insertComponent( Interaction act,
                                        String spAc,
-                                       CvComponentRole role ) throws IntactException {
+                                       CvExperimentalRole role,
+                                       CvBiologicalRole bioRole ) throws IntactException {
 
         Collection<Protein> proteins;
 
@@ -175,7 +176,7 @@ public final class InsertComplex {
         }
 
         //now build the Component.....
-        Component comp = new Component( owner, act, targetProtein, role );
+        Component comp = new Component( owner, act, targetProtein, role, bioRole );
         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().persist( comp );
     }
 
@@ -354,15 +355,16 @@ public final class InsertComplex {
         createdProteins = new HashMap<String, Collection<Protein>>();
 
         // add bait
-        CvComponentRole cvBait =  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByShortLabel(CvComponentRole.BAIT);
-        CvComponentRole cvPrey = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByShortLabel(CvComponentRole.PREY);
+        CvExperimentalRole cvBait =  IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvExperimentalRole.class).getByPsiMiRef(CvExperimentalRole.BAIT_PSI_REF);
+        CvExperimentalRole cvPrey = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvExperimentalRole.class).getByPsiMiRef(CvExperimentalRole.PREY_PSI_REF);
+        CvBiologicalRole cvUnspecified = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvBiologicalRole.class).getByPsiMiRef(CvBiologicalRole.UNSPECIFIED_PSI_REF);
 
-        insertComponent( interaction, bait, cvBait );
+        insertComponent( interaction, bait, cvBait, cvUnspecified );
 
         // add preys
         for ( int i = 0; i < preys.size(); i++ ) {
             String prey = (String) preys.elementAt( i );
-            insertComponent( interaction, prey, cvPrey );
+            insertComponent( interaction, prey, cvPrey, cvUnspecified );
         }
 
         // link interaction to experiment
