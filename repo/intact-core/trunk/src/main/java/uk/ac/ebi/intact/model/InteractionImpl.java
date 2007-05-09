@@ -331,6 +331,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * @return The first components marked as bait, otherwise null.
      */
     @Transient
+    @Deprecated
     public Component getBait() {
         for ( Component component : components ) {
             CvExperimentalRole role = component.getCvExperimentalRole();
