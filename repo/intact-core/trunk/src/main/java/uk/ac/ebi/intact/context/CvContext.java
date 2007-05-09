@@ -156,38 +156,38 @@ public final class CvContext implements Serializable {
         getByMiRef( CvInteractorType.class, CvInteractorType.getProteinMI() );
     }
 
-    public CvComponentRole getBait() throws IntactException {
-        return getByMiRef( CvComponentRole.class, CvComponentRole.BAIT_PSI_REF );
+    public CvExperimentalRole getBait() throws IntactException {
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.BAIT_PSI_REF );
     }
 
-    public CvComponentRole getPrey() throws IntactException {
+    public CvExperimentalRole getPrey() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.PREY_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.PREY_PSI_REF );
     }
 
-    public CvComponentRole getNeutral() throws IntactException {
+    public CvExperimentalRole getNeutral() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.NEUTRAL_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.NEUTRAL_PSI_REF );
     }
 
-    public CvComponentRole getSelf() throws IntactException {
+    public CvExperimentalRole getSelf() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.SELF_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.SELF_PSI_REF );
     }
 
-    public CvComponentRole getEnzyme() throws IntactException {
+    public CvExperimentalRole getEnzyme() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.ENZYME_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.ENZYME_PSI_REF );
     }
 
-    public CvComponentRole getEnzymeTarget() throws IntactException {
+    public CvExperimentalRole getEnzymeTarget() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.ENZYME_TARGET_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.ENZYME_TARGET_PSI_REF );
     }
 
-    public CvComponentRole getUnspecified() throws IntactException {
+    public CvExperimentalRole getUnspecified() throws IntactException {
 
-        return getByMiRef( CvComponentRole.class, CvComponentRole.UNSPECIFIED_PSI_REF );
+        return getByMiRef( CvExperimentalRole.class, CvExperimentalRole.UNSPECIFIED_PSI_REF );
     }
 
     private void putCv( CvObject cv ) {
