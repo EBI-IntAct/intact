@@ -19,7 +19,7 @@ import javax.persistence.Entity;
  * @version $Id$
  */
 @Entity
-@DiscriminatorValue( "uk.ac.ebi.intact.model.CvComponentRole" )
+@DiscriminatorValue( "uk.ac.ebi.intact.model.CvExperimentalRole" )
 @EditorTopic
 public class CvExperimentalRole extends CvObject implements Editable {
 
