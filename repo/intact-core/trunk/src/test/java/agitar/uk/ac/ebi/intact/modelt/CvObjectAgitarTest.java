@@ -89,7 +89,7 @@ public class CvObjectAgitarTest extends AgitarTestCase {
     }
 
     public void testGetXrefs() throws Throwable {
-        ArrayList result = ( ArrayList ) new CvComponentRole( new Institution( "testCvObjectShortLabel" ), "testCvObjectShortLabel" ).getXrefs();
+        ArrayList result = ( ArrayList ) new CvExperimentalRole( new Institution( "testCvObjectShortLabel" ), "testCvObjectShortLabel" ).getXrefs();
         assertEquals( "result.size()", 0, result.size() );
     }
 
