@@ -329,6 +329,9 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
      * Returns the first components marked as bait. If no such components is found, return null.
      *
      * @return The first components marked as bait, otherwise null.
+     *
+     * @deprecated this method should not be part of the model. A utility class should instead,
+     *             for isntance: uk.ac.ebi.intact.model.util.InteractionUtils.
      */
     @Transient
     @Deprecated
