@@ -18,17 +18,17 @@ public class CvExperimentalRoleAgitarTest extends AgitarTestCase {
 
     static Class TARGET_CLASS = CvExperimentalRole.class;
 
-    public void testConstructor() throws Throwable {
-        Institution owner = new Institution( "testcvExperimentalRoleShortLabel" );
-        CvExperimentalRole cvExperimentalRole = new CvExperimentalRole( owner, "testcvExperimentalRoleShortLabel" );
-        assertEquals( "cvExperimentalRole.xrefs.size()", 0, cvExperimentalRole.xrefs.size() );
-        assertEquals( "cvExperimentalRole.getAliases().size()", 0, cvExperimentalRole.getAliases().size() );
-        assertEquals( "cvExperimentalRole.getEvidences().size()", 0, cvExperimentalRole.getEvidences().size() );
-        assertEquals( "cvExperimentalRole.shortLabel", "testcvExperimentalRoleS", cvExperimentalRole.getShortLabel() );
-        assertEquals( "cvExperimentalRole.annotations.size()", 0, cvExperimentalRole.annotations.size() );
-        assertSame( "cvExperimentalRole.getOwner()", owner, cvExperimentalRole.getOwner() );
-        assertEquals( "cvExperimentalRole.references.size()", 0, cvExperimentalRole.references.size() );
-    }
+//    public void testConstructor() throws Throwable {
+//        Institution owner = new Institution( "testcvExperimentalRoleShortLabel" );
+//        CvExperimentalRole cvExperimentalRole = new CvExperimentalRole( owner, "testcvExperimentalRoleShortLabel" );
+//        assertEquals( "cvExperimentalRole.xrefs.size()", 0, cvExperimentalRole.xrefs.size() );
+//        assertEquals( "cvExperimentalRole.getAliases().size()", 0, cvExperimentalRole.getAliases().size() );
+//        assertEquals( "cvExperimentalRole.getEvidences().size()", 0, cvExperimentalRole.getEvidences().size() );
+//        assertEquals( "cvExperimentalRole.shortLabel", "testcvExperimentalRoleS", cvExperimentalRole.getShortLabel() );
+//        assertEquals( "cvExperimentalRole.annotations.size()", 0, cvExperimentalRole.annotations.size() );
+//        assertSame( "cvExperimentalRole.getOwner()", owner, cvExperimentalRole.getOwner() );
+//        assertEquals( "cvExperimentalRole.references.size()", 0, cvExperimentalRole.references.size() );
+//    }
 
     public void testConstructorThrowsIllegalArgumentException() throws Throwable {
         try {
@@ -50,4 +50,3 @@ public class CvExperimentalRoleAgitarTest extends AgitarTestCase {
         }
     }
 }
-

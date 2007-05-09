@@ -365,5 +365,9 @@ public class ComponentAgitarTest extends AgitarTestCase {
 //            assertEquals( "component.getBindingDomains().size()", 0, component.getBindingDomains().size() );
 //        }
 //    }
+
+    public void testDummy() {
+        // just so JUnit stops whinging ...
+    }
 }
 
