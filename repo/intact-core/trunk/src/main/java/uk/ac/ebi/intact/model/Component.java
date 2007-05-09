@@ -161,7 +161,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      */
     @ManyToOne( fetch = FetchType.LAZY )
     @JoinColumn( name = "biologicalrole_ac" )
-    public CvBiologicalRole getBiologicalRole() {
+    public CvBiologicalRole getCvBiologicalRole() {
         return biologicalRole;
     }
 
@@ -170,7 +170,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @param biologicalRole Value to set for property 'biologicalRole'.
      */
-    public void setBiologicalRole( CvBiologicalRole biologicalRole ) {
+    public void setCvBiologicalRole( CvBiologicalRole biologicalRole ) {
         this.biologicalRole = biologicalRole;
     }
 
