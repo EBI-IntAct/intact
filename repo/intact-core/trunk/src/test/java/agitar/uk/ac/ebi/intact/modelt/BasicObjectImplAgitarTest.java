@@ -70,7 +70,7 @@ public class BasicObjectImplAgitarTest extends AgitarTestCase {
     }
 
     public void testAddEvidenceThrowsNullPointerException() throws Throwable {
-        BasicObjectImpl cvComponentRole = new CvComponentRole( null, "testBasicObjectImplShortLabel" );
+        BasicObjectImpl cvComponentRole = new CvExperimentalRole( null, "testBasicObjectImplShortLabel" );
         cvComponentRole.setEvidences( null );
         try {
             cvComponentRole.addEvidence( new Evidence() );

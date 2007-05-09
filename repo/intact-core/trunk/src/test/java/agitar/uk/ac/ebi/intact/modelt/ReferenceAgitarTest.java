@@ -107,7 +107,7 @@ public class ReferenceAgitarTest extends AgitarTestCase {
 
     public void testGetAnnotatedObjects1() throws Throwable {
         Reference reference = new Reference();
-        AnnotatedObject annotatedObject = new CvComponentRole( new Institution( "testReferenceShortLabel" ), "testReferenceShortLabel" );
+        AnnotatedObject annotatedObject = new CvExperimentalRole( new Institution( "testReferenceShortLabel" ), "testReferenceShortLabel" );
         reference.addAnnotatedObject( annotatedObject );
         ArrayList result = ( ArrayList ) reference.getAnnotatedObjects();
         assertEquals( "result.size()", 1, result.size() );
