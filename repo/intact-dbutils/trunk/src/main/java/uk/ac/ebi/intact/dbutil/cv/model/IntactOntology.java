@@ -47,7 +47,8 @@ public class IntactOntology {
         class2mi.put( CvFuzzyType.class, new String[]{ "MI:0333" } );
         class2mi.put( CvXrefQualifier.class, new String[]{ "MI:0353" } );
         class2mi.put( CvDatabase.class, new String[]{ "MI:0444" } );
-        class2mi.put( CvComponentRole.class, new String[]{ "MI:0500", "MI:0495" } );
+        class2mi.put( CvExperimentalRole.class, new String[]{ "MI:0495" } );
+        class2mi.put( CvBiologicalRole.class, new String[]{ "MI:0500" } );
         class2mi.put( CvAliasType.class, new String[]{ "MI:0300" } );
         class2mi.put( CvTopic.class, new String[]{ "MI:0590" } );
 
@@ -55,8 +56,6 @@ public class IntactOntology {
         // we use the range IA:0001 to IA:0050 for these
         class2mi.put( CvCellType.class, new String[]{ "IA:0001" } );
         class2mi.put( CvTissue.class, new String[]{ "IA:0002" } );
-
-        // TODO what about CvCellType, CvTissue ???
 
         // mapping of the non DAG term to their shortlabel
         mi2name.put( "MI:0300", "alias type" );
