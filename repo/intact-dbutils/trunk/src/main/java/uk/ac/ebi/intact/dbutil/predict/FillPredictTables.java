@@ -202,7 +202,7 @@ public class FillPredictTables {
 
                             if (interactor instanceof ProteinImpl) {
 
-                                String role = component.getCvComponentRole().getShortLabel();
+                                String role = component.getCvExperimentalRole().getShortLabel();
                                 String species = interactor.getBioSource().getTaxId();
 
                                 if (role.equals("bait")) {
