@@ -99,10 +99,10 @@ public class InteractionUtilsTest extends TestCase {
 
         Component c = createProteinComponent( "EBI-1" );
         c.setStoichiometry( 2.0f );
-        CvComponentRole role = new CvComponentRole();
-        role.setShortLabel( CvComponentRole.SELF );
-        role.addXref( new CvObjectXref( null, null, CvComponentRole.SELF_PSI_REF, null ) );
-        c.setCvComponentRole( role );
+        CvExperimentalRole role = new CvExperimentalRole();
+        role.setShortLabel( CvExperimentalRole.SELF );
+        role.addXref( new CvObjectXref( null, null, CvExperimentalRole.SELF_PSI_REF, null ) );
+        c.setCvExperimentalRole( role );
         comps.add( c );
 
         return new InteractionImpl( new ArrayList(), comps, null, null, "Int-" + System.currentTimeMillis(), null );
@@ -112,10 +112,10 @@ public class InteractionUtilsTest extends TestCase {
         List<Component> comps = new ArrayList<Component>();
 
         Component c = createProteinComponent( "EBI-1" );
-        CvComponentRole role = new CvComponentRole();
+        CvExperimentalRole role = new CvExperimentalRole();
         //role.setShortLabel(CvComponentRole.SELF);
         //role.addXref(new CvObjectXref(null, new CvDatabase(), CvComponentRole.SELF_PSI_REF, new CvXrefQualifier()));
-        c.setCvComponentRole( role );
+        c.setCvExperimentalRole( role );
         comps.add( c );
         comps.add( c );
 
@@ -125,7 +125,7 @@ public class InteractionUtilsTest extends TestCase {
     private Component createProteinComponent( String ac ) {
         ProteinImpl prot = new ProteinImpl( null, null, "Prot-" + System.currentTimeMillis(), null );
         prot.setAc( ac );
-        Component c = new Component( null, new InteractionImpl(), prot, new CvComponentRole() );
+        Component c = new Component( null, new InteractionImpl(), prot, new CvExperimentalRole(), new CvBiologicalRole() );
         c.setInteractorAc( ac );
 
         return c;
@@ -133,7 +133,7 @@ public class InteractionUtilsTest extends TestCase {
 
     private Component createNonProteinComponent() {
         SmallMoleculeImpl sm = new SmallMoleculeImpl( "SmallMol-" + System.currentTimeMillis(), null, null );
-        return new Component( null, new InteractionImpl(), sm, new CvComponentRole() );
+        return new Component( null, new InteractionImpl(), sm, new CvExperimentalRole(), new CvBiologicalRole( ) );
     }
 
     private InteractionImpl createUnaryInteraction( float stoichiometry ) {
@@ -148,7 +148,7 @@ public class InteractionUtilsTest extends TestCase {
 
     private Component createUnaryComponent( float stoichiometry, Interaction interaction ) {
         SmallMoleculeImpl sm = new SmallMoleculeImpl( "SmallMol-" + System.currentTimeMillis(), null, null );
-        Component component = new Component( null, interaction, sm, new CvComponentRole() );
+        Component component = new Component( null, interaction, sm, new CvExperimentalRole(), new CvBiologicalRole( ) );
         component.setStoichiometry( stoichiometry );
         return component;
     }
