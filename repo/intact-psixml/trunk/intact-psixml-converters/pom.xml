@@ -16,4 +16,15 @@
     <name>IntAct PSIXML :: Converters</name>
     <description>Data converters from PSI XML schema objects to the IntAct model objects</description>
 
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>psidev.psi.mi</groupId>
+            <artifactId>psi25-xml</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

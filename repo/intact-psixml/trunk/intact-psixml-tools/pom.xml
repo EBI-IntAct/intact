@@ -47,7 +47,6 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml</artifactId>
-            <version>1.0-beta4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
