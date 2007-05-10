@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
@@ -15,7 +16,7 @@
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
 
-    <name>IntAct PSIXML Master</name>
+    <name>IntAct PSIXML :: Master POM</name>
     <description>PSIXML for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml</url>
 
@@ -26,12 +27,43 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/trunk/</url>
     </scm>
 
+    <properties>
+        <currentVersion>1.0-SNAPSHOT</currentVersion>
+    </properties>
+
     <modules>
         <module>intact-psixml-tools</module>
         <module>psixml-source-generator-maven-plugin</module>
+        <module>intact-psixml-converters</module>
         <module>intact-psixml-upload-extensions</module>
         <module>intact-psixml-upload</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>uk.ac.ebi.intact</groupId>
+                <artifactId>intact-core</artifactId>
+                <version>1.5.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.ac.ebi.intact.psixml</groupId>
+                <artifactId>intact-psixml-tools</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.ac.ebi.intact.psixml</groupId>
+                <artifactId>intact-psixml-converters</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.ac.ebi.intact.psixml</groupId>
+                <artifactId>intact-psixml-upload-extensions</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
