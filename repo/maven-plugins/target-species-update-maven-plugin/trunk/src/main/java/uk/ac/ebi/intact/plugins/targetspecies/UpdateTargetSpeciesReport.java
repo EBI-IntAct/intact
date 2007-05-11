@@ -13,22 +13,33 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.plugins;
+package uk.ac.ebi.intact.plugins.targetspecies;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.io.File;
 
-public class MyMojoTest extends AbstractMojoTestCase
-{
+/**
+ * TODO comment this!
+ *
+ * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @version $Id$
+ */
+public class UpdateTargetSpeciesReport implements Serializable {
 
-    public void testSimpleGeneration() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+    private Map<String, BioSourceStat[]> stats;
 
-        MyMojo mojo = (MyMojo) lookupMojo( "mygoal", pluginXmlFile );
-        mojo.setLog( new SystemStreamLog() );
 
-        mojo.execute();
+    public UpdateTargetSpeciesReport() {
+        this.stats = new HashMap<String, BioSourceStat[]>();
+    }
+
+    public Map<String, BioSourceStat[]> getStats() {
+        return stats;
+    }
+
+    public void setStats( Map<String, BioSourceStat[]> stats ) {
+        this.stats = stats;
     }
 }
