@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.plugins.dbtest.xmlimport;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Contains xml filesets
@@ -24,22 +24,19 @@ import java.util.ArrayList;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class Imports
-{
+public class Imports {
+
     private List<XmlFileset> xmlFilesets;
 
-    public Imports()
-    {
+    public Imports() {
         this.xmlFilesets = new ArrayList<XmlFileset>();
     }
 
-    public List<XmlFileset> getXmlFilesets()
-    {
+    public List<XmlFileset> getXmlFilesets() {
         return xmlFilesets;
     }
 
-    public void setXmlFilesets(List<XmlFileset> xmlFilesets)
-    {
+    public void setXmlFilesets( List<XmlFileset> xmlFilesets ) {
         this.xmlFilesets = xmlFilesets;
     }
 }

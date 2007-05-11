@@ -20,14 +20,13 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-public class PsiXmlImportMojoTest extends AbstractMojoTestCase
-{
+public class PsiXmlImportMojoTest extends AbstractMojoTestCase {
 
     public void testSimpleGeneration() throws Throwable {
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/preloadedH2-config.xml" );
 
-        PreloadedH2Mojo mojo = (PreloadedH2Mojo) lookupMojo( "h2-preload", pluginXmlFile );
+        PreloadedH2Mojo mojo = ( PreloadedH2Mojo ) lookupMojo( "h2-preload", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
@@ -35,7 +34,7 @@ public class PsiXmlImportMojoTest extends AbstractMojoTestCase
 
         pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/psixml-import-config.xml" );
 
-        PsiXmlImportMojo mojo2 = (PsiXmlImportMojo) lookupMojo( "import-psi", pluginXmlFile );
+        PsiXmlImportMojo mojo2 = ( PsiXmlImportMojo ) lookupMojo( "import-psi", pluginXmlFile );
         mojo2.setLog( new SystemStreamLog() );
 
         mojo2.execute();

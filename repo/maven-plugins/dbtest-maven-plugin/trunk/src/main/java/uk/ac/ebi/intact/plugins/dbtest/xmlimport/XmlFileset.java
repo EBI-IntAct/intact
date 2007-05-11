@@ -15,9 +15,8 @@
  */
 package uk.ac.ebi.intact.plugins.dbtest.xmlimport;
 
-import java.net.URL;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO comment this!
@@ -25,34 +24,29 @@ import java.util.ArrayList;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class XmlFileset
-{
+public class XmlFileset {
+
     private String version;
     private List<String> urls;
 
-    public XmlFileset()
-    {
+    public XmlFileset() {
         this.version = "1";
         this.urls = new ArrayList<String>();
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(String version)
-    {
+    public void setVersion( String version ) {
         this.version = version;
     }
 
-    public List<String> getUrls()
-    {
+    public List<String> getUrls() {
         return urls;
     }
 
-    public void setUrls(List<String> urls)
-    {
+    public void setUrls( List<String> urls ) {
         this.urls = urls;
     }
 }
