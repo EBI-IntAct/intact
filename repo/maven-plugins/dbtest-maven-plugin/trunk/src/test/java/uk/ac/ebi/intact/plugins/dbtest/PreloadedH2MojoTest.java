@@ -20,15 +20,12 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 
-import uk.ac.ebi.intact.plugins.dbtest.PreloadedH2Mojo;
-
-public class PreloadedH2MojoTest extends AbstractMojoTestCase
-{
+public class PreloadedH2MojoTest extends AbstractMojoTestCase {
 
     public void testSimpleGeneration() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/preloadedH2-config.xml" );
 
-        PreloadedH2Mojo mojo = (PreloadedH2Mojo) lookupMojo( "h2-preload", pluginXmlFile );
+        PreloadedH2Mojo mojo = ( PreloadedH2Mojo ) lookupMojo( "h2-preload", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();

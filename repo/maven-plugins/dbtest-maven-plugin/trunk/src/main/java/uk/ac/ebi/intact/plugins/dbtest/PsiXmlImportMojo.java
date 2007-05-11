@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.model.EntrySetTag;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.parser.EntrySetParser;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.persister.EntrySetPersister;
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
@@ -34,7 +35,6 @@ import uk.ac.ebi.intact.plugins.dbtest.xmlimport.XmlFileset;
 import uk.ac.ebi.intact.util.protein.BioSourceFactory;
 import uk.ac.ebi.intact.util.protein.UpdateProteins;
 import uk.ac.ebi.intact.util.protein.UpdateProteinsI;
-import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,16 +46,13 @@ import java.net.URL;
 
 /**
  * Import a psi xml into the database
- * 
+ *
  * @goal import-psi
- *
  * @requiresDependencyResolution test
- *
  * @phase generate-test-resources
  */
 public class PsiXmlImportMojo
-        extends IntactHibernateMojo
-{
+        extends IntactHibernateMojo {
 
     private static String PSI1_DIR = "src/test/psi1";
     private static String PSI2_5_DIR = "src/test/psi25";
@@ -85,78 +82,66 @@ public class PsiXmlImportMojo
      */
     private Imports imports;
 
-     /**
+    /**
      * If true, don't preload the H2
+     *
      * @parameter expression="${intact.h2preload.skip}" default-value="false"
      */
     private boolean skipPreload;
 
     /**
      * If true, run if offline mode
+     *
      * @parameter expression="${intact.offline}" default-value="false"
      */
     private boolean offlineMode;
 
 
-    protected void initializeHibernate() throws MojoExecutionException
-    {
-        System.setProperty(IntactEnvironment.INSTITUTION_LABEL.getFqn(), "myInstitution");
-        System.setProperty(IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn(), "TEST");
-        System.setProperty(IntactEnvironment.READ_ONLY_APP.getFqn(), Boolean.FALSE.toString());
+    protected void initializeHibernate() throws MojoExecutionException {
+        System.setProperty( IntactEnvironment.INSTITUTION_LABEL.getFqn(), "myInstitution" );
+        System.setProperty( IntactEnvironment.AC_PREFIX_PARAM_NAME.getFqn(), "TEST" );
+        System.setProperty( IntactEnvironment.READ_ONLY_APP.getFqn(), Boolean.FALSE.toString() );
 
         super.initializeHibernate();
     }
 
-    protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
-    {
-        if (skipPreload)
-        {
-            getLog().info("Skiping H2 Import");
+    protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
+        if ( skipPreload ) {
+            getLog().info( "Skiping H2 Import" );
             return;
         }
 
-        if (imports == null)
-        {
+        if ( imports == null ) {
             imports = defaultImports();
-        }
-        else
-        {
-            imports.getXmlFilesets().addAll(defaultImports().getXmlFilesets());
+        } else {
+            imports.getXmlFilesets().addAll( defaultImports().getXmlFilesets() );
         }
 
-        for (XmlFileset fileset : imports.getXmlFilesets())
-        {
-            if (fileset.getVersion() == null)
-            {
-                throw new MojoExecutionException("All xmlFilesets must contain a <version> element");
+        for ( XmlFileset fileset : imports.getXmlFilesets() ) {
+            if ( fileset.getVersion() == null ) {
+                throw new MojoExecutionException( "All xmlFilesets must contain a <version> element" );
             }
 
-            if (fileset.getVersion().equals(VERSION_1))
-            {
-                for (String url : fileset.getUrls())
-                {
-                    getLog().debug("Importing file: "+url);
+            if ( fileset.getVersion().equals( VERSION_1 ) ) {
+                for ( String url : fileset.getUrls() ) {
+                    getLog().debug( "Importing file: " + url );
 
-                    try
-                    {
-                        importUrl(url);
+                    try {
+                        importUrl( url );
                     }
-                    catch (Exception e)
-                    {
+                    catch ( Exception e ) {
                         e.printStackTrace();
-                        throw new MojoExecutionException("Could'nt import file: "+url, e);
+                        throw new MojoExecutionException( "Could'nt import file: " + url, e );
                     }
                 }
-            }
-            else
-            {
-                throw new MojoExecutionException("Import for version "+fileset.getVersion()+" not implemented");
+            } else {
+                throw new MojoExecutionException( "Import for version " + fileset.getVersion() + " not implemented" );
             }
         }
 
         try {
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-        } catch (IntactTransactionException e) {
+        } catch ( IntactTransactionException e ) {
             e.printStackTrace();
         }
 
@@ -164,66 +149,55 @@ public class PsiXmlImportMojo
         IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().closeSessionFactory();
     }
 
-    private Imports defaultImports() throws IOException
-    {
+    private Imports defaultImports() throws IOException {
         Imports imports = new Imports();
 
         File baseDir;
-        if (getProject() == null)
-        {
-            baseDir = new File(".");
-        }
-        else
-        {
+        if ( getProject() == null ) {
+            baseDir = new File( "." );
+        } else {
             baseDir = getProject().getBasedir();
         }
 
-        File psi1Dir = new File(baseDir, PSI1_DIR);
-        File psi25Dir = new File(baseDir, PSI2_5_DIR);
+        File psi1Dir = new File( baseDir, PSI1_DIR );
+        File psi25Dir = new File( baseDir, PSI2_5_DIR );
 
-        if (psi1Dir.exists())
-        {
-            imports.getXmlFilesets().add(filesetFromDir(psi1Dir, VERSION_1));
+        if ( psi1Dir.exists() ) {
+            imports.getXmlFilesets().add( filesetFromDir( psi1Dir, VERSION_1 ) );
         }
 
-        if (psi25Dir.exists())
-        {
-            imports.getXmlFilesets().add(filesetFromDir(psi25Dir, VERSION_2_5));
+        if ( psi25Dir.exists() ) {
+            imports.getXmlFilesets().add( filesetFromDir( psi25Dir, VERSION_2_5 ) );
         }
 
         return imports;
     }
 
-    private XmlFileset filesetFromDir(File dir, String version) throws IOException
-    {
-        if (!dir.exists() || !dir.isDirectory())
-        {
-            throw new IOException("File does not exist or it is not a directory: "+dir);
+    private XmlFileset filesetFromDir( File dir, String version ) throws IOException {
+        if ( !dir.exists() || !dir.isDirectory() ) {
+            throw new IOException( "File does not exist or it is not a directory: " + dir );
         }
 
         XmlFileset fileset = new XmlFileset();
 
-        File[] filesInDir = dir.listFiles(new FileFilter(){
+        File[] filesInDir = dir.listFiles( new FileFilter() {
 
-            public boolean accept(File pathname)
-            {
-                return pathname.getName().endsWith(".xml");
+            public boolean accept( File pathname ) {
+                return pathname.getName().endsWith( ".xml" );
             }
-        });
+        } );
 
-        for (File fileInDir : filesInDir)
-        {
-            fileset.getUrls().add(fileInDir.toURL().toString());
+        for ( File fileInDir : filesInDir ) {
+            fileset.getUrls().add( fileInDir.toURL().toString() );
         }
 
-        fileset.setVersion(version);
+        fileset.setVersion( version );
 
         return fileset;
     }
 
-    private void importUrl(String str) throws Exception
-    {
-        URL url = new URL(str);
+    private void importUrl( String str ) throws Exception {
+        URL url = new URL( str );
         InputStream xmlStream = url.openStream();
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -237,52 +211,42 @@ public class PsiXmlImportMojo
         EntrySetParser entrySetParser = new EntrySetParser();
         EntrySetTag entrySet = entrySetParser.process( rootElement );
 
-        UpdateProteinsI proteinFactory = new UpdateProteins(offlineMode, false);
+        UpdateProteinsI proteinFactory = new UpdateProteins( offlineMode, false );
         BioSourceFactory bioSourceFactory = new BioSourceFactory();
 
-        ControlledVocabularyRepository.check( );
+        ControlledVocabularyRepository.check();
 
         // check the parsed model
-        EntrySetChecker.check(entrySet, proteinFactory, bioSourceFactory);
+        EntrySetChecker.check( entrySet, proteinFactory, bioSourceFactory );
 
-        if (messages.checkerMessageExists())
-        {
+        if ( messages.checkerMessageExists() ) {
             // display checker messages.
-            MessageHolder.getInstance().printCheckerReport(System.err);
-        }
-        else
-        {
-            EntrySetPersister.persist(entrySet);
+            MessageHolder.getInstance().printCheckerReport( System.err );
+        } else {
+            EntrySetPersister.persist( entrySet );
 
-            if (messages.checkerMessageExists())
-            {
+            if ( messages.checkerMessageExists() ) {
                 // display persister messages.
-                MessageHolder.getInstance().printPersisterReport(System.err);
-            }
-            else
-            {
-                System.out.println("The data have been successfully saved in your Intact node.");
+                MessageHolder.getInstance().printPersisterReport( System.err );
+            } else {
+                System.out.println( "The data have been successfully saved in your Intact node." );
             }
         }
     }
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
-    public File getHibernateConfig()
-    {
+    public File getHibernateConfig() {
         return hibernateConfig;
     }
 
-    public Imports getImports()
-    {
+    public Imports getImports() {
         return imports;
     }
 
-    public void setImports(Imports imports)
-    {
+    public void setImports( Imports imports ) {
         this.imports = imports;
     }
 }
