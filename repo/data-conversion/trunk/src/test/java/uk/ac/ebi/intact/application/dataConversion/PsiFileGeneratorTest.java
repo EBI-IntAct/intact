@@ -51,10 +51,12 @@ public class PsiFileGeneratorTest extends DataConversionAbstractTest {
         //assertEquals(59420, xmlDoc.length());
 
         assertNotNull( xmlDoc );
-        System.out.println( "PSI-MI XML 1.0" );
-        System.out.println( xmlDoc );
+
         final File target = new File( PsiFileGeneratorTest.class.getResource( "/" ).getFile() ).getParentFile();
-        BufferedWriter out = new BufferedWriter( new FileWriter( new File( target, "mahajan-2000-1.mi10.xml" ) ) );
+
+        File outFile10 = new File( target, "mahajan-2000-1.mi10.xml" );
+        System.out.println( "Exporting PSI-MI XML 2.5 content to: " + outFile10.getAbsolutePath() );
+        BufferedWriter out = new BufferedWriter( new FileWriter( outFile10 ) );
         out.write( xmlDoc );
         out.close();
 
@@ -75,11 +77,11 @@ public class PsiFileGeneratorTest extends DataConversionAbstractTest {
         assertNotNull( xmlDoc );
 
         // TODO check the xml output
-        System.out.println( "PSI-MI XML 2.5" );
-        System.out.println( xmlDoc );
         writer.close();
 
-        BufferedWriter out2 = new BufferedWriter( new FileWriter( new File( target, "mahajan-2000-1.mi25.xml" ) ) );
+        File outFile25 = new File( target, "mahajan-2000-1.mi25.xml" );
+        System.out.println( "Exporting PSI-MI XML 2.5 content to: " + outFile25.getAbsolutePath() );
+        BufferedWriter out2 = new BufferedWriter( new FileWriter( outFile25  ) );
         out2.write( xmlDoc );
         out2.close();
     }
