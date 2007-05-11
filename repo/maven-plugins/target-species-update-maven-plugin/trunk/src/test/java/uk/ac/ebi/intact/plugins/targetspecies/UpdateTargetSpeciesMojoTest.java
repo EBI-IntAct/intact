@@ -30,6 +30,6 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
         mojo.setDryRun(false);
         mojo.setLog( new SystemStreamLog() );
 
-        mojo.execute();
+        mojo.executeIntactMojo();
     }
 }
