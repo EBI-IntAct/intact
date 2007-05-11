@@ -56,11 +56,11 @@ public class Interaction2xmlPSI25Test extends PsiDownloadTest {
 
         // add 2 components
         Protein protein1 = new TestableProtein( "EBI-11111", owner, yeast, "p1_yeast", proteinType, "AAAAAAAAAAAAAAAAAA" );
-        Component component1 = new Component( owner, interaction, protein1, bait );
+        Component component1 = new Component( owner, interaction, protein1, bait, unspecified );
         interaction.addComponent( component1 );
 
         Protein protein2 = new TestableProtein( "EBI-22222", owner, yeast, "p2_yeast", proteinType, "ZZZZZZZZZZZ" );
-        Component component2 = new Component( owner, interaction, protein2, prey );
+        Component component2 = new Component( owner, interaction, protein2, prey, unspecified );
         interaction.addComponent( component2 );
         // put features on that Interaction !!
 

@@ -44,9 +44,9 @@ public class Component2xmlPSI1 implements Component2xmlI {
         roleAllowed.add( BAIT );
         roleAllowed.add( PREY );
 
-        roleNameRemapping.put( CvComponentRole.ENZYME, BAIT );
-        roleNameRemapping.put( CvComponentRole.ENZYME_TARGET, PREY );
-        roleNameRemapping.put( CvComponentRole.NEUTRAL, NEUTRAL );
+        roleNameRemapping.put( CvBiologicalRole.ENZYME, BAIT );
+        roleNameRemapping.put( CvBiologicalRole.ENZYME_TARGET, PREY );
+        roleNameRemapping.put( CvExperimentalRole.NEUTRAL, NEUTRAL );
     }
 
     //////////////////////////////////////
@@ -105,7 +105,7 @@ public class Component2xmlPSI1 implements Component2xmlI {
         Element element = session.createElement( PROTEIN_PARTICIPANT_TAG_NAME );
 
         // 3. Generating proteinInteractorRef and proteinInteractor...
-        Protein protein = (Protein) component.getInteractor();
+        Protein protein = ( Protein ) component.getInteractor();
         if ( false == session.isAlreadyDefined( protein ) ) {
 
             // get the global list of proteins
@@ -123,7 +123,7 @@ public class Component2xmlPSI1 implements Component2xmlI {
             Element featureListElement = session.createElement( "featureList" );
 
             for ( Iterator iterator = component.getBindingDomains().iterator(); iterator.hasNext(); ) {
-                Feature feature = (Feature) iterator.next();
+                Feature feature = ( Feature ) iterator.next();
 
                 Feature2xmlFactory.getInstance( session ).create( session, featureListElement, feature );
             }
@@ -134,33 +134,9 @@ public class Component2xmlPSI1 implements Component2xmlI {
 
         // 6. Generating role...
         Element role = session.createElement( "role" );
-        // only unspecified, neutal, bait and prey are allowed here.
-        String theRole = component.getCvComponentRole().getShortLabel();
-        if ( false == roleAllowed.contains( theRole ) ) {
-
-            // check if we have a mapping for it.
-            if ( roleNameRemapping.containsKey( theRole ) ) {
-
-                String newRole = (String) roleNameRemapping.get( theRole );
-
-                // add a message
-                session.addMessage( "NOTE: CvComponentRole( '" + theRole + "' ) has been renamed '" + newRole + "'." +
-                                    "(Component: " + component.getAc() + " - " +
-                                    "Interaction: " + component.getInteraction().getAc() + ")" );
-                theRole = newRole;
-
-            } else {
-
-                String newRole = DEFAULT_ROLE;
-
-                // add message
-                session.addMessage( "NOTE: CvComponentRole( '" + theRole + "' ) is nont allowed in PSI 1, it has been " +
-                                    "set to the default '" + newRole + "'.(Component: " + component.getAc() + " - " +
-                                    "Interaction: " + component.getInteraction().getAc() + ")" );
-                theRole = newRole;
-            }
-        }
-
+        // only unspecified, neutral, bait and prey are allowed here.
+        // Yet, since intact-core 1.6, CvConponentRole was split into CvExperimentalRole and CvBiologicalRole.
+        String theRole = chooseRole( session, component );
         Text roleText = session.createTextNode( theRole );
         role.appendChild( roleText );
         element.appendChild( role );
@@ -175,5 +151,61 @@ public class Component2xmlPSI1 implements Component2xmlI {
         parent.appendChild( element );
 
         return element;
+    }
+
+    /**
+     * Chooses a single role based on experimental and biological role.
+     *
+     * @param session   user session that we will use to store messages.
+     * @param component the component holding experimental and biological roles.
+     *
+     * @return the role of the component.
+     */
+    private String chooseRole( UserSessionDownload session, Component component ) {
+
+        String role = null;
+
+        CvExperimentalRole exp = component.getCvExperimentalRole();
+        CvBiologicalRole bio = component.getCvBiologicalRole();
+
+        if ( exp != null ) {
+
+            String expRole = exp.getShortLabel();
+
+            if ( roleAllowed.contains( expRole ) && ! expRole.equals( UNSPECIFIED ) ) {
+                // if it is unspecified, we try to check the biologicalRole
+                role = expRole;
+
+            } else if ( roleNameRemapping.containsKey( expRole ) ) {
+
+                role = ( String ) roleNameRemapping.get( expRole );
+                session.addMessage( "NOTE: CvExperimentalRole( '" + expRole + "' ) has been renamed '" + role + "'." +
+                                    "(Component: " + component.getAc() + " - " +
+                                    "Interaction: " + component.getInteraction().getAc() + ")" );
+
+            } else if ( bio != null && roleNameRemapping.containsKey( bio.getShortLabel() ) ) {
+
+                role = ( String ) roleNameRemapping.get( bio.getShortLabel() );
+                session.addMessage( "NOTE: CvBiologicalRole( '" + bio.getShortLabel() + "' ) has been renamed '" + role + "'." +
+                                    "(Component: " + component.getAc() + " - " +
+                                    "Interaction: " + component.getInteraction().getAc() + ")" );
+
+            } else if ( expRole.equals( UNSPECIFIED ) ) {
+
+                role = expRole;
+            }
+        }
+
+        if ( role == null ) {
+            session.addMessage( "NOTE: Failed to select a single role when given " +
+                                "CvExperimentalRole( '" + ( exp == null ? "null" : exp.getShortLabel() ) + "' ) and " +
+                                "CvBiologicalRole( '" + ( bio == null ? "null" : bio.getShortLabel() ) + "' ). " +
+                                "Role was set to default '" + DEFAULT_ROLE + "'. " +
+                                "(Component: " + component.getAc() +
+                                " - Interaction: " + component.getInteraction().getAc() + ")" );
+            role = DEFAULT_ROLE;
+        }
+
+        return role;
     }
 }

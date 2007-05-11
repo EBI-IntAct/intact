@@ -9,7 +9,8 @@ import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.Message
 import uk.ac.ebi.intact.application.dataConversion.psiUpload.util.report.MessageHolder;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.CvComponentRole;
+import uk.ac.ebi.intact.model.CvBiologicalRole;
+import uk.ac.ebi.intact.model.CvExperimentalRole;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,15 +26,34 @@ public final class RoleChecker {
     // will avoid to have to search again later !
     private static final Map cache = new HashMap();
 
+    private static boolean unspecifiedSearched = false;
+    private static CvBiologicalRole unspecified;
 
-    public static CvComponentRole getCvComponentRole( String role ) {
-        return (CvComponentRole) cache.get( role );
+
+    public static CvBiologicalRole getDefaultCvBiologicalRole() {
+        return unspecified;
     }
 
-    public static void check( final String role ) {
+    public static CvExperimentalRole getCvExperimentalRole( String role ) {
+        return ( CvExperimentalRole ) cache.get( role );
+    }
+
+    public synchronized static void check( final String role ) {
+
+        if ( !unspecifiedSearched ) {
+            unspecifiedSearched = true;
+            unspecified = IntactContext.getCurrentInstance().getCvContext().getByMiRef( CvBiologicalRole.class,
+                                                                                        CvBiologicalRole.UNSPECIFIED_PSI_REF );
+            if ( unspecified == null ) {
+                MessageHolder.getInstance().addCheckerMessage(
+                        new Message( "Could not find CvBiologicalRole (unspecified)" +
+                                     "by psimi id: " + CvBiologicalRole.UNSPECIFIED_PSI_REF ) );
+            }
+        }
+
 
         if ( !cache.keySet().contains( role ) ) {
-            CvComponentRole cvComponentRole = null;
+            CvExperimentalRole experimentalRole = null;
             try {
 
                 if ( !( "bait".equals( role ) ||
@@ -50,27 +70,27 @@ public final class RoleChecker {
                     // we may have either 'neutral' or 'neutral component' in the database ...
                     // handle it !!
 
-                    cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, role);
+                    experimentalRole = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvExperimentalRole.class, role );
 
-                    if ( cvComponentRole == null ) {
+                    if ( experimentalRole == null ) {
 
                         // it was not found, try the other possibility
 
-                        cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, CvComponentRole.NEUTRAL );
-                        if ( cvComponentRole == null ) {
+                        experimentalRole = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvExperimentalRole.class, CvExperimentalRole.NEUTRAL );
+                        if ( experimentalRole == null ) {
                             // neither worked, there is a problem of data integrity
-                            System.out.println( "ERROR: neither " + role + " nor " + CvComponentRole.NEUTRAL +
-                                                " could be found in the database (CvComponentRole)." );
+                            System.out.println( "ERROR: neither " + role + " nor " + CvExperimentalRole.NEUTRAL +
+                                                " could be found in the database (CvExperimentalRole)." );
                         }
                     }
 
                 } else {
 
                     // any other role is search simply by shorltabel.
-                    cvComponentRole = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvComponentRole.class, role );
+                    experimentalRole = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvExperimentalRole.class, role );
                 }
 
-                if ( cvComponentRole != null ) {
+                if ( experimentalRole != null ) {
                     System.out.println( "Found CvComponentRole with shortlabel: " + role );
                 } else {
                     MessageHolder.getInstance().addCheckerMessage( new Message( "Could not find CvComponentRole " +
@@ -83,7 +103,7 @@ public final class RoleChecker {
                 e.printStackTrace();
             }
 
-            cache.put( role, cvComponentRole );
+            cache.put( role, experimentalRole );
         }
     }
 }

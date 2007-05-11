@@ -41,16 +41,17 @@ public class Component2xmlPSI2 implements Component2xmlI {
     // Private methods
 
     /**
-     * get the value what will be used as ID of the experiment.
+     * get the value what will be used as ID of the component.
      *
-     * @param experiment the experiment for which we need an ID.
+     * @param session 
+     * @param component
      *
      * @return the ID of the experiment.
      */
     private String getParticipantId( UserSessionDownload session, Component component ) {
 
         long id = session.getParticipantIdentifier( component );
-        return "" + id;
+        return String.valueOf( id );
     }
 
     /**
@@ -64,7 +65,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
      *
      * @see uk.ac.ebi.intact.model.Interactor
      * @see uk.ac.ebi.intact.model.Protein
-     * @see uk.ac.ebi.intact.model.CvComponentRole
+     * @see uk.ac.ebi.intact.model.CvBiologicalRole
      * @see uk.ac.ebi.intact.model.Feature
      */
     private Element createProteinParticipant( UserSessionDownload session, Element parent, Component component ) {
@@ -119,10 +120,13 @@ public class Component2xmlPSI2 implements Component2xmlI {
         // 6. Generating role...
         // TODO do we filter on CvComponentRole ? allowed: neutral, bait and prey ?
         // That will fall into places when we migrate IntAct to PSI CV v2
-        if ( component.getCvComponentRole() != null ) {
-//            CvObject2xmlFactory.getInstance( session ).create( session, element, component.getCvComponentRole() );
-            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
-            cv2xml.createBiologicalRole( session, element, component.getCvComponentRole() );
+        if ( component.getCvBiologicalRole() != null ) {
+            CvObject2xmlFactory.getInstance( session ).create( session,
+                                                               element,
+                                                               component.getCvBiologicalRole() );
+
+//            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
+//            cv2xml.createBiologicalRole( session, element, component.getCvBiologicalRole() );
         }
 
         // 9. Attaching the newly created element to the parent...
@@ -186,7 +190,7 @@ public class Component2xmlPSI2 implements Component2xmlI {
      *
      * @see uk.ac.ebi.intact.model.Interactor
      * @see uk.ac.ebi.intact.model.Protein
-     * @see uk.ac.ebi.intact.model.CvComponentRole
+     * @see uk.ac.ebi.intact.model.CvExperimentalRole
      * @see uk.ac.ebi.intact.model.Feature
      */
     private Element createProteinExperimentalForm( UserSessionDownload session,
@@ -239,13 +243,14 @@ public class Component2xmlPSI2 implements Component2xmlI {
                 }
 
                 // 6. Generating experimentalRole...
-                CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
-                cv2xml.createExperimentalRole( session,
-                                               proteinExperimentalFormElement,
-                                               component.getCvComponentRole() );
-//            CvObject2xmlFactory.getInstance( session ).create( session,
-//                                                               proteinExperimentalFormElement,
-//                                                               component.getCvComponentRole() );
+                CvObject2xmlFactory.getInstance( session ).create( session,
+                                                                   proteinExperimentalFormElement,
+                                                                   component.getCvExperimentalRole() );
+
+//                CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
+//                cv2xml.createExperimentalRole( session,
+//                                               proteinExperimentalFormElement,
+//                                               component.getCvExperimentalRole() );
 
                 // . attach it to the parent.
                 parent.appendChild( proteinExperimentalFormElement );
@@ -360,7 +365,6 @@ public class Component2xmlPSI2 implements Component2xmlI {
      * @param session       the user session.
      * @param parent        the Element to which we will add the experimentalForm.
      * @param component     the component from which we get the experimentalForm information.
-     * @param participantId the id of the related participant.
      *
      * @return the created experimentalForm.
      */

@@ -38,7 +38,8 @@ public class ProteinParticipantPersister {
         final String proteinId = proteinInteractor.getPrimaryXref().getId();
         final String db = proteinInteractor.getPrimaryXref().getDb();
         final ProteinHolder proteinHolder = ProteinInteractorChecker.getProtein( proteinId, db, bioSource );
-        final CvComponentRole role = RoleChecker.getCvComponentRole( proteinParticipant.getRole() );
+        final CvExperimentalRole expRole = RoleChecker.getCvExperimentalRole( proteinParticipant.getRole() );
+        CvBiologicalRole bioRole = RoleChecker.getDefaultCvBiologicalRole();
 
         Protein protein = null;
         if ( proteinHolder.isUniprot() ) {
@@ -56,7 +57,7 @@ public class ProteinParticipantPersister {
 
 
         final Component component = new Component(IntactContext.getCurrentInstance().getInstitution(),
-                interaction, protein, role );
+                                                  interaction, protein, expRole, bioRole );
         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao().persist( component );
 
         // add expressedIn if it is available.
