@@ -11,9 +11,7 @@ import org.w3c.dom.Document;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.CvMapping;
 import uk.ac.ebi.intact.application.dataConversion.util.DisplayXML;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -23,61 +21,67 @@ import java.util.List;
  * @version $Id$
  * @since <pre>09-Aug-2006</pre>
  */
-public class PsiFileGeneratorTest extends DataConversionAbstractTest
-{
+public class PsiFileGeneratorTest extends DataConversionAbstractTest {
 
-    private static final Log log = LogFactory.getLog(PsiFileGeneratorTest.class);
+    private static final Log log = LogFactory.getLog( PsiFileGeneratorTest.class );
 
-   
-    public void testGenerateListMahajan() throws Exception
-    {
 
-        File reverseMappingFile = new File(PsiFileGeneratorTest.class.getResource("/reverseMapping.txt").getFile());
+    public void testGenerateListMahajan() throws Exception {
+
+        File reverseMappingFile = new File( PsiFileGeneratorTest.class.getResource( "/reverseMapping.txt" ).getFile() );
 
         CvMapping mapping = new CvMapping();
-        mapping.loadFile(reverseMappingFile);
+        mapping.loadFile( reverseMappingFile );
 
 
-        ExperimentListGenerator gen = new ExperimentListGenerator("mahajan-2000-1");
+        ExperimentListGenerator gen = new ExperimentListGenerator( "mahajan-2000-1" );
         //gen.setLargeScaleChunkSize(150);
 
         List<ExperimentListItem> eliSpecies = gen.generateClassificationBySpecies();
 
-        ExperimentListItem eli = eliSpecies.get(0);
-        log.info("Experiment List Item: "+eli);
+        ExperimentListItem eli = eliSpecies.get( 0 );
+        log.info( "Experiment List Item: " + eli );
 
-        Document doc = PsiFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion1(), mapping);
+        Document doc = PsiFileGenerator.generatePsiData( eliSpecies.get( 0 ), PsiVersion.getVersion1(), mapping );
 
         Writer writer = new StringWriter();
-        DisplayXML.write(doc, writer, "   ");
+        DisplayXML.write( doc, writer, "   " );
 
         String xmlDoc = writer.toString();
         //assertEquals(59420, xmlDoc.length());
 
-        assertNotNull(xmlDoc);
+        assertNotNull( xmlDoc );
+        System.out.println( "PSI-MI XML 1.0" );
+        System.out.println( xmlDoc );
+        final File target = new File( PsiFileGeneratorTest.class.getResource( "/" ).getFile() ).getParentFile();
+        BufferedWriter out = new BufferedWriter( new FileWriter( new File( target, "mahajan-2000-1.mi10.xml" ) ) );
+        out.write( xmlDoc );
+        out.close();
 
         // TODO check the xml output
 
         writer.close();
 
- 
         // 2.5
-        doc = PsiFileGenerator.generatePsiData(eliSpecies.get(0), PsiVersion.getVersion25(), mapping);
+        doc = PsiFileGenerator.generatePsiData( eliSpecies.get( 0 ), PsiVersion.getVersion25(), mapping );
 
         writer = new StringWriter();
-        DisplayXML.write(doc, writer, "   ");
+        DisplayXML.write( doc, writer, "   " );
 
         xmlDoc = writer.toString();
-        System.out.println(xmlDoc.length());
+        System.out.println( xmlDoc.length() );
         //assertEquals(128563, xmlDoc.length());
 
-        assertNotNull(xmlDoc);
+        assertNotNull( xmlDoc );
 
         // TODO check the xml output
-
-
+        System.out.println( "PSI-MI XML 2.5" );
+        System.out.println( xmlDoc );
         writer.close();
 
+        BufferedWriter out2 = new BufferedWriter( new FileWriter( new File( target, "mahajan-2000-1.mi25.xml" ) ) );
+        out2.write( xmlDoc );
+        out2.close();
     }
     /*
     public void testGenerateXmlFiles_Psi25() throws Exception

@@ -49,6 +49,10 @@ public class CvObject2xmlCommons {
     public static final String EXPERIMENTAL_FORM_NAME = "experimentalForm";
     public static final String INTERACTOR_TYPE_NAME = "interactorType";
 
+    private static final String BIOLOGICAL_ROLE_NODE_NAME = "biologicalRole";
+    private static final String EXPERIMENTAL_ROLE_NODE_NAME = "experimentalRole";
+
+
     /**
      * Commons association PSI 1 and 2 IntAct CV type -> root tag name
      */
@@ -89,8 +93,8 @@ public class CvObject2xmlCommons {
         associations.put( new CvClass2Source( CvCellType.class ), CELL_TYPE_NODE_NAME );
         associations.put( new CvClass2Source( CvTissue.class ), TISSUE_NODE_NAME );
         associations.put( new CvClass2Source( CvCompartment.class ), COMPARTMENT_NODE_NAME );
-        associations.put( new CvClass2Source( CvBiologicalRole.class ), ROLE_NODE_NAME );
-        associations.put( new CvClass2Source( CvExperimentalRole.class ), ROLE_NODE_NAME );
+        associations.put( new CvClass2Source( CvBiologicalRole.class ), BIOLOGICAL_ROLE_NODE_NAME );
+        associations.put( new CvClass2Source( CvExperimentalRole.class ), EXPERIMENTAL_ROLE_NODE_NAME );
         associations.put( new CvClass2Source( CvInteractionType.class ), INTERACTION_TYPE_NODE_NAME );
 
         // PSI version 1
