@@ -100,7 +100,7 @@ public class PreloadedH2Mojo
         hibernateMojo.setHbm2ddlAuto("none");
         hibernateMojo.setScope(scope);
         hibernateMojo.setConnectionProviderClass("org.hibernate.connection.C3P0ConnectionProvider");
-        
+
         hibernateMojo.setDriver("org.h2.Driver");
         hibernateMojo.setDialect("org.hibernate.dialect.H2Dialect");
         hibernateMojo.setUser("sa");
@@ -144,7 +144,7 @@ public class PreloadedH2Mojo
             }
 
             getLog().debug("Going to unzip: "+zipDbFile);
-            
+
             List<File> dbFiles = Utilities.unzip(zipDbFile, new File(TMP_DIR));
 
             for (File dbFile : dbFiles)
@@ -171,15 +171,15 @@ public class PreloadedH2Mojo
                 return artifact;
             }
         }
-        
+
         throw new IntactException("To be able to run the 'h2-preload' goal " +
-                "you need to declare the h2db dependency. \ne.g. \n\n" +
-                "   <dependency>\n" +
-                "      <groupId>uk.ac.ebi.intact.templates</groupId>\n" +
-                "      <artifactId>h2db-with-cv</artifactId>\n" +
-                "      <version>1.3-20061130</version> (or newer)\n" +
-                "      <type>zip</type>\n" +
-                "   <dependency>\n\n");
+                                  "you need to declare the h2db dependency. \ne.g. \n\n" +
+                                  "   <dependency>\n" +
+                                  "      <groupId>uk.ac.ebi.intact.templates</groupId>\n" +
+                                  "      <artifactId>h2db-with-cv</artifactId>\n" +
+                                  "      <version>1.6.0-20070509</version> (or newer)\n" +
+                                  "      <type>zip</type>\n" +
+                                  "   </dependency>\n\n");
     }
 
     private void moveToExpectedPath(File dbFile) throws IOException
