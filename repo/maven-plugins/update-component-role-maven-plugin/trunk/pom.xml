@@ -1,104 +1,132 @@
-<?xml version="1.0"?><project>
-  <parent>
-    <artifactId>intact-maven-plugins</artifactId>
-    <groupId>uk.ac.ebi.intact.maven</groupId>
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>9</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>uk.ac.ebi.intact.plugins</groupId>
+    <artifactId>update-component-role-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
     <version>1.0-SNAPSHOT</version>
-  </parent>
 
-<modelVersion>4.0.0</modelVersion>
+    <name>Plugin - update-component-role-maven-plugin</name>
+    <description>Plugin for updating the role of the component when migrating from intact-core 1.5.0 to 1.6.0.
+    </description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
-<groupId>uk.ac.ebi.intact.plugins</groupId>
-  <artifactId>update-component-role-maven-plugin</artifactId>
-  <packaging>maven-plugin</packaging>
-  <name>Plugin - update-component-role-maven-plugin</name>
-  <version>1.0-SNAPSHOT</version>
+    <scm>
+        <connection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk
+        </developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk/
+        </url>
+    </scm>
 
-  <description>Plugin for IntAct</description>
-  <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/update-component-role-maven-plugin</url>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.plugins</groupId>
+                <artifactId>dbtest-maven-plugin</artifactId>
+                <version>1.6.0-SNAPSHOT</version>
+            </plugin>
+        </plugins>
+    </build>
 
-  <scm>
-    <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk</connection>
-    <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk/</url>
-  </scm>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.3.1</version>
+            <scope>test</scope>
+        </dependency>
 
-<repositories>
-    <repository>
-      <releases />
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>ebi-repo</id>
-      <name>The EBI internal repository</name>
-      <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots />
-      <id>ebi-repo-snapshots</id>
-      <name>The EBI internal repository</name>
-      <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-    </repository>
-  </repositories>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.templates</groupId>
+            <artifactId>h2db-with-cv</artifactId>
+            <version>1.6.0-20070509</version>
+            <type>zip</type>
+        </dependency>
 
-<dependencies>
-    <dependency>
-      <groupId>uk.ac.ebi.intact.plugins</groupId>
-      <artifactId>intact-plugin</artifactId>
-      <version>1.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>uk.ac.ebi.intact</groupId>
-      <artifactId>intact-core</artifactId>
-      <version>1.5.0-rc1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-project</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-artifact</artifactId>
-      <version>2.0.4</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.shared</groupId>
-      <artifactId>maven-plugin-testing-harness</artifactId>
-      <version>1.0-beta-1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.2</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.plugins</groupId>
+            <artifactId>intact-plugin</artifactId>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>1.6.0-SNAPSHOT</version>
+        </dependency>
 
-<reporting>
-    <plugins>
-      <plugin>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.1</version>
-      </plugin>
-    </plugins>
-  </reporting>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>1.0-beta-1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 
-<distributionManagement>
-    <site>
-      <id>intact-site</id>
-      <name>Intact site</name>
-      <url>${site.remote.basedir}/maven-plugins/update-component-role-maven-plugin</url>
-    </site>
-  </distributionManagement>
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <repositories>
+        <repository>
+            <releases/>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots/>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/maven-plugins/${artifactId}</url>
+        </site>
+    </distributionManagement>
 </project>
