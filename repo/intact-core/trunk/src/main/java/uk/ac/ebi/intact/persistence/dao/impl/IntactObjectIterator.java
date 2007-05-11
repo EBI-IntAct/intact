@@ -151,6 +151,9 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
                 }
             }
 
+            // HACK - the iterator would only work if auto-begin-transaction is set to true. This line solves the problem for the time being.
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
             //if (log.isTraceEnabled()) log.trace( "Retreiving " + batchSize + " objects." );
 
             chunk = ( List<T> )
