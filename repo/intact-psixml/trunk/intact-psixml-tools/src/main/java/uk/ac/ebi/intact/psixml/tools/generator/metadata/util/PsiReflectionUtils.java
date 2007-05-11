@@ -106,7 +106,7 @@ public class PsiReflectionUtils {
 
     public static List<Method> discoverPsiExtensionMethodsForClass(Class modelClass, SourceGeneratorContext context) {
 
-        List<Class> psiExtensionClasses = PsiExtensionsCache.getPsiExtensionClasses(context);
+        Collection<Class> psiExtensionClasses = PsiExtensionsCache.getPsiExtensionClasses(context);
 
         // get the methods with the @PsiExtensionMethods
         List<Method> psiExtensionMethods = new ArrayList<Method>();

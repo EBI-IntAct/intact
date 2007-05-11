@@ -37,7 +37,7 @@ public class ModelClassMetadataFactory {
 
         List<Method> extensionMethods = PsiReflectionUtils.discoverPsiExtensionMethodsForClass(modelClass, context);
         for (Method extMethos : extensionMethods) {
-            checkPsiExtensionMethod(extMethos, modelClass);
+            checkPsiExtensionMethod(extMethos);
         }
         mcm.setExtensions(extensionMethods);
 
@@ -47,7 +47,7 @@ public class ModelClassMetadataFactory {
         return mcm;
     }
 
-    private static void checkPsiExtensionMethod(Method method, Class modelClass) {
+    private static void checkPsiExtensionMethod(Method method) {
         if (!method.getReturnType().equals(void.class)) {
             throw new RuntimeException("PsiExtensionMethod must return void: " + method);
         }

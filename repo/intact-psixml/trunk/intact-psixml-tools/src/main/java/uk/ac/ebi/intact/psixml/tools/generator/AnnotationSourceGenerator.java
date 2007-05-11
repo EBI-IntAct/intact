@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.psixml.tools.generator.metadata.ModelClassMetadataFactor
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -52,7 +53,7 @@ public class AnnotationSourceGenerator implements SourceGenerator {
     public void generateClasses(SourceGeneratorContext sgContext, PrintStream out) throws Exception {
         this.out = out;
 
-        List<Class> modelClasses = getModelClassesFromJars(sgContext.getDependencyJars());
+        Collection<Class> modelClasses = getModelClassesFromJars(sgContext.getDependencyJars());
 
         sgContext.createNewHelper(modelClasses);
 
@@ -97,11 +98,11 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         out.println("Generated processor: " + processorClassName);
     }
 
-    protected List<Class> getModelClassesFromJars(File[] jarFiles) {
+    protected Collection<Class> getModelClassesFromJars(File[] jarFiles) {
         List<Class> modelClasses = new ArrayList<Class>();
 
         for (File jarFile : jarFiles) {
-            List<Class> modelClassesInJar = getModelClassesFromJar(jarFile);
+            Collection<Class> modelClassesInJar = getModelClassesFromJar(jarFile);
 
             if (!modelClassesInJar.isEmpty()) {
                 out.println(modelClassesInJar.size() + " PsiXmlElemnt classes found in jar: " + jarFile);
@@ -113,8 +114,8 @@ public class AnnotationSourceGenerator implements SourceGenerator {
         return modelClasses;
     }
 
-    protected List<Class> getModelClassesFromJar(File jarFile) {
-        List<Class> modelClasses = null;
+    protected Collection<Class> getModelClassesFromJar(File jarFile) {
+        Collection<Class> modelClasses = null;
 
         try {
             // Looking for the annotation

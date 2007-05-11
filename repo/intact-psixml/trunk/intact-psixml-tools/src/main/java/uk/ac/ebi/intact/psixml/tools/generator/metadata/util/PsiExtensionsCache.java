@@ -21,7 +21,7 @@ import uk.ac.ebi.intact.psixml.tools.generator.SourceGeneratorContext;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * Class used to maintain the found psiExtension classes in cache
@@ -31,26 +31,25 @@ import java.util.List;
  */
 public class PsiExtensionsCache {
 
-    private static ThreadLocal<List<Class>> extensionsLocal = null;
+    private static ThreadLocal<Collection<Class>> extensionsLocal = null;
 
-    public static List<Class> getPsiExtensionClasses(SourceGeneratorContext context) {
+    public static synchronized Collection<Class> getPsiExtensionClasses(SourceGeneratorContext context) {
         if (extensionsLocal == null) {
-            List<Class> psiExtensionClasses = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(PsiExtension.class);
+            Collection<Class> psiExtensionClasses = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(PsiExtension.class);
 
             ClassLoader classLoader = context.getDependencyClassLoader();
             File[] jars = context.getDependencyJars();
 
-
             for (File jar : jars) {
                 try {
-                    List<Class> psiExtClassesFromJars = AnnotationUtil.getClassesWithAnnotationFromJar(PsiExtension.class, jar.toString(), classLoader);
+                    Collection<Class> psiExtClassesFromJars = AnnotationUtil.getClassesWithAnnotationFromJar(PsiExtension.class, jar.toString(), classLoader);
                     psiExtensionClasses.addAll(psiExtClassesFromJars);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            extensionsLocal = new ThreadLocal<List<Class>>();
+            extensionsLocal = new ThreadLocal<Collection<Class>>();
             extensionsLocal.set(psiExtensionClasses);
         }
 

@@ -18,7 +18,7 @@ package uk.ac.ebi.intact.psixml.tools.generator;
 import org.apache.velocity.VelocityContext;
 
 import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -42,7 +42,7 @@ public class SourceGeneratorContext {
         this.targetPath = targetPath;
     }
 
-    public void createNewHelper(List<Class> modelClasses) {
+    public void createNewHelper(Collection<Class> modelClasses) {
         this.helper = new SourceGeneratorHelper(modelClasses, this);
     }
 

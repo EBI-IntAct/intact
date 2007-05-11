@@ -79,11 +79,6 @@
             <version>4.3</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-classworlds</artifactId>
-            <version>1.2-alpha-7</version>
-        </dependency>
     </dependencies>
 
     <reporting>
