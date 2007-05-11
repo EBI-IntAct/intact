@@ -87,9 +87,11 @@ public class PsiDownloadTest extends TestCase {
     protected static CvFeatureType formylation = new CvFeatureType( owner, "formylation" );
     protected static CvFeatureType hydroxylation = new CvFeatureType( owner, "hydroxylation" );
 
-    protected static CvComponentRole bait = new CvComponentRole( owner, CvComponentRole.BAIT );
-    protected static CvComponentRole prey = new CvComponentRole( owner, CvComponentRole.PREY );
-    protected static CvComponentRole neutral = new CvComponentRole( owner, CvComponentRole.NEUTRAL );
+    protected static CvExperimentalRole bait = new CvExperimentalRole( owner, CvExperimentalRole.BAIT );
+    protected static CvExperimentalRole prey = new CvExperimentalRole( owner, CvExperimentalRole.PREY );
+    protected static CvExperimentalRole neutral = new CvExperimentalRole( owner, CvExperimentalRole.NEUTRAL );
+
+    protected static CvBiologicalRole unspecified = new CvBiologicalRole( owner, CvBiologicalRole.UNSPECIFIED );
 
     protected static CvInteractionType aggregation = new CvInteractionType( owner, "aggregation" );
     protected static CvInteractionType cleavage = new CvInteractionType( owner, "cleavage" );

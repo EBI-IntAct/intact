@@ -39,7 +39,8 @@ public class FileHelper {
      */
     public static final String ZIP_FILE_EXTENSION = ".zip";
 
-    public static final String SLASH = System.getProperty("file.separator");
+    public static final String SLASH = "/";
+//    public static final String SLASH = System.getProperty("file.separator");
 
     ////////////////////////
     // Helper methods

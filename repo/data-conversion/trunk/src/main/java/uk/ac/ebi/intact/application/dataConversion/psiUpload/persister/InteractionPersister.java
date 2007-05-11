@@ -976,7 +976,7 @@ public final class InteractionPersister {
                                 psiProtein = holder.getProtein();
                             }
 
-                            final CvComponentRole psiRole = RoleChecker.getCvComponentRole( psiComponent.getRole() );
+                            final CvExperimentalRole psiRole = RoleChecker.getCvExperimentalRole( psiComponent.getRole() );
 
                             if ( DEBUG ) {
                                 System.out.println( "PSI: " + psiProtein.getShortLabel() + " (" + psiRole.getShortLabel() + ")" );
@@ -996,10 +996,10 @@ public final class InteractionPersister {
 
                                 if ( DEBUG ) {
                                     System.out.print( "\tINTACT: " + intactComponent.getInteractor().getShortLabel() +
-                                                      " (" + intactComponent.getCvComponentRole().getShortLabel() + "): " );
+                                                      " (" + intactComponent.getCvExperimentalRole().getShortLabel() + "): " );
                                 }
 
-                                if ( psiRole.equals( intactComponent.getCvComponentRole() ) &&
+                                if ( psiRole.equals( intactComponent.getCvExperimentalRole() ) &&
                                      psiProtein.equals( intactComponent.getInteractor() ) ) {
 
                                     if ( DEBUG ) {

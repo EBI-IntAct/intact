@@ -10,12 +10,11 @@ import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.BioS
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Component2xmlI;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.CvObject2xmlFactory;
 import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.Feature2xmlFactory;
-import uk.ac.ebi.intact.application.dataConversion.psiDownload.xmlGenerator.psi2.CvObject2xmlPSI2;
 import uk.ac.ebi.intact.model.*;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * Implements the tranformation of an IntAct Component into PSI XML.
@@ -74,7 +73,8 @@ public class Component2xmlPSI25 implements Component2xmlI {
      * @see uk.ac.ebi.intact.model.NucleicAcid
      * @see uk.ac.ebi.intact.model.SmallMolecule
      * @see uk.ac.ebi.intact.model.Polymer
-     * @see uk.ac.ebi.intact.model.CvComponentRole
+     * @see uk.ac.ebi.intact.model.CvExperimentalRole
+     * @see uk.ac.ebi.intact.model.CvBiologicalRole
      * @see uk.ac.ebi.intact.model.Feature
      */
     private Element createParticipant( UserSessionDownload session, Element parent, Component component ) {
@@ -123,19 +123,26 @@ public class Component2xmlPSI25 implements Component2xmlI {
         interactor2xml.createInteractorReference( session, element, interactor );
 
         // 6. Generating biologicalRole ...
-        // TODO do we filter on CvComponentRole ? allowed: neutral, bait and prey ?
-        // That will fall into places when we migrate IntAct to PSI CV v2
-        if ( component.getCvComponentRole() != null ) {
-            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
-            cv2xml.createBiologicalRole( session, element, component.getCvComponentRole() );
+        if ( component.getCvBiologicalRole() != null ) {
+            CvObject2xmlFactory.getInstance( session ).create( session,
+                                                               element,
+                                                               component.getCvBiologicalRole() );
+
+//            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
+//            cv2xml.createBiologicalRole( session, element, component.getCvBiologicalRole() );
         }
 
         // 7. Generating experimentalRoleList ...
-        if ( component.getCvComponentRole() != null ) {
-            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
+        if ( component.getCvExperimentalRole() != null ) {
             Element experimentalRoleList = session.createElement( "experimentalRoleList" );
-            element.appendChild( experimentalRoleList );
-            cv2xml.createExperimentalRole( session, experimentalRoleList, component.getCvComponentRole() );
+
+            CvObject2xmlFactory.getInstance( session ).create( session,
+                                                               experimentalRoleList,
+                                                               component.getCvExperimentalRole() );
+
+//            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
+//            element.appendChild( experimentalRoleList );
+//            cv2xml.createExperimentalRole( session, experimentalRoleList, component.getCvExperimentalRole() );
         }
 
         // 8. Generating experimentalFormList ...

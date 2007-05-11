@@ -245,13 +245,10 @@ public class ExperimentListItem
         return strNum;
     }
 
-    private static String removeTrailingSlash(String folder)
-    {
-        if (folder.endsWith(FileHelper.SLASH))
-        {
-            folder = folder.substring(0, folder.length()-1);
+    private static String removeTrailingSlash( String folder ) {
+        if ( folder.endsWith( FileHelper.SLASH ) ) {
+            folder = folder.substring( 0, folder.length() - 1 );
         }
-
         return folder;
     }
 }

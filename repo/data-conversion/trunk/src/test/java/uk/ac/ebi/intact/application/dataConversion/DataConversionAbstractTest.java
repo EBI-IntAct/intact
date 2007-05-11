@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.application.dataConversion;
 
 import junit.framework.TestCase;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
+import uk.ac.ebi.intact.plugins.targetspecies.UpdateTargetSpecies;
 
 import java.io.File;
 

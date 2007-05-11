@@ -128,9 +128,9 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
         Protein protein = new ProteinImpl( owner, yeast, "bbc1_yeast", proteinType );
         Protein protein2 = new ProteinImpl( owner, yeast, "cdc42_yeast", proteinType );
 
-        Component component = new Component( owner, interaction, protein, bait );
-        Component component2 = new Component( owner, interaction, protein, prey );
-        Component component3 = new Component( owner, interaction, protein2, prey );
+        Component component = new Component( owner, interaction, protein, bait, unspecified );
+        Component component2 = new Component( owner, interaction, protein, prey, unspecified );
+        Component component3 = new Component( owner, interaction, protein2, prey, unspecified );
 
         long id1 = session.getParticipantIdentifier( component );
         assertTrue( id1 != session.getParticipantIdentifier( component ) );
@@ -148,7 +148,7 @@ public class UserSessionDownloadTest extends PsiDownloadTest {
     public void testgetFeatureIdentifier() {
 
         UserSessionDownload session = new UserSessionDownload( PsiVersion.VERSION_1 );
-
+                                                 
         try {
             session.getFeatureIdentifier( null );
             fail( "null is not allowed." );

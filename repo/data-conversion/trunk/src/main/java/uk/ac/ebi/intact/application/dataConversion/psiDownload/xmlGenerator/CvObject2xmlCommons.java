@@ -89,7 +89,8 @@ public class CvObject2xmlCommons {
         associations.put( new CvClass2Source( CvCellType.class ), CELL_TYPE_NODE_NAME );
         associations.put( new CvClass2Source( CvTissue.class ), TISSUE_NODE_NAME );
         associations.put( new CvClass2Source( CvCompartment.class ), COMPARTMENT_NODE_NAME );
-        associations.put( new CvClass2Source( CvComponentRole.class ), ROLE_NODE_NAME );
+        associations.put( new CvClass2Source( CvBiologicalRole.class ), ROLE_NODE_NAME );
+        associations.put( new CvClass2Source( CvExperimentalRole.class ), ROLE_NODE_NAME );
         associations.put( new CvClass2Source( CvInteractionType.class ), INTERACTION_TYPE_NODE_NAME );
 
         // PSI version 1
@@ -195,7 +196,7 @@ public class CvObject2xmlCommons {
      * is faster than recreating it.
      *
      * @param cache    the cache ( cvObject -> DOM Element)
-     * @param cvObject the CvObject we want to check.
+     * @param cvSource the CvObject we want to check.
      *
      * @return the XML representation (as the root of a DOM tree) of the given CvObject, or null if it hasn't been
      *         generated  yet.
@@ -216,7 +217,7 @@ public class CvObject2xmlCommons {
      * Store in the cache the XML representation related to the given CvObject instance.
      *
      * @param cache    the cache ( cvObject -> DOM Element)
-     * @param cvObject the cvObject we wanted to comvert to XML.
+     * @param cvSource the cvObject we wanted to comvert to XML.
      * @param element  The DOM root (as an Element) of the XML representation of the given CvObject.
      */
     public void updateCache( Map cache, Cv2Source cvSource, Element element ) {

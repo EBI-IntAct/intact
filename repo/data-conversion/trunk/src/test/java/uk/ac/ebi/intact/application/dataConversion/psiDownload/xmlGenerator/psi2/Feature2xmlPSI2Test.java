@@ -45,7 +45,7 @@ public class Feature2xmlPSI2Test extends PsiDownloadTest {
 
         Protein protein = new ProteinImpl( owner, yeast, "bbc1_yeast", proteinType );
         Interaction interaction = new InteractionImpl( experiments, aggregation, interactionType, "bbc1-xxx", owner );
-        Component component = new Component( owner, interaction, protein, bait );
+        Component component = new Component( owner, interaction, protein, bait, unspecified );
 
         CvFeatureType acetylation = new CvFeatureType( owner, "acetylation" );
         acetylation.addXref( new CvObjectXref( owner, psi, "MI:0121", null, null, identity ) );
