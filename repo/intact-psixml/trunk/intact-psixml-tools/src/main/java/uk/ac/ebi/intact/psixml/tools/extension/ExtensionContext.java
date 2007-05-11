@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.psixml.tools.extension;
 
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
+import uk.ac.ebi.intact.psixml.tools.Phase;
 import uk.ac.ebi.intact.psixml.tools.PsiProcessReport;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
@@ -33,10 +34,12 @@ public class ExtensionContext<T> {
 
     private T element;
     private PsiProcessReport processReport;
+    private Phase currentPhase;
 
-    public ExtensionContext(T element, PsiProcessReport processReport) {
+    public ExtensionContext(T element, PsiProcessReport processReport, Phase currentPhase) {
         this.element = element;
         this.processReport = processReport;
+        this.currentPhase = currentPhase;
     }
 
     public void injectIntoExtension(Object extension) throws ContextInjectionException {
@@ -72,5 +75,10 @@ public class ExtensionContext<T> {
 
     public void setProcessReport(PsiProcessReport processReport) {
         this.processReport = processReport;
+    }
+
+    public Phase getCurrentPhase()
+    {
+        return currentPhase;
     }
 }

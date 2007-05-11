@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.psixml.tools.extension;
 
+import uk.ac.ebi.intact.psixml.tools.Phase;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
@@ -31,7 +32,7 @@ public class DummyExtension {
     @PsiExtensionContext
     ExtensionContext context;
 
-    @PsiExtensionMethod
+    @PsiExtensionMethod (phase = Phase.AFTER_VALIDATION)
     public ExtensionContext getContext() {
         return context;
     }

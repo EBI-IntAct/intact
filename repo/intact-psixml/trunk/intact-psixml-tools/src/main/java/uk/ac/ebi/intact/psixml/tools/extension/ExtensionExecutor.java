@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.psixml.tools.extension;
 
+import uk.ac.ebi.intact.psixml.tools.Phase;
 import uk.ac.ebi.intact.psixml.tools.PsiProcessReport;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
 import uk.ac.ebi.intact.psixml.tools.validator.ValidationReport;
@@ -40,11 +41,19 @@ public class ExtensionExecutor {
     }
 
     public static void execute(ExtensionContext context, Object extension, Method method) throws ExtensionExecutionException {
+        PsiExtensionMethod methodAnnot = method.getAnnotation(PsiExtensionMethod.class);
+
+        // check if this method has to be executed in this phase, if not, just return
+        Phase currentPhase = context.getCurrentPhase();
+        if (methodAnnot.phase() != currentPhase)
+        {
+            return;
+        }
+
         PsiProcessReport report = context.getProcessReport();
         ValidationReport validationReport = report.getValidationReport();
 
-        PsiExtensionMethod methodAnnot = method.getAnnotation(PsiExtensionMethod.class);
-
+        // check "onlyExecuteIfValid"
         if (methodAnnot.onlyExecuteIfValid()) {
             if (validationReport.isValid()) {
                 invokeMethod(extension, method);

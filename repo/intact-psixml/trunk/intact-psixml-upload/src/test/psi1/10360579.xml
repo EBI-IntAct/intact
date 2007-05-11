@@ -141,12 +141,12 @@
                <fullName>aggregation</fullName>
              </names>
              <xref>
-               <primaryRef db="psi-mi" id="MI:0191"/>
+               <primaryRef db="psi-mi" id="MI:0407"/>
              </xref>
            </interactionType>
            <xref>
              <primaryRef db="intact" id="EBI-603486" secondary="wasp-ack1-1"/>
-             <secondaryRef db="pdb" id="1cf4"/>
+             <secondaryRef db="rcsb pdb" id="1cf4"/>
            </xref>
            <attributeList>
              <attribute name="comment">Cdc42 Q61L is constitutively active and bound to GMPPNP</attribute>

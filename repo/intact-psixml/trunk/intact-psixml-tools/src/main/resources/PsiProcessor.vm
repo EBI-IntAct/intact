@@ -46,6 +46,11 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
         }
 
 ## --------------------------------------
+## psi extensions - phase BEFORE_VALIDATION
+## --------------------------------------
+        executePsiExtensions(model, report, Phase.BEFORE_VALIDATION);
+
+## --------------------------------------
 ## null check validation
 ## --------------------------------------
 
@@ -173,12 +178,19 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 
 ## --------------------------------------
-## psi extensions
+## psi extensions - phase AFTER_VALIDATION
 ## --------------------------------------
+        executePsiExtensions(model, report, Phase.AFTER_VALIDATION);
 
-#if ( !${mcm.extensions.empty} )
 
-        ExtensionContext extensionContext = new ExtensionContext(model,report);
+
+        return report;
+    }
+
+    private void executePsiExtensions(Object model, PsiProcessReport report, Phase currentPhase) {
+       #if ( !${mcm.extensions.empty} )
+
+        ExtensionContext extensionContext = new ExtensionContext(model,report,Phase.AFTER_VALIDATION);
 
         try {
 #foreach( $extMethod in ${mcm.extensions} )
@@ -193,9 +205,6 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
             throw new PsiProcessException("Exception executing PsiExtension", t);
         }
 #end
-
-
-        return report;
     }
 
     private String getId(Object element) {

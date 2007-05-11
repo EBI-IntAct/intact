@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.psixml.tools.extension;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import uk.ac.ebi.intact.psixml.tools.Phase;
 
 /**
  * TODO comment this
@@ -28,7 +29,7 @@ public class ExtensionContextTest {
 
     @Test
     public void injectIntoExtension() throws Exception {
-        ExtensionContext ctx = new ExtensionContext("hello", null);
+        ExtensionContext ctx = new ExtensionContext("hello", null, Phase.AFTER_VALIDATION);
 
         DummyExtension extension = new DummyExtension();
         ctx.injectIntoExtension(extension);

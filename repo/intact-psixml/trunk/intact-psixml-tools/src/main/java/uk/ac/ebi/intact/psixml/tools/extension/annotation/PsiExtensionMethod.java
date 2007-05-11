@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.psixml.tools.extension.annotation;
 
+import uk.ac.ebi.intact.psixml.tools.Phase;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,6 +31,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PsiExtensionMethod {
+
+    Phase phase() default Phase.AFTER_VALIDATION;
 
     boolean onlyExecuteIfValid() default false;
 }
