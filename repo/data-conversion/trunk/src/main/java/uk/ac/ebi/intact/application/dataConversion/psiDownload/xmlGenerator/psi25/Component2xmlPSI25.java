@@ -127,22 +127,16 @@ public class Component2xmlPSI25 implements Component2xmlI {
             CvObject2xmlFactory.getInstance( session ).create( session,
                                                                element,
                                                                component.getCvBiologicalRole() );
-
-//            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
-//            cv2xml.createBiologicalRole( session, element, component.getCvBiologicalRole() );
         }
 
         // 7. Generating experimentalRoleList ...
         if ( component.getCvExperimentalRole() != null ) {
             Element experimentalRoleList = session.createElement( "experimentalRoleList" );
+            element.appendChild( experimentalRoleList );
 
             CvObject2xmlFactory.getInstance( session ).create( session,
                                                                experimentalRoleList,
                                                                component.getCvExperimentalRole() );
-
-//            CvObject2xmlPSI2 cv2xml = (CvObject2xmlPSI2) CvObject2xmlFactory.getInstance( session );
-//            element.appendChild( experimentalRoleList );
-//            cv2xml.createExperimentalRole( session, experimentalRoleList, component.getCvExperimentalRole() );
         }
 
         // 8. Generating experimentalFormList ...
