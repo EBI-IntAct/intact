@@ -2,7 +2,7 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>dbupdate-maven-plugin</artifactId>
+                <artifactId>target-species-update-maven-plugin</artifactId>
                 <configuration>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/update-target-species.log</outputFile>
