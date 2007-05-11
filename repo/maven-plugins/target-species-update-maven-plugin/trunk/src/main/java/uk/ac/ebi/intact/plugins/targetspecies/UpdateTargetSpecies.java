@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
@@ -59,6 +60,8 @@ public class UpdateTargetSpecies {
      */
     public void init() throws IntactException {
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         // loading required CVs
         noUniprotUpdate = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
         if ( noUniprotUpdate == null ) {
@@ -82,6 +85,12 @@ public class UpdateTargetSpecies {
                                              CvXrefQualifier.TARGET_SPECIES + " ). abort." );
         } else {
             log.debug( "CvXrefQualifier( " + CvXrefQualifier.TARGET_SPECIES + " ) found" );
+        }
+
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new IntactException( "Could not commit current transaction.", e );
         }
     }
 
@@ -119,21 +128,23 @@ public class UpdateTargetSpecies {
         return updateTargetSpecies( ps, dryRun, null );
     }
 
-    public UpdateTargetSpeciesReport updateTargetSpecies( PrintStream ps, boolean dryRun, String labelLike ) {
+    public UpdateTargetSpeciesReport updateTargetSpecies( PrintStream ps, boolean dryRun, String labelLike ) throws IntactException {
 
         UpdateTargetSpeciesReport report = new UpdateTargetSpeciesReport();
 
         init();
 
-        ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        ExperimentDao edao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
 
         Iterator<Experiment> experimentIterator;
 
         // get all scrollableExperiments
         if ( labelLike != null ) {
-            experimentIterator = experimentDao.getByShortLabelLikeIterator( labelLike, true );
+            experimentIterator = edao.getByShortLabelLikeIterator( labelLike, true );
         } else {
-            experimentIterator = experimentDao.getAllIterator();
+            experimentIterator = edao.getAllIterator();
         }
 
         Map<BioSource, BioSourceStat> biosource2count = new HashMap<BioSource, BioSourceStat>( 4 );
@@ -153,7 +164,7 @@ public class UpdateTargetSpecies {
             biosource2count.clear();
 
             // 1. look for distinct list of Protein's biosource
-            Iterator<Interaction> interactionIterator = experimentDao.getInteractionsForExperimentWithAcIterator( currentExperiment.getAc() );
+            Iterator<Interaction> interactionIterator = edao.getInteractionsForExperimentWithAcIterator( currentExperiment.getAc() );
 
             while ( interactionIterator.hasNext() ) {
                 Interaction interaction = interactionIterator.next();
@@ -186,8 +197,8 @@ public class UpdateTargetSpecies {
 
             // reload the current experiment here, because to iterate through the interactions the
             // tansaction is automatically committed to avoid OutOfMemory errors.
-            experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-            currentExperiment = experimentDao.getByAc( currentExperiment.getAc() );
+            edao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+            currentExperiment = edao.getByAc( currentExperiment.getAc() );
 
             // 2. process the list of BioSource.
             Collection<ExperimentXref> existingTargetXrefs = getTargetSpeciesXrefs( currentExperiment );
@@ -253,6 +264,12 @@ public class UpdateTargetSpecies {
 
         } // scrollableExperiments
 
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch ( IntactTransactionException e ) {
+            throw new IntactException( "Could not commit current transaction.", e );
+        }
+
         return report;
     }
 
@@ -268,6 +285,5 @@ public class UpdateTargetSpecies {
         }
 
         update( System.out, false ).getStats();
-
     }
 }
