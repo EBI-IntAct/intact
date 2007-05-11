@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.annotation.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import sun.misc.URLClassPath;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -15,10 +16,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import java.net.URL;
 
 /**
  * Utilities to deal with annotations
@@ -120,7 +121,7 @@ public class AnnotationUtil {
      */
     public static Collection<Class> getClassesWithAnnotationFromClasspathDirs(Class<? extends Annotation> annotationClass) {
         //recover the classpath
-        List<String> classpathItems = getClasspathElements();
+        Collection<String> classpathItems = getClasspathElements();
         classpathItems.addAll(getDirsFromStackTrace());
 
         Set<Class> annotatedClasses = new HashSet<Class>();
@@ -161,7 +162,7 @@ public class AnnotationUtil {
      */
     public static Collection<Class> getClassesWithAnnotationFromClasspathJars(Class<? extends Annotation> annotationClass) throws IOException {
         //recover the classpath
-        List<String> classpathItems = getClasspathElements();
+        Collection<String> classpathItems = getClasspathElements();
 
         Set<Class> annotatedClasses = new HashSet<Class>();
 
@@ -275,6 +276,12 @@ public class AnnotationUtil {
                     clazz = Class.forName(completeClassName);
                 }
 
+                if (completeClassName.contains("PsiTestExtension"))
+                {
+                    System.out.println(clazz +" - PRESENT: "+clazz.isAnnotationPresent(annotationClass));
+                    System.out.println(clazz +" - NULL?: "+clazz.getAnnotation(annotationClass));
+                }
+
                 // check for the annotation is present, and if present, return the class
                 if (clazz.isAnnotationPresent(annotationClass)) {
                     return clazz;
@@ -282,6 +289,11 @@ public class AnnotationUtil {
 
             } catch (Throwable e) {
                 log.debug("Error loading class " + packageName + "." + className + ": " + e);
+
+                if (className.contains("PsiTestExtension") && classLoader != null)
+                {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -350,22 +362,18 @@ public class AnnotationUtil {
         return methods;
     }
 
-    private static List<String> getClasspathElements() {
+    private static Collection<String> getClasspathElements() {
         String classPath = System.getProperty("java.class.path");
 
-        String[] classpathItems;
+        URL[] classpathElements = URLClassPath.pathToURLs(classPath);
 
-        if (classPath.contains(";"))
-        {
-            // this case should only be valid in a windows os
-            classpathItems = classPath.split(";");
-        }
-        else
-        {
-            classpathItems = classPath.split(":");
+        Set<String> classPathItems = new HashSet<String>();
+
+        for (URL cpElem : classpathElements) {
+            classPathItems.add(cpElem.getFile());
         }
 
-        return new ArrayList<String>(Arrays.asList(classpathItems));
+        return classPathItems;
     }
 
     /**
