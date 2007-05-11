@@ -15,11 +15,10 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.net.URL;
 
 /**
  * Utilities to deal with annotations
@@ -31,6 +30,7 @@ import java.util.jar.JarFile;
 public class AnnotationUtil {
 
     private static final Log log = LogFactory.getLog(AnnotationUtil.class);
+    private static final String FILE_SEPARATOR = System.getProperty("file.separator");
 
     /**
      * Gathers a list of classes with a defined Annotation
@@ -42,7 +42,7 @@ public class AnnotationUtil {
      *
      * @throws IOException thrown if something goes wrong when reading the jar
      */
-    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath) throws IOException {
+    public static Collection<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath) throws IOException {
         return getClassesWithAnnotationFromJar(annotationClass, jarPath, null, null);
     }
 
@@ -56,7 +56,7 @@ public class AnnotationUtil {
      *
      * @throws IOException thrown if something goes wrong when reading the jar
      */
-    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, ClassLoader classLoader) throws IOException {
+    public static Collection<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, ClassLoader classLoader) throws IOException {
         return getClassesWithAnnotationFromJar(annotationClass, jarPath, null, classLoader);
     }
 
@@ -70,7 +70,7 @@ public class AnnotationUtil {
      *
      * @throws IOException thrown if something goes wrong when reading the jar
      */
-    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName) throws IOException {
+    public static Collection<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName) throws IOException {
         return getClassesWithAnnotationFromJar(annotationClass, jarPath, packageName, null);
     }
 
@@ -84,8 +84,8 @@ public class AnnotationUtil {
      *
      * @throws IOException thrown if something goes wrong when reading the jar
      */
-    public static List<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName, ClassLoader classLoader) throws IOException {
-        List<Class> annotatedClasses = new ArrayList<Class>();
+    public static Collection<Class> getClassesWithAnnotationFromJar(Class<? extends Annotation> annotationClass, String jarPath, String packageName, ClassLoader classLoader) throws IOException {
+        Set<Class> annotatedClasses = new HashSet<Class>();
 
         JarFile jarFile = new JarFile(jarPath);
 
@@ -118,21 +118,16 @@ public class AnnotationUtil {
      *
      * @return Classes containing the annotation
      */
-    public static List<Class> getClassesWithAnnotationFromClasspathDirs(Class<? extends Annotation> annotationClass) {
+    public static Collection<Class> getClassesWithAnnotationFromClasspathDirs(Class<? extends Annotation> annotationClass) {
         //recover the classpath
-        String classPath = System.getProperty("java.class.path");
+        List<String> classpathItems = getClasspathElements();
+        classpathItems.addAll(getDirsFromStackTrace());
 
-        String[] classpathItems = classPath.split(":");
-
-        if (classpathItems.length == 0) {
-            classPath.split(";");
-        }
-
-        List<Class> annotatedClasses = new ArrayList<Class>();
+        Set<Class> annotatedClasses = new HashSet<Class>();
 
         for (String classpathItem : classpathItems) {
             File ciFile = new File(classpathItem);
-
+            
             if (ciFile.isDirectory()) {
                 annotatedClasses.addAll(getClassesWithAnnotationFromDir(annotationClass, ciFile));
             }
@@ -149,8 +144,8 @@ public class AnnotationUtil {
      *
      * @return Classes containing the annotation
      */
-    public static List<Class> getClassesWithAnnotationFromClasspath(Class<? extends Annotation> annotationClass) throws IOException {
-        List<Class> annotatedClasses = new ArrayList<Class>();
+    public static Collection<Class> getClassesWithAnnotationFromClasspath(Class<? extends Annotation> annotationClass) throws IOException {
+        Set<Class> annotatedClasses = new HashSet<Class>();
         annotatedClasses.addAll(getClassesWithAnnotationFromClasspathJars(annotationClass));
         annotatedClasses.addAll(getClassesWithAnnotationFromClasspathDirs(annotationClass));
         return annotatedClasses;
@@ -164,17 +159,11 @@ public class AnnotationUtil {
      *
      * @return Classes containing the annotation
      */
-    public static List<Class> getClassesWithAnnotationFromClasspathJars(Class<? extends Annotation> annotationClass) throws IOException {
+    public static Collection<Class> getClassesWithAnnotationFromClasspathJars(Class<? extends Annotation> annotationClass) throws IOException {
         //recover the classpath
-        String classPath = System.getProperty("java.class.path");
+        List<String> classpathItems = getClasspathElements();
 
-        String[] classpathItems = classPath.split(":");
-
-        if (classpathItems.length == 0) {
-            classPath.split(";");
-        }
-
-        List<Class> annotatedClasses = new ArrayList<Class>();
+        Set<Class> annotatedClasses = new HashSet<Class>();
 
         for (String classpathItem : classpathItems) {
             File ciFile = new File(classpathItem);
@@ -195,12 +184,12 @@ public class AnnotationUtil {
      *
      * @return Classes containing the annotation
      */
-    public static List<Class> getClassesWithAnnotationFromDir(Class<? extends Annotation> annotationClass, File dir) {
+    public static Collection<Class> getClassesWithAnnotationFromDir(Class<? extends Annotation> annotationClass, File dir) {
         return getClassesWithAnnotationFromDir(annotationClass, dir, dir);
     }
 
-    private static List<Class> getClassesWithAnnotationFromDir(Class<? extends Annotation> annotationClass, File dir, File parentDir) {
-        List<Class> classesFromDir = new ArrayList<Class>();
+    private static Collection<Class> getClassesWithAnnotationFromDir(Class<? extends Annotation> annotationClass, File dir, File parentDir) {
+        Set<Class> classesFromDir = new HashSet<Class>();
 
         File[] classFiles = dir.listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
@@ -225,7 +214,7 @@ public class AnnotationUtil {
         });
 
         for (File subdir : subdirs) {
-            List<Class> classesFromSubdir = getClassesWithAnnotationFromDir(annotationClass, subdir, parentDir);
+            Collection<Class> classesFromSubdir = getClassesWithAnnotationFromDir(annotationClass, subdir, parentDir);
             classesFromDir.addAll(classesFromSubdir);
         }
 
@@ -258,6 +247,9 @@ public class AnnotationUtil {
 
             String fileDir;
             String className;
+
+            // windows conversion
+            classFilename = classFilename.replaceAll("\\\\", "/");
 
             if (classFilename.contains("/")) {
                 fileDir = classFilename.substring(0, classFilename.lastIndexOf("/"));
@@ -357,4 +349,63 @@ public class AnnotationUtil {
 
         return methods;
     }
+
+    private static List<String> getClasspathElements() {
+        String classPath = System.getProperty("java.class.path");
+
+        String[] classpathItems;
+
+        if (classPath.contains(";"))
+        {
+            // this case should only be valid in a windows os
+            classpathItems = classPath.split(";");
+        }
+        else
+        {
+            classpathItems = classPath.split(":");
+        }
+
+        return new ArrayList<String>(Arrays.asList(classpathItems));
+    }
+
+    /**
+     * Goes through the stacktrace to get the dirs where the classes are (when they are not in a jar)
+     */
+    private static Collection<String> getDirsFromStackTrace() {
+        Set<String> dirs = new HashSet<String>();
+
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace())
+        {
+            String className = ste.getClassName();
+            Class clazz = null;
+
+            try {
+                clazz = Class.forName(className);
+
+                String resClass = "/"+className.replaceAll("\\.","/")+".class";
+
+                URL resUrl = clazz.getResource(resClass);
+
+                String completeDir = null;
+                if (resUrl != null) {
+                    completeDir = resUrl.getFile();
+
+                    if (!completeDir.contains(".jar!")) {
+                        String dir = completeDir.substring(0, completeDir.length() - resClass.length());
+
+                        if (dir != null && new File(dir).isDirectory()) {
+                            dirs.add(dir);
+                        }
+                    }
+                }
+
+
+            } catch (ClassNotFoundException e) {
+                // nothing
+            }
+        }
+
+        return dirs;
+    }
+    
 }
