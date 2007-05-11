@@ -276,12 +276,6 @@ public class AnnotationUtil {
                     clazz = Class.forName(completeClassName);
                 }
 
-                if (completeClassName.contains("PsiTestExtension"))
-                {
-                    System.out.println(clazz +" - PRESENT: "+clazz.isAnnotationPresent(annotationClass));
-                    System.out.println(clazz +" - NULL?: "+clazz.getAnnotation(annotationClass));
-                }
-
                 // check for the annotation is present, and if present, return the class
                 if (clazz.isAnnotationPresent(annotationClass)) {
                     return clazz;
