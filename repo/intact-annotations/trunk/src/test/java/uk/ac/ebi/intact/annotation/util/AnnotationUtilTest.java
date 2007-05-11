@@ -21,6 +21,8 @@ import uk.ac.ebi.intact.annotation.EditorTopic;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -33,21 +35,21 @@ public class AnnotationUtilTest {
     @Test
     public void getClassesWithAnnotationFromDir() throws Exception {
         File dir = new File(AnnotationUtilTest.class.getResource("/").getFile());
-        List<Class> classes = AnnotationUtil.getClassesWithAnnotationFromDir(EditorTopic.class, dir);
+        Collection<Class> classes = AnnotationUtil.getClassesWithAnnotationFromDir(EditorTopic.class, dir);
 
         Assert.assertEquals(1, classes.size());
     }
 
     @Test
     public void getClassesWithAnnotationFromClasspathDirs() throws Exception {
-        List<Class> classes = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(EditorTopic.class);
+        Collection<Class> classes = AnnotationUtil.getClassesWithAnnotationFromClasspathDirs(EditorTopic.class);
 
         Assert.assertEquals(1, classes.size());
     }
 
     @Test
     public void getClassesWithAnnotationFromClasspath() throws Exception {
-        List<Class> classes = AnnotationUtil.getClassesWithAnnotationFromClasspath(EditorTopic.class);
+        Collection<Class> classes = AnnotationUtil.getClassesWithAnnotationFromClasspath(EditorTopic.class);
 
         Assert.assertEquals(1, classes.size());
     }
