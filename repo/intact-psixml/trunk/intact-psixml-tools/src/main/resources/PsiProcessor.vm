@@ -187,25 +187,28 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
         return report;
     }
 
-    private void executePsiExtensions(Object model, PsiProcessReport report, Phase currentPhase) {
+    private void executePsiExtensions(Object model, PsiProcessReport report, Phase currentPhase)
+                                            throws PsiProcessException {
        #if ( !${mcm.extensions.empty} )
 
-        ExtensionContext extensionContext = new ExtensionContext(model,report,Phase.AFTER_VALIDATION);
+        ExtensionContext extensionContext = new ExtensionContext(model, report, currentPhase);
 
         try {
 #foreach( $extMethod in ${mcm.extensions} )
 #set ( $extVarName = "extension$velocityCount" )
             ${extMethod.declaringClass.name} ${extVarName} = new ${extMethod.declaringClass.name}();
             extensionContext.injectIntoExtension(${extVarName});
-            //${extVarName}.${extMethod.name}();
+
             ExtensionExecutor.execute(extensionContext, ${extVarName}, "${extMethod.name}");
 
 #end
         } catch (Throwable t) {
             throw new PsiProcessException("Exception executing PsiExtension", t);
         }
+#else
+      // no psi extensions for this object type
 #end
-    }
+}
 
     private String getId(Object element) {
         String id = "";

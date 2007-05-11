@@ -107,7 +107,7 @@ public class PsiProcessorGeneratorMojo
 
         // create the sourceGeneratorContext, using the dependencies of the project
         File[] depJars = getDependencyJars();
-        ClassLoader classLoader = createClassLoaderwithJars(depJars);
+        ClassLoader classLoader = createClassLoaderWithJars(depJars);
 
         SourceGeneratorContext sbContext = new SourceGeneratorContext(context, generatedPackage, new File(targetPath));
         sbContext.setDependencyJars(depJars);
@@ -164,12 +164,13 @@ public class PsiProcessorGeneratorMojo
         return dependencyJars.toArray(new File[dependencyJars.size()]);
     }
 
-    private ClassLoader createClassLoaderwithJars(File[] jarsFiles) {
+    private ClassLoader createClassLoaderWithJars(File[] jarsFiles) {
         URL[] jarsUrls = new URL[jarsFiles.length];
 
         for (int i = 0; i < jarsFiles.length; i++) {
             try {
-                jarsUrls[i] = new URL("jar:file://" + jarsFiles[i].toString() + "!/");
+                //jarsUrls[i] = new URL("jar:file://" + jarsFiles[i].toString() + "!/");
+                jarsUrls[i] = jarsFiles[i].toURL();
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }

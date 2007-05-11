@@ -16,8 +16,8 @@
 package uk.ac.ebi.intact.psixml.tools.generator;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,7 +33,7 @@ public class SourceGeneratorHelper {
 
     private SourceGeneratorContext sgContext;
 
-    SourceGeneratorHelper(List<Class> modelClasses, SourceGeneratorContext sgContext) {
+    SourceGeneratorHelper(Collection<Class> modelClasses, SourceGeneratorContext sgContext) {
         this.sgContext = sgContext;
 
         File outputDir = createOutputDir();
