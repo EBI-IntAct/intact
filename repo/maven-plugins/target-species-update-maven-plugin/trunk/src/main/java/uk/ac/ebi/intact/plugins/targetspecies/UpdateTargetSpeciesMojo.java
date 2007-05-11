@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.plugins.targetspecies;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.plugin.MojoUtils;
+import uk.ac.ebi.intact.plugins.UpdateAbstractMojo;
 
 import java.io.File;
 import java.io.IOException;
