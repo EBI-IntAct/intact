@@ -1,6 +1,6 @@
 set serveroutput on size 1000000
 
-spool install_130.log
+spool install_160.log
 
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  start_date from dual;
 
