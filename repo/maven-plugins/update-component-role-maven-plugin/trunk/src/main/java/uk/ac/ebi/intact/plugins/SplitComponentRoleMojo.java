@@ -20,9 +20,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.CvBiologicalRole;
-import uk.ac.ebi.intact.model.CvExperimentalRole;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.ComponentDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -84,7 +82,23 @@ public class SplitComponentRoleMojo extends IntactHibernateMojo {
 
         CvBiologicalRole unspecified = bioDao.getByPsiMiRef( CvBiologicalRole.UNSPECIFIED_PSI_REF );
         if ( unspecified == null ) {
-            throw new MojoFailureException( "Could not find CvBiologicalRole by psi-mi id: " + CvBiologicalRole.UNSPECIFIED_PSI_REF );
+
+            log.print( "\nWARNING - Could not find CvBiologicalRole( unspecified ) by MI reference: " + CvBiologicalRole.UNSPECIFIED_PSI_REF );
+            log.print( "\n          Creating it now ... " );
+
+            Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
+            unspecified = new CvBiologicalRole( owner, CvBiologicalRole.UNSPECIFIED );
+            bioDao.persist( unspecified );
+
+            // add xrefs
+            CvDatabase psimi = daoFactory.getCvObjectDao( CvDatabase.class ).getByPsiMiRef( CvDatabase.PSI_MI_MI_REF );
+            CvXrefQualifier identity = daoFactory.getCvObjectDao( CvXrefQualifier.class ).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
+
+            CvObjectXref x = new CvObjectXref( owner, psimi, CvBiologicalRole.UNSPECIFIED_PSI_REF, identity );
+            unspecified.addXref( x );
+
+            bioDao.update( unspecified );
+            log.print( "\n          CvBiologicalRole( unspecified ) was created successfuly: " + unspecified.getAc() );
         }
 
         CvExperimentalRole neutral = expDao.getByPsiMiRef( CvExperimentalRole.NEUTRAL_PSI_REF );
