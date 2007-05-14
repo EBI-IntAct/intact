@@ -33,13 +33,7 @@ begin
 	from ia_controlledvocab
 	where shortlabel = 'identity';
 
-	--------------------------------
-	-- get unspecified_biorole_ac --
-	--------------------------------
-	select 'EBI-' || Intact_ac.nextval
-	into unspecified_biorole_ac
-	from dual;
-	
+		
 	-------------------
 	-- get pubmed_ac --
 	-------------------
@@ -49,7 +43,7 @@ begin
 	where cv.ac = x.parent_ac
 	and x.primaryId = 'MI:0446'
 	and x.database_ac = psimi_ac
-	and x.qualifier_ac = identity_ac
+	and x.qualifier_ac = identity_ac;
 
 	 -------------------
 	 -- get pubmed_ac --
@@ -60,7 +54,7 @@ begin
 	 where cv.ac = x.parent_ac
 	 and x.primaryId = 'MI:0358'
 	 and x.database_ac = psimi_ac
-	 and x.qualifier_ac = identity_ac
+	 and x.qualifier_ac = identity_ac;
 
 	-------------------------------------------------------------
 	-- Insert "unspecified role" biorole in ia_controlledvocab --
@@ -70,11 +64,20 @@ begin
 					objclass, 
 					shortlabel, 
 					fullname)
-	values (unspecified_biorole_ac, 
+	values ('EBI-' || Intact_ac.nextval, 
 		owner_ac, 
 		'uk.ac.ebi.intact.model.CvBiologicalRole', 
 		'unspecified role',
 		'unspecified role');
+
+	------------------------------------
+	-- Get the unspecified_biorole_ac --
+	------------------------------------
+	select ac
+	into unspecified_biorole_ac
+	from ia_controlledvocab 
+	where shortlabel = 'unspecified role'
+	and objclass = 'uk.ac.ebi.intact.model.CvBiologicalRole';
 
 	---------------------------------------------------------------
 	-- Add the psi-mi identity xref to the "unspecified role" cv --
@@ -109,5 +112,6 @@ begin
 		'14755292');
 
 end;
-/
+commit;
+
 

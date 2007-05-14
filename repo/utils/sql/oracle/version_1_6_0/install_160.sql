@@ -57,13 +57,16 @@ PROMPT "     uk.ac.ebi.intact.model.CvBiologicalRole                            
 PROMPT
 @170_update_objclass_CvComponentRole.sql
 
-PROMPT *********************************************************************************/
-PROMPT "Update the objclass from uk.ac.ebi.intact.model.CvComponentRole to either :     "
-PROMPT "     uk.ac.ebi.intact.model.CvExperimentalRole                                  "
-PROMPT "     uk.ac.ebi.intact.model.CvBiologicalRole                                    "
-PROMPT
-@180_insert_unspecified_as_biologicalRole.sql
+--PROMPT *********************************************************************************/
+--PROMPT "Update the objclass from uk.ac.ebi.intact.model.CvComponentRole to either :     "
+--PROMPT "     uk.ac.ebi.intact.model.CvExperimentalRole                                  "
+--PROMPT "     uk.ac.ebi.intact.model.CvBiologicalRole                                    "
+--PROMPT
+--@180_insert_unspecified_as_biologicalRole.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Update schema version"
+PROMPT
 UPDATE ia_db_info
 set value = '1.6.0'
 where UPPER(dbi_key) ='SCHEMA_VERSION';
@@ -72,3 +75,5 @@ commit;
 select to_char(sysdate,'dd-mon-yyyy hh24:mi:ss')  end_date from dual;
 
 spool off
+
+exit;

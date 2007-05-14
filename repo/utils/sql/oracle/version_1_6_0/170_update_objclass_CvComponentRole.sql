@@ -18,3 +18,7 @@ and x.database_ac = 'EBI-77142'
 and x.qualifier_ac = 'EBI-28'
 and x.primaryId in ('MI:0499', 'MI:0501', 'MI:0502', 'MI:0503', 'MI:0579', 'MI:0580', 'MI:0586', 'MI:0682', '
 MI:0840', 'MI:0842', 'MI:0843' ));
+
+commit;
+
+
