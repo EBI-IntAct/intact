@@ -22,9 +22,9 @@ import uk.ac.ebi.intact.searchengine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.searchengine.parser.IQLParser;
 import uk.ac.ebi.intact.util.Chrono;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.BufferedWriter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -59,7 +59,8 @@ public class SearchEngineImpl implements SearchEngine {
     public SearchEngineImpl( final Analyzer analyzer,
                              final File dir,
                              final SearchDAO dao,
-                             final IQLParser iqlParser ) {
+                             final IQLParser iqlParser
+    ) {
 
         this.analyzer = analyzer;
         this.dao = dao;
@@ -71,7 +72,7 @@ public class SearchEngineImpl implements SearchEngine {
      * Illegal constructor, prevent user from instanciating the no-arg constructor from Object.
      */
     private SearchEngineImpl() {
-        throw new IllegalStateException( );
+        throw new IllegalStateException();
     }
 
     /**
@@ -122,7 +123,7 @@ public class SearchEngineImpl implements SearchEngine {
         try {
             // set the default field to Shortlabel
             QueryParser parser = new QueryParser( "SHORTLABEL", analyzer );
-            query = parser.parse(luceneQuery);
+            query = parser.parse( luceneQuery );
 
             logger.info( "final query: " + query.toString() );
 
@@ -143,7 +144,7 @@ public class SearchEngineImpl implements SearchEngine {
                 // a problem with the BooleanQuery is that the hits are limited
                 // that causes an error for example if you search for EBI-*
                 // set the maximum number of hits higher (default: 1024)
-                BooleanQuery.setMaxClauseCount(9999);
+                BooleanQuery.setMaxClauseCount( 9999 );
                 hits = searcher.search( query );
             } catch ( BooleanQuery.TooManyClauses e ) {
                 logger.error( "Lucene is limited: BooleanQuery TooManyClauses!", e );
@@ -250,7 +251,7 @@ public class SearchEngineImpl implements SearchEngine {
         }
 
         for ( Iterator iterator = allSearchObjects.iterator(); iterator.hasNext(); ) {
-            SearchObject searchObject = (SearchObject) iterator.next();
+            SearchObject searchObject = ( SearchObject ) iterator.next();
             searchObjectIndexer.createIndex( searchObject );
         }
     }
@@ -259,11 +260,11 @@ public class SearchEngineImpl implements SearchEngine {
      * Creats a Lucene index out of the intact objects. It writes the index first into RAM and writes it
      * at the end into the directory
      *
-     * @throws IOException ...
- * @throws IntactException ...
+     * @throws IOException     ...
+     * @throws IntactException ...
      */
-    public void createLuceneIndex(BufferedWriter logOutWriter) throws IOException, IntactException {
-        
+    public void createLuceneIndex( BufferedWriter logOutWriter ) throws IOException, IntactException {
+
         Indexer indexer = new Indexer( dao, new SearchObjectIndexer() );
         indexer.createIndex( index, logOutWriter );
     }
@@ -303,7 +304,7 @@ public class SearchEngineImpl implements SearchEngine {
         final String objClass = aSearchObject.getObjClass();
 
         this.removeIndex( aSearchObject );
-        SearchObject updatedObject = (SearchObject) dao.getSearchObject( ac, objClass );
+        SearchObject updatedObject = ( SearchObject ) dao.getSearchObject( ac, objClass );
         this.createIndex( updatedObject );
     }
 

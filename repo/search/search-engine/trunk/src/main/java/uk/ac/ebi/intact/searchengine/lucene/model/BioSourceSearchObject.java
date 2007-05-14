@@ -31,7 +31,8 @@ public class BioSourceSearchObject extends SearchObject {
      */
     public BioSourceSearchObject( final String ac, final String shortLabel,
                                   final String fullName, final String objClass,
-                                  final Map xrefs, final Map annotations, final Map alias ) {
+                                  final Map xrefs, final Map annotations, final Map alias
+    ) {
         super( ac, shortLabel, fullName, objClass, xrefs, annotations, alias );
     }
 }

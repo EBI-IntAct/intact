@@ -56,6 +56,7 @@ public class IntactAnalyzer extends Analyzer {
 
     /**
      * Builds an analyzer with the given stop words.
+     *
      * @param stopWords an array of stop word
      */
     public IntactAnalyzer( String[] stopWords ) {
@@ -68,7 +69,7 @@ public class IntactAnalyzer extends Analyzer {
      * WhitespaceTokenizer which stops only at whitespaces.
      *
      * @param fieldName the field name
-     * @param reader a reader
+     * @param reader    a reader
      *
      * @return a tokenStream.
      */
@@ -97,7 +98,7 @@ public class IntactAnalyzer extends Analyzer {
      */
     private boolean isTextField( String fieldName ) {
         for ( int i = 0; i < TEXT_FIELDS.length; i++ ) {
-            if ( fieldName.equalsIgnoreCase( TEXT_FIELDS[ i ] ) ) {
+            if ( fieldName.equalsIgnoreCase( TEXT_FIELDS[i] ) ) {
                 return true;
             }
         }

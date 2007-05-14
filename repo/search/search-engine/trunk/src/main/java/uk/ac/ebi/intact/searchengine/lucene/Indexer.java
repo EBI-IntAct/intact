@@ -63,7 +63,7 @@ public class Indexer {
      * @throws IOException     ...
      * @throws IntactException ...
      */
-    public BufferedWriter createIndex( File dir,BufferedWriter logOutWriter ) throws IOException, IntactException {
+    public BufferedWriter createIndex( File dir, BufferedWriter logOutWriter ) throws IOException, IntactException {
         // writer to write the index on scratch disk
         IndexWriter fsWriter = null;
         // writer to store the index in RAM
@@ -91,7 +91,7 @@ public class Indexer {
         for ( Iterator iterator = documents.iterator(); iterator.hasNext(); ) {
             countDocs++;
 
-            Document doc = (Document) iterator.next();
+            Document doc = ( Document ) iterator.next();
             ramWriter.addDocument( doc );
 
             if ( ( countDocs % 40 ) == 0 ) {
@@ -100,14 +100,14 @@ public class Indexer {
 
                 if ( ( countDocs % 2400 ) == 0 ) {
                     // 60 dots per line
-                    String percent = formatter.format( ( (float) countDocs / (float) documents.size() ) * 100 );
-                    logOutWriter.write( " " + countDocs + "(" + percent + "%)" + NEW_LINE);
+                    String percent = formatter.format( ( ( float ) countDocs / ( float ) documents.size() ) * 100 );
+                    logOutWriter.write( " " + countDocs + "(" + percent + "%)" + NEW_LINE );
                 }
             }
         }
 
         // write the index from the RAM into the file on scratch
-        fsWriter.addIndexes( new Directory[]{ ramDir } );
+        fsWriter.addIndexes( new Directory[]{ramDir} );
 
         fsWriter.close();
         ramWriter.close();
@@ -138,7 +138,7 @@ public class Indexer {
 
         // iterate through the IntAct objects, to transform them into Lucene documents.
         for ( Iterator iterator = searchObjects.iterator(); iterator.hasNext(); ) {
-            SearchObject obj = (SearchObject) iterator.next();
+            SearchObject obj = ( SearchObject ) iterator.next();
 
             // print out the heap size at this state
             long heapSize = Runtime.getRuntime().totalMemory();
@@ -149,16 +149,15 @@ public class Indexer {
         return documents;
     }
 
-    public static OutputStream index(File indexFile) throws IOException {
-        if (indexFile == null)
-        {
-            throw new NullPointerException("Provided indexFile file is null");
+    public static OutputStream index( File indexFile ) throws IOException {
+        if ( indexFile == null ) {
+            throw new NullPointerException( "Provided indexFile file is null" );
         }
         OutputStream logOutStream = new ByteArrayOutputStream();
-        BufferedWriter logOutWriter = new BufferedWriter(new OutputStreamWriter(logOutStream));
+        BufferedWriter logOutWriter = new BufferedWriter( new OutputStreamWriter( logOutStream ) );
         try {
             String usage = "Usage: Indexer <Name of the index directory>";
-            
+
 
             logOutWriter.write( "Start to create the Lucene index..." + NEW_LINE );
 
@@ -166,21 +165,21 @@ public class Indexer {
             Chrono time = new Chrono();
             time.start();
             // create the index
-            logOutWriter = test.createIndex( indexFile,logOutWriter);
+            logOutWriter = test.createIndex( indexFile, logOutWriter );
             time.stop();
             // print the time the indexing used
-            logOutWriter.write( "\nIndex created in " + time.toString()  + NEW_LINE );
+            logOutWriter.write( "\nIndex created in " + time.toString() + NEW_LINE );
 
         } catch ( OutOfMemoryError aome ) {
 
             aome.printStackTrace();
 
-            logOutWriter.write( "" + NEW_LINE  );
-            logOutWriter.write( "Indexer ran out of memory." + NEW_LINE  );
-            logOutWriter.write( "Please run it again and change the JVM configuration." + NEW_LINE  );
-            logOutWriter.write( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html"  + NEW_LINE );
-            logOutWriter.write( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum"  + NEW_LINE );
-            logOutWriter.write( "      amount of memory that the JVM is allowed to allocate." + NEW_LINE  );
+            logOutWriter.write( "" + NEW_LINE );
+            logOutWriter.write( "Indexer ran out of memory." + NEW_LINE );
+            logOutWriter.write( "Please run it again and change the JVM configuration." + NEW_LINE );
+            logOutWriter.write( "Here are some the options: http://java.sun.com/docs/hotspot/VMOptions.html" + NEW_LINE );
+            logOutWriter.write( "Hint: You can use -Xms -Xmx to specify respectively the minimum and maximum" + NEW_LINE );
+            logOutWriter.write( "      amount of memory that the JVM is allowed to allocate." + NEW_LINE );
             logOutWriter.write( "      eg. java -Xms128m -Xmx512m <className>" + NEW_LINE );
 
             System.exit( 1 );
@@ -202,6 +201,6 @@ public class Indexer {
      * @throws IntactException
      */
     public static void main( String[] args ) throws IOException, IntactException {
-        index( new File( "lucene-index") );
+        index( new File( "lucene-index" ) );
     }
 }

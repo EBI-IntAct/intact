@@ -84,7 +84,7 @@ public class IQLParserImpl implements IQLParser {
             // while parsing the IQL statement there was a tree generated, which contains
             // the search conditions. In this tree the AND/OR and LIKE/EQUALS are the nodes
             // get the tree storing the search condition
-            CommonAST conditionTree = (CommonAST) parser.getAST();
+            CommonAST conditionTree = ( CommonAST ) parser.getAST();
 
             String searchCondition = null;
             // check if there is a search condition, otherwise the treeWalker is not needed

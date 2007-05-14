@@ -27,7 +27,7 @@ public class ResultWrapper implements Serializable {
      */
     private List<? extends AnnotatedObject> myResults;
 
-    private Map<String,Integer> myInfo;
+    private Map<String, Integer> myInfo;
 
     private int totalResultsCount = 0;
 
@@ -44,8 +44,8 @@ public class ResultWrapper implements Serializable {
     /**
      * Use this constructor only when there are no matching search results.
      */
-    public ResultWrapper(int maxSize) {
-        this(Collections.EMPTY_LIST, maxSize);
+    public ResultWrapper( int maxSize ) {
+        this( Collections.EMPTY_LIST, maxSize );
     }
 
     /**
@@ -55,17 +55,17 @@ public class ResultWrapper implements Serializable {
      * @param results the list of search results
      * @param maxSize the maximum size for the search result.
      */
-    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize) {
-        this(results, results.size(), maxSize);
+    public ResultWrapper( Collection<? extends AnnotatedObject> results, int maxSize ) {
+        this( results, results.size(), maxSize );
         this.totalResultsCount = results.size();
     }
 
-    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize, Map<String,Integer> info) {
-        this(results, results.size(), info, maxSize);
+    public ResultWrapper( Collection<? extends AnnotatedObject> results, int maxSize, Map<String, Integer> info ) {
+        this( results, results.size(), info, maxSize );
     }
 
-    public ResultWrapper(Collection<? extends AnnotatedObject> results, int maxSize, Map<String,Integer> info, int totalResultsCount) {
-        this(results, results.size(), maxSize);
+    public ResultWrapper( Collection<? extends AnnotatedObject> results, int maxSize, Map<String, Integer> info, int totalResultsCount ) {
+        this( results, results.size(), maxSize );
         this.myInfo = info;
         this.totalResultsCount = totalResultsCount;
     }
@@ -78,19 +78,19 @@ public class ResultWrapper implements Serializable {
      * @param possibleSize the possible size of the returned set.
      * @param maxSize      maximum number of records allowed.
      */
-    public ResultWrapper(int possibleSize, int maxSize) {
-        this(null, possibleSize, maxSize);
+    public ResultWrapper( int possibleSize, int maxSize ) {
+        this( null, possibleSize, maxSize );
     }
 
-     /**
+    /**
      * Creates an instance of this class with given maximum number of records allowed. Use this
      * constructor when the result set is too big.
      *
      * @param possibleSize the possible size of the returned set.
      * @param maxSize      maximum number of records allowed.
      */
-    public ResultWrapper(int possibleSize, int maxSize, Map<String,Integer> info) {
-        this(null, possibleSize, maxSize);
+    public ResultWrapper( int possibleSize, int maxSize, Map<String, Integer> info ) {
+        this( null, possibleSize, maxSize );
         this.myInfo = info;
         this.totalResultsCount = possibleSize;
     }
@@ -101,7 +101,7 @@ public class ResultWrapper implements Serializable {
      * @return can be empty if the result set is too large or no matches.
      */
     public List<? extends AnnotatedObject> getResult() {
-        if (myResults == null) {
+        if ( myResults == null ) {
             return Collections.EMPTY_LIST;
         }
         return myResults;
@@ -121,19 +121,18 @@ public class ResultWrapper implements Serializable {
         return myPossibleSize;
     }
 
-    public Map<String,Integer> getInfo() {
-            return myInfo;
+    public Map<String, Integer> getInfo() {
+        return myInfo;
     }
 
-    public int getTotalResultsCount()
-    {
+    public int getTotalResultsCount() {
         return totalResultsCount;
     }
 
     // Helper methods.
 
-    private ResultWrapper(Collection<? extends AnnotatedObject> results, int potentialSize, int maxSize) {
-        myResults = (List<? extends AnnotatedObject>) results;
+    private ResultWrapper( Collection<? extends AnnotatedObject> results, int potentialSize, int maxSize ) {
+        myResults = ( List<? extends AnnotatedObject> ) results;
         myPossibleSize = potentialSize;
         myMaxAllowedSize = maxSize;
     }

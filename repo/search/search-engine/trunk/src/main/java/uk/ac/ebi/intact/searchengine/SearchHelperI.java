@@ -27,10 +27,12 @@ public interface SearchHelperI {
      * @param searchClass the search class we are looking for in the IntAct data.
      * @param value       the queryString for which the objects should match.
      * @param user        the IntAct datasource.
+     *
      * @return A collection of Intact objects of the type <i>searchClass</i>.
+     *
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection<IntactObject> doLookup(SearchClass searchClass, String value, IntactUserI user)
+    public Collection<IntactObject> doLookup( SearchClass searchClass, String value, IntactUserI user )
             throws IntactException;
 
     /**
@@ -41,10 +43,12 @@ public interface SearchHelperI {
      *                      IntAct data.
      * @param value         the queryString for which the objects should match.
      * @param user          the IntAct datasource.
+     *
      * @return A collection of Intact objects of the type <i>searchClass</i>.
+     *
      * @throws IntactException if an erro occurs when searching in the database.
      */
-    public Collection<IntactObject> doLookup(List<SearchClass> searchClasses, String value, IntactUserI user)
+    public Collection<IntactObject> doLookup( List<SearchClass> searchClasses, String value, IntactUserI user )
             throws IntactException;
 
     /**

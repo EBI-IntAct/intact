@@ -4,13 +4,13 @@ import org.apache.commons.collections.IterableMap;
 import org.apache.commons.collections.MapIterator;
 import org.apache.commons.collections.map.HashedMap;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.searchengine.SearchEngineConstants;
 import uk.ac.ebi.intact.searchengine.lucene.model.SearchObject;
 import uk.ac.ebi.intact.searchengine.util.SearchObjectProvider;
 import uk.ac.ebi.intact.searchengine.util.sql.SqlSearchObjectProvider;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,8 +36,8 @@ public class SearchDAOImpl implements SearchDAO {
     /**
      * Constructs a SearchDAOImpl object.
      */
-    public SearchDAOImpl( ) {
-        this.soProvider = new SqlSearchObjectProvider( );
+    public SearchDAOImpl() {
+        this.soProvider = new SqlSearchObjectProvider();
     }
 
 
@@ -50,14 +50,14 @@ public class SearchDAOImpl implements SearchDAO {
         final Collection<Interaction> interResults = new ArrayList<Interaction>();
         final Collection<CvObject> cvResults = new ArrayList<CvObject>();
         final Collection<BioSource> bioResults = new ArrayList<BioSource>();
-        final IterableMap map = (IterableMap) someACs;
+        final IterableMap map = ( IterableMap ) someACs;
 
         // Iterate throuth the Map holding the ACs and search for the corresponding intact object.
         // Add the located object to that collection that fits to the objclass
         for ( MapIterator it = map.mapIterator(); it.hasNext(); ) {
 
-            final String ac = (String) it.next();
-            String objclass = (String) it.getValue();
+            final String ac = ( String ) it.next();
+            String objclass = ( String ) it.getValue();
 
             objclass = objclass.trim();
 
@@ -72,7 +72,7 @@ public class SearchDAOImpl implements SearchDAO {
                 }
 
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.InteractionImpl" ) ) {
-                Interaction result = getDaoFactory().getInteractionDao().getByAc(ac);
+                Interaction result = getDaoFactory().getInteractionDao().getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Interaction.class and no object was found. Index and database not in synch." );
@@ -80,7 +80,7 @@ public class SearchDAOImpl implements SearchDAO {
                     interResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.Experiment" ) ) {
-                Experiment result = getDaoFactory().getExperimentDao().getByAc(ac);
+                Experiment result = getDaoFactory().getExperimentDao().getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Experiment.class and no object was found. Index and database not in synch." );
@@ -88,7 +88,7 @@ public class SearchDAOImpl implements SearchDAO {
                     expResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.CvObject" ) ) {
-                CvObject result = getDaoFactory().getCvObjectDao(CvObject.class).getByAc(ac);
+                CvObject result = getDaoFactory().getCvObjectDao( CvObject.class ).getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: CvObject.class and no object was found. Index and database not in synch." );
@@ -96,7 +96,7 @@ public class SearchDAOImpl implements SearchDAO {
                     cvResults.add( result );
                 }
             } else if ( objclass.equalsIgnoreCase( "uk.ac.ebi.intact.model.BioSource" ) ) {
-                BioSource result = getDaoFactory().getBioSourceDao().getByAc(ac);
+                BioSource result = getDaoFactory().getBioSourceDao().getByAc( ac );
                 if ( result == null ) {
                     // this should not happen unless the Lucene index is not in synch with the database.
                     logger.warning( "Looking for AC:" + ac + " Type: Protein.class and no object was found. Index and database not in synch." );
@@ -133,15 +133,15 @@ public class SearchDAOImpl implements SearchDAO {
         // join the collections of the different search object together to one collection
         // get first all experiments and interactions
         Collection searchObjects = soProvider.getAllExperiments( SearchEngineConstants.EXPERIMENT_QUERY );
-        searchObjects.addAll(soProvider.getAllInteractions( SearchEngineConstants.INTERACTION_QUERY ) );
+        searchObjects.addAll( soProvider.getAllInteractions( SearchEngineConstants.INTERACTION_QUERY ) );
         // ... then add all CVs
-        searchObjects.addAll(soProvider.getAllCvObjects( SearchEngineConstants.CV_OBJECT_QUERY ) );
+        searchObjects.addAll( soProvider.getAllCvObjects( SearchEngineConstants.CV_OBJECT_QUERY ) );
 
         // ... then add all proteins
-        searchObjects.addAll(soProvider.getAllProteins( SearchEngineConstants.PROTEIN_QUERY ) );
+        searchObjects.addAll( soProvider.getAllProteins( SearchEngineConstants.PROTEIN_QUERY ) );
 
         //... and at last add all biosources
-        searchObjects.addAll(soProvider.getAllBioSources( SearchEngineConstants.BIOSOURCE_QUERY ) );
+        searchObjects.addAll( soProvider.getAllBioSources( SearchEngineConstants.BIOSOURCE_QUERY ) );
         System.out.println( "\n\nThe total number of objects indexed: " + searchObjects.size() );
 
         return searchObjects;
@@ -151,8 +151,7 @@ public class SearchDAOImpl implements SearchDAO {
         return soProvider.getSearchObject( ac, objClass );
     }
 
-    private DaoFactory getDaoFactory()
-    {
+    private DaoFactory getDaoFactory() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 }

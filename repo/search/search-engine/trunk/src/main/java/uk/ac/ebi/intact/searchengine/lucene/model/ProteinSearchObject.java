@@ -27,7 +27,8 @@ public class ProteinSearchObject extends SearchObject {
     public ProteinSearchObject( final String ac, final String shortLabel,
                                 final String fullName, final String objClass,
                                 final Map xrefs, final Map annotations,
-                                final Map alias ) {
+                                final Map alias
+    ) {
 
         super( ac, shortLabel, fullName, objClass, xrefs, annotations, alias );
     }
