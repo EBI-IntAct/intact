@@ -66,7 +66,8 @@ public class SearchObject {
      *                    value is a collection of the alias names
      */
     protected SearchObject( final String ac, final String shortLabel, final String fullName,
-                            final String objClass, final Map xrefs, final Map annotations, final Map alias ) {
+                            final String objClass, final Map xrefs, final Map annotations, final Map alias
+    ) {
 
         this.ac = ac;
         this.shortLabel = shortLabel;

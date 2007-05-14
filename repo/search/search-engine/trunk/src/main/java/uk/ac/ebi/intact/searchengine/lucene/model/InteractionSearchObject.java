@@ -29,13 +29,14 @@ public class InteractionSearchObject extends SearchObject {
      * @param cvInteractionsType object that stores information about the interaction type
      * @param alias              Map with alias, again the key is the description of the alias and the value the name of the alias
      */
-    public InteractionSearchObject(final String ac, final String shortLabel,
-                                   final String fullName, final String objClass,
-                                   final Map xrefs, final Map annotations,
-                                   final CvSearchObject cvInteractionsType,
-                                   final Map alias) {
+    public InteractionSearchObject( final String ac, final String shortLabel,
+                                    final String fullName, final String objClass,
+                                    final Map xrefs, final Map annotations,
+                                    final CvSearchObject cvInteractionsType,
+                                    final Map alias
+    ) {
 
-        super(ac, shortLabel, fullName, objClass, xrefs, annotations, alias);
+        super( ac, shortLabel, fullName, objClass, xrefs, annotations, alias );
         this.cvInteractionsType = cvInteractionsType;
     }
 

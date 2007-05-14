@@ -40,7 +40,8 @@ public class ExperimentSearchObject extends SearchObject {
                                    final String objClass, final Map xrefs, final Map annotations,
                                    final CvSearchObject cvIdentification,
                                    final CvSearchObject cvInteraction,
-                                   final Map alias ) {
+                                   final Map alias
+    ) {
 
         super( ac, shortLabel, fullName, objClass, xrefs, annotations, alias );
         this.cvIdentification = cvIdentification;

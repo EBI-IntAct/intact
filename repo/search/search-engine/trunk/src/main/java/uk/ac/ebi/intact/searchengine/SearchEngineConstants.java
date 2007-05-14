@@ -58,7 +58,7 @@ public interface SearchEngineConstants {
             " SELECT E.ac as ac, " +
             "E.shortlabel as shortlabel, " +
             "E.fullname as fullname, " +
-            "'" + Experiment.class.getName() +"' as objclass " +
+            "'" + Experiment.class.getName() + "' as objclass " +
             "FROM ia_experiment E ";
 
     // SQL query to get all interactions out of the database

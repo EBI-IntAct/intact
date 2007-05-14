@@ -13,10 +13,10 @@ public class CvSearchObject extends SearchObject {
     /**
      * Constructs a CvSearchObject object.
      *
-     * @param ac          accession number
-     * @param shortLabel  short label of the CV
-     * @param fullName    fullname/description of the CV
-     * @param objClass    name of the IntAct class
+     * @param ac         accession number
+     * @param shortLabel short label of the CV
+     * @param fullName   fullname/description of the CV
+     * @param objClass   name of the IntAct class
      */
     public CvSearchObject( final String ac, final String shortLabel, final String fullName, final String objClass ) {
         super( ac, shortLabel, fullName, objClass, null, null, null );
@@ -37,7 +37,8 @@ public class CvSearchObject extends SearchObject {
      *                    alias
      */
     public CvSearchObject( final String ac, final String shortLabel, final String fullName, final String objClass,
-                           final Map xrefs, final Map annotations, final Map alias ) {
+                           final Map xrefs, final Map annotations, final Map alias
+    ) {
         super( ac, shortLabel, fullName, objClass, xrefs, annotations, alias );
     }
 }

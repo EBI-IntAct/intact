@@ -17,7 +17,7 @@ public interface IQLParser {
      *
      * @return a Lucene query.
      *
-     * @throws IntactException 
+     * @throws IntactException
      */
     public String getLuceneQuery( String IQLStatement ) throws IntactException;
 }

@@ -78,15 +78,15 @@ public class SearchObjectIndexer {
     public void createIndex( final SearchObject searchObject ) {
 
         if ( ( ExperimentSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            createExperimentIndex( (ExperimentSearchObject) searchObject );
+            createExperimentIndex( ( ExperimentSearchObject ) searchObject );
         } else if ( ( InteractionSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            createInteractionIndex( (InteractionSearchObject) searchObject );
+            createInteractionIndex( ( InteractionSearchObject ) searchObject );
         } else if ( ( ProteinSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            createProteinIndex( (ProteinSearchObject) searchObject );
+            createProteinIndex( ( ProteinSearchObject ) searchObject );
         } else if ( ( CvSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            createCvObjectIndex( (CvSearchObject) searchObject );
+            createCvObjectIndex( ( CvSearchObject ) searchObject );
         } else if ( ( BioSourceSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            createBioSourceObjectIndex( (BioSourceSearchObject) searchObject );
+            createBioSourceObjectIndex( ( BioSourceSearchObject ) searchObject );
         }
     }
 
@@ -102,15 +102,15 @@ public class SearchObjectIndexer {
     public Document getDocument( final SearchObject searchObject ) {
         Document document = new Document();
         if ( ( ExperimentSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            document = createExperimentDoc( (ExperimentSearchObject) searchObject, document );
+            document = createExperimentDoc( ( ExperimentSearchObject ) searchObject, document );
         } else if ( ( InteractionSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            document = createInteractionDoc( (InteractionSearchObject) searchObject, document );
+            document = createInteractionDoc( ( InteractionSearchObject ) searchObject, document );
         } else if ( ( ProteinSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            document = createProteinDoc( (ProteinSearchObject) searchObject, document );
+            document = createProteinDoc( ( ProteinSearchObject ) searchObject, document );
         } else if ( ( CvSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            document = createCvObjectDoc( (CvSearchObject) searchObject, document );
+            document = createCvObjectDoc( ( CvSearchObject ) searchObject, document );
         } else if ( ( BioSourceSearchObject.class.isAssignableFrom( searchObject.getClass() ) ) ) {
-            document = createBioSourceObjectDoc( (BioSourceSearchObject) searchObject, document );
+            document = createBioSourceObjectDoc( ( BioSourceSearchObject ) searchObject, document );
         }
         return document;
     }
@@ -163,7 +163,7 @@ public class SearchObjectIndexer {
         CvSearchObject cvInterType = interaction.getCvInteractionsType();
         // only add the CvInteractionType to the document, if it really exists
         if ( cvInterType != null ) {
-                 doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
+            doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_AC, cvInterType.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvInterType.getShortLabel() != null ) {
                 doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
@@ -194,7 +194,7 @@ public class SearchObjectIndexer {
         if ( cvIdent != null ) {
             doc.add( new Field( SearchEngineConstants.IDENT_AC, cvIdent.getAc(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             if ( cvIdent.getShortLabel() != null ) {
-                doc.add( new Field( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED) );
+                doc.add( new Field( SearchEngineConstants.IDENT_SHORTLABEL, cvIdent.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvIdent.getFullName() != null ) {
                 doc.add( new Field( SearchEngineConstants.IDENT_FULLNAME, cvIdent.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
@@ -237,7 +237,7 @@ public class SearchObjectIndexer {
      * This method creates a lucene document for a specific experiment search object and adds that document to the
      * index.. The created document contains the standard fields, like ac, shortlabel, fullname, xrefs and annotation.
      * In addition to that fields for the CvIdentificaion and the CvInteraction are also added to the document.
-     * <p>
+     * <p/>
      * It was used for the trivial indexing, but not for the RAM indexing.
      *
      * @param experiment object to create a lucene document of
@@ -281,7 +281,7 @@ public class SearchObjectIndexer {
      * This method creates a lucene document for a specific interaction search object and adds that document to the
      * index. The created document contains the standard fields, like ac, shortlabel, fullname, xrefs and annotation. In
      * addition to that fields for the CvInteractionType are also added to the document.
-     * <p>
+     * <p/>
      * It was used for the trivial indexing, but not for the RAM indexing.
      *
      * @param interaction object to create a lucene document of
@@ -301,7 +301,7 @@ public class SearchObjectIndexer {
                 doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_SHORTLABEL, cvInterType.getShortLabel(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
             if ( cvInterType.getFullName() != null ) {
-                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ));
+                doc.add( new Field( SearchEngineConstants.INTERACTION_TYPE_FULLNAME, cvInterType.getFullName(), Field.Store.YES, Field.Index.UN_TOKENIZED ) );
             }
         }
         this.writeDocument( doc );
@@ -311,7 +311,7 @@ public class SearchObjectIndexer {
      * This method creates a lucene document for a specific protein search object and adds that document to the index.
      * The created document contains the standard fields, like ac, shortlabel, fullname, xrefs and annotation. At the
      * moment there are no additional fields.
-     * <p>
+     * <p/>
      * It was used for the trivial indexing, but not for the RAM indexing.
      *
      * @param protein to create a lucene document of
@@ -329,7 +329,7 @@ public class SearchObjectIndexer {
      * This method creates a lucene document for a specific cv search object and adds that document to the index. The
      * created document contains the standard fields, like ac, shortlabel, fullname, xrefs and annotation. At the moment
      * there are no additional fields.
-     * <p>
+     * <p/>
      * It was used for the trivial indexing, but not for the RAM indexing.
      *
      * @param cvObject to create a lucene document of
@@ -347,7 +347,7 @@ public class SearchObjectIndexer {
      * This method creates a lucene document for a specific biosource search object and adds that document to the index.
      * The created document contains the standard fields, like ac, shortlabel, fullname, xrefs and annotation. At the
      * moment there are no additional fields.
-     * <p>
+     * <p/>
      * It was used for the trivial indexing, but not for the RAM indexing.
      *
      * @param bioSourceObject to create a lucene document of
@@ -411,15 +411,15 @@ public class SearchObjectIndexer {
 
         // Map containing all annotations with their topics
         IterableMap annotMap = new HashedMap();
-        annotMap.putAll( annotations);
+        annotMap.putAll( annotations );
         MapIterator it = annotMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
-            String key = (String) it.next();
-            Collection value = (Collection) it.getValue();
+            String key = ( String ) it.next();
+            Collection value = ( Collection ) it.getValue();
             if ( !value.isEmpty() ) {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
-                    String content = (String) iterator.next();
+                    String content = ( String ) iterator.next();
                     // the key is the cvTopic of the annotation
                     doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field 'annotation'
@@ -445,15 +445,15 @@ public class SearchObjectIndexer {
 
         // map containing all xrefs with their database names
         IterableMap xrefMap = new HashedMap();
-        xrefMap.putAll(xrefs);
+        xrefMap.putAll( xrefs );
         MapIterator it = xrefMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
-            String key = (String) it.next();
-            Collection value = (Collection) it.getValue();
+            String key = ( String ) it.next();
+            Collection value = ( Collection ) it.getValue();
             if ( !value.isEmpty() ) {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
-                    String content = (String) iterator.next();
+                    String content = ( String ) iterator.next();
                     //the lucene document field is named after the name of the database
                     doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field xrefs
@@ -479,16 +479,16 @@ public class SearchObjectIndexer {
 
         // map containing all alias types with their alias names
         IterableMap aliasMap = new HashedMap();
-        aliasMap.putAll(alias);
+        aliasMap.putAll( alias );
 
         MapIterator it = aliasMap.mapIterator();
         // iterate through the map and add the fields to the documents
         while ( it.hasNext() ) {
-            String key = (String) it.next();
-            Collection value = (Collection) it.getValue();
+            String key = ( String ) it.next();
+            Collection value = ( Collection ) it.getValue();
             if ( !value.isEmpty() ) {
                 for ( Iterator iterator = value.iterator(); iterator.hasNext(); ) {
-                    String content = (String) iterator.next();
+                    String content = ( String ) iterator.next();
                     // the lucene document is named after the alias type
                     doc.add( new Field( key, content, Field.Store.YES, Field.Index.UN_TOKENIZED ) );
                     // add all values to the field alias
@@ -511,7 +511,7 @@ public class SearchObjectIndexer {
 
             try {
                 writer = new IndexWriter( index, analyzer, false );
-                writer.setMergeFactor(100);
+                writer.setMergeFactor( 100 );
                 writer.addDocument( doc );
                 writer.optimize();
                 writer.close();
@@ -532,7 +532,7 @@ public class SearchObjectIndexer {
             final IndexWriter writer;
             try {
                 writer = new IndexWriter( index, analyzer, false );
-                writer.setMergeFactor(100);
+                writer.setMergeFactor( 100 );
                 writer.addIndexes( dir );
                 writer.optimize();
                 writer.close();

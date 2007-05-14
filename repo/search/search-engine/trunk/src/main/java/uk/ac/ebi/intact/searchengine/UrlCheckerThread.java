@@ -22,7 +22,7 @@ import java.net.URL;
  * @version $Id$
  * @since <pre>07-Feb-2006</pre>
  */
-public class UrlCheckerThread extends Thread implements Serializable{
+public class UrlCheckerThread extends Thread implements Serializable {
 
     public static final boolean DEBUG = false;
 
@@ -237,7 +237,7 @@ public class UrlCheckerThread extends Thread implements Serializable{
      * @return true if the check has been completed, false otherwise.
      */
     public boolean hasFinished( long waitIfNotFinished ) {
-        if ( ! finished ) {
+        if ( !finished ) {
             try {
                 if ( waitIfNotFinished > 0 ) {
                     if ( DEBUG ) {
@@ -252,7 +252,7 @@ public class UrlCheckerThread extends Thread implements Serializable{
                         }
                         Thread.currentThread().sleep( CHUNK_OF_TIME );
                         sum += CHUNK_OF_TIME;
-                    } while ( sum < waitIfNotFinished && ( ! finished ) );
+                    } while ( sum < waitIfNotFinished && ( !finished ) );
                 }
             } catch ( InterruptedException e ) {
                 e.printStackTrace();

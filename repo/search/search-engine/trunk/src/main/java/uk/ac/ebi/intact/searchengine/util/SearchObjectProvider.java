@@ -11,8 +11,7 @@ import java.util.Collection;
  * @author Anja Friedrichsen
  * @version $Id$
  */
-public interface SearchObjectProvider
-{
+public interface SearchObjectProvider {
 
     /**
      * This method searches the database for a specific object with the given accession number and object class. It is
@@ -20,10 +19,12 @@ public interface SearchObjectProvider
      *
      * @param ac       accession number of the object to be found
      * @param objClass class of the object to be found
+     *
      * @return the fetched IntAct object
+     *
      * @throws IntactException
      */
-    public SearchObject getSearchObject(String ac, String objClass) throws IntactException;
+    public SearchObject getSearchObject( String ac, String objClass ) throws IntactException;
 
     /**
      * This method selects all experiment (with ac, shortlabel, fullname , objclass, xref, alias and annotation) out of
@@ -32,10 +33,12 @@ public interface SearchObjectProvider
      * and annotation) the CvInteraction and the CvIdentification is selected for every experiment.
      *
      * @param sqlQuery an SQL query.
+     *
      * @return a collection containing all ExperimentSearchObjects to create a lucene index of
+     *
      * @throws IntactException
      */
-    public Collection<ExperimentSearchObject> getAllExperiments(String sqlQuery) throws IntactException;
+    public Collection<ExperimentSearchObject> getAllExperiments( String sqlQuery ) throws IntactException;
 
     /**
      * This method selects all Interactions (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out
@@ -44,10 +47,12 @@ public interface SearchObjectProvider
      * specific Interaction is fetched out of the database.
      *
      * @param sqlQuery an SQL query.
+     *
      * @return a collection of InteractionSearchObjects to be inserted into the lucene index
+     *
      * @throws IntactException
      */
-    public Collection<InteractionSearchObject> getAllInteractions(String sqlQuery) throws IntactException;
+    public Collection<InteractionSearchObject> getAllInteractions( String sqlQuery ) throws IntactException;
 
     /**
      * This method selects all Proteins (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
@@ -55,10 +60,12 @@ public interface SearchObjectProvider
      * single lucene document.
      *
      * @param sqlQuery an SQL query.
+     *
      * @return a collection containing all proteins to be indexed with lucene
+     *
      * @throws IntactException
      */
-    public Collection<ProteinSearchObject> getAllProteins(String sqlQuery) throws IntactException;
+    public Collection<ProteinSearchObject> getAllProteins( String sqlQuery ) throws IntactException;
 
     /**
      * This method selects all CvObjects (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
@@ -66,10 +73,12 @@ public interface SearchObjectProvider
      * lucene document.
      *
      * @param sqlQuery an SQL query.
+     *
      * @return a collection of CvSearchObject which are going to be indexed with lucene
+     *
      * @throws IntactException
      */
-    public Collection<CvSearchObject> getAllCvObjects(String sqlQuery) throws IntactException;
+    public Collection<CvSearchObject> getAllCvObjects( String sqlQuery ) throws IntactException;
 
     /**
      * This method selects all Biosources (with: ac, shortlabel, fullname, objclass, xref, alias and annotation) out of
@@ -77,8 +86,10 @@ public interface SearchObjectProvider
      * be a single lucene document.
      *
      * @param sqlQuery an SQL query.
+     *
      * @return a collection of BioSource, can be empty, never null.
+     *
      * @throws IntactException
      */
-    public Collection<BioSourceSearchObject> getAllBioSources(String sqlQuery) throws IntactException;
+    public Collection<BioSourceSearchObject> getAllBioSources( String sqlQuery ) throws IntactException;
 }

@@ -1,11 +1,11 @@
 package uk.ac.ebi.intact.searchengine.util.sql;
 
+import uk.ac.ebi.intact.annotation.PotentialThreat;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.searchengine.SearchEngineConstants;
 import uk.ac.ebi.intact.searchengine.lucene.model.*;
 import uk.ac.ebi.intact.searchengine.util.SearchObjectProvider;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.annotation.PotentialThreat;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -59,7 +59,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         }
     }
 
-    @PotentialThreat(description = "Contains direct SQL, including usage of Xref and Alias related tables")
+    @PotentialThreat( description = "Contains direct SQL, including usage of Xref and Alias related tables" )
     public Collection<ExperimentSearchObject> getAllExperiments( String sqlQuery ) throws IntactException {
         // collection to be returned
         Collection<ExperimentSearchObject> expSet = null;
@@ -166,7 +166,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return expSet;
     }
 
-    @PotentialThreat(description = "Contains direct SQL, including usage of Xref and Alias related tables")
+    @PotentialThreat( description = "Contains direct SQL, including usage of Xref and Alias related tables" )
     public Collection<InteractionSearchObject> getAllInteractions( String sqlQuery ) throws IntactException {
         // collection to be returned
         Collection<InteractionSearchObject> interactionSet = null;
@@ -270,7 +270,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return interactionSet;
     }
 
-    @PotentialThreat(description = "Contains direct SQL, including usage of Xref and Alias related tables")
+    @PotentialThreat( description = "Contains direct SQL, including usage of Xref and Alias related tables" )
     public Collection<ProteinSearchObject> getAllProteins( String sqlQuery ) throws IntactException {
         // collection with the set of protein searchObjects
         Collection<ProteinSearchObject> proteinSet = null;
@@ -363,7 +363,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return proteinSet;
     }
 
-    @PotentialThreat(description = "Contains direct SQL, including usage of Xref and Alias related tables")
+    @PotentialThreat( description = "Contains direct SQL, including usage of Xref and Alias related tables" )
     public Collection<CvSearchObject> getAllCvObjects( String sqlQuery ) throws IntactException {
         // collection with CvSearchObjects to be returned
         Collection<CvSearchObject> cvSet = null;
@@ -452,7 +452,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return cvSet;
     }
 
-    @PotentialThreat(description = "Contains direct SQL code, including Alias and Xref references")
+    @PotentialThreat( description = "Contains direct SQL code, including Alias and Xref references" )
     public Collection<BioSourceSearchObject> getAllBioSources( String sqlQuery ) throws IntactException {
         // collection with BioSourceSearchObjects to be returned
         Collection<BioSourceSearchObject> bioSoSet = null;
@@ -552,9 +552,9 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
      *
      * @return a Map with the fieldname for the lucene index as key and a Collection with the found entries as value
      */
-    private Map<String,Collection<String>> getResultMapBySQL( String sqlQuery ) throws IntactException {
+    private Map<String, Collection<String>> getResultMapBySQL( String sqlQuery ) throws IntactException {
         // map to be returned
-        Map<String,Collection<String>> results = null;
+        Map<String, Collection<String>> results = null;
         // collection to store the values for one key
         Collection<String> values;
         // key of the map
@@ -574,7 +574,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
             // checks if the resultset is empty,
             // if so return an EMPTY_LIST
             if ( resultSet.next() ) {
-                results = new HashMap<String,Collection<String>>();
+                results = new HashMap<String, Collection<String>>();
             } else {
                 return Collections.EMPTY_MAP;
             }
@@ -671,8 +671,7 @@ public class SqlSearchObjectProvider implements SearchObjectProvider {
         return cvso;
     }
 
-    private Connection getConnection()
-    {
+    private Connection getConnection() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 }
