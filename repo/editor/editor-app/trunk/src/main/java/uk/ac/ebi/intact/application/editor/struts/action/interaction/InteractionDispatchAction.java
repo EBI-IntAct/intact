@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.application.editor.business.EditUserI;
 import uk.ac.ebi.intact.application.editor.struts.action.CommonDispatchAction;
 import uk.ac.ebi.intact.application.editor.struts.view.experiment.ExperimentViewBean;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
+import uk.ac.ebi.intact.application.editor.struts.framework.util.AbstractEditViewBean;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Component;
@@ -123,11 +124,19 @@ public class InteractionDispatchAction extends CommonDispatchAction {
         // Do we have to return to the experiment editor?
         if (user.hasPreviousView()) {
 
-            // The experiment we will be going back to.
-            ExperimentViewBean expView = (ExperimentViewBean) user.peekPreviousView();
+            AbstractEditViewBean view = user.peekPreviousView();
 
-            // Update the experiment-Interaction view.
-            expView.updateInteractionRow((Interaction) user.getView().getAnnotatedObject());
+            if (ExperimentViewBean.class.isAssignableFrom(view.getClass())){
+
+                // The experiment we will be going back to.
+                ExperimentViewBean expView = (ExperimentViewBean) user.peekPreviousView();
+
+                // Update the experiment-Interaction view.
+                expView.updateInteractionRow((Interaction) user.getView().getAnnotatedObject());
+
+                log.info("The previous view of this Interaction was no an ExperimentView but a "
+                        + view.getClass().getSimpleName());
+            }
         }
         return forward;
     }
