@@ -24,15 +24,15 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/uniprotexport-maven-plugin/trunk</url>
     </scm>
 
+    <properties>
+       <maven.test.skip>true</maven.test.skip>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
-<!--
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
--->
-		<groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>hibernateconfig-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
