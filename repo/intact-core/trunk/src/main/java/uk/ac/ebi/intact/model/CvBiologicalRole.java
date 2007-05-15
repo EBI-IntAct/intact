@@ -27,7 +27,7 @@ public class CvBiologicalRole extends CvObject implements Editable {
     //////////////////////
     // Constants
 
-    public static final String UNSPECIFIED = "unspecified";
+    public static final String UNSPECIFIED = "unspecified role";
     public static final String UNSPECIFIED_PSI_REF = "MI:0499";    
 
     public static final String ENZYME = "enzyme";
