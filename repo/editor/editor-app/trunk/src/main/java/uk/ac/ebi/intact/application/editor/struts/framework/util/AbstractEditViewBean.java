@@ -443,23 +443,16 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
             if(!component.getInteractor().getAc().equals(cb.getInteractorAc())){
                 continue;
             }
-            if(!component.getCvComponentRole().getShortLabel().equals(cb.getRole())){
+            if(!component.getCvExperimentalRole().getShortLabel().equals(cb.getExpRole())){
                 continue;
             }
-            if(!component.getBiologicalRole().getShortLabel().equals(cb.getRole())){
+            if(!component.getCvBiologicalRole().getShortLabel().equals(cb.getBioRole())){
                 continue;
             }
             if(component.getBindingDomains().size() != cb.getFeatures().size()){
                 continue;
             }
             potentialComps.add(component);
-        }
-
-        if(potentialComps.size() == 0){
-            log.debug("No corresponding component found.");
-        }
-        if(potentialComps.size()>1){
-            log.debug("Several coresponding component found");
         }
 
         return potentialComps;

@@ -77,7 +77,7 @@ public class ComponentBean extends AbstractEditKeyBean {
     /**
      * The role of this Protein.
      */
-    private String myRole;
+    private String myExpRole;
 
     /**
      * The biological role of the protein
@@ -199,33 +199,34 @@ public class ComponentBean extends AbstractEditKeyBean {
     }
 
     public Component getComponent(boolean create) throws IntactException {
-        CvComponentRole newrole = getCvRole();
+        CvExperimentalRole newExpRole = getCvExpRole();
         CvBiologicalRole newBioRole = getCvBioRole();
         // Must have a non null role and interaction for a valid component
-        if ((newBioRole == null) || (newrole == null) || (myInteraction == null)) {
+        if((newBioRole == null) || (newExpRole == null) || (myInteraction == null)) {
+            log.info("newBioRole, newExpRole or myInteraction was null");
             return null;
         }
         // Component is null if this bean constructed from a Protein.
         if (myComponent == null) {
             myComponent = new Component(IntactContext.getCurrentInstance().getConfig().getInstitution(), myInteraction,
-                    myInteractor, newrole, newBioRole);
+                    myInteractor, newExpRole, newBioRole);
         }else if (myComponent.getAc() != null){
             ComponentDao componentDao = DaoProvider.getDaoFactory().getComponentDao();
             myComponent = componentDao.getByAc(myComponent.getAc());
-            myComponent.setCvComponentRole(newrole);
-            myComponent.setBiologicalRole(newBioRole);
+            myComponent.setCvExperimentalRole(newExpRole);
+            myComponent.setCvBiologicalRole(newBioRole);
         }
         
         myComponent.setStoichiometry(getStoichiometry());
 
-        myComponent.setCvComponentRole(newrole);
-        myComponent.setBiologicalRole(newBioRole);
+        myComponent.setCvExperimentalRole(newExpRole);
+        myComponent.setCvBiologicalRole(newBioRole);
 
         // The expressed in to set in the component.
         BioSource expressedIn = null;
         if (myExpressedIn != null) {
             BioSourceDao bioSourceDao = DaoProvider.getDaoFactory().getBioSourceDao();
-            expressedIn = (BioSource) bioSourceDao.getByShortLabel(myExpressedIn);
+            expressedIn = bioSourceDao.getByShortLabel(myExpressedIn);
         }
         myComponent.setExpressedIn(expressedIn);
 
@@ -266,12 +267,12 @@ public class ComponentBean extends AbstractEditKeyBean {
 
     // Read/Write properties.
 
-    public String getRole() {
-        return myRole;
+    public String getExpRole() {
+        return myExpRole;
     }
 
-    public void setRole(String role) {
-        myRole = EditorMenuFactory.normalizeMenuItem(role);
+    public void setExpRole(String role) {
+        myExpRole = EditorMenuFactory.normalizeMenuItem(role);
     }
 
     public String getBioRole() {
@@ -439,8 +440,8 @@ public class ComponentBean extends AbstractEditKeyBean {
         myInteraction = component.getInteraction();
         myInteractor = component.getInteractor();
         mySPAc = getSPAc();
-        myRole = component.getCvComponentRole().getShortLabel();
-        myBioRole = component.getBiologicalRole().getShortLabel();
+        myExpRole = component.getCvExperimentalRole().getShortLabel();
+        myBioRole = component.getCvBiologicalRole().getShortLabel();
         myStoichiometry = component.getStoichiometry();
         if(component.getInteractor() instanceof Protein){
             setType(PROTEIN);
@@ -525,16 +526,16 @@ public class ComponentBean extends AbstractEditKeyBean {
         return "";
     }
 
-    private CvComponentRole getCvRole() throws IntactException  {
-        CvObjectDao<CvComponentRole> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
-        if (myRole != null) {
-            return cvObjectDao.getByShortLabel(myRole);
+    private CvExperimentalRole getCvExpRole() throws IntactException  {
+        CvObjectDao<CvExperimentalRole> cvObjectDao = (CvObjectDao<CvExperimentalRole>) DaoProvider.getDaoFactory(CvExperimentalRole.class);
+        if (myExpRole != null) {
+            return cvObjectDao.getByShortLabel(myExpRole);
         }
         return null;
     }
 
     private CvBiologicalRole getCvBioRole() throws IntactException  {
-        CvObjectDao<CvBiologicalRole> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvBiologicalRole.class);
+        CvObjectDao<CvBiologicalRole> cvObjectDao = (CvObjectDao<CvBiologicalRole>) DaoProvider.getDaoFactory(CvBiologicalRole.class);
         if (myBioRole != null) {
             return cvObjectDao.getByShortLabel(myBioRole);
         }

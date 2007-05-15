@@ -91,7 +91,7 @@ public class ProteinDispatchAction extends AbstractEditorDispatchAction {
         assert cb != null;
 
         // Must define a role for the Protein.
-        if (cb.getRole() == null) {
+        if (cb.getExpRole() == null) {
             ActionMessages errors = new ActionMessages();
             errors.add("int.prot.role",
                     new ActionMessage("error.int.interact.edit.role"));

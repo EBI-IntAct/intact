@@ -24,12 +24,12 @@
 <c:set var="menus" value="${user.view.menus}"/>
 
 <%-- Menus to edit a Protein --%>
-<c:set var="rolelist" value="${menus['Role']}"/>
+<c:set var="rolelist" value="${menus['ExpRole']}"/>
 <%-- Menus to edit a Protein --%>
 <c:set var="biorolelist" value="${menus['BioRole']}"/>
 
 <%-- Menu to add a new Protein --%>
-<c:set var="rolelist_" value="${menus['Role_']}"/>
+<c:set var="rolelist_" value="${menus['ExpRole_']}"/>
 <%-- Menu to add a new Protein --%>
 <c:set var="biorolelist_" value="${menus['BioRole_']}"/>
 
@@ -243,7 +243,7 @@
                 <%-- View Data --%>
                 <c:if test="${edit}">
                     <td class="tableCell">
-                        <nested:write property="role"/>
+                        <nested:write property="expRole"/>
                     </td>
                     <td class="tableCell">
                         <nested:write property="bioRole"/>
@@ -258,7 +258,7 @@
 
                 <c:if test="${save}">
                     <td class="tableCell">
-                        <nested:select property="role" styleClass="inputRequired">
+                        <nested:select property="expRole" styleClass="inputRequired">
                             <html:options name="rolelist" />
                         </nested:select>
                     </td>
@@ -271,7 +271,7 @@
 
                 <c:if test="${saveNew or error}">
                     <td class="tableCell">
-                        <nested:select styleId="expRole" property="role" styleClass="inputRequired" onchange="updateBiologicalRole()">
+                        <nested:select styleId="expRole" property="expRole" styleClass="inputRequired" onchange="updateBiologicalRole()">
                             <html:options name="rolelist_" />
                         </nested:select>
                     </td>

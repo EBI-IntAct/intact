@@ -991,24 +991,24 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         myMenus.put(name, menuFactory.getMenu(name, mode));
 
         // Protein role edit menu
-        name = EditorMenuFactory.ROLE;
-        menu = menuFactory.getMenu(name, 0, CvComponentRole.NEUTRAL);
+        name = EditorMenuFactory.EXPROLE;
+        menu = menuFactory.getMenu(name, 0, CvExperimentalRole.NEUTRAL);
         myMenus.put(name, menu);
 
         // Protein role edit menu
         name = EditorMenuFactory.BIOROLE;
-        menu = menuFactory.getMenu(name, 0, CvComponentRole.UNSPECIFIED);
+        menu = menuFactory.getMenu(name, 0, CvBiologicalRole.UNSPECIFIED);
         myMenus.put(name, menu);
 
         // Add the Role add menu.
-        name = EditorMenuFactory.ROLE;
+        name = EditorMenuFactory.EXPROLE;
         menu = myMenus.get(name);
-        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvComponentRole.NEUTRAL));
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvExperimentalRole.NEUTRAL));
 
           // Add the Role add menu.
         name = EditorMenuFactory.BIOROLE;
         menu = myMenus.get(name);
-        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvComponentRole.UNSPECIFIED));
+        myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvBiologicalRole.UNSPECIFIED));
     }
 
     private void makeProteinBeans(Collection<Component> components) {
@@ -1278,9 +1278,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
             disconnectLinkedFeatures(cb);
 
             Component comp = cb.getComponent(true);
-            log.debug("newRole before update" + comp.getCvComponentRole().getShortLabel() );
             componentDao.saveOrUpdate(comp);
-            log.debug("newRole after update " + comp.getCvComponentRole().getShortLabel() );
 
             // Add features
             for (FeatureBean featureBean : cb.getFeaturesToAdd())

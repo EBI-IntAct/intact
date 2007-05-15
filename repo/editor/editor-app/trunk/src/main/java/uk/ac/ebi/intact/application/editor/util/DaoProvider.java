@@ -34,8 +34,8 @@ public class DaoProvider {
             }else if(CvCellType.class.isAssignableFrom(clazz)){
                 return DaoProvider.getDaoFactory().getCvObjectDao(CvCellType.class);
 
-            }else if(CvComponentRole.class.isAssignableFrom(clazz)){
-                return DaoProvider.getDaoFactory().getCvObjectDao(CvComponentRole.class);
+            }else if(CvExperimentalRole.class.isAssignableFrom(clazz)){
+                return DaoProvider.getDaoFactory().getCvObjectDao(CvExperimentalRole.class);
 
             }else if(CvDatabase.class.isAssignableFrom(clazz)){
                 return DaoProvider.getDaoFactory().getCvObjectDao(CvDatabase.class);
