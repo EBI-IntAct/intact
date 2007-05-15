@@ -15,12 +15,11 @@
  */
 package uk.ac.ebi.intact.psixml.upload.extensions;
 
-import psidev.psi.mi.xml.model.Entry;
+import psidev.psi.mi.xml.model.Interaction;
 import uk.ac.ebi.intact.psixml.tools.extension.ExtensionContext;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtension;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionContext;
 import uk.ac.ebi.intact.psixml.tools.extension.annotation.PsiExtensionMethod;
-import uk.ac.ebi.intact.psixml.tools.validator.ValidationMessage;
 
 /**
  * TODO comment this
@@ -28,21 +27,15 @@ import uk.ac.ebi.intact.psixml.tools.validator.ValidationMessage;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@PsiExtension(forClass = Entry.class)
-public class PsiTestExtension {
+@PsiExtension(forClass = Interaction.class)
+public class InteractionPsiExtension {
 
     @PsiExtensionContext
     ExtensionContext extensionContext;
 
     @PsiExtensionMethod
-    public void executeMyTestExtension() {
-        Entry entry = (Entry) extensionContext.getElement();
-
-        System.out.println("TEST EXTENSION, entry interactions: " + entry.getInteractions().size() +
-                           " - is valid: " + extensionContext.getProcessReport().getValidationReport().isValid());
-
-        for (ValidationMessage msg : extensionContext.getProcessReport().getValidationReport().getMessages()) {
-            System.out.println("\t" + msg);
-        }
+    public void debugInteraction() {
+        Interaction interaction = (Interaction) extensionContext.getElement();
+        System.out.println("\t\tInteraction: " + interaction.getNames().getShortLabel());
     }
 }
