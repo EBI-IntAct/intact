@@ -50,7 +50,7 @@ public class CvExperimentalRole extends CvObject implements Editable {
     public static final String ENZYME_TARGET = "enzyme target";
     public static final String ENZYME_TARGET_PSI_REF = "MI:0502";
 
-    public static final String UNSPECIFIED = "unspecified";
+    public static final String UNSPECIFIED = "unspecified role";
     public static final String UNSPECIFIED_PSI_REF = "MI:0499";
 
     public static final String SELF = "self";
