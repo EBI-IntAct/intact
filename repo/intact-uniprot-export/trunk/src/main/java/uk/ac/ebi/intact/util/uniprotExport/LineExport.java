@@ -507,19 +507,17 @@ public class LineExport {
      */
     protected final List<Interaction> getInteractions(final Protein protein) {
         Collection<Component> components = protein.getActiveInstances();
-        List<Interaction> interactions = new ArrayList<Interaction>(components.size());
-        Set<String> acs = new HashSet<String>(components.size());
+        int componentsSize = components.size();
+        List<Interaction> interactions = new ArrayList<Interaction>(componentsSize);
 
-        out.println("Found " + components.size() + " components for protein " + protein.getShortLabel()
+        out.println("Found " + componentsSize + " components for protein " + protein.getShortLabel()
                     + ". Starting to get the interactions from those components.");
 
         for (Component component : components) {
             Interaction interaction = component.getInteraction();
 
-            String ac = interaction.getAc();
-            if (!acs.contains(ac)) {
+            if (!interactions.contains(interaction)) {
                 interactions.add(interaction);
-                acs.add(ac);
             }
         }
 

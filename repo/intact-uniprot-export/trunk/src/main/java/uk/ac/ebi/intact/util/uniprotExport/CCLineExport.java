@@ -808,12 +808,10 @@ public class CCLineExport extends LineExport {
             idProcessed++;
 
             if ((idProcessed % 50) == 0) {
-                System.out.print("..." + idProcessed);
+                getOut().println("..." + idProcessed);
 
                 if ((idProcessed % 500) == 0) {
                     getOut().println("");
-                } else {
-                    System.out.flush();
                 }
             }
 
