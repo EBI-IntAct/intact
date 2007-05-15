@@ -91,7 +91,7 @@ public class EditorMenuFactory {
     /**
      * The name for the role list.
      */
-    public static final String ROLE = "Role";
+    public static final String EXPROLE = "ExpRole";
 
     public static final String BIOROLE = "BioRole";
 
@@ -154,7 +154,7 @@ public class EditorMenuFactory {
         ourNameToType.put(IDENTIFICATION, CvIdentification.class);
         ourNameToType.put(INTERACTION_TYPE, CvInteractionType.class);
         ourNameToType.put(EXPERIMENT, Experiment.class);
-        ourNameToType.put(ROLE, CvComponentRole.class);
+        ourNameToType.put(EXPROLE, CvExperimentalRole.class);
         ourNameToType.put(BIOROLE, CvBiologicalRole.class);
         ourNameToType.put(CELL, CvCellType.class);
         ourNameToType.put(TISSUE, CvTissue.class);
@@ -253,7 +253,7 @@ public class EditorMenuFactory {
      * @param key the name of the menu; the valid values are: {@link #TOPIC},
      * {@link #DATABASE}, {@link #QUALIFIER}, {@link #ORGANISM},
      * {@link #INTERACTION}, {@link #IDENTIFICATION}, {@link #INTERACTION_TYPE},
-     * {@link #EXPERIMENT} and {@link #ROLE}.
+     * {@link #EXPERIMENT} and {@link #EXPROLE}.
      * @param mode 0 for and edit menu and 1 for an add menu; the difference is
      * {@link #SELECT_LIST_ITEM} is added as the first entry for an add menu.
      * @return a list of menu items for given <code>name</code>.
