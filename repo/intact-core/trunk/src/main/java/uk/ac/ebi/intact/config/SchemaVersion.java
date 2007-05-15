@@ -35,7 +35,7 @@ public class SchemaVersion {
     // required version is 1.3.0 (build version should always be 0, as a change in the build
     // version should no break compatibility)
     private static final Integer REQUIRED_VERSION_MAJOR = 1;
-    private static final Integer REQUIRED_VERSION_MINOR = 3;
+    private static final Integer REQUIRED_VERSION_MINOR = 6;
     private static final Integer REQUIERD_VERSION_BUILD = 0;
 
     private static final Log log = LogFactory.getLog( SchemaVersion.class );
