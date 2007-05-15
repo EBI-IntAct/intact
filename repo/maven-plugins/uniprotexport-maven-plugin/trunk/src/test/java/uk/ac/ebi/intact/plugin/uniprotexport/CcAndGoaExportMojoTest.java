@@ -30,7 +30,7 @@ public class CcAndGoaExportMojoTest extends AbstractMojoTestCase
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/cc-goa-config.xml" );
 
         CcAndGoaExportMojo mojo = (CcAndGoaExportMojo) lookupMojo( "cc-goa", pluginXmlFile );
-        mojo.setUniprotLinksFile(new File(CcAndGoaExportMojoTest.class.getResource("/uniprotlinks.dat").getFile()));
+        mojo.setUniprotLinksFile(new File("/ebi/sp/pro4/intact/local/data/released/2007-04-25_maven/uniprotlinks.dat"));
 
         mojo.execute();
     }
