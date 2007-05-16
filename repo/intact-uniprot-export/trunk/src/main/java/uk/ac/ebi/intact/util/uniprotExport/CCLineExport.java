@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.util.uniprotExport;
 
 import org.apache.commons.cli.*;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
@@ -175,8 +176,7 @@ public class CCLineExport extends LineExport {
         XrefDao<InteractorXref> xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(InteractorXref.class);
         Collection<InteractorXref> xrefs = xrefDao.getByPrimaryId(primaryId, false);
 
-
-        Collection<ProteinImpl> proteins = new ArrayList();
+        Collection<ProteinImpl> proteins = new ArrayList<ProteinImpl>();
         for (InteractorXref xref : xrefs) {
             if ((null != database && database.equals(xref.getCvDatabase()))
                 ||
@@ -798,6 +798,9 @@ public class CCLineExport extends LineExport {
     public void generateCCLines(Collection<String> uniprotIDs) throws IntactException,
                                                                       SQLException, IOException {
 
+        getOut().println("NOTE: Forced autobegin transaction");
+        IntactContext.getCurrentInstance().getConfig().setAutoBeginTransaction(true);
+
         int count = uniprotIDs.size();
         int idProcessed = 0;
         int percentProteinProcessed;
@@ -1007,6 +1010,8 @@ public class CCLineExport extends LineExport {
 
                                 if (!eligibleExperiments.isEmpty()) {
 
+                                    getOut().println("\t\t Creating CC Lines");
+
                                     // CC Lines
                                     createCCLine(uniprotID_1, protein1,
                                                  uniprotID_2, protein2,
@@ -1019,6 +1024,8 @@ public class CCLineExport extends LineExport {
                                     //     -> should not happen as we deal here with binary interactions. though in
                                     //        case of self we could have that. eg. c-terminus and n-terminus at the
                                     //        same time.
+
+                                    getOut().println("\t\t Creating GO Lines");
 
                                     // GO lines
                                     createGoLine(uniprotID_1, protein1,
@@ -1039,8 +1046,14 @@ public class CCLineExport extends LineExport {
             fireDrLineProcessedEvent(new DrLineProcessedEvent(this, uniprot_ID));
             drProcessedCount++;
 
-            getOut().println("Committing transaction");
-            //IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            try {
+                getOut().println("Finished. Committing transaction");
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch (IntactTransactionException e) {
+                e.printStackTrace();
+            }
+
+            getOut().flush();
 
         } // i (all eligible uniprot IDs)
 
