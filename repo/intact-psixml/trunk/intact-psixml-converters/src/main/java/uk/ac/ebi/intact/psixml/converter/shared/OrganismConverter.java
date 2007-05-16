@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
+import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.Organism;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
@@ -13,15 +14,13 @@ import uk.ac.ebi.intact.psixml.converter.annotation.PsiConverter;
  * @version $Id$
  */
 @PsiConverter(intactObjectType = BioSource.class, psiObjectType = Organism.class)
-public class OrganismConverter extends AbstractIntactPsiConverter<BioSource,Organism>
-{
-    public OrganismConverter(IntactContext intactContext)
-    {
-        super(intactContext);
+public class OrganismConverter extends AbstractIntactPsiConverter<BioSource, Organism> {
+
+    public OrganismConverter(IntactContext intactContext, Entry parentEntry) {
+        super(intactContext, parentEntry);
     }
 
-    public BioSource psiToIntact(Organism psiObject)
-    {
+    public BioSource psiToIntact(Organism psiObject) {
         if (psiObject == null) return null;
 
         String shortLabel = psiObject.getNames().getShortLabel();
@@ -30,12 +29,11 @@ public class OrganismConverter extends AbstractIntactPsiConverter<BioSource,Orga
 
         BioSource bioSource = new BioSource(getInstitution(), shortLabel, String.valueOf(taxId));
         bioSource.setFullName(fullName);
-        
+
         return bioSource;
     }
 
-    public Organism intactToPsi(BioSource intactObject)
-    {
+    public Organism intactToPsi(BioSource intactObject) {
         throw new UnsupportedOperationException();
     }
 }

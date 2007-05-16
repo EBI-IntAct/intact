@@ -1,8 +1,8 @@
 package uk.ac.ebi.intact.psixml.converter;
 
+import psidev.psi.mi.xml.model.Entry;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * TODO comment this
@@ -10,22 +10,25 @@ import uk.ac.ebi.intact.model.IntactObject;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractIntactPsiConverter<I extends IntactObject, P> implements IntactPsiConverter<I,P>
-{
-    private IntactContext intactContext;
+public abstract class AbstractIntactPsiConverter<I, P> implements IntactPsiConverter<I, P> {
 
-    public AbstractIntactPsiConverter(IntactContext intactContext)
-    {
+    private IntactContext intactContext;
+    private Entry parentEntry;
+
+    public AbstractIntactPsiConverter(IntactContext intactContext, Entry parentEntry) {
         this.intactContext = intactContext;
+        this.parentEntry = parentEntry;
     }
 
-    protected IntactContext getIntactContext()
-    {
+    protected IntactContext getIntactContext() {
         return intactContext;
     }
 
-    protected Institution getInstitution()
-    {
+    protected Institution getInstitution() {
         return intactContext.getConfig().getInstitution();
+    }
+
+    public Entry getParentEntry() {
+        return parentEntry;
     }
 }
