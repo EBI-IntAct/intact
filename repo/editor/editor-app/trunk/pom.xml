@@ -40,7 +40,7 @@
             <plugin>
                 <groupId>uk.ac.ebi.intact.editor</groupId>
                 <artifactId>maven-editortopics-plugin</artifactId>
-                <!--<version>1.1-SNAPSHOT</version>-->
+                <version>1.1-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <phase>compile</phase>
