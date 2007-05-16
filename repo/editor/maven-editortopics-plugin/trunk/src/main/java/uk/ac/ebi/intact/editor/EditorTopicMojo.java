@@ -10,8 +10,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.artifact.Artifact;
-import uk.ac.ebi.intact.annotation.AnnotationUtil;
 import uk.ac.ebi.intact.annotation.EditorTopic;
+import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 
 import java.io.File;
 import java.io.IOException;
