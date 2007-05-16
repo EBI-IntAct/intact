@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface PsiExtensionMethod {
 
-    Phase phase() default Phase.AFTER_VALIDATION;
+    Phase phase() default Phase.PROCESS;
 
     boolean onlyExecuteIfValid() default false;
 }
