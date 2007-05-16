@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.psixml.tools;
 
 import uk.ac.ebi.intact.psixml.tools.validator.ValidationReport;
+import uk.ac.ebi.intact.psixml.tools.validator.ValidationReportImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,9 @@ public class PsiProcessReport {
     }
 
     public ValidationReport getValidationReport() {
+        if (validationReport == null) {
+            return new ValidationReportImpl();
+        }
         return validationReport;
     }
 
@@ -47,16 +51,6 @@ public class PsiProcessReport {
         }
 
         childReports.add(subReport);
-
-        if (validationReport != null) {
-            ValidationReport subValReport = subReport.getValidationReport();
-
-            if (subValReport != null) {
-                validationReport.mergeWith(subValReport);
-            }
-        } else {
-            validationReport = subReport.getValidationReport();
-        }
     }
 
     public List<PsiProcessReport> getChildReports() {

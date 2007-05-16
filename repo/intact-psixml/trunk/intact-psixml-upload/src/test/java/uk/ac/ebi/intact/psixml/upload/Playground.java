@@ -42,6 +42,6 @@ public class Playground {
 
 
         EntrySetProcessor processor = new EntrySetProcessor();
-        PsiProcessReport report = processor.process(entrySet);
+        PsiProcessReport report = processor.run(entrySet);
     }
 }

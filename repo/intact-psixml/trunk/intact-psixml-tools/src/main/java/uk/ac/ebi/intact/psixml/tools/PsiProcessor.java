@@ -23,6 +23,6 @@ package uk.ac.ebi.intact.psixml.tools;
  */
 public interface PsiProcessor<T> {
 
-    PsiProcessReport process(T elementToProcess) throws PsiProcessException;
+    PsiProcessReport run(T elementToProcess) throws PsiProcessException;
 
 }

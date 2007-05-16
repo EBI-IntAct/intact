@@ -36,7 +36,24 @@ public class EntryPsiExtension {
     ExtensionContext extensionContext;
 
     @PsiExtensionMethod(phase = Phase.BEFORE_VALIDATION)
-    public void printEntryInfo() {
+    public void printEntryPreValidation() {
+        Entry entry = (Entry) extensionContext.getElement();
+
+        System.out.println("Validating entry with " + entry.getExperiments().size() + " experiments");
+    }
+
+    @PsiExtensionMethod(phase = Phase.AFTER_VALIDATION)
+    public void printEntryPostValidation() {
+        boolean valid = extensionContext.getProcessReport().getValidationReport().isValid();
+        System.out.println("\tThis entry is: " + (valid ? "valid" : "invalid"));
+
+        for (ValidationMessage msg : extensionContext.getProcessReport().getValidationReport().getMessages()) {
+            System.out.println("\t\t" + msg);
+        }
+    }
+
+    @PsiExtensionMethod
+    public void printEntryProcessInfo() {
         Entry entry = (Entry) extensionContext.getElement();
 
         System.out.println("Processing entry with " + entry.getExperiments().size() + " experiments");
@@ -48,9 +65,5 @@ public class EntryPsiExtension {
 
         System.out.println("\tThis entry contains interactions: " + entry.getInteractions().size() +
                            " - is valid: " + extensionContext.getProcessReport().getValidationReport().isValid());
-
-        for (ValidationMessage msg : extensionContext.getProcessReport().getValidationReport().getMessages()) {
-            System.out.println("\t" + msg);
-        }
     }
 }

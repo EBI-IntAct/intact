@@ -36,22 +36,26 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
         // empty constructor
     }
 
-    public PsiProcessReport process(${modelClass.simpleName} model) throws PsiProcessException
+    public PsiProcessReport run(${modelClass.simpleName} model) throws PsiProcessException {
+        ValidationReport validationReport = validate(model);
+        return process(model, validationReport);
+    }
+
+    protected ValidationReport validate(${modelClass.simpleName} model) throws PsiProcessException
     {
         ValidationReportImpl validationReport = new ValidationReportImpl();
-        PsiProcessReport report = new PsiProcessReport(validationReport);
 
         if (model == null) {
-            return report;
+            return validationReport;
         }
 
 ## --------------------------------------
-## psi extensions - phase BEFORE_VALIDATION
+## VAL: psi extensions - phase BEFORE_VALIDATION
 ## --------------------------------------
-        executePsiExtensions(model, report, Phase.BEFORE_VALIDATION);
+        executePsiExtensions(model, new PsiProcessReport(validationReport), Phase.BEFORE_VALIDATION);
 
 ## --------------------------------------
-## null check validation
+## VAL: null check validation
 ## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.nullValidationFields} )
@@ -72,7 +76,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 #end
 
 ## --------------------------------------
-## validation of booleans
+## VAL: validation of booleans
 ## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.booleansWithMetadata} )
@@ -93,7 +97,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 
 ## --------------------------------------
-## validation of psi elements (not in collections)
+## VAL: validation of psi elements (not in collections)
 ## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.individuals} )
@@ -101,14 +105,14 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 #set ( $reportVarName = "subReport$velocityCount" )
 
         ${fieldMetadata.processorClassName} ${processorVarName} = new ${fieldMetadata.processorClassName}();
-        PsiProcessReport ${reportVarName} = ${processorVarName}.process(model.${fieldMetadata.getterMethodName}());
-        report.mergeWith($reportVarName);
-        
+        ValidationReport ${reportVarName} = ${processorVarName}.validate(model.${fieldMetadata.getterMethodName}());
+        validationReport.mergeWith($reportVarName);
+
 #end
 
 
 ## --------------------------------------
-## validation of names
+## VAL: validation of names
 ## --------------------------------------
 
 
@@ -133,7 +137,7 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 
 
 ## --------------------------------------
-## validation of collections
+## VAL: validation of collections
 ## --------------------------------------
 
 #foreach( $fieldMetadata in ${mcm.collections} )
@@ -170,22 +174,78 @@ public class ${type} implements PsiProcessor<${modelClass.simpleName}> {
 #if ( !${fieldMetadata.disabled} )
         for (${fieldMetadata.genericType.simpleName} elem : $colVarName) {
             ${fieldMetadata.processorClassName} processor = new ${fieldMetadata.processorClassName}();
-            PsiProcessReport subReport = processor.process(elem);
-            report.mergeWith(subReport);
+            ValidationReport subReport = processor.validate(elem);
+            validationReport.mergeWith(subReport);
         }
 #end
 #end
 
 
 ## --------------------------------------
-## psi extensions - phase AFTER_VALIDATION
+## VAL: psi extensions - phase AFTER_VALIDATION
 ## --------------------------------------
-        executePsiExtensions(model, report, Phase.AFTER_VALIDATION);
+        executePsiExtensions(model, new PsiProcessReport(validationReport), Phase.AFTER_VALIDATION);
 
 
+        return validationReport;
+    }
+
+
+## --------------------------------------
+## PROCESS METHOD
+## --------------------------------------
+    protected PsiProcessReport process(${modelClass.simpleName} model, ValidationReport validationReport) throws PsiProcessException
+    {
+        PsiProcessReport report = new PsiProcessReport(validationReport);
+
+        if (model == null) {
+            return report;
+        }
+
+## --------------------------------------
+## PROCESS: psi extensions - phase PROCESS
+## --------------------------------------
+        executePsiExtensions(model, report, Phase.PROCESS);
+
+## --------------------------------------
+## PROCESS: process psi elements (not collections)
+## --------------------------------------
+
+#foreach( $fieldMetadata in ${mcm.individuals} )
+#set ( $processorVarName = "processor$velocityCount" )
+#set ( $reportVarName = "subReport$velocityCount" )
+
+        ${fieldMetadata.processorClassName} ${processorVarName} = new ${fieldMetadata.processorClassName}();
+        PsiProcessReport ${reportVarName} = ${processorVarName}.process(model.${fieldMetadata.getterMethodName}(), validationReport);
+        report.mergeWith($reportVarName);
+
+#end
+
+## --------------------------------------
+## PROCESS: process of collections
+## --------------------------------------
+
+#foreach( $fieldMetadata in ${mcm.collections} )
+#set ( $colVarName = "col$velocityCount" )
+
+        Collection<${fieldMetadata.genericType.simpleName}> $colVarName = model.${fieldMetadata.getterMethodName}();
+
+        for (${fieldMetadata.genericType.simpleName} elem : $colVarName) {
+            ${fieldMetadata.processorClassName} processor = new ${fieldMetadata.processorClassName}();
+            PsiProcessReport subReport = processor.process(elem, validationReport);
+            report.mergeWith(subReport);
+        }
+
+#end
+
+## --------------------------------------
+## PROCESS: psi extensions - phase AFTER_PROCESS
+## --------------------------------------
+        executePsiExtensions(model, report, Phase.AFTER_PROCESS);
 
         return report;
     }
+
 
     private void executePsiExtensions(Object model, PsiProcessReport report, Phase currentPhase)
                                             throws PsiProcessException {
