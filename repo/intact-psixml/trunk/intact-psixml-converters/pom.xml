@@ -16,11 +16,42 @@
     <name>IntAct PSIXML :: Converters</name>
     <description>Data converters from PSI XML schema objects to the IntAct model objects</description>
 
+    <scm>
+        <connection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-converters/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-converters/trunk
+        </developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/intact-psixml-converters/trunk/</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.plugins</groupId>
+                <artifactId>dbtest-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
     <dependencies>
+        <!--
+        h2 database used for testing, with the cvs preloaded
+        -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.templates</groupId>
+            <artifactId>h2db-with-cv</artifactId>
+            <version>1.3-20070410</version>
+            <type>zip</type>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
         </dependency>
+
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml</artifactId>
