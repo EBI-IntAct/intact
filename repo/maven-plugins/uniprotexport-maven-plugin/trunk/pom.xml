@@ -10,7 +10,7 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>uniprotexport-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.3.3-SNAPSHOT</version>
+    <version>1.3.3</version>
 
     <name>Plugin - Export lines for uniprot</name>
     <description>
@@ -19,9 +19,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/uniprotexport-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/uniprotexport-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/uniprotexport-maven-plugin/trunk</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/uniprotexport-maven-plugin/tags/uniprotexport-maven-plugin-1.3.3</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/uniprotexport-maven-plugin/tags/uniprotexport-maven-plugin-1.3.3</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/uniprotexport-maven-plugin/tags/uniprotexport-maven-plugin-1.3.3</url>
     </scm>
 
     <properties>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>intact-uniprot-export</artifactId>
-            <version>1.1.2-SNAPSHOT</version>
+            <version>1.1.2</version>
         </dependency>
 
         <dependency>
