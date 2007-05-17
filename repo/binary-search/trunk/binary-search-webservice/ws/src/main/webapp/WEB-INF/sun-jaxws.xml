@@ -3,7 +3,7 @@
         xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime"
         version="2.0">
     <endpoint
-            name="BinarySearchService"
-            implementation="uk.ac.ebi.intact.binarysearch.ws.BinarySearchService"
+            name="BinarySearch"
+            implementation="uk.ac.ebi.intact.binarysearch.ws.BinarySearch"
             url-pattern="/binarysearch"/>
 </endpoints>
