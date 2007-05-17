@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:tns="http://ebi.ac.uk/intact/binarysearch/wsclient/generated"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.xmlsoap.org/wsdl/"
+             targetNamespace="http://ebi.ac.uk/intact/binarysearch/wsclient/generated"
+             name="BinarySearchServiceService">
+    <types>
+        <xsd:schema>
+            <xsd:import namespace="http://ebi.ac.uk/intact/binarysearch/wsclient/generated"
+                        schemaLocation="http://localhost:8080/ws-1.0-SNAPSHOT/binarysearch?xsd=1"></xsd:import>
+        </xsd:schema>
+    </types>
+    <message name="findBinaryInteractions">
+        <part name="parameters" element="tns:findBinaryInteractions"></part>
+    </message>
+    <message name="findBinaryInteractionsResponse">
+        <part name="parameters" element="tns:findBinaryInteractionsResponse"></part>
+    </message>
+    <message name="findBinaryInteractionsLimited">
+        <part name="parameters" element="tns:findBinaryInteractionsLimited"></part>
+    </message>
+    <message name="findBinaryInteractionsLimitedResponse">
+        <part name="parameters" element="tns:findBinaryInteractionsLimitedResponse"></part>
+    </message>
+    <portType name="BinarySearchService">
+        <operation name="findBinaryInteractions">
+            <input message="tns:findBinaryInteractions"></input>
+            <output message="tns:findBinaryInteractionsResponse"></output>
+        </operation>
+        <operation name="findBinaryInteractionsLimited">
+            <input message="tns:findBinaryInteractionsLimited"></input>
+            <output message="tns:findBinaryInteractionsLimitedResponse"></output>
+        </operation>
+    </portType>
+    <binding name="BinarySearchServicePortBinding" type="tns:BinarySearchService">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"></soap:binding>
+        <operation name="findBinaryInteractions">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+        </operation>
+        <operation name="findBinaryInteractionsLimited">
+            <soap:operation soapAction=""></soap:operation>
+            <input>
+                <soap:body use="literal"></soap:body>
+            </input>
+            <output>
+                <soap:body use="literal"></soap:body>
+            </output>
+        </operation>
+    </binding>
+    <service name="BinarySearchServiceService">
+        <port name="BinarySearchServicePort" binding="tns:BinarySearchServicePortBinding">
+            <soap:address location="http://localhost:8080/ws-1.0-SNAPSHOT/binarysearch"></soap:address>
+        </port>
+    </service>
+</definitions>
