@@ -1,0 +1,61 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.binarysearch.ws</groupId>
+        <artifactId>binary-search-webservice</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>wsclient</artifactId>
+    <packaging>war</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>IntAct Binary Search :: Web Service :: WS Client</name>
+    <description>A web service interface to retrieve data from intact</description>
+
+    <scm>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/search/trunk/binary-search-webservice/wsclient</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/trunk/binary-search-webservice/wsclient
+        </developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/binary-search/trunk/binary-search-webservice-ws/wsclient</url>
+    </scm>
+
+    <properties>
+        <maven.test.failure.ignore>true</maven.test.failure.ignore>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>1.0-beta-1-SNAPSHOT</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>xfire</groupId>
+                        <artifactId>xfire-jsr181-api</artifactId>
+                        <version>1.0-M1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/binary-search/binary-search-webservice/${artifactId}</url>
+        </site>
+    </distributionManagement>
+
+</project>
