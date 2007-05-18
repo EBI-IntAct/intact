@@ -16,13 +16,10 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.Entry;
+import psidev.psi.mi.xml.model.InteractionType;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * TODO comment this
@@ -30,30 +27,23 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entry> {
+public class InteractionTypeConverter extends AbstractIntactPsiConverter<CvInteractionType, InteractionType> {
 
-    public EntryConverter(IntactContext intactContext) {
-        super(intactContext, null);
+    public InteractionTypeConverter(IntactContext intactContext, Entry parentEntry) {
+        super(intactContext, parentEntry);
     }
 
-    public IntactEntry psiToIntact(Entry psiObject) {
+    public CvInteractionType psiToIntact(InteractionType psiObject) {
+        String shortLabel = psiObject.getNames().getShortLabel();
+        String fullName = psiObject.getNames().getFullName();
 
-        Collection<Interaction> interactions = new ArrayList<Interaction>();
+        CvInteractionType cvIntType = new CvInteractionType(getInstitution(), shortLabel);
+        cvIntType.setFullName(fullName);
 
-        InteractionConverter interactionConverter = new InteractionConverter(getIntactContext(), psiObject);
-
-        for (psidev.psi.mi.xml.model.Interaction psiInteraction : psiObject.getInteractions()) {
-            Interaction interaction = interactionConverter.psiToIntact(psiInteraction);
-            interactions.add(interaction);
-        }
-
-        IntactEntry ientry = new IntactEntry(interactions);
-
-        return ientry;
+        return cvIntType;
     }
 
-    public Entry intactToPsi(IntactEntry intactObject) {
+    public InteractionType intactToPsi(CvInteractionType intactObject) {
         throw new UnsupportedOperationException();
     }
-
 }
