@@ -134,7 +134,7 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab-search</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.1.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -152,7 +152,7 @@
         <dependency>
             <groupId>com.sun.xml.stream</groupId>
             <artifactId>sjsxp</artifactId>
-            <version>SNAPSHOT</version>
+            <version>INTERNAL</version>
         </dependency>
         <dependency>
             <groupId>javax.annotation</groupId>
