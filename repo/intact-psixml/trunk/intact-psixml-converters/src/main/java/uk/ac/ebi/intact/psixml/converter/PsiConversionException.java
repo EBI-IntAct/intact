@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.converter.model;
-
-import uk.ac.ebi.intact.model.Interaction;
-
-import java.util.Collection;
+package uk.ac.ebi.intact.psixml.converter;
 
 /**
  * TODO comment this
@@ -25,22 +21,20 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactEntry {
+public class PsiConversionException extends RuntimeException {
 
-    private Collection<Interaction> interactions;
-
-    public IntactEntry() {
+    public PsiConversionException() {
     }
 
-    public IntactEntry(Collection<Interaction> interactions) {
-        this.interactions = interactions;
+    public PsiConversionException(Throwable cause) {
+        super(cause);
     }
 
-    public Collection<Interaction> getInteractions() {
-        return interactions;
+    public PsiConversionException(String message) {
+        super(message);
     }
 
-    public void setInteractions(Collection<Interaction> interactions) {
-        this.interactions = interactions;
+    public PsiConversionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

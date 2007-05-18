@@ -20,7 +20,7 @@ import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
 
 import java.io.InputStream;
@@ -46,10 +46,11 @@ public class EntryConverterTest {
 
         IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
 
-        System.out.println("Experiments: " + intactEntry.getExperiments().size());
+        System.out.println("Interactions: " + intactEntry.getInteractions().size());
 
-        for (Experiment exp : intactEntry.getExperiments()) {
-            System.out.println(exp);
+        for (Interaction inter : intactEntry.getInteractions()) {
+            System.out.println(inter);
+            System.out.println("\tExperiment: " + inter.getExperiments().iterator().next());
         }
 
     }
