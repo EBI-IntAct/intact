@@ -27,8 +27,11 @@
     <description>A web service interface to retrieve data from intact</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/search/trunk/binary-search-webservice/ws</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/trunk/binary-search-webservice/ws
+        <connection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/search/trunk/binary-search-webservice/ws
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/binary-search/trunk/binary-search-webservice/ws
         </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/binary-search/trunk/binary-search-webservice-ws/ws</url>
     </scm>
@@ -51,18 +54,6 @@
             </build>
 
             <dependencies>
-                <dependency>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                    <version>1.1</version>
-                    <type>jar</type>
-                </dependency>
-                <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                    <version>1.2.13</version>
-                    <type>jar</type>
-                </dependency>
                 <dependency>
                     <groupId>com.sun.xml.bind</groupId>
                     <artifactId>jaxb-impl</artifactId>
@@ -144,17 +135,20 @@
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab-search</artifactId>
             <version>1.2-SNAPSHOT</version>
-        </dependency>
-
-        <!-- This dep overrides a dependeny of psimitab-search -->
-        <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psimitab</artifactId>
-            <version>1.0-beta6-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- JAX-WS -->
-        
+
         <dependency>
             <groupId>com.sun.xml.stream</groupId>
             <artifactId>sjsxp</artifactId>
