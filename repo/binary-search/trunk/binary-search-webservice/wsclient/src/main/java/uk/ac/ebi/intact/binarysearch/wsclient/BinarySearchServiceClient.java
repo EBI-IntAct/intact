@@ -15,12 +15,11 @@
  */
 package uk.ac.ebi.intact.binarysearch.wsclient;
 
-import uk.ac.ebi.intact.binarysearch.wsclient.generated.BinarySearchService;
 import uk.ac.ebi.intact.binarysearch.wsclient.generated.BinarySearch;
+import uk.ac.ebi.intact.binarysearch.wsclient.generated.BinarySearchService;
 import uk.ac.ebi.intact.binarysearch.wsclient.generated.SearchResult;
 
 import javax.xml.namespace.QName;
-import javax.jws.WebParam;
 import java.net.URL;
 
 /**
@@ -40,38 +39,31 @@ public class BinarySearchServiceClient {
     private BinarySearch binarySearch;
 
 
-    public BinarySearchServiceClient()
-    {
+    public BinarySearchServiceClient() {
 
-        try
-        {
+        try {
             BinarySearchService searchService = new BinarySearchService(new URL(DEFAULT_URL), new QName(QNAME_TARGET_NAMESPACE, QNAME_PORT_NAME));
             this.binarySearch = searchService.getBinarySearchPort();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     } // constructor
 
-    public BinarySearchServiceClient(String searchWsUrl)
-    {
+    public BinarySearchServiceClient(String searchWsUrl) {
 
-        try
-        {
+        try {
             BinarySearchService searchService = new BinarySearchService(new URL(searchWsUrl), new QName(QNAME_TARGET_NAMESPACE, QNAME_PORT_NAME));
             this.binarySearch = searchService.getBinarySearchPort();
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public BinarySearch getBinarySearchPort()
-    {
+    public BinarySearch getBinarySearchPort() {
         return binarySearch;
     }
 
@@ -81,5 +73,28 @@ public class BinarySearchServiceClient {
 
     public SearchResult findBinaryInteractionsLimited(String query, Integer firstResult, Integer maxResults) {
         return binarySearch.findBinaryInteractionsLimited(query, firstResult, maxResults);
+    }
+
+    public SearchResult findBinaryInteractionsByIdentifiers(String... identifiers) {
+        String query = "identifiers:" + arrayElementsToOR(identifiers);
+        return binarySearch.findBinaryInteractions(query);
+    }
+
+
+    private static String arrayElementsToOR(String... elements) {
+        return arrayElementsToString(" OR ", elements);
+    }
+
+    private static String arrayElementsToString(String separator, String[] elements) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < elements.length; i++) {
+            if (i > 0) {
+                sb.append(separator);
+            }
+            sb.append(elements[i]);
+        }
+
+        return sb.toString();
     }
 }
