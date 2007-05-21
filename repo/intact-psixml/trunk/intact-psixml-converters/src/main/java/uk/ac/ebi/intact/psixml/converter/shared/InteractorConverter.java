@@ -15,10 +15,8 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Organism;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
@@ -32,8 +30,8 @@ import uk.ac.ebi.intact.util.Crc64;
  */
 public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, psidev.psi.mi.xml.model.Interactor> {
 
-    public InteractorConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+    public InteractorConverter(Institution institution) {
+        super(institution);
     }
 
     public Interactor psiToIntact(psidev.psi.mi.xml.model.Interactor psiObject) {
@@ -42,7 +40,7 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
 
         Interactor interactor = newInteractorAccordingToType(psiObject.getOrganism(), shortLabel, psiObject.getInteractorType());
         ConverterUtils.populateNames(psiObject.getNames(), interactor);
-        ConverterUtils.populateXref(psiObject.getXref(), interactor, new XrefConverter<InteractorXref>(getIntactContext(), getParentEntry(), InteractorXref.class));
+        ConverterUtils.populateXref(psiObject.getXref(), interactor, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
 
         // sequence
         if (sequence != null && interactor instanceof Polymer) {
@@ -59,8 +57,8 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
     }
 
     protected Interactor newInteractorAccordingToType(Organism psiOrganism, String shortLabel, InteractorType psiInteractorType) {
-        BioSource organism = new OrganismConverter(getIntactContext(), getParentEntry()).psiToIntact(psiOrganism);
-        CvInteractorType interactorType = new InteractorTypeConverter(getIntactContext(), getParentEntry()).psiToIntact(psiInteractorType);
+        BioSource organism = new OrganismConverter(getInstitution()).psiToIntact(psiOrganism);
+        CvInteractorType interactorType = new InteractorTypeConverter(getInstitution()).psiToIntact(psiInteractorType);
 
         String interactorTypeLabel = psiInteractorType.getNames().getShortLabel();
 

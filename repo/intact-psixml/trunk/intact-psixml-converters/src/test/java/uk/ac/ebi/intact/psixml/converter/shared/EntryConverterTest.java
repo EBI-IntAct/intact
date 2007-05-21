@@ -34,14 +34,17 @@ import java.io.InputStream;
  */
 public class EntryConverterTest {
 
+    private static final String INTACT_FILE = "/xml/intact_2006-07-19.xml";
+    private static final String MINT_FILE = "/xml/mint_2006-07-18.xml";
+
     @Test
     public void entryToIntactDefault() throws Exception {
 
-        InputStream is = EntryConverterTest.class.getResourceAsStream("/xml/intact_2006-07-19.xml");
+        InputStream is = EntryConverterTest.class.getResourceAsStream(MINT_FILE);
         PsimiXmlReader reader = new PsimiXmlReader();
         EntrySet entrySet = reader.read(is);
 
-        EntryConverter entryConverter = new EntryConverter(IntactContext.getCurrentInstance());
+        EntryConverter entryConverter = new EntryConverter(IntactContext.getCurrentInstance().getInstitution());
 
         Entry psiEntry = entrySet.getEntries().iterator().next();
 

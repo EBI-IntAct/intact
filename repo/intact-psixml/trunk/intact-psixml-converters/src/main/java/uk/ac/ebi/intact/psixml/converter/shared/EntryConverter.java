@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.Entry;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
@@ -32,15 +32,15 @@ import java.util.Collection;
  */
 public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entry> {
 
-    public EntryConverter(IntactContext intactContext) {
-        super(intactContext, null);
+    public EntryConverter(Institution institution) {
+        super(institution);
     }
 
     public IntactEntry psiToIntact(Entry psiObject) {
 
         Collection<Interaction> interactions = new ArrayList<Interaction>();
 
-        InteractionConverter interactionConverter = new InteractionConverter(getIntactContext(), psiObject);
+        InteractionConverter interactionConverter = new InteractionConverter(getInstitution());
 
         for (psidev.psi.mi.xml.model.Interaction psiInteraction : psiObject.getInteractions()) {
             Interaction interaction = interactionConverter.psiToIntact(psiInteraction);

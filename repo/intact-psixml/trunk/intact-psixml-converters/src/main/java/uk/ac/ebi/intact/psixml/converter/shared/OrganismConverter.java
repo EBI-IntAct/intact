@@ -1,9 +1,8 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.Organism;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.annotation.PsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
@@ -17,8 +16,8 @@ import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 @PsiConverter(intactObjectType = BioSource.class, psiObjectType = Organism.class)
 public class OrganismConverter extends AbstractIntactPsiConverter<BioSource, Organism> {
 
-    public OrganismConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+    public OrganismConverter(Institution institution) {
+        super(institution);
     }
 
     public BioSource psiToIntact(Organism psiObject) {

@@ -15,10 +15,10 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
+import psidev.psi.mi.xml.model.BiologicalRole;
 import psidev.psi.mi.xml.model.ExperimentalRole;
+import psidev.psi.mi.xml.model.Names;
 import psidev.psi.mi.xml.model.Participant;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
@@ -30,14 +30,14 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  */
 public class ParticipantConverter extends AbstractIntactPsiConverter<Component, Participant> {
 
-    public ParticipantConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+    public ParticipantConverter(Institution institution) {
+        super(institution);
     }
 
     public Component psiToIntact(Participant psiObject) {
-        Interaction interaction = new InteractionConverter(getIntactContext(), getParentEntry()).psiToIntact(psiObject.getInteraction());
+        Interaction interaction = new InteractionConverter(getInstitution()).psiToIntact(psiObject.getInteraction());
 
-        Component component = newComponent(getIntactContext(), psiObject, interaction, getParentEntry());
+        Component component = newComponent(getInstitution(), psiObject, interaction);
 
         return component;
     }
@@ -52,19 +52,36 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
     protected CvExperimentalRole getExperimentalRole(Participant psiObject) {
         ExperimentalRole role = psiObject.getExperimentalRoles().iterator().next();
 
-        return new ExperimentalRoleConverter(getIntactContext(), getParentEntry()).psiToIntact(role);
+        return new ExperimentalRoleConverter(getInstitution()).psiToIntact(role);
     }
 
-    static Component newComponent(IntactContext context, Participant psiObject, Interaction interaction, Entry parentEntry) {
-        Interactor interactor = new InteractorConverter(context, parentEntry).psiToIntact(psiObject.getInteractor());
-        CvBiologicalRole biologicalRole = new BiologicalRoleConverter(context, parentEntry).psiToIntact(psiObject.getBiologicalRole());
+    static Component newComponent(Institution institution, Participant participant, Interaction interaction) {
+        Interactor interactor = new InteractorConverter(institution).psiToIntact(participant.getInteractor());
+
+        BiologicalRole psiBioRole = participant.getBiologicalRole();
+        if (psiBioRole == null) {
+            psiBioRole = unspecifiedBiologicalRole();
+        }
+        CvBiologicalRole biologicalRole = new BiologicalRoleConverter(institution).psiToIntact(psiBioRole);
 
         // only the first experimental role
-        ExperimentalRole role = psiObject.getExperimentalRoles().iterator().next();
-        CvExperimentalRole experimentalRole = new ExperimentalRoleConverter(context, parentEntry).psiToIntact(role);
+        ExperimentalRole role = participant.getExperimentalRoles().iterator().next();
+        CvExperimentalRole experimentalRole = new ExperimentalRoleConverter(institution).psiToIntact(role);
 
-        Component component = new Component(context.getInstitution(), interaction, interactor, experimentalRole, biologicalRole);
+        Component component = new Component(institution, interaction, interactor, experimentalRole, biologicalRole);
 
         return component;
+    }
+
+    static BiologicalRole unspecifiedBiologicalRole() {
+        BiologicalRole role = new BiologicalRole();
+
+        Names names = new Names();
+        names.setShortLabel("unspeficied role");
+        names.setFullName("unspecified role");
+
+        role.setNames(names);
+
+        return role;
     }
 }

@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractionType;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractionType;
+import uk.ac.ebi.intact.model.Institution;
 
 /**
  * TODO comment this
@@ -28,8 +27,8 @@ import uk.ac.ebi.intact.model.CvInteractionType;
  */
 public class InteractionTypeConverter extends AbstractCvConverter<CvInteractionType, InteractionType> {
 
-    public InteractionTypeConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, CvInteractionType.class, InteractionType.class);
+    public InteractionTypeConverter(Institution institution) {
+        super(institution, CvInteractionType.class, InteractionType.class);
     }
 
 }
