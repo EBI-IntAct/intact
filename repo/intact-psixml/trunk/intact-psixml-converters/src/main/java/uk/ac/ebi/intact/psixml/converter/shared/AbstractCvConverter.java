@@ -41,6 +41,7 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
 
     public C psiToIntact(T psiObject) {
         C cv = newCvInstance(intactCvClass);
+        cv.setOwner(getInstitution());
         ConverterUtils.populateNames(psiObject.getNames(), cv);
         ConverterUtils.populateXref(psiObject.getXref(), cv, new XrefConverter<CvObjectXref>(getInstitution(), CvObjectXref.class));
 
