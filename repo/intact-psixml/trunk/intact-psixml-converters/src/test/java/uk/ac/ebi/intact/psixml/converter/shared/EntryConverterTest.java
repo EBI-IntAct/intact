@@ -20,6 +20,7 @@ import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
@@ -58,6 +59,15 @@ public class EntryConverterTest {
             for (Xref xref : inter.getXrefs()) {
                 System.out.println("\t\tXref: " + xref);
             }
+
+            CvInteractionType intType = inter.getCvInteractionType();
+            if (intType != null) {
+                System.out.println("\t\tCV Interaction type: " + intType);
+                for (Xref xref : intType.getXrefs()) {
+                    System.out.println("\t\t\tXref: " + xref);
+                }
+            }
+
             System.out.println("\tExperiment: " + inter.getExperiments().iterator().next());
         }
 
