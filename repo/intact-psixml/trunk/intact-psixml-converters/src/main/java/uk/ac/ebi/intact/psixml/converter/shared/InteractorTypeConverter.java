@@ -19,7 +19,6 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractorType;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
  * TODO comment this
@@ -27,23 +26,10 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractorTypeConverter extends AbstractIntactPsiConverter<CvInteractorType, InteractorType> {
+public class InteractorTypeConverter extends AbstractCvConverter<CvInteractorType, InteractorType> {
 
     public InteractorTypeConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+        super(intactContext, CvInteractorType.class, InteractorType.class);
     }
 
-    public CvInteractorType psiToIntact(InteractorType psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
-
-        CvInteractorType cvIntType = new CvInteractorType(getInstitution(), shortLabel);
-        cvIntType.setFullName(fullName);
-
-        return cvIntType;
-    }
-
-    public InteractorType intactToPsi(CvInteractorType intactObject) {
-        throw new UnsupportedOperationException();
-    }
 }

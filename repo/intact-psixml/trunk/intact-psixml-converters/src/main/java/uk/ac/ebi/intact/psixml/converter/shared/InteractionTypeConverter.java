@@ -19,7 +19,6 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractionType;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
  * TODO comment this
@@ -27,23 +26,10 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionTypeConverter extends AbstractIntactPsiConverter<CvInteractionType, InteractionType> {
+public class InteractionTypeConverter extends AbstractCvConverter<CvInteractionType, InteractionType> {
 
     public InteractionTypeConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+        super(intactContext, CvInteractionType.class, InteractionType.class);
     }
 
-    public CvInteractionType psiToIntact(InteractionType psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
-
-        CvInteractionType cvIntType = new CvInteractionType(getInstitution(), shortLabel);
-        cvIntType.setFullName(fullName);
-
-        return cvIntType;
-    }
-
-    public InteractionType intactToPsi(CvInteractionType intactObject) {
-        throw new UnsupportedOperationException();
-    }
 }

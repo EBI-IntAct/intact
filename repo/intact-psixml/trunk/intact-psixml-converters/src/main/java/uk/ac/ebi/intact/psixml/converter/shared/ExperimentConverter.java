@@ -17,11 +17,9 @@ package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvIdentification;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 
 /**
  * TODO comment this
@@ -37,7 +35,6 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
 
     public Experiment psiToIntact(ExperimentDescription psiObject) {
         String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
 
         Organism hostOrganism = psiObject.getHostOrganisms().iterator().next();
         BioSource bioSource = new OrganismConverter(getIntactContext(), getParentEntry()).psiToIntact(hostOrganism);
@@ -49,7 +46,8 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
         CvIdentification cvParticipantIdentification = new ParticipantIdentificationMethodConverter(getIntactContext(), getParentEntry()).psiToIntact(pim);
 
         Experiment experiment = new Experiment(getInstitution(), shortLabel, bioSource);
-        experiment.setFullName(fullName);
+        ConverterUtils.populateNames(psiObject.getNames(), experiment);
+        ConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getIntactContext(), getParentEntry(), ExperimentXref.class));
         experiment.setCvInteraction(cvInteractionDetectionMethod);
         experiment.setCvIdentification(cvParticipantIdentification);
 

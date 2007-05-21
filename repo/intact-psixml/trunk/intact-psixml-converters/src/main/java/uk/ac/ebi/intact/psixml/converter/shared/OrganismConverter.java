@@ -6,6 +6,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.annotation.PsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 
 /**
  * TODO comment this
@@ -24,11 +25,10 @@ public class OrganismConverter extends AbstractIntactPsiConverter<BioSource, Org
         if (psiObject == null) return null;
 
         String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
         int taxId = psiObject.getNcbiTaxId();
 
         BioSource bioSource = new BioSource(getInstitution(), shortLabel, String.valueOf(taxId));
-        bioSource.setFullName(fullName);
+        ConverterUtils.populateNames(psiObject.getNames(), bioSource);
 
         return bioSource;
     }

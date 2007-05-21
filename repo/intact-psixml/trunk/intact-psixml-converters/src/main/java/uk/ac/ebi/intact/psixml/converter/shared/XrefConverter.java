@@ -1,0 +1,80 @@
+/*
+ * Copyright 2001-2007 The European Bioinformatics Institute.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package uk.ac.ebi.intact.psixml.converter.shared;
+
+import psidev.psi.mi.xml.model.DbReference;
+import psidev.psi.mi.xml.model.Entry;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+
+/**
+ * TODO comment this
+ *
+ * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @version $Id$
+ */
+public class XrefConverter<X extends Xref> extends AbstractIntactPsiConverter<X, DbReference> {
+
+    private Class<X> xrefClass;
+
+    public XrefConverter(IntactContext intactContext, Entry parentEntry, Class<X> xrefType) {
+        super(intactContext, parentEntry);
+        this.xrefClass = xrefType;
+    }
+
+    public X psiToIntact(DbReference psiObject) {
+        String primaryId = psiObject.getId();
+        String secondaryId = psiObject.getSecondary();
+        String dbRelease = psiObject.getVersion();
+
+        String db = psiObject.getDb();
+        CvDatabase cvDb = new CvDatabase(getInstitution(), db);
+
+        String xrefType = psiObject.getRefType();
+        CvXrefQualifier xrefQual = null;
+
+        if (xrefType != null) {
+            xrefQual = new CvXrefQualifier(getInstitution(), xrefType);
+        }
+
+        X xref = newXrefInstance(xrefClass, cvDb, primaryId, secondaryId, dbRelease, xrefQual);
+        return xref;
+    }
+
+    public DbReference intactToPsi(Xref intactObject) {
+        throw new UnsupportedOperationException();
+    }
+
+    private static <X extends Xref> X newXrefInstance(Class<X> xrefClass, CvDatabase db, String primaryId, String secondaryId, String dbRelease, CvXrefQualifier cvXrefQual) {
+        X xref = null;
+        try {
+            xref = xrefClass.newInstance();
+            xref.setCvDatabase(db);
+            xref.setPrimaryId(primaryId);
+            xref.setSecondaryId(secondaryId);
+            xref.setDbRelease(dbRelease);
+            xref.setCvXrefQualifier(cvXrefQual);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return xref;
+    }
+
+}

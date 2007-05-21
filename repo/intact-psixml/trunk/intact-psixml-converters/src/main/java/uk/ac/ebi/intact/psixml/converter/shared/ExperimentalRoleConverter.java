@@ -19,7 +19,6 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.ExperimentalRole;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvExperimentalRole;
-import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
  * TODO comment this
@@ -27,23 +26,10 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ExperimentalRoleConverter extends AbstractIntactPsiConverter<CvExperimentalRole, ExperimentalRole> {
+public class ExperimentalRoleConverter extends AbstractCvConverter<CvExperimentalRole, ExperimentalRole> {
 
     public ExperimentalRoleConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+        super(intactContext, CvExperimentalRole.class, ExperimentalRole.class);
     }
 
-    public CvExperimentalRole psiToIntact(ExperimentalRole psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
-
-        CvExperimentalRole cv = new CvExperimentalRole(getInstitution(), shortLabel);
-        cv.setFullName(fullName);
-
-        return cv;
-    }
-
-    public ExperimentalRole intactToPsi(CvExperimentalRole intactObject) {
-        throw new UnsupportedOperationException();
-    }
 }

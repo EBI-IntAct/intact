@@ -21,6 +21,7 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
 
 import java.io.InputStream;
@@ -50,6 +51,10 @@ public class EntryConverterTest {
 
         for (Interaction inter : intactEntry.getInteractions()) {
             System.out.println(inter);
+
+            for (Xref xref : inter.getXrefs()) {
+                System.out.println("\t\tXref: " + xref);
+            }
             System.out.println("\tExperiment: " + inter.getExperiments().iterator().next());
         }
 
