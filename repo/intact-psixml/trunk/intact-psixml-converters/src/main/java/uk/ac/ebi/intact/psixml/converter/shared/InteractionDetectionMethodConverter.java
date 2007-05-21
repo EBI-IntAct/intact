@@ -19,7 +19,6 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractionDetectionMethod;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
  * TODO comment this
@@ -27,23 +26,9 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionDetectionMethodConverter extends AbstractIntactPsiConverter<CvInteraction, InteractionDetectionMethod> {
+public class InteractionDetectionMethodConverter extends AbstractCvConverter<CvInteraction, InteractionDetectionMethod> {
 
     public InteractionDetectionMethodConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
-    }
-
-    public CvInteraction psiToIntact(InteractionDetectionMethod psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
-
-        CvInteraction intDetMethod = new CvInteraction(getInstitution(), shortLabel);
-        intDetMethod.setFullName(fullName);
-
-        return intDetMethod;
-    }
-
-    public InteractionDetectionMethod intactToPsi(CvInteraction intactObject) {
-        throw new UnsupportedOperationException();
+        super(intactContext, CvInteraction.class, InteractionDetectionMethod.class);
     }
 }

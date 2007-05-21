@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,7 +40,6 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
 
     public Interaction psiToIntact(psidev.psi.mi.xml.model.Interaction psiObject) {
         String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
 
         Collection<Experiment> experiments = getExperiments(psiObject);
 
@@ -50,7 +50,8 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
         CvInteractorType interactorType = getInteractorType(psiObject);
 
         Interaction interaction = new InteractionImpl(experiments, interactionType, interactorType, shortLabel, getInstitution());
-        interaction.setFullName(fullName);
+        ConverterUtils.populateNames(psiObject.getNames(), interaction);
+        ConverterUtils.populateXref(psiObject.getXref(), interaction, new XrefConverter<InteractorXref>(getIntactContext(), getParentEntry(), InteractorXref.class));
 
         // components, created after the interaction, as we need the interaction to create them
         Collection<Component> components = getComponents(interaction, psiObject);

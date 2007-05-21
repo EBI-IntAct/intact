@@ -19,7 +19,6 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.ParticipantIdentificationMethod;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvIdentification;
-import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
  * TODO comment this
@@ -27,23 +26,9 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ParticipantIdentificationMethodConverter extends AbstractIntactPsiConverter<CvIdentification, ParticipantIdentificationMethod> {
+public class ParticipantIdentificationMethodConverter extends AbstractCvConverter<CvIdentification, ParticipantIdentificationMethod> {
 
     public ParticipantIdentificationMethodConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
-    }
-
-    public CvIdentification psiToIntact(ParticipantIdentificationMethod psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
-
-        CvIdentification participantIdentification = new CvIdentification(getInstitution(), shortLabel);
-        participantIdentification.setFullName(fullName);
-
-        return participantIdentification;
-    }
-
-    public ParticipantIdentificationMethod intactToPsi(CvIdentification intactObject) {
-        throw new UnsupportedOperationException();
+        super(intactContext, CvIdentification.class, ParticipantIdentificationMethod.class);
     }
 }

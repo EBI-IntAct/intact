@@ -19,11 +19,10 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Organism;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.CvInteractorType;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.util.Crc64;
 
 /**
  * TODO comment this
@@ -39,10 +38,18 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
 
     public Interactor psiToIntact(psidev.psi.mi.xml.model.Interactor psiObject) {
         String shortLabel = psiObject.getNames().getShortLabel();
-        String fullName = psiObject.getNames().getFullName();
+        String sequence = psiObject.getSequence();
 
         Interactor interactor = newInteractorAccordingToType(psiObject.getOrganism(), shortLabel, psiObject.getInteractorType());
-        interactor.setFullName(fullName);
+        ConverterUtils.populateNames(psiObject.getNames(), interactor);
+        ConverterUtils.populateXref(psiObject.getXref(), interactor, new XrefConverter<InteractorXref>(getIntactContext(), getParentEntry(), InteractorXref.class));
+
+        // sequence
+        if (sequence != null && interactor instanceof Polymer) {
+            Polymer polymer = (Polymer) interactor;
+            polymer.setSequence(sequence);
+            polymer.setCrc64(Crc64.getCrc64(sequence));
+        }
 
         return interactor;
     }
