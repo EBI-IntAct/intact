@@ -15,8 +15,10 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.*;
-import uk.ac.ebi.intact.context.IntactContext;
+import psidev.psi.mi.xml.model.ExperimentDescription;
+import psidev.psi.mi.xml.model.InteractionDetectionMethod;
+import psidev.psi.mi.xml.model.Organism;
+import psidev.psi.mi.xml.model.ParticipantIdentificationMethod;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
@@ -29,27 +31,29 @@ import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
  */
 public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, ExperimentDescription> {
 
-    public ExperimentConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+    public ExperimentConverter(Institution institution) {
+        super(institution);
     }
 
     public Experiment psiToIntact(ExperimentDescription psiObject) {
         String shortLabel = psiObject.getNames().getShortLabel();
 
         Organism hostOrganism = psiObject.getHostOrganisms().iterator().next();
-        BioSource bioSource = new OrganismConverter(getIntactContext(), getParentEntry()).psiToIntact(hostOrganism);
+        BioSource bioSource = new OrganismConverter(getInstitution()).psiToIntact(hostOrganism);
 
         InteractionDetectionMethod idm = psiObject.getInteractionDetectionMethod();
-        CvInteraction cvInteractionDetectionMethod = new InteractionDetectionMethodConverter(getIntactContext(), getParentEntry()).psiToIntact(idm);
-
-        ParticipantIdentificationMethod pim = psiObject.getParticipantIdentificationMethod();
-        CvIdentification cvParticipantIdentification = new ParticipantIdentificationMethodConverter(getIntactContext(), getParentEntry()).psiToIntact(pim);
+        CvInteraction cvInteractionDetectionMethod = new InteractionDetectionMethodConverter(getInstitution()).psiToIntact(idm);
 
         Experiment experiment = new Experiment(getInstitution(), shortLabel, bioSource);
         ConverterUtils.populateNames(psiObject.getNames(), experiment);
-        ConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getIntactContext(), getParentEntry(), ExperimentXref.class));
+        ConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getInstitution(), ExperimentXref.class));
         experiment.setCvInteraction(cvInteractionDetectionMethod);
-        experiment.setCvIdentification(cvParticipantIdentification);
+
+        ParticipantIdentificationMethod pim = psiObject.getParticipantIdentificationMethod();
+        if (pim != null) {
+            CvIdentification cvParticipantIdentification = new ParticipantIdentificationMethodConverter(getInstitution()).psiToIntact(pim);
+            experiment.setCvIdentification(cvParticipantIdentification);
+        }
 
         return experiment;
     }

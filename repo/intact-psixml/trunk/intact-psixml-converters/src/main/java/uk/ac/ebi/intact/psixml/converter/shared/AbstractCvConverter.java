@@ -16,8 +16,9 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.CvType;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 
@@ -32,17 +33,18 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
     private Class<C> intactCvClass;
     private Class<T> psiCvClass;
 
-    public AbstractCvConverter(IntactContext intactContext, Class<C> intactCvClass, Class<T> psiCvClass) {
-        super(intactContext, null);
+    public AbstractCvConverter(Institution institution, Class<C> intactCvClass, Class<T> psiCvClass) {
+        super(institution);
         this.intactCvClass = intactCvClass;
         this.psiCvClass = psiCvClass;
     }
 
     public C psiToIntact(T psiObject) {
-        C cvIntType = newCvInstance(intactCvClass);
-        ConverterUtils.populateNames(psiObject.getNames(), cvIntType);
+        C cv = newCvInstance(intactCvClass);
+        ConverterUtils.populateNames(psiObject.getNames(), cv);
+        ConverterUtils.populateXref(psiObject.getXref(), cv, new XrefConverter<CvObjectXref>(getInstitution(), CvObjectXref.class));
 
-        return cvIntType;
+        return cv;
     }
 
     public T intactToPsi(C intactObject) {
@@ -59,6 +61,4 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
 
         return cv;
     }
-
-
 }

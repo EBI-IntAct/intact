@@ -16,10 +16,9 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.DbReference;
-import psidev.psi.mi.xml.model.Entry;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
@@ -33,8 +32,8 @@ public class XrefConverter<X extends Xref> extends AbstractIntactPsiConverter<X,
 
     private Class<X> xrefClass;
 
-    public XrefConverter(IntactContext intactContext, Entry parentEntry, Class<X> xrefType) {
-        super(intactContext, parentEntry);
+    public XrefConverter(Institution institution, Class<X> xrefType) {
+        super(institution);
         this.xrefClass = xrefType;
     }
 

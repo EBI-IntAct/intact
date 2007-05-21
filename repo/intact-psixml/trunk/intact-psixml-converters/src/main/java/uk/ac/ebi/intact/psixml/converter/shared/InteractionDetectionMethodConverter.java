@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.InteractionDetectionMethod;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.Institution;
 
 /**
  * TODO comment this
@@ -28,7 +27,7 @@ import uk.ac.ebi.intact.model.CvInteraction;
  */
 public class InteractionDetectionMethodConverter extends AbstractCvConverter<CvInteraction, InteractionDetectionMethod> {
 
-    public InteractionDetectionMethodConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, CvInteraction.class, InteractionDetectionMethod.class);
+    public InteractionDetectionMethodConverter(Institution institution) {
+        super(institution, CvInteraction.class, InteractionDetectionMethod.class);
     }
 }

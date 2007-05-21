@@ -15,10 +15,11 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.*;
-import uk.ac.ebi.intact.context.IntactContext;
+import psidev.psi.mi.xml.model.ExperimentDescription;
+import psidev.psi.mi.xml.model.InteractionType;
+import psidev.psi.mi.xml.model.InteractorType;
+import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
 
@@ -34,8 +35,8 @@ import java.util.List;
  */
 public class InteractionConverter extends AbstractIntactPsiConverter<Interaction, psidev.psi.mi.xml.model.Interaction> {
 
-    public InteractionConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, parentEntry);
+    public InteractionConverter(Institution institution) {
+        super(institution);
     }
 
     public Interaction psiToIntact(psidev.psi.mi.xml.model.Interaction psiObject) {
@@ -51,7 +52,7 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
 
         Interaction interaction = new InteractionImpl(experiments, interactionType, interactorType, shortLabel, getInstitution());
         ConverterUtils.populateNames(psiObject.getNames(), interaction);
-        ConverterUtils.populateXref(psiObject.getXref(), interaction, new XrefConverter<InteractorXref>(getIntactContext(), getParentEntry(), InteractorXref.class));
+        ConverterUtils.populateXref(psiObject.getXref(), interaction, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
 
         // components, created after the interaction, as we need the interaction to create them
         Collection<Component> components = getComponents(interaction, psiObject);
@@ -70,7 +71,7 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
 
         List<Experiment> experiments = new ArrayList<Experiment>(expDescriptions.size());
 
-        ExperimentConverter converter = new ExperimentConverter(getIntactContext(), getParentEntry());
+        ExperimentConverter converter = new ExperimentConverter(getInstitution());
 
         for (ExperimentDescription expDesc : expDescriptions) {
             Experiment experiment = converter.psiToIntact(expDesc);
@@ -86,7 +87,7 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
     protected CvInteractionType getInteractionType(psidev.psi.mi.xml.model.Interaction psiInteraction) {
         InteractionType psiInteractionType = psiInteraction.getInteractionTypes().iterator().next();
 
-        return new InteractionTypeConverter(getIntactContext(), getParentEntry()).psiToIntact(psiInteractionType);
+        return new InteractionTypeConverter(getInstitution()).psiToIntact(psiInteractionType);
     }
 
 
@@ -96,14 +97,14 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
     protected CvInteractorType getInteractorType(psidev.psi.mi.xml.model.Interaction psiInteraction) {
         InteractorType psiInteractorType = psiInteraction.getParticipants().iterator().next().getInteractor().getInteractorType();
 
-        return new InteractorTypeConverter(getIntactContext(), getParentEntry()).psiToIntact(psiInteractorType);
+        return new InteractorTypeConverter(getInstitution()).psiToIntact(psiInteractorType);
     }
 
     protected Collection<Component> getComponents(Interaction interaction, psidev.psi.mi.xml.model.Interaction psiInteraction) {
         List<Component> components = new ArrayList<Component>(psiInteraction.getParticipants().size());
 
         for (Participant participant : psiInteraction.getParticipants()) {
-            Component component = ParticipantConverter.newComponent(getIntactContext(), participant, interaction, getParentEntry());
+            Component component = ParticipantConverter.newComponent(getInstitution(), participant, interaction);
             components.add(component);
         }
 

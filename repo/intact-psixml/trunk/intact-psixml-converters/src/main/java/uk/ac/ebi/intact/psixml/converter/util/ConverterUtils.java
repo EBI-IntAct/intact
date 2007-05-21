@@ -38,6 +38,10 @@ public class ConverterUtils {
     }
 
     public static <X extends Xref> void populateXref(psidev.psi.mi.xml.model.Xref psiXref, AnnotatedObject<X, ?> annotatedObject, XrefConverter<X> xrefConverter) {
+        if (psiXref == null) {
+            return;
+        }
+
         if (psiXref.getPrimaryRef() != null) {
             addXref(psiXref.getPrimaryRef(), annotatedObject, xrefConverter);
         }

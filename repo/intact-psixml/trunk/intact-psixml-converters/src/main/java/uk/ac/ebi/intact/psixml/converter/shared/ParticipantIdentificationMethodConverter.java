@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.ParticipantIdentificationMethod;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvIdentification;
+import uk.ac.ebi.intact.model.Institution;
 
 /**
  * TODO comment this
@@ -28,7 +27,7 @@ import uk.ac.ebi.intact.model.CvIdentification;
  */
 public class ParticipantIdentificationMethodConverter extends AbstractCvConverter<CvIdentification, ParticipantIdentificationMethod> {
 
-    public ParticipantIdentificationMethodConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, CvIdentification.class, ParticipantIdentificationMethod.class);
+    public ParticipantIdentificationMethodConverter(Institution institution) {
+        super(institution, CvIdentification.class, ParticipantIdentificationMethod.class);
     }
 }

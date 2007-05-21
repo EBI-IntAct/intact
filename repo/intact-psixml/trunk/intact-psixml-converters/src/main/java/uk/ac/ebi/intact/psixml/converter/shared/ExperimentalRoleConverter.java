@@ -15,10 +15,9 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.ExperimentalRole;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvExperimentalRole;
+import uk.ac.ebi.intact.model.Institution;
 
 /**
  * TODO comment this
@@ -28,8 +27,8 @@ import uk.ac.ebi.intact.model.CvExperimentalRole;
  */
 public class ExperimentalRoleConverter extends AbstractCvConverter<CvExperimentalRole, ExperimentalRole> {
 
-    public ExperimentalRoleConverter(IntactContext intactContext, Entry parentEntry) {
-        super(intactContext, CvExperimentalRole.class, ExperimentalRole.class);
+    public ExperimentalRoleConverter(Institution institution) {
+        super(institution, CvExperimentalRole.class, ExperimentalRole.class);
     }
 
 }
