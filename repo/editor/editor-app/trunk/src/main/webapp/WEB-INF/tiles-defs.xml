@@ -99,7 +99,7 @@
         <put name="title"  value="Editor"/>
         <put name="sidebar" value="login.sidebar.layout"/>
         <put name="header" value="header.layout"/>
-        <put name="footer" value="/pages/footer.jsp"/>
+        <put name="footer" value="/pages/misc/footer.jsp"/>
     </definition>
 
     <!-- Login failure page description  -->
@@ -145,7 +145,7 @@
         <put name="header" value="header.layout"/>
         <put name="sidebar" value="edit.sidebar.layout"/>
         <put name="content" value="edit.cv.layout"/>
-        <put name="footer" value="/pages/footer.jsp"/>
+        <put name="footer" value="/pages/misc/footer.jsp"/>
     </definition>
 
     <!-- ===================================================================-->
