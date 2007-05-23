@@ -15,11 +15,10 @@
  */
 package uk.ac.ebi.intact.psixml.persister.service;
 
+import net.sf.ehcache.Cache;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
-import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
 
 /**
  * TODO comment this
@@ -27,24 +26,15 @@ import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class OrganismService extends AbstractService<BioSource, OrganismKey> {
+public class CvService<T extends CvObject> extends AnnotatedObjectService<T, AnnotatedObjectKey> {
 
-    public OrganismService(IntactContext intactContext) {
+    public CvService(IntactContext intactContext) {
         super(intactContext);
     }
 
-    public void persist(BioSource objectToPersist) {
-        getDao().persist(objectToPersist);
-
-        getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());
+    protected Cache getCache() {
+        throw new UnsupportedOperationException();
     }
 
-    protected BioSource fetchFromDb(OrganismKey key) {
-        return getDao().getByTaxonIdUnique((String) key.getElement().getKey());
-    }
-
-    protected BioSourceDao getDao() {
-        return getIntactContext().getDataContext().getDaoFactory().getBioSourceDao();
-    }
 
 }

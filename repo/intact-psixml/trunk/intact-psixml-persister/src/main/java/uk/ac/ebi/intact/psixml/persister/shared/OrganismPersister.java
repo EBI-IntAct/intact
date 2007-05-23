@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
+import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
 import uk.ac.ebi.intact.psixml.persister.service.OrganismService;
 
 /**
@@ -39,7 +40,7 @@ public class OrganismPersister extends AbstractPersister<BioSource> {
     public PersisterReport saveOrUpdate(BioSource intactObject) throws PersisterException {
         PersisterReport report = new PersisterReport();
 
-        BioSource bioSource = service.get(intactObject.getTaxId());
+        BioSource bioSource = service.get(new OrganismKey(intactObject));
 
         if (bioSource == null) {
             bioSource = intactObject;
