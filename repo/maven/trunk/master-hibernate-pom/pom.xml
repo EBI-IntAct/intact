@@ -179,7 +179,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-annotations</artifactId>
-            <version>3.2.0.ga</version>
+            <version>3.2.4.ga</version>
         </dependency>
         <dependency>
             <groupId>c3p0</groupId>
@@ -188,9 +188,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.h2</groupId>
+            <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2006-07-14-beta</version>
+            <version>1.0.20070429</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
