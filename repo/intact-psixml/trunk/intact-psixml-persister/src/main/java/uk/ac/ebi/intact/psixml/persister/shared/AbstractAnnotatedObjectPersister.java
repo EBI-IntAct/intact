@@ -17,9 +17,10 @@ package uk.ac.ebi.intact.psixml.persister.shared;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.psixml.persister.Persister;
+import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
-import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
+import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
+import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
 
 /**
  * TODO comment this
@@ -27,24 +28,26 @@ import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractPersister<T extends AnnotatedObject> implements Persister<T> {
+public class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends AbstractPersister<T> {
 
-    private IntactContext intactContext;
-    private boolean dryRun;
+    private AnnotatedObjectService service;
 
-    public AbstractPersister(IntactContext intactContext, boolean dryRun) {
-        this.intactContext = intactContext;
-        this.dryRun = dryRun;
+    public AbstractAnnotatedObjectPersister(IntactContext intactContext, boolean dryRun) {
+        super(intactContext, dryRun);
+        this.service = new AnnotatedObjectService(intactContext);
     }
 
-    protected IntactContext getIntactContext() {
-        return intactContext;
-    }
+    public PersisterReport saveOrUpdate(T intactObject) throws PersisterException {
+        PersisterReport report = new PersisterReport();
 
-    protected void persist(T intactObject, AbstractService<T, ?> service, PersisterReport report) {
-        if (!dryRun) {
-            service.persist(intactObject);
+        T ao = (T) service.get(new AnnotatedObjectKey(intactObject));
+
+        if (ao == null) {
+            ao = intactObject;
+            super.persist(ao, service, report);
         }
-        report.addCreated(intactObject);
+
+        return report;
     }
+
 }

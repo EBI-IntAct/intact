@@ -21,6 +21,8 @@ import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Utils to access the cache
@@ -32,16 +34,22 @@ public class CacheContext implements Serializable {
 
     private static final String EHCACHE_CONFIG_FILE = "/ehcache-config.xml";
 
-    private static final String ORGANISM_CACHE_NAME = "organism-service-cache";
-
     private static final String ATT_NAME = CacheContext.class.getName();
 
     private CacheManager cacheManager;
-    private Cache organismCache;
+
+    private Map<Class, Cache> cacheMap;
 
     private CacheContext() {
         URL url = CacheContext.class.getResource(EHCACHE_CONFIG_FILE);
+
+        if (url == null) {
+            throw new RuntimeException("ehcache.xml file not found: " + EHCACHE_CONFIG_FILE);
+        }
+
         this.cacheManager = CacheManager.create(url);
+
+        this.cacheMap = new HashMap<Class, Cache>();
     }
 
     public static CacheContext getInstance(IntactContext context) {
@@ -55,22 +63,19 @@ public class CacheContext implements Serializable {
         return cacheContext;
     }
 
-    public Cache getOrganismCache() {
-        return checkCache(organismCache, ORGANISM_CACHE_NAME);
-    }
-
-    /**
-     * Checks if the cache is null, and creates it is null
-     *
-     * @param cache     The cache to return, creating it if null
-     * @param cacheName Name of the cache
-     *
-     * @return The cache
-     */
-    private Cache checkCache(Cache cache, String cacheName) {
-        if (cache == null) {
-            cache = cacheManager.getCache(cacheName);
+    public Cache cacheFor(Class<?> aoClass) {
+        if (cacheMap.containsKey(aoClass)) {
+            return cacheMap.get(aoClass);
         }
+
+        Cache cache = cacheManager.getCache(aoClass.getName());
+
+        if (cache == null) {
+            throw new RuntimeException("Cache not found: " + aoClass.getName());
+        }
+
+        cacheMap.put(aoClass, cache);
+
         return cache;
     }
 

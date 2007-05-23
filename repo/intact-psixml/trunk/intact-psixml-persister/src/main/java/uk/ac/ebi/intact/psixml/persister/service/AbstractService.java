@@ -15,8 +15,11 @@
  */
 package uk.ac.ebi.intact.psixml.persister.service;
 
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.psixml.persister.key.Key;
 import uk.ac.ebi.intact.psixml.persister.util.CacheContext;
 
 import java.io.Serializable;
@@ -27,7 +30,7 @@ import java.io.Serializable;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractService<T extends IntactObject> implements Serializable {
+public abstract class AbstractService<T extends AnnotatedObject, K extends Key> implements Serializable {
 
     private IntactContext intactContext;
     private CacheContext cacheContext;
@@ -45,5 +48,33 @@ public abstract class AbstractService<T extends IntactObject> implements Seriali
         return intactContext;
     }
 
-    public abstract void persist(T intactObject);
+    public T get(K key) {
+        Element elem = getCache(key.getElement().getObjectValue().getClass())
+                .get(key.getElement().getObjectKey());
+
+        T intactObject = null;
+
+        if (elem != null) {
+            intactObject = (T) elem.getValue();
+        } else {
+            T intactObjectFromDb = fetchFromDb(key);
+
+            if (intactObjectFromDb != null) {
+                intactObject = intactObjectFromDb;
+            }
+
+            getCache(key.getElement().getObjectValue().getClass())
+                    .put(key.getElement());
+        }
+
+        return intactObject;
+    }
+
+    public abstract void persist(T objectToPersist);
+
+    protected abstract T fetchFromDb(K key);
+
+    protected Cache getCache(Class objectType) {
+        return getCacheContext().cacheFor(objectType);
+    }
 }

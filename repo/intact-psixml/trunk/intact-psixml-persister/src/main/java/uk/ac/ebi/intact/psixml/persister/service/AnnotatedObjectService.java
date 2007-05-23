@@ -16,10 +16,9 @@
 package uk.ac.ebi.intact.psixml.persister.service;
 
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
-import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
 
 /**
  * TODO comment this
@@ -27,24 +26,24 @@ import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class OrganismService extends AbstractService<BioSource, OrganismKey> {
+public class AnnotatedObjectService<A extends AnnotatedObject, K extends AnnotatedObjectKey> extends AbstractService<A, K> {
 
-    public OrganismService(IntactContext intactContext) {
+    public AnnotatedObjectService(IntactContext intactContext) {
         super(intactContext);
     }
 
-    public void persist(BioSource objectToPersist) {
+    public void persist(A objectToPersist) {
         getDao().persist(objectToPersist);
 
         getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());
     }
 
-    protected BioSource fetchFromDb(OrganismKey key) {
-        return getDao().getByTaxonIdUnique((String) key.getElement().getKey());
+    protected A fetchFromDb(K key) {
+        return (A) getDao().getByShortLabel((String) key.getElement().getValue());
     }
 
-    protected BioSourceDao getDao() {
-        return getIntactContext().getDataContext().getDaoFactory().getBioSourceDao();
+    protected AnnotatedObjectDao getDao() {
+        return getIntactContext().getDataContext().getDaoFactory().getAnnotatedObjectDao();
     }
 
 }

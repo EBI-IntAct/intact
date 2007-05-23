@@ -204,7 +204,7 @@
     These caches contains a maximum in memory of 5000 elements, and will expire an element if it is idle for more than
     5 minutes and lives for more than 10 minutes.
     -->
-    <cache name="organism-service-cache"
+    <cache name="uk.ac.ebi.intact.model.BioSource"
            maxElementsInMemory="5000"
            eternal="false"
            overflowToDisk="false"
