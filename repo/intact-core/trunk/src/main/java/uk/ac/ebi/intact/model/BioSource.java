@@ -220,10 +220,11 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 29 * result + ( taxId != null ? taxId.hashCode() : 0 );
-
-        return result;
+        int code = 29;
+        if ( taxId != null ) {
+            code = 29 * code + taxId.hashCode();
+        }
+        return code;
     }
 
     @Override
