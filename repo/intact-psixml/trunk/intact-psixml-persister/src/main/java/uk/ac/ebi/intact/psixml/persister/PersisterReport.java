@@ -17,8 +17,8 @@ package uk.ac.ebi.intact.psixml.persister;
 
 import uk.ac.ebi.intact.model.IntactObject;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
 /**
  * TODO comment this
@@ -36,7 +36,7 @@ public class PersisterReport {
 
     public Collection<IntactObject> getCreated() {
         if (created == null) {
-            created = new ArrayList<IntactObject>();
+            created = new HashSet<IntactObject>();
         }
         return created;
     }
@@ -47,7 +47,7 @@ public class PersisterReport {
 
     public Collection<IntactObject> getUpdated() {
         if (updated == null) {
-            updated = new ArrayList<IntactObject>();
+            updated = new HashSet<IntactObject>();
         }
         return updated;
     }

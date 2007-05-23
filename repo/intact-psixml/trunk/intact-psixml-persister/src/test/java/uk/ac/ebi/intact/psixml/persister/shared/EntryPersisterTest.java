@@ -55,6 +55,8 @@ public class EntryPersisterTest {
 
         OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), true);
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         for (Interaction interaction : intactEntry.getInteractions()) {
             for (Experiment exp : interaction.getExperiments()) {
                 BioSource bioSource = exp.getBioSource();
@@ -63,6 +65,8 @@ public class EntryPersisterTest {
                 System.out.println("Report: created: " + report.getCreated() + " / updated: " + report.getUpdated());
             }
         }
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
     }
 

@@ -56,8 +56,7 @@ public class CacheContext implements Serializable {
     }
 
     public Cache getOrganismCache() {
-        checkCache(organismCache, ORGANISM_CACHE_NAME);
-        return organismCache;
+        return checkCache(organismCache, ORGANISM_CACHE_NAME);
     }
 
     /**
@@ -68,10 +67,11 @@ public class CacheContext implements Serializable {
      *
      * @return The cache
      */
-    private void checkCache(Cache cache, String cacheName) {
+    private Cache checkCache(Cache cache, String cacheName) {
         if (cache == null) {
-            cache = cacheManager.getCache(ORGANISM_CACHE_NAME);
+            cache = cacheManager.getCache(cacheName);
         }
+        return cache;
     }
 
 }
