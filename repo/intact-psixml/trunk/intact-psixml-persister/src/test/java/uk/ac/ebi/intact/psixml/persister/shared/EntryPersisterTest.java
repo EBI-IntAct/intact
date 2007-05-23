@@ -56,15 +56,18 @@ public class EntryPersisterTest {
         OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), true);
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        PersisterReport report = new PersisterReport();
 
         for (Interaction interaction : intactEntry.getInteractions()) {
             for (Experiment exp : interaction.getExperiments()) {
                 BioSource bioSource = exp.getBioSource();
 
-                PersisterReport report = organismPersister.saveOrUpdate(bioSource);
-                System.out.println("Report: created: " + report.getCreated() + " / updated: " + report.getUpdated());
+                PersisterReport subRreport = organismPersister.saveOrUpdate(bioSource);
+                report.mergeWith(subRreport);
             }
         }
+
+        System.out.println("Report: created: " + report.getCreated() + " / updated: " + report.getUpdated());
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
