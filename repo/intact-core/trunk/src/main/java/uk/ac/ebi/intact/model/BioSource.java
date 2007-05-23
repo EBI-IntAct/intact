@@ -195,6 +195,10 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
      */
     @Override
     public boolean equals( Object o ) {
+        if ( !super.equals( o ) ) {
+            return false;
+        }
+        
         if ( this == o ) {
             return true;
         }
@@ -207,33 +211,30 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
 
         final BioSource bioSource = ( BioSource ) o;
 
-        //check the taxId...
-        if ( taxId != null ) {
-            return ( taxId.equals( bioSource.getTaxId() ) );
+        if ( taxId == null ) {
+            return false;
         }
 
-        return bioSource.taxId == null;
-        //if (taxId != null ? !taxId.equals(bioSource.taxId) : bioSource.taxId != null) return false;
-
-        //return true;
+        return ( taxId.equals( bioSource.getTaxId() ) );
     }
 
     @Override
     public int hashCode() {
+        int result = super.hashCode();
+        result = 29 * result + ( taxId != null ? taxId.hashCode() : 0 );
 
-        //YUK AGAIN!! This ends up calling the java Object hashcode -
-        //which generates an int based on memory address (ie for object
-        //identity) - not what we want here...
-        //int code = super.hashCode();
-
-        int code = 29;
-        if ( taxId != null ) {
-            code = 29 * code + taxId.hashCode();
-        }
-        return code;
+        return result;
     }
 
-    // TODO write toString !!
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("BioSource [ac: ").append(ac).append(", ");
+        sb.append("taxId: ").append(taxId).append(", ");
+        sb.append("shortLabel: ").append(getShortLabel()).append("]");
+
+        return sb.toString();
+    }
 
 } // end BioSource
 

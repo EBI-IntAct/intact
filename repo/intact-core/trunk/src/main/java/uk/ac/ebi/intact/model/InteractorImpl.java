@@ -244,9 +244,6 @@ public abstract class InteractorImpl extends AnnotatedObjectImpl<InteractorXref,
         if ( o == null || getClass() != o.getClass() ) {
             return false;
         }
-        if ( !super.equals( o ) ) {
-            return false;
-        }
 
         final InteractorImpl that = ( InteractorImpl ) o;
 
