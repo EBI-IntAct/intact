@@ -18,8 +18,8 @@ package uk.ac.ebi.intact.psixml.converter.shared;
 import psidev.psi.mi.xml.model.Entry;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;

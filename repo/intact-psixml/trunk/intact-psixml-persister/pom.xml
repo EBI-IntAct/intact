@@ -48,13 +48,8 @@
         </dependency>
 
         <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
-            <artifactId>intact-core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psi25-xml</artifactId>
+            <groupId>uk.ac.ebi.intact.psixml</groupId>
+            <artifactId>intact-psixml-commons</artifactId>
         </dependency>
 
         <dependency>

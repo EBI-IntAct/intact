@@ -23,7 +23,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
+import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 
 import java.io.InputStream;
 
