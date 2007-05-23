@@ -23,7 +23,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.psixml.converter.model.IntactEntry;
+import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 import uk.ac.ebi.intact.psixml.converter.shared.EntryConverter;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
 
@@ -40,6 +40,8 @@ public class EntryPersisterTest {
     private static final String INTACT_FILE = "/xml/intact_2006-07-19.xml";
     private static final String MINT_FILE = "/xml/mint_2006-07-18.xml";
 
+    private static final boolean DRY_RUN = true;
+
     @Test
     public void entryToIntactDefault() throws Exception {
 
@@ -53,7 +55,7 @@ public class EntryPersisterTest {
 
         IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
 
-        OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), true);
+        OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), DRY_RUN);
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         PersisterReport report = new PersisterReport();
