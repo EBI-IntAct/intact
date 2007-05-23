@@ -195,10 +195,6 @@ public class BioSource extends AnnotatedObjectImpl<BioSourceXref, BioSourceAlias
      */
     @Override
     public boolean equals( Object o ) {
-        if ( !super.equals( o ) ) {
-            return false;
-        }
-        
         if ( this == o ) {
             return true;
         }
