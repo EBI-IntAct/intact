@@ -15,11 +15,15 @@
  */
 package uk.ac.ebi.intact.psixml.persister.shared;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.psixml.persister.Persister;
+import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
 import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
+import uk.ac.ebi.intact.psixml.persister.util.PersisterConfig;
 
 /**
  * TODO comment this
@@ -29,22 +33,30 @@ import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
  */
 public abstract class AbstractPersister<T extends AnnotatedObject> implements Persister<T> {
 
+    private static final Log log = LogFactory.getLog(AbstractPersister.class);
+
     private IntactContext intactContext;
-    private boolean dryRun;
 
     public AbstractPersister(IntactContext intactContext, boolean dryRun) {
         this.intactContext = intactContext;
-        this.dryRun = dryRun;
+
+        PersisterConfig.setDryRun(intactContext, dryRun);
     }
 
     protected IntactContext getIntactContext() {
         return intactContext;
     }
 
-    protected void persist(T intactObject, AbstractService<T, ?> service, PersisterReport report) {
-        if (!dryRun) {
+    protected void persist(T intactObject, AbstractService<T, ?> service, PersisterReport report) throws PersisterException {
+        if (log.isDebugEnabled()) log.debug("Persisting: " + intactObject.getShortLabel());
+
+        if (!PersisterConfig.isDryRun(getIntactContext())) {
             service.persist(intactObject);
         }
         report.addCreated(intactObject);
+    }
+
+    protected boolean isDryRun() {
+        return PersisterConfig.isDryRun(getIntactContext());
     }
 }

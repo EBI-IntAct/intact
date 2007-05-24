@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.persister.service;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
+import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
 
@@ -33,7 +34,7 @@ public class OrganismService extends AbstractService<BioSource, OrganismKey> {
         super(intactContext);
     }
 
-    public void persist(BioSource objectToPersist) {
+    public void persist(BioSource objectToPersist) throws PersisterException {
         getDao().persist(objectToPersist);
 
         getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());

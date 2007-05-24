@@ -21,6 +21,7 @@ import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
@@ -40,12 +41,12 @@ public class EntryPersisterTest {
     private static final String INTACT_FILE = "/xml/intact_2006-07-19.xml";
     private static final String MINT_FILE = "/xml/mint_2006-07-18.xml";
 
-    private static final boolean DRY_RUN = true;
+    private static final boolean DRY_RUN = false;
 
     @Test
     public void entryToIntactDefault() throws Exception {
 
-        InputStream is = EntryPersisterTest.class.getResourceAsStream(MINT_FILE);
+        InputStream is = EntryPersisterTest.class.getResourceAsStream(INTACT_FILE);
         PsimiXmlReader reader = new PsimiXmlReader();
         EntrySet entrySet = reader.read(is);
 
@@ -56,6 +57,7 @@ public class EntryPersisterTest {
         IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
 
         OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), DRY_RUN);
+        InteractorPersister interactorPersister = new InteractorPersister(IntactContext.getCurrentInstance(), DRY_RUN);
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         PersisterReport report = new PersisterReport();
@@ -63,9 +65,13 @@ public class EntryPersisterTest {
         for (Interaction interaction : intactEntry.getInteractions()) {
             for (Experiment exp : interaction.getExperiments()) {
                 BioSource bioSource = exp.getBioSource();
-
+                /*
                 PersisterReport subRreport = organismPersister.saveOrUpdate(bioSource);
-                report.mergeWith(subRreport);
+                report.mergeWith(subRreport);  */
+            }
+
+            for (Component component : interaction.getComponents()) {
+                interactorPersister.saveOrUpdate(component.getInteractor());
             }
         }
 

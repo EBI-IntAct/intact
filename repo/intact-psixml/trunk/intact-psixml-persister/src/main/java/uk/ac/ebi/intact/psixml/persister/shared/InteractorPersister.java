@@ -17,9 +17,9 @@ package uk.ac.ebi.intact.psixml.persister.shared;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.CvInteractorType;
+import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
-import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
-import uk.ac.ebi.intact.psixml.persister.service.OrganismService;
 
 /**
  * TODO comment this
@@ -27,29 +27,27 @@ import uk.ac.ebi.intact.psixml.persister.service.OrganismService;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class OrganismPersister extends AbstractAnnotatedObjectPersister<BioSource> {
+public class InteractorPersister<T extends Interactor> extends AbstractAnnotatedObjectPersister<T> {
 
-    private OrganismService service;
-
-    public OrganismPersister(IntactContext intactContext, boolean dryRun) {
+    public InteractorPersister(IntactContext intactContext, boolean dryRun) {
         super(intactContext, dryRun);
-        this.service = new OrganismService(intactContext);
     }
 
-    public BioSource saveOrUpdate(BioSource intactObject) throws PersisterException {
-        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
+    @Override
+    public T saveOrUpdate(T intactObject) throws PersisterException {
 
-        BioSource bioSource = service.get(new OrganismKey(intactObject));
+        OrganismPersister organismPersister = new OrganismPersister(getIntactContext(), isDryRun());
+        BioSource bioSource = organismPersister.saveOrUpdate(intactObject.getBioSource());
+        intactObject.setBioSource(bioSource);
 
-        if (bioSource == null) {
-            bioSource = intactObject;
+        getReport().mergeWith(organismPersister.getReport());
 
-            super.persist(bioSource, service, getReport());
-        } else {
-            intactObject = bioSource;
-        }
+        CvPersister cvPersister = new CvPersister(getIntactContext(), isDryRun());
+        CvInteractorType cvIntType = (CvInteractorType) cvPersister.saveOrUpdate(intactObject.getCvInteractorType());
+        intactObject.setCvInteractorType(cvIntType);
+
+        getReport().mergeWith(cvPersister.getReport());
 
         return intactObject;
     }
-
 }
