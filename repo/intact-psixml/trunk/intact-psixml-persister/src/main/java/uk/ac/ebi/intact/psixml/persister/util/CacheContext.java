@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.psixml.persister.util;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.Interactor;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -68,10 +70,20 @@ public class CacheContext implements Serializable {
             return cacheMap.get(aoClass);
         }
 
-        Cache cache = cacheManager.getCache(aoClass.getName());
+        String cacheName;
+
+        if (Interactor.class.isAssignableFrom(aoClass)) {
+            cacheName = Interactor.class.getName();
+        } else if (CvObject.class.isAssignableFrom(aoClass)) {
+            cacheName = CvObject.class.getName();
+        } else {
+            cacheName = aoClass.getName();
+        }
+
+        Cache cache = cacheManager.getCache(cacheName);
 
         if (cache == null) {
-            throw new RuntimeException("Cache not found: " + aoClass.getName());
+            throw new RuntimeException("Cache not found: " + cacheName);
         }
 
         cacheMap.put(aoClass, cache);

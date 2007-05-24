@@ -31,23 +31,31 @@ import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
 public class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends AbstractPersister<T> {
 
     private AnnotatedObjectService service;
+    private PersisterReport report;
 
     public AbstractAnnotatedObjectPersister(IntactContext intactContext, boolean dryRun) {
         super(intactContext, dryRun);
         this.service = new AnnotatedObjectService(intactContext);
+        this.report = new PersisterReport();
     }
 
-    public PersisterReport saveOrUpdate(T intactObject) throws PersisterException {
-        PersisterReport report = new PersisterReport();
+    public T saveOrUpdate(T intactObject) throws PersisterException {
+        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
 
         T ao = (T) service.get(new AnnotatedObjectKey(intactObject));
 
         if (ao == null) {
             ao = intactObject;
+
             super.persist(ao, service, report);
+        } else {
+            intactObject = ao;
         }
 
-        return report;
+        return intactObject;
     }
 
+    public PersisterReport getReport() {
+        return report;
+    }
 }

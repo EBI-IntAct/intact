@@ -213,4 +213,23 @@
            memoryStoreEvictionPolicy="LFU"
             />
 
+    <cache name="uk.ac.ebi.intact.model.Interactor"
+           maxElementsInMemory="5000"
+           eternal="false"
+           overflowToDisk="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"
+            />
+
+
+    <cache name="uk.ac.ebi.intact.model.CvObject"
+           maxElementsInMemory="5000"
+           eternal="false"
+           overflowToDisk="false"
+           timeToIdleSeconds="300"
+           timeToLiveSeconds="600"
+           memoryStoreEvictionPolicy="LFU"
+            />
+
 </ehcache>

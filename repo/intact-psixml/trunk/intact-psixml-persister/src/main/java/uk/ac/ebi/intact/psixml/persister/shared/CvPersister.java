@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.persister;
+package uk.ac.ebi.intact.psixml.persister.shared;
 
-import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvObject;
 
 /**
  * TODO comment this
@@ -23,9 +24,9 @@ import uk.ac.ebi.intact.model.IntactObject;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface Persister<T extends IntactObject> {
+public class CvPersister<T extends CvObject> extends AbstractAnnotatedObjectPersister<T> {
 
-    public T saveOrUpdate(T objectToPersist) throws PersisterException;
-
-    public PersisterReport getReport();
+    public CvPersister(IntactContext intactContext, boolean dryRun) {
+        super(intactContext, dryRun);
+    }
 }

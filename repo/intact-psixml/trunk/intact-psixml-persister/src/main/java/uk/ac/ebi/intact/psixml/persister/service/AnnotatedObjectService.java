@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.persister.service;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 
 /**
@@ -32,14 +33,14 @@ public class AnnotatedObjectService<A extends AnnotatedObject, K extends Annotat
         super(intactContext);
     }
 
-    public void persist(A objectToPersist) {
+    public void persist(A objectToPersist) throws PersisterException {
         getDao().persist(objectToPersist);
 
         getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());
     }
 
     protected A fetchFromDb(K key) {
-        return (A) getDao().getByShortLabel((String) key.getElement().getValue());
+        return (A) getDao().getByShortLabel((String) key.getElement().getKey());
     }
 
     protected AnnotatedObjectDao getDao() {

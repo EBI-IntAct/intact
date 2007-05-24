@@ -19,10 +19,15 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.Key;
 import uk.ac.ebi.intact.psixml.persister.util.CacheContext;
+import uk.ac.ebi.intact.psixml.persister.util.PersisterConfig;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -34,6 +39,7 @@ public abstract class AbstractService<T extends AnnotatedObject, K extends Key> 
 
     private IntactContext intactContext;
     private CacheContext cacheContext;
+    private Institution institution;
 
     protected AbstractService(IntactContext intactContext) {
         this.intactContext = intactContext;
@@ -49,10 +55,13 @@ public abstract class AbstractService<T extends AnnotatedObject, K extends Key> 
     }
 
     public T get(K key) {
-        Element elem = getCache(key.getElement().getObjectValue().getClass())
+        T annotatedObject = (T) key.getElement().getObjectValue();
+
+        Element elem = getCache(annotatedObject.getClass())
                 .get(key.getElement().getObjectKey());
 
         T intactObject = null;
+        boolean isCheckTransient = true;
 
         if (elem != null) {
             intactObject = (T) elem.getValue();
@@ -61,20 +70,44 @@ public abstract class AbstractService<T extends AnnotatedObject, K extends Key> 
 
             if (intactObjectFromDb != null) {
                 intactObject = intactObjectFromDb;
+                isCheckTransient = false;
+
+                getCache(annotatedObject.getClass())
+                        .put(new Element(key.getElement().getObjectKey(), intactObject));
             }
 
-            getCache(key.getElement().getObjectValue().getClass())
-                    .put(key.getElement());
+
+        }
+
+        if (isCheckTransient) {
+            checkTransientValues(annotatedObject);
         }
 
         return intactObject;
     }
 
-    public abstract void persist(T objectToPersist);
+    protected void checkTransientValues(T annotatedObject) {
+        if (institution == null) {
+            institution = getIntactContext().getDataContext().getDaoFactory()
+                    .getInstitutionDao().getByAc(getIntactContext().getInstitution().getAc());
+        }
+
+        annotatedObject.setOwner(institution);
+
+        for (Xref xref : (Collection<Xref>) annotatedObject.getXrefs()) {
+            xref.setOwner(institution);
+        }
+    }
+
+    public abstract void persist(T objectToPersist) throws PersisterException;
 
     protected abstract T fetchFromDb(K key);
 
     protected Cache getCache(Class objectType) {
         return getCacheContext().cacheFor(objectType);
+    }
+
+    protected boolean isDryRun() {
+        return PersisterConfig.isDryRun(getIntactContext());
     }
 }
