@@ -55,6 +55,7 @@ public class ComponentPersister extends AbstractAnnotatedObjectPersister<Compone
 
         InteractorPersister interactorPersister = new InteractorPersister(getIntactContext(), isDryRun());
         intactObject.setInteractor(interactorPersister.saveOrUpdate(intactObject.getInteractor()));
+        getReport().mergeWith(interactorPersister.getReport());
 
         return intactObject;
     }

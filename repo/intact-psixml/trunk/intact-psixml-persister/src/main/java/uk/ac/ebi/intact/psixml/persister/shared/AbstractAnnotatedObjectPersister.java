@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 import uk.ac.ebi.intact.psixml.persister.key.Key;
+import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
 import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
 
 /**
@@ -41,10 +42,10 @@ public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject
     }
 
     public T saveOrUpdate(T intactObject) throws PersisterException {
-        return saveOrUpdate(intactObject, new AnnotatedObjectKey(intactObject));
+        return saveOrUpdate(intactObject, service, new AnnotatedObjectKey(intactObject));
     }
 
-    protected T saveOrUpdate(T intactObject, Key key) throws PersisterException {
+    protected T saveOrUpdate(T intactObject, AbstractService service, Key key) throws PersisterException {
         if (intactObject == null) {
             throw new NullPointerException("intactObject");
         }
@@ -54,13 +55,16 @@ public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject
         if (ao == null) {
             ao = intactObject;
             super.persist(ao, service, report);
+        } else {
+            getReport().addIgnored(ao);
         }
 
         intactObject = ao;
 
         intactObject = sync(intactObject);
-        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
 
+        PersisterReport aoReport = PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
+        getReport().mergeWith(aoReport);
 
         return intactObject;
     }

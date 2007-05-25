@@ -47,6 +47,7 @@ public class InteractionPersister extends InteractorPersister<Interaction> {
         CvPersister cvPersister = new CvPersister(getIntactContext(), isDryRun());
         CvInteractionType cvIntType = (CvInteractionType) cvPersister.saveOrUpdate(intactObject.getCvInteractionType());
         intactObject.setCvInteractionType(cvIntType);
+        getReport().mergeWith(cvPersister.getReport());
 
         saveOrUpdateComponents(intactObject);
         saveOrUpdateExperiments(intactObject);
@@ -69,6 +70,8 @@ public class InteractionPersister extends InteractorPersister<Interaction> {
         }
 
         intactObject.setComponents(components);
+
+        getReport().mergeWith(compPersister.getReport());
     }
 
     protected void saveOrUpdateExperiments(Interaction intactObject) throws PersisterException {
@@ -89,5 +92,7 @@ public class InteractionPersister extends InteractorPersister<Interaction> {
         }
 
         intactObject.setExperiments(experiments);
+
+        getReport().mergeWith(persister.getReport());
     }
 }
