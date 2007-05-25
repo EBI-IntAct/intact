@@ -15,15 +15,13 @@
  */
 package uk.ac.ebi.intact.psixml.persister;
 
-import uk.ac.ebi.intact.model.IntactObject;
-
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface Persister<T extends IntactObject> {
+public interface Persister<T> {
 
     public T saveOrUpdate(T objectToPersist) throws PersisterException;
 

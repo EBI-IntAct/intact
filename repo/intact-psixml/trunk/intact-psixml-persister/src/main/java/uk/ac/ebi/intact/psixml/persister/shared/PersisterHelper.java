@@ -34,6 +34,7 @@ public class PersisterHelper {
     }
 
     public static void syncAnnotatedObject(AnnotatedObject intactObject, IntactContext context) throws PersisterException {
+
         CvPersister cvPersister = new CvPersister(context, PersisterConfig.isDryRun(context));
 
         for (Xref xref : (Collection<Xref>) intactObject.getXrefs()) {
@@ -53,6 +54,10 @@ public class PersisterHelper {
             CvTopic cvTopic = (CvTopic) cvPersister.saveOrUpdate(annotation.getCvTopic());
             annotation.setCvTopic(cvTopic);
         }
+    }
+
+    public static boolean isDirty(IntactObject intactObject) {
+        return intactObject.getAc() == null;
     }
 
 }

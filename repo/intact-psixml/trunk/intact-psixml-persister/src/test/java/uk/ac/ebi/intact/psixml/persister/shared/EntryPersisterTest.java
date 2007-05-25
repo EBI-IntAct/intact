@@ -20,10 +20,6 @@ import psidev.psi.mi.xml.PsimiXmlReader;
 import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 import uk.ac.ebi.intact.psixml.converter.shared.EntryConverter;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
@@ -52,32 +48,21 @@ public class EntryPersisterTest {
 
         EntryConverter entryConverter = new EntryConverter(IntactContext.getCurrentInstance().getInstitution());
 
-        Entry psiEntry = entrySet.getEntries().iterator().next();
+        for (Entry psiEntry : entrySet.getEntries()) {
 
-        IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
+            IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
+            IntactEntryPersister persister = new IntactEntryPersister(IntactContext.getCurrentInstance(), DRY_RUN);
 
-        OrganismPersister organismPersister = new OrganismPersister(IntactContext.getCurrentInstance(), DRY_RUN);
-        InteractorPersister interactorPersister = new InteractorPersister(IntactContext.getCurrentInstance(), DRY_RUN);
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-        PersisterReport report = new PersisterReport();
+            persister.saveOrUpdate(intactEntry);
+            PersisterReport report = persister.getReport();
 
-        for (Interaction interaction : intactEntry.getInteractions()) {
-            for (Experiment exp : interaction.getExperiments()) {
-                BioSource bioSource = exp.getBioSource();
-                /*
-                PersisterReport subRreport = organismPersister.saveOrUpdate(bioSource);
-                report.mergeWith(subRreport);  */
-            }
+            System.out.println("Report: created: " + report.getCreated().size() + " / updated: " + report.getUpdated().size());
 
-            for (Component component : interaction.getComponents()) {
-                interactorPersister.saveOrUpdate(component.getInteractor());
-            }
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
 
-        System.out.println("Report: created: " + report.getCreated() + " / updated: " + report.getUpdated());
-
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
     }
 

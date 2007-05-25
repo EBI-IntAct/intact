@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
+import uk.ac.ebi.intact.psixml.persister.key.Key;
 import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
 
 /**
@@ -28,7 +29,7 @@ import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends AbstractPersister<T> {
+public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends AbstractPersister<T> {
 
     private AnnotatedObjectService service;
     private PersisterReport report;
@@ -40,18 +41,31 @@ public class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends
     }
 
     public T saveOrUpdate(T intactObject) throws PersisterException {
-        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
+        return saveOrUpdate(intactObject, new AnnotatedObjectKey(intactObject));
+    }
 
-        T ao = (T) service.get(new AnnotatedObjectKey(intactObject));
+    protected T saveOrUpdate(T intactObject, Key key) throws PersisterException {
+        if (intactObject == null) {
+            throw new NullPointerException("intactObject");
+        }
+
+        T ao = (T) service.get(key);
 
         if (ao == null) {
             ao = intactObject;
-
             super.persist(ao, service, report);
-        } else {
-            intactObject = ao;
         }
 
+        intactObject = ao;
+
+        intactObject = sync(intactObject);
+        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
+
+
+        return intactObject;
+    }
+
+    protected T sync(T intactObject) throws PersisterException {
         return intactObject;
     }
 

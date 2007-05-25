@@ -20,7 +20,7 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
-import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
+import uk.ac.ebi.intact.psixml.persister.key.Key;
 
 /**
  * TODO comment this
@@ -28,7 +28,7 @@ import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class OrganismService extends AbstractService<BioSource, OrganismKey> {
+public class OrganismService extends AbstractService<BioSource> {
 
     public OrganismService(IntactContext intactContext) {
         super(intactContext);
@@ -40,7 +40,7 @@ public class OrganismService extends AbstractService<BioSource, OrganismKey> {
         getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());
     }
 
-    protected BioSource fetchFromDb(OrganismKey key) {
+    protected BioSource fetchFromDb(Key key) {
         return getDao().getByTaxonIdUnique((String) key.getElement().getKey());
     }
 
