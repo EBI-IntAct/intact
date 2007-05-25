@@ -41,13 +41,15 @@ public abstract class AbstractPersister<T extends AnnotatedObject> implements Pe
         this.intactContext = intactContext;
 
         PersisterConfig.setDryRun(intactContext, dryRun);
+
+        intactContext.getConfig().getDefaultDataConfig().setAutoFlush(false);
     }
 
     protected IntactContext getIntactContext() {
         return intactContext;
     }
 
-    protected void persist(T intactObject, AbstractService<T, ?> service, PersisterReport report) throws PersisterException {
+    protected void persist(T intactObject, AbstractService<T> service, PersisterReport report) throws PersisterException {
         if (log.isDebugEnabled()) log.debug("Persisting: " + intactObject.getShortLabel());
 
         if (!PersisterConfig.isDryRun(getIntactContext())) {

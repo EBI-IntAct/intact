@@ -35,7 +35,7 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractService<T extends AnnotatedObject, K extends Key> implements Serializable {
+public abstract class AbstractService<T extends AnnotatedObject> implements Serializable {
 
     private IntactContext intactContext;
     private CacheContext cacheContext;
@@ -54,7 +54,7 @@ public abstract class AbstractService<T extends AnnotatedObject, K extends Key> 
         return intactContext;
     }
 
-    public T get(K key) {
+    public T get(Key key) {
         T annotatedObject = (T) key.getElement().getObjectValue();
 
         Element elem = getCache(annotatedObject.getClass())
@@ -101,7 +101,7 @@ public abstract class AbstractService<T extends AnnotatedObject, K extends Key> 
 
     public abstract void persist(T objectToPersist) throws PersisterException;
 
-    protected abstract T fetchFromDb(K key);
+    protected abstract T fetchFromDb(Key key);
 
     protected Cache getCache(Class objectType) {
         return getCacheContext().cacheFor(objectType);

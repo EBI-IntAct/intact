@@ -37,19 +37,7 @@ public class OrganismPersister extends AbstractAnnotatedObjectPersister<BioSourc
     }
 
     public BioSource saveOrUpdate(BioSource intactObject) throws PersisterException {
-        PersisterHelper.syncAnnotatedObject(intactObject, getIntactContext());
-
-        BioSource bioSource = service.get(new OrganismKey(intactObject));
-
-        if (bioSource == null) {
-            bioSource = intactObject;
-
-            super.persist(bioSource, service, getReport());
-        } else {
-            intactObject = bioSource;
-        }
-
-        return intactObject;
+        return saveOrUpdate(intactObject, new OrganismKey(intactObject));
     }
 
 }

@@ -29,4 +29,5 @@ public class CvPersister<T extends CvObject> extends AbstractAnnotatedObjectPers
     public CvPersister(IntactContext intactContext, boolean dryRun) {
         super(intactContext, dryRun);
     }
+
 }

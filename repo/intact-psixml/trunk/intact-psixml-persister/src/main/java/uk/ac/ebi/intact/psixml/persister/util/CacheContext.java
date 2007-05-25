@@ -20,6 +20,7 @@ import net.sf.ehcache.CacheManager;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.io.Serializable;
 import java.net.URL;
@@ -77,7 +78,7 @@ public class CacheContext implements Serializable {
         } else if (CvObject.class.isAssignableFrom(aoClass)) {
             cacheName = CvObject.class.getName();
         } else {
-            cacheName = aoClass.getName();
+            cacheName = CgLibUtil.removeCglibEnhanced(aoClass).getName();
         }
 
         Cache cache = cacheManager.getCache(cacheName);

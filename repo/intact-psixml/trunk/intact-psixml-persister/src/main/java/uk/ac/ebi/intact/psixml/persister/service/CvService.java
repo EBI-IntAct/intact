@@ -18,7 +18,6 @@ package uk.ac.ebi.intact.psixml.persister.service;
 import net.sf.ehcache.Cache;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 
 /**
  * TODO comment this
@@ -26,7 +25,7 @@ import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CvService<T extends CvObject> extends AnnotatedObjectService<T, AnnotatedObjectKey> {
+public class CvService<T extends CvObject> extends AnnotatedObjectService<T> {
 
     public CvService(IntactContext intactContext) {
         super(intactContext);
