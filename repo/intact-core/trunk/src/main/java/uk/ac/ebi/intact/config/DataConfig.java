@@ -22,6 +22,8 @@ public abstract class DataConfig<T, C> {
 
     private IntactSession session;
 
+    private boolean autoFlush;
+
     public DataConfig( IntactSession session ) {
         this.session = session;
     }
@@ -64,5 +66,13 @@ public abstract class DataConfig<T, C> {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public boolean isAutoFlush() {
+        return autoFlush;
+    }
+
+    public void setAutoFlush(boolean autoFlush) {
+        this.autoFlush = autoFlush;
     }
 }

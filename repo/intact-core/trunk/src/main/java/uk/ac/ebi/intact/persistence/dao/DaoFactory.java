@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.persistence.dao;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import uk.ac.ebi.intact.config.DataConfig;
@@ -237,6 +238,10 @@ public class DaoFactory implements Serializable {
 
     public synchronized Session getCurrentSession() {
         Session session = dataConfig.getSessionFactory().getCurrentSession();
+
+        if (!dataConfig.isAutoFlush()) {
+            session.setFlushMode(FlushMode.MANUAL);
+        }
 
         if ( !session.isOpen() ) {
             if ( log.isDebugEnabled() ) {
