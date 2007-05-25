@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
@@ -35,6 +36,11 @@ public class DataContext implements Serializable {
     }
 
     public void beginTransaction() {
+        beginTransaction( getDefaultDataConfig().getName() );
+    }
+
+    public void beginTransactionManualFlush() {
+        getDefaultDataConfig().setAutoFlush(true);
         beginTransaction( getDefaultDataConfig().getName() );
     }
 
@@ -70,6 +76,11 @@ public class DataContext implements Serializable {
 
         if ( daoFactory.isTransactionActive() ) {
             try {
+                if (getSession().getFlushMode() == FlushMode.MANUAL)
+                {
+                    getSession().flush();
+                }
+
                 daoFactory.getCurrentTransaction().commit();
             } catch ( IntactTransactionException e ) {
                 log.debug( "An Exception occured commiting" + e.getMessage() );
