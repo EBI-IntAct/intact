@@ -31,13 +31,13 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactEntryPersister implements Persister<IntactEntry> {
+public class EntryPersister implements Persister<IntactEntry> {
 
     private IntactContext intactContext;
     private boolean dryRun;
     private PersisterReport report;
 
-    public IntactEntryPersister(IntactContext intactContext, boolean dryRun) {
+    public EntryPersister(IntactContext intactContext, boolean dryRun) {
         this.intactContext = intactContext;
         this.dryRun = dryRun;
         this.report = new PersisterReport();

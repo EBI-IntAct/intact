@@ -51,14 +51,14 @@ public class EntryPersisterTest {
         for (Entry psiEntry : entrySet.getEntries()) {
 
             IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
-            IntactEntryPersister persister = new IntactEntryPersister(IntactContext.getCurrentInstance(), DRY_RUN);
+            EntryPersister persister = new EntryPersister(IntactContext.getCurrentInstance(), DRY_RUN);
 
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             persister.saveOrUpdate(intactEntry);
             PersisterReport report = persister.getReport();
 
-            System.out.println("Report: created: " + report.getCreated().size() + " / updated: " + report.getUpdated().size());
+            System.out.println("Report: " + report);
 
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }

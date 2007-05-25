@@ -29,15 +29,13 @@ import uk.ac.ebi.intact.psixml.persister.service.OrganismService;
  */
 public class OrganismPersister extends AbstractAnnotatedObjectPersister<BioSource> {
 
-    private OrganismService service;
-
     public OrganismPersister(IntactContext intactContext, boolean dryRun) {
         super(intactContext, dryRun);
-        this.service = new OrganismService(intactContext);
     }
 
     public BioSource saveOrUpdate(BioSource intactObject) throws PersisterException {
-        return saveOrUpdate(intactObject, new OrganismKey(intactObject));
+        OrganismService service = new OrganismService(getIntactContext());
+        return saveOrUpdate(intactObject, service, new OrganismKey(intactObject));
     }
 
 }

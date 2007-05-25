@@ -50,8 +50,6 @@ public abstract class AbstractPersister<T extends AnnotatedObject> implements Pe
     }
 
     protected void persist(T intactObject, AbstractService<T> service, PersisterReport report) throws PersisterException {
-        if (log.isDebugEnabled()) log.debug("Persisting: " + intactObject.getShortLabel());
-
         if (!PersisterConfig.isDryRun(getIntactContext())) {
             service.persist(intactObject);
         }

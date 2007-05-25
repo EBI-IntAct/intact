@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psixml.persister.shared;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
+import uk.ac.ebi.intact.psixml.persister.PersisterReport;
 import uk.ac.ebi.intact.psixml.persister.util.PersisterConfig;
 
 import java.util.Collection;
@@ -33,8 +34,7 @@ public class PersisterHelper {
     private PersisterHelper() {
     }
 
-    public static void syncAnnotatedObject(AnnotatedObject intactObject, IntactContext context) throws PersisterException {
-
+    public static PersisterReport syncAnnotatedObject(AnnotatedObject intactObject, IntactContext context) throws PersisterException {
         CvPersister cvPersister = new CvPersister(context, PersisterConfig.isDryRun(context));
 
         for (Xref xref : (Collection<Xref>) intactObject.getXrefs()) {
@@ -54,6 +54,8 @@ public class PersisterHelper {
             CvTopic cvTopic = (CvTopic) cvPersister.saveOrUpdate(annotation.getCvTopic());
             annotation.setCvTopic(cvTopic);
         }
+
+        return cvPersister.getReport();
     }
 
     public static boolean isDirty(IntactObject intactObject) {

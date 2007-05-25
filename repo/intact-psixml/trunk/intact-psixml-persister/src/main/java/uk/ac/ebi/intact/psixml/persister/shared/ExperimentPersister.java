@@ -52,6 +52,7 @@ public class ExperimentPersister extends AbstractAnnotatedObjectPersister<Experi
         CvPersister cvPersister = new CvPersister(getIntactContext(), isDryRun());
         intactObject.setCvInteraction((CvInteraction) cvPersister.saveOrUpdate(intactObject.getCvInteraction()));
         intactObject.setCvIdentification((CvIdentification) cvPersister.saveOrUpdate(intactObject.getCvIdentification()));
+        getReport().mergeWith(cvPersister.getReport());
 
         return super.sync(intactObject);
     }

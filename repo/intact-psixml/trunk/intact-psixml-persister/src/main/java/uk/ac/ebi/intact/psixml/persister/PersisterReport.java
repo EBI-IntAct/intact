@@ -16,9 +16,9 @@
 package uk.ac.ebi.intact.psixml.persister;
 
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
-import java.util.Collection;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * TODO comment this
@@ -28,36 +28,105 @@ import java.util.HashSet;
  */
 public class PersisterReport {
 
-    private Collection<IntactObject> created;
-    private Collection<IntactObject> updated;
+    private Map<Class, Collection<IntactObject>> updated;
+    private Map<Class, Collection<IntactObject>> created;
+    private Map<Class, Collection<IntactObject>> ignored;
 
     public PersisterReport() {
     }
 
-    public Collection<IntactObject> getCreated() {
+    public Map<Class, Collection<IntactObject>> getCreated() {
         if (created == null) {
-            created = new HashSet<IntactObject>();
+            created = new HashMap<Class, Collection<IntactObject>>();
         }
         return created;
     }
 
     public void addCreated(IntactObject intactObject) {
-        getCreated().add(intactObject);
+        add(intactObject, getCreated());
     }
 
-    public Collection<IntactObject> getUpdated() {
+    public Map<Class, Collection<IntactObject>> getUpdated() {
         if (updated == null) {
-            updated = new HashSet<IntactObject>();
+            updated = new HashMap<Class, Collection<IntactObject>>();
         }
         return updated;
     }
 
     public void addUpdated(IntactObject intactObject) {
-        getUpdated().add(intactObject);
+        add(intactObject, getUpdated());
+    }
+
+    public Map<Class, Collection<IntactObject>> getIgnored() {
+        if (ignored == null) {
+            ignored = new HashMap<Class, Collection<IntactObject>>();
+        }
+        return ignored;
+    }
+
+    public void addIgnored(IntactObject intactObject) {
+        add(intactObject, getIgnored());
+    }
+
+    private void add(IntactObject intactObject, Map<Class, Collection<IntactObject>> map) {
+        Class key = CgLibUtil.getRealClassName(intactObject);
+
+        if (map.containsKey(key)) {
+            map.get(key).add(intactObject);
+        } else {
+            Set<IntactObject> intactObjects = new HashSet<IntactObject>();
+            intactObjects.add(intactObject);
+            map.put(key, intactObjects);
+        }
     }
 
     public void mergeWith(PersisterReport mergeReport) {
-        getCreated().addAll(mergeReport.getCreated());
-        getUpdated().addAll(mergeReport.getUpdated());
+        for (Collection<IntactObject> intactObjects : mergeReport.getCreated().values()) {
+            for (IntactObject intactObject : intactObjects) {
+                addCreated(intactObject);
+            }
+        }
+        for (Collection<IntactObject> intactObjects : mergeReport.getUpdated().values()) {
+            for (IntactObject intactObject : intactObjects) {
+                addUpdated(intactObject);
+            }
+        }
+        for (Collection<IntactObject> intactObjects : mergeReport.getIgnored().values()) {
+            for (IntactObject intactObject : intactObjects) {
+                addIgnored(intactObject);
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("PersisterReport { \n");
+        sb.append("\tCREATED = " + mapToString(getCreated())).append("\n");
+        sb.append("\tUPDATED = " + mapToString(getUpdated())).append("\n");
+        sb.append("\tIGNORED = " + mapToString(getIgnored())).append("\n}");
+
+        return sb.toString();
+    }
+
+    private String mapToString(Map<Class, Collection<IntactObject>> map) {
+        StringBuilder sb = new StringBuilder();
+
+        for (Iterator<Class> iterator = map.keySet().iterator(); iterator.hasNext();) {
+            Class key = iterator.next();
+            Collection<IntactObject> intactObjects = map.get(key);
+
+            sb.append(key.getSimpleName()).append("(").append(intactObjects.size()).append(")");
+
+            if (iterator.hasNext()) {
+                sb.append(", ");
+            }
+        }
+
+        if (sb.length() == 0) {
+            return "0";
+        }
+
+        return sb.toString();
     }
 }
