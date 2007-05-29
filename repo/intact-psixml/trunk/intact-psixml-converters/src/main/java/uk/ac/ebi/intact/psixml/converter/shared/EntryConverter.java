@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.Entry;
+import psidev.psi.mi.xml.model.ExperimentDescription;
+import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
@@ -57,8 +59,18 @@ public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entr
 
         InteractionConverter interactionConverter = new InteractionConverter(getInstitution());
 
-        for (Interaction interaction : intactObject.getInteractions()) {
-            entry.getInteractions().add(interactionConverter.intactToPsi(interaction));
+        for (Interaction intactInteracton : intactObject.getInteractions()) {
+            psidev.psi.mi.xml.model.Interaction interaction = interactionConverter.intactToPsi(intactInteracton);
+            entry.getInteractions().add(interaction);
+
+            for (Participant participant : interaction.getParticipants()) {
+                entry.getInteractors().add(participant.getInteractor());
+            }
+
+            for (ExperimentDescription experimentDesc : interaction.getExperiments()) {
+                entry.getExperiments().add(experimentDesc);
+            }
+
         }
 
         return entry;
