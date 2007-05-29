@@ -65,7 +65,11 @@ public class PersisterReport {
     }
 
     public void addIgnored(IntactObject intactObject) {
-        add(intactObject, getIgnored());
+        // a real ignored object cannot be in the created list (this would mean the object has been created just before,
+        // so it should be considered as ignored)
+        if (!mapContainsIntactObject(getCreated(), intactObject)) {
+            add(intactObject, getIgnored());
+        }
     }
 
     private void add(IntactObject intactObject, Map<Class, Collection<IntactObject>> map) {
@@ -96,6 +100,16 @@ public class PersisterReport {
                 addIgnored(intactObject);
             }
         }
+    }
+
+    private boolean mapContainsIntactObject(Map<Class, Collection<IntactObject>> map, IntactObject intactObject) {
+        Class key = CgLibUtil.getRealClassName(intactObject);
+
+        if (map.containsKey(key)) {
+            return map.get(key).contains(intactObject);
+        }
+
+        return false;
     }
 
     @Override

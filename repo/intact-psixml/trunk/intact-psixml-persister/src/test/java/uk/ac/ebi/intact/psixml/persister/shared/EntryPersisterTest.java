@@ -42,7 +42,7 @@ public class EntryPersisterTest {
     @Test
     public void entryToIntactDefault() throws Exception {
 
-        InputStream is = EntryPersisterTest.class.getResourceAsStream(INTACT_FILE);
+        InputStream is = EntryPersisterTest.class.getResourceAsStream(MINT_FILE);
         PsimiXmlReader reader = new PsimiXmlReader();
         EntrySet entrySet = reader.read(is);
 
@@ -62,8 +62,6 @@ public class EntryPersisterTest {
 
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
-
-
     }
 
 }

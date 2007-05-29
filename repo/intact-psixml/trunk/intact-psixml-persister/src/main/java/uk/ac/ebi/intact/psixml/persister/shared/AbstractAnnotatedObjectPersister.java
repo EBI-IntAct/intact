@@ -32,29 +32,31 @@ import uk.ac.ebi.intact.psixml.persister.service.AnnotatedObjectService;
  */
 public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject> extends AbstractPersister<T> {
 
-    private AnnotatedObjectService service;
     private PersisterReport report;
 
     public AbstractAnnotatedObjectPersister(IntactContext intactContext, boolean dryRun) {
         super(intactContext, dryRun);
-        this.service = new AnnotatedObjectService(intactContext);
         this.report = new PersisterReport();
     }
 
-    public T saveOrUpdate(T intactObject) throws PersisterException {
-        return saveOrUpdate(intactObject, service, new AnnotatedObjectKey(intactObject));
+    protected AbstractService getService() {
+        return new AnnotatedObjectService(getIntactContext());
     }
 
-    protected T saveOrUpdate(T intactObject, AbstractService service, Key key) throws PersisterException {
+    public T saveOrUpdate(T intactObject) throws PersisterException {
+        return saveOrUpdate(intactObject, new AnnotatedObjectKey(intactObject));
+    }
+
+    protected T saveOrUpdate(T intactObject, Key key) throws PersisterException {
         if (intactObject == null) {
             throw new NullPointerException("intactObject");
         }
 
-        T ao = (T) service.get(key);
+        T ao = (T) getService().get(key);
 
         if (ao == null) {
             ao = intactObject;
-            super.persist(ao, service, report);
+            super.persist(ao, report);
         } else {
             getReport().addIgnored(ao);
         }
