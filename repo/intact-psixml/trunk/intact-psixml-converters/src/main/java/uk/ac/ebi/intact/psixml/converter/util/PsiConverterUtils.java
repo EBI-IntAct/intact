@@ -23,9 +23,8 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.psixml.converter.shared.AbstractCvConverter;
 import uk.ac.ebi.intact.psixml.converter.shared.XrefConverter;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
 
 /**
  * TODO comment this
@@ -83,6 +82,13 @@ public class PsiConverterUtils {
         xrefContainer.setXref(xref);
     }
 
+    public static int populateId(HasId hasIdElement) {
+        int id = IdSequenceGenerator.getInstance().nextId();
+        hasIdElement.setId(id);
+
+        return id;
+    }
+
     public static CvType toCvType(CvObject cvObject, AbstractCvConverter converter) {
         CvType cvType = converter.intactToPsi(cvObject);
         populateNames(cvObject, cvType);
@@ -92,7 +98,7 @@ public class PsiConverterUtils {
     }
 
     private static Collection<DbReference> toDbReferences(Collection<? extends uk.ac.ebi.intact.model.Xref> intactXrefs) {
-        List<DbReference> dbRefs = new ArrayList<DbReference>(intactXrefs.size());
+        Collection<DbReference> dbRefs = new HashSet<DbReference>(intactXrefs.size());
 
         for (uk.ac.ebi.intact.model.Xref intactXref : intactXrefs) {
             XrefConverter xrefConverter = new XrefConverter(null, intactXref.getClass());
@@ -105,7 +111,7 @@ public class PsiConverterUtils {
     }
 
     private static DbReference getIdentity(Collection<DbReference> dbRefs) {
-        Collection<DbReference> identityRefs = new ArrayList<DbReference>();
+        Collection<DbReference> identityRefs = new HashSet<DbReference>();
 
         for (DbReference dbRef : dbRefs) {
             if (dbRef.getRefTypeAc() != null && dbRef.getRefTypeAc().equals(CvXrefQualifier.IDENTITY_MI_REF)) {

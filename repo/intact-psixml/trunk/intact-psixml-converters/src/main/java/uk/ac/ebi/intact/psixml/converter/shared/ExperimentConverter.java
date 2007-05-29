@@ -64,6 +64,7 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
         InteractionDetectionMethod detMethod = (InteractionDetectionMethod) PsiConverterUtils.toCvType(intactObject.getCvInteraction(), detMethodConverter);
 
         ExperimentDescription expDesc = new ExperimentDescription(bibref, detMethod);
+        PsiConverterUtils.populateId(expDesc);
         PsiConverterUtils.populateNames(intactObject, expDesc);
         PsiConverterUtils.populateXref(intactObject, expDesc);
 

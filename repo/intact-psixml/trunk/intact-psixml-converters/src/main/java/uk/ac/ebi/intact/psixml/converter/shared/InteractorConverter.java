@@ -55,6 +55,7 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
 
     public psidev.psi.mi.xml.model.Interactor intactToPsi(Interactor intactObject) {
         psidev.psi.mi.xml.model.Interactor interactor = new psidev.psi.mi.xml.model.Interactor();
+        PsiConverterUtils.populateId(interactor);
         PsiConverterUtils.populateNames(intactObject, interactor);
         PsiConverterUtils.populateXref(intactObject, interactor);
 

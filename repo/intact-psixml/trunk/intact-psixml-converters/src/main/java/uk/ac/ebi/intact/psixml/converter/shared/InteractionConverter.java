@@ -64,12 +64,14 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
 
     public psidev.psi.mi.xml.model.Interaction intactToPsi(Interaction intactObject) {
         psidev.psi.mi.xml.model.Interaction interaction = new psidev.psi.mi.xml.model.Interaction();
+        PsiConverterUtils.populateId(interaction);
         PsiConverterUtils.populateNames(intactObject, interaction);
         PsiConverterUtils.populateXref(intactObject, interaction);
 
         ExperimentConverter experimentConverter = new ExperimentConverter(getInstitution());
         for (Experiment exp : intactObject.getExperiments()) {
-            interaction.getExperiments().add(experimentConverter.intactToPsi(exp));
+            ExperimentDescription expDescription = experimentConverter.intactToPsi(exp);
+            interaction.getExperiments().add(expDescription);
         }
 
         ParticipantConverter participantConverter = new ParticipantConverter(getInstitution());
