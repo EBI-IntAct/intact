@@ -20,7 +20,8 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
 /**
  * TODO comment this
@@ -42,17 +43,21 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
     public C psiToIntact(T psiObject) {
         C cv = newCvInstance(intactCvClass);
         cv.setOwner(getInstitution());
-        ConverterUtils.populateNames(psiObject.getNames(), cv);
-        ConverterUtils.populateXref(psiObject.getXref(), cv, new XrefConverter<CvObjectXref>(getInstitution(), CvObjectXref.class));
+        IntactConverterUtils.populateNames(psiObject.getNames(), cv);
+        IntactConverterUtils.populateXref(psiObject.getXref(), cv, new XrefConverter<CvObjectXref>(getInstitution(), CvObjectXref.class));
 
         return cv;
     }
 
     public T intactToPsi(C intactObject) {
-        throw new UnsupportedOperationException();
+        T cvType = newCvInstance(psiCvClass);
+        PsiConverterUtils.populateNames(intactObject, cvType);
+        PsiConverterUtils.populateXref(intactObject, cvType);
+
+        return cvType;
     }
 
-    private static <C extends CvObject> C newCvInstance(Class<C> cvClass) {
+    private static <C> C newCvInstance(Class<C> cvClass) {
         C cv = null;
         try {
             cv = cvClass.newInstance();

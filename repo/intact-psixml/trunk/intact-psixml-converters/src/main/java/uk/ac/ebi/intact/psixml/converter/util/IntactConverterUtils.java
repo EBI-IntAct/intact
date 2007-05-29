@@ -27,9 +27,9 @@ import uk.ac.ebi.intact.psixml.converter.shared.XrefConverter;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ConverterUtils {
+public class IntactConverterUtils {
 
-    private ConverterUtils() {
+    private IntactConverterUtils() {
     }
 
     public static void populateNames(Names names, AnnotatedObject<?, ?> annotatedObject) {

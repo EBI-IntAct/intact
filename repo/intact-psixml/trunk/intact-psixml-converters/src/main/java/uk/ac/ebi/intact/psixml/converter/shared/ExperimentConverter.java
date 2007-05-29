@@ -15,13 +15,11 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
-import psidev.psi.mi.xml.model.ExperimentDescription;
-import psidev.psi.mi.xml.model.InteractionDetectionMethod;
-import psidev.psi.mi.xml.model.Organism;
-import psidev.psi.mi.xml.model.ParticipantIdentificationMethod;
+import psidev.psi.mi.xml.model.*;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
 /**
  * TODO comment this
@@ -45,8 +43,8 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
         CvInteraction cvInteractionDetectionMethod = new InteractionDetectionMethodConverter(getInstitution()).psiToIntact(idm);
 
         Experiment experiment = new Experiment(getInstitution(), shortLabel, bioSource);
-        ConverterUtils.populateNames(psiObject.getNames(), experiment);
-        ConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getInstitution(), ExperimentXref.class));
+        IntactConverterUtils.populateNames(psiObject.getNames(), experiment);
+        IntactConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getInstitution(), ExperimentXref.class));
         experiment.setCvInteraction(cvInteractionDetectionMethod);
 
         ParticipantIdentificationMethod pim = psiObject.getParticipantIdentificationMethod();
@@ -59,6 +57,20 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
     }
 
     public ExperimentDescription intactToPsi(Experiment intactObject) {
-        throw new UnsupportedOperationException();
+        Bibref bibref = new Bibref();
+        PsiConverterUtils.populateXref(intactObject, bibref);
+
+        InteractionDetectionMethodConverter detMethodConverter = new InteractionDetectionMethodConverter(getInstitution());
+        InteractionDetectionMethod detMethod = (InteractionDetectionMethod) PsiConverterUtils.toCvType(intactObject.getCvInteraction(), detMethodConverter);
+
+        ExperimentDescription expDesc = new ExperimentDescription(bibref, detMethod);
+        PsiConverterUtils.populateNames(intactObject, expDesc);
+        PsiConverterUtils.populateXref(intactObject, expDesc);
+
+        ParticipantIdentificationMethod identMethod = (ParticipantIdentificationMethod)
+                PsiConverterUtils.toCvType(intactObject.getCvIdentification(), new ParticipantIdentificationMethodConverter(getInstitution()));
+        expDesc.setParticipantIdentificationMethod(identMethod);
+
+        return expDesc;
     }
 }

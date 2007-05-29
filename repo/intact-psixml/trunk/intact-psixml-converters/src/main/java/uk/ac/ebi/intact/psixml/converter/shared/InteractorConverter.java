@@ -19,7 +19,8 @@ import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Organism;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 import uk.ac.ebi.intact.util.Crc64;
 
 /**
@@ -39,8 +40,8 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
         String sequence = psiObject.getSequence();
 
         Interactor interactor = newInteractorAccordingToType(psiObject.getOrganism(), shortLabel, psiObject.getInteractorType());
-        ConverterUtils.populateNames(psiObject.getNames(), interactor);
-        ConverterUtils.populateXref(psiObject.getXref(), interactor, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
+        IntactConverterUtils.populateNames(psiObject.getNames(), interactor);
+        IntactConverterUtils.populateXref(psiObject.getXref(), interactor, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
 
         // sequence
         if (sequence != null && interactor instanceof Polymer) {
@@ -53,7 +54,20 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
     }
 
     public psidev.psi.mi.xml.model.Interactor intactToPsi(Interactor intactObject) {
-        throw new UnsupportedOperationException();
+        psidev.psi.mi.xml.model.Interactor interactor = new psidev.psi.mi.xml.model.Interactor();
+        PsiConverterUtils.populateNames(intactObject, interactor);
+        PsiConverterUtils.populateXref(intactObject, interactor);
+
+        if (intactObject instanceof Polymer) {
+            String sequence = ((Polymer) intactObject).getSequence();
+            interactor.setSequence(sequence);
+        }
+
+        InteractorType interactorType = (InteractorType)
+                PsiConverterUtils.toCvType(intactObject.getCvInteractorType(), new InteractorTypeConverter(getInstitution()));
+        interactor.setInteractorType(interactorType);
+
+        return interactor;
     }
 
     protected Interactor newInteractorAccordingToType(Organism psiOrganism, String shortLabel, InteractorType psiInteractorType) {

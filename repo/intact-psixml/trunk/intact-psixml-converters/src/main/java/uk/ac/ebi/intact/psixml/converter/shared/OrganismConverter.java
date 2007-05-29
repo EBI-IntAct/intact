@@ -5,7 +5,8 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.annotation.PsiConverter;
-import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
 /**
  * TODO comment this
@@ -27,12 +28,17 @@ public class OrganismConverter extends AbstractIntactPsiConverter<BioSource, Org
         int taxId = psiObject.getNcbiTaxId();
 
         BioSource bioSource = new BioSource(getInstitution(), shortLabel, String.valueOf(taxId));
-        ConverterUtils.populateNames(psiObject.getNames(), bioSource);
+        IntactConverterUtils.populateNames(psiObject.getNames(), bioSource);
 
         return bioSource;
     }
 
     public Organism intactToPsi(BioSource intactObject) {
-        throw new UnsupportedOperationException();
+        Organism organism = new Organism();
+        PsiConverterUtils.populateNames(intactObject, organism);
+
+        organism.setNcbiTaxId(Integer.valueOf(intactObject.getTaxId()));
+
+        return organism;
     }
 }

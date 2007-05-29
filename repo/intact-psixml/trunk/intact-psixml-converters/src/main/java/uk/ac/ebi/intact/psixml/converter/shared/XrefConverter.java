@@ -16,10 +16,8 @@
 package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.DbReference;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Institution;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 
 /**
@@ -57,7 +55,29 @@ public class XrefConverter<X extends Xref> extends AbstractIntactPsiConverter<X,
     }
 
     public DbReference intactToPsi(Xref intactObject) {
-        throw new UnsupportedOperationException();
+        DbReference dbRef = new DbReference();
+        dbRef.setDb(intactObject.getCvDatabase().getShortLabel());
+        dbRef.setId(intactObject.getPrimaryId());
+        dbRef.setSecondary(intactObject.getSecondaryId());
+        dbRef.setVersion(intactObject.getDbRelease());
+
+        if (intactObject.getCvXrefQualifier() != null) {
+            dbRef.setRefType(intactObject.getCvXrefQualifier().getShortLabel());
+        }
+
+        CvObjectXref cvDatabasePsiMiXref = CvObjectUtils.getPsiMiIdentityXref(intactObject.getCvDatabase());
+        if (cvDatabasePsiMiXref != null) {
+            dbRef.setDbAc(CvObjectUtils.getPsiMiIdentityXref(intactObject.getCvDatabase()).getPrimaryId());
+        }
+
+        if (intactObject.getCvXrefQualifier() != null) {
+            CvObjectXref cvRefTypePsiMiXref = CvObjectUtils.getPsiMiIdentityXref(intactObject.getCvXrefQualifier());
+            if (cvRefTypePsiMiXref != null) {
+                dbRef.setRefTypeAc(cvRefTypePsiMiXref.getPrimaryId());
+            }
+        }
+
+        return dbRef;
     }
 
     private static <X extends Xref> X newXrefInstance(Class<X> xrefClass, CvDatabase db, String primaryId, String secondaryId, String dbRelease, CvXrefQualifier cvXrefQual) {
@@ -75,5 +95,6 @@ public class XrefConverter<X extends Xref> extends AbstractIntactPsiConverter<X,
 
         return xref;
     }
+
 
 }
