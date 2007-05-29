@@ -17,15 +17,14 @@ package uk.ac.ebi.intact.psixml.converter.shared;
 
 import org.junit.Test;
 import psidev.psi.mi.xml.PsimiXmlReader;
+import psidev.psi.mi.xml.PsimiXmlWriter;
 import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.EntrySet;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 
 import java.io.InputStream;
+import java.util.Arrays;
 
 /**
  * TODO comment this
@@ -41,7 +40,7 @@ public class EntryConverterTest {
     @Test
     public void entryToIntactDefault() throws Exception {
 
-        InputStream is = EntryConverterTest.class.getResourceAsStream(MINT_FILE);
+        InputStream is = EntryConverterTest.class.getResourceAsStream(INTACT_FILE);
         PsimiXmlReader reader = new PsimiXmlReader();
         EntrySet entrySet = reader.read(is);
 
@@ -51,25 +50,32 @@ public class EntryConverterTest {
 
         IntactEntry intactEntry = entryConverter.psiToIntact(psiEntry);
 
-        System.out.println("Interactions: " + intactEntry.getInteractions().size());
+        Entry convEntry = entryConverter.intactToPsi(intactEntry);
+        EntrySet convEntrySet = new EntrySet(Arrays.asList(convEntry), 2, 5, 3);
 
-        for (Interaction inter : intactEntry.getInteractions()) {
-            System.out.println(inter);
+        PsimiXmlWriter writer = new PsimiXmlWriter();
+        System.out.println(writer.getAsString(convEntrySet));
 
-            for (Xref xref : inter.getXrefs()) {
-                System.out.println("\t\tXref: " + xref);
-            }
+        /*
+     System.out.println("Interactions: " + intactEntry.getInteractions().size());
 
-            CvInteractionType intType = inter.getCvInteractionType();
-            if (intType != null) {
-                System.out.println("\t\tCV Interaction type: " + intType);
-                for (Xref xref : intType.getXrefs()) {
-                    System.out.println("\t\t\tXref: " + xref);
-                }
-            }
+     for (Interaction inter : intactEntry.getInteractions()) {
+         System.out.println(inter);
 
-            System.out.println("\tExperiment: " + inter.getExperiments().iterator().next());
-        }
+         for (Xref xref : inter.getXrefs()) {
+             System.out.println("\t\tXref: " + xref);
+         }
 
+         CvInteractionType intType = inter.getCvInteractionType();
+         if (intType != null) {
+             System.out.println("\t\tCV Interaction type: " + intType);
+             for (Xref xref : intType.getXrefs()) {
+                 System.out.println("\t\t\tXref: " + xref);
+             }
+         }
+
+         System.out.println("\tExperiment: " + inter.getExperiments().iterator().next());
+     }
+        */
     }
 }

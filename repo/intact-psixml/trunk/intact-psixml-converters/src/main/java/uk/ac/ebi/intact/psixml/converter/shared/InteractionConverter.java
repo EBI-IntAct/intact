@@ -21,7 +21,8 @@ import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
-import uk.ac.ebi.intact.psixml.converter.util.ConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,8 +52,8 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
         CvInteractorType interactorType = getInteractorType(psiObject);
 
         Interaction interaction = new InteractionImpl(experiments, interactionType, interactorType, shortLabel, getInstitution());
-        ConverterUtils.populateNames(psiObject.getNames(), interaction);
-        ConverterUtils.populateXref(psiObject.getXref(), interaction, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
+        IntactConverterUtils.populateNames(psiObject.getNames(), interaction);
+        IntactConverterUtils.populateXref(psiObject.getXref(), interaction, new XrefConverter<InteractorXref>(getInstitution(), InteractorXref.class));
 
         // components, created after the interaction, as we need the interaction to create them
         Collection<Component> components = getComponents(interaction, psiObject);
@@ -62,7 +63,27 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
     }
 
     public psidev.psi.mi.xml.model.Interaction intactToPsi(Interaction intactObject) {
-        throw new UnsupportedOperationException();
+        psidev.psi.mi.xml.model.Interaction interaction = new psidev.psi.mi.xml.model.Interaction();
+        PsiConverterUtils.populateNames(intactObject, interaction);
+        PsiConverterUtils.populateXref(intactObject, interaction);
+
+        ExperimentConverter experimentConverter = new ExperimentConverter(getInstitution());
+        for (Experiment exp : intactObject.getExperiments()) {
+            interaction.getExperiments().add(experimentConverter.intactToPsi(exp));
+        }
+
+        ParticipantConverter participantConverter = new ParticipantConverter(getInstitution());
+        for (Component comp : intactObject.getComponents()) {
+            Participant participant = participantConverter.intactToPsi(comp);
+            participant.setInteraction(interaction);
+            interaction.getParticipants().add(participant);
+        }
+
+        InteractionType interactionType = (InteractionType)
+                PsiConverterUtils.toCvType(intactObject.getCvInteractionType(), new InteractionTypeConverter(getInstitution()));
+        interaction.getInteractionTypes().add(interactionType);
+
+        return interaction;
     }
 
 

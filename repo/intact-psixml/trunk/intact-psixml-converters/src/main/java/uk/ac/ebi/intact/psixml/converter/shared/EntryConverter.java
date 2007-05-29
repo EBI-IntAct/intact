@@ -53,7 +53,16 @@ public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entr
     }
 
     public Entry intactToPsi(IntactEntry intactObject) {
-        throw new UnsupportedOperationException();
+        Entry entry = new Entry();
+
+        InteractionConverter interactionConverter = new InteractionConverter(getInstitution());
+
+        for (Interaction interaction : intactObject.getInteractions()) {
+            entry.getInteractions().add(interactionConverter.intactToPsi(interaction));
+        }
+
+        return entry;
+
     }
 
 }

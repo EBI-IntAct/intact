@@ -21,6 +21,7 @@ import psidev.psi.mi.xml.model.Names;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
 /**
  * TODO comment this
@@ -29,6 +30,8 @@ import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
  * @version $Id$
  */
 public class ParticipantConverter extends AbstractIntactPsiConverter<Component, Participant> {
+
+    private static final String UNSPEFICIED_ROLE = "unspeficied role";
 
     public ParticipantConverter(Institution institution) {
         super(institution);
@@ -43,7 +46,22 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
     }
 
     public Participant intactToPsi(Component intactObject) {
-        throw new UnsupportedOperationException();
+        Participant participant = new Participant();
+        PsiConverterUtils.populateNames(intactObject, participant);
+        PsiConverterUtils.populateXref(intactObject, participant);
+
+        ExperimentalRole expRole = (ExperimentalRole)
+                PsiConverterUtils.toCvType(intactObject.getCvExperimentalRole(), new ExperimentalRoleConverter(getInstitution()));
+        participant.getExperimentalRoles().add(expRole);
+
+        BiologicalRole bioRole = (BiologicalRole)
+                PsiConverterUtils.toCvType(intactObject.getCvBiologicalRole(), new BiologicalRoleConverter(getInstitution()));
+        participant.setBiologicalRole(bioRole);
+
+        psidev.psi.mi.xml.model.Interactor interactor = new InteractorConverter(getInstitution()).intactToPsi(intactObject.getInteractor());
+        participant.setInteractor(interactor);
+
+        return participant;
     }
 
     /**
@@ -77,8 +95,8 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         BiologicalRole role = new BiologicalRole();
 
         Names names = new Names();
-        names.setShortLabel("unspeficied role");
-        names.setFullName("unspecified role");
+        names.setShortLabel(UNSPEFICIED_ROLE);
+        names.setFullName(UNSPEFICIED_ROLE);
 
         role.setNames(names);
 
