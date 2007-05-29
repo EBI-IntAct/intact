@@ -20,6 +20,8 @@ import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
+import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
+import uk.ac.ebi.intact.psixml.persister.service.InteractorService;
 
 /**
  * TODO comment this
@@ -57,5 +59,10 @@ public class InteractorPersister<T extends Interactor> extends AbstractAnnotated
         }
 
         return intactObject;
+    }
+
+    @Override
+    protected AbstractService getService() {
+        return new InteractorService(getIntactContext());
     }
 }

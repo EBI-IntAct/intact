@@ -49,9 +49,9 @@ public abstract class AbstractPersister<T extends AnnotatedObject> implements Pe
         return intactContext;
     }
 
-    protected void persist(T intactObject, AbstractService<T> service, PersisterReport report) throws PersisterException {
+    protected void persist(T intactObject, PersisterReport report) throws PersisterException {
         if (!PersisterConfig.isDryRun(getIntactContext())) {
-            service.persist(intactObject);
+            getService().persist(intactObject);
         }
         report.addCreated(intactObject);
     }
@@ -59,4 +59,6 @@ public abstract class AbstractPersister<T extends AnnotatedObject> implements Pe
     protected boolean isDryRun() {
         return PersisterConfig.isDryRun(getIntactContext());
     }
+
+    protected abstract AbstractService getService();
 }

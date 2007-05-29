@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.OrganismKey;
+import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
 import uk.ac.ebi.intact.psixml.persister.service.OrganismService;
 
 /**
@@ -33,9 +34,12 @@ public class OrganismPersister extends AbstractAnnotatedObjectPersister<BioSourc
         super(intactContext, dryRun);
     }
 
+    protected AbstractService getService() {
+        return new OrganismService(getIntactContext());
+    }
+
     public BioSource saveOrUpdate(BioSource intactObject) throws PersisterException {
-        OrganismService service = new OrganismService(getIntactContext());
-        return saveOrUpdate(intactObject, service, new OrganismKey(intactObject));
+        return saveOrUpdate(intactObject, new OrganismKey(intactObject));
     }
 
 }

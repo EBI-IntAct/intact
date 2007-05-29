@@ -21,6 +21,8 @@ import uk.ac.ebi.intact.model.CvInteractionType;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
+import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
+import uk.ac.ebi.intact.psixml.persister.service.InteractionService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,5 +96,10 @@ public class InteractionPersister extends InteractorPersister<Interaction> {
         intactObject.setExperiments(experiments);
 
         getReport().mergeWith(persister.getReport());
+    }
+
+    @Override
+    protected AbstractService getService() {
+        return new InteractionService(getIntactContext());
     }
 }
