@@ -150,13 +150,16 @@ public class ProteinServiceImpl implements ProteinService {
                 uniprotServiceResult.addError("Couldn't update protein with uniprot id = " + uniprotId + ". It was found" +
                         " in IntAct but was not found in Uniprot.");
                 return uniprotServiceResult;
+            }else{
+                uniprotServiceResult.addError("Could not udpate protein with uniprot id = " + uniprotId + ". No " +
+                        "corresponding entry found in uniprot.");
             }
         }else if ( proteins.size() > 1 ) {
             if ( eachSpeciesSeenOnlyOnce( proteins ) ) {
                 intactProteins.addAll( createOrUpdate( proteins ) );
             } else {
                 uniprotServiceResult.addError("eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false");
-//                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
+///                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
             }
         } else {
             intactProteins.addAll( createOrUpdate( proteins ) );
