@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.Entry;
 import psidev.psi.mi.xml.model.ExperimentDescription;
+import psidev.psi.mi.xml.model.HasId;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
@@ -64,17 +65,30 @@ public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entr
             entry.getInteractions().add(interaction);
 
             for (Participant participant : interaction.getParticipants()) {
-                entry.getInteractors().add(participant.getInteractor());
+                if (!contains(entry.getInteractors(), participant.getInteractor())) {
+                    entry.getInteractors().add(participant.getInteractor());
+                }
             }
 
             for (ExperimentDescription experimentDesc : interaction.getExperiments()) {
-                entry.getExperiments().add(experimentDesc);
+                if (!contains(entry.getExperiments(), experimentDesc)) {
+                    entry.getExperiments().add(experimentDesc);
+                }
             }
 
         }
 
         return entry;
 
+    }
+
+    public boolean contains(Collection<? extends HasId> idElements, HasId hasId) {
+        for (HasId idElement : idElements) {
+            if (idElement.getId() == hasId.getId()) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

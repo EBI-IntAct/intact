@@ -92,7 +92,11 @@ public class PsiConverterUtils {
                 dbRefs.remove(getPrimaryReference(dbRefs));
             }
 
-            xref.getSecondaryRef().addAll(dbRefs);
+            for (DbReference secDbRef : dbRefs) {
+                if (!xref.getSecondaryRef().contains(secDbRef)) {
+                    xref.getSecondaryRef().add(secDbRef);
+                }
+            }
         }
 
 

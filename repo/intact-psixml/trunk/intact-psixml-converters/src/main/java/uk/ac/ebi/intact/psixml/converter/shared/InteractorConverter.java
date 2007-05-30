@@ -19,6 +19,7 @@ import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Organism;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConversionCache;
 import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
 import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 import uk.ac.ebi.intact.util.Crc64;
@@ -54,7 +55,13 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
     }
 
     public psidev.psi.mi.xml.model.Interactor intactToPsi(Interactor intactObject) {
-        psidev.psi.mi.xml.model.Interactor interactor = new psidev.psi.mi.xml.model.Interactor();
+        psidev.psi.mi.xml.model.Interactor interactor = (psidev.psi.mi.xml.model.Interactor) ConversionCache.getElement(intactObject.getShortLabel());
+
+        if (interactor != null) {
+            return interactor;
+        }
+
+        interactor = new psidev.psi.mi.xml.model.Interactor();
         PsiConverterUtils.populate(intactObject, interactor);
 
         if (intactObject instanceof Polymer) {
@@ -65,6 +72,8 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
         InteractorType interactorType = (InteractorType)
                 PsiConverterUtils.toCvType(intactObject.getCvInteractorType(), new InteractorTypeConverter(getInstitution()));
         interactor.setInteractorType(interactorType);
+
+        ConversionCache.putElement(intactObject.getShortLabel(), interactor);
 
         return interactor;
     }

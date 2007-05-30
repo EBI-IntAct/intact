@@ -134,7 +134,7 @@ public class PsiMockFactory {
     }
 
     private static void populateId(HasId hasId) {
-        hasId.setId(nextInt());
+        hasId.setId(nextId());
     }
 
     private static void populateNames(NamesContainer namesContainer) {
@@ -208,10 +208,14 @@ public class PsiMockFactory {
     }
 
     private static String nextString(String prefix) {
-        return prefix + "_" + IdSequenceGenerator.getInstance().nextId();
+        return prefix + "_" + nextInt();
     }
 
     private static int nextInt() {
+        return new Random().nextInt(10000);
+    }
+
+    private static int nextId() {
         return IdSequenceGenerator.getInstance().nextId();
     }
 

@@ -73,6 +73,9 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
             expDesc.setParticipantIdentificationMethod(identMethod);
         }
 
+        Organism organism = new OrganismConverter(getInstitution()).intactToPsi(intactObject.getBioSource());
+        expDesc.getHostOrganisms().add(organism);
+
         return expDesc;
     }
 }

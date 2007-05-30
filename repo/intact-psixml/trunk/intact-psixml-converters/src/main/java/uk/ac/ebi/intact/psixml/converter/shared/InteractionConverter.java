@@ -21,6 +21,7 @@ import psidev.psi.mi.xml.model.InteractorType;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConversionCache;
 import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
 import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
@@ -63,7 +64,13 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
     }
 
     public psidev.psi.mi.xml.model.Interaction intactToPsi(Interaction intactObject) {
-        psidev.psi.mi.xml.model.Interaction interaction = new psidev.psi.mi.xml.model.Interaction();
+        psidev.psi.mi.xml.model.Interaction interaction = (psidev.psi.mi.xml.model.Interaction) ConversionCache.getElement(intactObject.getShortLabel());
+
+        if (interaction != null) {
+            return interaction;
+        }
+
+        interaction = new psidev.psi.mi.xml.model.Interaction();
         PsiConverterUtils.populate(intactObject, interaction);
 
         ExperimentConverter experimentConverter = new ExperimentConverter(getInstitution());
@@ -82,6 +89,8 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
         InteractionType interactionType = (InteractionType)
                 PsiConverterUtils.toCvType(intactObject.getCvInteractionType(), new InteractionTypeConverter(getInstitution()));
         interaction.getInteractionTypes().add(interactionType);
+
+        ConversionCache.putElement(intactObject.getShortLabel(), interaction);
 
         return interaction;
     }
