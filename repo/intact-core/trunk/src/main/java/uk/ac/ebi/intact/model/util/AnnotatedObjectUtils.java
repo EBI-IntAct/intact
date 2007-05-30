@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -168,7 +169,8 @@ public class AnnotatedObjectUtils {
      * @return the Xref type used in the class
      */
     public static Class<? extends Xref> getXrefClassType(Class<? extends AnnotatedObject> clazz)  {
-
+        clazz = CgLibUtil.removeCglibEnhanced(clazz);
+        
         PropertyDescriptor propDesc = null;
         try {
             propDesc = new PropertyDescriptor("xrefs", clazz);
