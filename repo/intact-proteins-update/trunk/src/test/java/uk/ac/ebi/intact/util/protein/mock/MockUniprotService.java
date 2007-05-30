@@ -29,6 +29,8 @@ public class MockUniprotService extends AbstractUniprotService {
         UniprotProtein cdc42canfa = MockUniprotProtein.build_CDC42_CANFA();
         UniprotProtein cdc42human = MockUniprotProtein.build_CDC42_HUMAN();
 
+        /*In uniprot, if you search for P60952 or it's splice variant (P60952-1, P60952-2), it will return the same entry.
+        That's why P60952, P60952-1 and P60952-2 are associated to the same UniprotProtein cdc42canfa*/
         proteins.put( "P60952", Arrays.asList( cdc42canfa ) );
         proteins.put( "P60952-1", Arrays.asList( cdc42canfa ) );
         proteins.put( "P60952-2", Arrays.asList( cdc42canfa ) );
