@@ -39,8 +39,11 @@ public class MockUniprotProtein {
                               "DDPSTIEKLAKNKQKPITPETAEKLARDLKAVKYVECSALTQRGLKNVFDEAILAALEPP" +
                               "ETQPKRKCCIF";
 
-
-
+    public static final String CDC42_ID ="CDC42_HUMAN";
+    public static final String CDC42_PRIMARY_AC ="P60953";
+    public static final String CDC42_SECONDARY_AC_1 ="P21181";
+    public static final String CDC42_SECONDARY_AC_2 = "P25763";
+    public static final String CDC42_SECONDARY_AC_3 = "Q7L8R5";
 
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" );
