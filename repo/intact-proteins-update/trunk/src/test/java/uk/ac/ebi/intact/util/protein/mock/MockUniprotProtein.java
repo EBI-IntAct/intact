@@ -24,6 +24,24 @@ import java.util.Date;
  * @since TODO artifact version here
  */
 public class MockUniprotProtein {
+    public static final String CANFA_ID = "CDC42_CANFA";
+    public static final String CANFA_PRIMARY_AC = "P60952";
+    public static final String CANFA_SECONDARY_AC_1 = "P21181";
+    public static final String CANFA_SECONDARY_AC_2 = "P25763";
+    public static final int CANFA_ORGA_TAXID = 9615;
+    public static final String CANFA_ORGA_NAME = "Dog";
+    public static final String CANFA_DESCRIPTION = "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)";
+    public static final String CANFA_GENE = "CDC42";
+    public static final String CANFA_SEQ_UPDATE = "13-APR-2004";
+    public static final String CANFA_ANNOT_UPDATE =  "20-FEB-2007";
+    public static final String CANFA_SEQUENCE =  "MQTIKCVVVGDGAVGKTCLLISYTTNKFPSEYVPTVFDNYAVTVMIGGEPYTLGLFDTAG" +
+                              "QEDYDRLRPLSYPQTDVFLVCFSVVSPSSFENVKEKWVPEITHHCPKTPFLLVGTQIDLR" +
+                              "DDPSTIEKLAKNKQKPITPETAEKLARDLKAVKYVECSALTQRGLKNVFDEAILAALEPP" +
+                              "ETQPKRKCCIF";
+
+
+
+
 
     public static final SimpleDateFormat sdf = new SimpleDateFormat( "dd-MMM-yyyy" );
 
@@ -46,17 +64,17 @@ public class MockUniprotProtein {
     public static UniprotProtein build_CDC42_CANFA() {
         return new UniprotProteinBuilder()
                 .setSource( UniprotProteinType.SWISSPROT )
-                .setId( "CDC42_CANFA" )
-                .setPrimaryAc( "P60952" )
-                .setSecondaryAcs( Arrays.asList( "P21181", "P25763" ) )
-                .setOrganism( new Organism( 9615, "Dog" ) )
-                .setDescription( "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)" )
-                .setGenes( Arrays.asList( "CDC42" ) )
+                .setId( CANFA_ID )
+                .setPrimaryAc( CANFA_PRIMARY_AC )
+                .setSecondaryAcs( Arrays.asList( CANFA_SECONDARY_AC_1, CANFA_SECONDARY_AC_2 ) )
+                .setOrganism( new Organism( CANFA_ORGA_TAXID, CANFA_ORGA_NAME ) )
+                .setDescription( CANFA_DESCRIPTION )
+                .setGenes( Arrays.asList( CANFA_GENE ) )
                 .setSynomyms( NONE )
                 .setOrfs( NONE )
                 .setLocuses( NONE )
-                .setLastSequenceUpdate( buildDate( "13-APR-2004" ) )
-                .setLastAnnotationUpdate( buildDate( "20-FEB-2007" ) )
+                .setLastSequenceUpdate( buildDate( CANFA_SEQ_UPDATE ) )
+                .setLastAnnotationUpdate( buildDate( CANFA_ANNOT_UPDATE ) )
                 .setDiseases( NONE )
                 .setFunctions( NONE )
                 .setKeywords( NONE )
@@ -69,10 +87,7 @@ public class MockUniprotProtein {
                                 .build()
                 )
                 .setCrc64( "34B44F9225EC106B" )
-                .setSequence( "MQTIKCVVVGDGAVGKTCLLISYTTNKFPSEYVPTVFDNYAVTVMIGGEPYTLGLFDTAG" +
-                              "QEDYDRLRPLSYPQTDVFLVCFSVVSPSSFENVKEKWVPEITHHCPKTPFLLVGTQIDLR" +
-                              "DDPSTIEKLAKNKQKPITPETAEKLARDLKAVKYVECSALTQRGLKNVFDEAILAALEPP" +
-                              "ETQPKRKCCIF" )
+                .setSequence( CANFA_SEQUENCE )
                 .setFeatureChains( null )
                 .setSpliceVariants( Arrays.asList(
                         new UniprotSpliceVariantBuilder()
