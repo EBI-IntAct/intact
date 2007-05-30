@@ -131,7 +131,7 @@ public class XrefUpdaterUtils {
         }
 
         if ( database == null ) {
-            throw new IllegalArgumentException( "You must give a non null database." );
+            throw new IllegalArgumentException( "You must give a non null database (cvDatabase))." );
         }
 
         if ( newXrefs == null ) {
