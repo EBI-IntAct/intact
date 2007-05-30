@@ -98,7 +98,7 @@ public abstract class UpdateProteinsI {
 
     //////////////////////////////////
     // Constructors
-
+    // todo : change managing of connection should be done outside
     public UpdateProteinsI( boolean offlineMode, boolean setOutputOn )
     {
         this.offlineMode = offlineMode;

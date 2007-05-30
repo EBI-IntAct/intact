@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.protein;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.util.biosource.BioSourceService;
 import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
+import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 import java.util.Collection;
@@ -37,20 +38,20 @@ public interface ProteinService {
     ///////////////////////////
     // Handle single protein
 
-    public Collection<Protein> retrieve( String uniprotId ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( String uniprotId );
 
-    public Collection<Protein> retrieve( String uniprotId, int taxidFilter ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( String uniprotId, int taxidFilter );
 
-    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( String uniprotId, Collection<Integer> taxidFilters );
 
     ///////////////////////////////////
     // Handle collections of proteins
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds );
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds, int taxidFilter );
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) throws ProteinServiceException;
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters );
 
     ////////////////////////////////////
     // Configuration
