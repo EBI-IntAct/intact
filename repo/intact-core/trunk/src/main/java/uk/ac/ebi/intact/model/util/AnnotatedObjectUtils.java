@@ -20,6 +20,11 @@ import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Xref;
 
+import java.beans.IntrospectionException;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -155,5 +160,31 @@ public class AnnotatedObjectUtils {
         }
 
         return xrefs;
+    }
+
+    /**
+     * Gets the generic Xref type for an AnnotatedObject class
+     * @param clazz an AnnotatedObject class
+     * @return the Xref type used in the class
+     */
+    public static <X extends Xref> Class<X> getClassType(Class<? extends AnnotatedObject<X,?>> clazz)  {
+
+        PropertyDescriptor propDesc = null;
+        try {
+            propDesc = new PropertyDescriptor("xrefs", clazz);
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+        Method method = propDesc.getReadMethod();
+
+        return getParameterizedType(method.getGenericReturnType());
+    }
+
+    private static Class getParameterizedType(Type type) {
+        if (type instanceof ParameterizedType) {
+            ParameterizedType paramType = (ParameterizedType) type;
+            return (Class) paramType.getActualTypeArguments()[0];
+        }
+        return null;
     }
 }
