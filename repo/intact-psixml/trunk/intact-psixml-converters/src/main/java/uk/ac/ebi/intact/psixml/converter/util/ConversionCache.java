@@ -15,41 +15,35 @@
  */
 package uk.ac.ebi.intact.psixml.converter.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * TODO comment this
+ * Stores a cache of elements with id
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IdSequenceGenerator {
+public class ConversionCache {
 
-    private int currentId;
+    private Map<Object, Object> idMap;
 
-    public IdSequenceGenerator() {
-        reset();
+    public ConversionCache() {
+        this.idMap = new HashMap<Object, Object>();
     }
 
-    public static ThreadLocal<IdSequenceGenerator> instance = new ThreadLocal<IdSequenceGenerator>() {
+    public static ThreadLocal<ConversionCache> instance = new ThreadLocal<ConversionCache>() {
         @Override
-        protected IdSequenceGenerator initialValue() {
-            return new IdSequenceGenerator();
+        protected ConversionCache initialValue() {
+            return new ConversionCache();
         }
     };
 
-    public static IdSequenceGenerator getInstance() {
-        return instance.get();
+    public static Object getElement(Object id) {
+        return instance.get().idMap.get(id);
     }
 
-    public synchronized int nextId() {
-        currentId++;
-        return currentId;
-    }
-
-    public int currentId() {
-        return currentId;
-    }
-
-    public void reset() {
-        this.currentId = 0;
+    public static void putElement(Object key, Object element) {
+        instance.get().idMap.put(key, element);
     }
 }

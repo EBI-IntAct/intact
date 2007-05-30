@@ -15,12 +15,16 @@
  */
 package uk.ac.ebi.intact.psixml.commons.model;
 
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Interactor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Represents an entry in IntAct
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -28,6 +32,8 @@ import java.util.Collection;
 public class IntactEntry {
 
     private Collection<Interaction> interactions;
+    private Collection<Experiment> experiments;
+    private Collection<Interactor> interactors;
 
     public IntactEntry() {
     }
@@ -42,5 +48,48 @@ public class IntactEntry {
 
     public void setInteractions(Collection<Interaction> interactions) {
         this.interactions = interactions;
+    }
+
+    /**
+     * Convenience method to get the experiments - delegates the logic to the interactions
+     *
+     * @return Experiments
+     */
+    public Collection<Experiment> getExperiments() {
+        if (experiments != null) {
+            return experiments;
+
+        }
+
+        experiments = new ArrayList<Experiment>();
+
+        for (Interaction interaction : getInteractions()) {
+            experiments.addAll(interaction.getExperiments());
+        }
+
+        return experiments;
+    }
+
+    /**
+     * Convenience method to get the interactors - delegates the logic to the interactions
+     *
+     * @return Interactors
+     */
+    public Collection<Interactor> getInteractor() {
+        if (interactors != null) {
+            return interactors;
+
+        }
+
+        interactors = new ArrayList<Interactor>();
+
+        for (Interaction interaction : getInteractions()) {
+            for (Component comp : interaction.getComponents()) {
+                interactors.add(comp.getInteractor());
+            }
+
+        }
+
+        return interactors;
     }
 }

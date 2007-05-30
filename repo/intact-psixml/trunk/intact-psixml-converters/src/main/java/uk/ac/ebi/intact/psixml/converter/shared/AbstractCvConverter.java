@@ -20,6 +20,7 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConversionCache;
 import uk.ac.ebi.intact.psixml.converter.util.IntactConverterUtils;
 import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
 
@@ -50,8 +51,16 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
     }
 
     public T intactToPsi(C intactObject) {
-        T cvType = newCvInstance(psiCvClass);
+        T cvType = (T) ConversionCache.getElement(intactObject.getShortLabel());
+
+        if (cvType != null) {
+            return cvType;
+        }
+
+        cvType = newCvInstance(psiCvClass);
         PsiConverterUtils.populate(intactObject, cvType);
+
+        ConversionCache.putElement(intactObject.getShortLabel(), cvType);
 
         return cvType;
     }
