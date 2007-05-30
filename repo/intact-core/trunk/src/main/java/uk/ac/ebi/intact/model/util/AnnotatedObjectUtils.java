@@ -167,7 +167,7 @@ public class AnnotatedObjectUtils {
      * @param clazz an AnnotatedObject class
      * @return the Xref type used in the class
      */
-    public static <X extends Xref> Class<X> getClassType(Class<? extends AnnotatedObject<X,?>> clazz)  {
+    public static <X extends Xref> Class<X> getXrefClassType(Class<? extends AnnotatedObject<X,?>> clazz)  {
 
         PropertyDescriptor propDesc = null;
         try {
