@@ -147,8 +147,8 @@ public class ProteinServiceImpl implements ProteinService {
             ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
             if(proteinsInIntact.size() != 0){
-                uniprotServiceResult.addError("Protein with uniprot id = " + uniprotId + " was found in IntAct but was " +
-                        "not found in Uniprot.");
+                uniprotServiceResult.addError("Couldn't update protein with uniprot id = " + uniprotId + ". It was found" +
+                        " in IntAct but was not found in Uniprot.");
                 return uniprotServiceResult;
             }
         }else if ( proteins.size() > 1 ) {
