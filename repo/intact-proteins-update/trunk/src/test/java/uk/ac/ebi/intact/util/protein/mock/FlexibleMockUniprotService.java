@@ -41,7 +41,9 @@ public class FlexibleMockUniprotService extends AbstractUniprotService {
 
     public Collection<UniprotProtein> retreive( String ac ) {
         Collection<UniprotProtein> myProteins = new ArrayList<UniprotProtein>( 2 );
-        myProteins.addAll( proteins.get( ac ) );
+        if(proteins.containsKey(ac)){
+            myProteins.addAll( proteins.get( ac ) );
+        }
         return myProteins;
     }
 
