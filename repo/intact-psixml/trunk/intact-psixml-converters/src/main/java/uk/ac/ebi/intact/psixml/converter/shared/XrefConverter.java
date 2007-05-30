@@ -19,6 +19,7 @@ import psidev.psi.mi.xml.model.DbReference;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.PsiMiPopulator;
 
 /**
  * TODO comment this
@@ -40,17 +41,33 @@ public class XrefConverter<X extends Xref> extends AbstractIntactPsiConverter<X,
         String secondaryId = psiObject.getSecondary();
         String dbRelease = psiObject.getVersion();
 
+        PsiMiPopulator psiMiPopulator = new PsiMiPopulator();
+
         String db = psiObject.getDb();
+        String dbAc = psiObject.getDbAc();
+
         CvDatabase cvDb = new CvDatabase(getInstitution(), db);
 
-        String xrefType = psiObject.getRefType();
-        CvXrefQualifier xrefQual = null;
-
-        if (xrefType != null) {
-            xrefQual = new CvXrefQualifier(getInstitution(), xrefType);
+        if (dbAc != null && dbAc.startsWith("MI")) {
+            psiMiPopulator.populateWithPsiMi(cvDb, dbAc);
         }
 
+        String refType = psiObject.getRefType();
+        String refTypeAc = psiObject.getRefTypeAc();
+
+        CvXrefQualifier xrefQual = null;
+
+        if (refType != null) {
+            xrefQual = new CvXrefQualifier(getInstitution(), refType);
+
+            if (refTypeAc != null) {
+                psiMiPopulator.populateWithPsiMi(xrefQual, refTypeAc);
+            }
+        }
+
+
         X xref = newXrefInstance(xrefClass, cvDb, primaryId, secondaryId, dbRelease, xrefQual);
+
         return xref;
     }
 

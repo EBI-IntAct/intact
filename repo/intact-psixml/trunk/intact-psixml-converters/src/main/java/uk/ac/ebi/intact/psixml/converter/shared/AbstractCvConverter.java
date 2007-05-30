@@ -51,8 +51,7 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
 
     public T intactToPsi(C intactObject) {
         T cvType = newCvInstance(psiCvClass);
-        PsiConverterUtils.populateNames(intactObject, cvType);
-        PsiConverterUtils.populateXref(intactObject, cvType);
+        PsiConverterUtils.populate(intactObject, cvType);
 
         return cvType;
     }
