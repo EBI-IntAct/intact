@@ -26,6 +26,7 @@ import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
 import uk.ac.ebi.intact.util.protein.utils.AliasUpdaterUtils;
 import uk.ac.ebi.intact.util.protein.utils.AnnotationUpdaterUtils;
 import uk.ac.ebi.intact.util.protein.utils.XrefUpdaterUtils;
+import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 
 import java.util.*;
 
@@ -37,6 +38,8 @@ import java.util.*;
  * @since <pre>08-Feb-2007</pre>
  */
 public class ProteinServiceImpl implements ProteinService {
+
+    private UniprotServiceResult uniprotServiceResult;
 
     public static final Log log = LogFactory.getLog( ProteinServiceImpl.class );
 
@@ -122,7 +125,7 @@ public class ProteinServiceImpl implements ProteinService {
     //////////////////////////
     // ProteinLoaderService
 
-    public Collection<Protein> retrieve( String uniprotId ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( String uniprotId ) {
         if ( uniprotId == null ) {
             throw new IllegalArgumentException( "You must give a non null UniProt AC" );
         }
@@ -132,21 +135,30 @@ public class ProteinServiceImpl implements ProteinService {
         if ( uniprotId.length() == 0 ) {
             throw new IllegalArgumentException( "You must give a non empty UniProt AC" );
         }
+        // Instanciate the uniprotServiceResult that is going to hold the proteins collection, the information messages
+        // and the error message.
+        uniprotServiceResult = new UniprotServiceResult(uniprotId);
 
-        Collection<UniprotProtein> proteins = retreiveFromUniprot( uniprotId );
+        Collection<UniprotProtein> proteins = retrieveFromUniprot( uniprotId );
 
         Collection<Protein> intactProteins = new ArrayList<Protein>( proteins.size() );
+        try{
         if ( proteins.size() > 1 ) {
-            if ( eachSpecieisSeenOnlyOnce( proteins ) ) {
+            if ( eachSpeciesSeenOnlyOnce( proteins ) ) {
                 intactProteins.addAll( createOrUpdate( proteins ) );
             } else {
-                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
+                uniprotServiceResult.addError("eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false");
+//                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
             }
         } else {
             intactProteins.addAll( createOrUpdate( proteins ) );
         }
+        }catch(ProteinServiceException e){
+            uniprotServiceResult.addError(e.getMessage());
+        }
 
-        return intactProteins;
+        uniprotServiceResult.addAllToProteins(intactProteins);
+        return uniprotServiceResult;
     }
 
     /**
@@ -163,38 +175,38 @@ public class ProteinServiceImpl implements ProteinService {
         }
     }
 
-    private boolean eachSpecieisSeenOnlyOnce( Collection<UniprotProtein> proteins ) {
+    private boolean eachSpeciesSeenOnlyOnce( Collection<UniprotProtein> proteins ) {
 
         Collection<Integer> species = new ArrayList<Integer>( proteins.size() );
 
         for ( UniprotProtein protein : proteins ) {
-            int t = protein.getOrganism().getTaxid();
-            if ( species.contains( t ) ) {
+            int taxid = protein.getOrganism().getTaxid();
+            if ( species.contains( taxid ) ) {
                 return false;
             }
-            species.add( t );
+            species.add( taxid );
         }
 
         return true;
     }
 
-    public Collection<Protein> retrieve( String uniprotId, int taxidFilter ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( String uniprotId, int taxidFilter )  {
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( String uniprotId, Collection<Integer> taxidFilters ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( String uniprotId, Collection<Integer> taxidFilters ) {
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds ) {
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, int taxidFilter ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds, int taxidFilter )  {
         throw new UnsupportedOperationException();
     }
 
-    public Collection<Protein> retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters ) throws ProteinServiceException {
+    public UniprotServiceResult retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters )  {
         throw new UnsupportedOperationException();
     }
 
@@ -212,9 +224,6 @@ public class ProteinServiceImpl implements ProteinService {
      */
     private Collection<Protein> createOrUpdate( UniprotProtein uniprotProtein ) throws ProteinServiceException {
 
-        // . TODO Open a transaction
-//        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
         Collection<Protein> proteins = new ArrayList<Protein>( 1 );
 
         Collection<Protein> nonUniprotProteins = new ArrayList<Protein>( 1 );
@@ -224,7 +233,7 @@ public class ProteinServiceImpl implements ProteinService {
         Collection<Protein> primaryProteins = searchIntactByPrimaryAc( uniprotProtein );
         if ( !primaryProteins.isEmpty() ) {
             primaryProteins = filterByTaxid( primaryProteins, taxid );
-            nonUniprotProteins.addAll( removeNonUniprotProteins( primaryProteins ) );
+            nonUniprotProteins.addAll( removeAndGetNonUniprotProteins( primaryProteins ) );
         }
         int countPrimary = primaryProteins.size();
 
@@ -232,7 +241,7 @@ public class ProteinServiceImpl implements ProteinService {
         Collection<Protein> secondaryProteins = searchIntactBySecondaryAc( uniprotProtein );
         if ( !secondaryProteins.isEmpty() ) {
             secondaryProteins = filterByTaxid( secondaryProteins, taxid );
-            nonUniprotProteins.addAll( removeNonUniprotProteins( secondaryProteins ) );
+            nonUniprotProteins.addAll( removeAndGetNonUniprotProteins( secondaryProteins ) );
         }
         int countSecondary = secondaryProteins.size();
 
@@ -244,7 +253,7 @@ public class ProteinServiceImpl implements ProteinService {
             updateProtein( protein, uniprotProtein );
 
         } else if ( countPrimary == 0 && countSecondary == 1 ) {
-
+            //Corresponding test : ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount1()
             log.debug( "Found a single IntAct protein by UniProt secondary AC (hint: could be a TrEMBL moved to SP)." );
             Protein protein = secondaryProteins.iterator().next();
             proteins.add( protein );
@@ -256,7 +265,8 @@ public class ProteinServiceImpl implements ProteinService {
             updateProtein( protein, uniprotProtein );
 
         } else if ( countPrimary == 1 && countSecondary == 0 ) {
-
+            // Corresponding test : ProteinServiceImplTest.testRetrieve_sequenceUpdate()
+            //                      ProteinServiceImplTest.testRetrieve_update_CDC42_CANFA()
             log.debug( "Found a single IntAct protein by UniProt primary AC." );
             Protein protein = primaryProteins.iterator().next();
             proteins.add( protein );
@@ -267,11 +277,11 @@ public class ProteinServiceImpl implements ProteinService {
             // Error cases
 
 
-            String pCount = "primary(" + countPrimary + ") secondary(" + countSecondary + ")";
+            String pCount = "Count of protein in Intact for the Uniprot entry primary ac(" + countPrimary + ") for the Uniprot entry secondary ac(s)(" + countSecondary + ")";
             log.error( "Could not update that protein, number of protein found in IntAct: " + pCount );
 
             if ( countPrimary > 1 && countSecondary == 0 ) {
-
+            //corresponding test : testRetrieve_primaryCount2_secondaryCount1()
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching Primary AC: " + uniprotProtein.getPrimaryAc() );
                 sb.append( NEW_LINE ).append( "Matches were:" ).append( NEW_LINE );
@@ -283,9 +293,11 @@ public class ProteinServiceImpl implements ProteinService {
                     sb.append( pp.getShortLabel() );
                     sb.append( NEW_LINE );
                 }
-                raiseAlarm( sb.toString() );
+                uniprotServiceResult.addError(sb.toString());
+//                raiseAlarm( sb.toString() );
 
             } else if ( countPrimary == 0 && countSecondary > 1 ) {
+            // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount2()
 
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching secondary AC(s): " + uniprotProtein.getSecondaryAcs() );
@@ -298,24 +310,23 @@ public class ProteinServiceImpl implements ProteinService {
                     sb.append( pp.getShortLabel() );
                     sb.append( NEW_LINE );
                 }
-                raiseAlarm( sb.toString() );
+                uniprotServiceResult.addError(sb.toString());
+//                raiseAlarm( sb.toString() );
 
             } else {
 
-                raiseAlarm( "Unexpected number of protein found in IntAct: " + pCount + NEW_LINE +
-                            "Please fix this problem manualy." );
+                // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount1_secondaryCount1()
+                uniprotServiceResult.addError( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
+                            "Please fix this problem manualy.");
+//                raiseAlarm( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
+//                            "Please fix this problem manualy." );
 
             }
         }
 
-        // . TODO Close transaction
-//        try {
-//            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-//        } catch ( IntactTransactionException e ) {
-//            throw new ProteinServiceException( "An error occured while closing transaction. See nested.", e );
-//        }
-
         proteins.addAll( nonUniprotProteins );
+
+        uniprotServiceResult.addAllToProteins(nonUniprotProteins);
 
         return proteins;
     }
@@ -435,7 +446,8 @@ public class ProteinServiceImpl implements ProteinService {
 
             } else {
 
-                raiseAlarm( "Could not find a corresponding" );
+//                raiseAlarm( "Could not find a corresponding" );
+                throw new ProteinServiceException( "Could not find a corresponding" );
             }
         }
     }
@@ -633,7 +645,7 @@ public class ProteinServiceImpl implements ProteinService {
         try {
             biosource = bioSourceService.getBiosourceByTaxid( String.valueOf( uniprotProtein.getOrganism().getTaxid() ) );
         } catch ( BioSourceServiceException e ) {
-            throw new ProteinServiceException();
+            throw new ProteinServiceException(e);
         }
 
         Protein protein = new ProteinImpl( CvHelper.getInstitution(),
@@ -694,7 +706,7 @@ public class ProteinServiceImpl implements ProteinService {
         return proteins;
     }
 
-    private Collection<UniprotProtein> retreiveFromUniprot( String uniprotId ) {
+    private Collection<UniprotProtein> retrieveFromUniprot( String uniprotId ) {
         return uniprotService.retreive( uniprotId );
     }
 
@@ -706,7 +718,7 @@ public class ProteinServiceImpl implements ProteinService {
      *
      * @return a non null colection of IntAct protein that are not from UniProt.
      */
-    private Collection<Protein> removeNonUniprotProteins( Collection<Protein> proteins ) {
+    private Collection<Protein> removeAndGetNonUniprotProteins( Collection<Protein> proteins ) {
         Collection<Protein> selected = new ArrayList<Protein>( proteins.size() );
 
         for ( Iterator<Protein> iterator = proteins.iterator(); iterator.hasNext(); ) {
