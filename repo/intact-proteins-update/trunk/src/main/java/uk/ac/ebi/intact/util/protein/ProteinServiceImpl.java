@@ -143,7 +143,15 @@ public class ProteinServiceImpl implements ProteinService {
 
         Collection<Protein> intactProteins = new ArrayList<Protein>( proteins.size() );
         try{
-        if ( proteins.size() > 1 ) {
+        if(proteins.size() == 0){
+            ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+            List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
+            if(proteinsInIntact.size() != 0){
+                uniprotServiceResult.addError("Protein with uniprot id = " + uniprotId + " was found in IntAct but was " +
+                        "not found in Uniprot.");
+                return uniprotServiceResult;
+            }
+        }else if ( proteins.size() > 1 ) {
             if ( eachSpeciesSeenOnlyOnce( proteins ) ) {
                 intactProteins.addAll( createOrUpdate( proteins ) );
             } else {
@@ -160,6 +168,7 @@ public class ProteinServiceImpl implements ProteinService {
         uniprotServiceResult.addAllToProteins(intactProteins);
         return uniprotServiceResult;
     }
+
 
     /**
      * Process the alarm.
