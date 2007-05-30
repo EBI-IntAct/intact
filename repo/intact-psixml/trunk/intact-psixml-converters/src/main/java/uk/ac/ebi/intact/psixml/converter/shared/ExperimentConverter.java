@@ -45,6 +45,7 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
         Experiment experiment = new Experiment(getInstitution(), shortLabel, bioSource);
         IntactConverterUtils.populateNames(psiObject.getNames(), experiment);
         IntactConverterUtils.populateXref(psiObject.getXref(), experiment, new XrefConverter<ExperimentXref>(getInstitution(), ExperimentXref.class));
+        IntactConverterUtils.populateXref(psiObject.getBibref().getXref(), experiment, new XrefConverter<ExperimentXref>(getInstitution(), ExperimentXref.class));
         experiment.setCvInteraction(cvInteractionDetectionMethod);
 
         ParticipantIdentificationMethod pim = psiObject.getParticipantIdentificationMethod();
@@ -58,19 +59,19 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
 
     public ExperimentDescription intactToPsi(Experiment intactObject) {
         Bibref bibref = new Bibref();
-        PsiConverterUtils.populateXref(intactObject, bibref);
+        PsiConverterUtils.populate(intactObject, bibref);
 
         InteractionDetectionMethodConverter detMethodConverter = new InteractionDetectionMethodConverter(getInstitution());
         InteractionDetectionMethod detMethod = (InteractionDetectionMethod) PsiConverterUtils.toCvType(intactObject.getCvInteraction(), detMethodConverter);
 
         ExperimentDescription expDesc = new ExperimentDescription(bibref, detMethod);
-        PsiConverterUtils.populateId(expDesc);
-        PsiConverterUtils.populateNames(intactObject, expDesc);
-        PsiConverterUtils.populateXref(intactObject, expDesc);
+        PsiConverterUtils.populate(intactObject, expDesc);
 
-        ParticipantIdentificationMethod identMethod = (ParticipantIdentificationMethod)
-                PsiConverterUtils.toCvType(intactObject.getCvIdentification(), new ParticipantIdentificationMethodConverter(getInstitution()));
-        expDesc.setParticipantIdentificationMethod(identMethod);
+        if (intactObject.getCvIdentification() != null) {
+            ParticipantIdentificationMethod identMethod = (ParticipantIdentificationMethod)
+                    PsiConverterUtils.toCvType(intactObject.getCvIdentification(), new ParticipantIdentificationMethodConverter(getInstitution()));
+            expDesc.setParticipantIdentificationMethod(identMethod);
+        }
 
         return expDesc;
     }

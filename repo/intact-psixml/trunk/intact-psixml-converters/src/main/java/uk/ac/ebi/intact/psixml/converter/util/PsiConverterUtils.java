@@ -16,10 +16,8 @@
 package uk.ac.ebi.intact.psixml.converter.util;
 
 import psidev.psi.mi.xml.model.*;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
+import psidev.psi.mi.xml.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.shared.AbstractCvConverter;
 import uk.ac.ebi.intact.psixml.converter.shared.XrefConverter;
 
@@ -37,7 +35,21 @@ public class PsiConverterUtils {
     private PsiConverterUtils() {
     }
 
-    public static void populateNames(AnnotatedObject<?, ?> annotatedObject, NamesContainer namesContainer) {
+    public static void populate(AnnotatedObject<?, ?> annotatedObject, Object objectToPopulate) {
+        if (objectToPopulate instanceof HasId) {
+            populateId((HasId) objectToPopulate);
+        }
+
+        if (objectToPopulate instanceof NamesContainer) {
+            populateNames(annotatedObject, (NamesContainer) objectToPopulate);
+        }
+
+        if (objectToPopulate instanceof XrefContainer) {
+            populateXref(annotatedObject, (XrefContainer) objectToPopulate);
+        }
+    }
+
+    private static void populateNames(AnnotatedObject<?, ?> annotatedObject, NamesContainer namesContainer) {
         Names names = namesContainer.getNames();
 
         if (names == null) {
@@ -50,7 +62,7 @@ public class PsiConverterUtils {
         namesContainer.setNames(names);
     }
 
-    public static void populateXref(AnnotatedObject<?, ?> annotatedObject, XrefContainer xrefContainer) {
+    private static void populateXref(AnnotatedObject<?, ?> annotatedObject, XrefContainer xrefContainer) {
         if (annotatedObject.getXrefs().isEmpty()) {
             return;
         }
@@ -69,12 +81,17 @@ public class PsiConverterUtils {
             DbReference primaryRef = getPrimaryReference(dbRefs);
             xref.setPrimaryRef(primaryRef);
         } else {
-
             DbReference primaryRef = getIdentity(dbRefs);
             xref.setPrimaryRef(primaryRef);
 
-            // remove the primary ref from the collection and add the rest as secondary refs
+            // remove the primary ref and the bibref (primary-ref) in case of being an experiment
+            // from the collection and add the rest as secondary refs
             dbRefs.remove(primaryRef);
+
+            if (annotatedObject instanceof Experiment) {
+                dbRefs.remove(getPrimaryReference(dbRefs));
+            }
+
             xref.getSecondaryRef().addAll(dbRefs);
         }
 
@@ -82,7 +99,7 @@ public class PsiConverterUtils {
         xrefContainer.setXref(xref);
     }
 
-    public static int populateId(HasId hasIdElement) {
+    private static int populateId(HasId hasIdElement) {
         int id = IdSequenceGenerator.getInstance().nextId();
         hasIdElement.setId(id);
 
@@ -90,9 +107,12 @@ public class PsiConverterUtils {
     }
 
     public static CvType toCvType(CvObject cvObject, AbstractCvConverter converter) {
+        if (cvObject == null) {
+            throw new NullPointerException("cvObject");
+        }
+
         CvType cvType = converter.intactToPsi(cvObject);
-        populateNames(cvObject, cvType);
-        populateXref(cvObject, cvType);
+        populate(cvObject, cvType);
 
         return cvType;
     }

@@ -47,9 +47,7 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
 
     public Participant intactToPsi(Component intactObject) {
         Participant participant = new Participant();
-        PsiConverterUtils.populateId(participant);
-        PsiConverterUtils.populateNames(intactObject, participant);
-        PsiConverterUtils.populateXref(intactObject, participant);
+        PsiConverterUtils.populate(intactObject, participant);
 
         ExperimentalRole expRole = (ExperimentalRole)
                 PsiConverterUtils.toCvType(intactObject.getCvExperimentalRole(), new ExperimentalRoleConverter(getInstitution()));

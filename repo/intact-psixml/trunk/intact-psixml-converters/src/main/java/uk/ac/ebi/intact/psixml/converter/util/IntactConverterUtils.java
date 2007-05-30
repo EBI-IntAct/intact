@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.psixml.converter.util;
 import psidev.psi.mi.xml.model.DbReference;
 import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.converter.shared.XrefConverter;
 
@@ -55,5 +57,17 @@ public class IntactConverterUtils {
         X xref = xrefConverter.psiToIntact(dbReference);
         annotatedObject.addXref(xref);
     }
+
+    public static CvXrefQualifier createCvXrefQualifier(Institution institution, DbReference dbReference) {
+        String xrefType = dbReference.getRefType();
+        CvXrefQualifier xrefQual = null;
+
+        if (xrefType != null) {
+            xrefQual = new CvXrefQualifier(institution, xrefType);
+        }
+
+        return xrefQual;
+    }
+
 
 }
