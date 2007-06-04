@@ -32,6 +32,8 @@ import java.util.HashSet;
  */
 public class PsiConverterUtils {
 
+    private static final String UNSPEFICIED_ROLE = "unspeficied role";
+
     private PsiConverterUtils() {
     }
 
@@ -119,6 +121,30 @@ public class PsiConverterUtils {
         populate(cvObject, cvType);
 
         return cvType;
+    }
+
+    public static BiologicalRole createUnspecifiedBiologicalRole() {
+        BiologicalRole role = new BiologicalRole();
+
+        Names names = new Names();
+        names.setShortLabel(UNSPEFICIED_ROLE);
+        names.setFullName(UNSPEFICIED_ROLE);
+
+        role.setNames(names);
+
+        Xref xref = new Xref();
+
+        String biologicalRoleMiRef = "MI:0499";
+
+        DbReference dbRef = new DbReference(biologicalRoleMiRef, CvDatabase.PSI_MI);
+        dbRef.setRefType(CvXrefQualifier.IDENTITY);
+        dbRef.setRefTypeAc(CvXrefQualifier.IDENTITY_MI_REF);
+        dbRef.setDbAc(CvDatabase.PSI_MI_MI_REF);
+
+        xref.setPrimaryRef(dbRef);
+        role.setXref(xref);
+
+        return role;
     }
 
     private static Collection<DbReference> toDbReferences(Collection<? extends uk.ac.ebi.intact.model.Xref> intactXrefs) {

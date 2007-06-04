@@ -42,7 +42,7 @@ public class InteractionConverter extends AbstractIntactPsiConverter<Interaction
     }
 
     public Interaction psiToIntact(psidev.psi.mi.xml.model.Interaction psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
+        String shortLabel = IntactConverterUtils.getShortLabelFromNames(psiObject.getNames());
 
         Collection<Experiment> experiments = getExperiments(psiObject);
 

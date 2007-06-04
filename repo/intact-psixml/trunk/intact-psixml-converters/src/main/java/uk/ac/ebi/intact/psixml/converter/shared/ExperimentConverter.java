@@ -34,7 +34,7 @@ public class ExperimentConverter extends AbstractIntactPsiConverter<Experiment, 
     }
 
     public Experiment psiToIntact(ExperimentDescription psiObject) {
-        String shortLabel = psiObject.getNames().getShortLabel();
+        String shortLabel = IntactConverterUtils.getShortLabelFromNames(psiObject.getNames());
 
         Organism hostOrganism = psiObject.getHostOrganisms().iterator().next();
         BioSource bioSource = new OrganismConverter(getInstitution()).psiToIntact(hostOrganism);

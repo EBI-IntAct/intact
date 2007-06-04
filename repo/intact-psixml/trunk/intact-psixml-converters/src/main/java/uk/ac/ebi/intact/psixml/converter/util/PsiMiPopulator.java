@@ -34,7 +34,7 @@ public class PsiMiPopulator {
     public PsiMiPopulator() {
     }
 
-    public <X extends Xref> void populateWithPsiMi(AnnotatedObject<X, ?> annotatedObject, String psiMi) {
+    public <X extends Xref> void populateWithPsiMi(AnnotatedObject annotatedObject, String psiMi) {
         this.institution = annotatedObject.getOwner();
 
         Class<? extends Xref> xrefClass = AnnotatedObjectUtils.getXrefClassType(annotatedObject.getClass());

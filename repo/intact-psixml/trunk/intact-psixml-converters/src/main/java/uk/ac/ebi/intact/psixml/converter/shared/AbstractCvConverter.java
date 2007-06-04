@@ -51,7 +51,7 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
     }
 
     public T intactToPsi(C intactObject) {
-        T cvType = (T) ConversionCache.getElement(intactObject.getShortLabel());
+        T cvType = (T) ConversionCache.getElement(elementKey(intactObject));
 
         if (cvType != null) {
             return cvType;
@@ -60,7 +60,7 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
         cvType = newCvInstance(psiCvClass);
         PsiConverterUtils.populate(intactObject, cvType);
 
-        ConversionCache.putElement(intactObject.getShortLabel(), cvType);
+        ConversionCache.putElement(elementKey(intactObject), cvType);
 
         return cvType;
     }
@@ -74,5 +74,9 @@ public class AbstractCvConverter<C extends CvObject, T extends CvType> extends A
         }
 
         return cv;
+    }
+
+    private String elementKey(C intactObject) {
+        return intactObject.getShortLabel() + "_" + intactObject.getClass();
     }
 }

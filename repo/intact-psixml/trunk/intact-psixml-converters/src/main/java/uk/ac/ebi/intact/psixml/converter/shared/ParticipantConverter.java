@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.psixml.converter.shared;
 
 import psidev.psi.mi.xml.model.BiologicalRole;
 import psidev.psi.mi.xml.model.ExperimentalRole;
-import psidev.psi.mi.xml.model.Names;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
@@ -30,8 +29,6 @@ import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
  * @version $Id$
  */
 public class ParticipantConverter extends AbstractIntactPsiConverter<Component, Participant> {
-
-    private static final String UNSPEFICIED_ROLE = "unspeficied role";
 
     public ParticipantConverter(Institution institution) {
         super(institution);
@@ -77,7 +74,7 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
 
         BiologicalRole psiBioRole = participant.getBiologicalRole();
         if (psiBioRole == null) {
-            psiBioRole = unspecifiedBiologicalRole();
+            psiBioRole = PsiConverterUtils.createUnspecifiedBiologicalRole();
         }
         CvBiologicalRole biologicalRole = new BiologicalRoleConverter(institution).psiToIntact(psiBioRole);
 
@@ -90,15 +87,5 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         return component;
     }
 
-    static BiologicalRole unspecifiedBiologicalRole() {
-        BiologicalRole role = new BiologicalRole();
 
-        Names names = new Names();
-        names.setShortLabel(UNSPEFICIED_ROLE);
-        names.setFullName(UNSPEFICIED_ROLE);
-
-        role.setNames(names);
-
-        return role;
-    }
 }

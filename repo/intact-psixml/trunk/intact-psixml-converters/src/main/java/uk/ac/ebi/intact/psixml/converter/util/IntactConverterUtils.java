@@ -35,8 +35,12 @@ public class IntactConverterUtils {
     }
 
     public static void populateNames(Names names, AnnotatedObject<?, ?> annotatedObject) {
-        annotatedObject.setShortLabel(names.getShortLabel());
-        annotatedObject.setFullName(names.getFullName());
+        String shortLabel = getShortLabelFromNames(names);
+        annotatedObject.setShortLabel(shortLabel);
+
+        if (names != null) {
+            annotatedObject.setFullName(names.getFullName());
+        }
     }
 
     public static <X extends Xref> void populateXref(psidev.psi.mi.xml.model.Xref psiXref, AnnotatedObject<X, ?> annotatedObject, XrefConverter<X> xrefConverter) {
@@ -67,6 +71,14 @@ public class IntactConverterUtils {
         }
 
         return xrefQual;
+    }
+
+    public static String getShortLabelFromNames(Names names) {
+        return (names == null) ? IntactConverterUtils.createTempShortLabel() : names.getShortLabel();
+    }
+
+    public static String createTempShortLabel() {
+        return "ns-" + System.currentTimeMillis();
     }
 
 

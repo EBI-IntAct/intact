@@ -84,10 +84,21 @@ public class InteractorConverter extends AbstractIntactPsiConverter<Interactor, 
 
         String interactorTypeLabel = psiInteractorType.getNames().getShortLabel();
 
+        // in dip files, it seams that the type is stored in the full name and the short label is empty
+        if (interactorTypeLabel == null) {
+            interactorTypeLabel = psiInteractorType.getNames().getFullName();
+        }
+
         Interactor interactor = null;
 
-        if (interactorTypeLabel.equals("protein")) {
+        if (interactorTypeLabel.equals(CvInteractorType.PROTEIN)) {
             interactor = new ProteinImpl(getInstitution(), organism, shortLabel, interactorType);
+        } else if (interactorTypeLabel.equals(CvInteractorType.SMALL_MOLECULE)) {
+            interactor = new SmallMoleculeImpl(shortLabel, getInstitution(), interactorType);
+            interactor.setBioSource(organism);
+        } else
+        if (interactorTypeLabel.equals(CvInteractorType.NUCLEIC_ACID) || interactorTypeLabel.equals(CvInteractorType.DNA)) {
+            interactor = new NucleicAcidImpl(getInstitution(), organism, shortLabel, interactorType);
         } else {
             throw new RuntimeException("Interaction of unexpected type: " + interactorTypeLabel);
         }
