@@ -52,6 +52,12 @@
             <artifactId>intact-psixml-commons</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>uk.ac.ebi.intact.tools</groupId>
+            <artifactId>intact-psi-validator</artifactId>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
 </project>

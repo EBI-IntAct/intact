@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
+import uk.ac.ebi.intact.psixml.converter.util.ConversionCache;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,6 +53,8 @@ public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entr
 
         IntactEntry ientry = new IntactEntry(interactions);
 
+        ConversionCache.clear();
+
         return ientry;
     }
 
@@ -77,6 +80,8 @@ public class EntryConverter extends AbstractIntactPsiConverter<IntactEntry, Entr
             }
 
         }
+
+        ConversionCache.clear();
 
         return entry;
 

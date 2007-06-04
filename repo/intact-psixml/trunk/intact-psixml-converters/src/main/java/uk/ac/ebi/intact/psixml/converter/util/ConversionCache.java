@@ -46,4 +46,8 @@ public class ConversionCache {
     public static void putElement(Object key, Object element) {
         instance.get().idMap.put(key, element);
     }
+
+    public static void clear() {
+        instance.get().idMap.clear();
+    }
 }
