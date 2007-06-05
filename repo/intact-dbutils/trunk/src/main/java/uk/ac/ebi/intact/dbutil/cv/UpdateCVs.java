@@ -1250,22 +1250,19 @@ public class UpdateCVs {
             if (synonym.hasType()) {
                 // if the synonym has a type, we use it instead of the default go-synonym.
                 specificType = (CvAliasType) getCvObject(CvAliasType.class, synonym.getType(), output, report);
-                if (specificType == null) {
-                    output.println("Error: Could not find or create CvAliasType( '" + synonym.getType() + "' ). skip Alias update.");
-                    output.println("Error: Use '" + defaultAliasType.getShortLabel() + "' instead.");
-                    specificType = defaultAliasType;
-                }
+            }
+
+            if (specificType == null) {
+                output.println("ERROR: Could not find or create CvAliasType( '" + synonym.getType() + "' ). Using '" + defaultAliasType.getShortLabel() + "' instead.");
+                specificType = defaultAliasType;
             }
 
             CvObjectAlias alias = new CvObjectAlias(institution, cvObject, specificType, synonym.getName());
 
             if (!alias.getName().equals(synonym.getName())) {
                 // the synonym was truncated, we don't import these.
-
-                if (specificType != null) {
-                    output.println("\t\t Skipping Alias( " + specificType.getShortLabel() + ", '" +
-                                   synonym.getName() + "' ) ... the content would be truncated.");
-                }
+                output.println("\t\t Skipping Alias( " + specificType.getShortLabel() + ", '" +
+                               synonym.getName() + "' ) ... the content would be truncated.");
                 continue;
             }
 
@@ -1273,11 +1270,7 @@ public class UpdateCVs {
                 cvObject.addAlias(alias);
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAliasDao(CvObjectAlias.class).persist(alias);
 
-                if (specificType == null) {
-                    output.println("WARN: Term without specific type: " + cvTerm.getFullName());
-                } else {
-                    output.println("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )");
-                }
+                output.println("\t\t Created Alias( " + specificType.getShortLabel() + ", '" + synonym.getName() + "' )");
             }
         }
     }
