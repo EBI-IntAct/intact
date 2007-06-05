@@ -73,13 +73,11 @@ public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<
 
     public <T extends CvObject> T getByShortLabel( Class<T> cvType, String label ) {
         return ( T ) getSession().createCriteria( cvType )
-                .add( Restrictions.eq( "objClass", cvType.getName() ) )
                 .add( Restrictions.eq( "shortLabel", label ) ).uniqueResult();
     }
 
     public <T extends CvObject> T getByPrimaryId( Class<T> cvType, String miRef ) {
         return ( T ) getSession().createCriteria( cvType )
-                .add( Restrictions.eq( "objClass", cvType.getName() ) )
                 .createCriteria( "xrefs" )
                 .add( Restrictions.eq( "primaryId", miRef ) ).uniqueResult();
     }
