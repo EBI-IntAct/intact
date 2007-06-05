@@ -132,23 +132,14 @@
                     </executions>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-idea-plugin</artifactId>
-                    <version>2.0-beta-ebi</version>
                     <configuration>
                         <jdkLevel>1.5</jdkLevel>
                         <downloadSources>true</downloadSources>
                         <useClassifiers>true</useClassifiers>
                         <linkModules>true</linkModules>
                         <exclude>target</exclude>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.3</version>
-                    <configuration>
-                        <forkMode>once</forkMode>
-                        <argLine>-Dinstitution=${institution}</argLine>
                     </configuration>
                 </plugin>
 
@@ -342,6 +333,12 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.easymock</groupId>
+            <artifactId>easymockclassextension</artifactId>
+            <version>2.2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
