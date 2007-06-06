@@ -15,16 +15,16 @@
 
     <name>IntAct PSIXML :: PSI Extensions</name>
     <description>Uploads PSIXML files to the database</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-upload</url>
+    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-exchange</url>
 
     <scm>
         <connection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-upload/trunk
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-exchange/trunk
         </connection>
         <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-upload/trunk
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-exchange/trunk
         </developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/intact-psixml-upload/trunk/</url>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/intact-psixml-exchange/trunk/</url>
     </scm>
 
     <dependencies>
@@ -34,41 +34,15 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.psixml</groupId>
-            <artifactId>intact-psixml-tools</artifactId>
+            <artifactId>intact-psixml-processor</artifactId>
         </dependency>
     </dependencies>
-
-    <!-- EBI repositories -->
-    <repositories>
-        <repository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-psixml-upload</url>
+            <url>${site.remote.basedir}/intact-psixml-upload-extensions</url>
         </site>
     </distributionManagement>
 

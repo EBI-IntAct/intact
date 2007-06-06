@@ -10,21 +10,21 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>intact-psixml-upload</artifactId>
+    <artifactId>intact-psixml-exchange</artifactId>
     <packaging>jar</packaging>
 
-    <name>IntAct PSIXML :: Uploader</name>
-    <description>Uploads PSIXML files to the database</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-upload</url>
+    <name>IntAct PSIXML :: IO (input/Output)</name>
+    <description>Imports PSIXML files to the database or creates PSIXML from the intact database</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-exchange</url>
 
     <scm>
         <connection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-upload/trunk
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-exchange
         </connection>
         <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/intact-psixml-upload/trunk
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-exchange
         </developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/intact-psixml-upload/trunk/</url>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/trunk/intact-psixml-exchange</url>
     </scm>
 
     <build>
@@ -79,37 +79,11 @@
         </dependency>
     </dependencies>
 
-    <!-- EBI repositories -->
-    <repositories>
-        <repository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <site>
             <id>intact-site</id>
             <name>Intact site</name>
-            <url>${site.remote.basedir}/intact-psixml-upload</url>
+            <url>${site.remote.basedir}/intact-psixml-exchange</url>
         </site>
     </distributionManagement>
 
