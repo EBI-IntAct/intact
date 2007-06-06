@@ -22,7 +22,7 @@
     <groupId>uk.ac.ebi.intact.app.editor</groupId>
     <artifactId>editor-app</artifactId>
     <packaging>war</packaging>
-    <version>1.5.1-1</version>
+    <version>1.5.1-2</version>
 
     <name>Editor</name>
     <description>To edit IntAct data</description>
