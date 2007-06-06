@@ -289,13 +289,13 @@ public abstract class  AbstractEditViewBean<T extends AnnotatedObject> implement
 
         // Remove the current short label from the menu. Menus are already loaded
         // via activateObject method call of the EditViewBeanFactory class.
-        try {
-            removeCurrentSLFromMenus();
-        }
-        catch (IntactException ie) {
+        //try {
+        //    removeCurrentSLFromMenus();
+        //}
+        //catch (IntactException ie) {
             // Log the error; the editor will display without menus!
-            log.error("loadMenus() error", ie);
-        }
+        //    log.error("loadMenus() error", ie);
+        //}
     }
 
     /**
