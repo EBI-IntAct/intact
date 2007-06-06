@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.psixml.persister.service;
 
+import net.sf.ehcache.Element;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
-import uk.ac.ebi.intact.psixml.persister.key.Key;
 
 /**
  * TODO comment this
@@ -28,24 +28,35 @@ import uk.ac.ebi.intact.psixml.persister.key.Key;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotatedObjectService<A extends AnnotatedObject> extends AbstractService<A> {
+public class AnnotatedObjectService<A extends AnnotatedObject, K extends AnnotatedObjectKey> extends AbstractService<A, K> {
 
     public AnnotatedObjectService(IntactContext intactContext) {
         super(intactContext);
     }
 
     public void persist(A objectToPersist) throws PersisterException {
-        getDao().persist(objectToPersist);
+        getDao(objectToPersist.getClass()).persist(objectToPersist);
 
-        getCache(objectToPersist.getClass()).put(new AnnotatedObjectKey(objectToPersist).getElement());
+        getCache(objectToPersist.getClass()).put(createElement(objectToPersist));
     }
 
-    protected A fetchFromDb(Key key) {
-        return (A) getDao().getByShortLabel((String) key.getElement().getKey());
+    protected Element createElement(A object) {
+        return new AnnotatedObjectKey(object).getElement();
     }
 
-    protected AnnotatedObjectDao getDao() {
-        return getIntactContext().getDataContext().getDaoFactory().getAnnotatedObjectDao();
+    protected A fetchFromDb(K key) {
+        String shortLabel = (String) key.getElement().getKey();
+        A annotToFetch = (A) key.getElement().getValue();
+
+        if (shortLabel == null) {
+            throw new NullPointerException("Element key must not be null: " + key.getElement());
+        }
+
+        return getDao(annotToFetch.getClass()).getByShortLabel((String) key.getElement().getKey());
+    }
+
+    protected AnnotatedObjectDao<A> getDao(Class classToFetch) {
+        return (AnnotatedObjectDao<A>) getIntactContext().getDataContext().getDaoFactory().getAnnotatedObjectDao(classToFetch);
     }
 
 }

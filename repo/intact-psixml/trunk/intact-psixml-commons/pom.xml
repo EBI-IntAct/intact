@@ -36,7 +36,6 @@
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psi25-xml</artifactId>
         </dependency>
-
     </dependencies>
 
 </project>

@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.psixml.converter.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.xml.model.DbReference;
 import psidev.psi.mi.xml.model.Names;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -30,6 +32,10 @@ import uk.ac.ebi.intact.psixml.converter.shared.XrefConverter;
  * @version $Id$
  */
 public class IntactConverterUtils {
+
+    private static final Log log = LogFactory.getLog(IntactConverterUtils.class);
+
+    private static final int SHORT_LABEL_LENGTH = 20;
 
     private IntactConverterUtils() {
     }
@@ -74,7 +80,31 @@ public class IntactConverterUtils {
     }
 
     public static String getShortLabelFromNames(Names names) {
-        return (names == null) ? IntactConverterUtils.createTempShortLabel() : names.getShortLabel();
+        if (names == null) {
+            return IntactConverterUtils.createTempShortLabel();
+        }
+
+        String shortLabel = names.getShortLabel();
+        String fullName = names.getFullName();
+
+        // If the short label is null, but not the full name, use the full name as short label.
+        // Truncate the full name if its length > SHORT_LABEL_LENGTH
+        if (shortLabel == null) {
+            if (fullName != null) {
+                if (log.isWarnEnabled()) log.warn("Short label is null. Using full name as short label: " + fullName);
+                shortLabel = fullName;
+
+            } else {
+                throw new NullPointerException("Both fullName and shortLabel are null");
+            }
+        }
+
+        if (shortLabel.length() > SHORT_LABEL_LENGTH) {
+            shortLabel = fullName.substring(0, SHORT_LABEL_LENGTH);
+            if (log.isWarnEnabled()) log.warn("\tFull name to short label truncated: " + shortLabel);
+        }
+
+        return shortLabel;
     }
 
     public static String createTempShortLabel() {

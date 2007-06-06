@@ -16,8 +16,12 @@
 package uk.ac.ebi.intact.psixml.persister.service;
 
 import net.sf.ehcache.Cache;
+import net.sf.ehcache.Element;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.persistence.util.CgLibUtil;
+import uk.ac.ebi.intact.psixml.persister.key.CvObjectKey;
 
 /**
  * TODO comment this
@@ -25,15 +29,58 @@ import uk.ac.ebi.intact.model.CvObject;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CvService<T extends CvObject> extends AnnotatedObjectService<T> {
+public class CvService<T extends CvObject> extends AnnotatedObjectService<T, CvObjectKey> {
 
     public CvService(IntactContext intactContext) {
         super(intactContext);
     }
 
-    protected Cache getCache() {
-        throw new UnsupportedOperationException();
+    @Override
+    protected Element createElement(T object) {
+        return new CvObjectKey(object).getElement();
     }
 
+    @Override
+    protected T fetchFromDb(CvObjectKey key) {
+        CvObject cvObjToFetch = (CvObject) key.getElement().getValue();
 
+        String miRef = (String) key.getElement().getKey();
+        Class clazz = CgLibUtil.removeCglibEnhanced(cvObjToFetch.getClass());
+
+        if (miRef == null) {
+            throw new NullPointerException("Trying to fetch a CV with a null PSI MI: " + key.getElement().getValue());
+        }
+
+        T cv = (T) getIntactContext().getCvContext().getByMiRef(clazz, miRef);
+
+        return cv;
+    }
+
+    @Override
+    protected AnnotatedObjectDao getDao(Class objectType) {
+        return getIntactContext().getDataContext().getDaoFactory().getCvObjectDao(objectType);
+    }
+
+    @Override
+    protected void checkTransientValues(T annotatedObject) {
+        super.checkTransientValues(annotatedObject);
+
+        CvObject cv = null;
+
+        Cache cache = getCache(CvObject.class);
+        Element elem = cache.get(new CvObjectKey(annotatedObject).getElement().getKey());
+
+        if (elem != null) {
+            cv = (CvObject) elem.getValue();
+        }
+
+        if (cv == null) {
+            cv = getIntactContext().getCvContext().getByLabel(annotatedObject.getClass(), annotatedObject.getShortLabel());
+
+            if (cv == null) {
+                super.checkTransientValues(annotatedObject);
+                cache.put(new CvObjectKey(annotatedObject).getElement());
+            }
+        }
+    }
 }

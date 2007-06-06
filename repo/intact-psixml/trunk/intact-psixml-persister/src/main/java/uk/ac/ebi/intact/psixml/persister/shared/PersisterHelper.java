@@ -15,10 +15,13 @@
  */
 package uk.ac.ebi.intact.psixml.persister.shared;
 
+import net.sf.ehcache.Element;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
+import uk.ac.ebi.intact.psixml.persister.util.CacheContext;
 import uk.ac.ebi.intact.psixml.persister.util.PersisterConfig;
 
 import java.util.Collection;
@@ -36,6 +39,12 @@ public class PersisterHelper {
 
     public static PersisterReport syncAnnotatedObject(AnnotatedObject intactObject, IntactContext context) throws PersisterException {
         CvPersister cvPersister = new CvPersister(context, PersisterConfig.isDryRun(context));
+
+        if (isAlreadySynced(intactObject, context)) {
+            return cvPersister.getReport();
+        } else {
+            markAsSynched(intactObject, context);
+        }
 
         for (Xref xref : (Collection<Xref>) intactObject.getXrefs()) {
             CvDatabase cvDb = (CvDatabase) cvPersister.saveOrUpdate(xref.getCvDatabase());
@@ -58,8 +67,25 @@ public class PersisterHelper {
         return cvPersister.getReport();
     }
 
-    public static boolean isDirty(IntactObject intactObject) {
+    public static boolean doesNotContainAc(IntactObject intactObject) {
         return intactObject.getAc() == null;
+    }
+
+    public static boolean isTransient(IntactObject intactObject, IntactContext intactContext) {
+        AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) intactContext.getConfig().getDefaultDataConfig();
+        return !dataConfig.getSessionFactory().getCurrentSession().contains(intactObject);
+    }
+
+    private static boolean isAlreadySynced(IntactObject intactObject, IntactContext intactContext) {
+        if (doesNotContainAc(intactObject)) return false;
+
+        return (CacheContext.getInstance(intactContext).getSyncObjectsCache().isKeyInCache(intactObject.getAc()));
+    }
+
+    private static void markAsSynched(IntactObject intactObject, IntactContext intactContext) {
+        if (doesNotContainAc(intactObject)) return;
+
+        CacheContext.getInstance(intactContext).getSyncObjectsCache().put(new Element(intactObject.getAc(), true));
     }
 
 }

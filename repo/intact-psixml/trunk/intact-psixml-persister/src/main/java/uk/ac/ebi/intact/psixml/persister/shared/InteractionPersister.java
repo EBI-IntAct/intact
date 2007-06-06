@@ -84,7 +84,7 @@ public class InteractionPersister extends InteractorPersister<Interaction> {
         for (Experiment experiment : intactObject.getExperiments()) {
             Experiment exp;
 
-            if (PersisterHelper.isDirty(experiment)) {
+            if (PersisterHelper.doesNotContainAc(experiment)) {
                 exp = persister.saveOrUpdate(experiment);
             } else {
                 exp = experiment;

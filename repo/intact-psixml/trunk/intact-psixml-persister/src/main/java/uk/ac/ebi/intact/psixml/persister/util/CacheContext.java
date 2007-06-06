@@ -40,6 +40,7 @@ public class CacheContext implements Serializable {
     private static final String ATT_NAME = CacheContext.class.getName();
 
     private CacheManager cacheManager;
+    private Cache syncObjectsCache;
 
     private Map<Class, Cache> cacheMap;
 
@@ -90,6 +91,17 @@ public class CacheContext implements Serializable {
         cacheMap.put(aoClass, cache);
 
         return cache;
+    }
+
+    public Cache getSyncObjectsCache() {
+        if (syncObjectsCache == null) {
+            syncObjectsCache = cacheManager.getCache("syncObjectsCache");
+        }
+        return syncObjectsCache;
+    }
+
+    public void clearAll() {
+        cacheManager.clearAll();
     }
 
 }

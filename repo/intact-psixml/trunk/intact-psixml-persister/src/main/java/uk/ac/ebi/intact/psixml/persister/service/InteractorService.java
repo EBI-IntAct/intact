@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.psixml.persister.service;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 
 /**
  * TODO comment this
@@ -24,7 +25,7 @@ import uk.ac.ebi.intact.model.Interactor;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractorService extends AnnotatedObjectService<Interactor> {
+public class InteractorService extends AnnotatedObjectService<Interactor, AnnotatedObjectKey> {
 
     public InteractorService(IntactContext intactContext) {
         super(intactContext);

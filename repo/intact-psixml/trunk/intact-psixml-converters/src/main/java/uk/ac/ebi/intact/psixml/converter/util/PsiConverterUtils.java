@@ -58,8 +58,11 @@ public class PsiConverterUtils {
             names = new Names();
         }
 
-        names.setShortLabel(annotatedObject.getShortLabel());
-        names.setFullName(annotatedObject.getFullName());
+        String shortLabel = annotatedObject.getShortLabel();
+        String fullName = annotatedObject.getFullName();
+
+        names.setShortLabel(shortLabel);
+        names.setFullName(fullName);
 
         namesContainer.setNames(names);
     }
@@ -124,7 +127,21 @@ public class PsiConverterUtils {
     }
 
     public static BiologicalRole createUnspecifiedBiologicalRole() {
-        BiologicalRole role = new BiologicalRole();
+        return createUnspecifiedRole(BiologicalRole.class);
+    }
+
+    public static ExperimentalRole createUnspecifiedExperimentalRole() {
+        return createUnspecifiedRole(ExperimentalRole.class);
+    }
+
+    private static <T extends CvType> T createUnspecifiedRole(Class<T> roleClass) {
+        T role;
+
+        try {
+            role = roleClass.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         Names names = new Names();
         names.setShortLabel(UNSPEFICIED_ROLE);
@@ -134,9 +151,9 @@ public class PsiConverterUtils {
 
         Xref xref = new Xref();
 
-        String biologicalRoleMiRef = "MI:0499";
+        String unspecifiedRoleMiRef = "MI:0499";
 
-        DbReference dbRef = new DbReference(biologicalRoleMiRef, CvDatabase.PSI_MI);
+        DbReference dbRef = new DbReference(unspecifiedRoleMiRef, CvDatabase.PSI_MI);
         dbRef.setRefType(CvXrefQualifier.IDENTITY);
         dbRef.setRefTypeAc(CvXrefQualifier.IDENTITY_MI_REF);
         dbRef.setDbAc(CvDatabase.PSI_MI_MI_REF);

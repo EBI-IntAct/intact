@@ -13,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.persister.shared;
+package uk.ac.ebi.intact.psixml.persister.key;
 
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.psixml.persister.key.CvObjectKey;
-import uk.ac.ebi.intact.psixml.persister.key.Key;
-import uk.ac.ebi.intact.psixml.persister.service.AbstractService;
-import uk.ac.ebi.intact.psixml.persister.service.CvService;
+import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 /**
  * TODO comment this
@@ -28,21 +25,24 @@ import uk.ac.ebi.intact.psixml.persister.service.CvService;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class CvPersister<T extends CvObject> extends AbstractAnnotatedObjectPersister<T> {
+public class CvObjectKey extends AnnotatedObjectKey<CvObject> {
 
-    public CvPersister(IntactContext intactContext, boolean dryRun) {
-        super(intactContext, dryRun);
+    public CvObjectKey(CvObject annotatedObject) {
+        super(annotatedObject);
     }
 
     @Override
-    protected Key generateKey(T intactObject) {
-        return new CvObjectKey(intactObject);
+    protected String generateKey(CvObject annotatedObject) {
+        Xref xref = CvObjectUtils.getPsiMiIdentityXref(annotatedObject);
+
+        String key;
+
+        if (xref != null) {
+            key = xref.getPrimaryId() + "_" + annotatedObject.getClass().getSimpleName();
+        } else {
+            key = annotatedObject.getShortLabel() + "_" + annotatedObject.getClass().getSimpleName();
+        }
+
+        return key;
     }
-
-    @Override
-    protected AbstractService getService() {
-        return new CvService(getIntactContext());
-    }
-
-
 }

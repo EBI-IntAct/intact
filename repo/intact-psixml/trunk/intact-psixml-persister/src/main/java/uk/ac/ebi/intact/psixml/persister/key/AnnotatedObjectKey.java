@@ -24,12 +24,24 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AnnotatedObjectKey implements Key {
+public class AnnotatedObjectKey<A extends AnnotatedObject> implements Key {
 
     private Element element;
 
-    public AnnotatedObjectKey(AnnotatedObject annotatedObject) {
-        this.element = new Element(annotatedObject.getShortLabel(), annotatedObject);
+    public AnnotatedObjectKey(A annotatedObject) {
+        String key = generateKey(annotatedObject);
+
+        this.element = new Element(key, annotatedObject);
+    }
+
+    protected String generateKey(A annotatedObject) {
+        String key = annotatedObject.getShortLabel();
+
+        if (key == null) {
+            throw new RuntimeException("To generate a key from an annotatedObject the shortLabel is needed: " + annotatedObject);
+        }
+
+        return key;
     }
 
     public Element getElement() {

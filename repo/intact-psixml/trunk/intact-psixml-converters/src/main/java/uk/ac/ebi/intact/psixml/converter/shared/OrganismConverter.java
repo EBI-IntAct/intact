@@ -24,7 +24,7 @@ public class OrganismConverter extends AbstractIntactPsiConverter<BioSource, Org
     public BioSource psiToIntact(Organism psiObject) {
         if (psiObject == null) return null;
 
-        String shortLabel = psiObject.getNames().getShortLabel();
+        String shortLabel = IntactConverterUtils.getShortLabelFromNames(psiObject.getNames());
         int taxId = psiObject.getNcbiTaxId();
 
         BioSource bioSource = new BioSource(getInstitution(), shortLabel, String.valueOf(taxId));
