@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.psixml.commons.model.IntactEntry;
 import uk.ac.ebi.intact.psixml.persister.Persister;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.PersisterReport;
+import uk.ac.ebi.intact.psixml.persister.util.CacheContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +57,8 @@ public class EntryPersister implements Persister<IntactEntry> {
         }
 
         objectToPersist.setInteractions(persistedInteractions);
+
+        CacheContext.getInstance(intactContext).clearAll();
 
         return objectToPersist;
     }

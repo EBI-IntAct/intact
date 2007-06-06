@@ -44,7 +44,7 @@ public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject
     }
 
     public T saveOrUpdate(T intactObject) throws PersisterException {
-        return saveOrUpdate(intactObject, new AnnotatedObjectKey(intactObject));
+        return saveOrUpdate(intactObject, generateKey(intactObject));
     }
 
     protected T saveOrUpdate(T intactObject, Key key) throws PersisterException {
@@ -69,6 +69,10 @@ public abstract class AbstractAnnotatedObjectPersister<T extends AnnotatedObject
         getReport().mergeWith(aoReport);
 
         return intactObject;
+    }
+
+    protected Key generateKey(T intactObject) {
+        return new AnnotatedObjectKey(intactObject);
     }
 
     protected T sync(T intactObject) throws PersisterException {

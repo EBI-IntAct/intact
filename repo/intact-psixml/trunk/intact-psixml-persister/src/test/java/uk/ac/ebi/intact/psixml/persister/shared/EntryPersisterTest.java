@@ -36,13 +36,14 @@ public class EntryPersisterTest {
 
     private static final String INTACT_FILE = "/xml/intact_2006-07-19.xml";
     private static final String MINT_FILE = "/xml/mint_2006-07-18.xml";
+    private static final String DIP_FILE = "/xml/dip_2006-11-01.xml";
 
     private static final boolean DRY_RUN = false;
 
     @Test
     public void entryToIntactDefault() throws Exception {
 
-        InputStream is = EntryPersisterTest.class.getResourceAsStream(MINT_FILE);
+        InputStream is = EntryPersisterTest.class.getResourceAsStream(DIP_FILE);
         PsimiXmlReader reader = new PsimiXmlReader();
         EntrySet entrySet = reader.read(is);
 

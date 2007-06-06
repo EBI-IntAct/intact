@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.psixml.persister.service;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.psixml.persister.key.Key;
+import uk.ac.ebi.intact.psixml.persister.key.AnnotatedObjectKey;
 
 /**
  * TODO comment this
@@ -25,7 +25,7 @@ import uk.ac.ebi.intact.psixml.persister.key.Key;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionService extends AnnotatedObjectService<Interaction> {
+public class InteractionService extends AnnotatedObjectService<Interaction, AnnotatedObjectKey> {
 
     public InteractionService(IntactContext intactContext) {
         super(intactContext);
@@ -42,7 +42,7 @@ public class InteractionService extends AnnotatedObjectService<Interaction> {
      * @return
      */
     @Override
-    protected Interaction fetchFromDb(Key key) {
+    protected Interaction fetchFromDb(AnnotatedObjectKey key) {
         return super.fetchFromDb(key);
     }
 }

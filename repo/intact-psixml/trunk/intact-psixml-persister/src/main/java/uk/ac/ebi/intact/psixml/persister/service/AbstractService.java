@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.psixml.persister.PersisterException;
 import uk.ac.ebi.intact.psixml.persister.key.Key;
+import uk.ac.ebi.intact.psixml.persister.shared.PersisterHelper;
 import uk.ac.ebi.intact.psixml.persister.util.CacheContext;
 import uk.ac.ebi.intact.psixml.persister.util.PersisterConfig;
 
@@ -35,7 +36,7 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractService<T extends AnnotatedObject> implements Serializable {
+public abstract class AbstractService<T extends AnnotatedObject, K extends Key> implements Serializable {
 
     private IntactContext intactContext;
     private CacheContext cacheContext;
@@ -54,7 +55,7 @@ public abstract class AbstractService<T extends AnnotatedObject> implements Seri
         return intactContext;
     }
 
-    public T get(Key key) {
+    public T get(K key) {
         T annotatedObject = (T) key.getElement().getObjectValue();
 
         Element elem = getCache(annotatedObject.getClass())
@@ -87,21 +88,25 @@ public abstract class AbstractService<T extends AnnotatedObject> implements Seri
     }
 
     protected void checkTransientValues(T annotatedObject) {
-        if (institution == null) {
-            institution = getIntactContext().getDataContext().getDaoFactory()
-                    .getInstitutionDao().getByAc(getIntactContext().getInstitution().getAc());
+        if (annotatedObject.getOwner() != null &&
+            !PersisterHelper.isTransient(annotatedObject.getOwner(), getIntactContext())) {
+            return;
         }
 
-        annotatedObject.setOwner(institution);
+        annotatedObject.setOwner(getInstitution());
 
         for (Xref xref : (Collection<Xref>) annotatedObject.getXrefs()) {
-            xref.setOwner(institution);
+            checkTransientXref(xref);
         }
+    }
+
+    protected void checkTransientXref(Xref xref) {
+        xref.setOwner(getInstitution());
     }
 
     public abstract void persist(T objectToPersist) throws PersisterException;
 
-    protected abstract T fetchFromDb(Key key);
+    protected abstract T fetchFromDb(K key);
 
     protected Cache getCache(Class objectType) {
         return getCacheContext().cacheFor(objectType);
@@ -109,5 +114,13 @@ public abstract class AbstractService<T extends AnnotatedObject> implements Seri
 
     protected boolean isDryRun() {
         return PersisterConfig.isDryRun(getIntactContext());
+    }
+
+    protected Institution getInstitution() {
+        if (institution == null) {
+            institution = getIntactContext().getDataContext().getDaoFactory()
+                    .getInstitutionDao().getByAc(getIntactContext().getInstitution().getAc());
+        }
+        return institution;
     }
 }

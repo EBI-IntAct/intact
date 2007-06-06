@@ -15,12 +15,16 @@
  */
 package uk.ac.ebi.intact.psixml.converter.shared;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.xml.model.BiologicalRole;
 import psidev.psi.mi.xml.model.ExperimentalRole;
 import psidev.psi.mi.xml.model.Participant;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.psixml.converter.AbstractIntactPsiConverter;
 import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
+
+import java.util.Iterator;
 
 /**
  * TODO comment this
@@ -29,6 +33,8 @@ import uk.ac.ebi.intact.psixml.converter.util.PsiConverterUtils;
  * @version $Id$
  */
 public class ParticipantConverter extends AbstractIntactPsiConverter<Component, Participant> {
+
+    private static final Log log = LogFactory.getLog(ParticipantConverter.class);
 
     public ParticipantConverter(Institution institution) {
         super(institution);
@@ -79,7 +85,18 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         CvBiologicalRole biologicalRole = new BiologicalRoleConverter(institution).psiToIntact(psiBioRole);
 
         // only the first experimental role
-        ExperimentalRole role = participant.getExperimentalRoles().iterator().next();
+        ExperimentalRole role;
+
+        Iterator<ExperimentalRole> expRoleIterator = participant.getExperimentalRoles().iterator();
+        if (expRoleIterator.hasNext()) {
+            role = expRoleIterator.next();
+        } else {
+            if (log.isWarnEnabled()) log.warn("Participant without experimental role: " + participant);
+
+            role = PsiConverterUtils.createUnspecifiedExperimentalRole();
+        }
+
+
         CvExperimentalRole experimentalRole = new ExperimentalRoleConverter(institution).psiToIntact(role);
 
         Component component = new Component(institution, interaction, interactor, experimentalRole, biologicalRole);
