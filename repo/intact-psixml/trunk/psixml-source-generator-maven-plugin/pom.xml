@@ -47,7 +47,7 @@
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.psixml</groupId>
-            <artifactId>intact-psixml-tools</artifactId>
+            <artifactId>intact-psixml-processor</artifactId>
         </dependency>
 
         <dependency>
@@ -89,27 +89,6 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <repositories>
-        <repository>
-            <releases/>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots/>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <site>

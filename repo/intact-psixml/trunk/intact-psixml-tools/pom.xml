@@ -8,23 +8,23 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.psixml</groupId>
-    <artifactId>intact-psixml-tools</artifactId>
+    <artifactId>intact-psixml-processor</artifactId>
 
     <packaging>jar</packaging>
 
-    <name>IntAct PSIXML :: Tools</name>
-    <description>Contains PSIXML tools for intact, such as the source generator</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml/intact-psixml-tools</url>
+    <name>IntAct PSIXML :: Processor</name>
+    <description>Contains the processor generator classes</description>
+    <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml/intact-psixml-processor</url>
 
     <scm>
         <connection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-tools
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-processor
         </connection>
         <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-tools
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-psixml/trunk/intact-psixml-processor
         </developerConnection>
         <url>
-            http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/trunk/intact-psixml-tools
+            http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-psixml/trunk/intact-psixml-processor
         </url>
     </scm>
 
@@ -60,27 +60,6 @@
             <version>1.7.0</version>
         </dependency>
     </dependencies>
-
-    <repositories>
-        <repository>
-            <releases/>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-        </repository>
-        <repository>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots/>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-        </repository>
-    </repositories>
 
     <distributionManagement>
         <site>
