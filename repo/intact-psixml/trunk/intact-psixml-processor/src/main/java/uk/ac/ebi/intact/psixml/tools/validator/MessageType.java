@@ -19,7 +19,7 @@ package uk.ac.ebi.intact.psixml.tools.validator;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:MessageType.java 8272 2007-04-25 10:20:12Z baranda $
  */
 public enum MessageType {
 

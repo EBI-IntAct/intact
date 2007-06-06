@@ -13,7 +13,7 @@
     <artifactId>intact-psixml-exchange</artifactId>
     <packaging>jar</packaging>
 
-    <name>IntAct PSIXML :: IO (input/Output)</name>
+    <name>IntAct PSIXML :: Exchange</name>
     <description>Imports PSIXML files to the database or creates PSIXML from the intact database</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/intact-psixml-exchange</url>
 
