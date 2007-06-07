@@ -19,8 +19,6 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <scm.base>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/trunk</scm.base>
-        <url.base>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/commons/trunk</url.base>
     </properties>
 
     <scm>
@@ -35,6 +33,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>${groupId}</groupId>
+                <artifactId>intact-commons</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
