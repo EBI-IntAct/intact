@@ -3,23 +3,23 @@
     <parent>
         <groupId>uk.ac.ebi.intact.commons</groupId>
         <artifactId>commons-master</artifactId>
-        <version>1.2.0</version>
+        <version>1.2.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>intact-commons</artifactId>
     <packaging>jar</packaging>
-    <version>1.2.0</version>
+    <version>1.2.1-SNAPSHOT</version>
     
     <name>IntAct Commons :: Commons</name>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <description>Intact Commons, utility classes that do not use the database</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/tags/commons-master-1.2.0</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/tags/commons-master-1.2.0</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/commons/tags/commons-master-1.2.0</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/trunk/intact-commons</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/trunk/intact-commons</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/commons/trunk/intact-commons</url>
     </scm>
 
     <dependencies>
