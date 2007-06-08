@@ -6,6 +6,7 @@
 package uk.ac.ebi.intact.uniprot.service.referenceFilter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for defining a UniProt cross reference filter.
@@ -31,4 +32,18 @@ public interface CrossReferenceFilter {
      * @return a non null list of database name.
      */
     public List<String> getFilteredDatabases();
+
+    /**
+     * Return a String corresponding to the psi-mi identifier of the given database name. It returns null if nothing is
+     * found.
+      * @param databaseName (a database name ex : uniprot, huge, sgd, pdb...)
+     * @return  a String representing the psi-mi identifier of the given databaseName or null if nothing is found.
+     */
+    public String getMi(String databaseName);
+
+    /**
+     * Return the Map maping the database name to there psi-mi identifier.
+     * @return
+     */
+    public Map<String,String> getDb2Mi();
 }
