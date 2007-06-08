@@ -81,7 +81,7 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
         return mi;
     }
 
-    public Map getDb2Mi(){
+    public Map<String,String> getDb2Mi(){
         return db2mi;
     }
 }
