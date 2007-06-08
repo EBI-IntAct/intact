@@ -24,15 +24,15 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public static final Log log = LogFactory.getLog( IntactCrossReferenceFilter.class );
 
-    private Map<String,String> databases = new HashMap<String,String>();
+    private Map<String,String> db2mi = new HashMap<String,String>();
 
     public IntactCrossReferenceFilter() {
-        databases.put( format( "GO" ),"MI:0448" );
-        databases.put( format( "InterPro" ),"MI:0449" );
-        databases.put( format( "PDB" ),"MI:0806" );
-        databases.put( format( "HUGE" ),"MI:0249" );
-        databases.put( format( "SGD" ),"MI:0484" );
-        databases.put( format( "FlyBase" ),"MI:0478" );
+        db2mi.put( format( "GO" ),"MI:0448" );
+        db2mi.put( format( "InterPro" ),"MI:0449" );
+        db2mi.put( format( "PDB" ),"MI:0806" );
+        db2mi.put( format( "HUGE" ),"MI:0249" );
+        db2mi.put( format( "SGD" ),"MI:0484" );
+        db2mi.put( format( "FlyBase" ),"MI:0478" );
     }
 
     private String format( String s ) {
@@ -52,12 +52,12 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
     // CrossReferenceSelector method
 
     public boolean isSelected( String database ) {
-        return databases.containsKey( format( database ) );
+        return db2mi.containsKey( format( database ) );
     }
 
     public List<String> getFilteredDatabases() {
         // TODO test this
-        Set set = databases.keySet();
+        Set set = db2mi.keySet();
         Iterator<String> iterator = set.iterator();
         List<String> list = new ArrayList<String>();
         if(iterator.hasNext()){
@@ -75,13 +75,13 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public String getMi(String databaseName){
         String mi = null;
-        if(databases.containsKey(databaseName)){
-            mi = databases.get(databaseName);
+        if(db2mi.containsKey(databaseName)){
+            mi = db2mi.get(databaseName);
         }
         return mi;
     }
 
-    public Map getDatabase2Mi(){
-        return databases;
+    public Map getDb2Mi(){
+        return db2mi;
     }
 }
