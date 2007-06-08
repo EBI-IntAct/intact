@@ -8,9 +8,7 @@ package uk.ac.ebi.intact.uniprot.service.referenceFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * TODO comment this
@@ -26,16 +24,15 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public static final Log log = LogFactory.getLog( IntactCrossReferenceFilter.class );
 
-    private List<String> databases = new ArrayList<String>();
+    private Map<String,String> databases = new HashMap<String,String>();
 
     public IntactCrossReferenceFilter() {
-        databases.add( format( "GO" ) );
-        databases.add( format( "InterPro" ) );
-        databases.add( format( "PDB" ) );
-        databases.add( format( "HUGE" ) );
-        databases.add( format( "SGD" ) );
-        databases.add( format( "FlyBase" ) );
-        databases.add( format( "HUGE" ) );
+        databases.put( format( "GO" ),"MI:0448" );
+        databases.put( format( "InterPro" ),"MI:0449" );
+        databases.put( format( "PDB" ),"MI:0806" );
+        databases.put( format( "HUGE" ),"MI:0249" );
+        databases.put( format( "SGD" ),"MI:0484" );
+        databases.put( format( "FlyBase" ),"MI:0478" );
     }
 
     private String format( String s ) {
@@ -55,11 +52,32 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
     // CrossReferenceSelector method
 
     public boolean isSelected( String database ) {
-        return databases.contains( format( database ) );
+        return databases.containsKey( format( database ) );
     }
 
     public List<String> getFilteredDatabases() {
         // TODO test this
-        return Collections.unmodifiableList( databases );
+        Set set = databases.keySet();
+        Iterator<String> iterator = set.iterator();
+        List<String> list = new ArrayList<String>();
+        if(iterator.hasNext()){
+            list.add(iterator.next());
+        }
+        return Collections.unmodifiableList( list );
+    }
+
+    /**
+     * Return the mi corresponding to the given databaseName. If not found returns null.
+     * @param databaseName a String in lower case. The different database names are go, interpro,
+     * huge, pdb, sgd or flybase. In the case this doc. wouldn't be up to date, you can get the list of dabase names by
+     * using the getFilteredDatabases() of this class.
+     * @return a String represinting the psi-mi id of the given databaseName or null if not in found.
+     */
+    public String getMi(String databaseName){
+        String mi = null;
+        if(databases.containsKey(databaseName)){
+            mi = databases.get(databaseName);
+        }
+        return mi;
     }
 }
