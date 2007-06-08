@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright (c) 2006 The European Bioinformatics Institute, and others.
+ * All rights reserved.
+ */
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>uk.ac.ebi.intact.maven</groupId>
+    <artifactId>intact-maven-plugins</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <name>IntAct Maven Plugins</name>
+    <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
+    <description>Intact maven plugins</description>
+
+    <scm>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
+    </scm>
+
+    <properties>
+        <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
+    </properties>
+
+    <modules>
+        <module>intact-plugin</module>
+<!--        <module>cv-maven-plugin</module> -->
+<!--        <module>dbtest-maven-plugin</module>      -->
+<!--        <module>dbupdate-maven-plugin</module>
+        <module>ebeye-export-maven-plugin</module>
+        <module>fasta-maven-plugin</module>
+-->
+        <module>hibernateconfig-maven-plugin</module>
+<!--
+        <module>lucene-maven-plugin</module>
+        <module>maven-editortopics-plugin</module>
+        <module>psimitab-maven-plugin</module>
+        <module>psixml-generator-maven-plugin</module>
+        <module>reactome-maven-plugin</module>
+        <module>uniprotexport-maven-plugin</module>
+        <module>dataminer-export-maven-plugin</module>
+        <module>psimitab-indexer-maven-plugin</module>
+        <module>predict-maven-plugin</module>
+        <module>update-component-role-maven-plugin</module>
+-->
+  </modules>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact site</name>
+            <url>${site.remote.basedir}/maven-plugins</url>
+        </site>
+    </distributionManagement>
+
+</project>
