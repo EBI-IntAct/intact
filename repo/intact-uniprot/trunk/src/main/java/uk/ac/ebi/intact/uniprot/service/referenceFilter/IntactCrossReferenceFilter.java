@@ -80,4 +80,8 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
         }
         return mi;
     }
+
+    public Map getDatabase2Mi(){
+        return databases;
+    }
 }
