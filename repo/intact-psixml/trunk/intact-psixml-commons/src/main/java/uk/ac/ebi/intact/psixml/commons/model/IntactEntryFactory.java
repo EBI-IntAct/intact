@@ -13,14 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.psixml.upload;
+package uk.ac.ebi.intact.psixml.commons.model;
+
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
- * TODO comment this
+ * Creates IntactEntry using an IntAct database
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IOPsiUtils {
+public class IntactEntryFactory {
+
+    private IntactEntryFactory() {
+    }
+
+    public static GeneratedEntry createIntactEntry(IntactContext intactContext) {
+        return new GeneratedEntry(intactContext);
+    }
+
 
 }
