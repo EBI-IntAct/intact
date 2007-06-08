@@ -460,6 +460,10 @@ public class OboImportMojo
         return hibernateConfig;
     }
 
+    public void setHibernateConfig(File hibernateConfig) {
+        this.hibernateConfig = hibernateConfig;
+    }
+
     public File getUpdatedTermsFile()
     {
         return updatedTermsFile;
