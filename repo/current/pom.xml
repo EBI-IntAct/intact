@@ -29,6 +29,7 @@
     <modules>
         <module>maven</module>
         <module>commons</module>
+        <module>plugins</module>
         <module>core</module>
         <module>bridges</module>
         <module>data-exchange</module>
