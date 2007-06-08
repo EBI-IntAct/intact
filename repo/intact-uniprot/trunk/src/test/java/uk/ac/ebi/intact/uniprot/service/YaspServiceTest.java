@@ -11,8 +11,7 @@ import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilt
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * YaspAdapter Tester.
@@ -77,6 +76,14 @@ public class YaspServiceTest extends TestCase {
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
 
+        Map<String, UniprotServiceReport> uniprotErrors = uniprot.getErrors();
+        Set set = uniprotErrors.entrySet();
+        Iterator iterator = set.iterator();
+        System.out.println("uniprot report");
+        if(iterator.hasNext()){
+            Map.Entry entry = (Map.Entry) iterator.next();
+            System.out.println(entry.getKey() + " : " + entry.getValue().toString());
+        }
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
         UniprotProtein protein = proteins.iterator().next();
@@ -132,7 +139,7 @@ public class YaspServiceTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "01-MAY-2007" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "29-MAY-2007" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
