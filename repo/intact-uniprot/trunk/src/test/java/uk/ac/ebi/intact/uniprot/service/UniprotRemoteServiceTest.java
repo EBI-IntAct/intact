@@ -246,7 +246,7 @@ public class UniprotRemoteServiceTest extends TestCase {
             calendar.set( Calendar.MINUTE, 0 );
             calendar.set( Calendar.SECOND, 0 );
 
-            assertEquals( formatter.parse( "03-APR-2007" ), calendar.getTime() );
+            assertEquals( formatter.parse( "29-MAY-2007" ), calendar.getTime() );
 
             formatter = null;
         } catch ( ParseException e ) {
@@ -261,7 +261,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertEquals( 5, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 23, protein.getCrossReferences().size() );
+        assertEquals( 25, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
