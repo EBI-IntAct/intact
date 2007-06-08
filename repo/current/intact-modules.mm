@@ -1,6 +1,6 @@
 <map version="0.8.0">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
-<node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181231531938" STYLE="bubble" TEXT="uk.ac.ebi.intact">
+<node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181231680279" STYLE="bubble" TEXT="cd ">
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
 <node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1181231530147" POSITION="right" TEXT="bridges">
 <font NAME="SansSerif" SIZE="12"/>
@@ -49,7 +49,7 @@
 </node>
 <node COLOR="#006633" CREATED="1181229123949" ID="Freemind_Link_1159366474" MODIFIED="1181231524947" POSITION="right" TEXT="data-exchange">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181221064562" ID="Freemind_Link_167868426" MODIFIED="1181231030341" TEXT="intact-psimi">
+<node CREATED="1181221064562" ID="Freemind_Link_167868426" MODIFIED="1181292221182" TEXT="psimi">
 <edge WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219897640" ID="Freemind_Link_1058910975" MODIFIED="1181231030336" TEXT="psixml">
@@ -141,6 +141,9 @@
 <node CREATED="1181219851598" ID="Freemind_Link_1644508135" MODIFIED="1181231030216" TEXT="intact-commons">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220139849" ID="Freemind_Link_1021290108" MODIFIED="1181231461372" TEXT="hibernateconfig-maven-plugin">
+<font NAME="SansSerif" SIZE="12"/>
+</node>
 </node>
 <node COLOR="#006633" CREATED="1181220341109" ID="Freemind_Link_1309242723" MODIFIED="1181231518562" POSITION="left" TEXT="core">
 <font NAME="SansSerif" SIZE="12"/>
@@ -195,9 +198,6 @@
 </node>
 <node COLOR="#006633" CREATED="1181229241236" ID="Freemind_Link_718154769" MODIFIED="1181231522602" POSITION="left" TEXT="plugins">
 <font NAME="SansSerif" SIZE="12"/>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220139849" ID="Freemind_Link_1021290108" MODIFIED="1181231461372" TEXT="hibernateconfig-maven-plugin">
-<font NAME="SansSerif" SIZE="12"/>
-</node>
 <node CREATED="1181220143108" ID="Freemind_Link_951319956" MODIFIED="1181231030134" TEXT="intact-plugin">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
