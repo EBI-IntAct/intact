@@ -680,6 +680,7 @@ public class UpdateCVs {
                 }
             } catch (Exception e) {
                 // that's should not happen, but just in case...
+                e.printStackTrace();
                 throw new IntactException("Error while creating " + getShortClassName(clazz) + "(" + shortlabel +
                                           ", " + mi + ").", e);
             }
