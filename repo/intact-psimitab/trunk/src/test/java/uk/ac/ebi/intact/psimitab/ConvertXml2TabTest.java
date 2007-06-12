@@ -46,11 +46,11 @@ public class ConvertXml2TabTest extends TestCase {
     public void testSetGetInteractorPairCluctering() throws Exception {
         ConvertXml2Tab converter = new ConvertXml2Tab();
 
-        converter.setInteractorPairCluctering( false );
-        assertFalse( converter.isInteractorPairCluctering() );
+        converter.setInteractorPairClustering( false );
+        assertFalse( converter.isInteractorPairClustering() );
 
-        converter.setInteractorPairCluctering( true );
-        assertTrue( converter.isInteractorPairCluctering() );
+        converter.setInteractorPairClustering( true );
+        assertTrue( converter.isInteractorPairClustering() );
     }
 
     public void testSetGetExpansionStrategy() throws Exception {
@@ -136,7 +136,7 @@ public class ConvertXml2TabTest extends TestCase {
         converter.setOverwriteOutputFile( true );
 
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
-        converter.setInteractorPairCluctering( true );
+        converter.setInteractorPairClustering( true );
 
         File logFile = new File( intputDir, "mitab.log" );
         Writer logWriter = new BufferedWriter( new FileWriter( logFile ) );
@@ -178,7 +178,7 @@ public class ConvertXml2TabTest extends TestCase {
         File file = new File( ConvertXml2TabTest.class.getResource( "/xml-samples/11230133.xml" ).getFile() );
         ConvertXml2Tab x2t = new ConvertXml2Tab();
         x2t.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
-        x2t.setInteractorPairCluctering( true );
+        x2t.setInteractorPairClustering( true );
         x2t.setOverwriteOutputFile( true );
 
         File logFile = new File( file.getParentFile(), "11230133.log" );
