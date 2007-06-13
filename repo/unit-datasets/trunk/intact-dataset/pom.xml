@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.datasets</groupId>
+        <artifactId>unitdatasets-master</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-dataset</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>IntAct Unit Datasets :: IntAct Dataset</name>
+    <description>Default IntAct Dataset</description>
+
+    <build>
+        <plugins>
+        <plugin>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>dbunit-dataset-maven-plugin</artifactId>
+            <configuration>
+                <cvConfiguration>
+                    <oboFile>../obo/psi-mi25-4intact.obo</oboFile>
+                    <additionalFile>../obo/intact-unique.csv</additionalFile>
+                    <additionalAnnotationsFile>../obo/additional-annotations.csv</additionalAnnotationsFile>
+                </cvConfiguration>
+                <datasets>
+                    <dataset>
+                        <id>ALL_CVS</id>
+                        <containsAllCVs>true</containsAllCVs>
+                    </dataset>
+                    <dataset>
+                        <id>INTACT_JUL_06</id>
+                        <files>
+                            <file>src/psi25/intact_2006-07-19.xml</file>
+                        </files>
+                    </dataset>
+                    <dataset>
+                        <id>MINT_JUL_06</id>
+                        <files>
+                            <file>src/psi25/mint_2006-07-18.xml</file>
+                        </files>
+                    </dataset>
+                </datasets>
+                <executions>
+                        <execution>
+                            <id>dataset</id>
+                            <phase>generate-sources</phase>
+                        </execution>
+                    </executions>
+            </configuration>
+        </plugin>
+        </plugins>
+    </build>
+
+
+</project>

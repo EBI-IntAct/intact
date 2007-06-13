@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact.datasets</groupId>
     <artifactId>unitdatasets-master</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>1.0-SNAPSHOT</version>
 
     <name>IntAct Unit Datasets</name>
     <description>IntAct Unit Datasets Master POM</description>
@@ -27,11 +27,11 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/unit-datasets/trunk</url>
     </scm>
 
-<!--
+
     <modules>
-        <module>intact-plugin</module>
+        <module>intact-dataset</module>
     </modules>
--->
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -41,6 +41,24 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+                    <artifactId>dbunit-dataset-maven-plugin</artifactId>
+                    <version>2.0.0-SNAPSHOT</version>
+                    <executions>
+                        <execution>
+                            <id>dataset</id>
+                            <phase>generate-sources</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <!-- EBI repositories -->
     <repositories>
