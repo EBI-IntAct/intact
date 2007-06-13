@@ -12,7 +12,7 @@ public interface TestDataset
 {
     String getId();
 
-    URL getResource();
+    URL getDbUnitDataset();
 
     boolean containsAllCVs();
 }
