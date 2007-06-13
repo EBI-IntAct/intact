@@ -30,6 +30,7 @@
         <module>maven</module>
         <module>commons</module>
         <module>plugins</module>
+        <module>unit-datasets</module>
         <module>core</module>
         <module>bridges</module>
         <module>data-exchange</module>
