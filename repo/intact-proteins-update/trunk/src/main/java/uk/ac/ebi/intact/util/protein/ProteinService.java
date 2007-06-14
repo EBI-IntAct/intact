@@ -5,9 +5,7 @@
  */
 package uk.ac.ebi.intact.util.protein;
 
-import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.util.biosource.BioSourceService;
-import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
@@ -40,19 +38,6 @@ public interface ProteinService {
 
     public UniprotServiceResult retrieve( String uniprotId );
 
-    public UniprotServiceResult retrieve( String uniprotId, int taxidFilter );
-
-    public UniprotServiceResult retrieve( String uniprotId, Collection<Integer> taxidFilters );
-
-    ///////////////////////////////////
-    // Handle collections of proteins
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds );
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds, int taxidFilter );
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters );
-
     ////////////////////////////////////
     // Configuration
 
@@ -64,9 +49,5 @@ public interface ProteinService {
 
     public void setUniprotService( UniprotService uniprotService );
 
-    public AlarmProcessor getAlarmProcessor();
-
-    public void setAlarmProcessor( AlarmProcessor alarmProcessor );
-
-    public void addDbMapping( String databaseName, String miRef );
+//    public void addDbMapping( String databaseName, String miRef );
 }
