@@ -14,7 +14,6 @@ import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
 import uk.ac.ebi.intact.util.protein.mock.*;
-import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
 
@@ -51,11 +50,6 @@ public class ProteinServiceImplTest extends TestCase {
         return new TestSuite( ProteinServiceImplTest.class );
     }
 
-    /////////////////////
-    // Instance variable
-
-    private final MockAlarmProcessor alarmProcessor = new MockAlarmProcessor();
-
     //////////////////////
     // Helper methods
 
@@ -63,14 +57,12 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotService uniprotService = new MockUniprotService();
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         return service;
     }
 
     private ProteinService buildProteinService( UniprotService uniprotService ) {
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         return service;
     }
 
@@ -120,12 +112,15 @@ public class ProteinServiceImplTest extends TestCase {
     // Tests
 
     public void testRetrieve_CDC42_CANFA() throws Exception {
+
+
         // clear database content.
         clearProteinsFromDatabase();
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         ProteinService service = buildProteinService();
-        UniprotServiceResult uniprotServiceResult = service.retrieve( "P60952" ); /* CDC42_CANFA */
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC); /* CDC42_CANFA */
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
 
         assertNotNull( proteins );
@@ -238,13 +233,15 @@ public class ProteinServiceImplTest extends TestCase {
 
         sv2 = searchByShortlabel( variants, "P60952-2" );
         assertEquals( sv2ac, sv2.getAc() );
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
     }
 
     public void testRetrieve_update_CDC42_CANFA() throws Exception {
         // clear database content.
         clearProteinsFromDatabase();
 
-
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         FlexibleMockUniprotService service = new FlexibleMockUniprotService();
         UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
         service.add( "P60952", canfa );
@@ -312,6 +309,9 @@ public class ProteinServiceImplTest extends TestCase {
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, synonym, "s" ) ) );
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, orf, "o" ) ) );
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, locus, "l" ) ) );
+
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     public void testRetrieve_sequenceUpdate() throws ProteinServiceException, IntactTransactionException {
@@ -325,7 +325,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -376,7 +375,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         assertEquals(1,uniprotServiceResult.getProteins().size());
@@ -393,7 +391,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
 
@@ -402,7 +399,7 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(1,errors.size());
         for (String error : errors){
             assertEquals("Couldn't update protein with uniprot id = " + uniprotServiceResult.getQuerySentToService() + ". It was found" +
-                        " in IntAct but was not found in Uniprot.", error);
+                    " in IntAct but was not found in Uniprot.", error);
         }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
@@ -421,7 +418,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_PRIMARY_AC );
         assertEquals(0, uniprotServiceResult.getProteins().size());
@@ -429,7 +425,7 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(1, errors.size());
         for(String error : errors){
             assertEquals("Could not udpate protein with uniprot id = " + uniprotServiceResult.getQuerySentToService() + ". No " +
-                        "corresponding entry found in uniprot.",error);
+                    "corresponding entry found in uniprot.",error);
         }
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -457,7 +453,6 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
@@ -520,7 +515,111 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(uniprotXref.getPrimaryId(), MockUniprotProtein.CANFA_PRIMARY_AC);
         assertEquals(P60952.getSequence(),MockUniprotProtein.CANFA_SEQUENCE);
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-              
+
+    }
+
+    /**
+     * Check that nothing is update if more then 1 proteins are found in uniprot.
+     */
+    public void testRetrieve_uniprotAcReturningMoreThen1EntryWithDifferentSpecies() throws Exception{
+
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        /*----------------------------------------------------------
+       Create in the db, the CANFA protein with primary Ac P60952
+        -----------------------------------------------------------*/
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        //Do some settings
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+        UniprotProtein human = MockUniprotProtein.build_CDC42_HUMAN();
+        uniprotService.add( MockUniprotProtein.CDC42_PRIMARY_AC, human );
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_1, human );
+        Collection<UniprotProtein> uniprotProteins = new ArrayList(2);
+        uniprotProteins.add(human);
+        uniprotProteins.add(canfa);
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_2, uniprotProteins );
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_3, human );
+
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_SECONDARY_AC_2 );
+        Collection<Protein> proteins = uniprotServiceResult.getProteins();
+        assertEquals( 0,proteins.size() );
+        Collection<String> errors = uniprotServiceResult.getErrors();
+        assertEquals( 1, uniprotServiceResult.getErrors().size());
+        boolean errorMessageFound = false;
+        String message = new String();
+        for(String error : errors){
+            message = error;
+            if(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to different organisms.").equals(error)){
+                errorMessageFound = true;
+            }
+        }
+        assertTrue("The retrieve method didn't return the appropriate error message : " + message,errorMessageFound);
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        Collection<ProteinImpl> intactProteins = proteinDao.getByUniprotId(canfa.getPrimaryAc());
+        assertEquals(0, intactProteins.size());
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+    }
+
+    /**
+     * Check that nothing is update if more then 1 proteins are found in uniprot.
+     */
+    public void testRetrieve_uniprotAcReturningMoreThen1EntryWithSameSpecies() throws Exception{
+
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        /*----------------------------------------------------------
+       Create in the db, the CANFA protein with primary Ac P60952
+        -----------------------------------------------------------*/
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        //Do some settings
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+        UniprotProtein human = MockUniprotProtein.build_CDC42_HUMAN();
+        uniprotService.add( MockUniprotProtein.CDC42_PRIMARY_AC, human );
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_1, human );
+        canfa.setOrganism(human.getOrganism());
+        Collection<UniprotProtein> uniprotProteins = new ArrayList(2);
+        uniprotProteins.add(human);
+        uniprotProteins.add(canfa);
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_2, uniprotProteins );
+        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_3, human );
+
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_SECONDARY_AC_2 );
+        Collection<Protein> proteins = uniprotServiceResult.getProteins();
+        assertEquals( 0,proteins.size() );
+        Collection<String> errors = uniprotServiceResult.getErrors();
+        assertEquals( 1, uniprotServiceResult.getErrors().size());
+        boolean errorMessageFound = false;
+        String message = new String();
+        for(String error : errors){
+            message = error;
+            if(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to the same organism.").equals(error)){
+                errorMessageFound = true;
+            }
+        }
+        assertTrue("The retrieve method didn't return the appropriate error message : " + message,errorMessageFound);
     }
 
 //    private Protein getProtein(String uniprotId, ProteinDao proteinDao){
@@ -548,7 +647,6 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
@@ -574,15 +672,15 @@ public class ProteinServiceImplTest extends TestCase {
         System.out.println("uniprotXref.getPrimaryId() = " + uniprotXref.getPrimaryId());
         String ac = protein.getAc();
         Protein duplicatedProtein = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
-                                                    protein.getBioSource(),
-                                                    protein.getShortLabel(),
-                                                    protein.getCvInteractorType());
+                protein.getBioSource(),
+                protein.getShortLabel(),
+                protein.getCvInteractorType());
         proteinDao.saveOrUpdate((ProteinImpl) duplicatedProtein);
         duplicatedProtein.setSequence("BLABLA");
         InteractorXref newXref = new InteractorXref(IntactContext.getCurrentInstance().getInstitution(),
-                                                    uniprot,
-                                                    MockUniprotProtein.CANFA_SECONDARY_AC_1,
-                                                    identity);
+                uniprot,
+                MockUniprotProtein.CANFA_SECONDARY_AC_1,
+                identity);
         newXref.setParent(duplicatedProtein);
         XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
         xrefDao.saveOrUpdate(newXref);
@@ -607,7 +705,6 @@ public class ProteinServiceImplTest extends TestCase {
         proteinsColl = uniprotServiceResult.getProteins();
         assertEquals(0,proteinsColl.size());
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-//        Collection<String> messages =  alarmProcessor.getMessages();
         Collection<String> errors =  uniprotServiceResult.getErrors();
         assertEquals(1,errors.size());
         for (String message : errors){
@@ -628,7 +725,6 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins() ;
@@ -648,15 +744,15 @@ public class ProteinServiceImplTest extends TestCase {
         ProteinImpl protein = proteinsList.get(0);
 
         Protein secondaryProt = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
-                                                    protein.getBioSource(),
-                                                    protein.getShortLabel(),
-                                                    protein.getCvInteractorType());
+                protein.getBioSource(),
+                protein.getShortLabel(),
+                protein.getCvInteractorType());
         proteinDao.saveOrUpdate((ProteinImpl) secondaryProt);
         secondaryProt.setSequence("BLABLA");
         InteractorXref newXref = new InteractorXref(IntactContext.getCurrentInstance().getInstitution(),
-                                                    uniprot,
-                                                    MockUniprotProtein.CANFA_SECONDARY_AC_1,
-                                                    identity);
+                uniprot,
+                MockUniprotProtein.CANFA_SECONDARY_AC_1,
+                identity);
         newXref.setParent(secondaryProt);
         XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
         xrefDao.saveOrUpdate(newXref);
@@ -669,7 +765,6 @@ public class ProteinServiceImplTest extends TestCase {
         proteinsColl = uniprotServiceResult.getProteins();
         assertEquals(0,proteinsColl.size());
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-//        Collection<String> messages =  alarmProcessor.getMessages();
         Collection<String> errors =  uniprotServiceResult.getErrors();
         assertEquals(1,errors.size());
         for (String message : errors){
@@ -678,6 +773,63 @@ public class ProteinServiceImplTest extends TestCase {
         }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
+
+    public void testRetrieve_throwException() throws Exception{
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        try{
+            UniprotServiceResult uniprotServiceResult = service.retrieve((String) null);
+            fail("Should have thrown a NullPointerException");
+        }catch(IllegalArgumentException e){
+
+        }
+        try{
+            UniprotServiceResult uniprotServiceResult = service.retrieve("");
+            fail("Should have thrown an IllegalArgumentException");
+        }catch(IllegalArgumentException e){
+
+        }
+    }
+
+
+//    public void testRetrieve_withSecondaryAcSharedBy2UniprotEntry() throws Exception{
+//        // clear database content.
+//        clearProteinsFromDatabase();
+//
+//        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+//        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+//        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+//        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+//        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+//        UniprotProtein cdc42 = MockUniprotProtein.build_CDC42_HUMAN();
+//        uniprotService.add( MockUniprotProtein.CDC42_PRIMARY_AC, cdc42 );
+//        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_1, cdc42 );
+//        uniprotService.add( MockUniprotProtein.CDC42_SECONDARY_AC_3, cdc42 );
+//        Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
+//        proteins.add(cdc42);
+//        proteins.add(canfa);
+//        uniprotService.add(MockUniprotProtein.CDC42_SECONDARY_AC_2, proteins);
+//
+//        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+//        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+//
+//        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_PRIMARY_AC );
+//        /*UniprotServiceResult*/ uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_SECONDARY_AC_2 );
+//        assertEquals(2, uniprotServiceResult.getProteins().size());
+//        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+//
+//
+//    }
 
     public void testRetrieve_primaryCount2_secondaryCount1() throws Exception{
         // clear database content.
@@ -692,7 +844,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
@@ -732,15 +883,15 @@ public class ProteinServiceImplTest extends TestCase {
 
         /**Create in intact db a protein with primary identity xref to uniprot equal to the secondary id of the uniprot entry.**/
         Protein secondaryProt = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
-                                                    protein.getBioSource(),
-                                                    protein.getShortLabel(),
-                                                    protein.getCvInteractorType());
+                protein.getBioSource(),
+                protein.getShortLabel(),
+                protein.getCvInteractorType());
         proteinDao.saveOrUpdate((ProteinImpl) secondaryProt);
         secondaryProt.setSequence("BLABLA");
         newXref = new InteractorXref(IntactContext.getCurrentInstance().getInstitution(),
-                                                    uniprot,
-                                                    MockUniprotProtein.CANFA_SECONDARY_AC_1,
-                                                    identity);
+                uniprot,
+                MockUniprotProtein.CANFA_SECONDARY_AC_1,
+                identity);
         newXref.setParent(secondaryProt);
         xrefDao.saveOrUpdate(newXref);
         secondaryProt.addXref(newXref);
@@ -769,7 +920,6 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(0,proteinsColl.size());
 
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-//        Collection<String> messages =  alarmProcessor.getMessages();
         Collection<String> errors =  uniprotServiceResult.getErrors();
         //        assertEquals(1,messages.size());
         for (String message : errors){
@@ -794,14 +944,196 @@ public class ProteinServiceImplTest extends TestCase {
 
     }
 
+
+    public void testRetrieve_spliceVariantWith2UniprotIdentity() throws Exception{
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
+        assertEquals( 1,proteinsColl.size() );
+        String proteinAc = "";
+        for(Protein protein : proteinsColl){
+            proteinAc = protein.getAc();
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        List<ProteinImpl> proteinsList = proteinDao.getByXrefLike(uniprot, identity,MockUniprotProtein.CANFA_PRIMARY_AC);
+        assertEquals(1, proteinsList.size());
+        ProteinImpl protein = proteinsList.get(0);
+        List<ProteinImpl> spliceVariants = proteinDao.getSpliceVariants(protein);
+        ProteinImpl spliceVariant = spliceVariants.get(0);
+        assertNotNull(ProteinUtils.getUniprotXref(spliceVariant));
+        InteractorXref newXref = new InteractorXref(IntactContext.getCurrentInstance().getInstitution(),
+                uniprot,
+                "P12345",
+                identity);
+        newXref.setParent(spliceVariant);
+        XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
+        xrefDao.saveOrUpdate(newXref);
+        spliceVariant.addXref(newXref);
+        proteinDao.saveOrUpdate(spliceVariant);
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        Collection<String> errors = uniprotServiceResult.getErrors();
+        boolean errorFound = false;
+        for(String error : errors){
+            if(error.contains("Could not find a unique UniProt identity for splice variant:")){
+                errorFound = true;
+            }
+        }
+        assertTrue(errorFound);
+        assertEquals(0,uniprotServiceResult.getProteins().size());
+        assertEquals(1,uniprotServiceResult.getErrors().size());
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+    }
+
+
+    public void testRetrieve_spliceVariantFoundInIntactNotInUniprot() throws Exception{
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
+        assertEquals( 1,proteinsColl.size() );
+        String proteinAc = "";
+        for(Protein protein : proteinsColl){
+            proteinAc = protein.getAc();
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        //In the uniprotService replace canfa with splice variants by canfa without, so that when will try to retrieve
+        // canfa, we can test the case where the intact protein has splice variants but not the uniprot entry.
+        UniprotProtein canfaWithNoSpliceVariant = MockUniprotProtein.build_CDC42_CANFA_WITH_NO_SPLICE_VARIANT();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfaWithNoSpliceVariant );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfaWithNoSpliceVariant );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfaWithNoSpliceVariant );
+        uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        assertEquals(0,uniprotServiceResult.getProteins().size());
+        Collection<String> errors = uniprotServiceResult.getErrors();
+        assertEquals(1, errors.size());
+        boolean errorMessageFound = false;
+        for(String error : errors){
+            System.out.println("error = " + error);
+            if(error.contains("cdc42_canfa,P60952] but in Uniprot it is not the case")){
+                errorMessageFound = true;
+            }
+        }
+        // Assert that the message found it the write one.
+        assertTrue(errorMessageFound);
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+    }
+
+    public void testRetrieve_1spliceVariantFoundInIntact2InUniprot() throws Exception{
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
+        uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
+        //Create the CANFA protein in the empty database, assert it has been created And commit.
+        UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
+        assertEquals( 1,proteinsColl.size() );
+        String proteinAc = "";
+        for(Protein protein : proteinsColl){
+            proteinAc = protein.getAc();
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class,CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class,CvXrefQualifier.IDENTITY_MI_REF);
+        List<ProteinImpl> proteins = proteinDao.getByXrefLike(uniprot, identity, MockUniprotProtein.CANFA_PRIMARY_AC);
+        assertNotNull(proteins);
+        assertEquals(1,proteins.size());
+        Protein intactCanfa = proteins.get(0);
+        List<ProteinImpl> spliceVariants = proteinDao.getSpliceVariants(intactCanfa);
+        assertEquals(2,spliceVariants.size());
+        //We delete one of the splice variants so that the intact canfa has only 1 splice variant when the uniprot canfa
+        //got one.
+        ProteinImpl splice2delete = spliceVariants.get(1);
+        proteinDao.delete(splice2delete);
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        //Check that canfa has 1 splice variant and update it in Intact
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class,CvDatabase.UNIPROT_MI_REF);
+        identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class,CvXrefQualifier.IDENTITY_MI_REF);
+        proteins = proteinDao.getByXrefLike(uniprot, identity, MockUniprotProtein.CANFA_PRIMARY_AC);
+        assertNotNull(proteins);
+        assertEquals(1,proteins.size());
+        intactCanfa = proteins.get(0);
+        spliceVariants = proteinDao.getSpliceVariants(intactCanfa);
+        assertEquals(1,spliceVariants.size());
+        uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        assertEquals(1, uniprotServiceResult.getProteins().size());
+        assertEquals(0, uniprotServiceResult.getErrors().size());
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        //Check now that canfa has 2 splice variants now.
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class,CvDatabase.UNIPROT_MI_REF);
+        identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class,CvXrefQualifier.IDENTITY_MI_REF);
+        proteins = proteinDao.getByXrefLike(uniprot, identity, MockUniprotProtein.CANFA_PRIMARY_AC);
+        assertNotNull(proteins);
+        assertEquals(1,proteins.size());
+        intactCanfa = proteins.get(0);
+        spliceVariants = proteinDao.getSpliceVariants(intactCanfa);
+        assertEquals(2,spliceVariants.size());
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+    }
+
+
     public void testRetrieve_TrEMBL_to_SP() throws Exception {
         // checks that protein moving from TrEMBL to SP are detected and updated accordingly.
         // Essentially, that means having a new Primary AC and the current on in the databse becoming secondary.
 
         // clear database content.
         clearProteinsFromDatabase();
-
-        // TODO spelling of 'retrieve' in UniprotService is wrong ! Fix it.
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -812,7 +1144,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
-        service.setAlarmProcessor( alarmProcessor );
 
         UniprotServiceResult uniprotServiceResult = service.retrieve( "P60952" );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
@@ -849,7 +1180,25 @@ public class ProteinServiceImplTest extends TestCase {
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
-    public void testX() {
-
+    public void testConstructor() throws Exception{
+        try{
+            ProteinService proteinService = new ProteinServiceImpl(null);
+            fail("Should have thrown and IllegalArgumentExcpetion.");
+        }catch(IllegalArgumentException e){
+            assertTrue(true);
+        }
     }
+
+    public void testSetBioSource() throws Exception{
+        FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
+
+        ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
+        try{
+            service.setBioSourceService(null );
+            fail("Should have thrown and IllegalArgumentExcpetion.");
+        }catch(IllegalArgumentException e){
+            assertTrue(true);
+        }
+    }
+
 }
