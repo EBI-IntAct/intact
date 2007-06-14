@@ -82,7 +82,7 @@ public class XrefUpdaterUtils {
             CvObjectDao<CvDatabase> dbDao = daoFactory.getCvObjectDao( CvDatabase.class );
 
             // search by shortlabel is dodgy ! Try mapping to MI:xxxx first.
-            String mi = databaseName2mi.get( db );
+            String mi = databaseName2mi.get( db.toLowerCase() );
             CvDatabase cvDatabase = null;
             if ( mi != null ) {
                 cvDatabase = dbDao.getByPsiMiRef( mi );
@@ -98,6 +98,7 @@ public class XrefUpdaterUtils {
                 cvDatabase = dbDao.getByShortLabel( db, true );
 
                 if( cvDatabase == null ) {
+                    log.error("databaseName2mi is empty : " + databaseName2mi.isEmpty());
                     log.error( "Could not find CvDatabase by label: " + db );
                 }
             }
