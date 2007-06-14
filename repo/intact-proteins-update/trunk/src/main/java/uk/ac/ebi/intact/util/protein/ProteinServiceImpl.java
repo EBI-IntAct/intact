@@ -19,10 +19,10 @@ import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotProteinType;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceService;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceException;
-import uk.ac.ebi.intact.util.protein.alarm.AlarmProcessor;
 import uk.ac.ebi.intact.util.protein.utils.AliasUpdaterUtils;
 import uk.ac.ebi.intact.util.protein.utils.AnnotationUpdaterUtils;
 import uk.ac.ebi.intact.util.protein.utils.XrefUpdaterUtils;
@@ -65,11 +65,6 @@ public class ProteinServiceImpl implements ProteinService {
     private BioSourceService bioSourceService;
 
     /**
-     * Strategy dealing with unrecoverable error.
-     */
-    private AlarmProcessor alarmProcessor;
-
-    /**
      * Mapping allowing to specify which database shortlabel correspond to which MI reference.
      */
     private Map<String, String> databaseName2mi = new HashMap<String, String>();
@@ -78,6 +73,8 @@ public class ProteinServiceImpl implements ProteinService {
     // Constructor
 
     ProteinServiceImpl( UniprotService uniprotService ) {
+        IntactCrossReferenceFilter intactCrossReferenceFilter = new IntactCrossReferenceFilter();
+        databaseName2mi = intactCrossReferenceFilter.getDb2Mi();
         if ( uniprotService == null ) {
             throw new IllegalArgumentException( "You must give a non null implementation of a UniProt Service." );
         }
@@ -93,7 +90,7 @@ public class ProteinServiceImpl implements ProteinService {
 
     public void setBioSourceService( BioSourceService bioSourceService ) {
         if ( bioSourceService == null ) {
-            throw new NullPointerException( "bioSourceService must not be null." );
+            throw new IllegalArgumentException( "bioSourceService must not be null." );
         }
         this.bioSourceService = bioSourceService;
     }
@@ -109,18 +106,10 @@ public class ProteinServiceImpl implements ProteinService {
         this.uniprotService = uniprotService;
     }
 
-    public AlarmProcessor getAlarmProcessor() {
-        return alarmProcessor;
-    }
-
-    public void setAlarmProcessor( AlarmProcessor alarmProcessor ) {
-        this.alarmProcessor = alarmProcessor;
-    }
-
-    public void addDbMapping( String databaseName, String miRef ) {
-        // TODO log overwriting !!
-        databaseName2mi.put( databaseName, miRef );
-    }
+//    public void addDbMapping( String databaseName, String miRef ) {
+//        // TODO log overwriting !!
+//        databaseName2mi.put( databaseName, miRef );
+//    }
 
     //////////////////////////
     // ProteinLoaderService
@@ -143,29 +132,41 @@ public class ProteinServiceImpl implements ProteinService {
 
         Collection<Protein> intactProteins = new ArrayList<Protein>( proteins.size() );
         try{
-        if(proteins.size() == 0){
-            ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-            List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
-            if(proteinsInIntact.size() != 0){
-                uniprotServiceResult.addError("Couldn't update protein with uniprot id = " + uniprotId + ". It was found" +
-                        " in IntAct but was not found in Uniprot.");
-                return uniprotServiceResult;
-            }else{
-                uniprotServiceResult.addError("Could not udpate protein with uniprot id = " + uniprotId + ". No " +
-                        "corresponding entry found in uniprot.");
-            }
-        }else if ( proteins.size() > 1 ) {
-            if ( eachSpeciesSeenOnlyOnce( proteins ) ) {
-                intactProteins.addAll( createOrUpdate( proteins ) );
-            } else {
-                uniprotServiceResult.addError("eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false");
+            if(proteins.size() == 0){
+                ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+                List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
+                if(proteinsInIntact.size() != 0){
+                    uniprotServiceResult.addError("Couldn't update protein with uniprot id = " + uniprotId + ". It was found" +
+                            " in IntAct but was not found in Uniprot.");
+                    return uniprotServiceResult;
+                }else{
+                    uniprotServiceResult.addError("Could not udpate protein with uniprot id = " + uniprotId + ". No " +
+                            "corresponding entry found in uniprot.");
+                }
+            }else if ( proteins.size() > 1 ) {
+                if ( 1 == getSpeciesCount( proteins ) ) {
+                    // If a uniprot ac we have in Intact as identity xref in IntAct, now corresponds to 2 or more proteins
+                    // in uniprot we should not update it automatically but send a message to the curators so that they
+                    // choose manually which of the new uniprot ac is relevant.
+                    uniprotServiceResult.addError("Trying to update " + uniprotServiceResult.getQuerySentToService()
+                            + " returned a set of proteins belonging to the same organism.");
+                } else {
+                    // Send an error message because this should just not happen anymore in IntAct at all. In IntAct, all
+                    // the dimerged has taken care of the dimerged proteins have been dealed with and replaced manually by
+                    // the correct uniprot protein.
+                    // Ex of dimerged protein :P00001 was standing for the Cytochrome c of the human and the chimpanzee.
+                    // It has now been dimerged in one entry for the human P99998 and one for the chimpanzee P99999.
+                    uniprotServiceResult.addError("Trying to update " + uniprotServiceResult.getQuerySentToService()
+                            + " returned a set of proteins belonging to different organisms.");
 ///                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
+                }
+            } else {
+                intactProteins.addAll( createOrUpdate( proteins ) );
             }
-        } else {
-            intactProteins.addAll( createOrUpdate( proteins ) );
-        }
         }catch(ProteinServiceException e){
-            uniprotServiceResult.addError(e.getMessage());
+
+            uniprotServiceResult.addException(e);
+            uniprotServiceResult.addError(e.getMessage() );
         }
 
         uniprotServiceResult.addAllToProteins(intactProteins);
@@ -173,54 +174,51 @@ public class ProteinServiceImpl implements ProteinService {
     }
 
 
+
     /**
-     * Process the alarm.
+     * Count the number of differents species the proteins are spread on and return the count.
+     * @param proteins a Collection of Uniprot Proteins
+     * @return an int representing the number of different species found.
      */
-    private void raiseAlarm( String message ) {
+    private int getSpeciesCount( Collection<UniprotProtein> proteins ) {
 
-
-        if ( alarmProcessor != null ) {
-            alarmProcessor.processAlarm( message );
-        } else {
-            log.error( "No alarm processor available - Could not keep processing going on." );
-            log.error( "Alarm Message was: " + message );
+        if(proteins == null){
+            throw new IllegalArgumentException("The proteins collection should not be null");
         }
-    }
-
-    private boolean eachSpeciesSeenOnlyOnce( Collection<UniprotProtein> proteins ) {
+        if(proteins.size() == 0){
+            throw new IllegalArgumentException("The proteins collection should not be empty");
+        }
 
         Collection<Integer> species = new ArrayList<Integer>( proteins.size() );
-
         for ( UniprotProtein protein : proteins ) {
             int taxid = protein.getOrganism().getTaxid();
-            if ( species.contains( taxid ) ) {
-                return false;
+            if(!species.contains(taxid)){
+                species.add( taxid );
             }
-            species.add( taxid );
         }
 
-        return true;
+        return species.size();
     }
-
-    public UniprotServiceResult retrieve( String uniprotId, int taxidFilter )  {
-        throw new UnsupportedOperationException();
-    }
-
-    public UniprotServiceResult retrieve( String uniprotId, Collection<Integer> taxidFilters ) {
-        throw new UnsupportedOperationException();
-    }
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds ) {
-        throw new UnsupportedOperationException();
-    }
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds, int taxidFilter )  {
-        throw new UnsupportedOperationException();
-    }
-
-    public UniprotServiceResult retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters )  {
-        throw new UnsupportedOperationException();
-    }
+//
+//    public UniprotServiceResult retrieve( String uniprotId, int taxidFilter )  {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    public UniprotServiceResult retrieve( String uniprotId, Collection<Integer> taxidFilters ) {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    public UniprotServiceResult retrieve( Collection<String> uniprotIds ) {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    public UniprotServiceResult retrieve( Collection<String> uniprotIds, int taxidFilter )  {
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    public UniprotServiceResult retrieve( Collection<String> uniprotIds, Collection<Integer> taxidFilters )  {
+//        throw new UnsupportedOperationException();
+//    }
 
     ///////////////////////////
     // Private methods
@@ -293,7 +291,7 @@ public class ProteinServiceImpl implements ProteinService {
             log.error( "Could not update that protein, number of protein found in IntAct: " + pCount );
 
             if ( countPrimary > 1 && countSecondary == 0 ) {
-            //corresponding test : testRetrieve_primaryCount2_secondaryCount1()
+                //corresponding test : testRetrieve_primaryCount2_secondaryCount1()
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching Primary AC: " + uniprotProtein.getPrimaryAc() );
                 sb.append( NEW_LINE ).append( "Matches were:" ).append( NEW_LINE );
@@ -309,7 +307,7 @@ public class ProteinServiceImpl implements ProteinService {
 //                raiseAlarm( sb.toString() );
 
             } else if ( countPrimary == 0 && countSecondary > 1 ) {
-            // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount2()
+                // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount2()
 
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching secondary AC(s): " + uniprotProtein.getSecondaryAcs() );
@@ -329,7 +327,7 @@ public class ProteinServiceImpl implements ProteinService {
 
                 // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount1_secondaryCount1()
                 uniprotServiceResult.addError( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
-                            "Please fix this problem manualy.");
+                        "Please fix this problem manualy.");
 //                raiseAlarm( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
 //                            "Please fix this problem manualy." );
 
@@ -378,8 +376,8 @@ public class ProteinServiceImpl implements ProteinService {
         int t2 = uniprotProtein.getOrganism().getTaxid();
         if ( !String.valueOf( t2 ).equals( t1 ) ) {
             String msg = "UpdateProteins is trying to modify the BioSource(" + t1 + ") of the following protein:" +
-                         protein.getShortLabel() + protein.getAc() + " by BioSource( " + t2 + " )" +
-                         "\nChanging the taxid of an existing protein is a forbidden operation.";
+                    protein.getShortLabel() + protein.getAc() + " by BioSource( " + t2 + " )" +
+                    "\nChanging the taxid of an existing protein is a forbidden operation.";
 
             throw new ProteinServiceException( msg );
         }
@@ -398,6 +396,8 @@ public class ProteinServiceImpl implements ProteinService {
         protein.setShortLabel( generateProteinShortlabel( uniprotProtein ) );
 
         // Xrefs -- but UniProt's as they are supposed to be up-to-date at this stage.
+        IntactCrossReferenceFilter intactCrossReferenceFilter = new IntactCrossReferenceFilter();
+//        if((databaseName2mi == null))
         XrefUpdaterUtils.updateAllXrefs( protein, uniprotProtein, databaseName2mi );
 
         // Aliases
@@ -451,15 +451,18 @@ public class ProteinServiceImpl implements ProteinService {
 
                 // create shallow
                 Protein intactSpliceVariant = createMinimalisticSpliceVariant( match.getUniprotSpliceVariant(),
-                                                                               protein,
-                                                                               uniprotProtein );
+                        protein,
+                        uniprotProtein );
                 // update
                 updateSpliceVariant( intactSpliceVariant, protein, match.getUniprotSpliceVariant(), uniprotProtein );
 
             } else {
-
+                InteractorXref intactSpliceVariatUniprotXref = ProteinUtils.getUniprotXref(match.getIntactProtein());
 //                raiseAlarm( "Could not find a corresponding" );
-                throw new ProteinServiceException( "Could not find a corresponding" );
+                throw new ProteinServiceException( "In Intact the protein[" + match.getIntactProtein().getAc() +
+                        ","+ match.getIntactProtein().getShortLabel() + "," + intactSpliceVariatUniprotXref.getPrimaryId() +
+                        "] is a splice variant of protein [" + protein.getAc() + ","+ protein.getShortLabel() + ","
+                        + uniprotProtein.getPrimaryAc() + "] but in Uniprot it is not the case" );
             }
         }
     }
@@ -493,7 +496,6 @@ public class ProteinServiceImpl implements ProteinService {
             boolean found = false;
             for ( Iterator<Protein> itp = proteins.iterator(); itp.hasNext() && false == found; ) {
                 Protein protein = itp.next();
-
                 Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( protein, uniprot, identity );
                 String upac = null;
                 if ( xrefs.size() == 1 ) {
@@ -617,9 +619,9 @@ public class ProteinServiceImpl implements ProteinService {
         ProteinDao pdao = daoFactory.getProteinDao();
 
         Protein variant = new ProteinImpl( CvHelper.getInstitution(),
-                                           master.getBioSource(),
-                                           uniprotSpliceVariant.getPrimaryAc(),
-                                           CvHelper.getProteinType() );
+                master.getBioSource(),
+                uniprotSpliceVariant.getPrimaryAc(),
+                CvHelper.getProteinType() );
 
         pdao.persist( ( ProteinImpl ) variant );
 
@@ -661,9 +663,9 @@ public class ProteinServiceImpl implements ProteinService {
         }
 
         Protein protein = new ProteinImpl( CvHelper.getInstitution(),
-                                           biosource,
-                                           generateProteinShortlabel( uniprotProtein ),
-                                           CvHelper.getProteinType() );
+                biosource,
+                generateProteinShortlabel( uniprotProtein ),
+                CvHelper.getProteinType() );
 
         pdao.persist( ( ProteinImpl ) protein );
 
