@@ -24,6 +24,10 @@ public class UniprotServiceResult {
      */
     Collection<Protein> proteins = new ArrayList<Protein>();
     /**
+     * A collection of Exception that occured.
+     */
+    private Collection<Exception> exceptions = new ArrayList<Exception>();
+    /**
      * A collection of information messages (ex : searching for P12345, filtering on taxid 6409...).
      */
     private Collection<String> messages = new ArrayList<String>();
@@ -52,9 +56,20 @@ public class UniprotServiceResult {
      */
     public UniprotServiceResult(String querySentToService) {
         if(querySentToService == null){
-            throw new NullPointerException("querySentToService parameter can not be null");
+            throw new IllegalArgumentException("querySentToService parameter can not be null");
         }
         this.querySentToService = querySentToService;
+    }
+
+    public void addException(Exception e){
+        if(e == null){
+            throw new IllegalArgumentException( " e should not be null");
+        }
+        exceptions.add(e);
+    }
+
+    public Collection<Exception> getExceptions(){
+        return exceptions;
     }
 
     /**
@@ -64,7 +79,7 @@ public class UniprotServiceResult {
      */
     public void addMessage(String message){
         if(message == null){
-            throw new NullPointerException("message argument can not be null");
+            throw new IllegalArgumentException("message argument can not be null");
         }
         messages.add(message);
     }
@@ -92,7 +107,7 @@ public class UniprotServiceResult {
      */
     public void addError(String error){
         if(error == null){
-            throw new NullPointerException("error argument can not be null");   
+            throw new IllegalArgumentException("error argument can not be null");
         }
         errors.add(error);
     }
