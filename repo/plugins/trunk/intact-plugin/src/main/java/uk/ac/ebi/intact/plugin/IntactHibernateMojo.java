@@ -97,24 +97,15 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
                     hibernateConfig = new File( "target/hibernate/config/hibernate.cfg.xml" );
                 }
 
-                try {
-                    if ( !hibernateConfig.exists() ) {
-                        MojoUtils.prepareFile( hibernateConfig );
-                    }
+                if (hibernateConfig.exists()) {
+                    getLog().info( "Using hibernate cfg file: " + hibernateConfig );
+                    dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
+                } else {
+                    getLog().info( "Using hibernate with a database in memory (no hibernate.cfg.xml file provided)" );
+                    dataConfig = new InMemoryDataConfig(session);
                 }
-                catch ( IOException e ) {
-                    throw new MojoExecutionException( "Problem creating folder for hibernate config", e );
-                }
-
-                getLog().info( "Using hibernate cfg file: " + hibernateConfig );
-
-                dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
-
-
             } else {
-                getLog().info( "Using hibernate with a database in memory (no hibernate.cfg.xml file provided)" );
-
-                dataConfig = new InMemoryDataConfig(session);
+                getLog().warn("Both hibernate file and data config are not nulls. Will use the data config");
             }
         }
 
