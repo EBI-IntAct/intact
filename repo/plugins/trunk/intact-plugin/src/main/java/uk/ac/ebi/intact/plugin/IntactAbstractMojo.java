@@ -21,6 +21,9 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     protected static final String NEW_LINE = System.getProperty( "line.separator" );
 
+    private boolean outputFileCreated;
+    private boolean errorFileCreated;
+
     /**
      * Standard output file
      *
@@ -100,11 +103,19 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     }
 
     public PrintStream getOutputPrintStream() throws IOException {
-        return new PrintStream( getOutputFile() );
+        if (!outputFileCreated) {
+            MojoUtils.prepareFile(getOutputFile(), true, false);
+            outputFileCreated = true;
+        }
+        return new PrintStream( outputFile );
     }
 
     public PrintStream getErrorPrintStream() throws IOException {
-        return new PrintStream( getErrorFile() );
+        if (!errorFileCreated) {
+            MojoUtils.prepareFile(getErrorFile(), true, false);
+            errorFileCreated = true;
+        }
+        return new PrintStream( errorFile );
     }
 
     public File getDirectory() {
