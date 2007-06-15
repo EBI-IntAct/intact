@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
+import uk.ac.ebi.intact.config.impl.InMemoryDataConfig;
+import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
@@ -84,37 +86,42 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
         File hibernateConfig = getHibernateConfig();
 
-        if ( hibernateConfig == null ) {
-            if ( getProject() != null ) {
-                hibernateConfig = new File( getDirectory(), "hibernate/config/hibernate.cfg.xml" );
-            } else {
-                hibernateConfig = new File( "target/hibernate/config/hibernate.cfg.xml" );
-            }
-
-            try {
-                if ( !hibernateConfig.exists() ) {
-                    MojoUtils.prepareFile( hibernateConfig );
-                }
-            }
-            catch ( IOException e ) {
-                throw new MojoExecutionException( "Problem creating folder for hibernate config", e );
-            }
-        }
-
-        getLog().info( "Using hibernate cfg file: " + hibernateConfig );
-
-        if ( !hibernateConfig.exists() ) {
-            throw new MojoExecutionException( "No hibernate config file found: " + hibernateConfig + ". Provide a hibernate config" +
-                                              " file using -DhibernateConfig=/path/to/yourhibernate.cfg.xml or add " +
-                                              "the <hibernateConfig> configuration element for the plugin" );
-        }
-
-        // configure the context
         IntactSession session = new StandaloneSession();
+        DataConfig dataConfig = getDataConfig();
 
-        CustomCoreDataConfig testConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
-        testConfig.initialize();
-        IntactContext.initContext( testConfig, session );
+        if (dataConfig == null) {
+            if ( hibernateConfig == null ) {
+                if ( getProject() != null ) {
+                    hibernateConfig = new File( getDirectory(), "hibernate/config/hibernate.cfg.xml" );
+                } else {
+                    hibernateConfig = new File( "target/hibernate/config/hibernate.cfg.xml" );
+                }
+
+                try {
+                    if ( !hibernateConfig.exists() ) {
+                        MojoUtils.prepareFile( hibernateConfig );
+                    }
+                }
+                catch ( IOException e ) {
+                    throw new MojoExecutionException( "Problem creating folder for hibernate config", e );
+                }
+
+                getLog().info( "Using hibernate cfg file: " + hibernateConfig );
+
+                dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
+
+
+            } else {
+                getLog().info( "Using hibernate with a database in memory (no hibernate.cfg.xml file provided)" );
+
+                dataConfig = new InMemoryDataConfig(session);
+            }
+        }
+
+        getLog().info( "Initializing data config: "+dataConfig.getName() );
+
+        dataConfig.initialize();
+        IntactContext.initContext( dataConfig, session );
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -138,7 +145,13 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
         initialized = true;
     }
 
-    public abstract File getHibernateConfig();
+    public DataConfig getDataConfig() {
+        return null;
+    }
+
+    public File getHibernateConfig() {
+        return null;
+    }
 
     public boolean isDryRun() {
         return dryRun;
