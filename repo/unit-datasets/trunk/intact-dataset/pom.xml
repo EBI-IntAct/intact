@@ -47,6 +47,15 @@
                     </datasets>
                 </configuration>
             </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-source</id>
+                        <phase>never</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
