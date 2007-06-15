@@ -61,15 +61,13 @@
 </node>
 <node COLOR="#006633" CREATED="1181229123949" ID="Freemind_Link_1159366474" MODIFIED="1181231524947" POSITION="right" TEXT="data-exchange">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181221064562" ID="Freemind_Link_167868426" MODIFIED="1181292221182" TEXT="psimi">
+<node CREATED="1181221064562" ID="Freemind_Link_167868426" MODIFIED="1181552781670" TEXT="psimi">
 <edge WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219897640" ID="Freemind_Link_1058910975" MODIFIED="1181231030336" TEXT="psixml">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181220013078" ID="Freemind_Link_23362051" MODIFIED="1181231030332" TEXT="intact-psixml-commons"/>
 <node CREATED="1181220016126" ID="Freemind_Link_339196956" MODIFIED="1181231030330" TEXT="intact-psixml-converters"/>
 <node CREATED="1181220019649" ID="Freemind_Link_1793249273" MODIFIED="1181231030328" TEXT="intact-psixml-exchange"/>
-<node CREATED="1181220022689" ID="Freemind_Link_1425147458" MODIFIED="1181231030327" TEXT="intact-psixml-persister"/>
 <node CREATED="1181220025324" ID="Freemind_Link_1813445305" MODIFIED="1181231030325" TEXT="intact-psixml-processor"/>
 <node CREATED="1181220028507" ID="Freemind_Link_313334292" MODIFIED="1181231030323" TEXT="intact-psixml-tools"/>
 <node CREATED="1181220030659" ID="Freemind_Link_1907791552" MODIFIED="1181231030322" TEXT="intact-psixml-upload"/>
@@ -78,9 +76,6 @@
 <node CREATED="1181220210838" ID="Freemind_Link_692197070" MODIFIED="1181231030313" TEXT="intact-psi-validator"/>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220161503" ID="Freemind_Link_165922696" MODIFIED="1181307055010" TEXT="psixml-generator-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
-</node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181306517478" ID="Freemind_Link_1301011876" MODIFIED="1181306592569" TEXT="dbunit-dataset-maven-plugin">
-<edge COLOR="#808080" WIDTH="thin"/>
 </node>
 </node>
 <node CREATED="1181227979010" ID="Freemind_Link_1088707423" MODIFIED="1181231030310" TEXT="legacy">
@@ -103,8 +98,8 @@
 </node>
 </node>
 </node>
-<node CREATED="1181219859127" ID="Freemind_Link_1670283523" MODIFIED="1181306899835" TEXT="intact-dbutils">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219859127" ID="Freemind_Link_1670283523" MODIFIED="1181551641353" TEXT="intact-dbutils">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <icon BUILTIN="clanbomber"/>
 </node>
@@ -132,11 +127,8 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220164347" ID="Freemind_Link_925319582" MODIFIED="1181307036929" TEXT="reactome-maven-plugin">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220118362" ID="Freemind_Link_1559544209" MODIFIED="1181307036341" TEXT="cv-maven-plugin">
+<node CREATED="1181554401954" ID="Freemind_Link_1094858423" MODIFIED="1181554405395" TEXT="plugins">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220145843" ID="Freemind_Link_740683974" MODIFIED="1181307035242" TEXT="lucene-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
@@ -144,9 +136,14 @@
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220145843" ID="Freemind_Link_740683974" MODIFIED="1181307035242" TEXT="lucene-maven-plugin">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220118362" ID="Freemind_Link_1559544209" MODIFIED="1181551652987" TEXT="cv-maven-plugin">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220164347" ID="Freemind_Link_925319582" MODIFIED="1181307036929" TEXT="reactome-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
+</node>
 </node>
 </node>
 <node COLOR="#006633" CREATED="1181230107393" ID="Freemind_Link_1895027714" MODIFIED="1181231526250" POSITION="right" TEXT="dbupdate">
@@ -189,12 +186,13 @@
 <node CREATED="1181219835842" ID="Freemind_Link_579808925" MODIFIED="1181231030209" TEXT="intact-apt">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219854368" ID="Freemind_Link_1521997633" MODIFIED="1181231030203" TEXT="intact-core">
-<font BOLD="true" NAME="SansSerif" SIZE="12"/>
-</node>
 <node CREATED="1181219831830" ID="Freemind_Link_1711215997" MODIFIED="1181231030198" TEXT="intact-annotations">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
+<node CREATED="1181219854368" ID="Freemind_Link_1521997633" MODIFIED="1181231030203" TEXT="intact-core">
+<font BOLD="true" NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1181220022689" ID="Freemind_Link_1425147458" MODIFIED="1181927279738" TEXT="intact-persister"/>
 </node>
 <node COLOR="#006633" CREATED="1181219915996" ID="Freemind_Link_1007362757" MODIFIED="1181231516171" POSITION="left" TEXT="maven">
 <font NAME="SansSerif" SIZE="12"/>
@@ -260,7 +258,7 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181220686811" ID="Freemind_Link_1380758384" MODIFIED="1181306866822" TEXT="search">
+<node CREATED="1181220686811" ID="Freemind_Link_1380758384" MODIFIED="1181552781827" TEXT="search">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219760204" ID="Freemind_Link_12338167" MODIFIED="1181231030101" TEXT="binary-search">
@@ -351,6 +349,13 @@
 <font NAME="SansSerif" SIZE="12"/>
 <icon BUILTIN="button_cancel"/>
 <icon BUILTIN="clanbomber"/>
+</node>
+<node COLOR="#006633" CREATED="1181927312102" ID="Freemind_Link_1682801276" MODIFIED="1181927319712" POSITION="right" TEXT="unit-dataset">
+<edge COLOR="#808080" WIDTH="thin"/>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181306517478" ID="Freemind_Link_1301011876" MODIFIED="1181306592569" TEXT="dbunit-dataset-maven-plugin">
+<edge COLOR="#808080" WIDTH="thin"/>
+</node>
+<node CREATED="1181927369087" ID="Freemind_Link_72801102" MODIFIED="1181927372939" TEXT="intact-dataset"/>
 </node>
 </node>
 </map>
