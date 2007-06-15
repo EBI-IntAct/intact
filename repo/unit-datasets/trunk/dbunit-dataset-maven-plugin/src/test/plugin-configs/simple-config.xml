@@ -4,7 +4,7 @@
             <plugin>
                 <artifactId>dbunit-dataset-maven-plugin</artifactId>
                 <configuration>
-                    <project implementation="uk.ac.ebi.intact.dataexchange.psimi.xml.unitdataset.StubProject"/>
+                    <project implementation="uk.ac.ebi.intact.unitdataset.plugin.StubProject"/>
                     <cvConfiguration>
                         <oboFile>src/test/resources/cv/psi-mi25-4intact.obo</oboFile>
                         <additionalFile>src/test/resources/cv/intact-unique.csv</additionalFile>
