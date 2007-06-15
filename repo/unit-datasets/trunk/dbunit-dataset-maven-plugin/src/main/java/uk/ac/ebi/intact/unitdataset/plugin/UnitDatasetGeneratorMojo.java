@@ -233,7 +233,7 @@ public class UnitDatasetGeneratorMojo
         try {
             InputStream is = url.openStream();
             tempFile = File.createTempFile("intact-", ".obo");
-            //tempFile.deleteOnExit();
+            tempFile.deleteOnExit();
 
             // Obtain a channel
             WritableByteChannel channel = new FileOutputStream(tempFile).getChannel();

@@ -23,9 +23,9 @@
                 <artifactId>dbunit-dataset-maven-plugin</artifactId>
                 <configuration>
                     <cvConfiguration>
-                        <oboFile>../obo/psi-mi25-4intact.obo</oboFile>
-                        <additionalFile>../obo/intact-unique.csv</additionalFile>
-                        <additionalAnnotationsFile>../obo/additional-annotations.csv</additionalAnnotationsFile>
+                        <oboUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
+                        <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>
+                        <additionalAnnotationsUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv</additionalAnnotationsUrl>
                     </cvConfiguration>
                     <datasets>
                         <dataset>
