@@ -151,6 +151,8 @@ public class UnitDatasetGeneratorMojo
         }
 
         if (dataset.isContainsAllCVs()) {
+            beginTransaction();
+
              if (cvConfiguration != null) {
                 getLog().debug("\tImporting CVs from OBO: "+cvConfiguration.getOboUrl());
 
@@ -180,14 +182,16 @@ public class UnitDatasetGeneratorMojo
                      throw new MojoExecutionException("Problems importing CVs", e);
                  }
 
-                 commitTransactionAndBegin();
+                 commitTransaction();
 
 
             } else {
                 getLog().info("No CV configuration found. CVs won't be imported");
             }
 
+            beginTransaction();
             getLog().debug("\t\tImported "+context.getDataContext().getDaoFactory().getCvObjectDao().countAll()+" CVs");
+            commitTransaction();
         } else {
             getLog().debug("\tNot importing all CVs");
         }
@@ -196,26 +200,33 @@ public class UnitDatasetGeneratorMojo
             getLog().debug("\tStarting to import dataset files...");
 
             try {
+                beginTransaction();
                 importDataset(dataset);
+                commitTransaction();
             } catch (Exception e) {
                 getLog().error(e);
                 throw new MojoExecutionException("Exception importing dataset: "+dataset.getId(),e);
             }
+
+            beginTransaction();
             getLog().debug("\t\tImported "+context.getDataContext().getDaoFactory().getInteractionDao().countAll()+" Interactions in "+
                     context.getDataContext().getDaoFactory().getExperimentDao().countAll() + " Experiments");
 
-            commitTransactionAndBegin();
+            commitTransaction();
 
         } else {
             getLog().debug("\tNo dataset files to import");
         }
 
+
         // create the dbunit dataset.xml
         getLog().debug("\tCreating DBUnit dataset...");
 
         try {
+            beginTransaction();
             IDataSet dbUnitDataSet = createDbUnitForDataset(dataset);
             exportDbUnitDataSetToFile(dbUnitDataSet, getDbUnitFileForDataset(dataset));
+            commitTransaction();
 
             // truncate tables after export, so next datasets have a clean db
             resetSchema();
@@ -319,12 +330,8 @@ public class UnitDatasetGeneratorMojo
     public void resetSchema() throws MojoExecutionException {
         try
         {
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
             IntactUnit iu = new IntactUnit();
             iu.resetSchema();
-
-            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         }
         catch (IntactTransactionException e)
         {
@@ -357,18 +364,29 @@ public class UnitDatasetGeneratorMojo
     }
 
     private void commitTransactionAndBegin() throws MojoExecutionException {
+        commitTransaction();
+        beginTransaction();
+    }
+
+    private void beginTransaction() throws MojoExecutionException {
+        IntactContext context = IntactContext.getCurrentInstance();
+        context.getDataContext().beginTransaction();
+    }
+
+    private void commitTransaction() throws MojoExecutionException {
         IntactContext context = IntactContext.getCurrentInstance();
          try {
                 context.getDataContext().commitTransaction();
-                context.getDataContext().beginTransaction();
             } catch (IntactTransactionException e) {
-                throw new MojoExecutionException("Problem committing the transaction after importing CVs", e);
+                throw new MojoExecutionException("Problem committing the transaction", e);
             }
     }
 
     private void importDataset(Dataset dataset) throws FileNotFoundException, PersisterException, MojoExecutionException {
         for (File psiFile : dataset.getFiles()) {
             checkFile(psiFile);
+            beginTransaction();
+            
             PsiExchange.importIntoIntact(new FileInputStream(psiFile), false);
 
             commitTransactionAndBegin();
