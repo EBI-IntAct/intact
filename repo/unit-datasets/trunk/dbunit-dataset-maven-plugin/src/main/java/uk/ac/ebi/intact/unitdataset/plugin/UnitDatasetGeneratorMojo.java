@@ -31,14 +31,11 @@ import org.dbunit.dataset.DataSetException;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.commons.util.TestDataset;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterException;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
@@ -215,7 +212,7 @@ public class UnitDatasetGeneratorMojo
             exportDbUnitDataSetToFile(dbUnitDataSet, getDbUnitFileForDataset(dataset));
 
             // truncate tables after export, so next datasets have a clean db
-            truncateTables();
+            resetSchema();
 
             //LogUtils.setPrintSql(true);
 
@@ -255,17 +252,20 @@ public class UnitDatasetGeneratorMojo
         FlatXmlDataSet.write( dataset, new FileOutputStream(file));
     }
 
-    public void truncateTables() throws MojoExecutionException {
-        commitTransactionAndBegin();
-        Configuration cfg = ((AbstractHibernateDataConfig)IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
-        SchemaExport schemaExport = new SchemaExport(cfg);
-        schemaExport.drop(false, true);
-        commitTransactionAndBegin();
-        schemaExport.create(false, true);
-        commitTransactionAndBegin();
+    public void resetSchema() throws MojoExecutionException {
+        try
+        {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-        IntactConfigurator.initializeDatabase(IntactContext.getCurrentInstance());
-        commitTransactionAndBegin();
+            IntactUnit iu = new IntactUnit();
+            iu.resetSchema();
+
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        }
+        catch (IntactTransactionException e)
+        {
+            throw new MojoExecutionException("Problem resetting schema: "+e.getMessage(), e);
+        }
     }
 
     public void generateDatasetEnum() throws Exception {
