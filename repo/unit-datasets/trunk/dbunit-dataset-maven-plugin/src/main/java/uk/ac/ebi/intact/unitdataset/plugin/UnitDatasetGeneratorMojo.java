@@ -42,6 +42,9 @@ import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.plugin.cv.obo.OboImportMojo;
 
 import java.io.*;
+import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.channels.WritableByteChannel;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -149,22 +152,25 @@ public class UnitDatasetGeneratorMojo
 
         if (dataset.isContainsAllCVs()) {
              if (cvConfiguration != null) {
-                getLog().debug("\tImporting CVs from OBO: "+cvConfiguration.getOboFile());
+                getLog().debug("\tImporting CVs from OBO: "+cvConfiguration.getOboUrl());
 
-                File oboFile = cvConfiguration.getOboFile();
-                File additionalFile = cvConfiguration.getAdditionalFile();
-                File additionalAnnotationsFile = cvConfiguration.getAdditionalAnnotationsFile();
+                URL oboUrl = cvConfiguration.getOboUrl();
+                URL additionalUrl = cvConfiguration.getAdditionalUrl();
+                URL additionalAnnotationsUrl = cvConfiguration.getAdditionalAnnotationsUrl();
 
-                checkFile(oboFile);
+                 File oboFile = urlToFile(oboUrl);
+                 checkFile(oboFile);
 
                 OboImportMojo oboImportMojo = new OboImportMojo(project);
                 oboImportMojo.setImportedOboFile(oboFile);
 
-                if (additionalFile != null) {
+                if (additionalUrl != null) {
+                    File additionalFile = urlToFile(additionalUrl);
                     oboImportMojo.setAdditionalCsvFile(additionalFile);
                 }
 
-                if (additionalAnnotationsFile != null) {
+                if (additionalAnnotationsUrl != null) {
+                    File additionalAnnotationsFile = urlToFile(additionalAnnotationsUrl);
                     oboImportMojo.setAdditionalAnnotationsCsvFile(additionalAnnotationsFile);
                 }
 
@@ -199,7 +205,7 @@ public class UnitDatasetGeneratorMojo
                     context.getDataContext().getDaoFactory().getExperimentDao().countAll() + " Experiments");
 
             commitTransactionAndBegin();
-            
+
         } else {
             getLog().debug("\tNo dataset files to import");
         }
@@ -220,6 +226,64 @@ public class UnitDatasetGeneratorMojo
             getLog().error(e);
             throw new MojoExecutionException("Exception creating dbUnit dataset", e);
         }
+    }
+
+    private static File urlToFile(URL url) throws  MojoExecutionException {
+        File tempFile = null;
+        try {
+            InputStream is = url.openStream();
+            tempFile = File.createTempFile("intact-", ".obo");
+            //tempFile.deleteOnExit();
+
+            // Obtain a channel
+            WritableByteChannel channel = new FileOutputStream(tempFile).getChannel();
+
+            // Create a direct ByteBuffer;
+            // see also e158 Creating a ByteBuffer
+            ByteBuffer buf = ByteBuffer.allocateDirect(10);
+
+            byte[] bytes = new byte[1024];
+            int count = 0;
+            int index = 0;
+
+            // Continue writing bytes until there are no more
+            while (count >= 0) {
+                if (index == count) {
+                    count = is.read(bytes);
+                    index = 0;
+                }
+                // Fill ByteBuffer
+                while (index < count && buf.hasRemaining()) {
+                    buf.put(bytes[index++]);
+                }
+
+                // Set the limit to the current position and the position to 0
+                // making the new bytes visible for write()
+                buf.flip();
+
+                // Write the bytes to the channel
+                int numWritten = channel.write(buf);
+
+                // Check if all bytes were written
+                if (buf.hasRemaining()) {
+                    // If not all bytes were written, move the unwritten bytes
+                    // to the beginning and set position just after the last
+                    // unwritten byte; also set limit to the capacity
+                    buf.compact();
+                } else {
+                    // Set the position to 0 and the limit to capacity
+                    buf.clear();
+                }
+            }
+
+            // Close the file
+            channel.close();
+        }
+        catch (IOException e) {
+            throw new MojoExecutionException("Exception copying from the URL to a temporary dir", e);
+        }
+
+        return tempFile;
     }
 
     public IDataSet createDbUnitForDataset(Dataset dataset) throws SQLException {
@@ -349,10 +413,6 @@ public class UnitDatasetGeneratorMojo
      */
     public MavenProject getProject() {
         return project;
-    }
-
-    public File getHibernateConfig() {
-        return new File(UnitDatasetGeneratorMojo.class.getResource(HIBERNATE_FILE).getFile());
     }
 
     public String getGeneratedPackage()

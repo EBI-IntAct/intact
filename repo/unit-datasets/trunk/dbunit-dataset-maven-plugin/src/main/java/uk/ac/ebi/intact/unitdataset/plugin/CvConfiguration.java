@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.unitdataset.plugin;
 
-import java.io.File;
+import java.net.URL;
 
 /**
  * TODO comment this
@@ -31,7 +31,7 @@ public class CvConfiguration {
      * @parameter
      * @required
      */
-    private File oboFile;
+    private URL oboUrl;
 
     /**
      * Additional CVs in CSV format
@@ -39,7 +39,7 @@ public class CvConfiguration {
      * @parameter
      * @required
      */
-    private File additionalFile;
+    private URL additionalUrl;
 
     /**
      * File with additional annotations
@@ -47,32 +47,32 @@ public class CvConfiguration {
      * @parameter
      * @required
      */
-    private File additionalAnnotationsFile;
+    private URL additionalAnnotationsUrl;
 
     public CvConfiguration() {
     }
 
-    public File getAdditionalAnnotationsFile() {
-        return additionalAnnotationsFile;
+    public URL getAdditionalAnnotationsUrl() {
+        return additionalAnnotationsUrl;
     }
 
-    public void setAdditionalAnnotationsFile(File additionalAnnotationsFile) {
-        this.additionalAnnotationsFile = additionalAnnotationsFile;
+    public void setAdditionalAnnotationsUrl(URL additionalAnnotationsUrl) {
+        this.additionalAnnotationsUrl = additionalAnnotationsUrl;
     }
 
-    public File getAdditionalFile() {
-        return additionalFile;
+    public URL getAdditionalUrl() {
+        return additionalUrl;
     }
 
-    public void setAdditionalFile(File additionalFile) {
-        this.additionalFile = additionalFile;
+    public void setAdditionalUrl(URL additionalUrl) {
+        this.additionalUrl = additionalUrl;
     }
 
-    public File getOboFile() {
-        return oboFile;
+    public URL getOboUrl() {
+        return oboUrl;
     }
 
-    public void setOboFile(File oboFile) {
-        this.oboFile = oboFile;
+    public void setOboUrl(URL oboUrl) {
+        this.oboUrl = oboUrl;
     }
 }
