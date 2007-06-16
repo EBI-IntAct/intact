@@ -22,6 +22,7 @@
                 <groupId>uk.ac.ebi.intact.datasets</groupId>
                 <artifactId>dbunit-dataset-maven-plugin</artifactId>
                 <configuration>
+                    <providerName>PsiTestDatasetProvider</providerName>
                     <cvConfiguration>
                         <oboUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
                         <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>

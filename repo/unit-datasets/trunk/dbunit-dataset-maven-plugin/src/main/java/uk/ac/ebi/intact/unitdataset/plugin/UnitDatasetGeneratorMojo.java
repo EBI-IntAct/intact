@@ -23,16 +23,16 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
-import org.dbunit.database.DatabaseConfig;
-import org.dbunit.database.DatabaseConnection;
-import org.dbunit.database.IDatabaseConnection;
-import org.dbunit.database.QueryDataSet;
+import org.dbunit.database.*;
 import org.dbunit.dataset.DataSetException;
+import org.dbunit.dataset.FilteredDataSet;
 import org.dbunit.dataset.IDataSet;
+import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.commons.util.TestDataset;
+import uk.ac.ebi.intact.commons.util.TestDatasetProvider;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterException;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
@@ -62,8 +62,7 @@ import java.util.Properties;
 public class UnitDatasetGeneratorMojo
         extends IntactHibernateMojo {
 
-    private static final String ENUM_NAME = "PsiUnitDataset";
-    private static final String ENUM_TEMPLATE = "PsiUnitDataset.vm";
+    private static final String PROVIDER_TEMPLATE = "PsiUnitDatasetProvider.vm";
 
     /**
      * Project instance
@@ -99,8 +98,15 @@ public class UnitDatasetGeneratorMojo
 
     /**
      * @parameter default-value="uk.ac.ebi.intact.unitdataset"
+     * @required
      */
     private String generatedPackage = "uk.ac.ebi.intact.unitdataset";
+
+    /**
+     * @parameter
+     * @required
+     */
+    private String providerName;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -295,18 +301,21 @@ public class UnitDatasetGeneratorMojo
         return tempFile;
     }
 
-    public IDataSet createDbUnitForDataset(Dataset dataset) throws SQLException {
+    public IDataSet createDbUnitForDataset(Dataset dataset) throws SQLException, DataSetException {
         Connection con = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
 
+        IDatabaseConnection conn = getDatabaseConnection();
+        ITableFilter filter = new DatabaseSequenceFilter(conn);
+
         ResultSet tables = con.getMetaData().getTables(null, null, "IA_%", new String[]{"TABLE"});
-        QueryDataSet allTablesDataSet = new QueryDataSet(getDatabaseConnection());
+        QueryDataSet allTablesDataSet = new QueryDataSet(conn);
         while (tables.next())
         {
             String tableName = tables.getString(3);
             allTablesDataSet.addTable(tableName);
         }
 
-        return allTablesDataSet;
+        return new FilteredDataSet(filter, allTablesDataSet);
     }
 
     public IDatabaseConnection getDatabaseConnection() {
@@ -345,8 +354,9 @@ public class UnitDatasetGeneratorMojo
         context.put("mojo", this);
         context.put("artifactId", project.getArtifactId());
         context.put("version", project.getVersion());
-        context.put("classSimpleName", ENUM_NAME);
-        context.put("interfaceName", TestDataset.class.getName());
+        context.put("classSimpleName", providerName);
+        context.put("datasetInterfaceName", TestDataset.class.getName());
+        context.put("providerInterfaceName", TestDatasetProvider.class.getName());
         context.put("datasets", datasets);
 
         Properties props = new Properties();
@@ -355,7 +365,7 @@ public class UnitDatasetGeneratorMojo
 
         Velocity.init(props);
 
-        Template template = Velocity.getTemplate(ENUM_TEMPLATE);
+        Template template = Velocity.getTemplate(PROVIDER_TEMPLATE);
 
         // write the resulting file with velocity
         Writer writer = new FileWriter(getGeneratedEnumFile());
@@ -421,7 +431,7 @@ public class UnitDatasetGeneratorMojo
     }
 
     private File getGeneratedEnumFile() throws IOException {
-        File file = new File(getGeneratePackageFile(), ENUM_NAME+".java");
+        File file = new File(getGeneratePackageFile(), providerName+".java");
         MojoUtils.prepareFile(file);
         return file;
     }
@@ -456,5 +466,15 @@ public class UnitDatasetGeneratorMojo
     public void setCvConfiguration(CvConfiguration cvConfiguration)
     {
         this.cvConfiguration = cvConfiguration;
+    }
+
+    public String getProviderName()
+    {
+        return providerName;
+    }
+
+    public void setProviderName(String providerName)
+    {
+        this.providerName = providerName;
     }
 }
