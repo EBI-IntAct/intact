@@ -35,6 +35,38 @@
         <module>intact-dataset</module>
     </modules>
 
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-source</id>
+                        <phase>never</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>uk.ac.ebi.intact.datasets</groupId>
+                    <artifactId>dbunit-dataset-maven-plugin</artifactId>
+                    <version>${currentVersion}</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                            <goal>dataset</goal>
+                        </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -69,26 +101,13 @@
         </dependencies>
     </dependencyManagement>
 
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.datasets</groupId>
-                    <artifactId>dbunit-dataset-maven-plugin</artifactId>
-                    <version>${currentVersion}</version>
-                    <executions>
-                        <execution>
-                            <id>normal</id>
-                            <phase>generate-sources</phase>
-                            <goals>
-                            <goal>dataset</goal>
-                        </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.commons</groupId>
+            <artifactId>intact-commons</artifactId>
+            <version>2.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
     <!-- EBI repositories -->
     <repositories>

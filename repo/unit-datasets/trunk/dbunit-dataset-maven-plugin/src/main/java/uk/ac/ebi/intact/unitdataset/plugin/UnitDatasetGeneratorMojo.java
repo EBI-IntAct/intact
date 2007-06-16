@@ -57,12 +57,11 @@ import java.util.Properties;
  *
  * @goal dataset
  * @phase generate-sources
- * @requiresDependencyResolution generate-sources
+ * @requiresDependencyResolution compile
  */
 public class UnitDatasetGeneratorMojo
         extends IntactHibernateMojo {
 
-    private static final String HIBERNATE_FILE = "/META-INF/dataset-hibernate.cfg.xml";
     private static final String ENUM_NAME = "PsiUnitDataset";
     private static final String ENUM_TEMPLATE = "PsiUnitDataset.vm";
 
@@ -114,7 +113,7 @@ public class UnitDatasetGeneratorMojo
             throw new MojoFailureException("No datasets to import");
         }
 
-        getLog().debug("Datasets to import ("+datasets.size()+"):");
+        getLog().debug("Datasets to import ("+datasets.size()+"):");   
         for (Dataset dataset : datasets) {
             getLog().debug("\tProcessing dataset: "+dataset.getId());
 
@@ -132,9 +131,10 @@ public class UnitDatasetGeneratorMojo
         }
 
         // add the resources into the classpath
-        List includes = Collections.singletonList("*/**");
+        List includes = Collections.singletonList("**/*.xml");
         List excludes = null;
         helper.addResource(project, getGeneratedResourcesDir().toString(), includes, excludes);
+        project.addCompileSourceRoot(getGeneratedResourcesDir().toString());
     }
 
     public boolean idIsInvalid(String id) {
@@ -231,8 +231,6 @@ public class UnitDatasetGeneratorMojo
             // truncate tables after export, so next datasets have a clean db
             resetSchema();
 
-            //LogUtils.setPrintSql(true);
-
         } catch (Exception e) {
             getLog().error(e);
             throw new MojoExecutionException("Exception creating dbUnit dataset", e);
@@ -324,7 +322,9 @@ public class UnitDatasetGeneratorMojo
     }
 
     public void exportDbUnitDataSetToFile(IDataSet dataset, File file) throws IOException, DataSetException {
-        FlatXmlDataSet.write( dataset, new FileOutputStream(file));
+        FileOutputStream fos = new FileOutputStream(file);
+        FlatXmlDataSet.write( dataset, fos);
+        fos.close();
     }
 
     public void resetSchema() throws MojoExecutionException {
