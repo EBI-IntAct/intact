@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.datasets</groupId>
+        <artifactId>unitdatasets-master</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-dataset-legacy</artifactId>
+    <packaging>jar</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <name>IntAct Unit Datasets :: IntAct Legacy Dataset</name>
+    <description>IntAct Legacy Dataset, used for existing tests when the dataset system was created</description>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.datasets</groupId>
+                <artifactId>dbunit-dataset-maven-plugin</artifactId>
+                <configuration>
+                    <providerName>LegacyPsiTestDatasetProvider</providerName>
+                    <cvConfiguration>
+                        <oboUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
+                        <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>
+                        <additionalAnnotationsUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv</additionalAnnotationsUrl>
+                    </cvConfiguration>
+                    <datasets>
+                        <dataset>
+                            <containsAllCVs>true</containsAllCVs>
+                            <id>INTACT_CORE</id>
+                            <files>
+                                <file>src/psi25/10029528.xml</file>
+                                <file>src/psi25/15039447.xml</file>
+                            </files>
+                        </dataset>
+                    </datasets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-source</id>
+                        <phase>never</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
