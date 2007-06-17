@@ -33,6 +33,7 @@
     <modules>
         <module>dbunit-dataset-maven-plugin</module>
         <module>intact-dataset</module>
+        <module>intact-dataset-legacy</module>
     </modules>
 
 
