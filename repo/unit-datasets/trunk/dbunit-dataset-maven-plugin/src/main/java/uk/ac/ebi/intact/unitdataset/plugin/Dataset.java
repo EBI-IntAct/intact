@@ -51,6 +51,11 @@ public class Dataset {
      */
     private File[] files;
 
+    /**
+     *
+     */
+    private String[] dbModifiers;
+
     public Dataset() {
 
     }
@@ -92,5 +97,15 @@ public class Dataset {
     public String toString()
     {
         return id;
+    }
+
+    public String[] getDbModifiers()
+    {
+        return dbModifiers;
+    }
+
+    public void setDbModifiers(String[] dbModifiers)
+    {
+        this.dbModifiers = dbModifiers;
     }
 }

@@ -31,8 +31,10 @@ import org.dbunit.dataset.filter.ITableFilter;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.commons.util.TestDataset;
-import uk.ac.ebi.intact.commons.util.TestDatasetProvider;
+import uk.ac.ebi.intact.commons.dataset.DatabaseModifier;
+import uk.ac.ebi.intact.commons.dataset.TestDataset;
+import uk.ac.ebi.intact.commons.dataset.TestDatasetFactory;
+import uk.ac.ebi.intact.commons.dataset.TestDatasetProvider;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterException;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
@@ -157,7 +159,6 @@ public class UnitDatasetGeneratorMojo
         }
 
         if (dataset.isContainsAllCVs()) {
-            beginTransaction();
 
              if (cvConfiguration != null) {
                 getLog().debug("\tImporting CVs from OBO: "+cvConfiguration.getOboUrl());
@@ -181,6 +182,8 @@ public class UnitDatasetGeneratorMojo
                     File additionalAnnotationsFile = urlToFile(additionalAnnotationsUrl);
                     oboImportMojo.setAdditionalAnnotationsCsvFile(additionalAnnotationsFile);
                 }
+
+                 beginTransaction();
 
                  try {
                      oboImportMojo.executeIntactMojo();
@@ -224,6 +227,27 @@ public class UnitDatasetGeneratorMojo
             getLog().debug("\tNo dataset files to import");
         }
 
+        // apply any modifier
+        if (dataset.getDbModifiers() != null) {
+
+            for (String dbModifierClassName : dataset.getDbModifiers()) {
+                getLog().debug("\tApplying DB Modifier: "+dbModifierClassName);
+                try
+                {
+                    beginTransaction();
+                    applyDbModifier(dbModifierClassName);
+                    commitTransaction();
+                }
+                catch (Exception e)
+                {
+                    getLog().error(e);
+                    throw new MojoExecutionException("Problem applying modifier: "+dbModifierClassName, e);
+                }
+            }
+
+        } else {
+            getLog().debug("\tNo DB modifiers");
+        }
 
         // create the dbunit dataset.xml
         getLog().debug("\tCreating DBUnit dataset...");
@@ -356,6 +380,7 @@ public class UnitDatasetGeneratorMojo
         context.put("version", project.getVersion());
         context.put("classSimpleName", providerName);
         context.put("datasetInterfaceName", TestDataset.class.getName());
+        context.put("datasetFactoryName", TestDatasetFactory.class.getName());
         context.put("providerInterfaceName", TestDatasetProvider.class.getName());
         context.put("datasets", datasets);
 
@@ -371,11 +396,6 @@ public class UnitDatasetGeneratorMojo
         Writer writer = new FileWriter(getGeneratedEnumFile());
         template.merge(context, writer);
         writer.close();
-    }
-
-    private void commitTransactionAndBegin() throws MojoExecutionException {
-        commitTransaction();
-        beginTransaction();
     }
 
     private void beginTransaction() throws MojoExecutionException {
@@ -399,8 +419,13 @@ public class UnitDatasetGeneratorMojo
             
             PsiExchange.importIntoIntact(new FileInputStream(psiFile), false);
 
-            commitTransactionAndBegin();
+            commitTransaction();
         }
+    }
+
+    private void applyDbModifier(String dbModifierClassName) throws Exception {
+        DatabaseModifier dbModifier = (DatabaseModifier) Class.forName(dbModifierClassName).newInstance();
+        dbModifier.modifyDatabase();
     }
 
     private void checkFile(File file) throws MojoExecutionException {
