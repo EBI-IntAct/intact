@@ -1,6 +1,6 @@
-package uk.ac.ebi.intact.commons.util;
+package uk.ac.ebi.intact.commons.dataset;
 
-import java.net.URL;
+import java.io.InputStream;
 
 /**
  * Implemented for those classes that are datasets (for testing)
@@ -12,7 +12,7 @@ public interface TestDataset
 {
     String getId();
 
-    URL getDbUnitDataset();
+    InputStream getSource();
 
     boolean containsAllCVs();
 }
