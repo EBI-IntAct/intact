@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.commons.util;
+package uk.ac.ebi.intact.commons.dataset;
 
 /**
  * This is an interface for some classes that modify the database during the creation of TestDatasets
