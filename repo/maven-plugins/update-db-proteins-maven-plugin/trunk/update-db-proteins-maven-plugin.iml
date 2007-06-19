@@ -1,0 +1,843 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4" relativePaths="false" type="JAVA_MODULE">
+  <component name="ModuleRootManager" />
+  <component name="NewModuleRootManager" inherit-compiler-output="false">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <exclude-output />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/uniprot/kraken/remote-api/11.0/remote-api-11.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-parameter-documenter/2.0/maven-plugin-parameter-documenter-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-parameter-documenter/2.0/maven-plugin-parameter-documenter-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-parameter-documenter/2.0/maven-plugin-parameter-documenter-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-logging/commons-logging/1.0.4/commons-logging-1.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/hibernate/hibernate-annotations/3.2.0.cr2/hibernate-annotations-3.2.0.cr2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-httpclient/commons-httpclient/3.0/commons-httpclient-3.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-httpclient/commons-httpclient/3.0/commons-httpclient-3.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-dbutils/commons-dbutils/1.0/commons-dbutils-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-dbutils/commons-dbutils/1.0/commons-dbutils-1.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/net/sf/ehcache/ehcache/1.2.4RC/ehcache-1.2.4RC-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/geronimo/specs/geronimo-javamail_1.3.1_spec/1.1/geronimo-javamail_1.3.1_spec-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/log4j/log4j/1.2.13/log4j-1.2.13.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/c3p0/c3p0/0.9.0.4/c3p0-0.9.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/aristotle/11.0/aristotle-11.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-collections/commons-collections/3.1/commons-collections-3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-collections/commons-collections/3.1/commons-collections-3.1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-collections/commons-collections/3.1/commons-collections-3.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/asm/asm/1.5.3/asm-1.5.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/junit/junit/3.8.2/junit-3.8.2.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/junit/junit/3.8.2/junit-3.8.2-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/junit/junit/3.8.2/junit-3.8.2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/uniprot-bridge/1.0-beta-1/uniprot-bridge-1.0-beta-1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/uniprot-bridge/1.0-beta-1/uniprot-bridge-1.0-beta-1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/uniprot-bridge/1.0-beta-1/uniprot-bridge-1.0-beta-1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-descriptor/2.0/maven-plugin-descriptor-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-descriptor/2.0/maven-plugin-descriptor-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-descriptor/2.0/maven-plugin-descriptor-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-remoting/2.0.5/spring-remoting-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-codec/commons-codec/20041127.091804/commons-codec-20041127.091804.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-apt/0.1/intact-apt-0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-apt/0.1/intact-apt-0.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-proteins-update/1.1.2-SNAPSHOT/intact-proteins-update-1.1.2-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-proteins-update/1.1.2-SNAPSHOT/intact-proteins-update-1.1.2-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-container-default/1.0-alpha-9/plexus-container-default-1.0-alpha-9.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-container-default/1.0-alpha-9/plexus-container-default-1.0-alpha-9-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-container-default/1.0-alpha-9/plexus-container-default-1.0-alpha-9-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-beans/2.0-m2/spring-beans-2.0-m2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-provider-api/1.0-alpha-6/wagon-provider-api-1.0-alpha-6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/classworlds/classworlds/1.1-alpha-2/classworlds-1.1-alpha-2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-uniprot/1.0-SNAPSHOT/intact-uniprot-1.0-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-uniprot/1.0-SNAPSHOT/intact-uniprot-1.0-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/cglib/cglib/2.1_3/cglib-2.1_3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/cglib/cglib/2.1_3/cglib-2.1_3-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/shared/maven-plugin-testing-harness/1.0-beta-1/maven-plugin-testing-harness-1.0-beta-1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/shared/maven-plugin-testing-harness/1.0-beta-1/maven-plugin-testing-harness-1.0-beta-1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/shared/maven-plugin-testing-harness/1.0-beta-1/maven-plugin-testing-harness-1.0-beta-1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/com/jcraft/jsch/0.1.23/jsch-0.1.23.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-api/2.0/maven-plugin-api-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-api/2.0/maven-plugin-api-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-api/2.0/maven-plugin-api-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-registry/2.0/maven-plugin-registry-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-registry/2.0/maven-plugin-registry-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-plugin-registry/2.0/maven-plugin-registry-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-context/2.0.5/spring-context-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/geronimo/specs/geronimo-activation_1.0.2_spec/1.1/geronimo-activation_1.0.2_spec-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/jakarta-regexp/jakarta-regexp/1.4/jakarta-regexp-1.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-annotations/0.1/intact-annotations-0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-annotations/0.1/intact-annotations-0.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-error-diagnostics/2.0/maven-error-diagnostics-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-error-diagnostics/2.0/maven-error-diagnostics-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-error-diagnostics/2.0/maven-error-diagnostics-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-taxonomy/1.0/intact-taxonomy-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-taxonomy/1.0/intact-taxonomy-1.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-taxonomy/1.0/intact-taxonomy-1.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/hibernate/hibernate/3.2.0.cr4/hibernate-3.2.0.cr4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-interactivity-api/1.0-alpha-4/plexus-interactivity-api-1.0-alpha-4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-interactivity-api/1.0-alpha-4/plexus-interactivity-api-1.0-alpha-4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-lang/commons-lang/2.1/commons-lang-2.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/antlr/antlr/2.7.6/antlr-2.7.6.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/antlr/antlr/2.7.6/antlr-2.7.6-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-beanutils/commons-beanutils/1.7.0/commons-beanutils-1.7.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-http-lightweight/1.0-alpha-5/wagon-http-lightweight-1.0-alpha-5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-http-lightweight/1.0-alpha-5/wagon-http-lightweight-1.0-alpha-5-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/lucene/lucene-core/2.0.0/lucene-core-2.0.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/javax/persistence/persistence-api/1.0/persistence-api-1.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-cli/commons-cli/1.0/commons-cli-1.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-cli/commons-cli/1.0/commons-cli-1.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/commons-cli/commons-cli/1.0/commons-cli-1.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-ssh/1.0-alpha-5/wagon-ssh-1.0-alpha-5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-ssh/1.0-alpha-5/wagon-ssh-1.0-alpha-5-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/xerces/xercesImpl/2.0.2/xercesImpl-2.0.2.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-core/2.0.5/spring-core-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/codehaus/plexus/plexus-utils/1.1/plexus-utils-1.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-monitor/2.0/maven-monitor-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-monitor/2.0/maven-monitor-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-monitor/2.0/maven-monitor-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-aop/2.0.5/spring-aop-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/yasp/11.0/yasp-11.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-file/1.0-alpha-5/wagon-file-1.0-alpha-5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/wagon/wagon-file/1.0-alpha-5/wagon-file-1.0-alpha-5-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/reporting/maven-reporting-api/2.0/maven-reporting-api-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/reporting/maven-reporting-api/2.0/maven-reporting-api-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/reporting/maven-reporting-api/2.0/maven-reporting-api-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/springframework/spring-web/2.0.5/spring-web-2.0.5.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-biosource-update/1.1-SNAPSHOT/intact-biosource-update-1.1-SNAPSHOT.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/util/intact-biosource-update/1.1-SNAPSHOT/intact-biosource-update-1.1-SNAPSHOT-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-core/2.0/maven-core-2.0.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-core/2.0/maven-core-2.0-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/org/apache/maven/maven-core/2.0/maven-core-2.0-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/doxia/doxia-sink-api/1.0-alpha-4/doxia-sink-api-1.0-alpha-4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/sptr/11.0/sptr-11.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-commons/1.1.1/intact-commons-1.1.1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-commons/1.1.1/intact-commons-1.1.1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-commons/1.1.1/intact-commons-1.1.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-core/1.5.0-rc2/intact-core-1.5.0-rc2.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-core/1.5.0-rc2/intact-core-1.5.0-rc2-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/intact-core/1.5.0-rc2/intact-core-1.5.0-rc2-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/plugins/intact-plugin/1.3.1/intact-plugin-1.3.1.jar!/" />
+        </CLASSES>
+        <JAVADOC>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/plugins/intact-plugin/1.3.1/intact-plugin-1.3.1-javadoc.jar!/" />
+        </JAVADOC>
+        <SOURCES>
+          <root url="jar://C:/Documents and Settings/CatherineLeroy/.m2/repository/uk/ac/ebi/intact/plugins/intact-plugin/1.3.1/intact-plugin-1.3.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://C:/jdk1.5.0_06/lib/tools.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntryProperties />
+  </component>
+</module>
+
