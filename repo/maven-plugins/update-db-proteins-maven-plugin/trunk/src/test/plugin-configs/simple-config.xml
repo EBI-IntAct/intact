@@ -1,0 +1,13 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>update-db-proteins-maven-plugin</artifactId>
+                <configuration>
+                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <outputFile>target/proteinUpdate.log</outputFile>
+                </configuration>
+            </plugin>
+        </plugins>
+     </build>
+</project>
