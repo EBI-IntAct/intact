@@ -1,76 +1,51 @@
 # short label	CvObject's full name	CvObject's type	MI reference	annotation's CvTopic.shortlabel	exclusion reason (Annotation's text)	apply to children	short exclusion reason			Sam's comment
 alias type	 alias type	uk.ac.ebi.intact.model.CvAliasType	MI:0300	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-bind	 bind	uk.ac.ebi.intact.model.CvDatabase	MI:0462	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 biological role	 biological role	uk.ac.ebi.intact.model.CvComponentRole	MI:0500	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-biopolymer	 biopolymer	uk.ac.ebi.intact.model.CvInteractorType	MI:0383	hidden	Term currently not used during manual curation as they are automatically assigned.	FALSE	root term-1			update type( CV interactor type )
+experimental role	 experimental role	uk.ac.ebi.intact.model.CvComponentRole	MI:0495	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
+suppressed gene	suppressed gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0582	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+suppressor gene	suppressor gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0581	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+3d repertoire	3d repertoire	uk.ac.ebi.intact.model.CvDatabase	MI:0731	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+bind	 bind	uk.ac.ebi.intact.model.CvDatabase	MI:0462	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 cdd	 cdd	uk.ac.ebi.intact.model.CvDatabase	MI:0450	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-complex	 complex	uk.ac.ebi.intact.model.CvInteractorType	MI:0314	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
+dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0465	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 database citation	 database citation	uk.ac.ebi.intact.model.CvDatabase	MI:0444	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 ecocyc	 ecocyc	uk.ac.ebi.intact.model.CvDatabase	MI:0466	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 entrezgene/locuslink	 entrez gene/locuslink	uk.ac.ebi.intact.model.CvDatabase	MI:0477	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 experiment xref	 experiment database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0445	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-experimental role	 experimental role	uk.ac.ebi.intact.model.CvComponentRole	MI:0495	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-feature range status	 feature range status	uk.ac.ebi.intact.model.CvFuzzyType	MI:0333	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
 feature xref	 feature database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0447	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+gene3d	gene3d	uk.ac.ebi.intact.model.CvDatabase	MI:0703	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
+gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 grid	 grid	uk.ac.ebi.intact.model.CvDatabase	MI:0463	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 hprd	 hprd	uk.ac.ebi.intact.model.CvDatabase	MI:0468	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 interaction xref	 interaction database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0461	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-interactor type	 interactor type	uk.ac.ebi.intact.model.CvInteractorType	MI:0313	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			update type( CV interactor type )
+ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 kegg	 kegg	uk.ac.ebi.intact.model.CvDatabase	MI:0470	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 mgd/mgi	 mgd/mgi	uk.ac.ebi.intact.model.CvDatabase	MI:0479	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
+mint	mint	uk.ac.ebi.intact.model.CvDatabase	MI:0471	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 mmdb	 mmdb	uk.ac.ebi.intact.model.CvDatabase	MI:0459	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 msd	 msd	uk.ac.ebi.intact.model.CvDatabase	MI:0472	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
+panther	uk.ac.ebi.intact.model.CvDatabase	uk.ac.ebi.intact.model.CvDatabase	MI:0702	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 participant xref	 participant database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0473	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
+pep seq db	pep seq db	uk.ac.ebi.intact.model.CvDatabase	MI:0737	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 pfam	 pfam	uk.ac.ebi.intact.model.CvDatabase	MI:0451	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 pirsf	 pirsf	uk.ac.ebi.intact.model.CvDatabase	MI:0452	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
+pride	pride	uk.ac.ebi.intact.model.CvDatabase	MI:0738	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 prints	 prints	uk.ac.ebi.intact.model.CvDatabase	MI:0453	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 prodom	 prodom	uk.ac.ebi.intact.model.CvDatabase	MI:0454	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
+pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 reactome	 reactome	uk.ac.ebi.intact.model.CvDatabase	MI:0467	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 rfam	 rfam	uk.ac.ebi.intact.model.CvDatabase	MI:0482	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 scop superfamily	 scop superfamily	uk.ac.ebi.intact.model.CvDatabase	MI:0456	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 smart	 smart	uk.ac.ebi.intact.model.CvDatabase	MI:0457	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 source database xref	 source database xref	uk.ac.ebi.intact.model.CvDatabase	MI:0489	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 tigrfams	 tigrfams	uk.ac.ebi.intact.model.CvDatabase	MI:0458	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-unknown participant	 unknown participant	uk.ac.ebi.intact.model.CvInteractorType	MI:0329	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
-xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-correlated mutations	correlated mutations	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0026	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-cv att name	controlled vocabulary attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0667	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-degeranylation	degeranylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0200	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-demyristoylation	demyristoylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0201	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-docking	docking	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0035	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-domain profile pairs	domain profile pairs	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0037	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-experiment att name	experiment attibute name	uk.ac.ebi.intact.model.CvTopic	MI:0665	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-feature att name	feature attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0668	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-feature detection	feature detection	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0003	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-feature type	feature type	uk.ac.ebi.intact.model.CvFeatureType	MI:0116	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-gene	gene	uk.ac.ebi.intact.model.CvInteractorType	MI:0250	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
-genetic interaction	genetic interaction	uk.ac.ebi.intact.model.CvInteractionType	MI:0208	hidden	Term currently not used  in IntAct as genetic interactions are not curated.	TRUE	genetic interaction and all its children			
-interaction att name	interaction attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0664	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-interaction detectio	interaction detection	uk.ac.ebi.intact.model.CvInteraction	MI:0001	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-interaction type	interaction type	uk.ac.ebi.intact.model.CvInteractionType	MI:0190	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-interface predictor	neural network on interface properties	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0076	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
 Mint	Mint	uk.ac.ebi.intact.model.CvDatabase	MI:0471	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
-organism att name	organism attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0669	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-participant att name	participant attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0666	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-participant identif	participant identification method	uk.ac.ebi.intact.model.CvIdentification	MI:0002	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
-prediction	prediction	uk.ac.ebi.intact.model.CvInteraction	MI:0063	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-surface patches	surface patches	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0106	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction			
-suppressed gene	suppressed gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0582	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-suppressor gene	suppressor gene	uk.ac.ebi.intact.model.CvComponentRole	MI:0581	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-expression interfer	post transcriptional interference	uk.ac.ebi.intact.model.CvInteraction	MI:0255	hidden	Term currently not used in IntAct.	TRUE	root term-2			
-genetic interference	genetic interference	uk.ac.ebi.intact.model.CvInteraction	MI:0073	hidden	Term currently not used in IntAct.	TRUE	root term-2			
-feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-attribute name	attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0590	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-experimental form de	experimental form description	uk.ac.ebi.intact.model.CvTopic	MI:0596	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0574	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-doi	doi	uk.ac.ebi.intact.model.CvDatabase	MI:0465	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-pathway	pathway	uk.ac.ebi.intact.model.CvTopic	MI:0619	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-sequence database	sequence database	uk.ac.ebi.intact.model.CvDatabase	MI:0683	hidden	Term currently not used in IntAct.	FALSE	root term-2
-panther	panther	uk.ac.ebi.intact.model.CvDatabase	MI:0702	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0574	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+doi	doi	uk.ac.ebi.intact.model.CvDatabase	MI:0465	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+sequence database	sequence database	uk.ac.ebi.intact.model.CvDatabase	MI:0683	hidden	Term currently not used in IntAct.	FALSE	root term-2			
+panther	panther	uk.ac.ebi.intact.model.CvDatabase	MI:0702	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
 gene3d	gene3d	uk.ac.ebi.intact.model.CvDatabase	MI:0703	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 3d repertoire	3d repertoire	uk.ac.ebi.intact.model.CvDatabase	MI:0731	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
@@ -78,6 +53,15 @@ peptide sequence database	peptide sequence database	uk.ac.ebi.intact.model.CvDat
 pride	pride	uk.ac.ebi.intact.model.CvDatabase	MI:0738	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+wwpdb	wwpdb	uk.ac.ebi.intact.model.CvDatabase	MI:0805	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
+pdbj	pdbj	uk.ac.ebi.intact.model.CvDatabase	MI:0806	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+correlated mutations	correlated mutations	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0026	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+docking	docking	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0035	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+domain profile pairs	domain profile pairs	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0037	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+feature detection	feature detection	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0003	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
+interface predictor	neural network on interface properties	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0076	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+surface patches	surface patches	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0106	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+feature type	feature type	uk.ac.ebi.intact.model.CvFeatureType	MI:0116	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
 dna binding domain tag	dna binding domain tag	uk.ac.ebi.intact.model.CvFeatureType	MI:0688	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 activation domain tag	activation domain tag	uk.ac.ebi.intact.model.CvFeatureType	MI:0689	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gal4 activation domain	gal4 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0690	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
@@ -85,10 +69,34 @@ vp16 activation domain	vp16 activation domain	uk.ac.ebi.intact.model.CvFeatureTy
 b42 activation domain	b42 activation domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0692	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 gal4 dna binding domain	gal4 dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0693	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 lexa dna binding domain	lexa dna binding domain	uk.ac.ebi.intact.model.CvFeatureType	MI:0694	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+feature range status	 feature range status	uk.ac.ebi.intact.model.CvFuzzyType	MI:0333	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
+participant identif	participant identification method	uk.ac.ebi.intact.model.CvIdentification	MI:0002	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
+interaction detectio	interaction detection	uk.ac.ebi.intact.model.CvInteraction	MI:0001	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
+prediction	prediction	uk.ac.ebi.intact.model.CvInteraction	MI:0063	hidden	Term currently not used in IntAct as interaction predictions are not curated.	TRUE	prediction
+expression interfer	post transcriptional interference	uk.ac.ebi.intact.model.CvInteraction	MI:0255	hidden	Term currently not used in IntAct.	TRUE	root term-2
+genetic interference	genetic interference	uk.ac.ebi.intact.model.CvInteraction	MI:0073	hidden	Term currently not used in IntAct.	TRUE	root term-2
 mrna display	mrna display	uk.ac.ebi.intact.model.CvInteraction	MI:0254	hidden	Term currently not used in IntAct.	FALSE	Term currently not used in IntAct.
+degeranylation	degeranylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0200	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+demyristoylation	demyristoylation	uk.ac.ebi.intact.model.CvInteractionType	MI:0201	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+genetic interaction	genetic interaction	uk.ac.ebi.intact.model.CvInteractionType	MI:0208	hidden	Term currently not used  in IntAct as genetic interactions are not curated.	TRUE	genetic interaction and all its children			
+interaction type	interaction type	uk.ac.ebi.intact.model.CvInteractionType	MI:0190	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
+biopolymer	 biopolymer	uk.ac.ebi.intact.model.CvInteractorType	MI:0383	hidden	Term currently not used during manual curation as they are automatically assigned.	FALSE	root term-1			update type( CV interactor type )
+complex	 complex	uk.ac.ebi.intact.model.CvInteractorType	MI:0314	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
+interactor type	 interactor type	uk.ac.ebi.intact.model.CvInteractorType	MI:0313	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			update type( CV interactor type )
+unknown participant	 unknown participant	uk.ac.ebi.intact.model.CvInteractorType	MI:0329	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
+gene	gene	uk.ac.ebi.intact.model.CvInteractorType	MI:0250	hidden	Term currently not used during manual curation as they are automatically assigned.	TRUE	Term not used in IntAct.			update type( CV interactor type )
+cv att name	controlled vocabulary attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0667	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+experiment att name	experiment attibute name	uk.ac.ebi.intact.model.CvTopic	MI:0665	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+feature att name	feature attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0668	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+interaction att name	interaction attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0664	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+organism att name	organism attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0669	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+participant att name	participant attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0666	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
+feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+attribute name	attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0590	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+experimental form de	experimental form description	uk.ac.ebi.intact.model.CvTopic	MI:0596	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+pathway	pathway	uk.ac.ebi.intact.model.CvTopic	MI:0619	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 function	function	uk.ac.ebi.intact.model.CvTopic	MI:0613	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
-wwpdb	wwpdb	uk.ac.ebi.intact.model.CvDatabase	MI:0805	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
-pdbj	pdbj	uk.ac.ebi.intact.model.CvDatabase	MI:0806	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-predetermined feature	predetermined feature	uk.ac.ebi.intact.model.CvFeatureIdentification	MI:0823	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-polyprotein fragment	polyprotein fragment	uk.ac.ebi.intact.model.CvFeatureType	MI:0828	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-
+xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
