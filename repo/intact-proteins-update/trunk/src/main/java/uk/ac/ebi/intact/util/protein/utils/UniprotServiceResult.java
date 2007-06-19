@@ -9,6 +9,8 @@ import uk.ac.ebi.intact.model.Protein;
 
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * TODO comment this
@@ -18,6 +20,22 @@ import java.util.ArrayList;
  * @since TODO
  */
 public class UniprotServiceResult {
+
+    public static final String MORE_THEN_1_PROT_MATCHING_UNIPROT_SECONDARY_AC_ERROR_TYPE = "More then one IntAct protein matching "
+            + "the uniprot primaryAc.";
+    public static final String MORE_THEN_1_PROT_MATCHING_UNIPROT_PRIMARY_AC_ERROR_TYPE = "More then one IntAct protein matching " +
+            "the uniprot secondaryAc.";
+    public static final String UNEXPECTED_NUMBER_OF_INTACT_PROT_FOUND_ERROR_TYPE = "An unexpected number of proteins was found in " +
+            "IntAct searching by uniprot primaryAc and uniprot secondaryAc(s).";
+    public static final String PROTEIN_FOUND_IN_INTACT_BUT_NOT_IN_UNIPROT_ERROR_TYPE = "Protein found in IntAct but not in Uniprot.";
+    public static final String PROTEIN_NOT_IN_INTACT_NOT_IN_UNIPROT_ERROR_TYPE = "Protein not found in IntAct and not found" +
+            " in Uniprot.";
+    public static final String SEVERAL_PROT_BELONGING_TO_SAME_ORGA_ERROR_TYPE = "More then one protein found in Uniprot all " +
+            "belonging to the same organism.";
+    public static final String SEVERAL_PROT_BELONGING_TO_DIFFERENT_ORGA_ERROR_TYPE = "More then one protein found in Uniprot " +
+                "belonging to the different organisms.";
+    public static final String UNEXPECTED_EXCEPTION_ERROR_TYPE = "Unexpected exception";
+
 
     /**
      * A collection of retrieved proteins.
@@ -35,7 +53,7 @@ public class UniprotServiceResult {
      * A collection of errors (ex : Could not update P12345, more than one protein found in IntAct for the uniprot
      * primary ac P12345).
      */
-    private Collection<String> errors = new ArrayList<String>();
+    private Map<String,String> errors = new HashMap<String, String>();
 
     /**
      * The query sent to the UniprotService for protein update(ex : P12345).
@@ -102,21 +120,26 @@ public class UniprotServiceResult {
 
     /**
      * Add an error to the errors collection.
-     * If error is null, it will send a NullPointerException.
+     * If error or errorType is null, it will send a NullPointerException.
      * @param error
+     * @param errorType, String defining the global type of error that occured. To be filled with one of the ERROR_TYPE
+     * defined in this class ( ex. = UniprotServiceResult.SEVERAL_PROT_BELONGING_TO_SAME_ORGA_ERROR_TYPE).
      */
-    public void addError(String error){
+    public void addError(String error, String errorType){
         if(error == null){
             throw new IllegalArgumentException("error argument can not be null");
         }
-        errors.add(error);
+        if(errorType == null){
+            throw new IllegalArgumentException("errorType argument can not be null");
+        }
+        errors.put(errorType,error);
     }
 
     /**
      * Get the errors collection.
      * @return
      */
-    public Collection<String> getErrors() {
+    public Map<String, String> getErrors() {
         return errors;
     }
 

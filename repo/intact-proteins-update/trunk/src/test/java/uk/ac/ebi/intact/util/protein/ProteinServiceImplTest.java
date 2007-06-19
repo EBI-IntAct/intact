@@ -17,9 +17,7 @@ import uk.ac.ebi.intact.util.protein.mock.*;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  * ProteinServiceImpl Tester.
@@ -275,8 +273,10 @@ public class ProteinServiceImplTest extends TestCase {
         canfa.getGenes().remove( "CDC42" );
 
         uniprotServiceResult = proteinService.retrieve( "P60952" );
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        for(String error : errors){
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
             System.out.println("error message is : " + error);
         }
         proteins = uniprotServiceResult.getProteins();
@@ -395,9 +395,11 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
 
 
-        Collection<String> errors = uniprotServiceResult.getErrors();
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
         assertEquals(1,errors.size());
-        for (String error : errors){
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
             assertEquals("Couldn't update protein with uniprot id = " + uniprotServiceResult.getQuerySentToService() + ". It was found" +
                     " in IntAct but was not found in Uniprot.", error);
         }
@@ -421,9 +423,11 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_PRIMARY_AC );
         assertEquals(0, uniprotServiceResult.getProteins().size());
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        assertEquals(1, errors.size());
-        for(String error : errors){
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        assertEquals(1,errors.size());
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
             assertEquals("Could not udpate protein with uniprot id = " + uniprotServiceResult.getQuerySentToService() + ". No " +
                     "corresponding entry found in uniprot.",error);
         }
@@ -553,17 +557,13 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_SECONDARY_AC_2 );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
         assertEquals( 0,proteins.size() );
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        assertEquals( 1, uniprotServiceResult.getErrors().size());
-        boolean errorMessageFound = false;
-        String message = new String();
-        for(String error : errors){
-            message = error;
-            if(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to different organisms.").equals(error)){
-                errorMessageFound = true;
-            }
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        assertEquals(1,errors.size());
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to different organisms.").equals(error));
         }
-        assertTrue("The retrieve method didn't return the appropriate error message : " + message,errorMessageFound);
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
@@ -609,17 +609,13 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CDC42_SECONDARY_AC_2 );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
         assertEquals( 0,proteins.size() );
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        assertEquals( 1, uniprotServiceResult.getErrors().size());
-        boolean errorMessageFound = false;
-        String message = new String();
-        for(String error : errors){
-            message = error;
-            if(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to the same organism.").equals(error)){
-                errorMessageFound = true;
-            }
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        assertEquals(1,errors.size());
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(("Trying to update "+ uniprotServiceResult.getQuerySentToService() +" returned a set of proteins belonging to the same organism.").equals(error));
         }
-        assertTrue("The retrieve method didn't return the appropriate error message : " + message,errorMessageFound);
     }
 
 //    private Protein getProtein(String uniprotId, ProteinDao proteinDao){
@@ -705,10 +701,12 @@ public class ProteinServiceImplTest extends TestCase {
         proteinsColl = uniprotServiceResult.getProteins();
         assertEquals(0,proteinsColl.size());
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-        Collection<String> errors =  uniprotServiceResult.getErrors();
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
         assertEquals(1,errors.size());
-        for (String message : errors){
-            assertTrue(message.contains("More than one IntAct protein is matching secondary AC(s):"));
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(error.contains("More than one IntAct protein is matching secondary AC(s):"));
         }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
@@ -765,10 +763,12 @@ public class ProteinServiceImplTest extends TestCase {
         proteinsColl = uniprotServiceResult.getProteins();
         assertEquals(0,proteinsColl.size());
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-        Collection<String> errors =  uniprotServiceResult.getErrors();
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
         assertEquals(1,errors.size());
-        for (String message : errors){
-            assertTrue(message.contains("Unexpected number of protein found in IntAct for UniprotEntry(P60952) Count of " +
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(error.contains("Unexpected number of protein found in IntAct for UniprotEntry(P60952) Count of " +
                     "protein in Intact for the Uniprot entry primary ac(1) for the Uniprot entry secondary ac(s)(1)"));
         }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -920,14 +920,14 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(0,proteinsColl.size());
 
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-        Collection<String> errors =  uniprotServiceResult.getErrors();
-        //        assertEquals(1,messages.size());
-        for (String message : errors){
-            System.out.println("MESSAGE : ");
-            System.out.println("message = " + message);
-//            assertTrue(message.contains("Unexpected number of protein found in IntAct for UniprotEntry(P60952) Count of " +
-//                    "protein in Intact for the Uniprot entry primary ac(1) for the Uniprot entry secondary ac(s)(1)"));
-        }
+//        Collection<String> errors =  uniprotServiceResult.getErrors();
+//        //        assertEquals(1,messages.size());
+//        for (String message : errors){
+//            System.out.println("MESSAGE : ");
+//            System.out.println("message = " + message);
+////            assertTrue(message.contains("Unexpected number of protein found in IntAct for UniprotEntry(P60952) Count of " +
+////                    "protein in Intact for the Uniprot entry primary ac(1) for the Uniprot entry secondary ac(s)(1)"));
+//        }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         // Make sure that we still have in the database, 2 proteins for the uniprot primary Ac and
@@ -991,14 +991,13 @@ public class ProteinServiceImplTest extends TestCase {
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        boolean errorFound = false;
-        for(String error : errors){
-            if(error.contains("Could not find a unique UniProt identity for splice variant:")){
-                errorFound = true;
-            }
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        assertEquals(1,errors.size());
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(error.contains("Could not find a unique UniProt identity for splice variant:"));
         }
-        assertTrue(errorFound);
         assertEquals(0,uniprotServiceResult.getProteins().size());
         assertEquals(1,uniprotServiceResult.getErrors().size());
 
@@ -1040,17 +1039,14 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfaWithNoSpliceVariant );
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         assertEquals(0,uniprotServiceResult.getProteins().size());
-        Collection<String> errors = uniprotServiceResult.getErrors();
-        assertEquals(1, errors.size());
-        boolean errorMessageFound = false;
-        for(String error : errors){
-            System.out.println("error = " + error);
-            if(error.contains("cdc42_canfa,P60952] but in Uniprot it is not the case")){
-                errorMessageFound = true;
-            }
+        Map<String ,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        assertEquals(1,errors.size());
+        for(String errorType : keySet){
+            String error = errors.get(errorType);
+            assertTrue(error.contains("cdc42_canfa,P60952] but in Uniprot it is not the case"));
         }
         // Assert that the message found it the write one.
-        assertTrue(errorMessageFound);
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
 
