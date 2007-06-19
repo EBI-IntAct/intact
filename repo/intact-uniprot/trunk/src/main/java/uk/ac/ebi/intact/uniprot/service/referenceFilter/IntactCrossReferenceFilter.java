@@ -24,15 +24,27 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public static final Log log = LogFactory.getLog( IntactCrossReferenceFilter.class );
 
+    private Map<String,String> databases = new HashMap();
+//    private List<String> databases = new ArrayList<String>();
+
     private Map<String,String> db2mi = new HashMap<String,String>();
 
+    /**
+     * This list has been by Henning. They are database to which uniprot xref and that we want to have in IntAct.
+     * Xref to go and interpro are needed as we have tools depending on those xref. Other xref are taken because they
+     * might be an entry point for the a user to get in Intact. (A user could search in IntAct with and ac from sgd db).
+     */
     public IntactCrossReferenceFilter() {
-        db2mi.put( format( "GO" ),"MI:0448" );
-        db2mi.put( format( "InterPro" ),"MI:0449" );
-        db2mi.put( format( "PDB" ),"MI:0806" );
-        db2mi.put( format( "HUGE" ),"MI:0249" );
-        db2mi.put( format( "SGD" ),"MI:0484" );
-        db2mi.put( format( "FlyBase" ),"MI:0478" );
+
+        databases.put( format( "cygd"), "MI:0464");
+        databases.put( format( "ensembl"), "MI:0476");
+        databases.put( format( "flybase"), "MI:0478");
+        databases.put( format( "go" ), "MI:0448");
+        databases.put( format( "interpro" ), "MI:0449");
+        databases.put( format( "pdb" ), "MI:0460");
+        databases.put( format( "sgd" ), "MI:0484");
+        databases.put( format( "rgd"), "MI:0483");
+
     }
 
     private String format( String s ) {
@@ -55,15 +67,9 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
         return db2mi.containsKey( format( database ) );
     }
 
-    public List<String> getFilteredDatabases() {
+    public Map<String,String> getFilteredDatabases() {
         // TODO test this
-        Set set = db2mi.keySet();
-        Iterator<String> iterator = set.iterator();
-        List<String> list = new ArrayList<String>();
-        if(iterator.hasNext()){
-            list.add(iterator.next());
-        }
-        return Collections.unmodifiableList( list );
+        return Collections.unmodifiableMap( databases );
     }
 
     /**
