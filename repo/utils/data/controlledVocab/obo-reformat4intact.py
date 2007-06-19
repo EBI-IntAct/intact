@@ -53,7 +53,7 @@ for k in range(0,len(inputt)) :
             newDefRefs=defRefs[0]+' "identity"'
             i=1
             print pezzi[1]
-            print defRefs[1]
+            #print defRefs[1]
             if defRefs[1][1:6] == 'PMID:' :
                 
                 newDefRefs=newDefRefs+', ' +defRefs[1][1:]+' "primary-reference"' # in ptm terms assign to the first PMID ref the qualifier 'primary-reference'
