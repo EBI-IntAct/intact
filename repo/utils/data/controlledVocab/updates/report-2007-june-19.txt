@@ -1,0 +1,46 @@
+new terms from PSI-MI entered in intact
+
+MI:0849	ncbi taxonomy
+MI:0850	encode
+MI:0851	protein genbank identifier
+MI:0852	nucleotide genbank identifier
+MI:0853	dna overhang
+MI:0854	3 prime overhang
+MI:0855	5 prime overhang
+MI:0856	fluorophore
+MI:0857	fluorescent dye label
+MI:0858	immunodepleted coimmunoprecipitation
+MI:0859	intermolecular force
+MI:0860	genbank indentifier
+MI:0861	protein a tag
+MI:0862	zz tag
+MI:0863	thiol reactive lanthanide label
+MI:0864	brenda
+MI:0865	fluorescence acceptor donor pair
+MI:0866	tag visualisation
+MI:0867	tag visualisation by fluorescence
+MI:0868	author identifier
+MI:0869	originally assigned identifier
+MI:0871	demethylation reaction
+MI:0872	atomic force microscopy
+MI:0873	curation request
+MI:0875	dataset
+MI:0878	author submitted
+MI:0879	nucleoside triphosphatase assay
+MI:0880	atpase assay
+MI:0881	nucleoside triphosphatase reaction
+MI:0882	atpase reaction
+MI:0883	gtpase reaction
+MI:0884	vsv tag
+MI:0885	journal
+MI:0886	publication year
+
+new terms from PSI-MI entered in intact as hidden term	
+none
+
+new terms from PSI-MI NOT entered in intact
+none
+
+Term obsoleted :
+none
+
