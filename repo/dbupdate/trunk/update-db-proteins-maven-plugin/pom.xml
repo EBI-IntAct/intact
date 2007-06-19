@@ -3,25 +3,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>1.4.3</version>
+        <groupId>uk.ac.ebi.intact.dbupdate</groupId>
+        <artifactId>dbupdate-master</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.plugins</groupId>
+    <groupId>uk.ac.ebi.intact.dbupdate.plugins</groupId>
     <artifactId>update-db-proteins-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.0-SNAPSHOT</version>
-    <name>Plugin - update-db-proteins-maven-plugin</name>
+    <name>IntAct Database Update :: Plugins :: update-db-proteins-maven-plugin</name>
     <description>Plugin for IntAct</description>
-    <url>http://www.ebi.ac.uk/~intact/devsite/update-db-proteins-maven-plugin</url>
 
-    <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-db-proteins-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-db-proteins-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/update-db-proteins-maven-plugin/trunk/</url>
-    </scm>
 
     <dependencies>
         <dependency>
@@ -68,16 +62,6 @@
             <version>1.0-beta-1</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.2</version>
-            <scope>test</scope>
-        </dependency>
-
-
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
@@ -129,39 +113,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <!-- EBI repositories -->
-    <repositories>
-        <repository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/maven-plugins/update-db-proteins-maven-plugin</url>
-        </site>
-    </distributionManagement>
 
 </project>
