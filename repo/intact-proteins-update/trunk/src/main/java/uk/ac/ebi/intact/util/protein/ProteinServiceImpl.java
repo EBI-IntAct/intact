@@ -137,11 +137,11 @@ public class ProteinServiceImpl implements ProteinService {
                 List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
                 if(proteinsInIntact.size() != 0){
                     uniprotServiceResult.addError("Couldn't update protein with uniprot id = " + uniprotId + ". It was found" +
-                            " in IntAct but was not found in Uniprot.");
+                            " in IntAct but was not found in Uniprot.", UniprotServiceResult.PROTEIN_FOUND_IN_INTACT_BUT_NOT_IN_UNIPROT_ERROR_TYPE);
                     return uniprotServiceResult;
                 }else{
                     uniprotServiceResult.addError("Could not udpate protein with uniprot id = " + uniprotId + ". No " +
-                            "corresponding entry found in uniprot.");
+                            "corresponding entry found in uniprot.", UniprotServiceResult.PROTEIN_NOT_IN_INTACT_NOT_IN_UNIPROT_ERROR_TYPE);
                 }
             }else if ( proteins.size() > 1 ) {
                 if ( 1 == getSpeciesCount( proteins ) ) {
@@ -149,7 +149,7 @@ public class ProteinServiceImpl implements ProteinService {
                     // in uniprot we should not update it automatically but send a message to the curators so that they
                     // choose manually which of the new uniprot ac is relevant.
                     uniprotServiceResult.addError("Trying to update " + uniprotServiceResult.getQuerySentToService()
-                            + " returned a set of proteins belonging to the same organism.");
+                            + " returned a set of proteins belonging to the same organism.",UniprotServiceResult.SEVERAL_PROT_BELONGING_TO_SAME_ORGA_ERROR_TYPE);
                 } else {
                     // Send an error message because this should just not happen anymore in IntAct at all. In IntAct, all
                     // the dimerged has taken care of the dimerged proteins have been dealed with and replaced manually by
@@ -157,7 +157,7 @@ public class ProteinServiceImpl implements ProteinService {
                     // Ex of dimerged protein :P00001 was standing for the Cytochrome c of the human and the chimpanzee.
                     // It has now been dimerged in one entry for the human P99998 and one for the chimpanzee P99999.
                     uniprotServiceResult.addError("Trying to update " + uniprotServiceResult.getQuerySentToService()
-                            + " returned a set of proteins belonging to different organisms.");
+                            + " returned a set of proteins belonging to different organisms.", UniprotServiceResult.SEVERAL_PROT_BELONGING_TO_DIFFERENT_ORGA_ERROR_TYPE);
 ///                raiseAlarm( "eachSpecieisSeenOnlyOnce( Proteins(" + uniprotId + " ) ): false" );
                 }
             } else {
@@ -166,7 +166,7 @@ public class ProteinServiceImpl implements ProteinService {
         }catch(ProteinServiceException e){
 
             uniprotServiceResult.addException(e);
-            uniprotServiceResult.addError(e.getMessage() );
+            uniprotServiceResult.addError(e.getMessage(), UniprotServiceResult.UNEXPECTED_EXCEPTION_ERROR_TYPE);
         }
 
         uniprotServiceResult.addAllToProteins(intactProteins);
@@ -303,7 +303,7 @@ public class ProteinServiceImpl implements ProteinService {
                     sb.append( pp.getShortLabel() );
                     sb.append( NEW_LINE );
                 }
-                uniprotServiceResult.addError(sb.toString());
+                uniprotServiceResult.addError(sb.toString(), UniprotServiceResult.MORE_THEN_1_PROT_MATCHING_UNIPROT_PRIMARY_AC_ERROR_TYPE);
 //                raiseAlarm( sb.toString() );
 
             } else if ( countPrimary == 0 && countSecondary > 1 ) {
@@ -320,14 +320,14 @@ public class ProteinServiceImpl implements ProteinService {
                     sb.append( pp.getShortLabel() );
                     sb.append( NEW_LINE );
                 }
-                uniprotServiceResult.addError(sb.toString());
+                uniprotServiceResult.addError(sb.toString(), UniprotServiceResult.MORE_THEN_1_PROT_MATCHING_UNIPROT_SECONDARY_AC_ERROR_TYPE);
 //                raiseAlarm( sb.toString() );
 
             } else {
 
                 // corresponding test ProteinServiceImplTest.testRetrieve_primaryCount1_secondaryCount1()
                 uniprotServiceResult.addError( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
-                        "Please fix this problem manualy.");
+                        "Please fix this problem manualy.", UniprotServiceResult.UNEXPECTED_NUMBER_OF_INTACT_PROT_FOUND_ERROR_TYPE);
 //                raiseAlarm( "Unexpected number of protein found in IntAct for UniprotEntry("+ uniprotProtein.getPrimaryAc() + ") " + pCount + NEW_LINE +
 //                            "Please fix this problem manualy." );
 
