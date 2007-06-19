@@ -17,21 +17,10 @@ import java.net.URL;
  */
 public class TestDatasetImplTest
 {
-    private URL dummyURL;
-
-    @Before
-    public void before() throws Exception {
-        dummyURL = TestDatasetImplTest.class.getResource(getClass().getSimpleName()+".class");
-    }
-
-    @After
-    public void after() throws Exception {
-        dummyURL = null;
-    }
-
     @Test
     public void testEquals_sameId() throws Exception {
         final String id = "id1";
+        final URL dummyURL = TestDatasetImplTest.class.getResource(getClass().getSimpleName()+".class");
         TestDataset ds1 = TestDatasetFactory.createTestDataset(id, dummyURL, false);
         TestDataset ds2 = TestDatasetFactory.createTestDataset(id, dummyURL, false);
 
@@ -40,6 +29,7 @@ public class TestDatasetImplTest
 
     @Test
     public void testEquals_differentId() throws Exception {
+        final URL dummyURL = TestDatasetImplTest.class.getResource(getClass().getSimpleName()+".class");
         TestDataset ds1 = TestDatasetFactory.createTestDataset("id1", dummyURL, false);
         TestDataset ds2 = TestDatasetFactory.createTestDataset("id2", dummyURL, false);
 
