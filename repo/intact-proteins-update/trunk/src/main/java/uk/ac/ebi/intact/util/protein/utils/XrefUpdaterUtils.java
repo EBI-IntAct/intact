@@ -90,22 +90,32 @@ public class XrefUpdaterUtils {
                 if( cvDatabase == null ) {
                     log.error( "Could not find CvDatabase by label: " + db );
                 }
-
-            } else {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No mapping found for CvDatabase("+db+"), searching by database name instead of MI ref..." );
-                }
-                cvDatabase = dbDao.getByShortLabel( db, true );
-
-                if( cvDatabase == null ) {
-                    log.error("databaseName2mi is empty : " + databaseName2mi.isEmpty());
-                    log.error( "Could not find CvDatabase by label: " + db );
-                }
+            }
+            // we have a define list of db we take as xref from Uniprot. This list will come from databaseName2mi,
+            // that can be IntactCrossReferenceFilter.getFilteredDatabases or an other map associating the name of
+            // a database in uniprot to it's psi-mi identifier in IntAct.
+            // If the database is not in the given map, we don't add the xref to the intact protein.
+            
+//            } else {
+//                if ( log.isDebugEnabled() ) {
+//                    log.debug( "No mapping found for CvDatabase("+db+"), searching by database name instead of MI ref..." );
+//                }
+//                cvDatabase = dbDao.getByShortLabel( db, true );
+//
+//                if( cvDatabase == null ) {
+//                    log.error("databaseName2mi is empty : " + databaseName2mi.isEmpty());
+//                    System.out.println("db = " + db);
+//                    log.error( "Could not find CvDatabase by label: " + db );
+//                }
+//            }
+            if(cvDatabase != null){
+                // Convert collection into Xref
+                Collection<Xref> xrefs = XrefUpdaterUtils.convert( uniprotXrefs, cvDatabase );
+                XrefUpdaterUtils.updateXrefCollection( protein, cvDatabase, xrefs );
+            }else{
+                log.info("We are not copying across xref to " + db);
             }
 
-            // Convert collection into Xref
-            Collection<Xref> xrefs = XrefUpdaterUtils.convert( uniprotXrefs, cvDatabase );
-            XrefUpdaterUtils.updateXrefCollection( protein, cvDatabase, xrefs );
         }
     }
 
