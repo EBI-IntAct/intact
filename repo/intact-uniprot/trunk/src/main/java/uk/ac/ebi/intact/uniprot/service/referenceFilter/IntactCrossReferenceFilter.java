@@ -24,8 +24,6 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public static final Log log = LogFactory.getLog( IntactCrossReferenceFilter.class );
 
-    private Map<String,String> databases = new HashMap();
-//    private List<String> databases = new ArrayList<String>();
 
     private Map<String,String> db2mi = new HashMap<String,String>();
 
@@ -36,14 +34,14 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
      */
     public IntactCrossReferenceFilter() {
 
-        databases.put( format( "cygd"), "MI:0464");
-        databases.put( format( "ensembl"), "MI:0476");
-        databases.put( format( "flybase"), "MI:0478");
-        databases.put( format( "go" ), "MI:0448");
-        databases.put( format( "interpro" ), "MI:0449");
-        databases.put( format( "pdb" ), "MI:0460");
-        databases.put( format( "sgd" ), "MI:0484");
-        databases.put( format( "rgd"), "MI:0483");
+        db2mi.put( format( "cygd"), "MI:0464");
+        db2mi.put( format( "ensembl"), "MI:0476");
+        db2mi.put( format( "flybase"), "MI:0478");
+        db2mi.put( format( "go" ), "MI:0448");
+        db2mi.put( format( "interpro" ), "MI:0449");
+        db2mi.put( format( "pdb" ), "MI:0460");
+        db2mi.put( format( "sgd" ), "MI:0484");
+        db2mi.put( format( "rgd"), "MI:0483");
 
     }
 
@@ -67,9 +65,14 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
         return db2mi.containsKey( format( database ) );
     }
 
-    public Map<String,String> getFilteredDatabases() {
+    public List<String> getFilteredDatabases() {
+        Set<String> keySet = db2mi.keySet();
+        List<String> databases = new ArrayList();
+        for ( String key : keySet ){
+            databases.add(key);
+        }
         // TODO test this
-        return Collections.unmodifiableMap( databases );
+        return Collections.unmodifiableList( databases );
     }
 
     /**

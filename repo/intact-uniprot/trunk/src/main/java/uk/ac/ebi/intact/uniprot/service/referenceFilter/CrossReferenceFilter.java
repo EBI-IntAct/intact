@@ -31,7 +31,7 @@ public interface CrossReferenceFilter {
      *
      * @return a non null list of database name.
      */
-    public Map<String,String> getFilteredDatabases();
+    public List<String> getFilteredDatabases();
 
     /**
      * Return a String corresponding to the psi-mi identifier of the given database name. It returns null if nothing is

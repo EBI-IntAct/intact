@@ -276,7 +276,7 @@ public class YaspServiceTest extends TestCase {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 7, protein.getCrossReferences().size() );
+        assertEquals( 9, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
@@ -285,5 +285,7 @@ public class YaspServiceTest extends TestCase {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0017024", "GO" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "GO" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
+        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "YJL020C", "Ensembl" ) ) );
+        assertTrue( protein.getCrossReferences().contains( new UniprotXref( "YJL020c", "CYGD" ) ) );
     }
 }
