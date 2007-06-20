@@ -758,16 +758,7 @@ public class ProteinServiceImpl implements ProteinService {
             throw new NullPointerException( "uniprotProtein must not be null." );
         }
 
-        // if this is a TrEMBL protein, we need to add _SPECIES to it !!
-        UniprotProteinType type = uniprotProtein.getSource();
-        if ( log.isDebugEnabled() ) {
-            log.debug( "Protein type: " + type );
-        }
-        if ( type != null && type.equals( UniprotProteinType.TREMBL ) ) {
-            name = uniprotProtein.getId() + "_" + uniprotProtein.getOrganism().getName().toUpperCase();
-        } else {
-            name = uniprotProtein.getId();
-        }
+        name = uniprotProtein.getId();
 
         return name.toLowerCase();
     }
