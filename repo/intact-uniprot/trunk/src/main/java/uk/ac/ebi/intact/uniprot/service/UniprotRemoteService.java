@@ -208,8 +208,10 @@ public class UniprotRemoteService extends AbstractUniprotService {
         // splice variants
         processSpliceVariants( uniProtEntry, uniprotProtein );
 
+        //I commented this line because we not making any use of uniprot features in IntAct. But in case we use them later,
+        // I have let the processFeatureChain method.
         // chains
-        processFeatureChain( uniProtEntry, uniprotProtein );
+//        processFeatureChain( uniProtEntry, uniprotProtein );
 
         return uniprotProtein;
     }
@@ -248,6 +250,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
         for ( ChainFeature featureChain : features ) {
 
             String id = featureChain.getFeatureId().getValue();
+            // todo : when uniprot does not know where is the start or the end of the protein the value will be -1
+            // Getting a sequence from -1 to x throw an Exception take into account this exception.
 
             FeatureLocation location = featureChain.getFeatureLocation();
             int begin = location.getStart();
