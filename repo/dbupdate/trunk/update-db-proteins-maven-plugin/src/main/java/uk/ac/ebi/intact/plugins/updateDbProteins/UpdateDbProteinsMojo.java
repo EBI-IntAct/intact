@@ -128,9 +128,9 @@ public class UpdateDbProteinsMojo
             proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             Collection<ProteinImpl> proteins;
             if(i == iterationCount){
-                proteins = proteinDao.getAll(0,proteinCountInLastIteration);
+                proteins = proteinDao.getAll((i*200),(i*200) + proteinCountInLastIteration);
             }else{
-                proteins = proteinDao.getAll(0,200);
+                proteins = proteinDao.getAll((i*200),(i*200) + 200);
             }
             CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
             CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
