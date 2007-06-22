@@ -89,7 +89,6 @@ public class UpdateDbProteinsMojo
     public void executeIntactMojo()
             throws MojoExecutionException, MojoFailureException, IOException
     {
-//        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         File outputDir = super.getDirectory();
 
@@ -221,7 +220,6 @@ public class UpdateDbProteinsMojo
         BufferedWriter out = new BufferedWriter(new FileWriter("general.log"));
         out.write(generalLog.toString());
         out.close();
-        commitTransaction();
 
         // TODO: put your logic here
     }
@@ -240,9 +238,10 @@ public class UpdateDbProteinsMojo
             } catch (IntactTransactionException e1) {
                 // If rollback was not successfull do what you want : printStackTrace, throw Exception...
                 System.out.println(e1);
+                throw new IntactException("Problem at commit time, couldn't rollback : " + e1);
             }
             // If commit is it could not commit do what you want : printStackTrace, throw Exception...
-            System.out.println(e);
+            throw new IntactException("Problem at commit time, rollback done : " + e);
         }finally{
             // Commiting the transaction close as well the session if everything goes fine but in case of an exception
             // sent at commit time then the session would not be closed, so it's really important that you close it here
@@ -251,6 +250,7 @@ public class UpdateDbProteinsMojo
             if ( hibernateSession.isOpen() ) {
                 hibernateSession.close();
             }
+
         }
 
     }
