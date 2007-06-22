@@ -11,10 +11,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.ProteinDao;
-import uk.ac.ebi.intact.persistence.dao.XrefDao;
+import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotProteinType;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
@@ -282,7 +279,36 @@ public class ProteinServiceImpl implements ProteinService {
             proteins.add( protein );
             updateProtein( protein, uniprotProtein );
 
-        } else {
+        }
+        if ( countPrimary == 1 && countSecondary >= 1){
+            StringBuffer sb = new StringBuffer();
+            sb.append("Found several protein in IntAct for entry : " + uniprotProtein.getPrimaryAc() + ". 1 with the " +
+                    "primaryAc and " + secondaryProteins.size() + " with the secondary acs. We are going to merged those" +
+                    " proteins into one.").append( NEW_LINE );
+            Protein primaryProt = primaryProteins.iterator().next();
+
+            Protein protToBeKept = getProtWithMaxInteraction(primaryProteins.iterator().next(),secondaryProteins);
+            sb.append("The protein we keep is : " + protToBeKept.getAc() + "," + protToBeKept.getShortLabel()).append( NEW_LINE );
+            Collection<Protein> proteinsToDelete = new ArrayList<Protein>();
+            proteinsToDelete.addAll(secondaryProteins);
+            proteinsToDelete.add(primaryProt);
+
+            proteinsToDelete.remove(protToBeKept);
+
+            replaceInActiveInstances(proteinsToDelete, protToBeKept);
+            ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+            sb.append("The protein which are going to be merged :").append( NEW_LINE );
+            for(Protein protToDelete : proteinsToDelete ){
+                proteinDao.delete((ProteinImpl) protToDelete);
+                sb.append("\t" + protToDelete.getAc() + "," + protToDelete.getShortLabel()).append( NEW_LINE );
+            }
+
+            proteins.add( protToBeKept );
+            updateProtein( protToBeKept, uniprotProtein );
+
+            uniprotServiceResult.addMessage(sb.toString());
+
+        }else {
 
             // Error cases
 
@@ -339,6 +365,56 @@ public class ProteinServiceImpl implements ProteinService {
         uniprotServiceResult.addAllToProteins(nonUniprotProteins);
 
         return proteins;
+    }
+
+    /**
+     * This will search all the active instances of the proteins contained in the proteins collection and set their
+     * interactor to the replacer. It will save each active instance, each proteins of the proteins collection and
+     * the replacer to the database.
+     * In other words if the collection of proteins contains (EBI-1,EBI-2,EBI-3) and the replacer is EBI-4, this will
+     * remove EBI-1, EBI-2, EBI-3 of all the interactions they might partipate in and will replace them by EBI-4. 
+     * @param proteins
+     * @param replacer
+     */
+    public void replaceInActiveInstances(Collection<Protein> proteins, Protein replacer){
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
+        for(Protein protein : proteins){
+            Collection<Component> components = protein.getActiveInstances();
+            for(Component component : components){
+                component.setInteractor(replacer);
+                replacer.addActiveInstance(component);
+                protein.removeActiveInstance(component);
+                componentDao.saveOrUpdate(component);
+            }
+            proteinDao.saveOrUpdate((ProteinImpl) protein);
+        }
+        proteinDao.saveOrUpdate((ProteinImpl) replacer);
+    }
+
+    /**
+     * Given a protein and a collection of proteins it will return the protein that appear in the higher number of
+     * interactions.
+     * @param protein (if null return an IllegalArgumentException)
+     * @param proteins (if null return an IllegalArgumentException)
+     * @return a protein
+     */
+    private Protein getProtWithMaxInteraction(Protein protein, Collection<Protein> proteins){
+        if(protein == null){
+            throw new IllegalArgumentException("The protein argument shouldn't be null.");
+        }
+        if(proteins == null){
+            throw new IllegalArgumentException("The proteins collection argument shouldn't be null.");
+        }
+        Protein protWithMaxInteraction = protein;
+        int numberOfInteraction = protein.getActiveInstances().size();
+        for(Protein prot : proteins){
+            if(prot.getActiveInstances().size() > numberOfInteraction){
+                numberOfInteraction = prot.getActiveInstances().size();
+                protWithMaxInteraction = prot;
+            }
+        }
+        return protWithMaxInteraction;
     }
 
     /**
