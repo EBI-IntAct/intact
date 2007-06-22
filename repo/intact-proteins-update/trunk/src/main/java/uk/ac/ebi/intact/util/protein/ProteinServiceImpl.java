@@ -279,8 +279,7 @@ public class ProteinServiceImpl implements ProteinService {
             proteins.add( protein );
             updateProtein( protein, uniprotProtein );
 
-        }
-        if ( countPrimary == 1 && countSecondary >= 1){
+        }else if ( countPrimary == 1 && countSecondary >= 1){
             StringBuffer sb = new StringBuffer();
             sb.append("Found several protein in IntAct for entry : " + uniprotProtein.getPrimaryAc() + ". 1 with the " +
                     "primaryAc and " + secondaryProteins.size() + " with the secondary acs. We are going to merged those" +
