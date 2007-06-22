@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>2</version>
+        <version>12</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -22,6 +22,10 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-webapp-pom</url>
     </scm>
 
+    <properties>
+       <port>9090</port>
+    </properties>
+
     <profiles>
         <profile>
             <id>jettyConfig</id>
@@ -30,8 +34,8 @@
                     <plugin>
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>maven-jetty-plugin</artifactId>
-                        <version>6.1.0rc3</version>
                         <configuration>
+                            <port>${port}</port>
                             <scanIntervalSeconds>10</scanIntervalSeconds>
                             <contextPath>intact/${build.finalName}</contextPath>
                         </configuration>
@@ -72,7 +76,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -84,7 +88,7 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.0</version>
+            <version>3.2</version>
         </dependency>
 
         <!-- Web development-->
