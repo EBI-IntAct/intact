@@ -222,7 +222,7 @@ public class PartnersView extends AbstractView
         else if (interactor instanceof NucleicAcid)
         {
             return getSimpleSearchURL(searchUrl, interactor) + "&amp;searchClass="+ SearchClass.NUCLEIC_ACID.getShortName() +"&amp;view=" + view +
-                    "&filter=ac";
+                        "&filter=ac";
         }
         else if (interactor instanceof SmallMolecule)
         {

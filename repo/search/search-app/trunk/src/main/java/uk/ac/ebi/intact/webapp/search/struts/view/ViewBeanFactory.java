@@ -12,7 +12,7 @@ in the root directory of this distribution.
  * </p>
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:ViewBeanFactory.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 package uk.ac.ebi.intact.webapp.search.struts.view;
 
@@ -91,7 +91,8 @@ public class ViewBeanFactory {
         ourBeanToSingleItemView.put( CvTopic.class, BioSourceViewBean.class );
         ourBeanToSingleItemView.put( CvInteraction.class, BioSourceViewBean.class );
         ourBeanToSingleItemView.put( CvInteractionType.class, BioSourceViewBean.class );
-        ourBeanToSingleItemView.put( CvComponentRole.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put( CvExperimentalRole.class, BioSourceViewBean.class );
+        ourBeanToSingleItemView.put( CvBiologicalRole.class, BioSourceViewBean.class );
         ourBeanToSingleItemView.put( CvIdentification.class, BioSourceViewBean.class );
         ourBeanToSingleItemView.put( BioSource.class, BioSourceViewBean.class );
 
