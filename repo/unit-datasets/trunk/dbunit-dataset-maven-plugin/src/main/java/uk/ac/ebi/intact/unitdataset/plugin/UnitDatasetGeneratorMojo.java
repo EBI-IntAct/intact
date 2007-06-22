@@ -215,9 +215,7 @@ public class UnitDatasetGeneratorMojo
             getLog().debug("\tStarting to import dataset files...");
 
             try {
-                beginTransaction();
                 importDataset(dataset);
-                commitTransaction();
             } catch (Exception e) {
                 getLog().error(e);
                 throw new MojoExecutionException("Exception importing dataset: "+dataset.getId(),e);
@@ -426,11 +424,8 @@ public class UnitDatasetGeneratorMojo
     private void importDataset(Dataset dataset) throws FileNotFoundException, PersisterException, MojoExecutionException {
         for (File psiFile : dataset.getFiles()) {
             checkFile(psiFile);
-            beginTransaction();
             
             PsiExchange.importIntoIntact(new FileInputStream(psiFile), false);
-
-            commitTransaction();
         }
     }
 
