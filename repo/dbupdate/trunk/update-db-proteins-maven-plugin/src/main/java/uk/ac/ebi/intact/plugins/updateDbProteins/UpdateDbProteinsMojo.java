@@ -182,12 +182,12 @@ public class UpdateDbProteinsMojo
                             }
                         }
                     } else {
-                        System.out.println(" splice variant.");
+                        System.out.println("not updated, splice variant.");
                         spliceVariantCount++;
                         proteinChunkLog.append("The protein was not udpated because it is a splice variant and will be updated with it's master protein.").append(NEW_LINE);
                     }
                 }else{
-                    System.out.println(" no uniprot udpate.");
+                    System.out.println("not updated, no uniprot udpate.");
                     noUniprotUpdateCount++;
                     proteinChunkLog.append("The protein was not udpated because it is not a UniProt protein.").append(NEW_LINE);
                 }
