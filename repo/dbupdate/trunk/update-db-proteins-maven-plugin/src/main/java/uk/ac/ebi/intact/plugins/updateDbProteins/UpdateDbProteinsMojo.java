@@ -60,6 +60,7 @@ public class UpdateDbProteinsMojo
          */
         private File hibernateConfig;
 
+    public static final String NEW_LINE = "\n";
 
     Map<String,Integer> errorType2count = new HashMap<String,Integer>();
     Map<String, Collection<String>> errorMessages = new HashMap();
@@ -93,16 +94,17 @@ public class UpdateDbProteinsMojo
         File outputDir = super.getDirectory();
 
         StringBuffer generalLog = new StringBuffer();
-        generalLog.append("---------------------------------------------------------------------");
-        generalLog.append("                           Uniprot Update");
-        generalLog.append("---------------------------------------------------------------------\n\n");
+        generalLog.append("---------------------------------------------------------------------").append(NEW_LINE);
+        generalLog.append("                           Uniprot Update").append(NEW_LINE);
+        generalLog.append("---------------------------------------------------------------------")
+                .append(NEW_LINE).append(NEW_LINE);
 
-        generalLog.append("\n\n-----");
-        generalLog.append("Index");
-        generalLog.append("-----");
+        generalLog.append(NEW_LINE).append("-----").append(NEW_LINE);
+        generalLog.append("Index").append(NEW_LINE);
+        generalLog.append("-----").append(NEW_LINE);
 
-        System.out.println("Uniprot Update");
-        System.out.println("--------------\n\n");
+        System.out.println("Uniprot Update ");
+        System.out.println("--------------");
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         UniprotService uniprotService = new UniprotRemoteService();
@@ -137,22 +139,25 @@ public class UpdateDbProteinsMojo
             for(Protein protein : proteins){
                 System.out.print("\nUpdating " +  protein.getAc() + " : " );
                 proteinsUpdatedInChunk = proteinsUpdatedInChunk + protein.getAc();
-                proteinChunkLog.append("\n\n---------------------------------------------------------------------------------");
-                proteinChunkLog.append("Updating protein[" + protein.getAc() + "," + protein.getShortLabel()+"] :");
-                proteinChunkLog.append("---------------------------------------------------------------------------------");
+                proteinChunkLog.append(NEW_LINE).append(NEW_LINE).append(NEW_LINE)
+                        .append("Updating protein[" + protein.getAc() + "," + protein.getShortLabel()+"] :").append(NEW_LINE);
                 // if protein does not have a not UniprotUpdate annotation and is not a splice variant then update it.
                 // We don't need to update the splice variants as they will be updated when updating their master proteins.
                 if(ProteinUtils.isFromUniprot(protein)){
                     if(!isSpliceVariant(protein)){
                         InteractorXref uniprotIdentity = ProteinUtils.getUniprotXref(protein);
-                        proteinChunkLog.append("Protein xref identity : " + uniprotIdentity.getPrimaryId());
+                        proteinChunkLog.append("Protein xref identity : " + uniprotIdentity.getPrimaryId()).append(NEW_LINE);
                         UniprotServiceResult uniprotServiceResult = service.retrieve(uniprotIdentity.getPrimaryId());
                         Collection<Protein> updatedProteins = uniprotServiceResult.getProteins();
                         Map<String,String> errors = uniprotServiceResult.getErrors();
                         if(updatedProteins.size() == 1 && errors.size() == 0){
                             System.out.println(" updated, " + uniprotIdentity.getPrimaryId() + ".");
                             updatedProteinCount++;
-                            proteinChunkLog.append("Protein updated to uniprot entry " + uniprotIdentity.getPrimaryId());
+                            proteinChunkLog.append("Protein updated to uniprot entry " + uniprotIdentity.getPrimaryId()).append(NEW_LINE);
+                            Collection<String> messages = uniprotServiceResult.getMessages();
+                            for(String message : messages){
+                                proteinChunkLog.append(message).append(NEW_LINE);
+                            }
                         }else if(updatedProteins.size() == 1 && errors.size()>=1){
                             String exceptionMessage = "An error occured, but the protein was updated. Error message is : \n";
                             Set<String> errorTypes = errors.keySet();
@@ -162,7 +167,7 @@ public class UpdateDbProteinsMojo
                             throw new IntactException(exceptionMessage);
                         }else if(updatedProteins.size()==0 && errors.size()>=1){
                             errorCount++;
-                            proteinChunkLog.append("The protein was not updated as an error occured :\n");
+                            proteinChunkLog.append("The protein was not updated as an error occured :").append(NEW_LINE);
                             Set<String> errorTypes = errors.keySet();
                             for(String errorType : errorTypes){
                                 System.out.println(" " + errorType);
@@ -173,18 +178,18 @@ public class UpdateDbProteinsMojo
                                     errorTypeCount++;
                                     errorType2count.put(errorType, errorTypeCount);
                                 }
-                                proteinChunkLog.append(errors.get(errorType));
+                                proteinChunkLog.append(errors.get(errorType)).append(NEW_LINE);
                             }
                         }
                     } else {
                         System.out.println(" splice variant.");
                         spliceVariantCount++;
-                        proteinChunkLog.append("The protein was not udpated because it is a splice variant and will be updated with it's master protein.");
+                        proteinChunkLog.append("The protein was not udpated because it is a splice variant and will be updated with it's master protein.").append(NEW_LINE);
                     }
                 }else{
                     System.out.println(" no uniprot udpate.");
                     noUniprotUpdateCount++;
-                    proteinChunkLog.append("The protein was not udpated because it is not a UniProt protein.");
+                    proteinChunkLog.append("The protein was not udpated because it is not a UniProt protein.").append(NEW_LINE);
                 }
             }
             generalLog.append("proteinUpdate-" + i + ".log : " + proteinsUpdatedInChunk);
@@ -196,21 +201,21 @@ public class UpdateDbProteinsMojo
             commitTransaction();
         }
 
-        generalLog.append("\n\n------------------");
-        generalLog.append("General statistics");
-        generalLog.append("------------------");
-        generalLog.append("\nNumber of proteins in IntAct : " + proteinCount);
-        generalLog.append("Number of NoUniprot Update proteins : " + noUniprotUpdateCount);
-        generalLog.append("Number of splice variants : " + spliceVariantCount);
-        generalLog.append("Number of updated proteins " + updatedProteinCount);
-        generalLog.append("Number of proteins that couldn't be udpate due to errors" + errorCount);
+        generalLog.append(NEW_LINE).append(NEW_LINE).append("------------------");
+        generalLog.append("General statistics").append(NEW_LINE);
+        generalLog.append("------------------").append(NEW_LINE);
+        generalLog.append(NEW_LINE).append("Number of proteins in IntAct : " + proteinCount).append(NEW_LINE);
+        generalLog.append("Number of NoUniprot Update proteins : " + noUniprotUpdateCount).append(NEW_LINE);
+        generalLog.append("Number of splice variants : " + spliceVariantCount).append(NEW_LINE);
+        generalLog.append("Number of updated proteins " + updatedProteinCount).append(NEW_LINE);
+        generalLog.append("Number of proteins that couldn't be udpate due to errors" + errorCount).append(NEW_LINE);
 
-        generalLog.append("\nDifferent type of error count : ");
-        generalLog.append("------------------------------- ");
+        generalLog.append("\nDifferent type of error count : ").append(NEW_LINE);
+        generalLog.append("------------------------------- ").append(NEW_LINE);
         Set<String> errorTypes = errorType2count.keySet();
         for(String errorType : errorTypes){
             Integer count = errorType2count.get(errorType);
-            generalLog.append(errorType + " : " + count);
+            generalLog.append(errorType + " : " + count).append(NEW_LINE);
         }
 
         BufferedWriter out = new BufferedWriter(new FileWriter("general.log"));
