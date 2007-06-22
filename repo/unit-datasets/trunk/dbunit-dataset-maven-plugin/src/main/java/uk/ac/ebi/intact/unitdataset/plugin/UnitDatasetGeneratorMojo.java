@@ -111,6 +111,12 @@ public class UnitDatasetGeneratorMojo
     private String providerName;
 
     /**
+     * @parameter
+     */
+    private boolean noexport;
+    
+
+    /**
      * Main execution method, which is called after hibernate has been initialized
      */
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
@@ -249,21 +255,26 @@ public class UnitDatasetGeneratorMojo
             getLog().debug("\tNo DB modifiers");
         }
 
-        // create the dbunit dataset.xml
-        getLog().debug("\tCreating DBUnit dataset...");
+        if (!noexport) {
+            // create the dbunit dataset.xml
+            getLog().debug("\tCreating DBUnit dataset...");
 
-        try {
-            beginTransaction();
-            IDataSet dbUnitDataSet = createDbUnitForDataset(dataset);
-            exportDbUnitDataSetToFile(dbUnitDataSet, getDbUnitFileForDataset(dataset));
-            commitTransaction();
+            try {
 
-            // truncate tables after export, so next datasets have a clean db
-            resetSchema();
+                beginTransaction();
+                IDataSet dbUnitDataSet = createDbUnitForDataset(dataset);
+                exportDbUnitDataSetToFile(dbUnitDataSet, getDbUnitFileForDataset(dataset));
+                commitTransaction();
 
-        } catch (Exception e) {
-            getLog().error(e);
-            throw new MojoExecutionException("Exception creating dbUnit dataset", e);
+                // truncate tables after export, so next datasets have a clean db
+                resetSchema();
+
+            } catch (Exception e) {
+                getLog().error(e);
+                throw new MojoExecutionException("Exception creating dbUnit dataset", e);
+            }
+        } else {
+            getLog().info("\tNot exporting to DBUnit - not resetting schema either");
         }
     }
 
@@ -501,5 +512,13 @@ public class UnitDatasetGeneratorMojo
     public void setProviderName(String providerName)
     {
         this.providerName = providerName;
+    }
+
+    public boolean isNoexport() {
+        return noexport;
+    }
+
+    public void setNoexport(boolean noexport) {
+        this.noexport = noexport;
     }
 }
