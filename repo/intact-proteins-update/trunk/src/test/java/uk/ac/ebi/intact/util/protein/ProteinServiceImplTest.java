@@ -740,6 +740,7 @@ public class ProteinServiceImplTest extends TestCase {
         List<ProteinImpl> proteinsList = proteinDao.getByXrefLike(uniprot, identity,MockUniprotProtein.CANFA_PRIMARY_AC);
         assertEquals(1, proteinsList.size());
         ProteinImpl protein = proteinsList.get(0);
+        String primaryProteinAc = protein.getAc();
 
         Protein secondaryProt = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
                 protein.getBioSource(),
@@ -756,20 +757,30 @@ public class ProteinServiceImplTest extends TestCase {
         xrefDao.saveOrUpdate(newXref);
         secondaryProt.addXref(newXref);
         proteinDao.saveOrUpdate((ProteinImpl) secondaryProt);
+        String secondaryProtAc = secondaryProt.getAc();
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals(0,proteinsColl.size());
+        assertEquals(1,proteinsColl.size());
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+
+        ProteinImpl proteinsPrimaryAc = proteinDao.getByAc(primaryProteinAc);
+        ProteinImpl proteinSecondaryAc = proteinDao.getByAc(secondaryProtAc);
+        if((proteinsPrimaryAc==null && proteinSecondaryAc==null)){
+            fail("one of them shouldn't be null");
+        }
+        if((proteinsPrimaryAc!=null && proteinSecondaryAc!=null)){
+            fail("one of them should be null");
+        }
+        assertTrue((proteinsPrimaryAc==null && proteinSecondaryAc!=null) || (proteinsPrimaryAc!=null && proteinSecondaryAc==null));
+
         System.out.println("proteinsColl.size() = " + proteinsColl.size());
-        Map<String ,String> errors = uniprotServiceResult.getErrors();
-        Set<String> keySet = errors.keySet();
-        assertEquals(1,errors.size());
-        for(String errorType : keySet){
-            String error = errors.get(errorType);
-            assertTrue(error.contains("Unexpected number of protein found in IntAct for UniprotEntry(P60952) Count of " +
-                    "protein in Intact for the Uniprot entry primary ac(1) for the Uniprot entry secondary ac(s)(1)"));
+        Collection<String> messages = uniprotServiceResult.getMessages();
+        assertEquals(1,messages.size());
+        for(String message : messages){
+            assertTrue(message.contains("The protein which are going to be merged :"));
         }
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
@@ -1104,6 +1115,11 @@ public class ProteinServiceImplTest extends TestCase {
         assertEquals(1,spliceVariants.size());
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         assertEquals(1, uniprotServiceResult.getProteins().size());
+        Map<String,String> errors = uniprotServiceResult.getErrors();
+        Set<String> keySet = errors.keySet();
+        for(String errorType : keySet){
+            System.out.println(errors.get(errorType));
+        }
         assertEquals(0, uniprotServiceResult.getErrors().size());
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
