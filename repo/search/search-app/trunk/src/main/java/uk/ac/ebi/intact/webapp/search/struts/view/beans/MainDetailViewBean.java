@@ -19,7 +19,7 @@ import java.util.*;
  * content (NOT the means to display it!).
  *
  * @author Chris Lewington
- * @version $Id$
+ * @version $Id:MainDetailViewBean.java 6452 2006-10-16 17:09:42 +0100 (Mon, 16 Oct 2006) baranda $
  */
 public class MainDetailViewBean extends AbstractViewBean {
 
@@ -1129,10 +1129,24 @@ public class MainDetailViewBean extends AbstractViewBean {
      *
      * @return String a String representation of a search URL link for CvComponentRole.
      */
-    public String getCvComponentRoleSearchURL( Component comp ) {
+    public String getCvExperimentalRoleSearchURL( Component comp ) {
 
-        return SearchWebappContext.getCurrentInstance().getSearchUrl() + comp.getCvComponentRole().getAc() +
-               "&amp;searchClass=CvComponentRole&filter=ac";
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + comp.getCvExperimentalRole().getAc() +
+               "&amp;searchClass=CvExperimentalRole&filter=ac";
+    }
+
+    /**
+     * Convenience method to provide a String representation of a URL to perform a search on CvComponentRole for a
+     * particular Protein/Interaction pair
+     *
+     * @param comp The Component role we want a search URL for
+     *
+     * @return String a String representation of a search URL link for CvComponentRole.
+     */
+    public String getCvBiologicalRoleSearchURL( Component comp ) {
+
+        return SearchWebappContext.getCurrentInstance().getSearchUrl() + comp.getCvBiologicalRole().getAc() +
+               "&amp;searchClass=CvBiologicalRole&filter=ac";
     }
 
     /**

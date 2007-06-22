@@ -26,11 +26,13 @@
 
 <%-- Intact classes needed --%>
 <%@ page import="uk.ac.ebi.intact.model.*,
+                 uk.ac.ebi.intact.model.util.CvObjectUtils,
+                 uk.ac.ebi.intact.model.util.RoleInfo,
                  uk.ac.ebi.intact.persistence.dao.query.impl.SearchableQuery,
                  uk.ac.ebi.intact.webapp.search.struts.util.SearchConstants,
-                 uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailView,
-                 uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailViewBean,
-                 java.util.*" %>
+                 uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailView" %>
+<%@ page import="uk.ac.ebi.intact.webapp.search.struts.view.beans.MainDetailViewBean" %>
+<%@ page import="java.util.*" %>
 
 <%-- Standard Java classes --%>
 
@@ -928,9 +930,30 @@
     %>
 
     <td class="data">
-        <a href="<%= bean.getCvComponentRoleSearchURL(component)%>">
-            <%= component.getCvComponentRole().getShortLabel()%>
+        <%
+            RoleInfo roleInfo = CvObjectUtils.createRoleInfo(component.getCvExperimentalRole(), component.getCvBiologicalRole());
+
+            if (roleInfo.isBiologicalRoleUnspecified()){
+        %>
+        <a href="<%= bean.getCvBiologicalRoleSearchURL(component)%>">
+            <%= component.getCvBiologicalRole().getShortLabel()%>
         </a>
+        <%
+            }
+            if (roleInfo.isBiologicalRoleUnspecified() && roleInfo.isExperimentalRoleUnspecified()) {
+        %>
+        /
+        <%
+            }
+
+            if (roleInfo.isExperimentalRoleUnspecified()) {
+        %>
+        <a href="<%= bean.getCvBiologicalRoleSearchURL(component)%>">
+            <%= component.getCvBiologicalRole().getShortLabel()%>
+        </a>
+        <%
+            }
+        %>
     </td>
     <%
     } else {
