@@ -46,7 +46,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
      *
      * @parameter default-value="true"
      */
-    private boolean closeSessionFactory;
+    private boolean closeSessionFactory = true;
 
     private boolean initialized;
 
@@ -72,7 +72,8 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
             throw new MojoExecutionException( "Failed to commit active transactions.", e );
         }
 
-        if ( closeSessionFactory ) {
+        if ( isCloseSessionFactory() ) {
+            getLog().info("Closing session factory");
             context.getConfig().getDefaultDataConfig().closeSessionFactory();
         }
     }
@@ -151,4 +152,9 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
     public void setDryRun( boolean dryRun ) {
         this.dryRun = dryRun;
     }
+
+    public boolean isCloseSessionFactory() {
+        return closeSessionFactory;
+    }
+
 }
