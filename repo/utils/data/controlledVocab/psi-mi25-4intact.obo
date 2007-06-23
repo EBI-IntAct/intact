@@ -4387,7 +4387,7 @@ id: MI:0574
 name: digital object identifier
 def: "Identifier of a publication prior it pubmed indexing." [pubmed:14755292 "primary-reference"]
 exact_synonym: "doi" []
-xref_analog: id-validation-regexp:doi\:[0-9\]+\\.[0-9\]+\\" "ANNOTATION"
+xref_analog: id-validation-regexp:\"doi\:[0-9\]+\\.[0-9\]+\" "ANNOTATION"
 is_a: MI:0445 ! literature database
 
 [Term]
