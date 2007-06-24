@@ -6172,7 +6172,6 @@ is_a: MI:0495 ! experimental role
 id: MI:0866
 name: tag visualisation
 def: "Molecule whose sequence identity is not checked after the interaction but its presence is detected through its tag" [pubmed:14755292 "primary-reference"]
-exact_synonym: "predetermined" []
 is_a: MI:0396 ! predetermined participant
 
 [Term]
