@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.datasets</groupId>
+        <artifactId>unitdatasets-master</artifactId>
+        <version>1.6.0-SNAPSHOT</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-dataset-imex</artifactId>
+    <packaging>jar</packaging>
+    <version>1.6.0-SNAPSHOT</version>
+
+    <name>IntAct Unit Datasets :: IntAct IMEx Dataset</name>
+    <description>Contains the IMEx test dataset</description>
+
+    <build>
+        <plugins>
+
+            <plugin>
+                <groupId>uk.ac.ebi.intact.datasets</groupId>
+                <artifactId>dbunit-dataset-maven-plugin</artifactId>
+                <configuration>
+                    <providerName>ImexDatasetProvider</providerName>
+                    <cvConfiguration>
+                        <oboUrl>http://svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
+                        <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>
+                        <additionalAnnotationsUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv</additionalAnnotationsUrl>
+                    </cvConfiguration>
+                    <datasets>
+                        <dataset>
+                            <containsAllCVs>true</containsAllCVs>
+                            <id>IMEX</id>
+                            <files>
+                                <!-- intact -->
+                                <file>src/psi25/intact/2006-06-28.xml</file>
+                                <file>src/psi25/intact/2006-07-19.xml</file>
+                                <file>src/psi25/intact/2006-06-28.xml</file>
+                                <file>src/psi25/intact/2006-07-19.xml</file>
+                                <file>src/psi25/intact/2006-07-28.xml</file>
+                                <file>src/psi25/intact/2006-07-10.xml</file>
+                                <file>src/psi25/intact/2006-06-21.xml</file>
+                                <file>src/psi25/intact/2006-06-30.xml</file>
+                                <file>src/psi25/intact/2006-07-13.xml</file>
+                                <file>src/psi25/intact/2006-07-07.xml</file>
+                                <file>src/psi25/intact/2006-09-05.xml</file>
+                                <file>src/psi25/intact/2006-09-14.xml</file>
+                                <!-- mint -->
+                                <file>src/psi25/mint/2006-07-18.xml</file>
+                                <file>src/psi25/mint/2006-07-12.xml</file>
+                                <file>src/psi25/mint/2006-07-04.xml</file>
+                                <file>src/psi25/mint/2006-07-05.xml</file>
+                                <file>src/psi25/mint/2006-07-06.xml</file>
+                                <file>src/psi25/mint/2006-07-07.xml</file>
+                                <!-- fails <file>src/psi25/mint/2006-09-23.xml</file>-->
+                                <!-- dip -->
+                                <file>src/psi25/dip/2006-11-01.xml</file>
+                                <file>src/psi25/dip/2006-12-04.xml</file>
+                                <file>src/psi25/dip/2006-12-23.xml</file>
+                                <!-- fails <file>src/psi25/dip/2007-02-15.xml</file>-->
+                                <file>src/psi25/dip/2006-11-08.xml</file>
+                            </files>
+                        </dataset>
+                    </datasets>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-source</id>
+                        <phase>never</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+</project>
