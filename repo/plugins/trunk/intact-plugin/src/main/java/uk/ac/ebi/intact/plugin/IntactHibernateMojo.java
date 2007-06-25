@@ -106,7 +106,8 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
                     dataConfig = IntactContext.calculateDefaultDataConfig(session);
                 }
             } else {
-                getLog().warn("Both hibernate file and data config are not nulls. Will use the data config");
+                getLog().info( "Using hibernate cfg file: " + hibernateConfig );
+                dataConfig = new CustomCoreDataConfig( "PluginHibernateConfig", hibernateConfig, session );
             }
         }
 
