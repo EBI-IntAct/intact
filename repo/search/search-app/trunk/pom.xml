@@ -51,19 +51,10 @@
                     <plugin>
                         <groupId>uk.ac.ebi.intact.datasets</groupId>
                         <artifactId>dataset-import-maven-plugin</artifactId>
-                        <version>1.6.0-SNAPSHOT</version>
                         <configuration>
                             <id>IMEX</id>
                             <provider>uk.ac.ebi.intact.unitdataset.ImexDatasetProvider</provider>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>import</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>
