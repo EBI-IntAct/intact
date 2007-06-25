@@ -3,6 +3,7 @@ package uk.ac.ebi.intact.commons.dataset.impl;
 import uk.ac.ebi.intact.commons.dataset.TestDataset;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * Default implementation of a TestDataset
@@ -42,6 +43,10 @@ public class TestDatasetImpl implements TestDataset
     public boolean containsAllCVs()
     {
         return containsAllCVs;
+    }
+
+    public Collection<String> getAvailableIds() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

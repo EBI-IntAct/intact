@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.commons.dataset;
 
 import java.io.InputStream;
+import java.util.Collection;
 
 /**
  * Implemented for those classes that are datasets (for testing)
@@ -15,4 +16,6 @@ public interface TestDataset
     InputStream getSource();
 
     boolean containsAllCVs();
+
+    Collection<String> getAvailableIds();
 }
