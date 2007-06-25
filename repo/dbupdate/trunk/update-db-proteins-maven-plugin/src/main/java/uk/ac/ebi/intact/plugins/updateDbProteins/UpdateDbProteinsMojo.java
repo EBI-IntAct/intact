@@ -113,12 +113,12 @@ public class UpdateDbProteinsMojo
         int noUniprotUpdateCount = 0;
         int updatedProteinCount = 0;
         int errorCount = 0;
-
+        int chunkSize = 50;
 
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         int proteinCount = proteinDao.countAll();
-        int iterationCount = proteinCount/200;
-        int proteinCountInLastIteration = proteinCount - (200*iterationCount);
+        int iterationCount = proteinCount/chunkSize;
+        int proteinCountInLastIteration = proteinCount - (chunkSize*iterationCount);
         commitTransaction();
 
 
@@ -129,13 +129,15 @@ public class UpdateDbProteinsMojo
             proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             Collection<ProteinImpl> proteins;
             if(i == iterationCount){
-                proteins = proteinDao.getAll((i*200),(i*200) + proteinCountInLastIteration);
+                proteins = proteinDao.getAll((i*chunkSize), proteinCountInLastIteration);
             }else{
-                proteins = proteinDao.getAll((i*200),(i*200) + 200);
+                proteins = proteinDao.getAll((i*chunkSize), chunkSize);
             }
-            CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
-            CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+            int protCount = 0;
             for(Protein protein : proteins){
+                protCount++;
+                System.out.println("Protein count : " + protCount);
+                
                 System.out.print("\nUpdating " +  protein.getAc() + " : " );
                 proteinsUpdatedInChunk = proteinsUpdatedInChunk + protein.getAc();
                 proteinChunkLog.append(NEW_LINE).append(NEW_LINE).append(NEW_LINE)
@@ -197,7 +199,28 @@ public class UpdateDbProteinsMojo
             out.close();
 
 
+
+//            System.out.println("\n\n\n\n---------------");
+//            System.out.println("About to commit");
+//            System.out.println("\n\n\n\n---------------");
+//            //Pause for 10 seconds
+//            try {
+//                Thread.sleep(10000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+
             commitTransaction();
+
+//            System.out.println("\n\n\n\n---------------");
+//            System.out.println("Commit done");
+//            System.out.println("\n\n\n\n---------------");
+//            //Pause for 10 seconds
+//            try {
+//                Thread.sleep(10000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
 
         generalLog.append(NEW_LINE).append(NEW_LINE).append("------------------");
