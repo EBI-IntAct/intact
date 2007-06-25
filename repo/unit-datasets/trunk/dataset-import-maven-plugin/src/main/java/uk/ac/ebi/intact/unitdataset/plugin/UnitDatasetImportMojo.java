@@ -27,6 +27,15 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.IntactEnvironment;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+
+import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.impl.TemporaryH2DataConfig;
+
+import java.util.Properties;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -66,6 +75,20 @@ public class UnitDatasetImportMojo extends IntactHibernateMojo {
      */
     private String provider;
 
+    /**
+     * @parameter
+     */
+    private String tempH2;
+
+    public DataConfig getDataConfig()
+    {
+        Properties properties = new Properties();
+        if (tempH2 != null) {
+            properties.put(IntactEnvironment.TEMP_H2.getFqn(), tempH2);
+        }
+        IntactSession session = new StandaloneSession(properties);
+        return new TemporaryH2DataConfig(session);
+    }
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -175,5 +198,15 @@ public class UnitDatasetImportMojo extends IntactHibernateMojo {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getTempH2()
+    {
+        return tempH2;
+    }
+
+    public void setTempH2(String tempH2)
+    {
+        this.tempH2 = tempH2;
     }
 }
