@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -12,65 +13,82 @@
     <packaging>pom</packaging>
     <name>Master Webapp POM</name>
     <version>2.4-SNAPSHOT</version>
-    <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It contains information
+    <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It
+        contains information
         that is common to all web applications.
     </description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</developerConnection>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom
+        </connection>
+        <developerConnection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-webapp-pom</url>
     </scm>
 
     <properties>
-       <port>9090</port>
+        <port>9090</port>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>jettyConfig</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.mortbay.jetty</groupId>
-                        <artifactId>maven-jetty-plugin</artifactId>
-                        <configuration>
-                            <port>${port}</port>
-                            <scanIntervalSeconds>10</scanIntervalSeconds>
-                            <contextPath>intact/${build.finalName}</contextPath>
-                        </configuration>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <configuration>
+                    <port>${port}</port>
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <contextPath>intact/${build.finalName}</contextPath>
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                        <groupId>uk.ac.ebi.intact.datasets</groupId>
+                        <artifactId>dataset-import-maven-plugin</artifactId>
+                        <version>1.6.0-SNAPSHOT</version>
+                        <executions>
+                            <execution>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>import</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
-                </plugins>
-            </build>
-
-            <pluginRepositories>
-                <!-- Repository to get the jetty plugin -->
-                <pluginRepository>
-                    <id>Mortbay (release)</id>
-                    <url>http://www.mortbay.org/maven2/release</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </pluginRepository>
-                <pluginRepository>
-                    <id>mortbay-repo</id>
-                    <name>mortbay-repo</name>
-                    <url>http://www.mortbay.org/maven2/snapshot</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                </pluginRepository>
-            </pluginRepositories>
-
-
-        </profile>
-    </profiles>
+                <plugin>
+                    <groupId>uk.ac.ebi.intact.datasets</groupId>
+                    <artifactId>dbunit-dataset-maven-plugin</artifactId>
+                    <configuration>
+                        <noexport>true</noexport>
+                        <providerName>PsiTestDatasetProvider</providerName>
+                        <cvConfiguration>
+                            <oboUrl>
+                                http://svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo
+                            </oboUrl>
+                            <additionalUrl>
+                                http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv
+                            </additionalUrl>
+                            <additionalAnnotationsUrl>
+                                http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv
+                            </additionalAnnotationsUrl>
+                        </cvConfiguration>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>dataset</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <dependencies>
         <dependency>
@@ -116,7 +134,7 @@
 
     <!-- EBI repositories -->
     <repositories>
-       <repository>
+        <repository>
             <id>ebi-repo</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
