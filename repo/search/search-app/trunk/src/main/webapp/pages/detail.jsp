@@ -264,9 +264,15 @@
 
     <!-- linked to CvIdentification search -->
     <td style="vertical-align: top;" rowspan="1" colspan="2">
+        <%
+            if (bean.getObject().getCvIdentification() != null) {
+        %>
         <a href="<%= bean.getCvIdentificationSearchURL() %>">
             <%= bean.getObject().getCvIdentification().getShortLabel() %>
         </a>
+        <%  } else { %>
+           -
+        <% } %>
     </td>
 
 
@@ -995,7 +1001,6 @@
 
     } // if any feature
 %>
-</tr>
 <%
 
      }   //end of interactions loop
