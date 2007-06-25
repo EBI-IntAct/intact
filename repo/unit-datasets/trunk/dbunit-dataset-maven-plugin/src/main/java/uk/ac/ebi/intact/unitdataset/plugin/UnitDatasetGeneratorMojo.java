@@ -114,7 +114,7 @@ public class UnitDatasetGeneratorMojo
      * @parameter
      */
     private boolean noexport;
-    
+
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -127,7 +127,9 @@ public class UnitDatasetGeneratorMojo
             throw new MojoFailureException("No datasets to import");
         }
 
-        getLog().debug("Datasets to import ("+datasets.size()+"):");   
+        resetSchema();
+
+        getLog().debug("Datasets to import ("+datasets.size()+"):");
         for (Dataset dataset : datasets) {
             getLog().debug("\tProcessing dataset: "+dataset.getId());
 
@@ -372,8 +374,10 @@ public class UnitDatasetGeneratorMojo
     public void resetSchema() throws MojoExecutionException {
         try
         {
+            commitTransaction();
+
             IntactUnit iu = new IntactUnit();
-            iu.resetSchema();
+            iu.createSchema();
         }
         catch (IntactTransactionException e)
         {
@@ -414,17 +418,20 @@ public class UnitDatasetGeneratorMojo
 
     private void commitTransaction() throws MojoExecutionException {
         IntactContext context = IntactContext.getCurrentInstance();
-         try {
+        try {
+            if (context.getDataContext().isTransactionActive()) {
                 context.getDataContext().commitTransaction();
-            } catch (IntactTransactionException e) {
-                throw new MojoExecutionException("Problem committing the transaction", e);
             }
+        } catch (IntactTransactionException e) {
+            throw new MojoExecutionException("Problem committing the transaction", e);
+        }
     }
 
     private void importDataset(Dataset dataset) throws FileNotFoundException, PersisterException, MojoExecutionException {
         for (File psiFile : dataset.getFiles()) {
+            getLog().info("\t\t\tImporting file: "+psiFile);
             checkFile(psiFile);
-            
+
             PsiExchange.importIntoIntact(new FileInputStream(psiFile), false);
         }
     }
