@@ -38,6 +38,7 @@
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
         <jetty.port>8081</jetty.port>
+        <tempH2>/tmp/intact-h2-${jetty.port}</tempH2>
     </properties>
 
     <build>
@@ -55,6 +56,7 @@
                         <configuration>
                             <id>IMEX</id>
                             <provider>uk.ac.ebi.intact.unitdataset.ImexDatasetProvider</provider>
+                            <tempH2>${tempH2}</tempH2>
                         </configuration>
                     </plugin>
                 </plugins>
