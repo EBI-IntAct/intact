@@ -44,4 +44,8 @@ public final class $classSimpleName implements $providerInterfaceName {
          return testDataset;
     }
 
+    public Collection<String> getAvailableIds() {
+        return datasets.keySet();
+    }
+
 }
