@@ -26,9 +26,9 @@
         </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-webapp-pom</url>
     </scm>
-
+    
     <properties>
-        <port>9090</port>
+       <jetty.port>9090</jetty.port> 
     </properties>
 
     <build>
@@ -39,7 +39,7 @@
                 <configuration>
                     <connectors>
                        <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-                          <port>${port}</port>
+                          <port>${jetty.port}</port>
                         </connector>
                     </connectors>
                     <scanIntervalSeconds>10</scanIntervalSeconds>
