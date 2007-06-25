@@ -946,11 +946,10 @@
         </a>
         <%
             }
-            if (roleInfo.isBiologicalRoleUnspecified() && roleInfo.isExperimentalRoleUnspecified()) {
+            if (!roleInfo.isBiologicalRoleUnspecified() && !roleInfo.isExperimentalRoleUnspecified()) {
         %>
         /
         <%
-            }
 
             if (roleInfo.isExperimentalRoleUnspecified()) {
         %>
@@ -958,6 +957,7 @@
             <%= component.getCvBiologicalRole().getShortLabel()%>
         </a>
         <%
+                }
             }
         %>
     </td>
