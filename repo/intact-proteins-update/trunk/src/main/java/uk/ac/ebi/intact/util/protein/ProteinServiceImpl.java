@@ -379,14 +379,14 @@ public class ProteinServiceImpl implements ProteinService {
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
         // Put the list in the vector to avoid ConcurrentModificationException
-        Vector<Protein> proteinVector = new Vector<Protein>();
+        ArrayList<Protein> proteinArrayList = new ArrayList<Protein>();
         for(Protein protein : proteins){
-            proteinVector.add(protein);
+            proteinArrayList.add(protein);
         }
 
         ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
-        for (int i=0; i<proteinVector.size(); i++){
-            Protein protein =  proteinVector.get(i);
+        for (int i=0; i<proteinArrayList.size(); i++){
+            Protein protein =  proteinArrayList.get(i);
             Collection<Component> components = protein.getActiveInstances();
             for (Iterator<Component> iterator1 = components.iterator(); iterator1.hasNext();) {
                 Component component =  iterator1.next();
