@@ -41,9 +41,6 @@
 
     <build>
         <finalName>editor</finalName>
-    </build>
-
-    <build>
         <plugins>
             <plugin>
                     <groupId>uk.ac.ebi.intact.commons</groupId>
