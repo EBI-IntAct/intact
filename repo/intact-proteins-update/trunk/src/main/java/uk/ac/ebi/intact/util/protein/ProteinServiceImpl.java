@@ -377,9 +377,16 @@ public class ProteinServiceImpl implements ProteinService {
      */
     public void replaceInActiveInstances(List<Protein> proteins, Protein replacer){
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+
+        // Put the list in the vector to avoid ConcurrentModificationException
+        Vector<Protein> proteinVector = new Vector<Protein>();
+        for(Protein protein : proteins){
+            proteinVector.add(protein);
+        }
+
         ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
-        for (Iterator<Protein> iterator = proteins.iterator(); iterator.hasNext();) {
-            Protein protein =  iterator.next();
+        for (int i=0; i<proteinVector.size(); i++){
+            Protein protein =  proteinVector.get(i);
             Collection<Component> components = protein.getActiveInstances();
             for (Iterator<Component> iterator1 = components.iterator(); iterator1.hasNext();) {
                 Component component =  iterator1.next();
