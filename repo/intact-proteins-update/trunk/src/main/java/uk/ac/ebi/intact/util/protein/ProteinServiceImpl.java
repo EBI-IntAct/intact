@@ -288,7 +288,7 @@ public class ProteinServiceImpl implements ProteinService {
 
             Protein protToBeKept = getProtWithMaxInteraction(primaryProteins.iterator().next(),secondaryProteins);
             sb.append("The protein we keep is : " + protToBeKept.getAc() + "," + protToBeKept.getShortLabel()).append( NEW_LINE );
-            Collection<Protein> proteinsToDelete = new ArrayList<Protein>();
+            List<Protein> proteinsToDelete = new ArrayList<Protein>();
             proteinsToDelete.addAll(secondaryProteins);
             proteinsToDelete.add(primaryProt);
 
@@ -375,13 +375,14 @@ public class ProteinServiceImpl implements ProteinService {
      * @param proteins
      * @param replacer
      */
-    public void replaceInActiveInstances(Collection<Protein> proteins, Protein replacer){
+    public void replaceInActiveInstances(List<Protein> proteins, Protein replacer){
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
-        for(Protein protein : proteins){
+        for (Iterator<Protein> iterator = proteins.iterator(); iterator.hasNext();) {
+            Protein protein =  iterator.next();
             Collection<Component> components = protein.getActiveInstances();
-            for(Component component : components){
-                component.setInteractor(replacer);
+            for (Iterator<Component> iterator1 = components.iterator(); iterator1.hasNext();) {
+                Component component =  iterator1.next();
                 replacer.addActiveInstance(component);
                 protein.removeActiveInstance(component);
                 componentDao.saveOrUpdate(component);
