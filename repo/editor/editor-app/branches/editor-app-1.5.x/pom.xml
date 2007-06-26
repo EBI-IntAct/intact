@@ -35,6 +35,14 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/editor-app/trunk/</url>
     </scm>
 
+    <properties>
+        <jetty.port>8081</jetty.port>
+    </properties>
+
+    <build>
+        <finalName>editor</finalName>
+    </build>
+
     <build>
         <plugins>
             <plugin>
