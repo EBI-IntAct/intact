@@ -35,10 +35,6 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/editor-app/trunk/</url>
     </scm>
 
-    <properties>
-        <jetty.port>8081</jetty.port>
-    </properties>
-
     <build>
         <finalName>editor</finalName>
         <plugins>
@@ -73,6 +69,7 @@
         <db.connectionProviderClass>uk.ac.ebi.intact.application.editor.hibernate.EditorConnectionProvider
         </db.connectionProviderClass>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
+        <jetty.port>8081</jetty.port>
     </properties>
 
     <profiles>
