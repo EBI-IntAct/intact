@@ -14,7 +14,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-master-webapp</artifactId>
-        <version>2</version>
+        <version>2.4-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -37,6 +37,10 @@
 
     <build>
         <plugins>
+            <plugin>
+                    <groupId>uk.ac.ebi.intact.commons</groupId>
+                    <artifactId>hibernateconfig-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>uk.ac.ebi.intact.editor</groupId>
                 <artifactId>maven-editortopics-plugin</artifactId>
