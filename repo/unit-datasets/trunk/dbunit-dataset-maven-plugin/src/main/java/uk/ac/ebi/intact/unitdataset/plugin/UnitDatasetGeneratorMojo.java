@@ -125,7 +125,6 @@ public class UnitDatasetGeneratorMojo
      */
     private String tempH2;
 
-    @Override
     public DataConfig getDataConfig()
     {
         Properties properties = new Properties();
