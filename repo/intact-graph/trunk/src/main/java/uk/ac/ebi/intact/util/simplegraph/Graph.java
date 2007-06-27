@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.util.simplegraph;
 
 import uk.ac.ebi.intact.model.BasicObject;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -88,12 +89,12 @@ public class Graph extends uk.ac.ebi.intact.util.simplegraph.BasicGraph implemen
             EdgeI e = edges.get( i );
             s.append( e.getNode1().getAc() );
             s.append( '(' );
-            s.append( e.getComponent1().getCvComponentRole().getShortLabel() );
+            s.append( CvObjectUtils.createRoleInfo(e.getComponent1().getCvExperimentalRole(), e.getComponent1().getCvBiologicalRole()).getRelevantName());
             s.append( ')' );
             s.append( "-> " );
             s.append( e.getNode2().getAc() );
             s.append( '(' );
-            s.append( e.getComponent2().getCvComponentRole().getShortLabel() );
+            s.append( CvObjectUtils.createRoleInfo(e.getComponent2().getCvExperimentalRole(), e.getComponent2().getCvBiologicalRole()).getRelevantName());
             s.append( ')' );
             s.append( NEW_LINE );
         }
