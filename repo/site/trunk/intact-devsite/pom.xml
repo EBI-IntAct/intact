@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-master</artifactId>
-        <version>6</version>
+        <groupId>uk.ac.ebi.intact.site</groupId>
+        <artifactId>site-master</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -13,7 +13,8 @@
     <artifactId>intact-devsite</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>IntAct Development Site</name>
+
+    <name>IntAct Site :: Development Site</name>
     <url>http://www.ebi.ac.uk/~intact/devsite</url>
 
     <build>
@@ -27,60 +28,5 @@
             </plugin>
         </plugins>
     </reporting>
-
-    <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/devsite/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/devsite/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/</url>
-    </scm>
-
-    <!-- EBI repositories -->
-    <repositories>
-       <repository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-         <repository>
-            <id>ebi-repo-snapshots</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-     <pluginRepositories>
-        <pluginRepository>
-            <id>ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <distributionManagement>
-         <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}</url>
-        </site>
-    </distributionManagement>
-
 </project>
 
