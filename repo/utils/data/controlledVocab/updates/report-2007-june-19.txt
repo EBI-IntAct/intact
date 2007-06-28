@@ -36,7 +36,9 @@ MI:0885	journal
 MI:0886	publication year
 
 new terms from PSI-MI entered in intact as hidden term	
-none
+MI:0869	originally assigned identifier
+MI:0849	ncbi taxonomy
+MI:0662	imex-primary
 
 new terms from PSI-MI NOT entered in intact
 none

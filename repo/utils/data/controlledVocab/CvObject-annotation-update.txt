@@ -100,3 +100,6 @@ pathway	pathway	uk.ac.ebi.intact.model.CvTopic	MI:0619	hidden	Term currently not
 prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
 function	function	uk.ac.ebi.intact.model.CvTopic	MI:0613	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
 xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
+original identifier	originally assigned identifier	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0869	hidden	Xref type that is used only to store external databases records and not used during manual curation.	FALSE	
+ncbi taxonomy	ncbi taxonomy	uk.ac.ebi.intact.model.CvDatabase	MI:0849	hidden	IntAct point to NEWT database instead of NCBI taxonomy. NCBI taxonomy and NEWT use the same TaxID.	FALSE	
+imex-primary	imex-primary	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0662	hidden	Xref type that is used only to store automatically assigned IMEX ids and used not during manual curation.	FALSE	
