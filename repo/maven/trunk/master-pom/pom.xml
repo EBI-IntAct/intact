@@ -6,16 +6,16 @@
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
     <name>Master POM</name>
-    <version>9-SNAPSHOT</version>
+    <version>9</version>
     
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
         that is common to all projects.
     </description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-9</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-9</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-9</url>
     </scm>
 
     <properties>
@@ -134,6 +134,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-idea-plugin</artifactId>
+                    <version>2.2-EBI-alpha</version>
                     <configuration>
                         <jdkLevel>1.5</jdkLevel>
                         <downloadSources>true</downloadSources>
