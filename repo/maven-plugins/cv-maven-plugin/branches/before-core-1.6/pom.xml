@@ -3,22 +3,22 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>8</version>
+        <version>9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>cv-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
     <name>cv-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/cv-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/cv-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/cv-maven-plugin/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/cv-maven-plugin/tags/cv-maven-plugin-1.5.1</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/cv-maven-plugin/tags/cv-maven-plugin-1.5.1</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/cv-maven-plugin/tags/cv-maven-plugin-1.5.1</url>
     </scm>
 
     <properties>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>intact-dbutils</artifactId>
-            <version>1.0-beta-8</version>
+            <version>1.0-beta-9</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
