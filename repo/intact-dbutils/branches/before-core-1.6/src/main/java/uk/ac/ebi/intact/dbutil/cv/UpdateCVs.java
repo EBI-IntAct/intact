@@ -200,6 +200,11 @@ public class UpdateCVs {
                 continue;
             }
 
+            // explicitly ignore the cv term "obsolete"
+            if (cvTerm.getShortName().equals("obsolete")) {
+                continue;
+            }
+
             output.println("----------------------------------------------------------------------------------");
             if (cvObject == null) {
 
@@ -1382,7 +1387,7 @@ public class UpdateCVs {
         getCvObject(CvTopic.class, CvTopic.COMMENT, CvTopic.COMMENT_MI_REF, output, report);
 
         // CvTopic( obsolete )
-        getCvObject(CvTopic.class, CvTopic.OBSOLETE, CvTopic.OBSOLETE_MI_REF, output, report);
+        getCvObject(CvTopic.class, "obsolete term", CvTopic.OBSOLETE_MI_REF, output, report);
 
         //IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
     }
