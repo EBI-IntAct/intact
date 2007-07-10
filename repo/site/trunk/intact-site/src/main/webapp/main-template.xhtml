@@ -11,78 +11,44 @@
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
       xmlns:ebi="http://ebi.ac.uk/faces/components">
-
 <f:view>
-    <ebi:head title="IntAct" description="The IntAct database provides a freely available, open source database system and analysis tools for protein interaction data. All interactions are derived from literature curation or direct user submissions and are freely available."
-            keywords="EBI, EMBL, UniProt, Swiss-Prot, TrEMBL, bioinformatics, proteomics, molecular,
-                                 software, database, sequence, protein, interaction, interacting, open source,
-                                 analysis, curator, curation, scientific literature, high throughput, graph,
-                                 visualization, rendering, network, hub, local installation, free,
-                                 computational biology, nucleotide, DNA, RNA, science, leading edge, protein-protein,
-                                 annotation, controlled vocabulary, CV, PSI, PSI-MI, Proteome Standards Initiative,
-                                 IMEx, binding-site, binding site, domain, GO classification, GO, PDB">
-        <link rel="stylesheet" href="#{appConfigBean.absoluteContextPath}/inc/css/intact.css" type="text/css"/>
-        <script type="javascript" src="#{appConfigBean.absoluteContextPath}/inc/css/intact.css"></script>
+    <ui:composition>
+        <ui:param name="standalone" value="#{initParam['psidev.STANDALONE']}"/>
 
-        <link rel="SHORTCUT ICON" href="#{appConfigBean.absoluteContextPath}/images/logo_intact_small.gif" />
-        <link rel="search" href="#{appConfigBean.absoluteContextPath}/plugins/openSearch/openSearch.xml" type="application/opensearchdescription+xml" title="IntAct" />
+        <ebi:page title="IntAct" uniqueForm="true"
+                  description="The IntAct database provides a freely available, open source database system and analysis tools for protein interaction data. All interactions are derived from literature curation or direct user submissions and are freely available."
+                  keywords="EBI, EMBL, UniProt, Swiss-Prot, TrEMBL, bioinformatics, proteomics, molecular, software, database, sequence, protein, interaction, interacting, open source, analysis, curator, curation, scientific literature, high throughput, graph, visualization, rendering, network, hub, local installation, free, computational biology, nucleotide, DNA, RNA, science, leading edge, protein-protein, annotation, controlled vocabulary, CV, PSI, PSI-MI, Proteome Standards Initiative, IMEx, binding-site, binding site, domain, GO classification, GO, PDB">
 
-    </ebi:head>
+            <ui:define name="headsection">
 
-    <ebi:body>
+                <link rel="stylesheet" href="#{appConfigBean.absoluteContextPath}/inc/css/intact.css" type="text/css"/>
+                <script type="javascript" src="#{appConfigBean.absoluteContextPath}/inc/css/intact.css"></script>
 
-            <table class="contentspane" id="contentspane" summary="The main content pane of the page"
-                   style="width: 100%">
-                <tr>
-                    <td class="leftmargin">
-                        <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
-                    </td>
+                <script type="text/javascript" src="#{appConfigBean.absoluteContextPath}/js/intact.js"></script>
 
-                    <c:if test="#{!hideSidebar}">
-                        <td class="leftmenucell" id="leftmenucell">
-                            <div class="leftmenu" id="leftmenu"
-                                 style="width: 145px; visibility: visible; display: block;">
-                                <!-- InstanceBeginEditable name="leftnav" -->
+                <link rel="SHORTCUT ICON" href="#{appConfigBean.absoluteContextPath}/images/logo_intact_small.gif"/>
+                <link rel="search" href="http://www.ebi.ac.uk/intact/site/plugins/plugins/openSearch/openSearch.xml"
+                      type="application/opensearchdescription+xml" title="IntAct"/>
+            </ui:define>
 
-                                <!-- start left menu here  -->
-                                <h:form id="sideForm">
-                                    <ui:include src="sidebar.xhtml"/>
-                                </h:form>
+            <ui:define name="left">
+                <ui:include src="sidebar.xhtml"/>
+            </ui:define>
 
-                            </div>
-                        </td>
-                    </c:if>
+            <ui:define name="breadcrumbs">
+                <a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a><a
+                    href="http://www.ebi.ac.uk/Databases/">Databases</a><a
+                    href="http://www.ebi.ac.uk/Databases/proteomic.html">Proteomic Databases</a>
 
-                    <td class="contentsarea" id="contentsarea">
-                        <!-- InstanceBeginEditable name="contents" -->
+                <h:commandLink value="IntAct" action="home"/>
+                <h:commandLink value="#{sectionTitle}" action="null"/>
+            </ui:define>
 
-                        <h:form id="mainForm">
+            <ui:define name="content">
+                <ui:insert name="contents"/>
+            </ui:define>
 
-                            <!-- breadcrumbs -->
-                            <div class="breadcrumbs"><a href="http://www.ebi.ac.uk/" class="firstbreadcrumb">EBI</a><a
-                                    href="http://www.ebi.ac.uk/Databases/">Databases</a><a
-                                    href="http://www.ebi.ac.uk/Databases/proteomic.html">Proteomic Databases</a>
-
-                                <h:commandLink value="IntAct" action="home"/>
-                                <h:commandLink value="#{sectionTitle}" action="null"/>
-                            </div>
-
-                            <!-- start contents here -->
-
-                            <ui:insert name="contents"/>
-
-                        </h:form>
-
-
-                    </td>
-                    <td class="rightmenucell" id="rightmenucell">
-                        <div class="rightmenu" id="rightmenu">
-                            <img src="http://www.ebi.ac.uk/inc/images/spacer.gif" class="spacer" alt="spacer"/>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-    </ebi:body>
+        </ebi:page>
+    </ui:composition>
 </f:view>
 </html>

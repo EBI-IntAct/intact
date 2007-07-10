@@ -18,6 +18,7 @@
 <f:view>
 
     <ui:composition>
+
         <h:outputLink value="http://www.ebi.ac.uk/intact">
             <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif" style="border:0"/>
         </h:outputLink>
@@ -32,6 +33,12 @@
 
         <ebi:panelBox id="searchbox" title="Search IntAct">
             <h:inputText id="search" value="#{searchBean.searchQuery}" size="12"/>
+
+            <ebi:help onlyIcon="true" width="800px" height="400px">
+                <h:panelGrid columns="1" width="700px">
+                <ui:include src="search_help_content.xhtml"/>
+                </h:panelGrid>
+            </ebi:help>
 
             <h:panelGrid columns="2">
                 <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
