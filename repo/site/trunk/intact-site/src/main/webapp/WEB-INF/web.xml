@@ -24,7 +24,7 @@
             URL to do a search query
         </description>
         <param-name>uk.ac.ebi.intact.SEARCH_QUERY_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/tc-test/intact/binary-search/remote.jsf?query=</param-value>
+        <param-value>http://localhost:9191/binary-search/faces/search.xhtml?query=</param-value>
     </context-param>
 
     <context-param>
@@ -46,7 +46,7 @@
             Where to find the Menu XML file
         </description>
         <param-name>uk.ac.ebi.faces.MENU_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu-test.xml</param-value>
+        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu-dev.xml</param-value>
     </context-param>
      <context-param>
         <description>
@@ -84,7 +84,7 @@
     </context-param>
     -->
 
-    
+
     <context-param>
         <param-name>javax.faces.DEFAULT_SUFFIX</param-name>
         <param-value>.xhtml</param-value>
@@ -167,9 +167,18 @@
         <param-name>org.apache.myfaces.VALIDATE</param-name>
         <param-value>true</param-value>
     </context-param>
+
+    <!-- Facelets -->
+
     <context-param>
         <param-name>facelets.SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
+        <param-name>facelets.LIBRARIES</param-name>
+        <param-value>/WEB-INF/site.taglib.xml
+        </param-value>
     </context-param>
 
     <!-- ajax4jsf -->

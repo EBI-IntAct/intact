@@ -27,11 +27,11 @@
     <description>The main web interface for intact</description>
 
     <properties>
-        <jetty.port>9090</jetty.port>
+        <jetty.port>9190</jetty.port>
     </properties>
 
     <build>
-        <finalName>intact</finalName>
+        <finalName>site</finalName>
         <plugins>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
@@ -131,9 +131,22 @@
             <artifactId>search-wsclient</artifactId>
             <version>1.6.0-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>uk.ac.ebi.faces</groupId>
             <artifactId>ebifaces-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.faces.ext</groupId>
+            <artifactId>tomahawk-facelets</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.faces.renderkit</groupId>
+            <artifactId>ebi-basic</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         
@@ -203,6 +216,11 @@
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
         </dependency>
 
         <!-- server -->

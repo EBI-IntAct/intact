@@ -8,6 +8,7 @@
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:s="http://myfaces.apache.org/sandbox"
       xmlns:c="http://java.sun.com/jstl/core"
       xmlns:fn="http://java.sun.com/jsp/jstl/functions"
       xmlns:a4j="https://ajax4jsf.dev.java.net/ajax"
@@ -58,14 +59,10 @@
                       <p>
                       Examples:
                       <ul>
-                          <li>Gene name: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}BRCA2"
-                                            target="searchWin">BRCA2</a></li>
-                          <li>UniProtKB Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}Q06609"
-                                               target="searchWin">Q06609</a></li>
-                          <li>UniProtKB Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}dmc1"
-                                               target="searchWin">dmc1</a></li>
-                          <li>Pubmed Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}10831611"
-                                            target="searchWin">10831611</a></li>
+                          <li>Gene name: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}BRCA2">BRCA2</a></li>
+                          <li>UniProtKB Ac: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}Q06609">Q06609</a></li>
+                          <li>UniProtKB Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}dmc1">dmc1</a></li>
+                          <li>Pubmed Id: <a href="#{initParam['uk.ac.ebi.intact.SEARCH_QUERY_URL']}10831611">10831611</a></li>
                       </ul>
                   </p>
           
@@ -90,11 +87,8 @@
 
               <ul>
                 <li>
-                    <ui:define name="dotm">
-                        <ui:param name="dataSet" value="#{dataSetsBean.dataSetOfTheMonth}"/>
-                        <ui:include src="dotm_template.xhtml"/>
-                    </ui:define>
-
+                    <ui:param name="dataSet" value="#{dataSetsBean.dataSetOfTheMonth}"/>
+                    <ui:include src="dotm_template.xhtml"/>
                 </li>
               </ul>
 

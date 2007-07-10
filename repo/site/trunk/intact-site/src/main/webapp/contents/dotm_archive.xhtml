@@ -34,11 +34,9 @@
             <ul>
                 <c:forEach var="dataSet" items="#{dataSetsBean.dataSets}">
                     <li>
-                        <ui:define name="dotm">
                             <ui:param name="dataSet" value="#{dataSet}"/>
                             <ui:param name="includeDate" value="true"/> 
                             <ui:include src="dotm_template.xhtml"/>
-                        </ui:define>
                     </li>
                 </c:forEach>
             </ul>
