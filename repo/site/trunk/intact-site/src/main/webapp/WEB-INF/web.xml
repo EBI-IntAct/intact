@@ -24,7 +24,7 @@
             URL to do a search query
         </description>
         <param-name>uk.ac.ebi.intact.SEARCH_QUERY_URL</param-name>
-        <param-value>http://localhost:9191/binary-search/faces/search.xhtml?query=</param-value>
+        <param-value>http://www.ebi.ac.uk/intact/binary-search/faces/search.xhtml?query=</param-value>
     </context-param>
 
     <context-param>
@@ -46,7 +46,7 @@
             Where to find the Menu XML file
         </description>
         <param-name>uk.ac.ebi.faces.MENU_URL</param-name>
-        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu-dev.xml</param-value>
+        <param-value>http://www.ebi.ac.uk/~intact/site/menu/menu-current.xml</param-value>
     </context-param>
      <context-param>
         <description>
