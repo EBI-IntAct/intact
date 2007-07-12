@@ -7,11 +7,11 @@ package uk.ac.ebi.intact.externalservices.searchengine;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
-import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,14 +43,12 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
     // Instance variables
 
     private Integer count = null;
-//    private int countPolymer = -1;
-//    private int countSmallMolecule = -1;
 
     //////////////////////////
     // Constructor
 
-    public InteractorIndexExporter( File output, String release ) {
-        super( output, release );
+    public InteractorIndexExporter( File output ) {
+        super( output );
     }
 
     ////////////////////////
@@ -66,11 +64,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
             out.write( "<database>" + NEW_LINE );
             out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
             out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
-
-            if ( release != null ) {
-                out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
-            }
-
+            out.write( INDENT + "<release>" + getRelease() + "</release>" + NEW_LINE );
             out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
             out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
         } catch ( IOException e ) {
@@ -85,24 +79,13 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
 
             InteractorDao<InteractorImpl> interactorDao = daoFactory.getInteractorDao();
 
-//            InteractorDao<PolymerImpl> pdao = daoFactory.getInteractorDao( PolymerImpl.class );
-//            InteractorDao<SmallMoleculeImpl> smdao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
-
-
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             count = interactorDao.countInteractorInvolvedInInteraction();
-
-
-//            countPolymer = pdao.countAll();
-//            countSmallMolecule = smdao.countAll();
-
-            // sum up polymer + small molecule.
-//            this.count = countPolymer + countSmallMolecule;
 
             try {
                 IntactContext.getCurrentInstance().getDataContext().commitTransaction();
             } catch ( IntactTransactionException e ) {
-                throw new IndexerException( "Error while closing transaction.", e);
+                throw new IndexerException( "Error while closing transaction.", e );
             }
         }
 
@@ -137,9 +120,6 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
                 throw new IndexerException( "Error when closing transaction.", e );
             }
         }
-
-//        exportSmallMolecule();
-//        exportPolymer();
     }
 
     public void exportEntry( Interactor interactor ) throws IndexerException {
@@ -148,9 +128,9 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
             Writer out = getOutput();
 
             final String i = INDENT + INDENT;
-            final String ii = INDENT + INDENT+ INDENT;
+            final String ii = INDENT + INDENT + INDENT;
             final String iii = INDENT + INDENT + INDENT + INDENT;
-            
+
             out.write( i + "<entry id=\"" + interactor.getAc() + "\">" + NEW_LINE );
             out.write( ii + "<name>" + interactor.getShortLabel() + "</name>" + NEW_LINE );
             if ( interactor.getFullName() != null ) {
@@ -231,7 +211,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
             out.write( ii + "</additional_fields>" + NEW_LINE );
 
             out.write( i + "</entry>" + NEW_LINE );
-            
+
         } catch ( IOException e ) {
             throw new IndexerException( "Error while writing index", e );
         }
