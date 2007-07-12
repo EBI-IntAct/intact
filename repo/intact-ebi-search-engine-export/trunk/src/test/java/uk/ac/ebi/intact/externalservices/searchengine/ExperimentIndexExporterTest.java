@@ -1,8 +1,8 @@
 package uk.ac.ebi.intact.externalservices.searchengine;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import java.io.File;
 
@@ -10,12 +10,12 @@ import java.io.File;
  * ExperimentIndexExporter Tester.
  *
  * @author <Authors name>
- * @since <pre>11/24/2006</pre>
  * @version 1.0
+ * @since <pre>11/24/2006</pre>
  */
 public class ExperimentIndexExporterTest extends TestCase {
-    public ExperimentIndexExporterTest(String name) {
-        super(name);
+    public ExperimentIndexExporterTest( String name ) {
+        super( name );
     }
 
     public void setUp() throws Exception {
@@ -27,14 +27,14 @@ public class ExperimentIndexExporterTest extends TestCase {
     }
 
     public static Test suite() {
-        return new TestSuite(ExperimentIndexExporterTest.class);
+        return new TestSuite( ExperimentIndexExporterTest.class );
     }
 
     ////////////////////
     // Tests
-    
+
     public void testBuildIndex() throws Exception {
-                File aFile = new File( InteractorIndexExporterTest.class.getResource( "/hibernate.cfg.xml" ).getFile() );
+        File aFile = new File( InteractorIndexExporterTest.class.getResource( "/hibernate.cfg.xml" ).getFile() );
         File outputDir = aFile.getParentFile();
         System.out.println( "Directory: " + outputDir.getAbsolutePath() );
         if ( !outputDir.exists() ) {
@@ -47,7 +47,7 @@ public class ExperimentIndexExporterTest extends TestCase {
             f.delete();
         }
 
-        IndexExporter exporter = new ExperimentIndexExporter( f, "1" );
+        IndexExporter exporter = new ExperimentIndexExporter( f );
         exporter.buildIndex();
     }
 

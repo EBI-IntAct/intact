@@ -46,8 +46,8 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
     //////////////////////////
     // Constructor
 
-    public InteractionIndexExporter( File output, String release ) {
-        super( output, release );
+    public InteractionIndexExporter( File output ) {
+        super( output );
     }
 
     ////////////////////////////
@@ -63,7 +63,7 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
             out.write( "<database>" + NEW_LINE );
             out.write( INDENT + "<name>" + INDEX_NAME + "</name>" + NEW_LINE );
             out.write( INDENT + "<description>" + DESCRIPTION + "</description>" + NEW_LINE );
-            out.write( INDENT + "<release>" + release + "</release>" + NEW_LINE );
+            out.write( INDENT + "<release>" + getRelease() + "</release>" + NEW_LINE );
             out.write( INDENT + "<release_date>" + getCurrentDate() + "</release_date>" + NEW_LINE );
             out.write( INDENT + "<entry_count>" + getEntryCount() + "</entry_count>" + NEW_LINE );
         } catch ( IOException e ) {

@@ -27,20 +27,19 @@ import java.util.Map;
  */
 public abstract class AbstractIndexExporter<T extends AnnotatedObject> implements IndexExporter<T> {
 
-    protected static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "yyyy-MMM-dd" );
+    protected static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( "dd-MMM-yyyy" );
 
     public static final String INDENT = "  ";
     public static final String NEW_LINE = "\n"; // Unix style line return.
 
     private BufferedWriter writer;
     private File output;
-    protected String release;
 
     private CvDatabase intact;
     private CvDatabase psi;
     private CvXrefQualifier identity;
 
-    public AbstractIndexExporter( File output, String release ) {
+    public AbstractIndexExporter( File output ) {
         if ( output == null ) {
             throw new IllegalArgumentException( "output file must not be null." );
         }
@@ -57,20 +56,14 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
             throw new IllegalArgumentException( "Cannot write on " + output.getAbsolutePath() );
         }
 
-        if ( release == null ) {
-            throw new IllegalArgumentException( "release must not be null." );
-        }
-
         this.output = output;
-
-        this.release = release;
     }
 
     ////////////////////////
     // Getters
 
     public String getRelease() {
-        return release;
+        return getCurrentDate();
     }
 
     //////////////////////////
