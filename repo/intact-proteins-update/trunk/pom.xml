@@ -86,10 +86,10 @@
             <version>1.0-beta-1</version>
         </dependency>
         <!-- Keep this one until we get rid of uniprot-bridge -->
-        <dependency>
+       <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-            <artifactId>remote-api</artifactId>
-            <version>(9.6,]</version>
+            <artifactId>uniprotjapi</artifactId>
+            <version>(10.5,]</version>
         </dependency>
 
 
