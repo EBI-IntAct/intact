@@ -60,8 +60,8 @@
         <!-- UniProt Remote API -->
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
-            <artifactId>remote-api</artifactId>
-            <version>(9.6,]</version>
+            <artifactId>uniprotjapi</artifactId>
+            <version>(10.5,]</version>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi</groupId>
