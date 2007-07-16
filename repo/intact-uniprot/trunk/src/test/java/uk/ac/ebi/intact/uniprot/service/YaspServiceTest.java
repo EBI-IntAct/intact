@@ -139,7 +139,7 @@ public class YaspServiceTest extends TestCase {
         try {
             SimpleDateFormat formatter = new SimpleDateFormat( "dd-MMM-yyyy" );
             assertEquals( formatter.parse( "17-JAN-2003" ), protein.getLastSequenceUpdate() );
-            assertEquals( formatter.parse( "29-MAY-2007" ), protein.getLastAnnotationUpdate() );
+            assertEquals( formatter.parse( "10-JUL-2007" ), protein.getLastAnnotationUpdate() );
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
@@ -150,10 +150,10 @@ public class YaspServiceTest extends TestCase {
         assertTrue( protein.getFunctions().contains( "Involved in the regulation of actin cytoskeleton" ) );
 
         // keywords
-        assertEquals( 5, protein.getKeywords().size() );
+        assertEquals( 6, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 25, protein.getCrossReferences().size() );
+        assertEquals( 26, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
