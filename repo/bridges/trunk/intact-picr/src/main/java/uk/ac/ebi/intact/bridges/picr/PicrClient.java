@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.bridges.picr;
 
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperInterface;
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperService;
+import uk.ac.ebi.picr.model.CrossReference;
 import uk.ac.ebi.picr.model.UPEntry;
 
 import javax.xml.namespace.QName;
@@ -32,12 +33,6 @@ import java.util.List;
  * @version $Id$
  */
 public class PicrClient {
-
-    private static final PicrSearchDatabase[] DEFAULT_DATABASES = new PicrSearchDatabase[] {
-            PicrSearchDatabase.REFSEQ,
-            PicrSearchDatabase.SWISSPROT,
-            PicrSearchDatabase.TREMBL
-    };
 
     private AccessionMapperService accessionMapperService;
 
@@ -58,30 +53,20 @@ public class PicrClient {
     }
 
     /**
-     * Finds the uniprot ID for a provided ID from the most common protein-related datbases
-     * @param accession the accession to look for
-     * @return the uniprot ID if found, null otherwise
-     */
-    public String getUniprotIdFor(String accession) {
-        return getUniprotIdFor(accession, DEFAULT_DATABASES);
-    }
-
-    /**
      * Finds the uniprot ID for a provided ID from the provided list of datbases
      * @param accession the accession to look for
      * @return the uniprot ID if found, null otherwise
      */
-    public String getUniprotIdFor(String accession, PicrSearchDatabase ... databases) {
+    public String getUPI(String accession, PicrSearchDatabase ... databases) {
         List<UPEntry> upEntries = getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), null, true);
 
         if (upEntries.isEmpty()) {
             return null;
         }
 
-
         return upEntries.iterator().next().getUPI();
     }
-
+    
     private List<String> databaseEnumToList(PicrSearchDatabase ... databases) {
         List<String> databaseNames = new ArrayList<String>(databases.length);
 
@@ -95,8 +80,7 @@ public class PicrClient {
     public static void main(String[] args) {
         PicrClient client = new PicrClient();
 
-        //System.out.println(client.getAccessionMapperPort().getMappedDatabaseNames());
-        System.out.println(client.getUniprotIdFor("P29375"));
+        System.out.println(client.getUPI("NP_417804", PicrSearchDatabase.REFSEQ));
     }
 
 }
