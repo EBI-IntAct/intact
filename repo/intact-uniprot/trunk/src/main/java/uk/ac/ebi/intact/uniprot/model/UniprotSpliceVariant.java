@@ -5,6 +5,9 @@
  */
 package uk.ac.ebi.intact.uniprot.model;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -17,6 +20,8 @@ import java.util.List;
  * @since <pre>15-Sep-2006</pre>
  */
 public class UniprotSpliceVariant {
+    public static final Log log = LogFactory.getLog( UniprotSpliceVariant.class );
+
 
     /////////////////////////
     // instance attributes
@@ -167,6 +172,7 @@ public class UniprotSpliceVariant {
      */
     public String getSequence() {
         if ( sequence == null || sequence.trim().length() == 0 ) {
+            log.error("The sequence was null, the primary Ac of the splice variant is " + getPrimaryAc());
             throw new IllegalArgumentException( "A splice variant must have a sequence." );
         }
         return sequence;
