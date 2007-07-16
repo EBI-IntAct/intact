@@ -25,9 +25,15 @@
                 <configuration>
                     <providerName>ImexDatasetProvider</providerName>
                     <cvConfiguration>
-                        <oboUrl>http://svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
-                        <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>
-                        <additionalAnnotationsUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv</additionalAnnotationsUrl>
+                        <oboUrl>
+                            http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo
+                        </oboUrl>
+                        <additionalUrl>
+                            http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv
+                        </additionalUrl>
+                        <additionalAnnotationsUrl>
+                            http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv
+                        </additionalAnnotationsUrl>
                     </cvConfiguration>
                     <datasets>
                         <dataset>
@@ -56,6 +62,17 @@
                                 <file>src/psi25/mint/2006-07-07.xml</file>
                                 <!-- fails <file>src/psi25/mint/2006-09-23.xml</file>-->
                                 <!-- dip -->
+                                <file>src/psi25/dip/2006-11-01.xml</file>
+                                <file>src/psi25/dip/2006-12-04.xml</file>
+                                <file>src/psi25/dip/2006-12-23.xml</file>
+                                <!-- fails <file>src/psi25/dip/2007-02-15.xml</file>-->
+                                <file>src/psi25/dip/2006-11-08.xml</file>
+                            </files>
+                        </dataset>
+                        <dataset>
+                            <containsAllCVs>true</containsAllCVs>
+                            <id>DIP</id>
+                            <files>
                                 <file>src/psi25/dip/2006-11-01.xml</file>
                                 <file>src/psi25/dip/2006-12-04.xml</file>
                                 <file>src/psi25/dip/2006-12-23.xml</file>
