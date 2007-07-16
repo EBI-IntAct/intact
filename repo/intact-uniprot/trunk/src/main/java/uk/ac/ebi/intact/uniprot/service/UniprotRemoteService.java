@@ -115,8 +115,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // search for primary and secondary ACs
         String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
-                       " OR " +
-                       IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac;
+                " OR " +
+                IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac;
         return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( query ) );
     }
 
@@ -126,7 +126,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         if ( organismCount > 1 ) {
             throw new IllegalStateException( "Entry: " + uniProtEntry.getUniProtId() +
-                                             ": expected to find a single organism. Instead found " + organismCount );
+                    ": expected to find a single organism. Instead found " + organismCount );
         }
 
         // Process OS, OC, OX
@@ -148,9 +148,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // TODO check on protein description
         UniprotProtein uniprotProtein = new UniprotProtein( uniProtEntry.getUniProtId().getValue(),
-                                                            uniProtEntry.getPrimaryUniProtAccession().getValue(),
-                                                            o,
-                                                            uniProtEntry.getDescription().getProteinNames().get( 0 ).getValue() );
+                uniProtEntry.getPrimaryUniProtAccession().getValue(),
+                o,
+                uniProtEntry.getDescription().getProteinNames().get( 0 ).getValue() );
 
         List<SecondaryUniProtAccession> secondaryAcs = uniProtEntry.getSecondaryUniProtAccessions();
         for ( SecondaryUniProtAccession secondaryAc : secondaryAcs ) {
@@ -171,7 +171,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
             uniprotProtein.setSource( UniprotProteinType.UNKNOWN );
         } else {
             throw new IllegalStateException( "Only SWISSPROT, TREMBL and UNKNOWN source are supported: " +
-                                             uniProtEntry.getType().getValue() );
+                    uniProtEntry.getType().getValue() );
         }
 
         // Process gene names, orfs, synonyms, locus...
@@ -261,8 +261,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
             String chainSequence = protein.getSequence().substring( begin - 1, end );
 
             UniprotFeatureChain chain = new UniprotFeatureChain( id,
-                                                                 protein.getOrganism(),
-                                                                 chainSequence );
+                    protein.getOrganism(),
+                    chainSequence );
             chain.setStart( begin );
             chain.setEnd( end );
 
@@ -325,7 +325,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
             // handles HUGE cross references (stored as gene name or synonym and start with KIAA)
             if ( getCrossReferenceSelector() != null &&
-                 ( getCrossReferenceSelector().isSelected( "HUGE" ) || getCrossReferenceSelector().isSelected( "KIAA" ) ) ) {
+                    ( getCrossReferenceSelector().isSelected( "HUGE" ) || getCrossReferenceSelector().isSelected( "KIAA" ) ) ) {
 
                 // we only do this if the filter requires it explicitely.
                 List<Gene> genes = uniProtEntry.getGenes();
@@ -380,58 +380,55 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 String status = isoform.getIsoformSequenceStatus().getValue();
                 log.debug( "Sequence status: " + status );
                 String parentProtein = getUniProtAccFromSpliceVariantId( ids.get( 0 ) );
-                if ( getUniProtAccFromSpliceVariantId( ids.get( 0 ) ).equals( protein.getPrimaryAc() ) ) {
 
-                    log.debug( "Calculating alternative sequence using current entry." );
-                    sequence = SplicedSequenceCalculator.getSplicedSequenceForIsoId( uniProtEntry, isoIDs.get( 0 ).getValue() );
-                    log.debug( "sequence = " + sequence );
+                switch (isoform.getIsoformSequenceStatus()) {
+                    case NOT_DESCRIBED:
+                        log.error("According to uniprot the splice variant " + ids.get(0) + " has no sequence (status = NOT_DESCRIBED)");
+                    case DESCRIBED:
+                        sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
+                        break;
+                    case DISPLAYED:
+                        sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
+                        break;
+                    case EXTERNAL:
+                        // then we need to load an external protein entry
+                        log.warn( "The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein );
 
-                } else {
-
-                    // then we need to load an external protein entry
-                    log.warn( "The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein );
-
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Loading external parent protein: " + parentProtein );
-                    }
-                    Iterator<UniProtEntry> it = getUniProtEntry( parentProtein );
-
-                    boolean multipleProteinFound = false;
-                    UniProtEntry protEntry = null;
-                    while ( it.hasNext() ) {
-                        if ( protEntry == null ) {
-
-                            protEntry = it.next();
-                            if ( log.isDebugEnabled() ) {
-                                log.debug( "Loaded " + protEntry.getUniProtId() );
-                            }
-
-                        } else {
-
-                            // we were expecting to find only one protein - hopefully that should not happen !
-                            log.error( "We were expecting to find only one protein while loading external sequence from: " + parentProtein );
-                            log.error( "Found " + protEntry.getUniProtId() );
-                            while ( it.hasNext() ) {
-                                UniProtEntry p = it.next();
-                                log.error( "Found " + p.getUniProtId() );
-                            }
-
-                            multipleProteinFound = true;
-                        }
-                    }
-
-                    if ( !multipleProteinFound ) {
-                        sequence = SplicedSequenceCalculator.getSplicedSequenceForIsoId( protEntry, isoIDs.get( 0 ).getValue() );
                         if ( log.isDebugEnabled() ) {
-                            log.debug( "sequence = " + sequence );
+                            log.debug( "Loading external parent protein: " + parentProtein );
                         }
-                    }
+                        Iterator<UniProtEntry> iterator =  getUniProtEntry(parentProtein);
+                        int numberOfEntryInIterator = 0;
+                        while(iterator.hasNext()){
+
+                            numberOfEntryInIterator++;
+                            UniProtEntry uniprotEntryParentProtein = iterator.next();
+
+                            if(numberOfEntryInIterator >= 1){
+                                // we were expecting to find only one protein - hopefully that should not happen !
+                                log.error( "We were expecting to find only one protein while loading external sequence from: " + parentProtein );
+                                log.error( "Found " + uniprotEntryParentProtein.getUniProtId() );
+                                while ( iterator.hasNext() ) {
+                                    UniProtEntry p = iterator.next();
+                                    log.error( "Found " + p.getUniProtId() );
+                                    sequence = null;
+                                }
+
+                            }else{
+                                numberOfEntryInIterator++;
+                                sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
+                            }
+                        }
+                }
+
+                if ( log.isDebugEnabled() ) {
+                    log.debug( "sequence = " + sequence );
                 }
 
                 // build splice variant
                 UniprotSpliceVariant sv = new UniprotSpliceVariant( ids.get( 0 ),
-                                                                    protein.getOrganism(),
-                                                                    sequence );
+                        protein.getOrganism(),
+                        sequence );
                 // add secondary ids (if any)
                 for ( int i = 1; i < ids.size(); i++ ) {
                     String id = ids.get( i );
