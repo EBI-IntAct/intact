@@ -44,7 +44,7 @@
             <modules>
                 <module>intact-dataset</module>
                 <module>intact-dataset-legacy</module>
-                <module>intact-dataset-imex</module>
+                <!--<module>intact-dataset-imex</module>-->
                 <module>dataset-import-maven-plugin</module>
             </modules>
         </profile>
