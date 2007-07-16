@@ -24,7 +24,7 @@
                 <configuration>
                     <providerName>PsiTestDatasetProvider</providerName>
                     <cvConfiguration>
-                        <oboUrl>http://svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo?revision=8645</oboUrl>
+                        <oboUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/psi-mi25-4intact.obo</oboUrl>
                         <additionalUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/intact-unique.csv</additionalUrl>
                         <additionalAnnotationsUrl>http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/utils/data/controlledVocab/additional-annotations.csv</additionalAnnotationsUrl>
                     </cvConfiguration>
@@ -36,13 +36,19 @@
                         <dataset>
                             <id>INTACT_JUL_06</id>
                             <files>
-                                <file>src/psi25/intact_2006-07-19.xml</file>
+                                <file>${project.basedir}/src/psi25/intact_2006-07-19.xml</file>
                             </files>
                         </dataset>
                         <dataset>
                             <id>MINT_JUL_06</id>
                             <files>
-                                <file>src/psi25/mint_2006-07-18.xml</file>
+                                <file>${project.basedir}/src/psi25/mint_2006-07-18.xml</file>
+                            </files>
+                        </dataset>
+                        <dataset>
+                            <id>DIP_NOV_06</id>
+                            <files>
+                               <file>${project.basedir}/src/psi25/dip_2006-11-01.xml</file>
                             </files>
                         </dataset>
                     </datasets>
