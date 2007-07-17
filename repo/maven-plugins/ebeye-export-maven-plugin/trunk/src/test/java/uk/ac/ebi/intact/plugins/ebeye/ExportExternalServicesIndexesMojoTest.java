@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.plugins.ebeye;
 
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
 

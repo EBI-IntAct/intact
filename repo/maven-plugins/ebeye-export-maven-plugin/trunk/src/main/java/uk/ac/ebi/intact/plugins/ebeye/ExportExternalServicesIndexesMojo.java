@@ -11,6 +11,8 @@ import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.externalservices.searchengine.*;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.File;
 import java.io.IOException;
@@ -81,44 +83,63 @@ public class ExportExternalServicesIndexesMojo extends IntactHibernateMojo {
 
         // export experiments
         if ( experimentFile != null ) {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             MojoUtils.prepareFile( experimentFile, true, true );
             System.out.println( "Start exporting experiments..." );
-            exporter = new ExperimentIndexExporter( experimentFile, releaseVersion );
+            exporter = new ExperimentIndexExporter( experimentFile );
             try {
                 exporter.buildIndex();
             } catch ( IndexerException e ) {
                 throw new MojoExecutionException( "Error while exporting experiments.", e );
             }
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new MojoExecutionException( "trsaction error, see nested messages", e );
+            }
         } else {
-            System.out.println( "No export of experiment required." );
+            System.out.println( "No export of experiment requested." );
         }
+
 
         // export interactions
         if ( interactionFile != null ) {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             MojoUtils.prepareFile( interactionFile, true, true );
             System.out.println( "Start exporting interactions..." );
-            exporter = new InteractionIndexExporter( interactionFile, releaseVersion );
+            exporter = new InteractionIndexExporter( interactionFile );
             try {
                 exporter.buildIndex();
             } catch ( IndexerException e ) {
                 throw new MojoExecutionException( "Error while exporting interactions.", e );
             }
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new MojoExecutionException( "trsaction error, see nested messages", e );
+            }
         } else {
-            System.out.println( "No export of interaction required." );
+            System.out.println( "No export of interaction requested." );
         }
 
         // export interactors
         if ( interactorFile != null ) {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             MojoUtils.prepareFile( interactorFile, true, true );
             System.out.println( "Start exporting interactors..." );
-            exporter = new InteractorIndexExporter( interactorFile, releaseVersion );
+            exporter = new InteractorIndexExporter( interactorFile );
             try {
                 exporter.buildIndex();
             } catch ( IndexerException e ) {
                 throw new MojoExecutionException( "Error while exporting interactors.", e );
             }
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new MojoExecutionException( "trsaction error, see nested messages", e );
+            }
         } else {
-            System.out.println( "No export of interactor required." );
+            System.out.println( "No export of interactor requested." );
         }
     }
 }
