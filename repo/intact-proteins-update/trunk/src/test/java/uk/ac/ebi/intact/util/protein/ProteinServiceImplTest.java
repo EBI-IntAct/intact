@@ -122,7 +122,7 @@ public class ProteinServiceImplTest extends TestCase {
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
 
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
 
         Protein protein = proteins.iterator().next();
 
@@ -218,7 +218,7 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult =  service.retrieve( "P60952" ); /* CDC42_CANFA */
         proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
 
         protein = proteins.iterator().next();
         assertEquals( ac, protein.getAc() );
@@ -235,6 +235,63 @@ public class ProteinServiceImplTest extends TestCase {
 
     }
 
+    public void testRetrieve_spliceVariant() throws Exception {
+        // clear database content.
+        clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        FlexibleMockUniprotService service = new FlexibleMockUniprotService();
+        UniprotProtein canfa = MockUniprotProtein.build_CDC42_CANFA();
+        service.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
+        service.add( "P60952-2", canfa );
+        ProteinService proteinService = buildProteinService( service );
+        UniprotServiceResult uniprotServiceResult = proteinService.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        Collection<Protein> proteins = uniprotServiceResult.getProteins();
+        assertNotNull( proteins );
+        assertEquals( 3, proteins.size() );
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        List<ProteinImpl> prots = proteinDao.getByXrefLike(uniprot, identity, MockUniprotProtein.CANFA_PRIMARY_AC);
+        assertEquals(1,prots.size());
+        ProteinImpl parentProtein = prots.get(0);
+        String parentProteinAc = parentProtein.getAc();
+        prots = proteinDao.getByXrefLike(uniprot, identity, "P60952-2");
+        assertEquals(1, prots.size());
+        ProteinImpl spliceVariant = prots.get(0);
+        String spliceVariantAc = spliceVariant.getAc();
+        String spliceVariantShortlabel = spliceVariant.getShortLabel();
+        spliceVariant.setShortLabel("SAPERLIPOPETE");
+        proteinDao.saveOrUpdate(spliceVariant);
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        uniprotServiceResult = uniprotServiceResult = proteinService.retrieve( "P60952-2" );
+        Collection<Protein> resultProteins = uniprotServiceResult.getProteins();
+        assertEquals(3, resultProteins.size());
+        boolean found = false;
+        for(Protein prot : resultProteins){
+            if (parentProteinAc.equals(prot.getAc())){
+                found = true;
+            }
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        prots = proteinDao.getByXrefLike(uniprot, identity, "P60952-2");
+        assertEquals(1, prots.size());
+        spliceVariant = prots.get(0);
+        assertEquals(spliceVariantAc, spliceVariant.getAc());
+        assertEquals(spliceVariantShortlabel, spliceVariant.getShortLabel());
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+    }
+
     public void testRetrieve_update_CDC42_CANFA() throws Exception {
         // clear database content.
         clearProteinsFromDatabase();
@@ -248,7 +305,7 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotServiceResult uniprotServiceResult = proteinService.retrieve( "P60952" );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
 
         // update shortlabel
         canfa.setId( "FOO_BAR" );
@@ -281,7 +338,7 @@ public class ProteinServiceImplTest extends TestCase {
         }
         proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
         Protein protein = proteins.iterator().next();
 
         assertEquals( "foo_bar", protein.getShortLabel() );
@@ -331,7 +388,7 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotServiceResult uniprotServiceResult =  service.retrieve( "P60952" );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
         Protein protein = proteins.iterator().next();
         String proteinSeq = protein.getSequence();
         String proteinCrc = protein.getCrc64();
@@ -353,7 +410,7 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult = service.retrieve( "P60952" );
         proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
         protein = proteins.iterator().next();
 
         // check that we have retrieved the exact same protein.
@@ -377,7 +434,7 @@ public class ProteinServiceImplTest extends TestCase {
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
-        assertEquals(1,uniprotServiceResult.getProteins().size());
+        assertEquals(3,uniprotServiceResult.getProteins().size());
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
@@ -460,11 +517,14 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteins.size() );
+        assertEquals( 3,proteins.size() );
 
         String proteinAc = "";
         for(Protein protein : proteins){
-            proteinAc = protein.getAc();
+            InteractorXref uniprotIdentity = ProteinUtils.getUniprotXref(protein);
+            if(MockUniprotProtein.CANFA_PRIMARY_AC.equals(uniprotIdentity.getPrimaryId())){
+                proteinAc = protein.getAc();
+            }
         }
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
@@ -496,7 +556,7 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         proteins = uniprotServiceResult.getProteins();
         assertNotNull(proteins);
-        assertEquals(1, proteins.size());
+        assertEquals(3, proteins.size());
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
@@ -646,7 +706,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -726,7 +786,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins() ;
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -763,7 +823,7 @@ public class ProteinServiceImplTest extends TestCase {
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals(1,proteinsColl.size());
+        assertEquals(3,proteinsColl.size());
         proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
         ProteinImpl proteinsPrimaryAc = proteinDao.getByAc(primaryProteinAc);
@@ -858,7 +918,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -972,7 +1032,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -1034,7 +1094,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -1079,7 +1139,7 @@ public class ProteinServiceImplTest extends TestCase {
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals( 1,proteinsColl.size() );
+        assertEquals( 3,proteinsColl.size() );
         String proteinAc = "";
         for(Protein protein : proteinsColl){
             proteinAc = protein.getAc();
@@ -1114,7 +1174,7 @@ public class ProteinServiceImplTest extends TestCase {
         spliceVariants = proteinDao.getSpliceVariants(intactCanfa);
         assertEquals(1,spliceVariants.size());
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
-        assertEquals(1, uniprotServiceResult.getProteins().size());
+        assertEquals(3, uniprotServiceResult.getProteins().size());
         Map<String,String> errors = uniprotServiceResult.getErrors();
         Set<String> keySet = errors.keySet();
         for(String errorType : keySet){
@@ -1160,7 +1220,7 @@ public class ProteinServiceImplTest extends TestCase {
         UniprotServiceResult uniprotServiceResult = service.retrieve( "P60952" );
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
         Protein protein = proteins.iterator().next();
         String proteinAc = protein.getAc();
         String proteinSeq = protein.getSequence();
@@ -1182,7 +1242,7 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult = service.retrieve( "P12345" );
         proteins = uniprotServiceResult.getProteins();
         assertNotNull( proteins );
-        assertEquals( 1, proteins.size() );
+        assertEquals( 3, proteins.size() );
         protein = proteins.iterator().next();
 
         // check that we have retrieved the exact same protein.
