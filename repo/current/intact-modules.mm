@@ -2,8 +2,11 @@
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
 <node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181306958909" STYLE="bubble" TEXT="uk.ac.ebi.intact.">
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
-<node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1181231530147" POSITION="right" TEXT="bridges">
+<node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1184577610410" POSITION="right" TEXT="bridges">
 <font NAME="SansSerif" SIZE="12"/>
+<hook NAME="accessories/plugins/NodeNote.properties">
+<text>Should NOT depend on intact-core</text>
+</hook>
 <node CREATED="1181219872733" ID="Freemind_Link_1932545838" MODIFIED="1181306883065" TEXT="intact-go">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
@@ -31,12 +34,12 @@
 </node>
 <node COLOR="#006633" CREATED="1181228032674" ID="Freemind_Link_468857254" MODIFIED="1181231529043" POSITION="right" TEXT="site">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219865296" ID="Freemind_Link_1404664183" MODIFIED="1181306887425" TEXT="intact-devsite">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219865296" ID="Freemind_Link_1404664183" MODIFIED="1183033165003" TEXT="intact-devsite">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219905958" ID="Freemind_Link_893035377" MODIFIED="1181306888098" TEXT="intact-site">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219905958" ID="Freemind_Link_893035377" MODIFIED="1183033167002" TEXT="intact-site">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
@@ -127,6 +130,7 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
+<node CREATED="1184577886167" ID="Freemind_Link_1681646863" MODIFIED="1184577921153" TEXT="intact-enricher"/>
 <node CREATED="1181554401954" ID="Freemind_Link_1094858423" MODIFIED="1181554405395" TEXT="plugins">
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220145843" ID="Freemind_Link_740683974" MODIFIED="1181307035242" TEXT="lucene-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
@@ -248,21 +252,26 @@
 </node>
 <node COLOR="#006633" CREATED="1181220679971" ID="Freemind_Link_1638890091" MODIFIED="1181306861230" POSITION="left" TEXT="service">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181227952371" ID="Freemind_Link_474393818" MODIFIED="1181306864732" TEXT="commons">
+<node CREATED="1181227952371" ID="Freemind_Link_474393818" MODIFIED="1183032935485" TEXT="commons">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+<node CREATED="1181219723363" ID="Freemind_Link_931810483" MODIFIED="1183032934275" TEXT="app-commons">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1181219772764" ID="Freemind_Link_237058525" MODIFIED="1183032989577" TEXT="confidence-score">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219723363" ID="Freemind_Link_931810483" MODIFIED="1181231030113" TEXT="app-commons">
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node CREATED="1181219772764" ID="Freemind_Link_237058525" MODIFIED="1181231030110" TEXT="confidence-score">
-<font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181220686811" ID="Freemind_Link_1380758384" MODIFIED="1181552781827" TEXT="search">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181220686811" ID="Freemind_Link_1380758384" MODIFIED="1183032938405" TEXT="search">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219760204" ID="Freemind_Link_12338167" MODIFIED="1181231030101" TEXT="binary-search">
 <font NAME="SansSerif" SIZE="12"/>
+<node BACKGROUND_COLOR="#fdfa79" CREATED="1184658991865" ID="Freemind_Link_944901296" MODIFIED="1184659040973" TEXT="binary-search-webapp">
+<edge COLOR="#808080" WIDTH="thin"/>
+</node>
 <node BACKGROUND_COLOR="#6cfcbd" CREATED="1181220188374" ID="Freemind_Link_641302933" MODIFIED="1181231030095" TEXT="binary-search-webservice">
 <node CREATED="1181220194269" ID="Freemind_Link_485887051" MODIFIED="1181231030093" TEXT="ws"/>
 <node CREATED="1181220197854" ID="Freemind_Link_637389615" MODIFIED="1181231030091" TEXT="wsclient"/>
@@ -298,13 +307,14 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181227902595" ID="Freemind_Link_663632694" MODIFIED="1181306870523" TEXT="hierarch-view">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181227902595" ID="Freemind_Link_663632694" MODIFIED="1183032942908" TEXT="hierarch-view">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219876974" ID="Freemind_Link_996647772" MODIFIED="1181231030046" TEXT="intact-graph">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219827493" ID="Freemind_Link_1776372620" MODIFIED="1181231153633" TEXT="hierarch-view-app">
+<node BACKGROUND_COLOR="#fdfa79" CREATED="1181219827493" ID="Freemind_Link_1776372620" MODIFIED="1184659044936" TEXT="hierarch-view-app">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node BACKGROUND_COLOR="#6cfcbd" CREATED="1181228106681" ID="Freemind_Link_127927214" MODIFIED="1181231030038" TEXT="tulip-webservice">
@@ -313,15 +323,15 @@
 <node CREATED="1181219954907" ID="Freemind_Link_806282221" MODIFIED="1181231030033" TEXT="tulip-ws"/>
 </node>
 </node>
-<node CREATED="1181228074445" ID="Freemind_Link_1368298740" MODIFIED="1181306871430" TEXT="mine">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181228074445" ID="Freemind_Link_1368298740" MODIFIED="1183032945172" TEXT="mine">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node BACKGROUND_COLOR="#fdfa79" CREATED="1181219918676" ID="Freemind_Link_1141559204" MODIFIED="1181231391253" TEXT="mine-app">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181228078842" ID="Freemind_Link_1241895187" MODIFIED="1181306872460" TEXT="graph2mif">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181228078842" ID="Freemind_Link_1241895187" MODIFIED="1183032946395" TEXT="graph2mif">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219781905" ID="Freemind_Link_1674957053" MODIFIED="1181231030021" TEXT="graph2mif-client">
 <font NAME="SansSerif" SIZE="12"/>
@@ -330,12 +340,12 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181219945342" ID="Freemind_Link_1852589076" MODIFIED="1181306873548" TEXT="statistic-view">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219945342" ID="Freemind_Link_1852589076" MODIFIED="1183032947852" TEXT="statistic-view">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181229302004" ID="Freemind_Link_1402108639" MODIFIED="1181306874589" TEXT="predict">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181229302004" ID="Freemind_Link_1402108639" MODIFIED="1183032949149" TEXT="predict">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node BACKGROUND_COLOR="#fdfa79" CREATED="1181219924934" ID="Freemind_Link_1234881622" MODIFIED="1181231391256" TEXT="predict-app">
 <font NAME="SansSerif" SIZE="12"/>
@@ -355,7 +365,12 @@
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181306517478" ID="Freemind_Link_1301011876" MODIFIED="1181306592569" TEXT="dbunit-dataset-maven-plugin">
 <edge COLOR="#808080" WIDTH="thin"/>
 </node>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1183033128273" ID="Freemind_Link_70182069" MODIFIED="1183033140798" TEXT="dataset-import-maven-plugin">
+<edge COLOR="#808080" WIDTH="thin"/>
+</node>
 <node CREATED="1181927369087" ID="Freemind_Link_72801102" MODIFIED="1181927372939" TEXT="intact-dataset"/>
+<node CREATED="1182266402794" ID="Freemind_Link_981754297" MODIFIED="1182266408610" TEXT="intact-dataset-legacy"/>
+<node CREATED="1183033121951" ID="Freemind_Link_84299045" MODIFIED="1183033127200" TEXT="intact-dataset-imex"/>
 </node>
 </node>
 </map>
