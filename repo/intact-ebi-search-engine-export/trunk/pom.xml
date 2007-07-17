@@ -45,7 +45,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-10</version>
+            <version>1.5.0-rc2</version>
         </dependency>
     </dependencies>
 
@@ -62,9 +62,7 @@
                             <xmlFileset>
                                 <version>1</version>
                                 <urls>
-                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10029528.xml
-                                    </url>
-                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2006/10206341.xml
+                                    <url>ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi1/pmid/2007/10757791.xml
                                     </url>
                                 </urls>
                             </xmlFileset>
