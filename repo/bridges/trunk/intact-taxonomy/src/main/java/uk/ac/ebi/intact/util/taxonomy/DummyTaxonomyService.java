@@ -31,11 +31,11 @@ public class DummyTaxonomyService implements TaxonomyService {
         return term;
     }
 
-    public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
         log.debug( "Retreiving children taxonomy term(s) of: " + term.getTaxid() );
     }
 
-    public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
         log.debug( "Retreiving parent taxonomy term of: " + term.getTaxid() );
         if( term.getTaxid() != 1 ) {
             // add the root: 1
