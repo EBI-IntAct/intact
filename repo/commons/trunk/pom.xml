@@ -24,7 +24,7 @@
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/trunk</connection>
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/commons/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/commons/trunk</url>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/commons/trunk</url>
     </scm>
 
     <modules>
