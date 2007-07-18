@@ -3,8 +3,8 @@
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>11</version>
+        <artifactId>intact-master</artifactId>
+        <version>9</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -27,6 +27,12 @@
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk</url>
     </scm>
+
+    <modules>
+       <module>intact-picr</module>
+       <module>intact-citexplore</module>
+    </modules>
+
 
     <dependencyManagement>
         <dependencies>
@@ -80,7 +86,5 @@
         </site>
     </distributionManagement>
 
-  <modules>
-    <module>intact-picr</module>
-  </modules>
+
 </project>
