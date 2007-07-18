@@ -232,7 +232,7 @@ public final class InteractionPersister {
                 final CvTopic authorConfidence = ControlledVocabularyRepository.getAuthorConfidenceTopic();
 
                 // check if that annotation could not be shared.
-                Collection _annotations = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().getByDescriptionLike(confidence.getValue());
+                Collection _annotations = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao().getByTextLike(confidence.getValue());
 
                 Annotation annotation = null;
                 for ( Iterator iterator3 = _annotations.iterator(); iterator3.hasNext() && annotation == null; ) {
