@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.bridges.citexplore;
 
-import uk.ac.ebi.cdb.webservice.WSCitationImpl;
-import uk.ac.ebi.cdb.webservice.WSCitationImplService;
+import uk.ac.ebi.cdb.webservice.*;
 
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
 /**
  * TODO comment this
@@ -48,10 +48,28 @@ public class CitexploreClient {
         return service.getWSCitationImplPort();
     }
 
+    public Citation getCitationById(String id) {
+        List<ResultBean> results = searchCitationsById(id).getResultBeanCollection();
+
+        if (!results.isEmpty()) {
+            return results.iterator().next().getCitation();
+        }
+
+        return null;
+    }
+
+    private ResultListBean searchCitationsById(String id) {
+        try {
+            return getPort().searchCitations("id:"+id, "all", 0, null);
+        } catch (QueryException_Exception e) {
+            throw new CitexploreClientException(e);
+        }
+    }
+
     public static void main(String[] args) throws Exception{
         CitexploreClient client = new CitexploreClient();
 
-        System.out.println(client.getPort().searchCitations("domain", "core", 0, null).getHitCount());
+        System.out.println(client.getCitationById("1234567").getTitle());
     }
 
 }
