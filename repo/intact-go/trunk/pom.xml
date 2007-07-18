@@ -5,17 +5,16 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>8</version>
+        <version>13</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-go</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <!-- previous released: 0.1 -->
+    <version>1.6-SNAPSHOT</version>
     <name>intact-go Module</name>
-    <description>Module for IntAct</description>
+    <description>IntAct access to GO</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
@@ -24,8 +23,6 @@
         <url>http://fisheye4.cenqua.com/browse/intact/repo/intact-go/trunk/</url>
     </scm>
 
-<!--   <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
--->
     <properties>
         <hibernate.scope>test</hibernate.scope>
     </properties>
@@ -34,8 +31,13 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-beta-9</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
+       <dependency>
+            <groupId>jakarta-regexp</groupId>
+	        <artifactId>jakarta-regexp</artifactId>
+		    <version>1.4</version>
+	   </dependency>
     </dependencies>
 
     <!-- EBI repositories -->
