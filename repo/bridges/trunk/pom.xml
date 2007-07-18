@@ -31,6 +31,7 @@
     <modules>
        <module>intact-picr</module>
        <module>intact-citexplore</module>
+       <module>intact-taxonomy</module>
     </modules>
 
 
@@ -40,6 +41,11 @@
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.13</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-logging</groupId>
+                <artifactId>commons-logging</artifactId>
+                <version>1.0.4</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
