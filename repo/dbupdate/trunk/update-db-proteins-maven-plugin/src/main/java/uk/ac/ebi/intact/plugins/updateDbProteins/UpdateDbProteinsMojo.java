@@ -71,7 +71,7 @@ public class UpdateDbProteinsMojo
     public static final String NEW_LINE = "\n";
 
     Map<String,Integer> errorType2count = new HashMap<String,Integer>();
-    Map<String, Collection<String>> errorMessages = new HashMap();
+    Map<String, Collection<String>> errorMessages = new HashMap<String, Collection<String>>();
 
     Collection<String> spliceVariantAcs = new ArrayList<String>();
 
@@ -185,13 +185,13 @@ public class UpdateDbProteinsMojo
                         //UPDATED
                         System.out.println("Splice variant [" + protein.getAc()+ ","+ protein.getShortLabel() + "] not updated.");
                         spliceVariantCount++;
-                        log.append("Splice variant [" + protein.getAc()+ ","+ protein.getShortLabel() + "] not udpated ").append(NEW_LINE);
+                        log.append("Splice variant [").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
                     }
                 }else{
                     //DO NOT UPDATE WHEN THE PROTEIN HAS A NO UNIPROT UPDATE ANNOTATION.
                     System.out.println("not updated, no uniprot udpate.");
                     noUniprotUpdateCount++;
-                    log.append("No uniprot update protein[" + protein.getAc()+ ","+ protein.getShortLabel() + "] not udpated ").append(NEW_LINE);
+                    log.append("No uniprot update protein[").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
                 }
             }
 
@@ -208,18 +208,18 @@ public class UpdateDbProteinsMojo
         statLog.append(NEW_LINE).append(NEW_LINE).append("------------------");
         statLog.append("General statistics").append(NEW_LINE);
         statLog.append("------------------").append(NEW_LINE);
-        statLog.append(NEW_LINE).append("Number of proteins in IntAct : " + proteinCount).append(NEW_LINE);
-        statLog.append("Number of NoUniprot Update proteins : " + noUniprotUpdateCount).append(NEW_LINE);
-        statLog.append("Number of splice variants : " + spliceVariantCount).append(NEW_LINE);
-        statLog.append("Number of updated proteins " + updatedProteinCount).append(NEW_LINE);
-        statLog.append("Number of proteins that couldn't be udpate due to errors" + errorCount).append(NEW_LINE);
+        statLog.append(NEW_LINE).append("Number of proteins in IntAct : ").append(proteinCount).append(NEW_LINE);
+        statLog.append("Number of NoUniprot Update proteins : ").append(noUniprotUpdateCount).append(NEW_LINE);
+        statLog.append("Number of splice variants : ").append(spliceVariantCount).append(NEW_LINE);
+        statLog.append("Number of updated proteins ").append(updatedProteinCount).append(NEW_LINE);
+        statLog.append("Number of proteins that couldn't be udpate due to errors").append(errorCount).append(NEW_LINE);
 
         statLog.append("\nDifferent type of error count : ").append(NEW_LINE);
         statLog.append("------------------------------- ").append(NEW_LINE);
         Set<String> errorTypes = errorType2count.keySet();
         for(String errorType : errorTypes){
             Integer count = errorType2count.get(errorType);
-            statLog.append(errorType + " : " + count).append(NEW_LINE);
+            statLog.append(errorType).append(" : ").append(count).append(NEW_LINE);
         }
         return statLog.toString();
     }
@@ -255,11 +255,9 @@ public class UpdateDbProteinsMojo
     }
 
     private Session getSession() {
-
         AbstractHibernateDataConfig abstractHibernateDataConfig = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
         SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
-        Session session = factory.getCurrentSession();
-        return session;
+        return factory.getCurrentSession();
     }
 
     public boolean isSpliceVariant(Protein protein){
