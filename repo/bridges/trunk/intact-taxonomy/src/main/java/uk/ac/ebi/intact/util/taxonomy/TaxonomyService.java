@@ -17,7 +17,7 @@ import java.util.List;
 public interface TaxonomyService {
 
     /**
-     * Retreives a term by taxid.
+     * retrieves a term by taxid.
      *
      * @param taxid the taxid of the wanted term
      *
@@ -35,7 +35,7 @@ public interface TaxonomyService {
      *
      * @throws TaxonomyServiceException if an error occur during the processing.
      */
-    public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
+    public void retrieveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
 
     /**
      * Update a NewtTerm by adding its parents. the process can be done recursively if the given flag it true.
@@ -45,7 +45,7 @@ public interface TaxonomyService {
      *
      * @throws TaxonomyServiceException if an error occur during the processing.
      */
-    public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
+    public void retrieveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException;
 
     /**
      * Get the list of children of a given term given its taxid.

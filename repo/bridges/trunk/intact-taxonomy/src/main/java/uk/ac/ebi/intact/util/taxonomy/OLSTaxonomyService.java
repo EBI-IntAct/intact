@@ -20,11 +20,11 @@ public class OLSTaxonomyService implements TaxonomyService {
         throw new UnsupportedOperationException( );
     }
 
-    public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
         throw new UnsupportedOperationException( );
     }
 
-    public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
         throw new UnsupportedOperationException( );
     }
 

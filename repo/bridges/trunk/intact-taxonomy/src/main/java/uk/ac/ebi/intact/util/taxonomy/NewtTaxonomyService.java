@@ -34,17 +34,17 @@ public class NewtTaxonomyService implements TaxonomyService {
     public static final String NEWT_URL = "http://www.ebi.ac.uk/newt/display";
 
     /**
-     * URL allowing to retreive a single term.
+     * URL allowing to retrieve a single term.
      */
     public static final String NEWT_URL_SPECIFIC_TERM = NEWT_URL + "?mode=IntAct&search=" + TAXID_FLAG + "&scope=term";
 
     /**
-     * URL allowing to retreive a term and its children.
+     * URL allowing to retrieve a term and its children.
      */
     public static final String NEWT_URL_TERMS_CHILDREN = NEWT_URL + "?mode=IntAct&search=" + TAXID_FLAG + "&scope=children";
 
     /**
-     * URL allowing to retreive a term and its parents.
+     * URL allowing to retrieve a term and its parents.
      */
     public static final String NEWT_URL_TERMS_PARENT = NEWT_URL + "?mode=IntAct&search=" + TAXID_FLAG + "&scope=parent";
 
@@ -153,7 +153,7 @@ public class NewtTaxonomyService implements TaxonomyService {
         return term;
     }
 
-    public void retreiveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveChildren( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
 
         if ( term.getTaxid() == -1 ) {
             return;
@@ -168,12 +168,12 @@ public class NewtTaxonomyService implements TaxonomyService {
 
         if ( recursively ) {
             for ( TaxonomyTerm child : term.getChildren() ) {
-                retreiveChildren( child, recursively );
+                retrieveChildren( child, recursively );
             }
         }
     }
 
-    public void retreiveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
+    public void retrieveParents( TaxonomyTerm term, boolean recursively ) throws TaxonomyServiceException {
 
         if ( term.getTaxid() == -1 ) {
             return;
@@ -188,7 +188,7 @@ public class NewtTaxonomyService implements TaxonomyService {
 
         if ( recursively ) {
             for ( TaxonomyTerm parent : term.getParents() ) {
-                retreiveParents( parent, recursively );
+                retrieveParents( parent, recursively );
             }
         }
     }

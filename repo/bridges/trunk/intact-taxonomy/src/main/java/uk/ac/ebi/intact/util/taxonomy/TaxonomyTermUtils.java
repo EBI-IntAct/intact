@@ -19,7 +19,7 @@ import java.util.Collection;
 public class TaxonomyTermUtils {
 
     /**
-     * Retreive the highest parent of the given term. this method doesn't alter the structure of the given hierarchy.
+     * Retrieve the highest parent of the given term. this method doesn't alter the structure of the given hierarchy.
      * That is, it doesn't load additional parent using a Taxonomy service.
      *
      * @param term a non null term.

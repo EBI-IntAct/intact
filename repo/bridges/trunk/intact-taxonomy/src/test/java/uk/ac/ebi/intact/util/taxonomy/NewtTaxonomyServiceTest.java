@@ -1,12 +1,8 @@
-package uk.ac.ebi.intact.util.protein;
+package uk.ac.ebi.intact.util.taxonomy;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.util.taxonomy.NewtTaxonomyService;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyServiceException;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyTerm;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyTermUtils;
 
 import java.util.Collection;
 
@@ -58,31 +54,31 @@ public class NewtTaxonomyServiceTest extends TestCase {
         assertEquals( 9605, parents.iterator().next().getTaxid() );
     }
 
-    public void testRretreiveChildren() throws TaxonomyServiceException {
+    public void testRetrieveChildren() throws TaxonomyServiceException {
         NewtTaxonomyService newt = new NewtTaxonomyService();
         TaxonomyTerm term = newt.getTaxonomyTerm( 562 );
 
         // Term with direct children
-        newt.retreiveChildren( term, false );
-        assertEquals( 55, TaxonomyTermUtils.collectAllChildren( term ).size() );
+        newt.retrieveChildren( term, false );
+        assertEquals( 71, TaxonomyTermUtils.collectAllChildren( term ).size() );
 
         // Term with all children
-        newt.retreiveChildren( term, true );
-        assertEquals( 59, TaxonomyTermUtils.collectAllChildren( term ).size() );
+        newt.retrieveChildren( term, true );
+        assertEquals( 83, TaxonomyTermUtils.collectAllChildren( term ).size() );
     }
 
-    public void testRetreiveParents() throws TaxonomyServiceException {
+    public void testRetrieveParents() throws TaxonomyServiceException {
         NewtTaxonomyService newt = new NewtTaxonomyService();
 
         TaxonomyTerm term = newt.getTaxonomyTerm( 285006 );
         assertNotNull( term );
 
         // Term with direct parent
-        newt.retreiveParents( term, false );
+        newt.retrieveParents( term, false );
         assertEquals( 4932, term.getParents().iterator().next().getTaxid() );
 
         // Term with all parents
-        newt.retreiveParents( term, true );
+        newt.retrieveParents( term, true );
 
         TaxonomyTerm t = null;
         t = term.getParents().iterator().next();
@@ -105,6 +101,9 @@ public class NewtTaxonomyServiceTest extends TestCase {
 
         t = t.getParents().iterator().next();
         assertEquals( 4890, t.getTaxid() );
+
+        t = t.getParents().iterator().next();
+        assertEquals( 451864, t.getTaxid() );
 
         t = t.getParents().iterator().next();
         assertEquals( 4751, t.getTaxid() );
@@ -132,8 +131,8 @@ public class NewtTaxonomyServiceTest extends TestCase {
         TaxonomyTerm eukariota = newt.getTaxonomyTerm( 2759 );
         TaxonomyTerm bacteria = newt.getTaxonomyTerm( 2 );
 
-        newt.retreiveParents( eukariota, false );
-        newt.retreiveParents( bacteria, false );
+        newt.retrieveParents( eukariota, false );
+        newt.retrieveParents( bacteria, false );
 
         TaxonomyTerm eukariotaParent = eukariota.getParents().iterator().next();
         TaxonomyTerm bacteriaParent = bacteria.getParents().iterator().next();
@@ -149,8 +148,8 @@ public class NewtTaxonomyServiceTest extends TestCase {
         TaxonomyTerm eukariota = newt.getTaxonomyTerm( 2759 );
         TaxonomyTerm bacteria = newt.getTaxonomyTerm( 2 );
 
-        newt.retreiveParents( eukariota, false );
-        newt.retreiveParents( bacteria, false );
+        newt.retrieveParents( eukariota, false );
+        newt.retrieveParents( bacteria, false );
 
         TaxonomyTerm eukariotaParent = eukariota.getParents().iterator().next();
         TaxonomyTerm bacteriaParent = bacteria.getParents().iterator().next();
