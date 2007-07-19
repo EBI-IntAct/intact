@@ -11,13 +11,13 @@
     <artifactId>intact-ols</artifactId>
     <packaging>jar</packaging>
     <version>1.2-SNAPSHOT</version>
-    <name>OLS Client</name>
+    <name>IntAct Bridges :: Legacy :: OLS Client (Deprecated; use the pride intact-ols module)</name>
     <description>Client for the OLS Web Service</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ols/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/intact-ols/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/intact-ols/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/legacy/intact-ols/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/legacy/intact-ols/trunk</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/legacy/intact-ols/trunk/</url>
     </scm>
 
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
