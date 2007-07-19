@@ -25,7 +25,7 @@
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</connection>
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk</url>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk</url>
     </scm>
 
     <modules>
