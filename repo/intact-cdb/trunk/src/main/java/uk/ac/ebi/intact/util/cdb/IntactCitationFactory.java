@@ -9,10 +9,9 @@ package uk.ac.ebi.intact.util.cdb;
 //import org.apache.soap.transport.*;
 //import oracle.soap.transport.*;
 
-import uk.ac.ebi.cdb.bean.Author;
-import uk.ac.ebi.cdb.bean.Citation;
-import uk.ac.ebi.cdb.webservice.WSCitation;
-import uk.ac.ebi.cdb.webservice.proxy.WSCitationProxy;
+import uk.ac.ebi.cdb.webservice.Citation;
+import uk.ac.ebi.cdb.webservice.Author;
+import uk.ac.ebi.intact.bridges.citexplore.CitexploreClient;
 
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +46,7 @@ public class IntactCitationFactory {
     /**
      * CitExplore web service
      */
-    private static WSCitationProxy citProxy = new WSCitationProxy();
+    private static CitexploreClient citProxy = new CitexploreClient();
 
     /**
      * Set the email pattern string
@@ -126,7 +125,7 @@ public class IntactCitationFactory {
 
         Citation c = null;
         try {
-            c = citProxy.getCitation(WSCitation.DATASOURCE_PUBMED,  pubmedId );
+            c = citProxy.getCitationById( pubmedId );
         } catch ( Exception e ) {
 
             if ( e.getMessage().indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
