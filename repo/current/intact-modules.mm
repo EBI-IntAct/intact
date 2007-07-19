@@ -15,21 +15,24 @@
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219890339" ID="Freemind_Link_991036459" MODIFIED="1181306884377" TEXT="intact-ols">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
 <node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1181306884986" TEXT="intact-msd">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node CREATED="1181219908288" ID="Freemind_Link_1699368659" MODIFIED="1181306885546" TEXT="intact-taxonomy">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1181306886210" TEXT="intact-uniprot">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1181219908288" ID="Freemind_Link_1699368659" MODIFIED="1184856117192" TEXT="intact-taxonomy">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1184856102864" ID="Freemind_Link_1600959279" MODIFIED="1184856106709" TEXT="intact-picr"/>
+<node CREATED="1184856095206" ID="Freemind_Link_187827585" MODIFIED="1184856098312" TEXT="legacy">
+<node CREATED="1181219890339" ID="Freemind_Link_991036459" MODIFIED="1184856130649" TEXT="intact-ols">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
 </node>
 </node>
 <node COLOR="#006633" CREATED="1181228032674" ID="Freemind_Link_468857254" MODIFIED="1181231529043" POSITION="right" TEXT="site">
@@ -80,6 +83,7 @@
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220161503" ID="Freemind_Link_165922696" MODIFIED="1181307055010" TEXT="psixml-generator-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 </node>
+<node CREATED="1184856160503" ID="Freemind_Link_916476509" MODIFIED="1184856167403" TEXT="intact-psixml-enricher"/>
 </node>
 <node CREATED="1181227979010" ID="Freemind_Link_1088707423" MODIFIED="1181231030310" TEXT="legacy">
 <font NAME="SansSerif" SIZE="12"/>
