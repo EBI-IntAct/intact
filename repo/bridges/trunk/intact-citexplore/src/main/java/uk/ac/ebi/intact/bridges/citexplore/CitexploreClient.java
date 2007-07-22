@@ -49,7 +49,7 @@ public class CitexploreClient {
     }
 
     public Citation getCitationById(String id) {
-        List<ResultBean> results = searchCitationsById(id).getResultBeanCollection();
+        List<ResultBean> results = searchCitationsByExternalId(id).getResultBeanCollection();
 
         if (!results.isEmpty()) {
             return results.iterator().next().getCitation();
@@ -58,9 +58,9 @@ public class CitexploreClient {
         return null;
     }
 
-    private ResultListBean searchCitationsById(String id) {
+    private ResultListBean searchCitationsByExternalId(String id) {
         try {
-            return getPort().searchCitations("id:"+id, "all", 0, null);
+            return getPort().searchCitations("ext_id:"+id, "all", 0, null);
         } catch (QueryException_Exception e) {
             throw new CitexploreClientException(e);
         }
