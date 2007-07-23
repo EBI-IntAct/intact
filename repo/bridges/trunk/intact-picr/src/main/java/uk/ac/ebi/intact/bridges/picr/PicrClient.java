@@ -17,7 +17,6 @@ package uk.ac.ebi.intact.bridges.picr;
 
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperInterface;
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperService;
-import uk.ac.ebi.picr.model.CrossReference;
 import uk.ac.ebi.picr.model.UPEntry;
 
 import javax.xml.namespace.QName;
@@ -37,12 +36,12 @@ public class PicrClient {
     private AccessionMapperService accessionMapperService;
 
     public PicrClient(){
-        accessionMapperService = new AccessionMapperService();
+        this("http://www.ebi.ac.uk/Tools/picr/service?wsdl");
     }
 
     public PicrClient(String wsdlUrl){
         try {
-            accessionMapperService = new AccessionMapperService(new URL(wsdlUrl), new QName("http://www.ebi.ac.uk/picr/AccessionMappingService", "AccessionMapperPort"));
+            accessionMapperService = new AccessionMapperService(new URL(wsdlUrl), new QName("http://www.ebi.ac.uk/picr/AccessionMappingService", "AccessionMapperService"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
