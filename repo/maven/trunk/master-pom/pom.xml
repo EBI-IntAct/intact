@@ -43,7 +43,7 @@
             <notifier>
                 <type>mail</type>
                 <configuration>
-                    <address>brunoaranda@gmail.com</address>
+                    <address>baranda@ebi.ac.uk</address>
                 </configuration>
             </notifier>
         </notifiers>
