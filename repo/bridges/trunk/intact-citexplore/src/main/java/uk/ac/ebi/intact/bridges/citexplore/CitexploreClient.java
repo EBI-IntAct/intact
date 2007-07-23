@@ -33,12 +33,12 @@ public class CitexploreClient {
     private WSCitationImplService service;
 
     public CitexploreClient(){
-        service = new WSCitationImplService();
+        this("http://www.ebi.ac.uk/webservices/citexplore/v1.0/service?wsdl");
     }
 
     public CitexploreClient(String wsdlUrl){
         try {
-            service = new WSCitationImplService(new URL(wsdlUrl), new QName("http://webservice.cdb.ebi.ac.uk/", "WSCitationImplPort"));
+            service = new WSCitationImplService(new URL(wsdlUrl), new QName("http://webservice.cdb.ebi.ac.uk/", "WSCitationImplService"));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
