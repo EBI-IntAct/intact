@@ -12,7 +12,7 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-cdb</artifactId>
     <packaging>jar</packaging>
-    <version>1.6-SNAPSHOT</version>
+    <version>1.6.1-SNAPSHOT</version>
     <name>intact-cdb Module</name>
     <description>IntAct access to the CDB web service</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
