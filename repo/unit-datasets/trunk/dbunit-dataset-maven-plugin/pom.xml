@@ -33,6 +33,14 @@
         </dependency>
 
         <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-persister</artifactId>
+            <version>1.6.1-SNAPSHOT</version>
+        </dependency>
+
+
+
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
         </dependency>
