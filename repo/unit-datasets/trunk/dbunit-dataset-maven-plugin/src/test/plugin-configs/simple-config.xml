@@ -17,9 +17,15 @@
                             <containsAllCVs>true</containsAllCVs>
                         </dataset>
                         <dataset>
-                            <id>INTACT_JUL_06</id>
+                            <id>INTACT_TEST</id>
                             <files>
                                 <file>src/test/resources/xml/intact_2006-07-19.xml</file>
+                            </files>
+                        </dataset>
+                        <dataset>
+                            <id>MINT_TEST</id>
+                            <files>
+                                <file>src/test/resources/xml/mint_2006-07-18.xml</file>
                             </files>
                         </dataset>
                     </datasets>

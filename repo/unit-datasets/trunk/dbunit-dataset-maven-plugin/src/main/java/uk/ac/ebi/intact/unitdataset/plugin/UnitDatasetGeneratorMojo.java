@@ -43,6 +43,7 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.core.persister.PersisterException;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.core.util.LogUtils;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
