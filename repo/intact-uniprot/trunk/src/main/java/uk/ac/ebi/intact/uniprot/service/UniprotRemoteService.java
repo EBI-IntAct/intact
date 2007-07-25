@@ -127,7 +127,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         if ( organismCount > 1 ) {
             throw new IllegalStateException( "Entry: " + uniProtEntry.getUniProtId() +
                     ": expected to find a single organism. Instead found " + organismCount );
-        }
+        }                               
 
         // Process OS, OC, OX
         List<uk.ac.ebi.kraken.interfaces.uniprot.Organism> organisms = uniProtEntry.getOrganisms();
@@ -359,7 +359,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                 List<IsoformId> isoIDs = isoform.getIds();
                 for ( IsoformId isoID : isoIDs ) {
-
+                    System.out.println("isoID  : " + isoID.getValue());
                     if ( log.isDebugEnabled() ) {
                         log.debug( "isoID.getValue() = " + isoID.getValue() );
                     }
@@ -401,8 +401,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
                         int numberOfEntryInIterator = 0;
                         while(iterator.hasNext()){
 
-                            numberOfEntryInIterator++;
                             UniProtEntry uniprotEntryParentProtein = iterator.next();
+//                            sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
+//                            System.out.println("SEQUENCE before while : " + sequence);
 
                             if(numberOfEntryInIterator >= 1){
                                 // we were expecting to find only one protein - hopefully that should not happen !
@@ -418,7 +419,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
                                 numberOfEntryInIterator++;
                                 sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
                             }
+                            numberOfEntryInIterator++;
                         }
+//                        break;
                 }
 
                 if ( log.isDebugEnabled() ) {
