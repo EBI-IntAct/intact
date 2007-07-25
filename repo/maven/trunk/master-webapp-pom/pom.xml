@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>9</version>
+        <version>12</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -37,7 +37,6 @@
                     <plugin>
                         <groupId>org.mortbay.jetty</groupId>
                         <artifactId>maven-jetty6-plugin</artifactId>
-                        <version>6.1.0rc3</version>
                         <configuration>
                             <scanIntervalSeconds>10</scanIntervalSeconds>
                             <contextPath>intact/${build.finalName}</contextPath>
@@ -45,32 +44,6 @@
                     </plugin>
                 </plugins>
             </build>
-
-            <pluginRepositories>
-                <!-- Repository to get the jetty plugin -->
-                <pluginRepository>
-                    <id>Mortbay (release)</id>
-                    <url>http://www.mortbay.org/maven2/release</url>
-                    <snapshots>
-                        <enabled>false</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>true</enabled>
-                    </releases>
-                </pluginRepository>
-                <pluginRepository>
-                    <id>mortbay-repo</id>
-                    <name>mortbay-repo</name>
-                    <url>http://www.mortbay.org/maven2/snapshot</url>
-                    <snapshots>
-                        <enabled>true</enabled>
-                    </snapshots>
-                    <releases>
-                        <enabled>false</enabled>
-                    </releases>
-                </pluginRepository>
-            </pluginRepositories>
-
         </profile>
     </profiles>
 
@@ -78,13 +51,13 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.0</version>
+            <version>3.2</version>
         </dependency>
 
         <!-- Web development-->
