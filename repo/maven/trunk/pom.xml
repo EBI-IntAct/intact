@@ -21,9 +21,9 @@
     <description>POM to build the master POMs</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/</url>
     </scm>
 
     <modules>

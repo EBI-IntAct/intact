@@ -15,7 +15,7 @@
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</connection>
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-pom</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom</url>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-pom</url>
     </scm>
 
     <properties>
