@@ -185,6 +185,14 @@ public class UnitDatasetGeneratorMojo
             throw new MojoExecutionException("Dataset with invalid id (it must not contain spaces or punctuation - except underscore): "+dataset.getId());
         }
 
+        // check if the database is empty
+        beginTransaction();
+        if (context.getDataContext().getDaoFactory().getCvObjectDao().countAll() != 0) {
+            throw new MojoExecutionException("Database should be empty");
+        }
+        commitTransaction();
+        
+
         if (dataset.isContainsAllCVs()) {
 
              if (cvConfiguration != null) {
