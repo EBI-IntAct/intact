@@ -667,6 +667,12 @@ public class BioSourceServiceImpl implements BioSourceService {
                     throw new BioSourceServiceException( "The TaxonomyService[" + name + "] returned a null TaxonomyTerm" );
                 }
 
+                //Sometimes the common name is null in Newt, therefore we choose as shortlabel the taxid.
+                String shortlabel = taxTerm.getCommonName();
+                if(shortlabel == null){
+                    shortlabel = taxTerm.getTaxid() + "";
+                }
+
                 bs = createAndPersistBioSource( taxTerm.getCommonName(),
                                                 taxTerm.getScientificName(),
                                                 String.valueOf( taxTerm.getTaxid() ) );
