@@ -18,6 +18,8 @@
 
     <modules>
        <module>intact-go</module>
+       <module>intact-cdb</module>
+       <module>intact-msd</module>
     </modules>
 
     <dependencies>
