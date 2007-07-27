@@ -1,12 +1,10 @@
-<map version="0.8.0">
+<map version="0.9.0_Beta_8">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
 <node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181306958909" STYLE="bubble" TEXT="uk.ac.ebi.intact.">
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
 <node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1184935721653" POSITION="right" TEXT="bridges">
+<richcontent TYPE="NOTE"><html><head/><body><p align="left"/></body></html></richcontent>
 <font NAME="SansSerif" SIZE="12"/>
-<hook NAME="accessories/plugins/NodeNote.properties">
-<text/>
-</hook>
 <node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1185528116822" TEXT="intact-uniprot">
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
@@ -47,10 +45,6 @@
 </node>
 <node COLOR="#006633" CREATED="1181228864110" ID="Freemind_Link_1539915686" MODIFIED="1181231528235" POSITION="right" TEXT="sanity">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219927664" ID="Freemind_Link_917778409" MODIFIED="1181306889437" TEXT="sanity-checker">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
 <node CREATED="1181219930350" ID="Freemind_Link_406316997" MODIFIED="1181306889962" TEXT="sanity-rules">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
@@ -92,14 +86,14 @@
 </node>
 <node CREATED="1181229367268" ID="Freemind_Link_1652070255" MODIFIED="1181231030304" TEXT="psimitab">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219895186" ID="Freemind_Link_1573146958" MODIFIED="1181306895489" TEXT="intact-psimitab">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219895186" ID="Freemind_Link_1573146958" MODIFIED="1185563623296" TEXT="intact-psimitab">
+<edge COLOR="#808080" WIDTH="thin"/>
 </node>
-<node CREATED="1181220156645" ID="Freemind_Link_1235764972" MODIFIED="1181306896374" TEXT="psimitab-indexer-maven-plugin">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220156645" ID="Freemind_Link_1235764972" MODIFIED="1185563630590" TEXT="psimitab-indexer-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181220159236" ID="Freemind_Link_846554045" MODIFIED="1181306897079" TEXT="psimitab-maven-plugin">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220159236" ID="Freemind_Link_846554045" MODIFIED="1185563631161" TEXT="psimitab-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 </node>
 </node>
@@ -124,13 +118,14 @@
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181229452772" ID="Freemind_Link_1926069642" MODIFIED="1181306901746" TEXT="uniprot-export">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181229452772" ID="Freemind_Link_1926069642" MODIFIED="1185563697021" TEXT="uniprot-export">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219913548" ID="Freemind_Link_118032030" MODIFIED="1181231030270" TEXT="intact-uniprot-export">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220168898" ID="Freemind_Link_735710325" MODIFIED="1181231461404" TEXT="uniprotexport-maven-plugin">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220168898" ID="Freemind_Link_735710325" MODIFIED="1185563700220" TEXT="uniprotexport-maven-plugin">
+<edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
@@ -178,10 +173,8 @@
 </node>
 </node>
 <node COLOR="#006633" CREATED="1181220454901" ID="Freemind_Link_995865092" MODIFIED="1181231596883" POSITION="left" TEXT="commons">
+<richcontent TYPE="NOTE"><html><head/><body><p align="left">Do not depend on intact-core</p></body></html></richcontent>
 <font NAME="SansSerif" SIZE="12"/>
-<hook NAME="accessories/plugins/NodeNote.properties">
-<text>Do not depend on intact-core</text>
-</hook>
 <node CREATED="1181219851598" ID="Freemind_Link_1644508135" MODIFIED="1181231030216" TEXT="intact-commons">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
@@ -263,8 +256,8 @@
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219772764" ID="Freemind_Link_237058525" MODIFIED="1183032989577" TEXT="confidence-score">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219772764" ID="Freemind_Link_237058525" MODIFIED="1185566231297" TEXT="confidence-score">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
@@ -317,14 +310,16 @@
 <node CREATED="1181219876974" ID="Freemind_Link_996647772" MODIFIED="1181231030046" TEXT="intact-graph">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node BACKGROUND_COLOR="#fdfa79" CREATED="1181219827493" ID="Freemind_Link_1776372620" MODIFIED="1184659044936" TEXT="hierarch-view-app">
-<edge COLOR="#808080" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
 <node BACKGROUND_COLOR="#6cfcbd" CREATED="1181228106681" ID="Freemind_Link_127927214" MODIFIED="1181231030038" TEXT="tulip-webservice">
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219952511" ID="Freemind_Link_904221934" MODIFIED="1181231030035" TEXT="tulip-client"/>
 <node CREATED="1181219954907" ID="Freemind_Link_806282221" MODIFIED="1181231030033" TEXT="tulip-ws"/>
+</node>
+<node CREATED="1185561685315" ID="Freemind_Link_560111693" MODIFIED="1185561690164" TEXT="legacy">
+<node BACKGROUND_COLOR="#fdfa79" CREATED="1181219827493" ID="Freemind_Link_1776372620" MODIFIED="1184659044936" TEXT="hierarch-view-app">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
 </node>
 </node>
 <node CREATED="1181228074445" ID="Freemind_Link_1368298740" MODIFIED="1183032945172" TEXT="mine">
@@ -358,11 +353,6 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-</node>
-<node CREATED="1181219960538" ID="Freemind_Link_996275527" MODIFIED="1181231029997" POSITION="left" TEXT="uniprot-wsclient">
-<font NAME="SansSerif" SIZE="12"/>
-<icon BUILTIN="button_cancel"/>
-<icon BUILTIN="clanbomber"/>
 </node>
 <node COLOR="#006633" CREATED="1181927312102" ID="Freemind_Link_1682801276" MODIFIED="1181927319712" POSITION="right" TEXT="unit-dataset">
 <edge COLOR="#808080" WIDTH="thin"/>
