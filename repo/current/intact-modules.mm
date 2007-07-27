@@ -2,23 +2,11 @@
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
 <node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181306958909" STYLE="bubble" TEXT="uk.ac.ebi.intact.">
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
-<node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1184577610410" POSITION="right" TEXT="bridges">
+<node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1184935721653" POSITION="right" TEXT="bridges">
 <font NAME="SansSerif" SIZE="12"/>
 <hook NAME="accessories/plugins/NodeNote.properties">
-<text>Should NOT depend on intact-core</text>
+<text/>
 </hook>
-<node CREATED="1181219872733" ID="Freemind_Link_1932545838" MODIFIED="1181306883065" TEXT="intact-go">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node CREATED="1181219848272" ID="Freemind_Link_373515143" MODIFIED="1181306883689" TEXT="intact-cdb">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1181306884986" TEXT="intact-msd">
-<edge COLOR="#ffb894" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
 <node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1181306886210" TEXT="intact-uniprot">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
@@ -31,6 +19,20 @@
 <node CREATED="1184856095206" ID="Freemind_Link_187827585" MODIFIED="1184856098312" TEXT="legacy">
 <node CREATED="1181219890339" ID="Freemind_Link_991036459" MODIFIED="1184856130649" TEXT="intact-ols">
 <edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+</node>
+<node CREATED="1184935548743" ID="Freemind_Link_730647088" MODIFIED="1184935552816" TEXT="coredep">
+<node CREATED="1181219872733" ID="Freemind_Link_1932545838" MODIFIED="1184935587392" TEXT="intact-go">
+<edge COLOR="#808080" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1181219848272" ID="Freemind_Link_373515143" MODIFIED="1181306883689" TEXT="intact-cdb">
+<edge COLOR="#ffb894" WIDTH="thin"/>
+<font NAME="SansSerif" SIZE="12"/>
+</node>
+<node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1181306884986" TEXT="intact-msd">
+<edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
@@ -105,6 +107,7 @@
 </node>
 </node>
 </node>
+<node CREATED="1184857829203" ID="Freemind_Link_1592349400" MODIFIED="1184857834229" TEXT="intact-cvtools"/>
 <node CREATED="1181219859127" ID="Freemind_Link_1670283523" MODIFIED="1181551641353" TEXT="intact-dbutils">
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
