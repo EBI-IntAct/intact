@@ -71,25 +71,35 @@ public class CachedUniprotService implements UniprotService {
         }
     }
 
+    @Deprecated
     public Collection<UniprotProtein> retreive( String ac ) {
+        return retrieve(ac);
+    }
+
+    @Deprecated
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+        return retrieve(acs);
+    }
+
+    public Collection<UniprotProtein> retrieve( String ac ) {
 
         Collection<UniprotProtein> proteins = getFromCache( ac );
         if ( proteins == null ) {
-            proteins = service.retreive( ac );
+            proteins = service.retrieve( ac );
             storeInCache( proteins, ac );
         }
 
         return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
 
         // TODO, here, we by-pass the underlying service method !!! Might not be what we want !!
 
         Map<String, Collection<UniprotProtein>> resultMap = new HashMap<String, Collection<UniprotProtein>>( acs.size() );
 
         for ( String ac : acs ) {
-            Collection<UniprotProtein> proteins = retreive( ac );
+            Collection<UniprotProtein> proteins = retrieve( ac );
             resultMap.put( ac, proteins );
         }
 

@@ -32,6 +32,9 @@ public interface UniprotService {
      *
      * @throws UniprotServiceException
      */
+    public Collection<UniprotProtein> retrieve( String ac );
+
+    @Deprecated
     public Collection<UniprotProtein> retreive( String ac );
 
     /**
@@ -43,6 +46,9 @@ public interface UniprotService {
      *
      * @throws UniprotServiceException
      */
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs );
+
+    @Deprecated
     public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs );
 
     /**

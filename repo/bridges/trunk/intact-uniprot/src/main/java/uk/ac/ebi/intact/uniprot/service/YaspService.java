@@ -52,7 +52,7 @@ public class YaspService extends AbstractUniprotService {
     ///////////////////////////////////
     // AbstractUniprotBridgeAdapter
 
-    public Collection<UniprotProtein> retreive( String ac ) {
+    public Collection<UniprotProtein> retrieve( String ac ) {
 
         if ( ac == null ) {
             throw new IllegalArgumentException( "You must give a non null protein AC." );
@@ -98,7 +98,7 @@ public class YaspService extends AbstractUniprotService {
         return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
 
         if ( acs == null ) {
             throw new IllegalArgumentException( "You must give a non null List of UniProt ACs." );
@@ -113,7 +113,7 @@ public class YaspService extends AbstractUniprotService {
 
         for ( Iterator<String> iterator = acs.iterator(); iterator.hasNext(); ) {
             ac = iterator.next();
-            Collection<UniprotProtein> proteins = retreive( ac );
+            Collection<UniprotProtein> proteins = retrieve( ac );
             if ( proteins != null ) {
                 results.put( ac, proteins );
             } else {
@@ -122,6 +122,16 @@ public class YaspService extends AbstractUniprotService {
         }
 
         return results;
+    }
+
+    @Deprecated
+    public Collection<UniprotProtein> retreive( String ac ) {
+        return retrieve(ac);
+    }
+
+    @Deprecated
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+        return retrieve(acs);
     }
 
     ////////////////////////////////
