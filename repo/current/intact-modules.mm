@@ -26,10 +26,11 @@
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1181306884986" TEXT="intact-msd">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1185567653796" TEXT="intact-msd">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
+<node CREATED="1185567655158" ID="Freemind_Link_1407174470" MODIFIED="1185567659541" TEXT="intact-cdb"/>
 </node>
 </node>
 <node COLOR="#006633" CREATED="1181228032674" ID="Freemind_Link_468857254" MODIFIED="1181231529043" POSITION="right" TEXT="site">
@@ -80,8 +81,8 @@
 </node>
 <node CREATED="1181227979010" ID="Freemind_Link_1088707423" MODIFIED="1181231030310" TEXT="legacy">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219776695" ID="Freemind_Link_115347496" MODIFIED="1181306894850" TEXT="data-conversion">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219776695" ID="Freemind_Link_115347496" MODIFIED="1185567612314" TEXT="data-conversion">
+<edge COLOR="#808080" WIDTH="thin"/>
 </node>
 </node>
 <node CREATED="1181229367268" ID="Freemind_Link_1652070255" MODIFIED="1181231030304" TEXT="psimitab">
@@ -294,8 +295,8 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181227542124" ID="Freemind_Link_243865507" MODIFIED="1181306869219" TEXT="imex">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181227542124" ID="Freemind_Link_243865507" MODIFIED="1185572884789" TEXT="imex">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219879689" ID="Freemind_Link_204214093" MODIFIED="1181231030059" TEXT="intact-imex-central">
 <font NAME="SansSerif" SIZE="12"/>
