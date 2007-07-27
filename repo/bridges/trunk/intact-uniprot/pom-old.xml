@@ -13,6 +13,7 @@
          <relocation>
              <groupId>uk.ac.ebi.intact.bridges</groupId>
              <version>2.0-beta-5-SNAPSHOT</version>
+             <message>This artifact was moved to IntAct Bridges</message>
          </relocation>
     </distributionManagement>
 
