@@ -71,7 +71,7 @@ public class MsdToolBox {
     /**
      * The neutral component CvComponentRole.
      */
-    private static CvComponentRole neutral;
+    private static CvExperimentalRole neutral;
     /**
      * The identity CvXrefQualifier.
      */
@@ -236,9 +236,9 @@ public class MsdToolBox {
      * @return the neutral CvComponentRole.
      * @throws IntactException
      */
-    public static CvComponentRole getNeutral() throws IntactException {
+    public static CvExperimentalRole getNeutral() throws IntactException {
         if(neutral == null){
-            neutral = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvComponentRole.class).getByXref(CvComponentRole.NEUTRAL_PSI_REF);
+            neutral = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvExperimentalRole.class).getByXref(CvExperimentalRole.NEUTRAL_PSI_REF);
         }
         return neutral;
     }
