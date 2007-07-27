@@ -34,6 +34,12 @@ public class UniprotServiceResult {
             "belonging to the same organism.";
     public static final String SEVERAL_PROT_BELONGING_TO_DIFFERENT_ORGA_ERROR_TYPE = "More then one protein found in Uniprot " +
                 "belonging to the different organisms.";
+    public static final String SPLICE_VARIANT_IN_INTACT_BUT_NOT_IN_UNIPROT = "Protein being a splice variant in IntAct " +
+            "but not in Uniprot and being part of an interaction.";
+    public static final String BIOSOURCE_MISMATCH = "The bioSource of the IntAct protein, is not the same then the " +
+            "bioSource of the uniprotProtein.";
+    public static final String SPLICE_VARIANT_WITH_MULTIPLE_IDENTITY = "Splice variants with multiple identity.";
+    public static final String SPLICE_VARIANT_WITH_NO_IDENTITY = "Splice variant with no identity.";
     public static final String UNEXPECTED_EXCEPTION_ERROR_TYPE = "Unexpected exception";
 
 

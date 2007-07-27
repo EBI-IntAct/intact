@@ -351,9 +351,8 @@ public class ProteinServiceImpl implements ProteinService {
             }
         }
 
-        proteins.addAll( nonUniprotProteins );
-
-        uniprotServiceResult.addAllToProteins(nonUniprotProteins);
+            proteins.addAll( nonUniprotProteins );
+            uniprotServiceResult.addAllToProteins(nonUniprotProteins);
 
         return proteins;
     }
@@ -460,11 +459,12 @@ public class ProteinServiceImpl implements ProteinService {
         String t1 = protein.getBioSource().getTaxId();
         int t2 = uniprotProtein.getOrganism().getTaxid();
         if ( !String.valueOf( t2 ).equals( t1 ) ) {
-            String msg = "UpdateProteins is trying to modify the BioSource(" + t1 + ") of the following protein:" +
-                    protein.getShortLabel() + protein.getAc() + " by BioSource( " + t2 + " )" +
-                    "\nChanging the taxid of an existing protein is a forbidden operation.";
+            uniprotServiceResult.addError(UniprotServiceResult.BIOSOURCE_MISMATCH, "UpdateProteins is trying to modify" +
+                    " the BioSource(" + t1 + "," + protein.getBioSource().getShortLabel() +  ") of the following protein " +
+                     getProteinDescription(protein) + " by BioSource( " + t2 + "," +
+                    uniprotProtein.getOrganism().getName() + " )\nChanging the taxid of an existing protein is a forbidden operation.");
 
-            throw new ProteinServiceException( msg );
+            return;
         }
 
         // Fullname
@@ -542,14 +542,33 @@ public class ProteinServiceImpl implements ProteinService {
                 updateSpliceVariant( intactSpliceVariant, protein, match.getUniprotSpliceVariant(), uniprotProtein, proteins );
 
             } else {
-                InteractorXref intactSpliceVariatUniprotXref = ProteinUtils.getUniprotXref(match.getIntactProtein());
-//                raiseAlarm( "Could not find a corresponding" );
-                throw new ProteinServiceException( "In Intact the protein[" + match.getIntactProtein().getAc() +
-                        ","+ match.getIntactProtein().getShortLabel() + "," + intactSpliceVariatUniprotXref.getPrimaryId() +
-                        "] is a splice variant of protein [" + protein.getAc() + ","+ protein.getShortLabel() + ","
-                        + uniprotProtein.getPrimaryAc() + "] but in Uniprot it is not the case" );
+                Protein intactSpliceVariant = match.getIntactProtein();
+                InteractorXref intactSpliceVariantUniprotXref = ProteinUtils.getUniprotXref(intactSpliceVariant);
+                if(intactSpliceVariant.getActiveInstances().size() == 0){
+                    ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+                    proteinDao.delete((ProteinImpl) intactSpliceVariant);
+                    uniprotServiceResult.addMessage("The protein " + getProteinDescription(intactSpliceVariant) +
+                            " is a splice variant of " + getProteinDescription(protein) + " in IntAct but not in Uniprot." +
+                            " As it is not part of any interactions in IntAct we have deleted it."  );
+
+                }else{
+                    uniprotServiceResult.addError(UniprotServiceResult.SPLICE_VARIANT_IN_INTACT_BUT_NOT_IN_UNIPROT,
+                            "In Intact the protein "+ getProteinDescription(intactSpliceVariant) +
+                            " is a splice variant of protein "+ getProteinDescription(protein)+
+                            " but in Uniprot it is not the case. As it is part of interactions in IntAct we couldn't " +
+                            "delete it.");
+//                    throw new ProteinServiceException( "In Intact the protein "+ getProteinDescription(intactSpliceVariant) +
+//                            " is a splice variant of protein "+ getProteinDescription(protein)+
+//                            " but in Uniprot it is not the case. As it is part of interactions in IntAct we couldn't " +
+//                            "delete it." );
+                }
             }
         }
+    }
+
+    private String getProteinDescription(Protein protein){
+        InteractorXref uniprotXref = ProteinUtils.getUniprotXref(protein);
+        return "[" + protein.getAc() + ","+ protein.getShortLabel() + "," + uniprotXref.getPrimaryId() + "]";
     }
 
     /**
@@ -587,7 +606,24 @@ public class ProteinServiceImpl implements ProteinService {
                     upac = xrefs.iterator().next().getPrimaryId();
                     xrefs = null;
                 } else {
-                    throw new ProteinServiceException( "Could not find a unique UniProt identity for splice variant: " + protein.getAc() );
+                    if(protein.getActiveInstances().size() == 0){
+                        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+                        proteinDao.delete((ProteinImpl) protein);
+                        uniprotServiceResult.addMessage("The protein " + getProteinDescription(protein) +
+                                " is a splice which had multiple or no identity, as it is not involved in any interaction" +
+                                " we deleted it.");
+                    } else {
+                        if (xrefs.size() > 1){
+                            uniprotServiceResult.addError(UniprotServiceResult.SPLICE_VARIANT_WITH_MULTIPLE_IDENTITY,
+                                    "Found " + xrefs.size() + "identities to UniProt for splice variant: "
+                                            + protein.getAc() + ". Couldn't be deleted as it is involved in interaction(s)" );
+                        } else if (xrefs.size() == 0){
+                            uniprotServiceResult.addError(UniprotServiceResult.SPLICE_VARIANT_WITH_NO_IDENTITY,
+                                    "Could not find a UniProt identity for splice variant: " + protein.getAc() +
+                                    ". Couldn't be deleted as it is involved in interaction(s)" );
+                        }
+                    }
+                    continue;
                 }
 
                 if ( usv.getPrimaryAc().equals( upac ) ) {
