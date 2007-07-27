@@ -107,12 +107,46 @@ public class UpdateDbProteinsMojo
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         proteinCount = proteinDao.countAll();
         int iterationCount = proteinCount/CHUNK_SIZE;
+
+        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE Q9VYW1");
+        UniprotServiceResult uniprotServResult = service.retrieve("Q9VYW1");
+        System.out.println("uniprotServResult.getProteins().size() = " + uniprotServResult.getProteins().size());
+        System.out.println("uniprotServResult.getErrors().size() = " + uniprotServResult.getErrors().size());
+        Map<String,String> errorsTest = uniprotServResult.getErrors();
+        StringBuilder errorTestLog = new StringBuilder(512);
+        Set<String> errorTestTypes = errorsTest.keySet();
+        for(String errorType : errorTestTypes){
+            System.out.println(" " + errorType);
+            Integer errorTypeCount = errorType2count.get(errorType);
+            if(errorTypeCount == null){
+                errorType2count.put(errorType,1);
+            }else{
+                errorTypeCount++;
+                errorType2count.put(errorType, errorTypeCount);
+            }
+            errorTestLog.append(errorsTest.get(errorType)).append(NEW_LINE);
+        }
+        // Log messages.
+        errorTestLog.append("MESSAGES :\n");
+        errorTestLog.append("--------\n");
+        Collection<String> messagesTest = uniprotServResult.getMessages();
+        for(String message : messagesTest){
+            errorTestLog.append(message).append(NEW_LINE);
+        }
+        System.out.println(errorTestLog);
+
+        System.out.println("Q9VYW1 UPDATED\n\n\n\n\n\n\n\n");
+        System.out.println("BEFORE ASSERT");
+        int x = 1;
+        if(x == 1){
+            return;
+        }
+
         commitTransaction();
 
 
         for(int i=0; i<=iterationCount ; i++){
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-            StringBuilder log = new StringBuilder();
 
             proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             Collection<ProteinImpl> proteins;
@@ -126,12 +160,14 @@ public class UpdateDbProteinsMojo
                 // We don't need to update the splice variants as they will be updated when updating their master proteins.
                 if(ProteinUtils.isFromUniprot(protein)){
                     if(!isSpliceVariant(protein)){
+
                         InteractorXref uniprotIdentity = ProteinUtils.getUniprotXref(protein);
                         UniprotServiceResult uniprotServiceResult = service.retrieve(uniprotIdentity.getPrimaryId());
                         Collection<Protein> updatedProteins = uniprotServiceResult.getProteins();
                         Map<String,String> errors = uniprotServiceResult.getErrors();
                         //TODO : check if it can return more then 1 prot when the updated prot has splice variants.
                         if(updatedProteins.size() >= 1 && errors.size() == 0){
+                            StringBuilder log = new StringBuilder();
                             //TODO : check that there is 1 protein udpated and 1 or more NO UNIPROT UPDATE protein
                             //TODO : DISPLAY SPLICE VARIANT IF ANY
 
@@ -146,22 +182,17 @@ public class UpdateDbProteinsMojo
                             for(String message : messages){
                                 log.append(message).append(NEW_LINE);
                             }
-                        }else if(updatedProteins.size() == 1 && errors.size()>=1){
-                            String exceptionMessage = "An error occured while updating protein ["+ protein.getAc()+ ","
-                                    + protein.getShortLabel()+ "], but the protein was updated. Error message is : \n";
-                            Set<String> errorTypes = errors.keySet();
-                            for(String errorType : errorTypes){
-                                exceptionMessage = exceptionMessage + errors.get(errorType);
-                            }
-                            throw new IntactException(exceptionMessage);
-                        }else if(updatedProteins.size()==0 && errors.size()>=1){
+                            System.out.println(log);
+                        }else if(updatedProteins.size()>=0 && errors.size()>=1){
                             errorCount++;
-                            StringBuilder errorLog = new StringBuilder();
+                            // Log errors.
+                            StringBuilder errorLog = new StringBuilder(512);
                             String errorFileName = uniprotIdentity.getPrimaryId() + "-error.log";
                             errorLog.append("Updating protein[").append(protein.getAc()).append(",")
                                     .append(protein.getShortLabel()).append(",").append(uniprotIdentity.getPrimaryId())
                                     .append("] :").append(NEW_LINE);
                             errorLog.append("The protein was not updated as an error occured :").append(NEW_LINE);
+
                             Set<String> errorTypes = errors.keySet();
                             for(String errorType : errorTypes){
                                 System.out.println(" " + errorType);
@@ -174,6 +205,15 @@ public class UpdateDbProteinsMojo
                                 }
                                 errorLog.append(errors.get(errorType)).append(NEW_LINE);
                             }
+                            // Log messages.
+                            errorLog.append("MESSAGES :\n");
+                            errorLog.append("--------\n");
+                            Collection<String> messages = uniprotServiceResult.getMessages();
+                            for(String message : messages){
+                                errorLog.append(message).append(NEW_LINE);
+                            }
+                            System.out.println(errorLog);
+
                             //WRITE ERROR TO FILE (ex : P12345-error.log)
                             BufferedWriter out = new BufferedWriter(new FileWriter(errorFileName));
                             out.write(errorLog.toString());
@@ -185,13 +225,13 @@ public class UpdateDbProteinsMojo
                         //UPDATED
                         System.out.println("Splice variant [" + protein.getAc()+ ","+ protein.getShortLabel() + "] not updated.");
                         spliceVariantCount++;
-                        log.append("Splice variant [").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
+//                        log.append("Splice variant [").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
                     }
                 }else{
                     //DO NOT UPDATE WHEN THE PROTEIN HAS A NO UNIPROT UPDATE ANNOTATION.
                     System.out.println("not updated, no uniprot udpate.");
                     noUniprotUpdateCount++;
-                    log.append("No uniprot update protein[").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
+//                    log.append("No uniprot update protein[").append(protein.getAc()).append(",").append(protein.getShortLabel()).append("] not udpated ").append(NEW_LINE);
                 }
             }
 
