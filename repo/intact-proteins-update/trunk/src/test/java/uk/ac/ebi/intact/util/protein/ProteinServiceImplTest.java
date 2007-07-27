@@ -1064,6 +1064,9 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Map<String ,String> errors = uniprotServiceResult.getErrors();
         Set<String> keySet = errors.keySet();
+        //todo : in this case it will not return an error but a message as the splice variant has no active instance it
+        //just delete it. Change the test : check on message size and content and add a test to check that if the splice
+        // variant is involved in an  interaction it returns an error.
         assertEquals(1,errors.size());
         for(String errorType : keySet){
             String error = errors.get(errorType);
@@ -1109,6 +1112,9 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfaWithNoSpliceVariant );
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfaWithNoSpliceVariant );
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        //todo : in this case it will not return an error but a message as the splice variant has no active instance it
+        //just delete it. Change the test : check on message size and content and add a test to check that if the splice
+        // variant is involved in an  interaction it returns an error.
         assertEquals(0,uniprotServiceResult.getProteins().size());
         Map<String ,String> errors = uniprotServiceResult.getErrors();
         Set<String> keySet = errors.keySet();
