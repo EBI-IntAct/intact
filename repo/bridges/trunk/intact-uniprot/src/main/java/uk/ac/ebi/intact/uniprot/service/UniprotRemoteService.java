@@ -19,7 +19,6 @@ import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.GeneNameSynonym;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.ORFName;
 import uk.ac.ebi.kraken.interfaces.uniprot.genename.OrderedLocusName;
-import uk.ac.ebi.kraken.model.uniprot.util.SplicedSequenceCalculator;
 import uk.ac.ebi.kraken.util.IndexField;
 import uk.ac.ebi.kraken.uuw.services.remoting.Query;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
@@ -42,7 +41,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
      */
     public static final Log log = LogFactory.getLog( UniprotRemoteService.class );
 
-    public Collection<UniprotProtein> retreive( String ac ) {
+    public Collection<UniprotProtein> retrieve( String ac ) {
 
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>();
 
@@ -60,7 +59,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
         return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
 
         if ( acs == null ) {
             throw new IllegalArgumentException( "You must give a non null List of UniProt ACs." );
@@ -74,7 +73,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // TODO use bulk loading and post sort the Map
         for ( String ac : acs ) {
-            Collection<UniprotProtein> proteins = retreive( ac );
+            Collection<UniprotProtein> proteins = retrieve( ac );
             if ( proteins != null ) {
                 results.put( ac, proteins );
             } else {
@@ -83,6 +82,16 @@ public class UniprotRemoteService extends AbstractUniprotService {
         }
 
         return results;
+    }
+
+    @Deprecated
+    public Collection<UniprotProtein> retreive( String ac ) {
+        return retrieve(ac);
+    }
+
+    @Deprecated
+    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+        return retrieve(acs);
     }
 
     //////////////////////////

@@ -26,7 +26,7 @@ public class DummyUniprotService extends UniprotRemoteService {
     // TODO build a static list of proteins that the service can serve.
     // TODO each protein will have specific properties such as given ac being a secondary AC, having splice variant...
 
-    public Collection<UniprotProtein> retreive( String ac ) {
+    public Collection<UniprotProtein> retrieve( String ac ) {
         if ( ac == null ) {
             throw new NullPointerException( "ac must not be null." );
         }
@@ -40,11 +40,11 @@ public class DummyUniprotService extends UniprotRemoteService {
         return proteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
         Map<String, Collection<UniprotProtein>> map = new HashMap<String, Collection<UniprotProtein>>( acs.size() );
 
         for ( String ac : acs ) {
-            map.put( ac, retreive( ac ) );
+            map.put( ac, retrieve( ac ) );
         }
 
         return map;

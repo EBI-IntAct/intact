@@ -61,7 +61,7 @@ public class YaspServiceTest extends TestCase {
 
     public void testRetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
-        Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
+        Collection<UniprotProtein> proteins = ya.retrieve( "foobar" );
         assertNotNull( proteins );
         assertEquals( 0, proteins.size() );
         assertNotNull( ya.getErrors() );
@@ -74,7 +74,7 @@ public class YaspServiceTest extends TestCase {
         // TODO not a good idea to run test on data available online ... data can change, internet can be down ... find an other way !!
 
         UniprotService uniprot = getUniprotService();
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
         Map<String, UniprotServiceReport> uniprotErrors = uniprot.getErrors();
         Set set = uniprotErrors.entrySet();
@@ -170,7 +170,7 @@ public class YaspServiceTest extends TestCase {
 
     public void testRetreiveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P21181" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181" );
 
         assertNotNull( proteins );
         assertEquals( 3, proteins.size() );
@@ -188,7 +188,7 @@ public class YaspServiceTest extends TestCase {
     public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getUniprotService();
-        Collection<UniprotProtein> proteins = uniprot.retreive( "Q24208" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "Q24208" );
 
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
@@ -268,7 +268,7 @@ public class YaspServiceTest extends TestCase {
 
     public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );

@@ -177,7 +177,7 @@ public class UniprotRemoteServiceTest extends TestCase {
     public void testBuild() throws Exception {
         UniprotService uniprot = getUniprotService();
 
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
@@ -281,7 +281,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getUniprotService();
 
-        Collection<UniprotProtein> proteins = uniprot.retreive( "Q8NG31-1" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "Q8NG31-1" );
 
         assertEquals( 1, proteins.size() );
         UniprotProtein protein = proteins.iterator().next();
@@ -305,7 +305,7 @@ public class UniprotRemoteServiceTest extends TestCase {
         UniprotService uniprot = getUniprotService();
 
         // note: this splice variant is showing up in CDC42_CANFA, CDC42_HUMAN and CDC42_MOUSE
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P21181-1" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181-1" );
 
         assertEquals( 3, proteins.size() );
         for ( UniprotProtein protein : proteins ) {
@@ -329,7 +329,7 @@ public class UniprotRemoteServiceTest extends TestCase {
     public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getUniprotService();
-        Collection<UniprotProtein> proteins = uniprot.retreive( "Q24208" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "Q24208" );
 
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
@@ -426,7 +426,7 @@ public class UniprotRemoteServiceTest extends TestCase {
 
     public void testRetreiveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService();
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P21181" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181" );
 
         assertNotNull( proteins );
         assertEquals( 3, proteins.size() );
@@ -443,7 +443,7 @@ public class UniprotRemoteServiceTest extends TestCase {
 
     public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
-        Collection<UniprotProtein> proteins = uniprot.retreive( "P47068" );
+        Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
@@ -466,7 +466,7 @@ public class UniprotRemoteServiceTest extends TestCase {
 
     public void testRetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
-        Collection<UniprotProtein> proteins = ya.retreive( "foobar" );
+        Collection<UniprotProtein> proteins = ya.retrieve( "foobar" );
         assertNotNull( proteins );
         assertEquals( 0, proteins.size() );
         assertNotNull( ya.getErrors() );
