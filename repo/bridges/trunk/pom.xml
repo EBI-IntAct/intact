@@ -32,6 +32,7 @@
        <module>intact-picr</module>
        <module>intact-citexplore</module>
        <module>intact-taxonomy</module>
+       <module>intact-uniprot</module>
        <module>coredep</module>
     </modules>
 
