@@ -7,8 +7,8 @@
 <hook NAME="accessories/plugins/NodeNote.properties">
 <text/>
 </hook>
-<node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1181306886210" TEXT="intact-uniprot">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1185528116822" TEXT="intact-uniprot">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node CREATED="1181219908288" ID="Freemind_Link_1699368659" MODIFIED="1184856117192" TEXT="intact-taxonomy">
@@ -16,6 +16,7 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node CREATED="1184856102864" ID="Freemind_Link_1600959279" MODIFIED="1184856106709" TEXT="intact-picr"/>
+<node CREATED="1185528168392" ID="Freemind_Link_1577258806" MODIFIED="1185528172685" TEXT="intact-citexplore"/>
 <node CREATED="1184856095206" ID="Freemind_Link_187827585" MODIFIED="1184856098312" TEXT="legacy">
 <node CREATED="1181219890339" ID="Freemind_Link_991036459" MODIFIED="1184856130649" TEXT="intact-ols">
 <edge COLOR="#808080" WIDTH="thin"/>
@@ -25,10 +26,6 @@
 <node CREATED="1184935548743" ID="Freemind_Link_730647088" MODIFIED="1184935552816" TEXT="coredep">
 <node CREATED="1181219872733" ID="Freemind_Link_1932545838" MODIFIED="1184935587392" TEXT="intact-go">
 <edge COLOR="#808080" WIDTH="thin"/>
-<font NAME="SansSerif" SIZE="12"/>
-</node>
-<node CREATED="1181219848272" ID="Freemind_Link_373515143" MODIFIED="1181306883689" TEXT="intact-cdb">
-<edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node CREATED="1181219887550" ID="Freemind_Link_278679673" MODIFIED="1181306884986" TEXT="intact-msd">
