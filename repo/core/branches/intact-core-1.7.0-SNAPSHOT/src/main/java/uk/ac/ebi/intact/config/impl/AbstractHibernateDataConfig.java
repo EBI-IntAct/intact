@@ -11,6 +11,8 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
+import org.hibernate.ejb.Ejb3Configuration;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
@@ -24,6 +26,7 @@ import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -41,7 +44,7 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Configuration> {
+public abstract class AbstractHibernateDataConfig extends DataConfig<EntityManagerFactory, Ejb3Configuration> {
 
     private static final Log log = LogFactory.getLog( AbstractHibernateDataConfig.class );
 
@@ -54,9 +57,9 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     private static final String INTERCEPTOR_CLASS = "hibernate.util.interceptor_class";
     private static final String NOT_DEFINED_JDBC_DRIVER = "NOT_DEFINED";
 
-    private Configuration configuration;
+    private Ejb3Configuration ejb3configuration;
 
-    private SessionFactory sessionFactory;
+    private EntityManagerFactory entityManagerFactory;
 
     private List<String> packagesWithEntities;
 
@@ -64,7 +67,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         super( session );
         this.packagesWithEntities = getPackagesWithEntities();
 
-        configuration = getConfiguration();
+        ejb3configuration = getConfiguration();
     }
 
     public SchemaVersion getMinimumRequiredVersion()
@@ -99,7 +102,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 for ( Class clazz : annotatedClasses ) {
                     if (!getExcludedEntities().contains(clazz.getName())) {
                         if (log.isDebugEnabled())log.debug( "Adding annotated class to hibernate: " + clazz.getName() );
-                        ( ( AnnotationConfiguration ) configuration ).addAnnotatedClass( clazz );
+                            ejb3configuration.addAnnotatedClass( clazz );
                     } else {
                         if (log.isDebugEnabled()) log.debug( "Excluded entity: "+clazz.getName());
                     }
@@ -112,13 +115,15 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 if (log.isDebugEnabled()) log.debug("Adding mappings from: " + mappingsUrl);
                 try
                 {
-                    configuration.addInputStream(mappingsUrl.openStream());
+                    ejb3configuration.addInputStream(mappingsUrl.openStream());
                 }
                 catch (IOException e)
                 {
                     throw new ExceptionInInitializerError(e);
                 }
             }
+
+            AnnotationConfiguration configuration = ejb3configuration.getHibernateConfiguration();
 
             // This custom entity resolver supports entity placeholders in XML mapping files
             // and tries to resolve them on the classpath as a resource
@@ -129,10 +134,10 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 log.info( "Reading from config file: " + cfgFile );
 
                 try {
-                    configuration.configure( cfgFile );
+                    configuration.configure( cfgFile.toString() );
                 }
                 catch ( Throwable t ) {
-                    throw new ConfigurationException( "Couldn't configure hibernate using file: " + cfgFile );
+                    throw new ConfigurationException( "Couldn't configure hibernate using file: " + cfgFile, t );
                 }
             } else {
                 log.info( "Reading from default config file" );
@@ -153,14 +158,14 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
             if ( getSession().isWebapp() && configuration.getProperty( Environment.SESSION_FACTORY_NAME ) != null ) {
                 // Let Hibernate bind the factory to JNDI
-                log.debug( "Building webapp sessionFactory: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                log.debug( "Building webapp entityManagerFactory: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
                 configuration.buildSessionFactory();
             } else {
                 // or use static variable handling
                 configuration.getProperties().remove( Environment.SESSION_FACTORY_NAME );
 
-                log.debug( "Building standalone sessionFactory" );
-                sessionFactory = configuration.buildSessionFactory();
+                log.debug( "Building standalone entityManagerFactory" );
+                entityManagerFactory = ejb3configuration.buildEntityManagerFactory();
             }
 
         }
@@ -211,70 +216,70 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     }
 
     @Override
-    public SessionFactory getSessionFactory() {
-        if ( sessionFactory != null ) {
-            return sessionFactory;
+    public EntityManagerFactory getSessionFactory() {
+        if ( entityManagerFactory != null ) {
+            return entityManagerFactory;
         }
 
         if ( getSession().isWebapp() ) {
             try {
-                getConfiguration().configure(getConfigFile());
-                String sessionFactoryName = configuration.getProperty( Environment.SESSION_FACTORY_NAME );
-                log.debug( "Looking up sessionFactory from JNDI: " + sessionFactoryName );
+                getConfiguration().configure(getConfigFile().toString());
+                String sessionFactoryName = ejb3configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME );
+                log.debug( "Looking up entityManagerFactory from JNDI: " + sessionFactoryName );
 
                 if ( sessionFactoryName != null ) {
-                    sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                    entityManagerFactory = ( EntityManagerFactory ) new InitialContext().lookup( ejb3configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME ) );
 
                     setInitialized( true );
                 }
             }
             catch ( ClassCastException cce ) {
-                log.debug( "Classcast exception thrown when getting the sessionFactory from JNDI. " +
+                log.debug( "Classcast exception thrown when getting the entityManagerFactory from JNDI. " +
                            "Probably initializing application and trying to get an instance created " +
                            "with a different classloader" );
             }
             catch ( NamingException ne ) {
-                log.debug( "SessionFactory not found in JNDI: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                log.debug( "EntityManagerFactory not found in JNDI: " + ejb3configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME ) );
             }
         }
 
-        if ( sessionFactory == null ) {
+        if ( entityManagerFactory == null ) {
             checkInitialization();
 
-            if ( sessionFactory != null ) {
-                return sessionFactory;
+            if ( entityManagerFactory != null ) {
+                return entityManagerFactory;
             }
 
             try {
-                sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                entityManagerFactory = ( EntityManagerFactory ) new InitialContext().lookup( ejb3configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME ) );
             }
             catch ( NamingException e ) {
                 throw new IntactException( "SessionFactory could not be retrieved from JNDI: " + Environment.SESSION_FACTORY_NAME );
             }
         }
 
-        return sessionFactory;
+        return entityManagerFactory;
     }
 
 
     public void closeSessionFactory() {
-        if ( sessionFactory != null ) {
-            sessionFactory.close();
+        if ( entityManagerFactory != null ) {
+            entityManagerFactory.close();
         }
     }
 
     @Override
-    public Configuration getConfiguration() {
-        if ( configuration == null ) {
-            configuration = new AnnotationConfiguration();
+    public Ejb3Configuration getConfiguration() {
+        if ( ejb3configuration == null ) {
+            ejb3configuration = new Ejb3Configuration();
         }
 
-        return configuration;
+        return ejb3configuration;
     }
 
     public void addPackageWithEntities( String packageName ) {
         if ( isInitialized() ) {
-            throw new IntactException( "Cannot add package after the sessionFactory has been initialized" );
+            throw new IntactException( "Cannot add package after the entityManagerFactory has been initialized" );
         }
 
         packagesWithEntities.add( packageName );
@@ -307,7 +312,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     }
 
     public void flushSession() {
-        sessionFactory.getCurrentSession().flush();
+        ((HibernateEntityManagerFactory) entityManagerFactory).getSessionFactory().getCurrentSession().flush();
     }
 
     public boolean isConfigurable() {

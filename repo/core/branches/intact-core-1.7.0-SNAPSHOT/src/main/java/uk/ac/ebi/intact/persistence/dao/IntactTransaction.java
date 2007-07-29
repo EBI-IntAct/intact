@@ -13,6 +13,8 @@ import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.RuntimeConfig;
 
+import javax.persistence.EntityTransaction;
+
 /**
  * It is a wrapper for Transactions
  *
@@ -24,7 +26,7 @@ public class IntactTransaction {
 
     private static final Log log = LogFactory.getLog( IntactTransaction.class );
 
-    private Transaction transaction;
+    private EntityTransaction transaction;
     private String id;
 
     /**
@@ -32,7 +34,7 @@ public class IntactTransaction {
      */
     private StackTraceElement[] stackTrace;
 
-    public IntactTransaction( IntactSession session, Transaction transaction ) {
+    public IntactTransaction( IntactSession session, EntityTransaction transaction ) {
         this.transaction = transaction;
 
         log.debug( "Transaction started" );
@@ -62,7 +64,7 @@ public class IntactTransaction {
     }
 
     public void commit() throws IntactTransactionException {
-        log.debug( "Committing transaction" );
+        log.debug( "Committing transaction: "+getId() );
 
         try {
             transaction.commit();
@@ -73,7 +75,7 @@ public class IntactTransaction {
 
         assert ( wasCommitted() );
 
-        log.debug( "Transaction committed" );
+        log.debug( "Transaction committed: "+getId() );
     }
 
     public void rollback() throws IntactTransactionException {
@@ -88,14 +90,14 @@ public class IntactTransaction {
     }
 
     public boolean wasCommitted() {
-        return transaction.wasCommitted();
+        return !transaction.isActive();
     }
 
     public boolean wasRolledBack() {
-        return transaction.wasRolledBack();
+        return !transaction.isActive();
     }
 
-    public Object getWrappedTransaction() {
+    public EntityTransaction getWrappedTransaction() {
         return transaction;
     }
 

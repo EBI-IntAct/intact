@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.config.ConfigurationException;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -56,7 +57,7 @@ public class TemporaryH2DataConfig extends StandardCoreDataConfig {
     }
 
     @Override
-    public Configuration getConfiguration()
+    public Ejb3Configuration getConfiguration()
     {
         connectionUrl = CONNECTION_PROTOCOL+CONNECTION_FILE_DEFAULT;
 
@@ -64,7 +65,7 @@ public class TemporaryH2DataConfig extends StandardCoreDataConfig {
             connectionUrl = CONNECTION_PROTOCOL + getSession().getInitParam(IntactEnvironment.TEMP_H2.getFqn());
         }
         
-        Configuration configuration = super.getConfiguration();
+        Ejb3Configuration configuration = super.getConfiguration();
         configuration.setProperty(Environment.URL, connectionUrl);
 
         return configuration;

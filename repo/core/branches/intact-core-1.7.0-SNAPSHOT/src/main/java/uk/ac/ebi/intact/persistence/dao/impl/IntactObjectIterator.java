@@ -19,6 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
@@ -169,8 +170,8 @@ public class IntactObjectIterator<T extends IntactObject> implements Iterator<T>
 
     private Session getSession() {
         AbstractHibernateDataConfig abstractHibernateDataConfig = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
-        SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
-        Session session = factory.getCurrentSession();
+        SessionFactory sessionFactory = ((HibernateEntityManagerFactory)abstractHibernateDataConfig.getSessionFactory()).getSessionFactory();
+        Session session = sessionFactory.getCurrentSession();
         return session;
     }
 

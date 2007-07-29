@@ -41,6 +41,7 @@ public final class RuntimeConfig implements Serializable {
     private boolean isAutoBeginTransaction;
     private boolean synchronizedSearchItems;
     private boolean debugMode;
+    private String defaultPersistenceUnitName;
 
     private RuntimeConfig( IntactSession session ) {
         this.dataConfigs = new HashMap<String, DataConfig>();
@@ -162,5 +163,20 @@ public final class RuntimeConfig implements Serializable {
 
     public void setDebugMode( boolean debugMode ) {
         this.debugMode = debugMode;
+    }
+
+    public String getDefaultPersistenceUnitName()
+    {
+        if (defaultPersistenceUnitName != null) {
+            return defaultPersistenceUnitName;
+        }
+
+        defaultPersistenceUnitName = session.getInitParam(IntactEnvironment.DEFAULT_PERSISTENCE_UNIT_PARAM_NAME.getFqn());
+
+        if (defaultPersistenceUnitName == null) {
+            defaultPersistenceUnitName = "intact-core-mem";
+        }
+
+        return defaultPersistenceUnitName;
     }
 }

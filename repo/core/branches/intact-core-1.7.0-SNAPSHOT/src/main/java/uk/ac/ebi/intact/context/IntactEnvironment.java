@@ -25,6 +25,11 @@ package uk.ac.ebi.intact.context;
 public enum IntactEnvironment {
 
     /**
+     * Persistence unit name to use by default
+     */
+    DEFAULT_PERSISTENCE_UNIT_PARAM_NAME("uk.ac.ebi.intact.PERSISTENCE_UNIT"),
+
+    /**
      * A comma-separated list with the name of the classes that extends 'uk.ac.ebi.intact.config.DataConfig',
      * used to register data entities
      */

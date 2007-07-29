@@ -7,14 +7,15 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
+import javax.persistence.FlushModeType;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -76,7 +77,7 @@ public class DataContext implements Serializable {
 
         if ( daoFactory.isTransactionActive() ) {
             try {
-                if (getSession().getFlushMode() == FlushMode.MANUAL)
+                if (daoFactory.getCurrentEntityManager().getFlushMode() == FlushModeType.COMMIT)
                 {
                     flushSession();
                 }
@@ -103,8 +104,9 @@ public class DataContext implements Serializable {
 
     public Session getSession() {
         AbstractHibernateDataConfig abstractHibernateDataConfig = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
-        SessionFactory factory = abstractHibernateDataConfig.getSessionFactory();
-        Session session = factory.getCurrentSession();
+        HibernateEntityManagerFactory entityManagerFactory = (HibernateEntityManagerFactory) abstractHibernateDataConfig.getSessionFactory();
+        SessionFactory sessionFactory = entityManagerFactory.getSessionFactory();
+        Session session = sessionFactory.getCurrentSession();
         return session;
     }
 

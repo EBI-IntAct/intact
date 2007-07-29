@@ -27,7 +27,7 @@ import org.dbunit.dataset.datatype.DefaultDataTypeFactory;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
 import org.dbunit.ext.hsqldb.HsqldbDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
@@ -143,7 +143,7 @@ public class IntactUnit {
 
         dataContext.beginTransaction();
 
-        SchemaExport se = new SchemaExport(getConfiguration());
+        SchemaExport se = new SchemaExport(getConfiguration().getHibernateConfiguration());
         se.create(false, true);
 
         dataContext.commitTransaction();
@@ -171,13 +171,13 @@ public class IntactUnit {
 
         dataContext.beginTransaction();
 
-        SchemaExport se = new SchemaExport(getConfiguration());
+        SchemaExport se = new SchemaExport(getConfiguration().getHibernateConfiguration());
         se.drop(false, true);
 
         dataContext.commitTransaction();
     }
 
-    private Configuration getConfiguration() {
+    private Ejb3Configuration getConfiguration() {
         AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
         return dataConfig.getConfiguration();
     }

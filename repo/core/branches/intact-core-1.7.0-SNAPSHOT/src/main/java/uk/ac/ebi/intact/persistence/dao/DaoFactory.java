@@ -9,7 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.ejb.HibernateEntityManager;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -17,6 +17,9 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.sql.Connection;
 
@@ -38,6 +41,8 @@ public class DaoFactory implements Serializable {
     private IntactSession intactSession;
 
     private IntactTransaction currentTransaction;
+
+    private EntityManager entityManager;
 
     protected DaoFactory( DataConfig dataConfig, IntactSession intactSession ) {
         this.dataConfig = ( AbstractHibernateDataConfig ) dataConfig;
@@ -228,7 +233,8 @@ public class DaoFactory implements Serializable {
 
     public IntactTransaction beginTransaction() {
         log.debug( "Starting transaction..." );
-        Transaction transaction = getCurrentSession().beginTransaction();
+        EntityTransaction transaction = getCurrentEntityManager().getTransaction();
+        transaction.begin();
 
         // wrap it
         currentTransaction = new IntactTransaction( intactSession, transaction );
@@ -236,29 +242,31 @@ public class DaoFactory implements Serializable {
         return currentTransaction;
     }
 
+    public EntityManager getCurrentEntityManager() {
+        if (entityManager == null)
+        {
+            EntityManagerFactory emf = dataConfig.getSessionFactory();
+            entityManager = emf.createEntityManager();
+        }
+
+        return entityManager;
+    }
+
     public synchronized Session getCurrentSession() {
-        Session session = dataConfig.getSessionFactory().getCurrentSession();
+        Session session = ((HibernateEntityManager) getCurrentEntityManager()).getSession();
 
         if (!dataConfig.isAutoFlush()) {
             session.setFlushMode(FlushMode.MANUAL);
-        }
-
-        if ( !session.isOpen() ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Opening new session because the current is closed" );
-            }
-            session = dataConfig.getSessionFactory().openSession();
         }
 
         return session;
     }
 
     public boolean isTransactionActive() {
-        boolean active = ( currentTransaction != null && !currentTransaction.wasCommitted() );
-        if( log.isDebugEnabled() ) {
-            log.debug( "Current transaction is " + (currentTransaction == null ? "null" : ( active ? "active" : "committed" ) ) );
+        if (currentTransaction == null) {
+            return false;
         }
-        return active;
+        return currentTransaction.getWrappedTransaction().isActive();
     }
 
     public IntactTransaction getCurrentTransaction() {

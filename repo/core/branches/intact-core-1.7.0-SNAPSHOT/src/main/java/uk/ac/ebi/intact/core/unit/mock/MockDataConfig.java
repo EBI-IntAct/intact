@@ -15,11 +15,11 @@
  */
 package uk.ac.ebi.intact.core.unit.mock;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactSession;
 
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +45,7 @@ public class MockDataConfig extends AbstractHibernateDataConfig {
     public void flushSession() {
     }
 
-    public Configuration getConfiguration() {
+    public Ejb3Configuration getConfiguration() {
         return null;
     }
 
@@ -53,7 +53,7 @@ public class MockDataConfig extends AbstractHibernateDataConfig {
         return "MOCK-DATA-CONFIG";
     }
 
-    public SessionFactory getSessionFactory() {
+    public EntityManagerFactory getSessionFactory() {
         throw new UnsupportedOperationException();
     }
 

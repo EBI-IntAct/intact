@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.config.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.event.IntactObjectEventListener;
@@ -54,10 +56,12 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
 
 
     @Override
-    public Configuration getConfiguration() {
-        Configuration configuration = super.getConfiguration();
+    public Ejb3Configuration getConfiguration() {
+        Ejb3Configuration ejb3configuration = super.getConfiguration();
 
         if ( !isListenersRegistered() ) {
+            AnnotationConfiguration configuration = ejb3configuration.getHibernateConfiguration();
+
             if ( log.isDebugEnabled() ) {
                 log.info( "Registering core EventListeners:" );
                 log.debug( "\tRegistering: " + IntactObjectEventListener.class );
@@ -76,7 +80,7 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
             setListenersRegistered( true );
         }
 
-        return configuration;
+        return ejb3configuration;
     }
 
     protected File getConfigFile() {
