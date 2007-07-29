@@ -15,10 +15,11 @@
  */
 package uk.ac.ebi.intact.config.impl;
 
-import uk.ac.ebi.intact.config.ConfigurationException;
 import uk.ac.ebi.intact.context.IntactSession;
 
-import java.io.*;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import java.io.File;
 
 /**
  * This configuration uses a memory database (H2)
@@ -30,38 +31,25 @@ public class InMemoryDataConfig extends StandardCoreDataConfig {
 
     public static final String NAME = "uk.ac.ebi.intact.config.IN_MEMORY";
 
-    private File configurationFile;
+    private EntityManagerFactory entityManagerFactory;
 
     public InMemoryDataConfig(IntactSession session) {
         super(session);
     }
 
     @Override
-    protected File getConfigFile() {
-        if (configurationFile != null) {
-            return configurationFile;
+    public void initialize()
+    {
+       setInitialized(true); 
+    }
+
+    @Override
+    public EntityManagerFactory getSessionFactory()
+    {
+        if (entityManagerFactory == null) {
+            entityManagerFactory = Persistence.createEntityManagerFactory("intact-core-mem");
         }
-
-        try {
-            configurationFile = File.createTempFile("memory-hibernate-", ".cfg.xml");
-            configurationFile.deleteOnExit();
-
-            InputStream is = InMemoryDataConfig.class.getResourceAsStream("/META-INF/memory-hibernate.cfg.xml");
-
-            FileWriter writer = new FileWriter(configurationFile);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                writer.write(line+System.getProperty("line.separator"));
-            }
-
-            writer.close();
-        } catch (IOException e) {
-            throw new ConfigurationException("Exception getting configuration file", e);
-        }
-
-        return configurationFile;
+        return entityManagerFactory;
     }
 
     @Override

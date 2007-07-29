@@ -5,19 +5,24 @@
  */
 package uk.ac.ebi.intact.persistence.dao.impl;
 
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.criterion.*;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.context.*;
+import uk.ac.ebi.intact.context.AutoBeginTransactionException;
+import uk.ac.ebi.intact.context.IntactEnvironment;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import java.sql.SQLException;
 import java.util.Collection;
 
@@ -40,6 +45,11 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<Session> {
         this.entityClass = entityClass;
         this.session = session;
         this.intactSession = intactSession;
+    }
+
+    public HibernateBaseDaoImpl( Class<T> entityClass, EntityManager em ) {
+        HibernateEntityManager hem = (HibernateEntityManager)em;
+        this.session = hem.getSession();
     }
 
     public Session getSession() {

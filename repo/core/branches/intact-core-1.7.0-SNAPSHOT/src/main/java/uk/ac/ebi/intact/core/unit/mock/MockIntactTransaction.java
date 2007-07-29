@@ -19,6 +19,8 @@ import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
+import javax.persistence.EntityTransaction;
+
 /**
  * TODO comment this
  *
@@ -47,7 +49,7 @@ public class MockIntactTransaction extends IntactTransaction {
     }
 
     @Override
-    public Object getWrappedTransaction() {
+    public EntityTransaction getWrappedTransaction() {
         throw new  UnsupportedOperationException();
     }
 

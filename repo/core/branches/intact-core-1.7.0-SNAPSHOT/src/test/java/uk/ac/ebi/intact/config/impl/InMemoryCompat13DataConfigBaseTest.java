@@ -3,6 +3,8 @@ package uk.ac.ebi.intact.config.impl;
 import org.hibernate.cfg.Settings;
 import org.hibernate.tool.hbm2ddl.DatabaseMetadata;
 import org.hibernate.tool.hbm2ddl.TableMetadata;
+import org.hibernate.dialect.DialectFactory;
+import org.hibernate.dialect.H2Dialect;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -56,8 +58,7 @@ public class InMemoryCompat13DataConfigBaseTest extends IntactBasicTestCase
 
     @Test
     public void componentMapping() throws Exception {
-        Settings settings = ((AbstractHibernateDataConfig)getIntactContext().getConfig().getDefaultDataConfig()).getConfiguration().buildSettings();
-        DatabaseMetadata databaseMetadata = new DatabaseMetadata(getDaoFactory().connection(), settings.getDialect());
+        DatabaseMetadata databaseMetadata = new DatabaseMetadata(getDaoFactory().connection(), H2Dialect.getDialect());       
         TableMetadata tableMetadata = databaseMetadata.getTableMetadata("ia_component", null, null, false);
 
         Assert.assertNotNull(tableMetadata.getColumnMetadata("role_ac"));
