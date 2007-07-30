@@ -20,10 +20,7 @@ import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilt
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceService;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceException;
-import uk.ac.ebi.intact.util.protein.utils.AliasUpdaterUtils;
-import uk.ac.ebi.intact.util.protein.utils.AnnotationUpdaterUtils;
-import uk.ac.ebi.intact.util.protein.utils.XrefUpdaterUtils;
-import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
+import uk.ac.ebi.intact.util.protein.utils.*;
 
 import java.util.*;
 
@@ -297,7 +294,12 @@ public class ProteinServiceImpl implements ProteinService {
             ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             sb.append("The protein which are going to be merged :").append( NEW_LINE );
             for(Protein protToDelete : proteinsToDelete ){
-                proteinDao.delete((ProteinImpl) protToDelete);
+//                proteinDao.delete((ProteinImpl) protToDelete);
+                protToDelete.setActiveInstances(null);
+                proteinDao.update((ProteinImpl) protToDelete);
+                // Add to the ac to the collection of ac to delete. Will be deleted later. 
+                ProteinToDeleteManager.addProteinAc(protToDelete.getAc());
+
                 sb.append("\t" + protToDelete.getAc() + "," + protToDelete.getShortLabel()).append( NEW_LINE );
             }
 
@@ -546,7 +548,10 @@ public class ProteinServiceImpl implements ProteinService {
                 InteractorXref intactSpliceVariantUniprotXref = ProteinUtils.getUniprotXref(intactSpliceVariant);
                 if(intactSpliceVariant.getActiveInstances().size() == 0){
                     ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-                    proteinDao.delete((ProteinImpl) intactSpliceVariant);
+                    //Add the ac to the protein to delete ac collection, as if we would delete it now it would create
+                    // bugs due to the use of the ProteinDao.getAll(int minResult, int maxResults) in the updatedProteinMojo.
+                    ProteinToDeleteManager.addProteinAc(intactSpliceVariant.getAc());
+//                    proteinDao.delete((ProteinImpl) intactSpliceVariant);
                     uniprotServiceResult.addMessage("The protein " + getProteinDescription(intactSpliceVariant) +
                             " is a splice variant of " + getProteinDescription(protein) + " in IntAct but not in Uniprot." +
                             " As it is not part of any interactions in IntAct we have deleted it."  );
@@ -557,10 +562,6 @@ public class ProteinServiceImpl implements ProteinService {
                             " is a splice variant of protein "+ getProteinDescription(protein)+
                             " but in Uniprot it is not the case. As it is part of interactions in IntAct we couldn't " +
                             "delete it.");
-//                    throw new ProteinServiceException( "In Intact the protein "+ getProteinDescription(intactSpliceVariant) +
-//                            " is a splice variant of protein "+ getProteinDescription(protein)+
-//                            " but in Uniprot it is not the case. As it is part of interactions in IntAct we couldn't " +
-//                            "delete it." );
                 }
             }
         }
@@ -608,7 +609,11 @@ public class ProteinServiceImpl implements ProteinService {
                 } else {
                     if(protein.getActiveInstances().size() == 0){
                         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-                        proteinDao.delete((ProteinImpl) protein);
+//                        proteinDao.delete((ProteinImpl) protein);
+                        //Add the ac of the protein to the list of acs to delete as if we would delete it now it would
+                        // cause bugs in module using this artifact with the ProteinDao.getAll(int minResult,
+                        // int maxResults) method.
+                        ProteinToDeleteManager.addProteinAc(protein.getAc());
                         uniprotServiceResult.addMessage("The protein " + getProteinDescription(protein) +
                                 " is a splice which had multiple or no identity, as it is not involved in any interaction" +
                                 " we deleted it.");
