@@ -236,7 +236,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private String getSPTREntryReleaseVersion( UniProtEntry sptrEntry ) {
         String version = null;
         String uniprotRelease = String.valueOf( sptrEntry.getEntryAudit().getEntryVersion() );
-        System.out.println( "uniprotRelease = " + uniprotRelease );
+        //System.out.println( "uniprotRelease = " + uniprotRelease );
         if ( sptrEntry.getType().equals( UniProtEntryType.SWISSPROT ) ) {
             version = SWISS_PROT_PREFIX + uniprotRelease;
         } else if ( sptrEntry.getType().equals( UniProtEntryType.TREMBL ) ) {
@@ -368,7 +368,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                 List<IsoformId> isoIDs = isoform.getIds();
                 for ( IsoformId isoID : isoIDs ) {
-                    System.out.println("isoID  : " + isoID.getValue());
+                    //System.out.println("isoID  : " + isoID.getValue());
                     if ( log.isDebugEnabled() ) {
                         log.debug( "isoID.getValue() = " + isoID.getValue() );
                     }
