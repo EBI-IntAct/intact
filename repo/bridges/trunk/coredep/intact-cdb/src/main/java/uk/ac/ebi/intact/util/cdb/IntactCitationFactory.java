@@ -30,10 +30,11 @@ public class IntactCitationFactory {
     private static IntactCitationFactory ourInstance;
     ///////////////////////////
     // Singleton's methods
-    static{
-   /* private static IntactCitationFactory*/ ourInstance = new IntactCitationFactory();
-    }
+
     public static IntactCitationFactory getInstance() {
+        if (ourInstance == null) {
+            ourInstance = new IntactCitationFactory();
+        }
         return ourInstance;
     }
 
