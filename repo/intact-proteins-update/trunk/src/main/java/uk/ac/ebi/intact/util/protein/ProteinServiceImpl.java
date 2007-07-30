@@ -295,7 +295,7 @@ public class ProteinServiceImpl implements ProteinService {
             sb.append("The protein which are going to be merged :").append( NEW_LINE );
             for(Protein protToDelete : proteinsToDelete ){
 //                proteinDao.delete((ProteinImpl) protToDelete);
-                protToDelete.setActiveInstances(null);
+                protToDelete.setActiveInstances(new ArrayList());
                 proteinDao.update((ProteinImpl) protToDelete);
                 // Add to the ac to the collection of ac to delete. Will be deleted later. 
                 ProteinToDeleteManager.addProteinAc(protToDelete.getAc());
