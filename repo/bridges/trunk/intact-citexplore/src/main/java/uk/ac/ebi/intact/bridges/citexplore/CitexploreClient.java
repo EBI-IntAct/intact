@@ -68,7 +68,7 @@ public class CitexploreClient {
 
     public static void main(String[] args) throws Exception{
         CitexploreClient client = new CitexploreClient();
-        Citation c = client.getCitationById("1");
+        Citation c = client.getCitationById("1234567");
 //        Citation c = client.getCitationById("1234567");
         System.out.println(c.getJournalIssue());
         System.out.println(c.getJournalIssue().getYearOfPublication());
