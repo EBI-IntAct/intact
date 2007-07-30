@@ -246,11 +246,15 @@ public class UpdateDbProteinsMojo
             commitTransaction();
         }
 
+        System.out.println("DELETING PROTEINS");
+        System.out.println("-----------------");
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         Collection<String> acsToDelete = ProteinToDeleteManager.getAcToDelete();
         proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         for(String ac : acsToDelete){
             Protein protein = proteinDao.getByAc(ac);
+            System.out.println("Deleting protein [" + protein.getAc() + "," + protein.getShortLabel() + "," 
+                    + ProteinUtils.getUniprotXref(protein) + "]");
             proteinDao.delete((ProteinImpl) protein);
         }
         commitTransaction();
