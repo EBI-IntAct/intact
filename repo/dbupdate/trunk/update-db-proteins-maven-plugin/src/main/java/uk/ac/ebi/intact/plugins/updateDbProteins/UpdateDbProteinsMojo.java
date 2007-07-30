@@ -27,6 +27,7 @@ import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.util.protein.ProteinService;
 import uk.ac.ebi.intact.util.protein.ProteinServiceFactory;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
+import uk.ac.ebi.intact.util.protein.utils.ProteinToDeleteManager;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
 import uk.ac.ebi.intact.util.taxonomy.NewtTaxonomyService;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
@@ -54,6 +55,8 @@ import java.util.*;
 public class UpdateDbProteinsMojo
         extends IntactHibernateMojo
 {
+
+    
     /**
          * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
          * @required
@@ -74,6 +77,8 @@ public class UpdateDbProteinsMojo
     Map<String, Collection<String>> errorMessages = new HashMap<String, Collection<String>>();
 
     Collection<String> spliceVariantAcs = new ArrayList<String>();
+
+
 
     /**
      * Project instance
@@ -241,6 +246,15 @@ public class UpdateDbProteinsMojo
             commitTransaction();
         }
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        Collection<String> acsToDelete = ProteinToDeleteManager.getAcToDelete();
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        for(String ac : acsToDelete){
+            Protein protein = proteinDao.getByAc(ac);
+            proteinDao.delete((ProteinImpl) protein);
+        }
+        commitTransaction();
+
     }
 
     private String createStatistic(){
@@ -289,7 +303,6 @@ public class UpdateDbProteinsMojo
             if ( hibernateSession.isOpen() ) {
                 hibernateSession.close();
             }
-
         }
 
     }
@@ -319,5 +332,5 @@ public class UpdateDbProteinsMojo
         return project;
     }
 
-    
+
 }
