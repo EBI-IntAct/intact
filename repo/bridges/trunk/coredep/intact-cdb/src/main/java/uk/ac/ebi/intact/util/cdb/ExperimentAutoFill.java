@@ -165,76 +165,108 @@ public class ExperimentAutoFill {
     public String getShortlabel() throws IntactException,
                                                               UnexpectedException,
                                                               PublicationNotFoundException {
+        return getShortlabel(true);
+    }
 
-        CvDatabase pubmed = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXref( CvDatabase.PUBMED_MI_REF );
-        CvXrefQualifier primaryRef = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByXref(CvXrefQualifier.PRIMARY_REFERENCE_MI_REF );
+    /**
+     * autogenerates a shortlabel for an experiment based on the given pubmed ID. <br>
+     * If accessDatabase is true, we need to take into account the
+     * current content of the database, so we proceed as follow:
+     * <pre>
+     * (1) load all experimentXrefs having that same pubmed ID
+     *     Note: this is in case some shortlabel would have been created not following the required format.
+     * (2) load all experiment matching the pattern 'author-year-%'
+     * (3) sort them by creation date
+     * (4) add then to the Suffix generator as context
+     * (5) get the suffix for the new experiment
+     * </pre>
+     *
+     * @return the generated shortlabel.
+     *
+     * @throws IntactException              if an error occured when accessing IntAct.
+     * @throws UnexpectedException          If some unexpected error occured
+     * @throws PublicationNotFoundException if the given pubmed ID could not be found or retreived from CitExplore.
+     * @param accessDatabase if true, access the database to calculate the prefix of the experiment
+     */
+    public String getShortlabel(boolean accessDatabase) throws IntactException,
+                                                              UnexpectedException,
+                                                              PublicationNotFoundException {
 
-        // Load, from IntAct, all existing experiment having that same pudmed ID.
-
-        // (1) load all experimentXrefs having that same pubmed ID
-        Collection experimentXrefs = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByXrefLike(pubmedID);
-
-        if ( _DEBUG_ ) {
-            log.debug( "Found " + experimentXrefs.size() + " experiment(s) by PubMed( " + pubmedID + " )" );
-            for ( Iterator iterator = experimentXrefs.iterator(); iterator.hasNext(); ) {
-                Experiment experiment = (Experiment) iterator.next();
-                log.debug( experiment.getShortLabel() );
-            }
-        }
-
-        // (2) load all experiment matching the pattern 'author-year-%'
         String authorLastName = citation.getAuthorLastName();
 
         int year = citation.getYear();
         String prefix = authorLastName + "-" + year;
 
-        Collection experimentLLabels = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByShortLabelLike(prefix+"%");
+        String experimentShortlabel;
 
-        if ( _DEBUG_ ) {
-            log.debug( "Found " + experimentLLabels.size() + " experiment(s) by prefix( " + prefix + " )" );
-            for ( Iterator iterator = experimentLLabels.iterator(); iterator.hasNext(); ) {
+        if (accessDatabase) {
+            // Load, from IntAct, all existing experiment having that same pudmed ID.
+
+            // (1) load all experimentXrefs having that same pubmed ID
+            Collection experimentXrefs = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByXrefLike(pubmedID);
+
+            if ( _DEBUG_ ) {
+                log.debug( "Found " + experimentXrefs.size() + " experiment(s) by PubMed( " + pubmedID + " )" );
+                for ( Iterator iterator = experimentXrefs.iterator(); iterator.hasNext(); ) {
+                    Experiment experiment = (Experiment) iterator.next();
+                    log.debug( experiment.getShortLabel() );
+                }
+            }
+
+            // (2) load all experiment matching the pattern 'author-year-%'
+
+
+            Collection experimentLLabels = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByShortLabelLike(prefix+"%");
+
+            if ( _DEBUG_ ) {
+                log.debug( "Found " + experimentLLabels.size() + " experiment(s) by prefix( " + prefix + " )" );
+                for ( Iterator iterator = experimentLLabels.iterator(); iterator.hasNext(); ) {
+                    Experiment experiment = (Experiment) iterator.next();
+                    log.debug( experiment.getShortLabel() );
+                }
+            }
+
+            // (3) sort them by creation date
+            Set _allExperiments = new HashSet( experimentLLabels.size() + experimentXrefs.size() );
+            _allExperiments.addAll( experimentXrefs );
+            _allExperiments.addAll( experimentLLabels );
+
+            // get a distinct set of Experiment
+            List allExperiments = new ArrayList( _allExperiments );
+
+            Collections.sort( allExperiments, creationDateComparator );
+
+            // (4) add then to the Suffix generator as context
+            if ( _DEBUG_ ) {
+                log.debug( "Initialise the current context" );
+            }
+            ExperimentShortlabelGenerator suffixGenerator = new ExperimentShortlabelGenerator();
+            for ( Iterator iterator = allExperiments.iterator(); iterator.hasNext(); ) {
                 Experiment experiment = (Experiment) iterator.next();
-                log.debug( experiment.getShortLabel() );
+                if ( _DEBUG_ ) {
+                    System.out.print( experiment.getShortLabel() + " " + experiment.getCreated() );
+                    System.out.flush();
+                }
+                String pmid = getPubmedId( experiment );
+                IntactCitation citation = loadCitation( pmid );
+
+                String s = suffixGenerator.getSuffix( citation.getAuthorLastName(), citation.getYear(), pmid );
+                if ( _DEBUG_ ) {
+                    log.debug( "   --->   " + s );
+                }
             }
+
+            // (5) get the suffix for the new experiment
+            String suffix = suffixGenerator.getSuffix( authorLastName, year, pubmedID );
+
+            // Build the shortlabel
+            // Here we don't care (yet) about the suffixes ... but keeping a list of all already generated
+            // shortlabel in the scope of the experimentList should allow us to generate it easily.
+            experimentShortlabel = authorLastName + "-" + year + suffix;
+
+        } else {
+           experimentShortlabel = authorLastName + "-" + year;
         }
-
-        // (3) sort them by creation date
-        Set _allExperiments = new HashSet( experimentLLabels.size() + experimentXrefs.size() );
-        _allExperiments.addAll( experimentXrefs );
-        _allExperiments.addAll( experimentLLabels );
-
-        // get a distinct set of Experiment
-        List allExperiments = new ArrayList( _allExperiments );
-
-        Collections.sort( allExperiments, creationDateComparator );
-
-        // (4) add then to the Suffix generator as context
-        if ( _DEBUG_ ) {
-            log.debug( "Initialise the current context" );
-        }
-        ExperimentShortlabelGenerator suffixGenerator = new ExperimentShortlabelGenerator();
-        for ( Iterator iterator = allExperiments.iterator(); iterator.hasNext(); ) {
-            Experiment experiment = (Experiment) iterator.next();
-            if ( _DEBUG_ ) {
-                System.out.print( experiment.getShortLabel() + " " + experiment.getCreated() );
-                System.out.flush();
-            }
-            String pmid = getPubmedId( experiment );
-            IntactCitation citation = loadCitation( pmid );
-
-            String s = suffixGenerator.getSuffix( citation.getAuthorLastName(), citation.getYear(), pmid );
-            if ( _DEBUG_ ) {
-                log.debug( "   --->   " + s );
-            }
-        }
-
-        // (5) get the suffix for the new experiment
-        String suffix = suffixGenerator.getSuffix( authorLastName, year, pubmedID );
-
-        // Build the shortlabel
-        // Here we don't care (yet) about the suffixes ... but keeping a list of all already generated
-        // shortlabel in the scope of the experimentList should allow us to generate it easily.
-        String experimentShortlabel = authorLastName + "-" + year + suffix;
 
         return experimentShortlabel;
     }
