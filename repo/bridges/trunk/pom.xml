@@ -40,6 +40,13 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>uk.ac.ebi.intact.bridges</groupId>
+                <artifactId>intact-citexplore</artifactId>
+                <version>${currentVersion}</version>
+                
+            </dependency>
+
+            <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
                 <version>1.2.13</version>
