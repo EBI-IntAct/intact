@@ -25,16 +25,10 @@
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
     </properties>
 
-    <modules>
-        <module>intact-plugin</module>
-<!--        <module>cv-maven-plugin</module> -->
-<!--        <module>dbtest-maven-plugin</module>      -->
-<!--        <module>dbupdate-maven-plugin</module>
+    <modules>    
+        <module>dbupdate-maven-plugin</module>
         <module>ebeye-export-maven-plugin</module>
         <module>fasta-maven-plugin</module>
--->
-        <module>hibernateconfig-maven-plugin</module>
-<!--
         <module>lucene-maven-plugin</module>
         <module>maven-editortopics-plugin</module>
         <module>psimitab-maven-plugin</module>
@@ -45,7 +39,6 @@
         <module>psimitab-indexer-maven-plugin</module>
         <module>predict-maven-plugin</module>
         <module>update-component-role-maven-plugin</module>
--->
   </modules>
 
     <distributionManagement>
