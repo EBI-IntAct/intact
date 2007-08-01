@@ -3,14 +3,15 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>8</version>
+        <version>10</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>lucene-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
+    
     <name>lucene-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
@@ -34,7 +35,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.templates</groupId>
             <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20061123</version>
+            <version>1.6-SNAPSHOT</version>
             <type>zip</type>
             <scope>provided</scope>
         </dependency>
@@ -42,12 +43,12 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>
             <artifactId>intact-plugin</artifactId>
-            <version>1.1.1</version>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.intact.app.search</groupId>
+            <groupId>uk.ac.ebi.intact.service.search.legacy</groupId>
             <artifactId>search-engine</artifactId>
-            <version>1.5.2</version>
+            <version>1.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -81,7 +82,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.2</version>
+            <version>4.3.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

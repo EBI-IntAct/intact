@@ -71,7 +71,7 @@ public class MineDatabaseFill {
     /**
      * SQL statement to select all interactors from a specific interaction
      */
-    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.role, I.objclass, I.shortLabel "
+    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.experimentalrole_ac, I.objclass, I.shortLabel "
                                                     + "FROM ia_component C, ia_interactor I "
                                                     + "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac";
 
@@ -499,7 +499,7 @@ public class MineDatabaseFill {
                 // if the interactor is a bait
                 interactorData = new InteractorData( interactor_ac, resultSet
                         .getString( "shortLabel" ) );
-                if ( bait_id.equalsIgnoreCase( resultSet.getString( "role" ) ) ) {
+                if ( bait_id.equalsIgnoreCase( resultSet.getString( "experimentalrole_ac" ) ) ) {
                     baits.add( interactorData );
                 } else {
                     preys.add( interactorData );
