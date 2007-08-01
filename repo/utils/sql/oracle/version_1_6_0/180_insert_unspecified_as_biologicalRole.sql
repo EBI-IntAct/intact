@@ -111,7 +111,11 @@ begin
         	owner_ac, 
 		'14755292');
 
+	commit;
+
 end;
-commit;
+/
+exit
+
 
 
