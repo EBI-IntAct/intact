@@ -1,9 +1,8 @@
-<map version="0.9.0_Beta_8">
+<map version="0.8.0">
 <!-- To view this file, download free mind mapping software FreeMind from http://freemind.sourceforge.net -->
 <node COLOR="#006633" CREATED="1168876114925" ID="Freemind_Link_1641714205" MODIFIED="1181306958909" STYLE="bubble" TEXT="uk.ac.ebi.intact.">
 <font BOLD="true" NAME="SansSerif" SIZE="12"/>
 <node COLOR="#006633" CREATED="1181226155459" ID="Freemind_Link_1821397944" MODIFIED="1184935721653" POSITION="right" TEXT="bridges">
-<richcontent TYPE="NOTE"><html><head/><body><p align="left"/></body></html></richcontent>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219911055" ID="Freemind_Link_855748950" MODIFIED="1185528116822" TEXT="intact-uniprot">
 <edge COLOR="#808080" WIDTH="thin"/>
@@ -35,11 +34,11 @@
 </node>
 <node COLOR="#006633" CREATED="1181228032674" ID="Freemind_Link_468857254" MODIFIED="1181231529043" POSITION="right" TEXT="site">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219865296" ID="Freemind_Link_1404664183" MODIFIED="1183033165003" TEXT="intact-devsite">
+<node BACKGROUND_COLOR="#fdfa79" CREATED="1181219865296" ID="Freemind_Link_1404664183" MODIFIED="1185963732108" TEXT="intact-devsite">
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219905958" ID="Freemind_Link_893035377" MODIFIED="1183033167002" TEXT="intact-site">
+<node BACKGROUND_COLOR="#fdfa79" CREATED="1181219905958" ID="Freemind_Link_893035377" MODIFIED="1185963729997" TEXT="intact-site">
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
@@ -69,11 +68,17 @@
 <node CREATED="1181220016126" ID="Freemind_Link_339196956" MODIFIED="1181231030330" TEXT="intact-psixml-converters"/>
 <node CREATED="1181220019649" ID="Freemind_Link_1793249273" MODIFIED="1181231030328" TEXT="intact-psixml-exchange"/>
 <node CREATED="1181220025324" ID="Freemind_Link_1813445305" MODIFIED="1181231030325" TEXT="intact-psixml-processor"/>
-<node CREATED="1181220028507" ID="Freemind_Link_313334292" MODIFIED="1181231030323" TEXT="intact-psixml-tools"/>
-<node CREATED="1181220030659" ID="Freemind_Link_1907791552" MODIFIED="1181231030322" TEXT="intact-psixml-upload"/>
-<node CREATED="1181220032989" ID="Freemind_Link_460551093" MODIFIED="1181231030318" TEXT="intact-psixml-upload-extensions"/>
+<node CREATED="1181220028507" ID="Freemind_Link_313334292" MODIFIED="1185889434714" TEXT="intact-psixml-tools">
+<icon BUILTIN="clanbomber"/>
+</node>
+<node CREATED="1181220030659" ID="Freemind_Link_1907791552" MODIFIED="1185889439938" TEXT="intact-psixml-upload">
+<icon BUILTIN="clanbomber"/>
+</node>
+<node CREATED="1181220032989" ID="Freemind_Link_460551093" MODIFIED="1185889443513" TEXT="intact-psixml-upload-extensions">
+<icon BUILTIN="clanbomber"/>
+</node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181219997687" ID="_" MODIFIED="1181231461388" TEXT="psixml-source-generator-maven-plugin&#xa;"/>
-<node CREATED="1181220210838" ID="Freemind_Link_692197070" MODIFIED="1181231030313" TEXT="intact-psi-validator"/>
+<node CREATED="1181220210838" ID="Freemind_Link_692197070" MODIFIED="1185889421767" TEXT="intact-psi-validator"/>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220161503" ID="Freemind_Link_165922696" MODIFIED="1181307055010" TEXT="psixml-generator-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 </node>
@@ -90,6 +95,7 @@
 <node CREATED="1181219895186" ID="Freemind_Link_1573146958" MODIFIED="1185563623296" TEXT="intact-psimitab">
 <edge COLOR="#808080" WIDTH="thin"/>
 </node>
+<node CREATED="1185963959021" ID="Freemind_Link_891291394" MODIFIED="1185963969320" TEXT="intact-interolog-prediction"/>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220156645" ID="Freemind_Link_1235764972" MODIFIED="1185563630590" TEXT="psimitab-indexer-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
@@ -98,6 +104,9 @@
 <edge COLOR="#ffb894" WIDTH="thin"/>
 </node>
 </node>
+</node>
+<node CREATED="1185793253542" ID="Freemind_Link_1906959819" MODIFIED="1185793256230" TEXT="imex">
+<node CREATED="1185793304604" ID="Freemind_Link_63970314" MODIFIED="1185793309097" TEXT="intact-imex-import"/>
 </node>
 <node CREATED="1184857829203" ID="Freemind_Link_1592349400" MODIFIED="1184857834229" TEXT="intact-cvtools"/>
 <node CREATED="1181219859127" ID="Freemind_Link_1670283523" MODIFIED="1181551641353" TEXT="intact-dbutils">
@@ -174,7 +183,6 @@
 </node>
 </node>
 <node COLOR="#006633" CREATED="1181220454901" ID="Freemind_Link_995865092" MODIFIED="1181231596883" POSITION="left" TEXT="commons">
-<richcontent TYPE="NOTE"><html><head/><body><p align="left">Do not depend on intact-core</p></body></html></richcontent>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219851598" ID="Freemind_Link_1644508135" MODIFIED="1181231030216" TEXT="intact-commons">
 <font NAME="SansSerif" SIZE="12"/>
@@ -295,7 +303,7 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1181227542124" ID="Freemind_Link_243865507" MODIFIED="1185572884789" TEXT="imex">
+<node CREATED="1181227542124" ID="Freemind_Link_243865507" MODIFIED="1185793284894" TEXT="imex">
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181219879689" ID="Freemind_Link_204214093" MODIFIED="1181231030059" TEXT="intact-imex-central">
@@ -357,9 +365,6 @@
 </node>
 <node COLOR="#006633" CREATED="1181927312102" ID="Freemind_Link_1682801276" MODIFIED="1181927319712" POSITION="right" TEXT="unit-dataset">
 <edge COLOR="#808080" WIDTH="thin"/>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181306517478" ID="Freemind_Link_1301011876" MODIFIED="1181306592569" TEXT="dbunit-dataset-maven-plugin">
-<edge COLOR="#808080" WIDTH="thin"/>
-</node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1183033128273" ID="Freemind_Link_70182069" MODIFIED="1183033140798" TEXT="dataset-import-maven-plugin">
 <edge COLOR="#808080" WIDTH="thin"/>
 </node>
