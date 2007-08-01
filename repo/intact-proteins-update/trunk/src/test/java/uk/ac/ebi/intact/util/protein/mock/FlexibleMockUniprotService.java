@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.util.protein.mock;
 
-import uk.ac.ebi.intact.uniprot.service.AbstractUniprotService;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.AbstractUniprotService;
 
 import java.util.*;
 
@@ -39,7 +39,7 @@ public class FlexibleMockUniprotService extends AbstractUniprotService {
     ////////////////////////////
     // AbstractUniprotService
 
-    public Collection<UniprotProtein> retreive( String ac ) {
+    public Collection<UniprotProtein> retrieve( String ac ) {
         Collection<UniprotProtein> myProteins = new ArrayList<UniprotProtein>( 2 );
         if(proteins.containsKey(ac)){
             myProteins.addAll( proteins.get( ac ) );
@@ -47,11 +47,21 @@ public class FlexibleMockUniprotService extends AbstractUniprotService {
         return myProteins;
     }
 
-    public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+    @Deprecated
+    public Collection<UniprotProtein> retreive(String s) {
+        return retrieve(s);
+    }
+
+    public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
         Map<String, Collection<UniprotProtein>> results = new HashMap<String, Collection<UniprotProtein>>( acs.size() );
         for ( String ac : acs ) {
-            results.put( ac, retreive( ac ) );
+            results.put( ac, retrieve( ac ) );
         }
         return results;
+    }
+
+    @Deprecated
+    public Map<String, Collection<UniprotProtein>> retreive(Collection<String> strings){
+        return retrieve(strings);
     }
 }

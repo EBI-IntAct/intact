@@ -3,8 +3,8 @@ package uk.ac.ebi.intact.util.protein;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.uniprot.service.AbstractUniprotService;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.AbstractUniprotService;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,12 +50,22 @@ public class ProteinServiceFactoryTest extends TestCase {
 
     // implementation of the service for the sake of the test below.
     protected class DummyUniprotService extends AbstractUniprotService {
-        public Collection<UniprotProtein> retreive( String ac ) {
+        public Collection<UniprotProtein> retrieve( String ac ) {
             throw new UnsupportedOperationException();
         }
 
-        public Map<String, Collection<UniprotProtein>> retreive( Collection<String> acs ) {
+        @Deprecated
+        public Collection<UniprotProtein> retreive(String s) {
+            return retrieve(s);
+        }
+
+        public Map<String, Collection<UniprotProtein>> retrieve( Collection<String> acs ) {
             throw new UnsupportedOperationException();
+        }
+
+        @Deprecated
+        public Map<String, Collection<UniprotProtein>> retreive(Collection<String> strings) {
+            return retrieve(strings);
         }
     }
 
