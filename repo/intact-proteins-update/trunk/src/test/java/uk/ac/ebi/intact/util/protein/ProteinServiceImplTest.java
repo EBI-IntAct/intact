@@ -3,19 +3,21 @@ package uk.ac.ebi.intact.util.protein;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.bridges.taxonomy.DummyTaxonomyService;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
-import uk.ac.ebi.intact.util.protein.mock.*;
+import uk.ac.ebi.intact.util.protein.mock.FlexibleMockUniprotService;
+import uk.ac.ebi.intact.util.protein.mock.MockUniprotProtein;
+import uk.ac.ebi.intact.util.protein.mock.MockUniprotService;
+import uk.ac.ebi.intact.util.protein.mock.UniprotProteinXrefBuilder;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
-import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
 
 import java.util.*;
 
