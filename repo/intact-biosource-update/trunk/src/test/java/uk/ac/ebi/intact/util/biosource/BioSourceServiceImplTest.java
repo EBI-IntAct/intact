@@ -3,9 +3,9 @@ package uk.ac.ebi.intact.util.biosource;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.bridges.taxonomy.DummyTaxonomyService;
+import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyService;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyService;
 
 /**
  * BioSourceServiceImpl Tester.
@@ -50,6 +50,8 @@ public class BioSourceServiceImplTest extends TestCase {
         BioSource bs2 = service.getBiosourceByTaxid( String.valueOf( 9999999 ) );
         assertNotNull( bs2 );
 
-        assertEquals( bs, bs2 );
+        assertEquals( bs.getTaxId(), bs2.getTaxId() );
+        assertEquals( bs.getShortLabel(), bs2.getShortLabel() );
+        assertEquals( bs.getFullName(), bs.getFullName());
     }
 }

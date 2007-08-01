@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.util.biosource;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
 import org.springframework.core.io.ClassPathResource;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyService;
+import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyService;
 
 /**
  * Factory building BioSourceServices.

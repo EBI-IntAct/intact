@@ -7,6 +7,9 @@ package uk.ac.ebi.intact.util.biosource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyService;
+import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyServiceException;
+import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyTerm;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -15,9 +18,6 @@ import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyService;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyServiceException;
-import uk.ac.ebi.intact.util.taxonomy.TaxonomyTerm;
 
 import java.util.Collection;
 import java.util.Iterator;
