@@ -58,11 +58,24 @@ PROMPT
 @170_update_objclass_CvComponentRole.sql
 
 --PROMPT *********************************************************************************/
---PROMPT "Update the objclass from uk.ac.ebi.intact.model.CvComponentRole to either :     "
---PROMPT "     uk.ac.ebi.intact.model.CvExperimentalRole                                  "
---PROMPT "     uk.ac.ebi.intact.model.CvBiologicalRole                                    "
+--PROMPT "Add CvBiologicalRole( 'unspecified role' )    "
 --PROMPT
 --@180_insert_unspecified_as_biologicalRole.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Add CvExperimentalRole( 'unspecified role' )    "
+PROMPT
+@185_insert_unspecified_as_experimentalRole.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Create the component split procedure "
+PROMPT
+@190_split_role.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Run the component split...    "
+PROMPT
+@200_run_split_role.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version"
