@@ -1,9 +1,9 @@
 package uk.ac.ebi.intact.util.biosource;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.util.taxonomy.DummyTaxonomyService;
+import junit.framework.TestSuite;
+import uk.ac.ebi.intact.bridges.taxonomy.DummyTaxonomyService;
 
 /**
  * BioSourceServiceFactory Tester.
