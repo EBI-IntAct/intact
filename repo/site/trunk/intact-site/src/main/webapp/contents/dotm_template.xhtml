@@ -34,7 +34,7 @@
                   <h:outputText value="  "/>
               </h:column>
               <h:column>
-                  <h:outputLink value="http://www.ebi.ac.uk/intact/search/do/search?searchString=#{pubmed.id}" target="_blank">
+                  <h:outputLink value="http://www.ebi.ac.uk/intact/binary-search/faces/search.xhtml?query=pubid%3A#{pubmed.id}" target="_blank">
                       <h:graphicImage alt="IntAct" value="#{appConfigBean.absoluteContextPath}/images/logo_intact.gif" style="border:0" width="40"/>
                   </h:outputLink>
               </h:column>
