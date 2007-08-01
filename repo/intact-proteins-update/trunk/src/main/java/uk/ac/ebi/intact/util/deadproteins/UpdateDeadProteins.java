@@ -7,14 +7,14 @@ package uk.ac.ebi.intact.util.deadproteins;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridge.UniprotBridgeException;
-import uk.ac.ebi.intact.bridge.adapters.UniprotBridgeAdapter;
-import uk.ac.ebi.intact.bridge.adapters.YaspAdapter;
-import uk.ac.ebi.intact.bridge.model.UniprotProtein;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.*;
-import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -74,15 +74,15 @@ public class UpdateDeadProteins {
         return upi;
     }
 
-    private String pickLongestUniprotSequence( Collection<String> liveIds ) throws UniprotBridgeException {
-        UniprotBridgeAdapter uniprot = new YaspAdapter();
+    private String pickLongestUniprotSequence( Collection<String> liveIds ) throws UniprotServiceException {
+        UniprotService uniprot = new UniprotRemoteService();
         int maxLen = 0;
         String selectedId = null;
 
         for ( String liveId : liveIds ) {
 
             // search uniprot
-            Collection<UniprotProtein> uniprotProteins = uniprot.retreive( liveId );
+            Collection<UniprotProtein> uniprotProteins = uniprot.retrieve( liveId );
 
             if ( uniprotProteins.size() > 1 ) {
                 log.warn( "WARNING - Found " + uniprotProteins.size() + " proteins in UniProt matching " + liveId );
@@ -103,9 +103,9 @@ public class UpdateDeadProteins {
         return selectedId;
     }
 
-    private boolean isLiveUniprot( String id, int taxidFilter ) throws UniprotBridgeException {
-        UniprotBridgeAdapter uniprot = new YaspAdapter();
-        Collection<UniprotProtein> uniprotProteins = uniprot.retreive( id );
+    private boolean isLiveUniprot( String id, int taxidFilter ) throws UniprotServiceException {
+        UniprotService uniprot = new UniprotRemoteService();
+        Collection<UniprotProtein> uniprotProteins = uniprot.retrieve( id );
         for ( Iterator<UniprotProtein> iterator = uniprotProteins.iterator(); iterator.hasNext(); ) {
             UniprotProtein protein = iterator.next();
             int t = protein.getOrganism().getTaxid();
@@ -117,7 +117,7 @@ public class UpdateDeadProteins {
         return !uniprotProteins.isEmpty();
     }
 
-    private Collection<String> selectLiveUniProtIds( Collection<String> ids, int taxidFilter ) throws UniprotBridgeException {
+    private Collection<String> selectLiveUniProtIds( Collection<String> ids, int taxidFilter ) throws UniprotServiceException {
         Collection<String> liveIds = new ArrayList<String>();
         for ( String id : ids ) {
             if ( isLiveUniprot( id, taxidFilter ) ) {
@@ -405,7 +405,7 @@ public class UpdateDeadProteins {
         }
     }
 
-    public void remapProteins( Map<String, Collection<RemappingEntry>> remapping ) throws UniprotBridgeException, IntactTransactionException {
+    public void remapProteins( Map<String, Collection<RemappingEntry>> remapping ) throws UniprotServiceException, IntactTransactionException {
 
         printDatabaseConnectionDetails();
         int count = 0;
@@ -432,7 +432,7 @@ public class UpdateDeadProteins {
                 try {
                     IntactContext.getCurrentInstance().getDataContext().commitTransaction();
                 } catch ( IntactTransactionException e ) {
-                    throw new UniprotBridgeException( e );
+                    throw new UniprotServiceException( e );
                 }
                 continue;
             }
@@ -515,7 +515,7 @@ public class UpdateDeadProteins {
             try {
                 IntactContext.getCurrentInstance().getDataContext().commitTransaction();
             } catch ( IntactTransactionException e ) {
-                throw new UniprotBridgeException( e );
+                throw new UniprotServiceException( e );
             }
 
         } // for remapping entry
