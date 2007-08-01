@@ -9,10 +9,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
-import uk.ac.ebi.intact.dbutil.update.UpdateTargetSpecies;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
+import uk.ac.ebi.intact.plugins.targetspecies.UpdateTargetSpecies;
 
 import java.io.*;
 import java.util.Collection;

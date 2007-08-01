@@ -5,20 +5,21 @@
  */
 package uk.ac.ebi.intact.editor;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.artifact.Artifact;
 import uk.ac.ebi.intact.annotation.EditorTopic;
 import uk.ac.ebi.intact.annotation.util.AnnotationUtil;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
-import java.util.Collections;
 
 /**
  * Generates a properties file with the topic names as keys and the classes as values
@@ -103,7 +104,7 @@ public class EditorTopicMojo
                 try
                 {
                     // Looking for the annotation
-                    List<Class> classes = AnnotationUtil.getClassesWithAnnotationFromJar(EditorTopic.class, depJar);
+                    Collection<Class> classes = AnnotationUtil.getClassesWithAnnotationFromJar(EditorTopic.class, depJar);
 
                     for (Class clazz : classes)
                     {

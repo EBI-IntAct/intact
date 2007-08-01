@@ -4,20 +4,29 @@
  * Copyright (c) 2006 The European Bioinformatics Institute, and others.
  * All rights reserved.
  */
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>uk.ac.ebi.intact.maven</groupId>
+        <artifactId>intact-hibernate-master</artifactId>
+        <version>17</version>
+    </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.maven</groupId>
-    <artifactId>intact-maven-plugins</artifactId>
+    <groupId>uk.ac.ebi.intact.plugins</groupId>
+    <artifactId>plugins-miscel</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.6.0-SNAPSHOT</version>
     <name>IntAct Maven Plugins</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Intact maven plugins</description>
 
     <scm>
         <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</developerConnection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
     </scm>
 
@@ -25,7 +34,7 @@
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
     </properties>
 
-    <modules>    
+    <modules>
         <module>dbupdate-maven-plugin</module>
         <module>ebeye-export-maven-plugin</module>
         <module>fasta-maven-plugin</module>
@@ -39,7 +48,103 @@
         <module>psimitab-indexer-maven-plugin</module>
         <module>predict-maven-plugin</module>
         <module>update-component-role-maven-plugin</module>
-  </modules>
+        <module>target-species-update-maven-plugin</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>uk.ac.ebi.intact.templates</groupId>
+                <artifactId>h2db-with-cv</artifactId>
+                <version>1.6-SNAPSHOT</version>
+                <type>zip</type>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+        
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.plugins</groupId>
+            <artifactId>intact-plugin</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-project</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>2.0.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-plugin-testing-harness</artifactId>
+            <version>1.0-beta-1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.3.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>
+        </plugins>
+    </reporting>
+
+    <repositories>
+        <repository>
+            <releases/>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+        </repository>
+        <repository>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots/>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
     <distributionManagement>
         <site>
