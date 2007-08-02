@@ -51,7 +51,8 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
     private boolean initialized;
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-
+        enableLogging();
+        
         initializeHibernate();
 
         // start a transaction
