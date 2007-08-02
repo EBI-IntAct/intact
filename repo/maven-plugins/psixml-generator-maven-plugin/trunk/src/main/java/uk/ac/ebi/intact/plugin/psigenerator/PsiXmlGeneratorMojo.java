@@ -84,6 +84,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
         initialize();
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         try
         {
             getLog().info("Database: "+IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName());
