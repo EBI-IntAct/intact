@@ -6,7 +6,7 @@
 
                 <configuration>
 
-                    <outputFile>C:\2006-10-31\pmidMIF25\pmid\2003.csv</outputFile>
+                    <tabFile>C:\2006-10-31\pmidMIF25\pmid\2003.csv</tabFile>
 
                     <files>
                         <file>C:\2006-10-31\pmidMIF25\pmid\test</file>

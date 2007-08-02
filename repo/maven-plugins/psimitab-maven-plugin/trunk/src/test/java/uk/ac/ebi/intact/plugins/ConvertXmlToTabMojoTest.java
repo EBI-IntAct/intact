@@ -26,10 +26,11 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         File rootDir =
                 new File( getBasedir(), "target" + File.separator + "test-classes" + File.separator + "xml-samples" );
 
-        File outputFile = new File( rootDir.getAbsolutePath() + File.separator + "all.xls" );
+        File tabFile = new File( rootDir.getAbsolutePath() + File.separator + "all.xls" );
+        File logFile = new File( rootDir.getAbsolutePath() + File.separator + "output.log" );
 
         // set output file
-        setVariableValueToObject( mojo, "outputFile", outputFile.getAbsolutePath() );
+        setVariableValueToObject( mojo, "tabFile", tabFile.getAbsolutePath() );
 
         // set input files
         Collection files = new ArrayList();
@@ -45,6 +46,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
             fail();
         }
 
-        assertTrue( outputFile.exists() );
+        assertTrue( tabFile.exists() );
     }
 }

@@ -16,12 +16,17 @@ package uk.ac.ebi.intact.plugins;
  * limitations under the License.
  */
 
-import org.apache.maven.plugin.AbstractMojo;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.*;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.project.MavenProject;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
+import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -33,7 +38,20 @@ import java.util.List;
  * @goal xml2tab
  * @phase process-sources
  */
-public class ConvertXmlToTabMojo extends AbstractMojo {
+public class ConvertXmlToTabMojo extends IntactAbstractMojo {
+
+    /**
+     * Sets up a logger for that class.
+     */
+    public static final Log log = LogFactory.getLog(ConvertXmlToTabMojo.class);
+
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @readonly
+     */
+    protected MavenProject project;
 
     /**
      * Location of the output PSIMITAB file.
@@ -41,7 +59,7 @@ public class ConvertXmlToTabMojo extends AbstractMojo {
      * @parameter
      * @required
      */
-    private String outputFile;
+    private String tabFile;
 
     /**
      * A list of file/directories to convert into a single PSIMITAB file.
@@ -52,6 +70,8 @@ public class ConvertXmlToTabMojo extends AbstractMojo {
     private List files;
 
     public void execute() throws MojoExecutionException {
+
+        enableLogging();
 
         ConvertXml2Tab converter = new ConvertXml2Tab();
 
@@ -68,7 +88,14 @@ public class ConvertXmlToTabMojo extends AbstractMojo {
             }
         }
         converter.setXmlFilesToConvert(inputFiles);
-        converter.setOutputFile( new File( outputFile ) );
+        converter.setOutputFile( new File(tabFile) );
+
+        try {
+            converter.setLogWriter(getOutputWriter());
+        } catch (IOException e) {
+            getLog().error(e);
+            throw new MojoExecutionException("Error getting outputWriter", e);
+        }
 
         // run it
         try {
@@ -76,5 +103,9 @@ public class ConvertXmlToTabMojo extends AbstractMojo {
         } catch (Exception e) {
             throw new MojoExecutionException("Error while converting files to PSIMITAB... see nested exception.", e);
         }
+    }
+
+    public MavenProject getProject() {
+        return project;
     }
 }
