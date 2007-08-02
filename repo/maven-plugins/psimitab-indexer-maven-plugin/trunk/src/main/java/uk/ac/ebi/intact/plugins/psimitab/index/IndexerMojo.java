@@ -19,6 +19,7 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
+import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 
 import java.io.File;
 
@@ -28,7 +29,7 @@ import java.io.File;
  * @goal index
  * @phase process-sources
  */
-public class IndexerMojo extends AbstractMojo {
+public class IndexerMojo extends IntactAbstractMojo {
 
     /**
      * Location of the output PSIMITAB file.
@@ -64,6 +65,8 @@ public class IndexerMojo extends AbstractMojo {
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        enableLogging();
+        
         try {
             PsimitabTools.buildIndex(indexDirectory, psimitabFile, createIndex, containsHeader);
         } catch (Exception e) {
