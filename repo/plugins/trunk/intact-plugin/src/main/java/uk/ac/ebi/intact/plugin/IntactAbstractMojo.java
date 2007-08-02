@@ -65,9 +65,13 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
         Layout layout = getLogLayout();
         FileAppender appender = new FileAppender(layout, logFile.getAbsolutePath(), true);
-        appender.setThreshold(Priority.DEBUG);
+        appender.setThreshold(getLogPriority());
 
         return appender;
+    }
+
+    protected Priority getLogPriority() {
+        return Priority.INFO;
     }
 
     protected void writeOutputln( String line ) throws IOException {
