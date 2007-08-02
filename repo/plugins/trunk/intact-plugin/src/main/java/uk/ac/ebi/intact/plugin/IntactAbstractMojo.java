@@ -7,6 +7,7 @@ package uk.ac.ebi.intact.plugin;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
+import org.apache.log4j.*;
 
 import java.io.*;
 
@@ -45,13 +46,36 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
     private Writer outputWriter;
     private Writer errorWriter;
 
+    protected void enableLogging() {
+        try {
+
+            BasicConfigurator.configure(getLogAppender());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected Layout getLogLayout() {
+        return new SimpleLayout();
+    }
+
+    protected Appender getLogAppender() throws IOException {
+        File logFile = new File( getDirectory(), "log.out" );
+        getLog().info("Setting log4j in output: "+logFile.getAbsolutePath());
+
+        Layout layout = getLogLayout();
+        FileAppender appender = new FileAppender(layout, logFile.getAbsolutePath(), true);
+        appender.setThreshold(Priority.DEBUG);
+
+        return appender;
+    }
+
     protected void writeOutputln( String line ) throws IOException {
         if ( line == null ) {
             return;
         }
 
         getOutputWriter().write( line + NEW_LINE );
-
     }
 
     protected void writeErrorln( String line ) throws IOException {
