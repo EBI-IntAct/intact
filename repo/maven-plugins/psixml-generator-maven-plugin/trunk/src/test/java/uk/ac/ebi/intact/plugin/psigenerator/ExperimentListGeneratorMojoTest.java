@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.plugin.psigenerator;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.junit.Ignore;
 import uk.ac.ebi.intact.application.dataConversion.ExperimentListGenerator;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.File;
  * @version $Id:PsiXmlGeneratorMojoTest.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since <pre>04/08/2006</pre>
  */
+@Ignore
 public class ExperimentListGeneratorMojoTest extends AbstractMojoTestCase
 {
         public void testSimpleGeneration() throws Exception
