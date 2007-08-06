@@ -673,7 +673,7 @@ public class BioSourceServiceImpl implements BioSourceService {
                     shortlabel = taxTerm.getTaxid() + "";
                 }
 
-                bs = createAndPersistBioSource( taxTerm.getCommonName(),
+                bs = createAndPersistBioSource( shortlabel,
                                                 taxTerm.getScientificName(),
                                                 String.valueOf( taxTerm.getTaxid() ) );
             }
