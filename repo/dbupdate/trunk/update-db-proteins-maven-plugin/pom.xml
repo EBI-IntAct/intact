@@ -17,6 +17,16 @@
     <description>Plugin for IntAct</description>
 
 
+    <!--todo : find out why we have to comment this when doing mvn deploy-->
+    <!--<build>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>uk.ac.ebi.intact.plugins</groupId>-->
+                <!--<artifactId>hibernateconfig-maven-plugin</artifactId>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
+
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>
@@ -37,7 +47,7 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-rc2</version>
+            <version>1.6.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
