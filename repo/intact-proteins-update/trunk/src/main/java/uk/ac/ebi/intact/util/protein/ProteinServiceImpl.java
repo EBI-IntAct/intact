@@ -525,17 +525,27 @@ public class ProteinServiceImpl implements ProteinService {
 
         // search intact
         Collection<ProteinImpl> variants = getSpliceVariants( protein );
+        // We create a copy of the collection that hold the spliceVariants as the findMatches remove the splice variants
+        // from the collection when a match is found. Therefore the first time it runs, it finds the match, the splice
+        // variants are correctly created, the uniprotSpliceVariant are deleted from the collection so that the second
+        // you run it, the splice variant are not linked anymore to the uniprotProtein and therefore they are not correctly
+        // updated.
+        Collection<UniprotSpliceVariant> spliceVariantsClone = new ArrayList();
+        for(UniprotSpliceVariant sv : uniprotProtein.getSpliceVariants()){
+            spliceVariantsClone.add(sv);
+        }
 
-        Collection<SpliceVariantMatch> matches = findMatches( variants, uniprotProtein.getSpliceVariants() );
+//        Collection<SpliceVariantMatch> matches = findMatches( variants, uniprotProtein.getSpliceVariants() );
+        Collection<SpliceVariantMatch> matches = findMatches( variants, spliceVariantsClone );
         for ( SpliceVariantMatch match : matches ) {
 
             if ( match.isSuccessful() ) {
-
+                System.out.println("HAS MATCH");
                 // update
                 updateSpliceVariant( match.getIntactProtein(), protein, match.getUniprotSpliceVariant(), uniprotProtein, proteins );
 
             } else if ( match.hasNoIntact() ) {
-
+                System.out.println("HAS NO INTACT MATCH");
                 // create shallow
                 Protein intactSpliceVariant = createMinimalisticSpliceVariant( match.getUniprotSpliceVariant(),
                         protein,
@@ -544,6 +554,10 @@ public class ProteinServiceImpl implements ProteinService {
                 updateSpliceVariant( intactSpliceVariant, protein, match.getUniprotSpliceVariant(), uniprotProtein, proteins );
 
             } else {
+                if(match.hasNoUniprot()){
+                    System.out.println("MATCH HAD NO UNIPROT, PROTEIN PROBABLY DELETED");
+                }
+                System.out.println("ELSE, NOT HAS MATHCH NOT, HAS NO INTACT MATCH");
                 Protein intactSpliceVariant = match.getIntactProtein();
                 InteractorXref intactSpliceVariantUniprotXref = ProteinUtils.getUniprotXref(intactSpliceVariant);
                 if(intactSpliceVariant.getActiveInstances().size() == 0){
@@ -678,7 +692,7 @@ public class ProteinServiceImpl implements ProteinService {
     private void updateSpliceVariant( Protein spliceVariant, Protein master,
                                       UniprotSpliceVariant uniprotSpliceVariant,
                                       UniprotProtein uniprotProtein,
-                                      Collection<Protein> spliceVariants
+                                      Collection<Protein> updatedProteins
     ) throws ProteinServiceException {
 
         String shorltabel = uniprotSpliceVariant.getPrimaryAc();
@@ -726,7 +740,7 @@ public class ProteinServiceImpl implements ProteinService {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         ProteinDao pdao = daoFactory.getProteinDao();
         pdao.update( ( ProteinImpl ) spliceVariant );
-        spliceVariants.add(spliceVariant);
+        updatedProteins.add(spliceVariant);
     }
 
     /**
@@ -782,7 +796,19 @@ public class ProteinServiceImpl implements ProteinService {
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         ProteinDao pdao = daoFactory.getProteinDao();
-
+        CvObjectDao cvObjectDao = daoFactory.getCvObjectDao(CvDatabase.class);
+        CvDatabase intact = (CvDatabase) cvObjectDao.getByShortLabel(CvDatabase.INTACT);
+        if(intact == null){
+            System.out.println("intact was null");
+        }else{
+            System.out.println("intact found by shortlabel");
+        }
+        intact = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
+        if(intact == null){
+            System.out.println("intact was null");
+        }else{
+            System.out.println("intact found by miRef");
+        }
         BioSource biosource = null;
         try {
             biosource = bioSourceService.getBiosourceByTaxid( String.valueOf( uniprotProtein.getOrganism().getTaxid() ) );
