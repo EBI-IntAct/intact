@@ -540,12 +540,10 @@ public class ProteinServiceImpl implements ProteinService {
         for ( SpliceVariantMatch match : matches ) {
 
             if ( match.isSuccessful() ) {
-                System.out.println("HAS MATCH");
                 // update
                 updateSpliceVariant( match.getIntactProtein(), protein, match.getUniprotSpliceVariant(), uniprotProtein, proteins );
 
             } else if ( match.hasNoIntact() ) {
-                System.out.println("HAS NO INTACT MATCH");
                 // create shallow
                 Protein intactSpliceVariant = createMinimalisticSpliceVariant( match.getUniprotSpliceVariant(),
                         protein,
@@ -554,10 +552,6 @@ public class ProteinServiceImpl implements ProteinService {
                 updateSpliceVariant( intactSpliceVariant, protein, match.getUniprotSpliceVariant(), uniprotProtein, proteins );
 
             } else {
-                if(match.hasNoUniprot()){
-                    System.out.println("MATCH HAD NO UNIPROT, PROTEIN PROBABLY DELETED");
-                }
-                System.out.println("ELSE, NOT HAS MATHCH NOT, HAS NO INTACT MATCH");
                 Protein intactSpliceVariant = match.getIntactProtein();
                 InteractorXref intactSpliceVariantUniprotXref = ProteinUtils.getUniprotXref(intactSpliceVariant);
                 if(intactSpliceVariant.getActiveInstances().size() == 0){
