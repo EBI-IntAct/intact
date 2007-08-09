@@ -20,6 +20,7 @@ import java.util.*;
  * @version 1.0
  * @since <pre>09/18/2006</pre>
  */
+@org.junit.Ignore
 public class YaspServiceTest extends TestCase {
 
     /**
