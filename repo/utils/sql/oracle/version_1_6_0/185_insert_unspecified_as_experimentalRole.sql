@@ -116,7 +116,4 @@ begin
 end;
 /
 
-exit
-
-
 
