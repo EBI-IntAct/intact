@@ -64,7 +64,7 @@ public class NewtTaxonomyServiceTest extends TestCase {
 
         // Term with all children
         newt.retrieveChildren( term, true );
-        assertEquals( 83, TaxonomyTermUtils.collectAllChildren( term ).size() );
+        assertEquals( 84, TaxonomyTermUtils.collectAllChildren( term ).size() );
     }
 
     public void testRetrieveParents() throws TaxonomyServiceException {
