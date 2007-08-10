@@ -70,7 +70,7 @@ PROMPT
 PROMPT *********************************************************************************/
 PROMPT "Create the component split procedure "
 PROMPT
-@190_split_role.sql
+@190_create_split_role_procedure.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Run the component split...    "
