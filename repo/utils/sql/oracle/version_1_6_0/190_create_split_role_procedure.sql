@@ -21,9 +21,9 @@ FOR UPDATE;
 
 v_comp_rec ia_component%ROWTYPE;
 
-v_exp_role       ia_component.experimentalrole_ac%TYPE;
-v_neutral_ac     ia_component.experimentalrole_ac%TYPE;
-v_unspecified_ac ia_component.biologicalrole_ac%TYPE;
+v_exp_role           ia_component.experimentalrole_ac%TYPE;
+v_exp_unspecified_ac ia_component.experimentalrole_ac%TYPE;
+v_bio_unspecified_ac ia_component.biologicalrole_ac%TYPE;
 
 -- count of rows
 v_count INTEGER;
@@ -32,7 +32,7 @@ BEGIN
 
   DBMS_OUTPUT.ENABLE(1000000);
 
-  -- load Experimental role AC for neutral
+  -- Check that we do not have any CvComponentRole anymore
   select count(1) into v_count
   from ia_controlledvocab
   where objclass like '%CvComponentRole%';
@@ -41,23 +41,23 @@ BEGIN
     RAISE_APPLICATION_ERROR( -21000, 'Found Could not find ExperimentalRole( neutral component )' );
   end if;
 
-  -- load Experimental role AC for neutral
-  select ac into v_neutral_ac
+  -- load Experimental role AC for 'unspecified'
+  select ac into v_exp_unspecified_ac
   from ia_controlledvocab
-  where     shortlabel = 'neutral component'
+  where     shortlabel = 'unspecified role'
         and objclass like '%ExperimentalRole%';
 
-  if( v_neutral_ac is null ) then
+  if( v_exp_unspecified_ac is null ) then
     RAISE_APPLICATION_ERROR( -21000, 'Could not find ExperimentalRole( neutral component )' );
   end if;
 
   -- load Biological role AC for unspecified
-  select ac into v_unspecified_ac
+  select ac into v_bio_unspecified_ac
   from ia_controlledvocab
   where     shortlabel = 'unspecified role'
         and objclass like '%BiologicalRole%';
 
-  if( v_unspecified_ac is null ) then
+  if( v_bio_unspecified_ac is null ) then
     RAISE_APPLICATION_ERROR( -21000, 'Could not find BiologicalRole( unspecified role )' );
   end if;
 
@@ -83,14 +83,14 @@ BEGIN
         
         v_exp_role := v_comp_rec.experimentalRole_ac;
         update ia_component
-        set experimentalRole_ac = v_neutral_ac,
+        set experimentalRole_ac = v_exp_unspecified_ac,
             biologicalrole_ac = v_exp_role
         where current of component_cur;
       
       else
       
         update ia_component
-        set biologicalrole_ac = v_unspecified_ac
+        set biologicalrole_ac = v_bio_unspecified_ac
         where current of component_cur;
       
       end if;
