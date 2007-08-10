@@ -78,10 +78,10 @@ PROMPT "Create the component split procedure "
 PROMPT
 @190_create_split_role_procedure.sql
 
--- PROMPT *********************************************************************************/
--- PROMPT "Run the component split...    "
--- PROMPT
--- @200_run_split_role.sql
+PROMPT *********************************************************************************/
+PROMPT "Run the component split...    "
+PROMPT
+@200_run_split_role.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version"
