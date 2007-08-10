@@ -78,7 +78,7 @@ BEGIN
         -- (!) potential problem if data in biologicalrole_ac: we lose'em
         
         if( v_comp_rec.biologicalrole_ac is not null ) then
-          dbms_output.put_line( 'Non null biological role ('|| v_comp_rec.biologicalrole_ac ||')will be lost on component: '|| v_comp_rec.ac );
+	  RAISE_APPLICATION_ERROR( -21000, 'Non null biological role will be lost on component: '|| v_comp_rec.ac  );
         end if;
         
         v_exp_role := v_comp_rec.experimentalRole_ac;
