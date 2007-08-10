@@ -11,7 +11,7 @@
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>intact-master-webapp</artifactId>
     <packaging>pom</packaging>
-    <version>3</version>
+    <version>4-SNAPSHOT</version>
 
     <name>Master Webapp POM</name>
     <description>This is the master webapp POM that is meant to be used by the various Intact Web applications. It
@@ -20,9 +20,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-webapp-3</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-master-webapp-3</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-master-webapp-3</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk/master-webapp-pom</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/master-webapp-pom/</url>
     </scm>
 
     <profiles>
