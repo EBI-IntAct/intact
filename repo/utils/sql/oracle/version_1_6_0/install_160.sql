@@ -57,10 +57,11 @@ PROMPT "     uk.ac.ebi.intact.model.CvBiologicalRole                            
 PROMPT
 @170_update_objclass_CvComponentRole.sql
 
---PROMPT *********************************************************************************/
---PROMPT "Add CvBiologicalRole( 'unspecified role' )    "
---PROMPT
---@180_insert_unspecified_as_biologicalRole.sql
+-- This is not necessary anymore !!
+-- PROMPT *********************************************************************************/
+-- PROMPT "Add CvBiologicalRole( 'unspecified role' )    "
+-- PROMPT
+-- @180_insert_unspecified_as_biologicalRole.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Add CvExperimentalRole( 'unspecified role' )    "
@@ -68,14 +69,19 @@ PROMPT
 @185_insert_unspecified_as_experimentalRole.sql
 
 PROMPT *********************************************************************************/
+PROMPT "Add CvExperimentalRole( 'self' )    "
+PROMPT
+@187_insert_self_as_experimentalRole.sql
+
+PROMPT *********************************************************************************/
 PROMPT "Create the component split procedure "
 PROMPT
 @190_create_split_role_procedure.sql
 
-PROMPT *********************************************************************************/
-PROMPT "Run the component split...    "
-PROMPT
-@200_run_split_role.sql
+-- PROMPT *********************************************************************************/
+-- PROMPT "Run the component split...    "
+-- PROMPT
+-- @200_run_split_role.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version"
