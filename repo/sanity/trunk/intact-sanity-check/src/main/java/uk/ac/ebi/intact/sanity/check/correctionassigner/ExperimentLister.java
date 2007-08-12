@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.sanity.check.SanityCheckerHelper;
+import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
 import uk.ac.ebi.intact.sanity.check.model.*;
 
 import java.sql.SQLException;

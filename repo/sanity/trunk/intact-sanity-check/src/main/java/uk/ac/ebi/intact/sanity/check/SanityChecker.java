@@ -19,12 +19,12 @@ import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
+import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
 import uk.ac.ebi.intact.sanity.check.util.AnnotationSection;
 import uk.ac.ebi.intact.util.Crc64;
 
 import javax.mail.MessagingException;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -127,13 +127,13 @@ public class SanityChecker {
     private Map<String, String> cvTopics;
 
 
-    public SanityChecker(Properties properties) throws IntactException, SQLException {
+    public SanityChecker(SanityCheckConfig sanityConfig) throws IntactException, SQLException {
         AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
         Dialect dialect = Dialect.getDialect(dataConfig.getConfiguration().getProperties());
 
-        messageSender = new MessageSender(properties);
+        messageSender = new MessageSender(sanityConfig);
 
-        editorUrlBuilder = new EditorUrlBuilder(properties);
+        editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
 
         featureSch = new SanityCheckerHelper();
         featureSch.addMapping( FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
@@ -1730,9 +1730,9 @@ public class SanityChecker {
      * @throws SQLException
      * @throws IntactException
      */
-    public static SimpleAdminReport executeSanityCheck( Properties properties ) throws SQLException, IntactException {
+    public static SimpleAdminReport executeSanityCheck( SanityCheckConfig sanityConfig ) throws SQLException, IntactException {
 
-        SanityChecker sanityChecker = new SanityChecker( properties );
+        SanityChecker sanityChecker = new SanityChecker( sanityConfig );
 
         final BaseDao baseDao = IntactContext.getCurrentInstance().getDataContext()
                 .getDaoFactory().getBaseDao();
@@ -1911,14 +1911,4 @@ public class SanityChecker {
         return sanityChecker.getMessageSender().getSimpleAdminReport();
     }
 
-    public static void main(String[] args) throws Exception
-    {
-        if (args.length == 0) {
-            System.out.println("Needs one parameter, the sanityChecker.properties location");
-        }
-
-        Properties props = new Properties();
-        props.load(new FileInputStream(args[0]));
-        executeSanityCheck(props);
-    }
 }

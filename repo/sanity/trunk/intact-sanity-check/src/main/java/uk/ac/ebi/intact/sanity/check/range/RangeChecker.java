@@ -12,19 +12,21 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.sanity.check.MessageSender;
 import uk.ac.ebi.intact.sanity.check.ReportTopic;
 import uk.ac.ebi.intact.sanity.check.SanityCheckerHelper;
+import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.RangeBean;
-import uk.ac.ebi.intact.util.Chrono;
 
 import javax.mail.MessagingException;
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * This class has been done to automatically remapped the range sequence.
@@ -156,54 +158,14 @@ public class RangeChecker
      */
     private SanityCheckerHelper sch = null;
 
-    public RangeChecker( Properties props )
+    public RangeChecker( SanityCheckConfig sanityConfig )
     {
-        messageSender = new MessageSender(props);
+        this.messageSender = new MessageSender(sanityConfig);
     }
 
-    public static void main( String[] args ) throws Exception {
-
-        if (args.length == 0) {
-            System.out.println("Needs one parameter, the sanityChecker.properties location");
-        }
-
-        Properties props = new Properties();
-        props.load(new FileInputStream(args[0]));
-
-        Chrono chrono = new Chrono();
-        chrono.start();
-
-        RangeChecker rangeChecker = new RangeChecker(props);
-        try {
-
-            System.out.print( "Loading proteins ... " );
-            System.out.flush();
-            Collection proteinACs = loadProteinAcs();
-            System.out.println( proteinACs.size() + " found." );
-
-            rangeChecker.check( proteinACs );
-
-        } catch ( SQLException e ) {
-
-            do {
-                System.out.println( "ERROR CODE: " + e.getErrorCode() );
-                System.out.println( "MESSAGE:    " + e.getMessage() );
-                System.out.println( "SQL STATE:  " + e.getSQLState() );
-
-                e.printStackTrace();
-
-                e = e.getNextException();
-                if ( e != null ) {
-                    System.out.println( "============================== NEXT EXCEPTION =============================" );
-                }
-
-            } while ( e != null );
-
-        } finally {
-
-            chrono.stop();
-            System.out.println( "Time elapsed: " + chrono );
-        }
+    public RangeChecker( MessageSender messageSender )
+    {
+        this.messageSender = messageSender;
     }
 
     /**
@@ -211,8 +173,8 @@ public class RangeChecker
      *
      * @return a non null list of interactor.
      */
-    public static List loadProteinAcs( ) throws IntactException, SQLException {
-        List acs = new ArrayList();
+    public static List<String> loadProteinAcs( ) throws IntactException, SQLException {
+        List<String> acs = new ArrayList<String>();
 
         Connection connection = getJdbcConnection();
         Statement statement = null;
@@ -245,28 +207,30 @@ public class RangeChecker
     /**
      * @param proteins
      */
-    public void check( Collection proteins ) throws IntactException, SQLException {
+    public void check( Collection<String> proteins ) throws IntactException, SQLException {
 
         if ( proteins == null ) {
             throw new IllegalArgumentException( "The parameter 'protein' should not be null" );
         }
 
         int count = 0;
-        for ( Iterator iterator = proteins.iterator(); iterator.hasNext(); ) {
-            String ac = (String) iterator.next();
-            Polymer polymer = getDaoFactory().getPolymerDao().getByAc( ac );
+        for (String ac : proteins)
+        {
+            Polymer polymer = getDaoFactory().getPolymerDao().getByAc(ac);
 
-            checkRange( polymer );
+            checkRange(polymer);
 
             count++;
 
-            if ( ( count % 10 ) == 0 ) {
+            if ((count % 10) == 0)
+            {
 
-                System.out.print( "." );
+                System.out.print(".");
                 System.out.flush();
 
-                if ( ( count % 500 ) == 0 ) {
-                    System.out.println( "\t" + count );
+                if ((count % 500) == 0)
+                {
+                    System.out.println("\t" + count);
                 }
             }
         }
