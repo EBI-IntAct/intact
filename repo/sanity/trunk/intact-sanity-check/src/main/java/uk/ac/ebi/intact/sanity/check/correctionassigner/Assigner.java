@@ -41,7 +41,7 @@ public class Assigner {
      */
     ExperimentLister lister;
 
-    SuperCuratorsGetter superCuratorsGetter;
+    private SuperCuratorsHelper superCuratorsHelper;
 
     //HashMap pubmedNewlyAssigned = new HashMap();
 
@@ -50,8 +50,18 @@ public class Assigner {
 
     public Assigner( Properties props, boolean debug ) throws Exception {
         this.messageSender = new MessageSender(props);
-        lister = new ExperimentLister( debug );
-        superCuratorsGetter = new SuperCuratorsGetter();
+        superCuratorsHelper = new SuperCuratorsHelper(props);
+        lister = new ExperimentLister( superCuratorsHelper.getSuperCurators(), debug );
+    }
+
+    public Assigner( Collection<SuperCurator> superCurators, MessageSender messageSender, boolean debug ) throws Exception {
+        if (superCurators == null) {
+            throw new NullPointerException("superCurators");
+        }
+        
+        this.messageSender = messageSender;
+        lister = new ExperimentLister( superCurators, debug );
+        superCuratorsHelper = new SuperCuratorsHelper(superCurators);
     }
 
     /**
@@ -68,7 +78,7 @@ public class Assigner {
         for ( Iterator iterator = assignedExperiments.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = (ComparableExperimentBean) iterator.next();
             // We get the super curator having the name contained in the reviewer property.
-            SuperCurator superCurator = superCuratorsGetter.getSuperCurator( exp.getReviewer().toLowerCase() );
+            SuperCurator superCurator = superCuratorsHelper.getSuperCurator( exp.getReviewer().toLowerCase() );
             if ( superCurator != null ) {
                 superCurator.addExperiment( exp );
             } else {
@@ -128,7 +138,7 @@ public class Assigner {
                 //Get the name of the SuperCurator from the know-reviewer associated to this pubmed.
                 String knownReviewer = (String) pubmedPreviouslyAssigned.get( exp.getPubmedId() );
                 //Get the superCurator object corresponding.
-                SuperCurator superCurator = superCuratorsGetter.getSuperCurator( knownReviewer.toLowerCase() );
+                SuperCurator superCurator = superCuratorsHelper.getSuperCurator( knownReviewer.toLowerCase() );
                 //Add the experiment to its list of experiments to correct.
                 superCurator.addExperiment( exp );
                 //Add a reviewer annotation to the newly assigned experiment.
@@ -151,7 +161,7 @@ public class Assigner {
      * @throws IntactException
      */
     public void assignExperiments( HashMap notAssignedPmid2creator, HashMap pubmedToExp, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
+        Collection superCurators = superCuratorsHelper.getSuperCurators();
 
         // For each superCurator :
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
@@ -209,7 +219,7 @@ public class Assigner {
      * @throws IntactException
      */
     public void assignRemainingExperiments( HashMap notAssignedPmid2creator, HashMap pmid2ExpColl, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
+        Collection superCurators = superCuratorsHelper.getSuperCurators();
         //If there are still some pubmed not assigned...
         if ( notAssignedPmid2creator.size() != 0 ) {
             //then iterate on those pubmed
@@ -264,10 +274,11 @@ public class Assigner {
         Annotation reviewerAnnotation = createAnnotation( reviewerName );
         //Add the annotation to the experiment.
         experiment.addAnnotation( reviewerAnnotation );
-        // If experiment is persistent update it, if not thow an Exception.
-        getDaoFactory().getAnnotationDao().saveOrUpdate( reviewerAnnotation );
+
+        getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
         getDaoFactory().getExperimentDao().saveOrUpdate( experiment );
 
+        IntactContext.getCurrentInstance().getDataContext().flushSession();
     }
 
     /**
@@ -300,8 +311,6 @@ public class Assigner {
         // corresponding to the method for explanation.
         filterOutAlreadyAssignedPubmed( notAssignedExperiments );
 
-
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
         HashMap notAssignedPmid2creator = new HashMap( lister.getNotAssignedPmid2creator() );
         HashMap pmid2ExpColl = lister.getPmid2expColl();
 
@@ -318,7 +327,7 @@ public class Assigner {
      * email which is going to be sent to the concerned super-curator.
      */
     public void addMessage( ) throws SQLException, IntactException {
-        Collection superCurators = superCuratorsGetter.getSuperCurators();
+        Collection superCurators = superCuratorsHelper.getSuperCurators();
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = (SuperCurator) iterator.next();
             Collection exps = sc.getExperiments();
@@ -383,5 +392,13 @@ public class Assigner {
                 // scould not send emails, then how error ...
                 //e.printStackTrace();
             }
+    }
+
+    public Collection<SuperCurator> getSuperCurators() {
+        return superCuratorsHelper.getSuperCurators();
+    }
+
+    public SuperCurator getSuperCurator(String name) {
+        return superCuratorsHelper.getSuperCurator(name);
     }
 }

@@ -5,11 +5,8 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.sanity.check.correctionassigner;
 
-import uk.ac.ebi.intact.util.PropertyLoader;
-
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Properties;
 
 /**
@@ -18,39 +15,59 @@ import java.util.Properties;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id: SuperCuratorsGetter.java,v 1.1 2006/04/05 16:02:54 catherineleroy Exp $
  */
-public class SuperCuratorsGetter {
-
-    private HashMap scName2scObject = new HashMap();
-
-    private static final String CORRECTION_ASSIGNER_CONFIG_FILE = "/config/correctionAssigner.properties";
+public class SuperCuratorsHelper
+{
 
     private static final String NUMBER_CURATOR_PROPERTY = "super.curator.number";
     private static final String NAME_PROPERTIE_DESCRIPTION = "super.curator.name";
     private static final String PERCENTAGE_PROPERTIE_DESCRIPTION = "super.curator.percentage";
 
-    private Collection superCurators = new ArrayList();
+    private Collection superCurators;
 
-    public SuperCuratorsGetter() throws Exception {
-        loadConfigFile();
+    public SuperCuratorsHelper(Properties properties) throws Exception {
+        this.superCurators = parseCuratorsFromProperties(properties);
+
+        checkCurators();
     }
 
-    public Collection getSuperCurators() {
+    public SuperCuratorsHelper(Collection<SuperCurator> superCurators) throws Exception {
+        this.superCurators = superCurators;
+
+        checkCurators();
+    }
+
+    public Collection<SuperCurator> getSuperCurators() {
         return superCurators;
     }
 
     public SuperCurator getSuperCurator(String name){
-        return (SuperCurator)scName2scObject.get(name.toLowerCase());
+        for (SuperCurator curator : getSuperCurators()) {
+            if (curator.getName().equalsIgnoreCase(name)) {
+                return curator;
+            }
+        }
+
+        throw new AssignerConfigurationException("Curator not found with name: "+name);
     }
 
-    public void  loadConfigFile() throws Exception {
-        Properties props = PropertyLoader.load( CORRECTION_ASSIGNER_CONFIG_FILE );
+    public void checkCurators() {
+        int percentageTotal = 0;
 
+        for (SuperCurator curator : getSuperCurators()) {
+           percentageTotal += curator.getPercentage();
+        }
+
+        if (percentageTotal != 100) {
+            throw new AssignerConfigurationException("Total percentage is different to 100%: "+percentageTotal+" ("+superCurators+")");
+        }
+    }
+
+    public Collection<SuperCurator> parseCuratorsFromProperties(Properties props) throws Exception {
         /*
         Thow an exception if props is null.
         */
         if(props != null){
 
-            int percentageTotal = 0;
             if(props != null){
 
 
@@ -62,7 +79,7 @@ public class SuperCuratorsGetter {
                 if( number != null){
                     superCuratorsNumber = Integer.parseInt(number);
                 }else{
-                    throw new Exception("The number of curators hadn't been set properly in " + CORRECTION_ASSIGNER_CONFIG_FILE );
+                    throw new Exception("The number of curators hadn't been set properly in the properties" );
                 }
 
                 /*
@@ -91,7 +108,6 @@ public class SuperCuratorsGetter {
                     int percentage;
                     try{
                         percentage = Integer.parseInt(props.getProperty(PERCENTAGE_PROPERTIE_DESCRIPTION + i));
-                        percentageTotal = percentageTotal + percentage;
                     } catch (NumberFormatException nfe){
                         throw new Exception("Name property is not properly assign for super curator " + i);
                     }
@@ -106,23 +122,15 @@ public class SuperCuratorsGetter {
                     */
                     superCurators.add(superCurator);
 
-                    /*
-                    Map the name of the curator to the SuperCurator object as it will help to retrieve the SuperCurator
-                    object just having the name of the super curator.
-                    */
-                    scName2scObject.put(superCurator.getName(), superCurator);
+
                 }
 
-                /*
-                The sum of all the percentage must be equal to 100%.
-                */
-                if( percentageTotal != 100 ){
-                    throw new Exception( "The sum of each super curator ration should be equal to 100 and is equal to " + percentageTotal );
-                }
             }
-            else throw new Exception ( "Unable to open the properties file: " + CORRECTION_ASSIGNER_CONFIG_FILE);
+            else throw new Exception ( "Unable to open the properties");
 
         }
+
+        return superCurators;
     }
 
 }

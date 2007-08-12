@@ -5,7 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.sanity.check.correctionassigner;
 
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -66,14 +69,18 @@ public class ExperimentLister {
 //    }
     private static boolean DEBUG = false;
 
+    private Collection<SuperCurator> superCurators;
+
     /**
      * Constructor of ExperimentLister.
      *
      * @throws SQLException
      * @throws IntactException
      */
-    public ExperimentLister( boolean debug ) throws Exception, IntactException {
+    public ExperimentLister( Collection<SuperCurator> superCurators, boolean debug ) throws Exception, IntactException {
         this.DEBUG = debug;
+        this.superCurators = superCurators;
+
         initialize( );
     }
 
@@ -193,7 +200,7 @@ public class ExperimentLister {
                                                                 "e2a.annotation_ac=a.ac and " +
                                                                 "a.topic_ac in  ('" + holder.reviewer.getAc() + "') " +
                                                                 ") " +
-                                                                "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
+                                                                "and e.created >  "+ getToDateSqlFirstSep2005()+" and e.ac like ? " +
                                                                 "order by created_user" );
         if (DEBUG){
             System.out.println("... Here is the request done\n\n");
@@ -215,7 +222,7 @@ public class ExperimentLister {
                     "e2a.annotation_ac=a.ac and \n" +
                     "a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
                     ") \n" +
-                    "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? \n" +
+                    "and e.created >  "+ getToDateSqlFirstSep2005()+" and e.ac like ? \n" +
                     "order by created_user\n\n");
         }
         notAssignedExperiments = sch.getBeans( ComparableExperimentBean.class, "%" );
@@ -255,7 +262,7 @@ public class ExperimentLister {
                                                                     "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') " +
                                                                     ") and " +
                                                                 "a.topic_ac in  ('" + holder.reviewer.getAc() + "') " +
-                                                                "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? " +
+                                                                "and e.created >  "+ getToDateSqlFirstSep2005()+" and e.ac like ? " +
                                                                 "order by created_user" );
 
         assignedExperiments = sch.getBeans( ComparableExperimentBean.class, "%" );
@@ -278,7 +285,7 @@ public class ExperimentLister {
                     "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "')\n " +
                     ") and " +
                     "a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
-                    "and e.created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and e.ac like ? \n" +
+                    "and e.created >  "+ getToDateSqlFirstSep2005()+" and e.ac like ? \n" +
                     "order by created_user\n\n");
         }
     }
@@ -298,8 +305,6 @@ public class ExperimentLister {
         if(DEBUG){
             System.out.println("Removing assignment to curators being away");
         }
-        SuperCuratorsGetter superCurotorsGetter = new SuperCuratorsGetter();
-        Collection superCurators = superCurotorsGetter.getSuperCurators();
 
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = (SuperCurator) iterator.next();
@@ -419,7 +424,7 @@ public class ExperimentLister {
                                                       "where e.ac=e2a.experiment_ac and " +
                                                       "e2a.annotation_ac=a.ac and " +
                                                       "a.topic_ac in ('" + cvHolder.accepted.getAc() + "','" + cvHolder.toBeReviewed.getAc() + "')) " +
-                                                      "and created >  to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') and ac like ? " );
+                                                      "and created >  "+ getToDateSqlFirstSep2005()+" and ac like ? " );
         notAcceptedNotToBeReviewed = sch.getBeans( ExperimentBean.class, "%" );
 
     }
@@ -557,6 +562,19 @@ public class ExperimentLister {
             return cvBean;
         }
 
+    }
+
+    private static String getToDateSqlFirstSep2005() {
+        AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        Dialect dialect = Dialect.getDialect(dataConfig.getConfiguration().getProperties());
+
+        String dateSql = "TIMESTAMP '2005-09-01 00:00:00'"; //H2
+
+        if (dialect instanceof OracleDialect) {
+            dateSql = "to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS')";
+        }
+
+        return dateSql;
     }
 
     private static DaoFactory getDaoFactory( ) {
