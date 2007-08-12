@@ -1,12 +1,10 @@
 package uk.ac.ebi.intact.sanity.check;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.standard.CvObjectPersister;
 import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
-import uk.ac.ebi.intact.core.unit.IntactAbstractTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
 import uk.ac.ebi.intact.model.CvExperimentalRole;
@@ -16,7 +14,6 @@ import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * TODO comment this
@@ -24,15 +21,9 @@ import java.util.Properties;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SanityCheckerTest extends IntactAbstractTestCase
+public class SanityCheckerTest extends AbstractSanityCheckTest
 {
-    private Properties sanityCheckTestProps;
 
-    @Before
-    public void prepare() throws Exception {
-        sanityCheckTestProps = new Properties();
-        sanityCheckTestProps.load(SanityCheckerTest.class.getResourceAsStream("/sanityCheck.test.properties"));
-    }
 
     @Test
     @IntactUnitDataset ( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
@@ -56,7 +47,7 @@ public class SanityCheckerTest extends IntactAbstractTestCase
 
         beginTransaction();
 
-        SimpleAdminReport report = SanityChecker.executeSanityCheck(sanityCheckTestProps);
+        SimpleAdminReport report = SanityChecker.executeSanityCheck(super.getSanityCheckConfig());
 
         //printReport(report);
         Assert.assertEquals(1, report.getTopicsWithMessages().size());

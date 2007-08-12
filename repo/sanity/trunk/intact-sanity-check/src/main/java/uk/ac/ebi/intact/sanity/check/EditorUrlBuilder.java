@@ -6,9 +6,8 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.sanity.check;
 
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
-
-import java.util.Properties;
 
 
 /**
@@ -22,12 +21,12 @@ public class EditorUrlBuilder {
 
     private static final String editorUrl = editorBasicUrl + "/editor/do/secure/edit?";
 
-    public EditorUrlBuilder(Properties props)
+    public EditorUrlBuilder(SanityCheckConfig sanityConfig)
     {
-        editorBasicUrl = props.getProperty ("editor_basic_url");
+        editorBasicUrl = sanityConfig.getEditorUrl();
 
         if (editorBasicUrl == null) {
-            System.err.println ("Property 'editor_basic_url' not found");
+            System.err.println ("Property SanityCheckConfig.editorUrl not configured");
         }
     }
 
