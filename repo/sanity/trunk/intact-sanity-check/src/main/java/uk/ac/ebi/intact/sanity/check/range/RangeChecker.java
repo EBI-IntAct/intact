@@ -17,16 +17,14 @@ import uk.ac.ebi.intact.util.Chrono;
 
 import javax.mail.MessagingException;
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class has been done to automatically remapped the range sequence.
@@ -151,19 +149,31 @@ public class RangeChecker
 
     Institution owner = new Institution( "EBI" );
 
-    MessageSender messageSender = new MessageSender();
+    MessageSender messageSender;
 
     /**
      * Unique instance of SanityCheckerHelper.
      */
     private SanityCheckerHelper sch = null;
 
-    public static void main( String[] args ) throws IntactException {
+    public RangeChecker( Properties props )
+    {
+        messageSender = new MessageSender(props);
+    }
+
+    public static void main( String[] args ) throws Exception {
+
+        if (args.length == 0) {
+            System.out.println("Needs one parameter, the sanityChecker.properties location");
+        }
+
+        Properties props = new Properties();
+        props.load(new FileInputStream(args[0]));
 
         Chrono chrono = new Chrono();
         chrono.start();
 
-        RangeChecker rangeChecker = new RangeChecker();
+        RangeChecker rangeChecker = new RangeChecker(props);
         try {
 
             System.out.print( "Loading proteins ... " );

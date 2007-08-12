@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.sanity.check;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.model.*;
-import uk.ac.ebi.intact.util.PropertyLoader;
 
 import java.util.Properties;
 
@@ -19,21 +18,22 @@ import java.util.Properties;
  * @version $Id: EditorUrlBuilder.java,v 1.5 2006/05/18 08:34:28 catherineleroy Exp $
  */
 public class EditorUrlBuilder {
-        public static final String SANITYCHECK_CONFIG_FILE = "/config/sanityCheck.properties";
-        private static String EDITOR_BASIC_URL = null;
-        static {
-        Properties props = PropertyLoader.load( SANITYCHECK_CONFIG_FILE );
-        if (props != null) {
-            EDITOR_BASIC_URL = props.getProperty ("editor_basic_url");
-        } else {
-            System.err.println ("Unable to open the properties file: " + SANITYCHECK_CONFIG_FILE);
+    private static String editorBasicUrl = null;
+
+    private static final String editorUrl = editorBasicUrl + "/editor/do/secure/edit?";
+
+    public EditorUrlBuilder(Properties props)
+    {
+        editorBasicUrl = props.getProperty ("editor_basic_url");
+
+        if (editorBasicUrl == null) {
+            System.err.println ("Property 'editor_basic_url' not found");
         }
     }
-    private static final String editorUrl = EDITOR_BASIC_URL + "/editor/do/secure/edit?";
 
     public String getEditorUrl(IntactBean intactBean){
 
-        String url = new String();
+        String url = "";
 
         if(intactBean instanceof ExperimentBean){
             url = editorUrl+"ac="+intactBean.getAc()+"&type=Experiment";

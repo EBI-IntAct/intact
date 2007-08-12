@@ -176,7 +176,7 @@ public class ExperimentLister {
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
         sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId " +
-                                                                "from ia_experiment e, ia_xref x " +
+                                                                "from ia_experiment e, ia_experiment_xref x " +
                                                                 "where x.parent_ac = e.ac and " +
                                                                 "x.database_ac = '" + holder.pubmed.getAc() + "' and " +
                                                                 "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and " +
@@ -198,7 +198,7 @@ public class ExperimentLister {
         if (DEBUG){
             System.out.println("... Here is the request done\n\n");
             System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
-                    "from ia_experiment e, ia_xref x \n" +
+                    "from ia_experiment e, ia_experiment_xref x \n" +
                     "where x.parent_ac = e.ac and \n" +
                     "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
                     "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and \n" +
@@ -240,7 +240,7 @@ public class ExperimentLister {
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
         sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer " +
-                                                                "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_xref x " +
+                                                                "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_experiment_xref x " +
                                                                 "where e.ac=e2a.experiment_ac and " +
                                                                 "x.parent_ac = e.ac and " +
                                                                 "x.parent_ac = e.ac and " +
@@ -263,7 +263,7 @@ public class ExperimentLister {
             System.out.println("..." + assignedExperiments.size() + " experiments found.");
             System.out.println("... Here was the request done : \n\n");
             System.out.println("select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId, a.description as reviewer \n" +
-                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_xref x \n" +
+                    "from ia_experiment e, ia_exp2annot e2a, ia_annotation a, ia_experiment_xref x \n" +
                     "where e.ac=e2a.experiment_ac and \n" +
                     "x.parent_ac = e.ac and \n" +
                     "x.parent_ac = e.ac and \n" +

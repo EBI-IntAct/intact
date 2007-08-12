@@ -19,6 +19,7 @@ import uk.ac.ebi.intact.sanity.check.model.ComparableExperimentBean;
 import uk.ac.ebi.intact.sanity.check.model.ExperimentBean;
 
 import javax.mail.MessagingException;
+import java.io.FileInputStream;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -33,7 +34,7 @@ public class Assigner {
     /**
      * MessageSender, to build the message for each superCurator and administrator and send them.
      */
-    MessageSender messageSender = new MessageSender();
+    MessageSender messageSender;
 
     /**
      * Lister, holding the collection of experiment to assign, the collection of already assigned experiment.
@@ -47,7 +48,8 @@ public class Assigner {
     //Pubmed assigned to the super-curator going to correct it.
     HashMap pubmedPreviouslyAssigned = new HashMap();
 
-    public Assigner( boolean debug ) throws Exception, IntactException {
+    public Assigner( Properties props, boolean debug ) throws Exception {
+        this.messageSender = new MessageSender(props);
         lister = new ExperimentLister( debug );
         superCuratorsGetter = new SuperCuratorsGetter();
     }
@@ -362,9 +364,16 @@ public class Assigner {
 
     public static void main( String[] args ) throws Exception {
 
+            if (args.length == 0) {
+                System.out.println("Needs one parameter, the sanityChecker.properties location");
+            }
+
+            Properties props = new Properties();
+            props.load(new FileInputStream(args[0]));
+
             System.out.println( "Database: " + getDaoFactory().getBaseDao().getDbName() );
 
-            Assigner assigner = new Assigner( true );
+            Assigner assigner = new Assigner( props, true );
             assigner.assign();
             assigner.addMessage();
             try {

@@ -15,10 +15,7 @@ import uk.ac.ebi.intact.sanity.check.model.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * TODO comment it.
@@ -28,7 +25,7 @@ import java.util.Map;
  */
 public class SanityCheckerHelper {
 
-    private Map bean2sql = new HashMap();
+    private Map<Class,List<String>> bean2sql = new HashMap<Class,List<String>>();
 
     private QueryRunner queryRunner;
 
@@ -51,47 +48,29 @@ public class SanityCheckerHelper {
         preparedStatement.close();
 
         // Store the association
-        bean2sql.put( beanClass, sql );
+        if (bean2sql.containsKey(beanClass)) {
+            List<String> sqls = bean2sql.get(beanClass);
+            sqls.add(sql);
+            bean2sql.put( beanClass, sqls );
+        } else {
+            List<String> sqls = new ArrayList<String>();
+            sqls.add(sql);
+            bean2sql.put( beanClass, sqls );
+        }
     }
 
     public <T> List<T> getBeans( Class<T> beanClass, String param ) throws SQLException {
-        if ( beanClass == null ) {
-            throw new IllegalArgumentException( "beanClass should not be null" );
-        }
 
-        if ( false == bean2sql.containsKey( beanClass ) ) {
-            throw new IllegalArgumentException( "The beanClass :" + beanClass.getName() + " does not have known sql association" );
-        }
-
-        List<T> resultList = null;
-
-        Connection conn = getJdbcConnection( );
-        resultList = (List<T>) queryRunner.query( conn,
-                                               (String) bean2sql.get( beanClass ),
-                                               param,
-                                               new BeanListHandler( beanClass ) );
-        return resultList;
+        return getBeans(beanClass, Arrays.asList(param));
     }
 
-    public IntactBean getFirstBean( Class beanClass, String param ) throws SQLException {
-        IntactBean intactBean = null;
+    public <T> T getFirstBean( Class<T> beanClass, String param ) throws SQLException {
+        T intactBean = null;
 
-        if ( beanClass == null ) {
-            throw new IllegalArgumentException( "beanClass should not be null" );
-        }
-
-        if ( false == bean2sql.containsKey( beanClass ) ) {
-            throw new IllegalArgumentException( "The beanClass :" + beanClass.getName() + " does not have known sql association" );
-        }
-
-        Connection conn = getJdbcConnection();
-        List resultList = (List) queryRunner.query( conn,
-                                                    (String) bean2sql.get( beanClass ),
-                                                    param,
-                                                    new BeanListHandler( beanClass ) );
+        List<T> resultList = getBeans(beanClass, param);
 
         if ( false == resultList.isEmpty() ) {
-            intactBean = (IntactBean) resultList.get( 0 );
+            intactBean = resultList.get( 0 );
         }
 
         return intactBean;
@@ -225,7 +204,7 @@ public class SanityCheckerHelper {
         return featureBean;
     }
 
-    public List getBeans( Class beanClass, List params ) throws SQLException {
+    public <T> List<T> getBeans( Class<T> beanClass, List<String> params ) throws SQLException {
 
         if ( beanClass == null ) {
             throw new IllegalArgumentException( "beanClass should not be null" );
@@ -237,14 +216,17 @@ public class SanityCheckerHelper {
 
         Connection conn = getJdbcConnection();
 
-        List resultList = new ArrayList();
+        List<T> resultList = new ArrayList<T>();
 
-        for ( int i = 0; i < params.size(); i++ ) {
-            List list = (List) queryRunner.query( conn,
-                                                  (String) bean2sql.get( beanClass ),
-                                                  (String) params.get( i ),
-                                                  new BeanListHandler( beanClass ) );
-            resultList.addAll( list );
+        for (String sql : bean2sql.get(beanClass)) {
+            for (String param : params) {
+                //System.out.println("SQL: "+sql+ " PARAMS: "+param);
+                List<T> list = (List) queryRunner.query(conn,
+                        sql,
+                        (String) param,
+                        new BeanListHandler(beanClass));
+                resultList.addAll(list);
+            }
         }
 
         return resultList;

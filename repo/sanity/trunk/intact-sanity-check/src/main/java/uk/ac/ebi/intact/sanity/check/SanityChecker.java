@@ -12,7 +12,10 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.hibernate.dialect.Dialect;
+import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -21,6 +24,7 @@ import uk.ac.ebi.intact.sanity.check.util.AnnotationSection;
 import uk.ac.ebi.intact.util.Crc64;
 
 import javax.mail.MessagingException;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -123,9 +127,13 @@ public class SanityChecker {
     private Map<String, String> cvTopics;
 
 
-    public SanityChecker() throws IntactException, SQLException {
+    public SanityChecker(Properties properties) throws IntactException, SQLException {
+        AbstractHibernateDataConfig dataConfig = (AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        Dialect dialect = Dialect.getDialect(dataConfig.getConfiguration().getProperties());
 
-        editorUrlBuilder = new EditorUrlBuilder();
+        messageSender = new MessageSender(properties);
+
+        editorUrlBuilder = new EditorUrlBuilder(properties);
 
         featureSch = new SanityCheckerHelper();
         featureSch.addMapping( FeatureBean.class, "select ac, shortlabel, fullname, created_user, created from ia_feature where ac like ? " );
@@ -235,59 +243,59 @@ public class SanityChecker {
         sch.addMapping( ControlledvocabBean.class, "SELECT ac, objclass " +
                                                            "FROM ia_controlledvocab " +
                                                            "WHERE shortlabel = ?" );
-	genbank = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "genbank_protein_gi").get(0);
-        this.onHoldCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.ON_HOLD ).get(0);
-        toBeReviewedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.TO_BE_REVIEWED).get(0);
-        acceptedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.ACCEPTED ).get( 0 );
-        noUniprotUpdateCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.NON_UNIPROT ).get( 0 );
-        hiddenCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.HIDDEN ).get( 0 );
-        obsoleteCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvTopic.OBSOLETE ).get( 0 );
+        genbank = sch.getBeans( ControlledvocabBean.class, "genbank_protein_gi").get(0);
+        onHoldCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.ON_HOLD ).get(0);
+        toBeReviewedCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.TO_BE_REVIEWED).get(0);
+        acceptedCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.ACCEPTED ).get( 0 );
+        noUniprotUpdateCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.NON_UNIPROT ).get( 0 );
+        hiddenCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.HIDDEN ).get( 0 );
+        obsoleteCvBean = sch.getBeans( ControlledvocabBean.class, CvTopic.OBSOLETE ).get( 0 );
 
         sch.addMapping( ControlledvocabBean.class, "SELECT ac, objclass " +
                                                            "FROM ia_controlledvocab " +
                                                            "WHERE ac IN ( SELECT parent_ac " +
-                                                           "              FROM ia_xref " +
+                                                           "              FROM ia_controlledvocab_xref " +
                                                            "              WHERE primaryid = ? )" );
 
         // CvComponentRole
-        neutralCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.NEUTRAL_PSI_REF ).get( 0 );
-        inhibitedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITED_PSI_REF ).get( 0 );
-        inhibitorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITOR_PSI_REF ).get( 0 );
-        fluorophoreAcceptorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_ACCEPTOR_MI_REF ).get( 0 );
-        fluorophoreDonorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_DONOR_MI_REF ).get( 0 );
-        electronAcceptorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ELECTRON_ACCEPTOR_MI_REF ).get( 0 );
-        electronDonorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ELECTRON_DONOR_MI_REF ).get( 0 );
-        baitCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.BAIT_PSI_REF ).get( 0 );
-        preyCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.PREY_PSI_REF ).get( 0 );
-        enzymeCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ENZYME_PSI_REF ).get( 0 );
-        enzymeTargetCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ENZYME_TARGET_PSI_REF ).get( 0 );
-        selfCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.SELF_PSI_REF ).get( 0 );
-        unspecifiedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.UNSPECIFIED_PSI_REF ).get( 0 );
+        neutralCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.NEUTRAL_PSI_REF ).get( 0 );
+        inhibitedCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITED_PSI_REF ).get( 0 );
+        inhibitorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITOR_PSI_REF ).get( 0 );
+        fluorophoreAcceptorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_ACCEPTOR_MI_REF ).get( 0 );
+        fluorophoreDonorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_DONOR_MI_REF ).get( 0 );
+        electronAcceptorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ELECTRON_ACCEPTOR_MI_REF ).get( 0 );
+        electronDonorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ELECTRON_DONOR_MI_REF ).get( 0 );
+        baitCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.BAIT_PSI_REF ).get( 0 );
+        preyCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.PREY_PSI_REF ).get( 0 );
+        enzymeCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ENZYME_PSI_REF ).get( 0 );
+        enzymeTargetCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.ENZYME_TARGET_PSI_REF ).get( 0 );
+        selfCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.SELF_PSI_REF ).get( 0 );
+        unspecifiedCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.UNSPECIFIED_PSI_REF ).get( 0 );
 	
         // CvInteraction
-        inferredByCuratorCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvInteraction.INFERRED_BY_CURATOR_MI_REF ).get( 0 );
+        inferredByCuratorCvBean = sch.getBeans( ControlledvocabBean.class, CvInteraction.INFERRED_BY_CURATOR_MI_REF ).get( 0 );
 
         // CvDatabases
-        uniprotDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.UNIPROT_MI_REF ).get( 0 );
-	refseq = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.REFSEQ_MI_REF).get(0);
-	uniparc = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.UNIPARC_MI_REF).get(0);
-	ipi = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0675").get(0); // MI:0675 -> IPI ref
-	ensembl = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.ENSEMBL_MI_REF).get(0);
-        intactDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.INTACT_MI_REF ).get( 0 );
-        pubmedDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.PUBMED_MI_REF ).get( 0 );
-        newtDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvDatabase.NEWT_MI_REF ).get( 0 );
-        ddbjDatabaseCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0475" ).get( 0 ); // DDBJ
+        uniprotDatabaseCvBean = sch.getBeans( ControlledvocabBean.class, CvDatabase.UNIPROT_MI_REF ).get( 0 );
+        refseq = sch.getBeans( ControlledvocabBean.class, CvDatabase.REFSEQ_MI_REF).get(0);
+        uniparc = sch.getBeans( ControlledvocabBean.class, CvDatabase.UNIPARC_MI_REF).get(0);
+        ipi = sch.getBeans( ControlledvocabBean.class, "MI:0675").get(0); // MI:0675 -> IPI ref
+        ensembl = sch.getBeans( ControlledvocabBean.class, CvDatabase.ENSEMBL_MI_REF).get(0);
+        intactDatabaseCvBean = sch.getBeans( ControlledvocabBean.class, CvDatabase.INTACT_MI_REF ).get( 0 );
+        pubmedDatabaseCvBean = sch.getBeans( ControlledvocabBean.class, CvDatabase.PUBMED_MI_REF ).get( 0 );
+        newtDatabaseCvBean = sch.getBeans( ControlledvocabBean.class, CvDatabase.NEWT_MI_REF ).get( 0 );
+        ddbjDatabaseCvBean = sch.getBeans( ControlledvocabBean.class, "MI:0475" ).get( 0 ); // DDBJ
 
         // Xref qualifier
-        primaryReferenceXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF ).get( 0 );
-        identityXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.IDENTITY_MI_REF ).get( 0 );
-        isoformParentXrefQualifierCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF ).get( 0 );
+        primaryReferenceXrefQualifierCvBean = sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF ).get( 0 );
+        identityXrefQualifierCvBean = sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.IDENTITY_MI_REF ).get( 0 );
+        isoformParentXrefQualifierCvBean = sch.getBeans( ControlledvocabBean.class, CvXrefQualifier.ISOFORM_PARENT_MI_REF ).get( 0 );
 
-        cTerminalCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0334" ).get( 0 );
+        cTerminalCvBean = sch.getBeans( ControlledvocabBean.class, "MI:0334" ).get( 0 );
 
-        nTerminalCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0340" ).get( 0 );
+        nTerminalCvBean = sch.getBeans( ControlledvocabBean.class, "MI:0340" ).get( 0 );
 
-        undeterminedCvBean = (ControlledvocabBean) sch.getBeans( ControlledvocabBean.class, "MI:0339" ).get( 0 );
+        undeterminedCvBean = sch.getBeans( ControlledvocabBean.class, "MI:0339" ).get( 0 );
 
         hiddenObsoleteNotInUsed = new SanityCheckerHelper();
         hiddenObsoleteNotInUsed.addMapping( ControlledvocabBean.class,
@@ -354,8 +362,18 @@ public class SanityChecker {
                                                       "FROM ia_experiment " +
                                                       "WHERE ac like ?" );
 
+        // xrefs
         sch.addMapping( XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
-                                                "FROM ia_xref " +
+                                                "FROM ia_controlledvocab_xref " +
+                                                "WHERE parent_ac = ?" );
+        sch.addMapping( XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
+                                                "FROM ia_interactor_xref " +
+                                                "WHERE parent_ac = ?" );
+        sch.addMapping( XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
+                                                "FROM ia_experiment_xref " +
+                                                "WHERE parent_ac = ?" );
+        sch.addMapping( XrefBean.class, "SELECT ac, database_ac, qualifier_ac, created_user, created " +
+                                                "FROM ia_biosource_xref " +
                                                 "WHERE parent_ac = ?" );
 
         sch.addMapping( BioSourceBean.class, "SELECT ac, shortlabel, taxid, created_user, created " +
@@ -368,6 +386,15 @@ public class SanityChecker {
                                                          "order by sequence_index" );
 
         superCuratedSch = new SanityCheckerHelper();
+
+        String createdDateSql = "created";
+        String fromDateSql = "TIMESTAMP '2005-09-01 00:00:00'"; //H2
+
+        if (dialect instanceof OracleDialect) {
+            createdDateSql = "to_date(created,'DD-MON-YYYY HH24:MI:SS')";
+            fromDateSql = "to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS')";
+        }
+
         superCuratedSch.addMapping( ExperimentBean.class, "select ac, created_user, created, shortlabel " +
                                                                   "from ia_experiment " +
                                                                   "where ac not in (select e.ac " +
@@ -375,9 +402,10 @@ public class SanityChecker {
                                                                   "                 where e.ac=e2a.experiment_ac and " +
                                                                   "                       e2a.annotation_ac=a.ac and " +
                                                                   "                       a.topic_ac in ('" + acceptedCvBean.getAc() + "','" + toBeReviewedCvBean.getAc() + "')) " +
-                                                                  "                       and to_date(created,'DD-MON-YYYY HH24:MI:SS') > to_date('01-Sep-2005:00:00:00','DD-MON-YYYY:HH24:MI:SS') " +
+                                                                  "                       and "+createdDateSql+" > "+fromDateSql+" " +
                                                                   "                       and ac like ? " );
-        messageSender = new MessageSender();
+
+
         annotationSection = new AnnotationSection();
     }
 
@@ -450,7 +478,7 @@ public class SanityChecker {
         //---------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping( XrefBean.class,
                                             "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created " +
-                                            "FROM ia_xref " +
+                                            "FROM ia_controlledvocab_xref " +
                                             "WHERE database_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
@@ -467,7 +495,7 @@ public class SanityChecker {
         //---------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping( XrefBean.class,
                                             "SELECT ac, database_ac, qualifier_ac, primaryid, parent_ac, created_user, created " +
-                                            "FROM ia_xref " +
+                                            "FROM ia_controlledvocab_xref " +
                                             "WHERE qualifier_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
@@ -558,9 +586,9 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as role in IA_COMPONENT
         //----------------------------------------------------------------------------------------------
-        hiddenObsoleteNotInUsed.addMapping( ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, role, stoichiometry, created_user, created " +
+        hiddenObsoleteNotInUsed.addMapping( ComponentBean.class, "SELECT ac, interaction_ac, interactor_ac, experimentalrole_ac, stoichiometry, created_user, created " +
                                                                          "FROM ia_component " +
-                                                                         "WHERE role = ? " );
+                                                                         "WHERE experimentalrole_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
             ControlledvocabBean hiddenOrObsoleteCv = (ControlledvocabBean) iterator.next();
@@ -609,6 +637,7 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as proteinform in IA_INTERACTOR
         //----------------------------------------------------------------------------------------------
+        /*
         hiddenObsoleteNotInUsed.addMapping( InteractorBean.class,
                                             "select ac, shortlabel, fullname, created_user, created, objclass, interactortype_ac, interactiontype_ac, proteinform_ac " +
                                             "from ia_interactor " +
@@ -623,6 +652,7 @@ public class SanityChecker {
                 messageSender.addMessage( ReportTopic.HIDDEN_OR_OBSOLETE_CVOBJECT_USED_AS_PROTEINFORM_IN_INTERACTOR, interactorBean, hiddenOrObsoleteCv );
             }
         }
+        */
         //----------------------------------------------------------------------------------------------
         // Make sure that the obsolete or hidden cv ac is not used as tissue_ac in IA_BIOSOURCE
         //----------------------------------------------------------------------------------------------
@@ -721,7 +751,19 @@ public class SanityChecker {
         //----------------------------------------------------------------------------------------------
         hiddenObsoleteNotInUsed.addMapping( AliasBean.class,
                                             "select ac, parent_ac, name, created_user, created " +
-                                            "from ia_alias " +
+                                            "from ia_interactor_alias " +
+                                            "where aliastype_ac = ? " );
+        hiddenObsoleteNotInUsed.addMapping( AliasBean.class,
+                                            "select ac, parent_ac, name, created_user, created " +
+                                            "from ia_experiment_alias " +
+                                            "where aliastype_ac = ? " );
+        hiddenObsoleteNotInUsed.addMapping( AliasBean.class,
+                                            "select ac, parent_ac, name, created_user, created " +
+                                            "from ia_biosource_alias " +
+                                            "where aliastype_ac = ? " );
+        hiddenObsoleteNotInUsed.addMapping( AliasBean.class,
+                                            "select ac, parent_ac, name, created_user, created " +
+                                            "from ia_component_alias " +
                                             "where aliastype_ac = ? " );
         for ( Iterator iterator = hiddenObsoleteCvs.iterator(); iterator.hasNext(); ) {
 
@@ -1678,13 +1720,19 @@ public class SanityChecker {
         }
     }
 
+    public MessageSender getMessageSender()
+    {
+        return messageSender;
+    }
 
-    /*
-     * M A I N
+    /**
+     * Main execution method
+     * @throws SQLException
+     * @throws IntactException
      */
-    public static void main( String[] args ) throws SQLException, IntactException {
+    public static SimpleAdminReport executeSanityCheck( Properties properties ) throws SQLException, IntactException {
 
-        SanityChecker scn = new SanityChecker( );
+        SanityChecker sanityChecker = new SanityChecker( properties );
 
         final BaseDao baseDao = IntactContext.getCurrentInstance().getDataContext()
                 .getDaoFactory().getBaseDao();
@@ -1692,19 +1740,19 @@ public class SanityChecker {
         System.out.println( "Helper created (User: " + baseDao.getDbUserName() + " " +
                             "Database: " + baseDao.getDbName() + ")" );
 
-        List<String> expUsableTopic = scn.annotationSection.getUsableTopics( Experiment.class.getName() );
+        List<String> expUsableTopic = sanityChecker.annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
         expUsableTopic.add( CvTopic.TO_BE_REVIEWED );
 
-        List<String> intUsableTopic = scn.annotationSection.getUsableTopics( Interaction.class.getName() );
-        List<String> protUsableTopic = scn.annotationSection.getUsableTopics( Protein.class.getName() );
-        List<String> cvUsableTopic = scn.annotationSection.getUsableTopics( CvObject.class.getName() );
-        List<String> bsUsableTopic = scn.annotationSection.getUsableTopics( BioSource.class.getName() );
+        List<String> intUsableTopic = sanityChecker.annotationSection.getUsableTopics( Interaction.class.getName() );
+        List<String> protUsableTopic = sanityChecker.annotationSection.getUsableTopics( Protein.class.getName() );
+        List<String> cvUsableTopic = sanityChecker.annotationSection.getUsableTopics( CvObject.class.getName() );
+        List<String> bsUsableTopic = sanityChecker.annotationSection.getUsableTopics( BioSource.class.getName() );
 
         /*
         *     Check on feature
         */
-//        scn.featureWithoutRange();
+//        sanityChecker.featureWithoutRange();
 
         /*
         *     Check on interactor
@@ -1717,23 +1765,23 @@ public class SanityChecker {
 
 
         List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
-        scn.checkInteractionsComplete( interactorBeans );
-        scn.checkInteractionsBaitAndPrey( interactorBeans );
-        scn.checkComponentOfInteractions( interactorBeans );
-        scn.checkOneIntOneExp();
-        scn.checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+        sanityChecker.checkInteractionsComplete( interactorBeans );
+        sanityChecker.checkInteractionsBaitAndPrey( interactorBeans );
+        sanityChecker.checkComponentOfInteractions( interactorBeans );
+        sanityChecker.checkOneIntOneExp();
+        sanityChecker.checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
 
         /*
         *     Check on Controlled Vocabullary
         */
-        scn.checkHiddenAndObsoleteCv();
-        scn.cvInteractionChecker( scn.hiddenObsoleteNotInUsed );
+        sanityChecker.checkHiddenAndObsoleteCv();
+        sanityChecker.cvInteractionChecker( sanityChecker.hiddenObsoleteNotInUsed );
 
         /*
         *     Check on xref
         */
         schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
-                                                     "from ia_xref, ia_controlledvocab db, ia_controlledvocab q " +
+                                                     "from ia_controlledvocab_xref, ia_controlledvocab db, ia_controlledvocab q " +
                                                      "where database_ac = db.ac and " +
                                                      "db.shortlabel = ? and " +
                                                      "qualifier_ac = q.ac and " +
@@ -1744,8 +1792,8 @@ public class SanityChecker {
 
         List xrefBeans = schIntAc.getBeans( XrefBean.class, CvDatabase.UNIPROT );
 
-        scn.sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
-                                                          "FROM ia_interactor i, ia_xref x " +
+        sanityChecker.sch.addMapping( InteractorBean.class, "SELECT i.ac,i.objclass, i.shortlabel, i.biosource_ac, i.created_user, i.created " +
+                                                          "FROM ia_interactor i, ia_interactor_xref x " +
                                                           "WHERE i.ac = x.parent_ac AND " +
                                                           "0 = ( SELECT count(1) " +
                                                           "FROM ia_annotation a, ia_int2annot i2a, ia_controlledvocab topic " +
@@ -1756,8 +1804,8 @@ public class SanityChecker {
                                                           "x.qualifier_ac = '" + identityXrefQualifierCvBean.getAc() + "' AND " +
                                                           "x.primaryid=?" );
 
-        scn.sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
-                                                                   "FROM ia_interactor sv, ia_interactor p, ia_xref x\n" +
+        sanityChecker.sch.addMapping( SpliceVariantParentBean.class, "SELECT distinct p.ac as ac, p.shortlabel as parentName, sv.shortlabel as variantName\n" +
+                                                                   "FROM ia_interactor sv, ia_interactor p, ia_interactor_xref x\n" +
                                                                    "WHERE ? = sv.ac AND\n" +
                                                                    "      sv.ac = x.parent_ac AND \n" +
                                                                    "      x.qualifier_ac = '" + isoformParentXrefQualifierCvBean.getAc() + "' AND \n" +
@@ -1766,36 +1814,45 @@ public class SanityChecker {
 
         for ( int i = 0; i < xrefBeans.size(); i++ ) {
             XrefBean xrefBean = (XrefBean) xrefBeans.get( i );
-            scn.duplicatedProtein( xrefBean );
+            sanityChecker.duplicatedProtein( xrefBean );
         }
 
         schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
-                                                     "from ia_xref " +
+                                                     "from ia_controlledvocab_xref " +
+                                                     "where ac like ?" );
+        schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+                                                     "from ia_experiment_xref " +
+                                                     "where ac like ?" );
+        schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+                                                     "from ia_interactor_xref " +
+                                                     "where ac like ?" );
+        schIntAc.addMapping( XrefBean.class, "select ac, created_user, created, database_ac, primaryid,parent_ac " +
+                                                     "from ia_biosource_xref " +
                                                      "where ac like ?" );
         //"where ac ='EBI-695273' and ac like ?");
         xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
-        scn.hasValidPrimaryId( xrefBeans );
+        sanityChecker.hasValidPrimaryId( xrefBeans );
 
         /*
         *     Check on Experiment
         */
-        List experimentBeans = scn.sch.getBeans( ExperimentBean.class, "EBI-%" );
-        scn.checkExperiment( experimentBeans );
-        scn.checkExperimentsPubmedIds( experimentBeans );
-        scn.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
+        List experimentBeans = sanityChecker.sch.getBeans( ExperimentBean.class, "EBI-%" );
+        sanityChecker.checkExperiment( experimentBeans );
+        sanityChecker.checkExperimentsPubmedIds( experimentBeans );
+        sanityChecker.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
         //This is now listed in the correctionAssigner
-        scn.checkReviewed( experimentBeans );
-        //scn.experimentNotSuperCurated();
+        sanityChecker.checkReviewed( experimentBeans );
+        //sanityChecker.experimentNotSuperCurated();
 
         /*
         *     Check on BioSource
         */
 
-        List bioSourceBeans = scn.sch.getBeans( BioSourceBean.class, "EBI-%" );
+        List bioSourceBeans = sanityChecker.sch.getBeans( BioSourceBean.class, "EBI-%" );
         //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
-        scn.checkBioSource( bioSourceBeans );
-        scn.checkNewt( bioSourceBeans );
-        scn.checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
+        sanityChecker.checkBioSource( bioSourceBeans );
+        sanityChecker.checkNewt( bioSourceBeans );
+        sanityChecker.checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
 
         /*
         *     Check on protein
@@ -1809,13 +1866,13 @@ public class SanityChecker {
 
         List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
 
-        scn.checkProtein( proteinBeans );
-        scn.checkCrc64( proteinBeans );
-        scn.checkAnnotations( proteinBeans, "Protein", protUsableTopic ); // "Protein" -> EditorMenuFactory.PROTEIN
+        sanityChecker.checkProtein( proteinBeans );
+        sanityChecker.checkCrc64( proteinBeans );
+        sanityChecker.checkAnnotations( proteinBeans, "Protein", protUsableTopic ); // "Protein" -> EditorMenuFactory.PROTEIN
 
         //already working
-        List ranges = scn.deletionFeatureSch.getBeans( RangeBean.class, "2" );
-        scn.checkDeletionFeature( ranges );
+        List ranges = sanityChecker.deletionFeatureSch.getBeans( RangeBean.class, "2" );
+        sanityChecker.checkDeletionFeature( ranges );
 
         /*
         *     Check on annotation
@@ -1827,8 +1884,8 @@ public class SanityChecker {
                                                            "WHERE topic_ac = 'EBI-18' and ac like ?"
         );
 
-        List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
-        //scn.checkURL( annotationBeans );
+        //List annotationBeans = schIntAc.getBeans( AnnotationBean.class, "EBI-%" );
+        //sanityChecker.checkURL( annotationBeans );
 
         /*
         *    Check on controlledvocab
@@ -1839,11 +1896,11 @@ public class SanityChecker {
                                                                 "WHERE ac = ?" );
         List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
 
-        scn.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
+        sanityChecker.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
         // try to send emails
         try {
-            scn.messageSender.postEmails( MessageSender.SANITY_CHECK );
+            sanityChecker.getMessageSender().postEmails( MessageSender.SANITY_CHECK );
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
@@ -1851,9 +1908,17 @@ public class SanityChecker {
 
         }
 
-
-        schIntAc = null;
-        scn = null;
+        return sanityChecker.getMessageSender().getSimpleAdminReport();
     }
 
+    public static void main(String[] args) throws Exception
+    {
+        if (args.length == 0) {
+            System.out.println("Needs one parameter, the sanityChecker.properties location");
+        }
+
+        Properties props = new Properties();
+        props.load(new FileInputStream(args[0]));
+        executeSanityCheck(props);
+    }
 }
