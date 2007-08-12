@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>11</version>
+        <version>17</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -20,6 +20,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
+        <core.version>1.6.2-SNAPSHOT</core.version>
     </properties>
 
     <scm>
@@ -27,10 +28,6 @@
         <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk</developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity/trunk</url>
     </scm>
-
-    <properties>
-        <core.version>1.6.2-SNAPSHOT</core.version>
-    </properties>
 
     <dependencyManagement>
         <dependencies>
