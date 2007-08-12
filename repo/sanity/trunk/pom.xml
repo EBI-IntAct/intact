@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -25,12 +26,26 @@
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk</developerConnection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity/trunk
+        </developerConnection>
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity/trunk</url>
     </scm>
 
+    <modules>
+        <module>intact-sanity-check</module>
+        <module>sanity-maven-plugin</module>
+    </modules>
+
     <dependencyManagement>
         <dependencies>
+            <!-- this group -->
+            <dependency>
+                <groupId>uk.ac.ebi.intact.sanity</groupId>
+                <artifactId>intact-sanity-check</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+
+            <!-- other intact -->
             <dependency>
                 <groupId>uk.ac.ebi.intact</groupId>
                 <artifactId>intact-core</artifactId>
@@ -41,7 +56,14 @@
                 <artifactId>intact-persister</artifactId>
                 <version>${core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>uk.ac.ebi.intact.datasets</groupId>
+                <artifactId>intact-dataset</artifactId>
+                <version>1.6.0</version>
+                <scope>test</scope>
+            </dependency>
 
+            <!-- third party -->
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
@@ -52,9 +74,9 @@
 
     <dependencies>
         <dependency>
-             <groupId>junit</groupId>
-             <artifactId>junit</artifactId>
-             <version>4.3.1</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.3.1</version>
         </dependency>
     </dependencies>
 
@@ -92,7 +114,4 @@
         </site>
     </distributionManagement>
 
-  <modules>
-    <module>intact-sanity-check</module>
-  </modules>
 </project>
