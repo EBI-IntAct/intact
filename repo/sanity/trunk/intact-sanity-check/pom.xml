@@ -16,8 +16,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
-            <artifactId>intact-core</artifactId>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-persister</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.datasets</groupId>
+            <artifactId>intact-dataset</artifactId>
+            <version>1.6.0</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
