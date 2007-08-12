@@ -26,7 +26,7 @@ public class SuperCurator {
     /**
      * List of ComparableExperimentBean corresponding to the experiments this SuperCurator has to correct.
      */
-    Collection experiments = new ArrayList();
+    Collection<ComparableExperimentBean> experiments = new ArrayList<ComparableExperimentBean>();
 
     /**
      * Curator name (should be the name of the user in the database).
@@ -36,7 +36,7 @@ public class SuperCurator {
     /**
      * Collection of pubmed Ids the super curator has to correct.
      */
-    private Collection pubmedIds = new ArrayList();
+    private Collection<String> pubmedIds = new ArrayList<String>();
 
     /**
      * Empty constructor.
@@ -58,7 +58,7 @@ public class SuperCurator {
      * Getter for the Collection of PubmedIds this superCurator has to correct.
      * @return the Collection pubmedIds.
      */
-    public Collection getPubmedIds() {
+    public Collection<String> getPubmedIds() {
         return pubmedIds;
     }
 
@@ -86,7 +86,7 @@ public class SuperCurator {
         this.name = name;
     }
 
-    public Collection getExperiments() {
+    public Collection<ComparableExperimentBean> getExperiments() {
         return experiments;
     }
 
@@ -94,8 +94,8 @@ public class SuperCurator {
         experiments.add(exp);
     }
 
-    public void addExperiment(Collection exps){
-        experiments.add(exps);
+    public void addExperiments(Collection<ComparableExperimentBean> exps){
+        experiments.addAll(exps);
     }
 
 //    public void setExperiments (Collection experiments) {
