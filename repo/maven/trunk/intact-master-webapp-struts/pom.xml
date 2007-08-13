@@ -4,12 +4,12 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>14</version>
+        <version>17</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.maven</groupId>
-    <artifactId>intact-master-webapp</artifactId>
+    <artifactId>intact-master-webapp-struts</artifactId>
     <packaging>pom</packaging>
     <name>Master Webapp POM</name>
     <version>2.5-SNAPSHOT</version>
