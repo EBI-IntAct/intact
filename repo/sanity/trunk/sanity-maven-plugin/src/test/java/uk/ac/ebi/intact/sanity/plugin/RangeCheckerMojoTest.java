@@ -19,7 +19,7 @@ public class RangeCheckerMojoTest extends AbstractMojoTestCase
     public void testAssigner() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
 
-        RangeCheckerMojo mojo = (RangeCheckerMojo) lookupMojo( "rangecheck", pluginXmlFile );
+        RangeCheckerMojo mojo = (RangeCheckerMojo) lookupMojo( "range-check", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
         mojo.hibernateConfig = new File(RangeCheckerMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 

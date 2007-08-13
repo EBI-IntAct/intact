@@ -14,7 +14,7 @@ import java.io.IOException;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  *
- * @goal rangecheck
+ * @goal range-check
  * @phase process-resources
  */
 public class RangeCheckerMojo extends AbstractSanityMojo {
