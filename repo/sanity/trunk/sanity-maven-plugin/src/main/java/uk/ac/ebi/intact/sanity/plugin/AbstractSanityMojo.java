@@ -47,8 +47,6 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
 
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
     {
-        System.out.println("CVSSS: "+ IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().countAll());
-
         if (curators == null) {
             throw new MojoFailureException("No curators configured: curators are null");
         }
