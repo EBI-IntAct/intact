@@ -12,16 +12,16 @@ import java.io.File;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SanityCheckMojoTest extends AbstractMojoTestCase
+public class AssignerMojoTest extends AbstractMojoTestCase
 {
 
     @Test
-    public void testCheck() throws Exception {
+    public void testAssigner() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
 
-        SanityCheckMojo mojo = (SanityCheckMojo) lookupMojo( "sanity-check", pluginXmlFile );
+        AssignerMojo mojo = (AssignerMojo) lookupMojo( "assigner", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
-        mojo.hibernateConfig = new File(SanityCheckMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
+        mojo.hibernateConfig = new File(AssignerMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 
         mojo.execute();
     }
