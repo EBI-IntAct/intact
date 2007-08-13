@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
@@ -1766,16 +1767,23 @@ public class SanityChecker {
 
         List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
         sanityChecker.checkInteractionsComplete( interactorBeans );
+        commitAndBeginTransaction();
         sanityChecker.checkInteractionsBaitAndPrey( interactorBeans );
+        commitAndBeginTransaction();
         sanityChecker.checkComponentOfInteractions( interactorBeans );
+        commitAndBeginTransaction();
         sanityChecker.checkOneIntOneExp();
+        commitAndBeginTransaction();
         sanityChecker.checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
+        commitAndBeginTransaction();
 
         /*
         *     Check on Controlled Vocabullary
         */
         sanityChecker.checkHiddenAndObsoleteCv();
+        commitAndBeginTransaction();
         sanityChecker.cvInteractionChecker( sanityChecker.hiddenObsoleteNotInUsed );
+        commitAndBeginTransaction();
 
         /*
         *     Check on xref
@@ -1844,6 +1852,8 @@ public class SanityChecker {
         sanityChecker.checkReviewed( experimentBeans );
         //sanityChecker.experimentNotSuperCurated();
 
+        commitAndBeginTransaction();
+
         /*
         *     Check on BioSource
         */
@@ -1853,6 +1863,8 @@ public class SanityChecker {
         sanityChecker.checkBioSource( bioSourceBeans );
         sanityChecker.checkNewt( bioSourceBeans );
         sanityChecker.checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
+
+        commitAndBeginTransaction();
 
         /*
         *     Check on protein
@@ -1867,8 +1879,11 @@ public class SanityChecker {
         List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
 
         sanityChecker.checkProtein( proteinBeans );
+        commitAndBeginTransaction();
         sanityChecker.checkCrc64( proteinBeans );
+        commitAndBeginTransaction();
         sanityChecker.checkAnnotations( proteinBeans, "Protein", protUsableTopic ); // "Protein" -> EditorMenuFactory.PROTEIN
+        commitAndBeginTransaction();
 
         //already working
         List ranges = sanityChecker.deletionFeatureSch.getBeans( RangeBean.class, "2" );
@@ -1898,6 +1913,8 @@ public class SanityChecker {
 
         sanityChecker.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
+        commitAndBeginTransaction();
+
         // try to send emails
         try {
             sanityChecker.getMessageSender().postEmails( MessageSender.SANITY_CHECK );
@@ -1909,6 +1926,23 @@ public class SanityChecker {
         }
 
         return sanityChecker.getMessageSender().getSimpleAdminReport();
+    }
+
+    private static void beginTransaction() {
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+    }
+
+    private static void commitTransaction() {
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void commitAndBeginTransaction() {
+        commitTransaction();
+        beginTransaction();
     }
 
 }
