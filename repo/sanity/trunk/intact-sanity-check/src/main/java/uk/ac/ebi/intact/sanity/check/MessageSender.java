@@ -949,7 +949,7 @@ public class MessageSender {
                             mailObject + " - " + TIME + " (" + count + " " + countType + (count > 1 ? "s" : "") + ")",
                             fullReport.toString(),
                             "cleroy@ebi.ac.uk");
-                    System.out.println("FULL REPORT for User : " + fullReport.toString());
+                    //System.out.println("FULL REPORT for User : " + fullReport.toString());
                 }
                 else {
 

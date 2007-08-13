@@ -29,17 +29,11 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
     @IntactUnitDataset ( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
     public void executeSanityCheck_default() throws Exception {
 
-        // create missing CvExperimentalRole
-        CvExperimentalRole inhibitedRole = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(), CvExperimentalRole.class, CvExperimentalRole.INHIBITED_PSI_REF, CvExperimentalRole.INHIBITED);
-
         // Add some random data
         IntactMockBuilder mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution());
         Protein prot = mockBuilder.createProteinRandom();
 
         beginTransaction();
-
-        CvObjectPersister.getInstance().saveOrUpdate(inhibitedRole);
-        CvObjectPersister.getInstance().commit();
         InteractorPersister.getInstance().saveOrUpdate(prot);
         InteractorPersister.getInstance().commit();
 

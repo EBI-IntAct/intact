@@ -79,7 +79,7 @@ public class SanityChecker {
 
     private static ControlledvocabBean neutralCvBean;
     private static ControlledvocabBean baitCvBean;
-    private static ControlledvocabBean inhibitedCvBean;
+    //private static ControlledvocabBean inhibitedCvBean;
     private static ControlledvocabBean inhibitorCvBean;
     private static ControlledvocabBean fluorophoreAcceptorCvBean;
     private static ControlledvocabBean fluorophoreDonorCvBean;
@@ -259,7 +259,7 @@ public class SanityChecker {
 
         // CvComponentRole
         neutralCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.NEUTRAL_PSI_REF ).get( 0 );
-        inhibitedCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITED_PSI_REF ).get( 0 );
+        //inhibitedCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITED_PSI_REF ).get( 0 ); // obsolete
         inhibitorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.INHIBITOR_PSI_REF ).get( 0 );
         fluorophoreAcceptorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_ACCEPTOR_MI_REF ).get( 0 );
         fluorophoreDonorCvBean = sch.getBeans( ControlledvocabBean.class, CvExperimentalRole.FLUROPHORE_DONOR_MI_REF ).get( 0 );
@@ -882,8 +882,8 @@ public class SanityChecker {
                         electronDonorCount++;
                     } else if ( electronAcceptorCvBean.getAc().equals( componentBean.getRole() ) ) {
                         electronAcceptorCount++;
-                    } else if ( inhibitedCvBean.getAc().equals( componentBean.getRole() ) ) {
-                        inhibitedCount++;
+                    //} else if ( inhibitedCvBean.getAc().equals( componentBean.getRole() ) ) {
+                    //    inhibitedCount++;
                     } else if ( inhibitorCvBean.getAc().equals( componentBean.getRole() ) ) {
                         inhibitorCount++;
                     }
