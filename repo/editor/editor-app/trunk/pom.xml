@@ -90,7 +90,6 @@
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
             <version>1.6.1</version>
-            <!--<version>1.6.2-SNAPSHOT</version>-->
         </dependency>
 
         <!--<dependency>-->
@@ -122,7 +121,7 @@
 	<dependency>
             <groupId>uk.ac.ebi.intact.service.search.legacy</groupId>
             <artifactId>search-engine</artifactId>
-            <version>1.6.0-SNAPSHOT</version>
+            <version>1.6.0</version>
         </dependency>
 
         <dependency>
