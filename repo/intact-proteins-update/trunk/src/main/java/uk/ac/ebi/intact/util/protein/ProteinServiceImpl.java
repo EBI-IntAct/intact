@@ -122,11 +122,11 @@ public class ProteinServiceImpl implements ProteinService {
         // and the error message.
         uniprotServiceResult = new UniprotServiceResult(uniprotId);
 
-        Collection<UniprotProtein> proteins = retrieveFromUniprot( uniprotId );
+        Collection<UniprotProtein> uniprotProteins = retrieveFromUniprot( uniprotId );
 
-        Collection<Protein> intactProteins = new ArrayList<Protein>( proteins.size() );
+        Collection<Protein> intactProteins = new ArrayList<Protein>( uniprotProteins.size() );
         try{
-            if(proteins.size() == 0){
+            if(uniprotProteins.size() == 0){
                 ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
                 List<ProteinImpl> proteinsInIntact = proteinDao.getByUniprotId(uniprotId);
                 if(proteinsInIntact.size() != 0){
@@ -137,8 +137,8 @@ public class ProteinServiceImpl implements ProteinService {
                     uniprotServiceResult.addError("Could not udpate protein with uniprot id = " + uniprotId + ". No " +
                             "corresponding entry found in uniprot.", UniprotServiceResult.PROTEIN_NOT_IN_INTACT_NOT_IN_UNIPROT_ERROR_TYPE);
                 }
-            }else if ( proteins.size() > 1 ) {
-                if ( 1 == getSpeciesCount( proteins ) ) {
+            }else if ( uniprotProteins.size() > 1 ) {
+                if ( 1 == getSpeciesCount( uniprotProteins ) ) {
                     // If a uniprot ac we have in Intact as identity xref in IntAct, now corresponds to 2 or more proteins
                     // in uniprot we should not update it automatically but send a message to the curators so that they
                     // choose manually which of the new uniprot ac is relevant.
@@ -154,7 +154,7 @@ public class ProteinServiceImpl implements ProteinService {
                             + " returned a set of proteins belonging to different organisms.", UniprotServiceResult.SEVERAL_PROT_BELONGING_TO_DIFFERENT_ORGA_ERROR_TYPE);
                 }
             } else {
-                intactProteins.addAll( createOrUpdate( proteins ) );
+                intactProteins.addAll( createOrUpdate( uniprotProteins ) );
             }
         }catch(ProteinServiceException e){
 
@@ -270,12 +270,13 @@ public class ProteinServiceImpl implements ProteinService {
         } else if ( countPrimary == 1 && countSecondary == 0 ) {
             // Corresponding test : ProteinServiceImplTest.testRetrieve_sequenceUpdate()
             //                      ProteinServiceImplTest.testRetrieve_update_CDC42_CANFA()
-            log.debug( "Found a single IntAct protein by UniProt primary AC." );
+            log.debug( "Found in Intact one protein with primaryAc and 0 with secondaryAc." );
             Protein protein = primaryProteins.iterator().next();
             proteins.add( protein );
             updateProtein( protein, uniprotProtein, proteins );
 
         }else if ( countPrimary == 1 && countSecondary >= 1){
+            log.debug("Found in IntAct 1 protein with primaryAc and 1 or more protein on with secondaryAc.");
             StringBuffer sb = new StringBuffer();
             sb.append("Found several protein in IntAct for entry : " + uniprotProtein.getPrimaryAc() + ". 1 with the " +
                     "primaryAc and " + secondaryProteins.size() + " with the secondary acs. We are going to merged those" +
