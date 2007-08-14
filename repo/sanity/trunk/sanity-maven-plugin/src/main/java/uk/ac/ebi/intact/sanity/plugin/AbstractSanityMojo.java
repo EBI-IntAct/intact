@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.sanity.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 
@@ -43,6 +42,11 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
     /**
      * @parameter
      */
+    protected String smtpHost;
+
+    /**
+     * @parameter
+     */
     protected File hibernateConfig;
 
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
@@ -65,6 +69,7 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
 
         SanityCheckConfig sanityConfig = new SanityCheckConfig(curators);
         sanityConfig.setEditorUrl(editorUrl);
+        sanityConfig.setSmtpHost(smtpHost);
 
         executeSanityMojo(sanityConfig);
 

@@ -9,6 +9,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.sanity.check.config.Curator;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
 import uk.ac.ebi.intact.util.MailSender;
@@ -51,11 +52,6 @@ public class MessageSender {
      * List of user name that can't be mapped to a mail adress
      */
     private static Set<String> unknownUsers = new HashSet<String>();
-
-    /**
-     * List of admin mail adress
-     */
-    private static Collection<String> adminsEmails = new HashSet<String>();
 
     private SanityCheckConfig sanityConfig;
 
@@ -886,7 +882,7 @@ public class MessageSender {
      */
     public void postEmails(String mailObject) throws MessagingException, IntactException {
 
-        MailSender mailer = new MailSender();
+        MailSender mailer = new MailSender(sanityConfig.getSmtpHost());
 
         String countType = "";
         System.out.println("");
@@ -1023,21 +1019,24 @@ public class MessageSender {
 
         }
 
+        Collection<String> adminEmails = getAdminEmails();
+
         // Send mail to the administrator
-        String[] recipients = new String[adminsEmails.size()];
+        String[] recipients = new String[adminEmails.size()];
         int i = 0;
-        for (String email : adminsEmails) {
+        for (String email : adminEmails) {
             recipients[i++] = email;
         }
 
         // always send mail to admin, even if no errors
 
-
-        mailer.postMail(recipients,
-                mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + (errorCount > 1 ? "s" : "") + ")",
-                fullReport.toString(),
-                "cleroy@ebi.ac.uk");
-        //System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
+        if (!adminEmails.isEmpty()) {
+            mailer.postMail(recipients,
+                    mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + (errorCount > 1 ? "s" : "") + ")",
+                    fullReport.toString(),
+                    "cleroy@ebi.ac.uk");
+            //System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
+        }
 
     }
 
@@ -1493,6 +1492,18 @@ public class MessageSender {
 
     private static DaoFactory getDaoFactory() {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+    }
+
+    private Collection<String> getAdminEmails() {
+        List<String> emails = new ArrayList<String>();
+
+        for (Curator curator : sanityConfig.getCurators()) {
+            if (curator.isAdmin()) {
+                emails.add(curator.getEmail());
+            }
+        }
+
+        return emails;
     }
 
 }
