@@ -27,24 +27,46 @@ import java.util.Properties;
  */
 public class MailSender {
 
-    private static String SMTP_HOST = null;
-    public static final String SMTP_CONFIG_FILE = "/config/smtp.properties";
+    private static String DEFAULT_SMTP_HOST = "mailserv.ebi.ac.uk";
     public static final String MAIL_FILE_NAME= "mail.html";
     private static final String NEW_LINE = "<BR>";
 
     private Session session;
 
+    @Deprecated
     public MailSender() {
         boolean debug = true; //false; !!! changed temp
 
         //Set the host smtp address
         Properties props = new Properties();
-        if( null != SMTP_HOST ) {
-            props.put( "mail.smtp.host", SMTP_HOST );
+        props.put( "mail.smtp.host", DEFAULT_SMTP_HOST);
+
+        //props.put("mail.debug", "true"); //!!! temporarily
+        // create some properties and get the default Session
+         session = Session.getDefaultInstance( props, null );
+       // session.setDebug( debug );
+    }
+
+    public MailSender(String smptHost) {
+        boolean debug = true; //false; !!! changed temp
+
+        //Set the host smtp address
+        Properties props = new Properties();
+        if( null != smptHost ) {
+            props.put( "mail.smtp.host", smptHost );
         }
         //props.put("mail.debug", "true"); //!!! temporarily
         // create some properties and get the default Session
          session = Session.getDefaultInstance( props, null );
+       // session.setDebug( debug );
+    }
+
+    public MailSender(Properties properties) {
+        boolean debug = true; //false; !!! changed temp
+
+        //props.put("mail.debug", "true"); //!!! temporarily
+        // create some properties and get the default Session
+         session = Session.getDefaultInstance( properties, null );
        // session.setDebug( debug );
     }
 
@@ -117,8 +139,8 @@ public class MailSender {
      */
     public static void main( String[] args ) throws MessagingException {
 
-        MailSender mailer = new MailSender();
-        String[] recipients = {"skerrien@ebi.ac.uk"};
-        mailer.postMail( recipients, "test from java", "content", "skerrien@ebi.ac.uk" );
+        MailSender mailer = new MailSender("mailserv.ebi.ac.uk");
+        String[] recipients = {"baranda@ebi.ac.uk"};
+        mailer.postMail( recipients, "test from java", "content", "baranda@ebi.ac.uk" );
     }
 }
