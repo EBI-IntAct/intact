@@ -88,6 +88,16 @@ public class UniprotRemoteServiceTest extends TestCase {
 
     }
 
+    public void testRetrieveByUniprotId() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve("CDC2_HUMAN");
+        assertEquals("P06493", prots.iterator().next().getPrimaryAc());
+    }
+
+    public void testRetrieveBySpliceVariantId() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve("Q13535-1");
+        assertEquals("ATR_HUMAN", prots.iterator().next().getId());
+    }
+
     public void testConvert_FAU_DROME() throws Exception {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();
