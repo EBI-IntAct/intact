@@ -10,9 +10,6 @@ import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.check.AbstractSanityCheckTest;
-import uk.ac.ebi.intact.sanity.check.ReportMessage;
-import uk.ac.ebi.intact.sanity.check.ReportTopic;
-import uk.ac.ebi.intact.sanity.check.SimpleAdminReport;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SanityConfigurationException;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
@@ -20,7 +17,6 @@ import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * TODO comment this
@@ -119,18 +115,5 @@ public class AssignerTest extends AbstractSanityCheckTest
             InteractionPersister.getInstance().saveOrUpdate(interaction);
         }
         InteractionPersister.getInstance().commit();
-    }
-
-    private static void printReport(SimpleAdminReport report) {
-        for (Map.Entry<ReportTopic, List<ReportMessage>> entry :  report.getMessages().entrySet()) {
-            System.out.println("=====================================");
-            System.out.println(entry.getKey().getTitle()+":");
-            System.out.println("=====================================");
-            System.out.println(report.getHeaderByTopic(entry.getKey()));
-            System.out.println("-----------------------------------------------------");
-            for (ReportMessage message : entry.getValue()) {
-                System.out.println("\t"+message);
-            }
-        }
     }
 }
