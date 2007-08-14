@@ -47,6 +47,16 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
     /**
      * @parameter
      */
+    protected boolean disableAdminMails;
+
+    /**
+     * @parameter
+     */
+    protected boolean disableUserMails;
+
+    /**
+     * @parameter
+     */
     protected File hibernateConfig;
 
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
@@ -70,6 +80,8 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
         SanityCheckConfig sanityConfig = new SanityCheckConfig(curators);
         sanityConfig.setEditorUrl(editorUrl);
         sanityConfig.setSmtpHost(smtpHost);
+        sanityConfig.setDisableAdminMails(disableAdminMails);
+        sanityConfig.setDisableUserMails(disableUserMails);
 
         executeSanityMojo(sanityConfig);
 
