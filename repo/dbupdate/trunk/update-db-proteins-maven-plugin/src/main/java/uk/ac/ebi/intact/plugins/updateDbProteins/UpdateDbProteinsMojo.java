@@ -29,7 +29,7 @@ import uk.ac.ebi.intact.util.protein.ProteinServiceFactory;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.util.protein.utils.ProteinToDeleteManager;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
-import uk.ac.ebi.intact.util.taxonomy.NewtTaxonomyService;
+import uk.ac.ebi.intact.bridges.taxonomy.NewtTaxonomyService;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
@@ -113,8 +113,8 @@ public class UpdateDbProteinsMojo
         proteinCount = proteinDao.countAll();
         int iterationCount = proteinCount/CHUNK_SIZE;
 
-        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE Q9VYW1");
-        UniprotServiceResult uniprotServResult = service.retrieve("Q9VYW1");
+        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE P88946");
+        UniprotServiceResult uniprotServResult = service.retrieve("P88946");
         System.out.println("uniprotServResult.getProteins().size() = " + uniprotServResult.getProteins().size());
         System.out.println("uniprotServResult.getErrors().size() = " + uniprotServResult.getErrors().size());
         Map<String,String> errorsTest = uniprotServResult.getErrors();
@@ -140,12 +140,12 @@ public class UpdateDbProteinsMojo
         }
         System.out.println(errorTestLog);
 
-        System.out.println("Q9VYW1 UPDATED\n\n\n\n\n\n\n\n");
+        System.out.println("P88946 UPDATED\n\n\n\n\n\n\n\n");
         System.out.println("BEFORE ASSERT");
-//        int x = 1;
-//        if(x == 1){
-//            return;
-//        }
+        int x = 1;
+        if(x == 1){
+            return;
+        }
 
         commitTransaction();
 
