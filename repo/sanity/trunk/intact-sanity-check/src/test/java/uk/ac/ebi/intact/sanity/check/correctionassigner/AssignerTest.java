@@ -48,6 +48,8 @@ public class AssignerTest extends AbstractSanityCheckTest
         beginTransaction();
 
         SanityCheckConfig config = super.getSanityCheckConfig();
+        config.setDisableAdminMails(true);
+        config.setDisableUserMails(true);
 
         Assigner assigner = new Assigner(config, false);
         assigner.assign();
@@ -66,6 +68,9 @@ public class AssignerTest extends AbstractSanityCheckTest
         beginTransaction();
 
         SanityCheckConfig config = new SanityCheckConfig(curators);
+        config.setDisableAdminMails(true);
+        config.setDisableUserMails(true);
+
 
         Assigner assigner = new Assigner(config, false);
         assigner.assign();
@@ -96,6 +101,8 @@ public class AssignerTest extends AbstractSanityCheckTest
         beginTransaction();
 
         SanityCheckConfig config = new SanityCheckConfig(curators);
+        config.setDisableAdminMails(true);
+        config.setDisableUserMails(true);
 
         Assigner assigner = new Assigner(config, false);
         assigner.assign();
