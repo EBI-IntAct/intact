@@ -34,6 +34,8 @@ public class AbstractSanityCheckTest extends IntactAbstractTestCase {
         curators.add(curatorSa);
 
         this.sanityCheckConfig = new SanityCheckConfig(curators);
+        sanityCheckConfig.setDisableAdminMails(true);
+        sanityCheckConfig.setDisableUserMails(true);
     }
 
     public SanityCheckConfig getSanityCheckConfig() {

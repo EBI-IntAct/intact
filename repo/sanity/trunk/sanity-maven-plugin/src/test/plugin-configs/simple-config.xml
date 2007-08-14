@@ -15,6 +15,9 @@
                         </superCurator>
                     </curators>
                     <editorUrl>http://www.ebi.ac.uk/intact/editor</editorUrl>
+
+                    <disableAdminMails>true</disableAdminMails>
+                    <disableUserMails>true</disableUserMails>
                 </configuration>
             </plugin>
         </plugins>

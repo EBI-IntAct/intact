@@ -927,34 +927,35 @@ public class MessageSender {
 
             // don't send mail to curator if no errors
             if (count > 0) {
+                if (!sanityConfig.isDisableUserMails()) {
+                    System.out.println("Send individual report to " + user + "( " + user + ")");
+                    String email = sanityConfig.getCurator(user).getEmail();
 
-                System.out.println("Send individual report to " + user + "( " + user + ")");
-                String email = sanityConfig.getCurator(user).getEmail();
+                    if (email != null) {
+                        String[] recipients = new String[1];
+                        recipients[0] = email;
 
-                if (email != null) {
-                    String[] recipients = new String[1];
-                    recipients[0] = email;
+                        // send mail
+                        //if(MessageSender.SANITY_CHECK.equals(mailObject)){
+                        //    mailObject = mailObject + " - " + TIME + " (" + count + " " +countType + ( count > 1 ? "s" : "" ) + ")";
+                        //}else if (MessageSender.CORRECTION_ASSIGNMENT.equals(mailObject)){
+                        //    mailObject = mailObject + " - " + TIME ;
+                        //}
+                        mailer.postMail(recipients,
+                                mailObject + " - " + TIME + " (" + count + " " + countType + (count > 1 ? "s" : "") + ")",
+                                fullReport.toString(),
+                                "cleroy@ebi.ac.uk");
+                        //System.out.println("FULL REPORT for User : " + fullReport.toString());
+                    }
+                    else {
 
-                    // send mail
-                    //if(MessageSender.SANITY_CHECK.equals(mailObject)){
-                    //    mailObject = mailObject + " - " + TIME + " (" + count + " " +countType + ( count > 1 ? "s" : "" ) + ")";
-                    //}else if (MessageSender.CORRECTION_ASSIGNMENT.equals(mailObject)){
-                    //    mailObject = mailObject + " - " + TIME ;
-                    //}
-                    mailer.postMail(recipients,
-                            mailObject + " - " + TIME + " (" + count + " " + countType + (count > 1 ? "s" : "") + ")",
-                            fullReport.toString(),
-                            "cleroy@ebi.ac.uk");
-                    //System.out.println("FULL REPORT for User : " + fullReport.toString());
-                }
-                else {
+                        // keep track of unknown users
+                        unknownUsers.add(user.toLowerCase());
 
-                    // keep track of unknown users
-                    unknownUsers.add(user.toLowerCase());
+                        System.err.println("Could not find that user, here is the content of his report:");
+                        //System.err.println( fullReport.toString() );
 
-                    System.err.println("Could not find that user, here is the content of his report:");
-                    //System.err.println( fullReport.toString() );
-
+                    }
                 }
             }
 
@@ -1019,23 +1020,25 @@ public class MessageSender {
 
         }
 
-        Collection<String> adminEmails = getAdminEmails();
+        if (sanityConfig.isDisableAdminMails()) {
+            Collection<String> adminEmails = getAdminEmails();
 
-        // Send mail to the administrator
-        String[] recipients = new String[adminEmails.size()];
-        int i = 0;
-        for (String email : adminEmails) {
-            recipients[i++] = email;
-        }
+            // Send mail to the administrator
+            String[] recipients = new String[adminEmails.size()];
+            int i = 0;
+            for (String email : adminEmails) {
+                recipients[i++] = email;
+            }
 
-        // always send mail to admin, even if no errors
+            // always send mail to admin, even if no errors
 
-        if (!adminEmails.isEmpty()) {
-            mailer.postMail(recipients,
-                    mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + (errorCount > 1 ? "s" : "") + ")",
-                    fullReport.toString(),
-                    "cleroy@ebi.ac.uk");
-            //System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
+            if (!adminEmails.isEmpty()) {
+                mailer.postMail(recipients,
+                        mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + (errorCount > 1 ? "s" : "") + ")",
+                        fullReport.toString(),
+                        "cleroy@ebi.ac.uk");
+                //System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
+            }
         }
 
     }
