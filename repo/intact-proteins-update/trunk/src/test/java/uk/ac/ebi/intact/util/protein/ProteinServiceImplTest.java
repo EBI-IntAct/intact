@@ -6,10 +6,12 @@ import junit.framework.TestSuite;
 import uk.ac.ebi.intact.bridges.taxonomy.DummyTaxonomyService;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.util.Crc64;
 import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
@@ -18,6 +20,9 @@ import uk.ac.ebi.intact.util.protein.mock.MockUniprotProtein;
 import uk.ac.ebi.intact.util.protein.mock.MockUniprotService;
 import uk.ac.ebi.intact.util.protein.mock.UniprotProteinXrefBuilder;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
+import uk.ac.ebi.intact.util.protein.utils.ProteinToDeleteManager;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 
 import java.util.*;
 
@@ -36,7 +41,7 @@ public class ProteinServiceImplTest extends TestCase {
 
     public void setUp() throws Exception {
         super.setUp();
-
+//        new IntactUnit().createSchema();
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
     }
 
@@ -118,37 +123,63 @@ public class ProteinServiceImplTest extends TestCase {
         clearProteinsFromDatabase();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
         ProteinService service = buildProteinService();
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC); /* CDC42_CANFA */
         Collection<Protein> proteins = uniprotServiceResult.getProteins();
-
         assertNotNull( proteins );
         assertEquals( 3, proteins.size() );
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-        Protein protein = proteins.iterator().next();
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC); /* CDC42_CANFA */
+        proteins = uniprotServiceResult.getProteins();
+        assertNotNull( proteins );
+        
+        // Make sure that the uniprotService still contains the protein and it's 2 splice variants, as we got a bug
+        // due to a method that was deleting the splice variants (findMatches method in ProteinServiceImpl class).
+        UniprotService uniprotService = service.getUniprotService();
+        Collection<UniprotProtein>uniprotProteins = uniprotService.retrieve(MockUniprotProtein.CANFA_PRIMARY_AC);
+        for(UniprotProtein prot : uniprotProteins){
+            System.out.println("Uniprot prot.getPrimaryAc() = " + prot.getPrimaryAc());
+            Collection<UniprotSpliceVariant> svs = prot.getSpliceVariants();
+            assertEquals(2, svs.size());
+        }
+        assertEquals( 3, proteins.size() );
+        //Check that proteins contains, P60952 and its 2 splice variants.
+        boolean P60952found = false;
+        boolean P60952_1found = false;
+        boolean P60952_2found = false;
+        for(Protein protein : proteins){
+            System.out.println("protein.getAc() = " + protein.getAc());
+            InteractorXref uniprotIdentity = ProteinUtils.getUniprotXref(protein);
+            System.out.println("uniprotIdentity.getPrimaryId() = " + uniprotIdentity.getPrimaryId());
+            if("P60952".equals(uniprotIdentity.getPrimaryId())){
+                P60952found = true;
+            } else if("P60952-1".equals(uniprotIdentity.getPrimaryId())){
+                P60952_1found = true;
+            } else if("P60952-2".equals(uniprotIdentity.getPrimaryId())){
+                P60952_2found = true;
+            }
+        }
+        assertTrue(P60952found);
+        assertTrue(P60952_1found);
+        assertTrue(P60952_2found);
+
+        // The retrieve method return a collection of proteins containing the master protein and it's splice variant if
+        // any. We want to be sure to get the master protein.
+        Protein protein = getProteinForPrimaryAc(proteins, MockUniprotProtein.CANFA_PRIMARY_AC);//proteins.iterator().next();
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         CvObjectDao<CvObject> cvDao = daoFactory.getCvObjectDao();
-
         Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
-
         CvAliasType isoformSynonym = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.ISOFORM_SYNONYM_MI_REF );
         CvAliasType gene = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.GENE_NAME_MI_REF );
-        CvAliasType synonym = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.GENE_NAME_SYNONYM_MI_REF );
-        CvAliasType orf = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.ORF_NAME_MI_REF );
-        CvAliasType locus = ( CvAliasType ) cvDao.getByPsiMiRef( CvAliasType.LOCUS_NAME_MI_REF );
-
         CvXrefQualifier identity = ( CvXrefQualifier ) cvDao.getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
         CvXrefQualifier secondaryAc = ( CvXrefQualifier ) cvDao.getByPsiMiRef( CvXrefQualifier.SECONDARY_AC_MI_REF );
         CvXrefQualifier isoformParent = ( CvXrefQualifier ) cvDao.getByPsiMiRef( CvXrefQualifier.ISOFORM_PARENT_MI_REF );
-
         CvDatabase uniprot = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
-        CvDatabase go = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.GO_MI_REF );
         CvDatabase interpro = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.INTERPRO_MI_REF );
         CvDatabase intact = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.INTACT_MI_REF );
-        CvDatabase pdb = ( CvDatabase ) cvDao.getByPsiMiRef( CvDatabase.PDB_MI_REF );
-
         CvTopic isoformComment = ( CvTopic ) cvDao.getByShortLabel( CvTopic.ISOFORM_COMMENT );
 
         assertNotNull( protein.getAc() );
@@ -159,11 +190,9 @@ public class ProteinServiceImplTest extends TestCase {
                 "QEDYDRLRPLSYPQTDVFLVCFSVVSPSSFENVKEKWVPEITHHCPKTPFLLVGTQIDLR" +
                 "DDPSTIEKLAKNKQKPITPETAEKLARDLKAVKYVECSALTQRGLKNVFDEAILAALEPP" +
                 "ETQPKRKCCIF", protein.getSequence() );
-
         assertNotNull( protein.getBioSource() );
         assertNotNull( protein.getBioSource().getAc() );
         assertEquals( "9615", protein.getBioSource().getTaxId() );
-
         assertEquals( 7, protein.getXrefs().size() );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, uniprot, "P60952", identity ) ) );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, uniprot, "P21181", secondaryAc ) ) );
@@ -172,10 +201,8 @@ public class ProteinServiceImplTest extends TestCase {
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR013753", null ) ) );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR001806", null ) ) );
         assertTrue( protein.getXrefs().contains( new InteractorXref( owner, interpro, "IPR005225", null ) ) );
-
         assertEquals( 1, protein.getAliases().size() );
         assertTrue( protein.getAliases().contains( new InteractorAlias( owner, protein, gene, "CDC42" ) ) );
-
         assertEquals( 0, protein.getAnnotations().size() );
 
         //////////////////////
@@ -183,7 +210,6 @@ public class ProteinServiceImplTest extends TestCase {
 
         ProteinDao pdao = daoFactory.getProteinDao();
         List<ProteinImpl> variants = pdao.getSpliceVariants( protein );
-
         assertEquals( 2, variants.size() );
 
         Protein sv1 = searchByShortlabel( variants, "P60952-1" );
@@ -215,14 +241,22 @@ public class ProteinServiceImplTest extends TestCase {
         String ac = protein.getAc();
         String sv1ac = sv1.getAc();
         String sv2ac = sv2.getAc();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-
-        uniprotServiceResult =  service.retrieve( "P60952" ); /* CDC42_CANFA */
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        uniprotServiceResult =  service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC); /* CDC42_CANFA */
         proteins = uniprotServiceResult.getProteins();
+
+        assertNotNull(service.retrieve("P60952-2"));
+        pdao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        Protein sv = pdao.getByAc(sv1ac);
+        InteractorXref svXref = ProteinUtils.getUniprotXref(sv);
+        assertEquals(svXref.getPrimaryId(), sv1.getShortLabel());
+
         assertNotNull( proteins );
         assertEquals( 3, proteins.size() );
 
-        protein = proteins.iterator().next();
+        protein = getProteinForPrimaryAc(proteins, MockUniprotProtein.CANFA_PRIMARY_AC);
         assertEquals( ac, protein.getAc() );
 
         variants = pdao.getSpliceVariants( protein );
@@ -236,6 +270,27 @@ public class ProteinServiceImplTest extends TestCase {
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
     }
+
+    private Protein getProteinForPrimaryAc(Collection<Protein> proteins, String primaryAc) throws ProteinServiceException {
+        CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
+        CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
+        Protein proteinToReturn = null;
+        for(Protein protein : proteins){
+            for(InteractorXref xref : protein.getXrefs()){
+                if(uniprot.equals(xref.getCvDatabase())
+                        && identity.equals(xref.getCvXrefQualifier())
+                        && primaryAc.equals(xref.getPrimaryId())){
+                    if(proteinToReturn == null){
+                        proteinToReturn = protein;
+                    }else{
+                        throw new ProteinServiceException("2 proteins with the same identity");
+                    }
+                }
+            }
+        }
+        return proteinToReturn;
+    }
+
 
     public void testRetrieve_spliceVariant() throws Exception {
         // clear database content.
@@ -783,16 +838,16 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_PRIMARY_AC, canfa );
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfa );
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfa );
+
+        
         ProteinService service = ProteinServiceFactory.getInstance().buildProteinService( uniprotService );
         service.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new DummyTaxonomyService() ) );
         //Create the CANFA protein in the empty database, assert it has been created And commit.
         UniprotServiceResult uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
         Collection<Protein> proteinsColl = uniprotServiceResult.getProteins() ;
         assertEquals( 3,proteinsColl.size() );
-        String proteinAc = "";
-        for(Protein protein : proteinsColl){
-            proteinAc = protein.getAc();
-        }
+        Protein masterProtein = getProteinForPrimaryAc(proteinsColl, MockUniprotProtein.CANFA_PRIMARY_AC);
+        String proteinAc = masterProtein.getAc();
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
@@ -800,8 +855,15 @@ public class ProteinServiceImplTest extends TestCase {
         CvDatabase uniprot = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.UNIPROT_MI_REF);
         CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF);
         List<ProteinImpl> proteinsList = proteinDao.getByXrefLike(uniprot, identity,MockUniprotProtein.CANFA_PRIMARY_AC);
+        Collection<Protein> proteins = new ArrayList<Protein>();
+        for (int i = 0; i < proteinsList.size(); i++) {
+            ProteinImpl protein =  proteinsList.get(i);
+            proteins.add(protein);
+        }
         assertEquals(1, proteinsList.size());
-        ProteinImpl protein = proteinsList.get(0);
+        // proteincColl and proteins contain the updated master protein and it's splice variant, we want to get the master
+        // protein.
+        Protein protein = getProteinForPrimaryAc(proteins, MockUniprotProtein.CANFA_PRIMARY_AC);
         String primaryProteinAc = protein.getAc();
 
         Protein secondaryProt = new ProteinImpl(IntactContext.getCurrentInstance().getInstitution(),
@@ -824,26 +886,38 @@ public class ProteinServiceImplTest extends TestCase {
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
-        proteinsColl = uniprotServiceResult.getProteins();
-        assertEquals(3,proteinsColl.size());
-        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-
-        ProteinImpl proteinsPrimaryAc = proteinDao.getByAc(primaryProteinAc);
-        ProteinImpl proteinSecondaryAc = proteinDao.getByAc(secondaryProtAc);
-        if((proteinsPrimaryAc==null && proteinSecondaryAc==null)){
-            fail("one of them shouldn't be null");
-        }
-        if((proteinsPrimaryAc!=null && proteinSecondaryAc!=null)){
-            fail("one of them should be null");
-        }
-        assertTrue((proteinsPrimaryAc==null && proteinSecondaryAc!=null) || (proteinsPrimaryAc!=null && proteinSecondaryAc==null));
-
-        System.out.println("proteinsColl.size() = " + proteinsColl.size());
         Collection<String> messages = uniprotServiceResult.getMessages();
         assertEquals(1,messages.size());
         for(String message : messages){
             assertTrue(message.contains("The protein which are going to be merged :"));
         }
+        Collection<String> acsOfProtToDelete = ProteinToDeleteManager.getAcToDelete();
+        assertEquals(1, acsOfProtToDelete.size());
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        for(String ac : acsOfProtToDelete){
+            ProteinImpl protToDel = proteinDao.getByAc(ac);
+            proteinDao.delete(protToDel);
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
+        proteinsColl = uniprotServiceResult.getProteins();
+        assertEquals(3,proteinsColl.size());
+        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+
+        ProteinImpl proteinPrimaryAc = proteinDao.getByAc(primaryProteinAc);
+        ProteinImpl proteinSecondaryAc = proteinDao.getByAc(secondaryProtAc);
+        if((proteinPrimaryAc==null && proteinSecondaryAc==null)){
+            fail("one of them shouldn't be null, because they should have been merged into one protein");
+        }
+        if((proteinPrimaryAc!=null && proteinSecondaryAc!=null)){
+            fail("one of them should be null, they should have been " +
+                    "merged into one but not both should have been deleted.");
+        }
+        assertTrue((proteinPrimaryAc==null && proteinSecondaryAc!=null) || (proteinPrimaryAc!=null && proteinSecondaryAc==null));
+
+        System.out.println("proteinsColl.size() = " + proteinsColl.size());
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
@@ -1060,6 +1134,34 @@ public class ProteinServiceImplTest extends TestCase {
         xrefDao.saveOrUpdate(newXref);
         spliceVariant.addXref(newXref);
         proteinDao.saveOrUpdate(spliceVariant);
+        // We know that the spliceVariant we have created is wrong, the retrieve method will check if it's used in an
+        // interaction, if it's not it will delete, if it is it will just sent a message. Here we don't want the splice
+        // variant to be deleted, so we attach it to the an interaction.
+        Institution owner = IntactContext.getCurrentInstance().getInstitution();
+        BioSource bioSource = new BioSource(owner, "human", "9606");
+        BioSourceDao bioSourceDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBioSourceDao();
+        bioSourceDao.saveOrUpdate(bioSource);
+        Experiment exp = new Experiment(owner, "yang-1997-1", bioSource);
+        ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        expDao.saveOrUpdate(exp);
+        Collection<Experiment> experiments = new ArrayList<Experiment>();
+        experiments.add(exp);
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
+        Interaction interaction = new InteractionImpl(experiments,
+                cvContext.getByMiRef(CvInteractionType.class, CvInteractionType.DIRECT_INTERACTION_MI_REF),
+                cvContext.getByMiRef(CvInteractorType.class,CvInteractorType.DNA_MI_REF), "dlw2-arg1-1", owner);
+        InteractionDao interactionDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionDao();
+        interactionDao.saveOrUpdate((InteractionImpl) interaction);
+        exp.addInteraction(interaction);
+        expDao.saveOrUpdate(exp);
+        Component component = new Component(owner, interaction, spliceVariant,
+                cvContext.getByMiRef(CvExperimentalRole.class, CvExperimentalRole.ANCILLARY_MI_REF),
+                cvContext.getByMiRef(CvBiologicalRole.class, CvBiologicalRole.COFACTOR_MI_REF));
+        ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
+        componentDao.saveOrUpdate(component);
+        interaction.addComponent(component);
+        interactionDao.saveOrUpdate((InteractionImpl) interaction);
+
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
@@ -1069,14 +1171,38 @@ public class ProteinServiceImplTest extends TestCase {
         //todo : in this case it will not return an error but a message as the splice variant has no active instance it
         //just delete it. Change the test : check on message size and content and add a test to check that if the splice
         // variant is involved in an  interaction it returns an error.
-        assertEquals(1,errors.size());
+
+        Set <Map.Entry<String,String>> errorSet = errors.entrySet();
+        Iterator<Map.Entry<String,String>> iterator = errorSet.iterator();
+        while(iterator.hasNext()){
+            Map.Entry entry = iterator.next();
+            System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
+        assertEquals(2,errors.size());
+        boolean multipleIdErrorFound = false;
+        boolean notSpliceVarInIntactErrorFound = false;
         for(String errorType : keySet){
             String error = errors.get(errorType);
-            assertTrue(error.contains("Could not find a unique UniProt identity for splice variant:"));
+            if(error.contains("Splice variants with multiple identity")){
+                multipleIdErrorFound = true;
+            }
+            if (error.contains("Protein being a splice variant in IntAct but not in Uniprot and being part of an interaction.")){
+                notSpliceVarInIntactErrorFound = true;
+            }
         }
-        assertEquals(0,uniprotServiceResult.getProteins().size());
-        assertEquals(1,uniprotServiceResult.getErrors().size());
-
+        // if this is false it means that the protein update didn't realise the splice variant had 2 identities.
+        assertTrue(multipleIdErrorFound);
+        //if this is false it means that the protein update didn't realise that the one of the uniprot identity of the
+        // splice variant did not correspond to a protein that is in Uniprot a splice variant of the given master (ie. :
+        // one of the identity is wrong and does not even correspond to a splice variant)
+        assertTrue(notSpliceVarInIntactErrorFound);
+        // A message for the wrong splice variant will be sent but the
+        // uniprotService will re-create a correct splice variant and still return the protein with it's 2 splice
+        // variants as normal.
+        // todo : what shall we do as in this stage it would be twice the splice variant : 1 newly created and correct
+        // and one old with 2 identities.
+        assertEquals(3,uniprotServiceResult.getProteins().size());
+        
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
 
@@ -1114,17 +1240,19 @@ public class ProteinServiceImplTest extends TestCase {
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_1, canfaWithNoSpliceVariant );
         uniprotService.add( MockUniprotProtein.CANFA_SECONDARY_AC_2, canfaWithNoSpliceVariant );
         uniprotServiceResult = service.retrieve( MockUniprotProtein.CANFA_PRIMARY_AC );
-        //todo : in this case it will not return an error but a message as the splice variant has no active instance it
-        //just delete it. Change the test : check on message size and content and add a test to check that if the splice
-        // variant is involved in an  interaction it returns an error.
-        assertEquals(0,uniprotServiceResult.getProteins().size());
-        Map<String ,String> errors = uniprotServiceResult.getErrors();
-        Set<String> keySet = errors.keySet();
-        assertEquals(1,errors.size());
-        for(String errorType : keySet){
-            String error = errors.get(errorType);
-            assertTrue(error.contains("cdc42_canfa,P60952] but in Uniprot it is not the case"));
+        //todo : as the splice variant is not attached to any interaction it's ac will be put in the ProteinToDeleteManager
+        //  it won't be deleted as it has to be done manually, but no error message will be sent just a message will be
+        // sent.
+        assertEquals(1,uniprotServiceResult.getProteins().size());
+
+        Collection<String> messages = uniprotServiceResult.getMessages();
+        for(String message : messages){
+            System.out.println("message = " + message);
         }
+        assertNotNull(uniprotServiceResult.getMessages());
+        // todo : check why there's twice the same message.
+        assertEquals(2,uniprotServiceResult.getMessages().size());
+
         // Assert that the message found it the write one.
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
