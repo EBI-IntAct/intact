@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>9</version>
+        <version>17</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -80,7 +80,7 @@
         </dependency>
 
         <!-- Only kept here so the old code doesn't break ... will be removed before next release  -->
-        <dependency>
+       <!-- <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
             <artifactId>uniprot-bridge</artifactId>
             <version>1.0-beta-1</version>
@@ -90,7 +90,7 @@
                     <artifactId>remote-api</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
         <!-- Keep this one until we get rid of uniprot-bridge -->
        <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
