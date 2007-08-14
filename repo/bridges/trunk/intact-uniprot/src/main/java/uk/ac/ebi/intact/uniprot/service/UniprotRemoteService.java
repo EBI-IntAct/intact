@@ -109,7 +109,6 @@ public class UniprotRemoteService extends AbstractUniprotService {
             iterator = uniProtQueryService.getEntryIterator( query );
 
         } else {
-
             iterator = getUniProtEntryForProteinEntry( ac );
         }
 
@@ -125,7 +124,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
         // search for primary and secondary ACs
         String query = IndexField.PRIMARY_ACCESSION.getValue() + ":" + ac +
                 " OR " +
-                IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac;
+                IndexField.UNIPROT_EXPIRED_IDENTIFIER.getValue() + ":" + ac +
+                " OR " +
+                IndexField.UNIPROT_ID.getValue() + ":" + ac;
         return uniProtQueryService.getEntryIterator( UniProtQueryBuilder.buildQuery( query ) );
     }
 
