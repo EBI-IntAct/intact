@@ -37,10 +37,10 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--plugin>
+            <plugin>
                 <groupId>uk.ac.ebi.intact.commons</groupId>
                 <artifactId>hibernateconfig-maven-plugin</artifactId>
-            </plugin-->
+            </plugin>
         </plugins>
     </build>
 
