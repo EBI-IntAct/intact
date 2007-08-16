@@ -11,16 +11,16 @@
     <groupId>uk.ac.ebi.intact.app.editor</groupId>
     <artifactId>editor-app</artifactId>
     <packaging>war</packaging>
-    <version>1.6.1</version>
+    <version>1.6.2-SNAPSHOT</version>
 
     <name>Editor</name>
     <description>To edit IntAct data</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/tags/editor-app-1.6.1</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/tags/editor-app-1.6.1</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/editor-app/tags/editor-app-1.6.1</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/editor/editor-app/trunk</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/editor/editor-app/trunk/</url>
     </scm>
 
     <build>
