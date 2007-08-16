@@ -28,7 +28,7 @@
 
     <context-param>
         <param-name>uk.ac.ebi.intact.PRELOAD_COMMON_CVOBJECTS</param-name>
-        <param-value>false</param-value>
+        <param-value>true</param-value>
         <description>
             Preload the most common CvObjects on application start, so it is
             faster to retrieve them later
@@ -46,7 +46,7 @@
    <context-param>
         <param-name>uk.ac.ebi.intact.FORCE_NO_SCHEMA_VERSION_CHECK</param-name>
         <param-value>true</param-value>
-        <description>
+        <description>        
             If read-only, an application cannot persist data in the database
         </description>
     </context-param>
