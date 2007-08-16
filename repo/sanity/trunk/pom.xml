@@ -21,7 +21,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <core.version>1.6.2-SNAPSHOT</core.version>
+        <core.version>1.6.2</core.version>
     </properties>
 
     <scm>
