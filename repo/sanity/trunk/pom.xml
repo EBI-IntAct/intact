@@ -32,7 +32,7 @@
     </scm>
 
     <modules>
-        <module>intact-sanity-apt</module>
+        <module>intact-sanity-commons</module>
         <module>intact-sanity-rules</module>
         <module>intact-sanity-check</module>
         <module>sanity-maven-plugin</module>
@@ -43,7 +43,7 @@
             <!-- this group -->
             <dependency>
                 <groupId>uk.ac.ebi.intact.sanity</groupId>
-                <artifactId>intact-sanity-apt</artifactId>
+                <artifactId>intact-sanity-commons</artifactId>
                 <version>${currentVersion}</version>
             </dependency>
             <dependency>
