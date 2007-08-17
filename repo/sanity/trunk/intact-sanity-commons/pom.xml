@@ -20,7 +20,7 @@
                 <groupId>com.sun.tools.xjc.maven2</groupId>
                 <artifactId>maven-jaxb-plugin</artifactId>
                 <configuration>
-                    <generatePackage>uk.ac.ebi.intact.sanity.apt</generatePackage>
+                    <generatePackage>uk.ac.ebi.intact.sanity.commons</generatePackage>
                     <includeSchemas>
                         <includeSchema>**/*.xsd</includeSchema>
                     </includeSchemas>
