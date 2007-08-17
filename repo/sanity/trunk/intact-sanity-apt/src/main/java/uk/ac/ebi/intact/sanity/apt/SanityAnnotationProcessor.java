@@ -10,8 +10,6 @@ import com.sun.mirror.apt.AnnotationProcessorEnvironment;
 import com.sun.mirror.declaration.AnnotationTypeDeclaration;
 import com.sun.mirror.declaration.Declaration;
 import com.sun.mirror.util.DeclarationVisitors;
-import uk.ac.ebi.intact.sanity.model.Rule;
-import uk.ac.ebi.intact.sanity.model.Rules;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -52,16 +50,16 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
             }
         }
 
-        List<Rule> rules = visitor.getRules();
+        List<DeclaredRule> rules = visitor.getRules();
 
         try {
             File targetDir = createTargetDir();
             Writer writer = new FileWriter(targetDir);
 
-            Rules jaxbRules = new Rules();
-            jaxbRules.getRule().addAll(rules);
+            DeclaredRules jaxbRules = new DeclaredRules();
+            jaxbRules.getDeclaredRule().addAll(rules);
 
-            RuleManager.writeRulesXml(jaxbRules, writer);
+            DeclaredRuleManager.writeRulesXml(jaxbRules, writer);
 
             writer.close();
 
