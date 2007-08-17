@@ -15,9 +15,6 @@
  */
 package uk.ac.ebi.intact.sanity.apt;
 
-import uk.ac.ebi.intact.sanity.model.Rule;
-import uk.ac.ebi.intact.sanity.model.Rules;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -35,39 +32,39 @@ import java.util.Set;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id:RuleManager.java 9493 2007-08-17 14:02:49Z baranda $
  */
-public class RuleManager {
+public class DeclaredRuleManager {
 
     public static final String RULES_XML_PATH = "/META-INF/sanity-rules.xml";
 
-    private static ThreadLocal<RuleManager> instance = new ThreadLocal<RuleManager>() {
+    private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>() {
         @Override
-        protected RuleManager initialValue() {
+        protected DeclaredRuleManager initialValue() {
             InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(RULES_XML_PATH);
 
-            Rules rules = null;
+            DeclaredRules rules = null;
             try {
                 rules = readRulesXml(is);
             } catch (JAXBException e) {
                 throw new SanityRuleException(e);
             }
-            return new RuleManager(rules.getRule());
+            return new DeclaredRuleManager(rules.getDeclaredRule());
         }
     };
 
-    public static RuleManager getInstance() {
+    public static DeclaredRuleManager getInstance() {
         return instance.get();
     }
 
-    private List<Rule> availableRules;
+    private List<DeclaredRule> availableRules;
 
-    private RuleManager(List<Rule> availableRules) {
+    private DeclaredRuleManager(List<DeclaredRule> availableRules) {
         this.availableRules = availableRules;
     }
 
-    public List<Rule> getRulesForTarget(String targetClass) {
-        List<Rule> rules = new ArrayList<Rule>();
+    public List<DeclaredRule> getRulesForTarget(String targetClass) {
+        List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
-        for (Rule rule : rules) {
+        for (DeclaredRule rule : rules) {
             if (rule.getTargetClass().equals(targetClass)) {
                 rules.add(rule);
             }
@@ -79,26 +76,26 @@ public class RuleManager {
     public Set<String> getAvailableTargetClasses() {
         Set<String> targets = new HashSet<String>();
 
-        for (Rule rule : availableRules) {
+        for (DeclaredRule rule : availableRules) {
             targets.add(rule.getTargetClass());
         }
 
         return targets;
     }
 
-    public static Rules readRulesXml(InputStream is) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(Rules.class.getPackage().getName());
+    public static DeclaredRules readRulesXml(InputStream is) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        return (Rules) unmarshaller.unmarshal(is);
+        return (DeclaredRules) unmarshaller.unmarshal(is);
     }
 
-    public static void writeRulesXml(Rules rules, Writer writer) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(Rules.class.getPackage().getName());
+    public static void writeRulesXml(DeclaredRules rules, Writer writer) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
         Marshaller marshaller = jc.createMarshaller();
         marshaller.marshal(rules, writer);
     }
 
-    public List<Rule> getAvailableRules() {
+    public List<DeclaredRule> getAvailableRules() {
         return availableRules;
     }
 }

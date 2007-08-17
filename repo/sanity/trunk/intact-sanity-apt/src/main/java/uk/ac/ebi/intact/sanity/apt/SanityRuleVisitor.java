@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.sanity.apt;
 import com.sun.mirror.declaration.ClassDeclaration;
 import com.sun.mirror.util.SimpleDeclarationVisitor;
 import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.model.Rule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +21,10 @@ import java.util.List;
  */
 public class SanityRuleVisitor extends SimpleDeclarationVisitor {
 
-    private List<Rule> rules;
+    private List<DeclaredRule> rules;
 
     public SanityRuleVisitor() {
-        this.rules = new ArrayList<Rule>();
+        this.rules = new ArrayList<DeclaredRule>();
     }
 
     @Override
@@ -45,7 +44,7 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
             name = ruleClassName;
         }
 
-        Rule rule = new Rule();
+        DeclaredRule rule = new DeclaredRule();
         rule.setClazz(ruleClassName);
         rule.setTargetClass(targetClass.getName());
         rule.setName(name);
@@ -71,7 +70,7 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
 
 
 
-    public List<Rule> getRules() {
+    public List<DeclaredRule> getRules() {
         return rules;
     }
 }
