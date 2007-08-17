@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util.sanity.xml;
+package uk.ac.ebi.intact.sanity.apt;
 
-import uk.ac.ebi.intact.sanity.apt.SanityRuleException;
 import uk.ac.ebi.intact.sanity.model.Rule;
 import uk.ac.ebi.intact.sanity.model.Rules;
 
@@ -34,7 +33,7 @@ import java.util.Set;
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
- * @version $Id$
+ * @version $Id:RuleManager.java 9493 2007-08-17 14:02:49Z baranda $
  */
 public class RuleManager {
 

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util.sanity.annotation;
+package uk.ac.ebi.intact.sanity.apt.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

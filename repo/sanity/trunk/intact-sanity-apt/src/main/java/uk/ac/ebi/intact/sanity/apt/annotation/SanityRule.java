@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.sanity.annotation;
+package uk.ac.ebi.intact.sanity.apt.annotation;
 
 import uk.ac.ebi.intact.model.IntactObject;
 

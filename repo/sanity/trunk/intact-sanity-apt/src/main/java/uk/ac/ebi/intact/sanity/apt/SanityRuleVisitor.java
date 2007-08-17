@@ -3,12 +3,12 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.sanity.apt;
+package uk.ac.ebi.intact.sanity.apt;
 
 import com.sun.mirror.declaration.ClassDeclaration;
 import com.sun.mirror.util.SimpleDeclarationVisitor;
+import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.model.Rule;
-import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 
 import java.util.ArrayList;
 import java.util.List;
