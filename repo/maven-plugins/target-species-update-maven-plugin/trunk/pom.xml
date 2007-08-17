@@ -25,14 +25,14 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/target-species-update-maven-plugin/trunk/</url>
     </scm>
 
-    <build>
+    <!--build>
         <plugins>
             <plugin>
                 <groupId>uk.ac.ebi.intact.plugins</groupId>
                 <artifactId>dbtest-maven-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build-->
 
     <dependencies>
 
