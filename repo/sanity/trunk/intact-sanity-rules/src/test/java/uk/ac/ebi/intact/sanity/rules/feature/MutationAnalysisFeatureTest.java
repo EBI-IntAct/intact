@@ -6,19 +6,15 @@
 package uk.ac.ebi.intact.sanity.rules.feature;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import uk.ac.ebi.intact.mocks.InstitutionMock;
+import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
+import uk.ac.ebi.intact.mocks.cvFeatureType.MutationDecreasingMock;
+import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.Range;
-import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
-import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
-import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
-import uk.ac.ebi.intact.mocks.InstitutionMock;
-import uk.ac.ebi.intact.mocks.cvFeatureType.MutationDecreasingMock;
 
 import java.util.Collection;
 
@@ -29,7 +25,7 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class FeatureWithoutRangeTest extends TestCase {
+public class MutationAnalysisFeatureTest extends TestCase {
 
 
     /**
@@ -37,7 +33,7 @@ public class FeatureWithoutRangeTest extends TestCase {
      *
      * @param testName name of the test case
      */
-    public FeatureWithoutRangeTest( String testName )
+    public MutationAnalysisFeatureTest( String testName )
     {
         super( testName );
     }
@@ -47,7 +43,7 @@ public class FeatureWithoutRangeTest extends TestCase {
      */
     public static Test suite()
     {
-        return new TestSuite( FeatureWithoutRangeTest.class );
+        return new TestSuite( MutationAnalysisFeatureTest.class );
     }
 
     /**
@@ -55,23 +51,21 @@ public class FeatureWithoutRangeTest extends TestCase {
      */
     public void testCheck() throws SanityCheckerException {
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
-        FeatureWithoutRange rule = new FeatureWithoutRange();
 
         Component component = Q9QXS6ComponentMock.getMock(interaction);
         Feature feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
         Range range = new Range(InstitutionMock.getMock(),1,1,1,1,"");
         feature.addRange(range);
+        MutationAnalysisFeature rule = new MutationAnalysisFeature();
         Collection<GeneralMessage> messages = rule.check(feature);
         assertEquals(0, messages.size());
 
         component = Q9QXS6ComponentMock.getMock(interaction);
         feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
-        messages = rule.check(feature);
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(FeatureWithoutRange.getDescription(), message.getDescription());
-            assertEquals(FeatureWithoutRange.getSuggestion(), message.getProposedSolution());
-        }
+        range = new Range(InstitutionMock.getMock(),1,8,16,24,"");
+        feature.addRange(range);
 
+        messages = rule.check(feature);
+        assertEquals(1,messages.size());
     }
 }

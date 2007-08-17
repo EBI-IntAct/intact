@@ -3,23 +3,23 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.nucleicAcid;
+package uk.ac.ebi.intact.sanity.rules.nucleicacid;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 import junit.framework.TestCase;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.model.InteractorXref;
-import uk.ac.ebi.intact.mocks.nucleicAcids.AnfRatGeneMock;
+import junit.framework.TestSuite;
 import uk.ac.ebi.intact.mocks.XrefMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.DDBJMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
+import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.mocks.nucleicAcids.AnfRatGeneMock;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.NucleicAcid;
+import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * TODO comment this

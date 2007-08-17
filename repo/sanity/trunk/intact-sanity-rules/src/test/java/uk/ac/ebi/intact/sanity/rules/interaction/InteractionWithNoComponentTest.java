@@ -5,15 +5,17 @@
  */
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
-import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -23,7 +25,7 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class InteractionWithNoExperimentTest extends TestCase {
+public class InteractionWithNoComponentTest extends TestCase {
 
 
     /**
@@ -31,7 +33,7 @@ public class InteractionWithNoExperimentTest extends TestCase {
      *
      * @param testName name of the test case
      */
-    public InteractionWithNoExperimentTest( String testName )
+    public InteractionWithNoComponentTest( String testName )
     {
         super( testName );
     }
@@ -41,27 +43,28 @@ public class InteractionWithNoExperimentTest extends TestCase {
      */
     public static Test suite()
     {
-        return new TestSuite( InteractionWithNoExperimentTest.class );
+        return new TestSuite( InteractionWithNoComponentTest.class );
     }
 
     /**
      * Rigourous Test :-)
      */
     public void testCheck() throws SanityCheckerException {
+
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
-        InteractionWithNoExperiment rule = new InteractionWithNoExperiment();
+        InteractionWithNoComponent rule = new InteractionWithNoComponent();
         Collection<GeneralMessage> messages =  rule.check(interaction);
         assertEquals(0,messages.size());
 
-        interaction = Cja1Dbn1Mock.getMock(null);
-        rule = new InteractionWithNoExperiment();
+        interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        Collection<Component> components = new ArrayList();
+        interaction.setComponents(components);
         messages =  rule.check(interaction);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(InteractionWithNoExperiment.getDescription(), message.getDescription());
-            assertEquals(InteractionWithNoExperiment.getSuggestion(), message.getProposedSolution());
+            assertEquals(InteractionWithNoComponent.getDescription(), message.getDescription());
+            assertEquals(InteractionWithNoComponent.getSuggestion(), message.getProposedSolution());
         }
-        
-    }
 
+    }
 }

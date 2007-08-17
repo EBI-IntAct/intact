@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.cvObject;
+package uk.ac.ebi.intact.sanity.rules.cvobject;
 
 import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;

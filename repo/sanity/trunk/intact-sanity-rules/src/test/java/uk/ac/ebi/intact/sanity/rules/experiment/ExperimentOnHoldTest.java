@@ -5,16 +5,16 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
 import uk.ac.ebi.intact.mocks.cvTopics.OnHoldMock;
+import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
 
 import java.util.Collection;
 
@@ -50,7 +50,7 @@ public class ExperimentOnHoldTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testCheck() throws SanityCheckerException {
-        OnHoldExperiment rule = new OnHoldExperiment();
+        ExperimentOnHold rule = new ExperimentOnHold();
 
         // Give the check method an experiment without on-hold annotation and make sure that it returns no message.
         Experiment experiment = ButkevitchMock.getMock();
@@ -63,8 +63,8 @@ public class ExperimentOnHoldTest extends TestCase {
         messages =  rule.check(experiment);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(OnHoldExperiment.getDescription(), message.getDescription());
-            assertEquals(OnHoldExperiment.getSuggestion(), message.getProposedSolution());
+            assertEquals(ExperimentOnHold.getDescription(), message.getDescription());
+            assertEquals(ExperimentOnHold.getSuggestion(), message.getProposedSolution());
         }
     }
 }
