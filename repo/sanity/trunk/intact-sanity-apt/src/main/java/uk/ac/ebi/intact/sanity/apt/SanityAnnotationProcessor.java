@@ -3,17 +3,15 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util.sanity.apt;
+package uk.ac.ebi.intact.sanity.apt;
 
 import com.sun.mirror.apt.AnnotationProcessor;
 import com.sun.mirror.apt.AnnotationProcessorEnvironment;
 import com.sun.mirror.declaration.AnnotationTypeDeclaration;
 import com.sun.mirror.declaration.Declaration;
 import com.sun.mirror.util.DeclarationVisitors;
-import uk.ac.ebi.intact.sanity.apt.SanityRuleException;
 import uk.ac.ebi.intact.sanity.model.Rule;
 import uk.ac.ebi.intact.sanity.model.Rules;
-import uk.ac.ebi.intact.util.sanity.xml.RuleManager;
 
 import java.io.File;
 import java.io.FileWriter;
