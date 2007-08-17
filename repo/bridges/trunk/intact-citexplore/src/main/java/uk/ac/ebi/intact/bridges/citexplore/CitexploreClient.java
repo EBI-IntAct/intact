@@ -60,7 +60,10 @@ public class CitexploreClient {
 
     private ResultListBean searchCitationsByExternalId(String id) {
         try {
-            return getPort().searchCitations("ext_id:"+id, "all", 0, null);
+            // SRC:med is needed as the externat ids are not unique. ex : extId1 coresponds to 2 publication in citexplore
+            // one from medline, one from CiteSeer.
+            // Putting : core allow to get a lighter object just with the title, authors name...
+            return getPort().searchCitations("EXT_ID:"+id+" SRC:med", "core", 0, null); //"core"
         } catch (QueryException_Exception e) {
             throw new CitexploreClientException(e);
         }
@@ -68,7 +71,7 @@ public class CitexploreClient {
 
     public static void main(String[] args) throws Exception{
         CitexploreClient client = new CitexploreClient();
-        Citation c = client.getCitationById("1234567");
+        Citation c = client.getCitationById("1");
 //        Citation c = client.getCitationById("1234567");
         System.out.println(c.getJournalIssue());
         System.out.println(c.getJournalIssue().getYearOfPublication());
