@@ -19,17 +19,78 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Iterator;
+
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.CvContext;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
+import uk.ac.ebi.intact.persistence.dao.XrefDao;
 
 public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
 {
 
     public void testSimpleGeneration() throws Exception {
+
+
+
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
 
         UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
         mojo.setDryRun(false);
         mojo.setLog( new SystemStreamLog() );
 
+
+        // MAKE SURE WE DELETE ALL THE XREF TARGET SPECIES IF ANY
+        ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        Collection<Experiment> experiments = expDao.getAll();
+        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
+        CvXrefQualifier targetSpecies = cvContext.getByLabel(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES);
+        CvDatabase newt = cvContext.getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
+        XrefDao<ExperimentXref> xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class);
+        for(Experiment exp : experiments){
+            Collection<ExperimentXref> experimentXrefs = exp.getXrefs();
+            for (Iterator<ExperimentXref> iterator = experimentXrefs.iterator(); iterator.hasNext();) {
+                ExperimentXref experimentXref =  iterator.next();
+                if(newt.equals(experimentXref.getCvDatabase()) && targetSpecies.equals(experimentXref.getCvXrefQualifier())){
+
+                    experimentXref.setParent(null);
+                    xrefDao.delete(experimentXref);
+                    iterator.remove();
+                }
+            }
+            ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+            experimentDao.saveOrUpdate(exp);
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        //EXECUTE THE MOJO
         mojo.executeIntactMojo();
+
+        //CHECK THAT THE XREF TARGET SPECIES ARE BACK
+        expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+        experiments = expDao.getAll();
+        cvContext = IntactContext.getCurrentInstance().getCvContext();
+        targetSpecies = cvContext.getByLabel(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES);
+        newt = cvContext.getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
+        xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class);
+        int xrefCount = 0;
+        for(Experiment exp : experiments){
+            Collection<ExperimentXref> experimentXrefs = exp.getXrefs();
+            for (Iterator<ExperimentXref> iterator = experimentXrefs.iterator(); iterator.hasNext();) {
+                ExperimentXref experimentXref =  iterator.next();
+                if(newt.equals(experimentXref.getCvDatabase()) && targetSpecies.equals(experimentXref.getCvXrefQualifier())){
+                    xrefCount++;
+                }
+            }
+            ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
+            experimentDao.saveOrUpdate(exp);
+        }
+        assertTrue(xrefCount > 0);
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
     }
 }
