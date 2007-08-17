@@ -10,7 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>intact-sanity-check</artifactId>
+    <artifactId>intact-sanity-check-legacy</artifactId>
     <version>2.0-SNAPSHOT</version>
 
     <name>IntAct Sanity :: Sanity Check</name>

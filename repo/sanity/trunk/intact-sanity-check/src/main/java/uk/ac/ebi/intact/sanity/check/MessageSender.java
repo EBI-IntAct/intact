@@ -964,7 +964,9 @@ public class MessageSender {
         // send summary of all individual mail to admin
         StringBuffer fullReport = new StringBuffer(256);
         try {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             fullReport.append("Instance name: ").append(getDaoFactory().getBaseDao().getDbName());
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
             fullReport.append(NEW_LINE).append(NEW_LINE);
         }
         catch (Exception e) {

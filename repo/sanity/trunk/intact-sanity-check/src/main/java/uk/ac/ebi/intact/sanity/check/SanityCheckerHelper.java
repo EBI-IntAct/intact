@@ -7,12 +7,16 @@ package uk.ac.ebi.intact.sanity.check;
 
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.sanity.check.model.*;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
@@ -23,18 +27,16 @@ import java.util.*;
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id: SanityCheckerHelper.java,v 1.6 2006/04/13 12:37:16 skerrien Exp $
  */
-public class SanityCheckerHelper {
+public class SanityCheckerHelper  {
 
     private Map<Class,List<String>> bean2sql = new HashMap<Class,List<String>>();
 
     private QueryRunner queryRunner;
 
+    private Connection connection;
+
     public SanityCheckerHelper() throws IntactException {
         queryRunner = new QueryRunner();
-    }
-
-    private Connection getJdbcConnection( ) {
-        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
     }
 
     public void addMapping( Class beanClass, String sql ) throws SQLException {
@@ -160,7 +162,7 @@ public class SanityCheckerHelper {
         addMapping(  InteractorBean.class, "select ac, objclass, updated, userstamp, crc64, biosource_ac, fullname, interactiontype_ac, shortlabel " +
                                                   "from ia_interactor " +
                                                   "where ac=?" );
-        interactorBean = (InteractorBean) getFirstBean(  InteractorBean.class, ac );
+        interactorBean = getFirstBean(  InteractorBean.class, ac );
 
         return interactorBean;
     }
@@ -229,6 +231,8 @@ public class SanityCheckerHelper {
             }
         }
 
+        getJdbcConnection().close();
+
         return resultList;
     }
 
@@ -276,5 +280,21 @@ public class SanityCheckerHelper {
                 sch.addMapping(Int2AnnotBean.class, "SELECT annotation_ac FROM ia_int2annot WHERE interactor_ac = ?");
                 //List int2AnnotBeans = sch.getBeans(  Int2AnnotBean.class, interactorBean.getAc() );
             }
+    }
+
+    protected Connection getJdbcConnection() throws SQLException {
+        if (connection != null && !connection.isClosed()) {
+            return connection;
+        }
+
+        Configuration configuration = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+
+        String url = configuration.getProperty(Environment.URL);
+        String user = configuration.getProperty(Environment.USER);
+        String password = configuration.getProperty(Environment.PASS);
+
+        this.connection = DriverManager.getConnection(url, user, password);
+
+        return connection;
     }
 }
