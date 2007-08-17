@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.sanity.apt;
+package uk.ac.ebi.intact.sanity.commons;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
