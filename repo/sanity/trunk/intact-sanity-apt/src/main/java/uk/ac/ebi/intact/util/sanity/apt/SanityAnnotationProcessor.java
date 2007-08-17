@@ -10,18 +10,17 @@ import com.sun.mirror.apt.AnnotationProcessorEnvironment;
 import com.sun.mirror.declaration.AnnotationTypeDeclaration;
 import com.sun.mirror.declaration.Declaration;
 import com.sun.mirror.util.DeclarationVisitors;
+import uk.ac.ebi.intact.sanity.apt.SanityRuleException;
+import uk.ac.ebi.intact.sanity.model.Rule;
+import uk.ac.ebi.intact.sanity.model.Rules;
+import uk.ac.ebi.intact.util.sanity.xml.RuleManager;
 
-import java.util.Set;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.Writer;
 import java.util.Collection;
-import java.util.HashMap;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-
-import uk.ac.ebi.intact.util.sanity.xmlPropertyFile.Generator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * TODO comment this
@@ -43,9 +42,10 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
 
     }
 
-    public void process() {
+    public void process()  {
+
         SanityRuleVisitor visitor = new SanityRuleVisitor();
-        PrintAnnotationVisitor printAnnotationVisitor = new PrintAnnotationVisitor();
+
         for (AnnotationTypeDeclaration atd : atds) {
             env.getMessager().printNotice("Collecting annotation "+atd);
             Collection<Declaration> decls = env.getDeclarationsAnnotatedWith(atd);
@@ -54,64 +54,35 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
             }
         }
 
+        List<Rule> rules = visitor.getRules();
+
         try {
-            visitor.print();
+            File targetDir = createTargetDir();
+            Writer writer = new FileWriter(targetDir);
 
-            HashMap<String,Collection<String>> target2rules = visitor.getTarget2rules();
-            Generator xmlGenerator = new Generator();
-            Document propertiesDoc = xmlGenerator.createPropertiesDocument(target2rules);
-            xmlGenerator.writeDomDocToXmlFile(propertiesDoc, "src/main/resources/META-INF/sanityRule.xml");
+            Rules jaxbRules = new Rules();
+            jaxbRules.getRule().addAll(rules);
 
-////            Set keySet = target2rules.keySet();
-////            Iterator iterator = keySet.iterator();
-////            System.out.println("WRITTING TO FILE");
-////            try {
-////                BufferedWriter out = new BufferedWriter(new FileWriter("/sanityRule.properties"));
-////                DOMImplementationImpl impl = new DOMImplementationImpl();
-////                while(iterator.hasNext()){
-////                    String target = (String) iterator.next();
-////                    Collection<String> rules = target2rules.get(target);
-////                    System.out.println(target);
-////                    for(String arule : rules){
-////                        System.out.println("\t " + arule);
-////                        out.write(target + "=" + arule + "\n");
-////                    }
-////                }
-////                out.close();
-////
-//
-//            } catch (IOException e) {
-//                throw new IOException("The sanityRule.properties file couldn't be created : " + e.getMessage());
-//            }
-//            printAnnotationVisitor.print();
+            RuleManager.writeRulesXml(jaxbRules, writer);
+
+            writer.close();
+
         } catch (Exception e) {
-            e.printStackTrace();
+           throw new SanityRuleException(e);
+        }
+    }
+
+
+    private File createTargetDir() {
+        String s = env.getOptions().get("-s");
+
+        File targetDir = new File(s);
+
+        if (!targetDir.exists()) {
+            targetDir.mkdirs();
         }
 
-    }
-    private Document createBlankDocumnent(){
-        System.out.println("Creating Balnk Document...");
-        Document doc = null;
-        try{
-            //Create instance of DocumentBuilderFactory
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            //Get the DocumentBuilder
-            DocumentBuilder parser = factory.newDocumentBuilder();
-            //Create blank DOM Document
-                doc = parser.newDocument();
-            Element targetList = doc.createElement("targetList");
-            doc.appendChild(targetList);
-        }catch(Exception e){
-              System.out.println(e.getMessage());
-            }
-        return doc;
-
-    }
-
-    private Element createTargetElement(String name){
-        Document doc = createBlankDocumnent();
-        Element targetElement = doc.createElement("target");
-        return targetElement;
+        return targetDir;
     }
 
 

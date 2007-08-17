@@ -2,31 +2,31 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>uk.ac.ebi.intact.maven</groupId>
-        <artifactId>intact-hibernate-master</artifactId>
-        <version>9</version>
+        <artifactId>sanity-master</artifactId>
+        <groupId>uk.ac.ebi.intact.sanity</groupId>
+        <version>2.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>uk.ac.ebi.intact.util.sanity.rules</groupId>
-    <artifactId>sanity-rules</artifactId>
-    <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>sanity-rules</name>
-    <url>http://maven.apache.org</url>
 
-    <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity-rules/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/sanity-rules/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/sanity-rules/trunk</url>
-    </scm>
+    <artifactId>intact-sanity-rules</artifactId>
+    <version>2.0-SNAPSHOT</version>
+
+    <name>IntAct Sanity :: Sanity Check Rules</name>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.myfaces.tobago</groupId>
                 <artifactId>maven-apt-plugin</artifactId>
-                <version>1.0.7</version>
+                <configuration>
+                    <target>1.5</target>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -57,25 +57,10 @@
         <dependency>
             <groupId>uk.ac.ebi.intact</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.5.0-rc2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.intact.util.sanity</groupId>
+            <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-apt</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.templates</groupId>
-            <artifactId>h2db-with-cv</artifactId>
-            <version>1.3-20070410-test</version>
-            <type>zip</type>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -104,13 +89,5 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <site>
-            <id>intact-site</id>
-            <name>Intact site</name>
-            <url>${site.remote.basedir}/${artifactId}</url>
-        </site>
-    </distributionManagement>
 
 </project>
