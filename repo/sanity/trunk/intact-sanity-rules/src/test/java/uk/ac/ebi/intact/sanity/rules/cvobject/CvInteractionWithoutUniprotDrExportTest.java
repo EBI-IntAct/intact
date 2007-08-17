@@ -3,18 +3,18 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.cvObject;
+package uk.ac.ebi.intact.sanity.rules.cvobject;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
+import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
+import uk.ac.ebi.intact.mocks.cvInteractions.CvInteractionWithNoAnnotationMock;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvInteraction;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.mocks.cvInteractions.CvInteractionWithNoAnnotationMock;
-import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
-import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 
 import java.util.Collection;
 

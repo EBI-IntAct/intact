@@ -27,7 +27,7 @@ import java.util.Map;
 
 @SanityRule(target = Annotation.class)
 
-public class AnnotationNotUsingAnApropriateCvTopic implements Rule {
+public class AnnotationNotUsingAnAppropriateCvTopic implements Rule {
 
     private static final String CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION = "This/those object(s) have annotation using CvTopic which are hidden or obsolete Cvs";
     private static final String CVTOPIC_NOT_APPROPRIATE_MSG_SUGGESTION = "Change cvTopic";

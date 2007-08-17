@@ -3,18 +3,19 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.annotatedObject;
+package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.mocks.ProteinMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
+import uk.ac.ebi.intact.mocks.ProteinMock;
 import uk.ac.ebi.intact.mocks.cvTopics.UrlMock;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.sanity.rules.annotatedObject.BrokenUrl;
+import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
 
 import java.util.Collection;
 

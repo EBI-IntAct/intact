@@ -3,15 +3,16 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.protein;
+package uk.ac.ebi.intact.sanity.rules.interaction;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
+import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
 
 import java.util.Collection;
 
@@ -22,13 +23,15 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class NotValidCrc64Test extends TestCase {
+public class InteractionWithNoExperimentTest extends TestCase {
+
+
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public NotValidCrc64Test ( String testName )
+    public InteractionWithNoExperimentTest( String testName )
     {
         super( testName );
     }
@@ -38,28 +41,27 @@ public class NotValidCrc64Test extends TestCase {
      */
     public static Test suite()
     {
-        return new TestSuite( NotValidCrc64Test.class );
+        return new TestSuite( InteractionWithNoExperimentTest.class );
     }
 
     /**
      * Rigourous Test :-)
      */
     public void testCheck() throws SanityCheckerException {
-        
-        Protein protein = P08050Mock.getMock();
-        NotValidCrc64 rule = new NotValidCrc64();
-        Collection<GeneralMessage> messages = rule.check(protein);
+        Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        InteractionWithNoExperiment rule = new InteractionWithNoExperiment();
+        Collection<GeneralMessage> messages =  rule.check(interaction);
         assertEquals(0,messages.size());
 
-        protein.setSequence("POISSON");
-        messages = rule.check(protein);
+        interaction = Cja1Dbn1Mock.getMock(null);
+        rule = new InteractionWithNoExperiment();
+        messages =  rule.check(interaction);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(NotValidCrc64.getDescription(), message.getDescription());
-            assertEquals(NotValidCrc64.getSuggestion(), message.getProposedSolution());
+            assertEquals(InteractionWithNoExperiment.getDescription(), message.getDescription());
+            assertEquals(InteractionWithNoExperiment.getSuggestion(), message.getProposedSolution());
         }
-
-
+        
     }
 
 }

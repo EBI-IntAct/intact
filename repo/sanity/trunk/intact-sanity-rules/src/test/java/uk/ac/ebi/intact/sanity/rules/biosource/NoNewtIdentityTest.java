@@ -3,20 +3,20 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.bioSource;
+package uk.ac.ebi.intact.sanity.rules.biosource;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.bioSources.BioSourceWithNoXrefMock;
+import uk.ac.ebi.intact.mocks.cvDatabases.NewtMock;
+import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
+import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.BioSourceXref;
-import uk.ac.ebi.intact.mocks.bioSources.BioSourceWithNoXrefMock;
-import uk.ac.ebi.intact.mocks.XrefMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
-import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
-import uk.ac.ebi.intact.mocks.cvDatabases.NewtMock;
+import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
 
 import java.util.Collection;
 

@@ -5,20 +5,20 @@
  */
 package uk.ac.ebi.intact.sanity.rules.protein;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.cvDatabases.UniprotMock;
+import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
 import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.InteractorXref;
-import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
-import uk.ac.ebi.intact.mocks.XrefMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
-import uk.ac.ebi.intact.mocks.cvDatabases.UniprotMock;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * TODO comment this
