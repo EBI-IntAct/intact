@@ -17,20 +17,42 @@ package uk.ac.ebi.intact.plugins.targetspecies;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Test;
+import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.Collection;
 import java.util.Iterator;
+import java.lang.reflect.Method;
 
-import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.core.unit.*;
+import uk.ac.ebi.intact.core.unit.mock.MockIntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.CvContext;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
+import uk.ac.ebi.intact.commons.dataset.TestDataset;
+import uk.ac.ebi.intact.commons.dataset.DbUnitTestDataset;
+import uk.ac.ebi.intact.commons.dataset.TestDatasetProvider;
 
-public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
-{
+@RunWith(IntactTestRunner.class)
+public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase  {
+
+     @Test
+     @IntactUnitDataset(  dataset = PsiTestDatasetProvider.INTACT_JUL_06,
+                         provider = PsiTestDatasetProvider.class )
+     public void export() throws Exception {
+
+         // my test using the data here
+
+     }
 
     public void testSimpleGeneration() throws Exception {
 
@@ -77,6 +99,7 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
         newt = cvContext.getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
         xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class);
         int xrefCount = 0;
+        assertTrue(experiments.size()>0);
         for(Experiment exp : experiments){
             Collection<ExperimentXref> experimentXrefs = exp.getXrefs();
             for (Iterator<ExperimentXref> iterator = experimentXrefs.iterator(); iterator.hasNext();) {
@@ -93,4 +116,101 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
 
 
     }
+@BeforeClass
+public static void begin() throws Exception {
+
+    }
+
+    @Before
+    public final void setUp() throws Exception {
+        //getDataContext().beginTransaction();
+
+        Method currentMethod = IntactTestRunner.getTestMethod();
+
+        if (currentMethod == null) {
+            throw new RuntimeException("This test cannot be run in IDEA");
+        }
+
+        IntactUnit iu = new IntactUnit();
+
+        IgnoreDatabase ignoreDbAnnot = currentMethod.getAnnotation(IgnoreDatabase.class);
+
+        IntactUnitDataset datasetAnnot = null;
+        boolean loadDataset = false;
+
+        // if the ignoreDbAnnot is present at method level, ignore the db, else
+        if (ignoreDbAnnot == null) {
+            // try to get the IntactUnitDataset annotation from the method, and then the class
+            datasetAnnot = currentMethod.getAnnotation(IntactUnitDataset.class);
+
+            if (datasetAnnot == null) {
+                ignoreDbAnnot = currentMethod.getDeclaringClass().getAnnotation(IgnoreDatabase.class);
+
+                if (ignoreDbAnnot == null) {
+                    datasetAnnot = currentMethod.getDeclaringClass().getAnnotation(IntactUnitDataset.class);
+
+                    if (datasetAnnot != null) {
+                        loadDataset = true;
+                    } else {
+                        iu.createSchema();
+                    }
+                }
+            } else {
+                loadDataset = true;
+            }
+        }
+
+        if (loadDataset) {
+            // ensure no MockIntactContext is active
+            if (getIntactContext() instanceof MockIntactContext) {
+                getIntactContext().close();
+            }
+
+            if (datasetAnnot != null) {
+                TestDataset testDataset = getTestDataset(datasetAnnot);
+
+                if (testDataset instanceof DbUnitTestDataset) {
+                    iu.createSchema(false);
+                    getDataContext().beginTransaction();
+                    iu.importTestDataset((DbUnitTestDataset) testDataset);
+                } else {
+                    throw new IntactTestException("Cannot import TestDatasets of type: " + testDataset.getClass().getName());
+                }
+
+                getDataContext().commitTransaction();
+            } else {
+                iu.createSchema();
+            }
+            getDataContext().commitTransaction();
+        }
+
+        getDataContext().beginTransaction();
+    }
+
+    private TestDataset getTestDataset(IntactUnitDataset datasetAnnot) throws Exception {
+        TestDatasetProvider provider = datasetAnnot.provider().newInstance();
+        return provider.getTestDataset(datasetAnnot.dataset());
+    }
+
+    @After
+    public final void tearDown() throws Exception {
+        getDataContext().commitTransaction();
+
+        if (IntactContext.currentInstanceExists()) {
+            IntactContext.getCurrentInstance().close();
+        }
+    }
+    protected IntactContext getIntactContext() {
+        return IntactContext.getCurrentInstance();
+    }
+
+    protected DataContext getDataContext() {
+        return getIntactContext().getDataContext();
+    }
+
+    protected DaoFactory getDaoFactory() {
+        return getDataContext().getDaoFactory();
+    }
+
 }
+
