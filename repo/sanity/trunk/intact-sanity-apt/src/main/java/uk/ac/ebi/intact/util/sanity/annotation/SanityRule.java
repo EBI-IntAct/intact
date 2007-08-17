@@ -7,6 +7,11 @@ package uk.ac.ebi.intact.util.sanity.annotation;
 
 import uk.ac.ebi.intact.model.IntactObject;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 /**
  * TODO comment this
  *
@@ -14,6 +19,11 @@ import uk.ac.ebi.intact.model.IntactObject;
  * @version $Id$
  * @since TODO
  */
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
 public @interface SanityRule {
+
     Class<? extends IntactObject> target();
+
+    String name() default "";
 }

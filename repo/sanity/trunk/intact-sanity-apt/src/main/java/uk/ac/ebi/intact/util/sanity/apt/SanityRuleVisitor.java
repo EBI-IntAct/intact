@@ -5,12 +5,14 @@
  */
 package uk.ac.ebi.intact.util.sanity.apt;
 
-import com.sun.mirror.declaration.*;
+import com.sun.mirror.declaration.ClassDeclaration;
+import com.sun.mirror.util.SimpleDeclarationVisitor;
+import uk.ac.ebi.intact.sanity.model.Rule;
+import uk.ac.ebi.intact.util.sanity.annotation.SanityRule;
 
-import java.util.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * TODO comment this
  *
@@ -18,14 +20,37 @@ import java.io.IOException;
  * @version $Id$
  * @since TODO
  */
-public class SanityRuleVisitor extends AnnotationDeclarationVisitorCollector {
+public class SanityRuleVisitor extends SimpleDeclarationVisitor {
 
-    HashMap<String,Collection<String>> target2rules = new HashMap();
+    private List<Rule> rules;
 
-    int counter = 1;
+    public SanityRuleVisitor() {
+        this.rules = new ArrayList<Rule>();
+    }
 
-    public void print()
+    @Override
+    public void visitClassDeclaration(ClassDeclaration classDeclaration) {
+        super.visitTypeDeclaration(classDeclaration);
+    }
+
+    protected void visitRule(ClassDeclaration classDeclaration)
     {
+        SanityRule sanityRule = classDeclaration.getAnnotation(SanityRule.class);
+
+        Class<?> targetClass = sanityRule.target();
+        String ruleClassName = classDeclaration.getQualifiedName();
+        String name = sanityRule.name();
+
+        if (name.length() == 0) {
+            name = ruleClassName;
+        }
+
+        Rule rule = new Rule();
+        rule.setClazz(ruleClassName);
+        rule.setTargetClass(targetClass.getName());
+        rule.setName(name);
+
+        /*
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter("sanityAnnotation.txt"));
             out.write("aString");
@@ -41,53 +66,12 @@ public class SanityRuleVisitor extends AnnotationDeclarationVisitorCollector {
         }
 
         System.out.println("--------------------");
-        System.out.println(this.getCollectedMethodDeclations().size()+" methods with potential threats\n");
-    }
-
-    private void printClassSanityRule(ClassDeclaration d)
-    {
-        System.out.println("[PT-"+(counter++)+"] "+ d.getPackage()/*.getDeclaringType()*/ + "." + d.getSimpleName() +
-                " (" + d.getPosition().line() + ")");
-        String rule = d.getPackage()+ "." + d.getSimpleName();
-        String targetOfTheRule = new String();
-
-
-//        Collection<FieldDeclaration> fields = d.getFields();
-//        for (FieldDeclaration field : fields ){
-//            System.out.println(field.getConstantExpression());
-//            System.out.println(field.getConstantValue().getClass().getName());
-//        }
-        for (AnnotationMirror annot : d.getAnnotationMirrors())
-        {
-            for (Map.Entry<AnnotationTypeElementDeclaration, AnnotationValue> entry : annot.getElementValues().entrySet())
-            {
-                targetOfTheRule = "" + entry.getValue().getValue();
-                System.out.println("\t"+entry.getKey().getSimpleName()+": "+entry.getValue().getValue());
-            }
-        }
-        if(target2rules.containsKey(targetOfTheRule)){
-            Collection<String> rules = target2rules.get(targetOfTheRule);
-            rules.add(rule);
-            target2rules.put(targetOfTheRule, rules);
-        }else{
-            Collection<String> rules = new ArrayList();
-            rules.add(rule);
-            target2rules.put(targetOfTheRule,rules);
-        }
-
-
-
-        /*
-       System.out.println("Method simpleName    " + d.getSimpleName());
-       System.out.println("Method docComment    " + d.getDocComment());
-       System.out.println("Method returnType    " + d.getReturnType());
-       System.out.println("Method parameter     " + d.getParameters());
-       System.out.println("Method declaringType " + d.getDeclaringType());
-       printAnnotationMirrors(d.getAnnotationMirrors()); */
+        System.out.println(this.getCollectedMethodDeclations().size()+" methods with potential threats\n");*/
     }
 
 
-    public HashMap<String, Collection<String>> getTarget2rules() {
-        return target2rules;
+
+    public List<Rule> getRules() {
+        return rules;
     }
 }

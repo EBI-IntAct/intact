@@ -32,6 +32,8 @@
     </scm>
 
     <modules>
+        <module>intact-sanity-apt</module>
+        <module>intact-sanity-rules</module>
         <module>intact-sanity-check</module>
         <module>sanity-maven-plugin</module>
     </modules>
@@ -39,6 +41,16 @@
     <dependencyManagement>
         <dependencies>
             <!-- this group -->
+            <dependency>
+                <groupId>uk.ac.ebi.intact.sanity</groupId>
+                <artifactId>intact-sanity-apt</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>uk.ac.ebi.intact.sanity</groupId>
+                <artifactId>intact-sanity-rules</artifactId>
+                <version>${currentVersion}</version>
+            </dependency>
             <dependency>
                 <groupId>uk.ac.ebi.intact.sanity</groupId>
                 <artifactId>intact-sanity-check</artifactId>
