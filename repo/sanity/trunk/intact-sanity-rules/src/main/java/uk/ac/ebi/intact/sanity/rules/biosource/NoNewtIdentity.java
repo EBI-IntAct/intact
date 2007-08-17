@@ -5,11 +5,12 @@
  */
 package uk.ac.ebi.intact.sanity.rules.biosource;
 
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class NoNewtIdentity  implements Rule {
         databaseMis.add(CvDatabase.NEWT_MI_REF);
     }
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, BioSource.class);
         BioSource bioSource = (BioSource) intactObject;
         Collection<GeneralMessage> messages = new ArrayList();

@@ -13,8 +13,8 @@ import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
 import uk.ac.ebi.intact.mocks.cvFeatureType.MutationDecreasingMock;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -49,7 +49,7 @@ public class MutationAnalysisFeatureTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
 
         Component component = Q9QXS6ComponentMock.getMock(interaction);

@@ -6,13 +6,12 @@
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
 import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class InteractionWithNoComponent  implements Rule {
     private static final String DESCRIPTION = "This/those Interaction(s) do not have any Interactor. ";
     private static final String SUGGESTION = "Edit the Interaction and add component(s).";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, Interaction.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Interaction interaction = (Interaction) intactObject;

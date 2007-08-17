@@ -8,10 +8,10 @@ package uk.ac.ebi.intact.sanity.rules.feature;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Range;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class FeatureWithoutRange implements Rule {
     private static final String DESCRIPTION = "This/those Feature(s) have no range. ";
     private static final String SUGGESTION = "Edit the feature(s) and add a range.";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, Feature.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Feature feature = (Feature) intactObject;

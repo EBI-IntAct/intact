@@ -14,27 +14,33 @@
 
     <name>IntAct Sanity :: Sanity Check Rules</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.myfaces.tobago</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-                <configuration>
-                    <target>1.5</target>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>generate-sources</phase>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <!--<build>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.myfaces.tobago</groupId>-->
+                <!--<artifactId>maven-apt-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<target>1.5</target>-->
+                <!--</configuration>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<phase>generate-sources</phase>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
 
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.sanity</groupId>
-            <artifactId>intact-sanity-apt</artifactId>
+            <artifactId>intact-sanity-commons</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1-rc1</version>
         </dependency>
     </dependencies>
 

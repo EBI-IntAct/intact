@@ -3,7 +3,12 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.exception;
+package uk.ac.ebi.intact.sanity.commons.rules;
+
+import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+
+import java.util.Collection;
 
 /**
  * TODO comment this
@@ -12,10 +17,8 @@ package uk.ac.ebi.intact.sanity.exception;
  * @version $Id$
  * @since <pre>08-Mar-2007</pre>
  */
-public class SanityCheckerException extends Exception{
-    private SanityCheckerException(){};
+public interface Rule {
 
-    public SanityCheckerException(String message) {
-        super(message);
-    }
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException;
+
 }

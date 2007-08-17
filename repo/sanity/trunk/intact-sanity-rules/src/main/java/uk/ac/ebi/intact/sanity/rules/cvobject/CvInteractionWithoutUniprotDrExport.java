@@ -5,10 +5,11 @@
  */
 package uk.ac.ebi.intact.sanity.rules.cvobject;
 
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class CvInteractionWithoutUniprotDrExport implements Rule {
     private static final String DESCRIPTION = "This/those CvInteraction have uniprot-dr-export annotation";
     private static final String SUGGESTION = "Add a uniprot-dr-export annotation";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, CvObject.class);
         CvObject cvObject = (CvObject) intactObject;
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();

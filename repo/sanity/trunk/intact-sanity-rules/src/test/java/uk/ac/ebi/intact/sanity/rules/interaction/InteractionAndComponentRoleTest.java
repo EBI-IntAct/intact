@@ -14,8 +14,8 @@ import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class InteractionAndComponentRoleTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         /***********************************************
         Give a right interaction with 1 bait, 1 prey
         ************************************************/

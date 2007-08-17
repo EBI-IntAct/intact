@@ -6,14 +6,13 @@
 package uk.ac.ebi.intact.sanity.rules.protein;
 
 import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.NucleicAcid;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.util.Crc64;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
+import uk.ac.ebi.intact.util.Crc64;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +32,7 @@ public class NotValidCrc64 implements Rule {
     private static final String DESCRIPTION = "This those Proteins have a crc64 that does not correspond to their sequence.";
     private static final String SUGGESTION = "Ask a developper to fix that.";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, Protein.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Protein protein = (Protein) intactObject;

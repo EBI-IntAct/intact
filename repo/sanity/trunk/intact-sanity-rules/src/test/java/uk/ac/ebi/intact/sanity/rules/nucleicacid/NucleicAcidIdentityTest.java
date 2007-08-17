@@ -15,8 +15,8 @@ import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.nucleicAcids.AnfRatGeneMock;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -52,7 +52,7 @@ public class NucleicAcidIdentityTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         /***************************************************************
          Test with a right Nucleic Acid that has one identity to DDBJ
         ****************************************************************/

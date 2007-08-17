@@ -5,6 +5,11 @@
  */
 package uk.ac.ebi.intact.sanity.rules.util;
 
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.Protein;
+
 import java.util.Collection;
 
 /**

@@ -5,11 +5,12 @@
  */
 package uk.ac.ebi.intact.sanity.rules.feature;
 
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class MutationAnalysisFeature implements Rule{
             "amino-acid and have their CvFeatureIdentification set to " + CvFeatureIdentification.DELETION_ANALYSIS;
     private static final String SUGGESTION = "";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, Feature.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Feature feature = (Feature) intactObject;

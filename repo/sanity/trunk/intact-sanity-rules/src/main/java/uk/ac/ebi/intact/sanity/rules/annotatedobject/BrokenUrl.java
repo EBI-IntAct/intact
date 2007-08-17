@@ -3,19 +3,20 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.annotatedObject;
+package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.AnnotationMessage;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.AnnotationMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.io.IOException;
@@ -36,7 +37,7 @@ public class BrokenUrl  implements Rule {
     private static final String DESCRIPTION = "This/those Url(s) is/are not valid";
     private static final String SUGGESTION = "Could be just momentarily broken";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, AnnotatedObject.class);
 
         AnnotatedObject annotatedObject = (AnnotatedObject) intactObject;
