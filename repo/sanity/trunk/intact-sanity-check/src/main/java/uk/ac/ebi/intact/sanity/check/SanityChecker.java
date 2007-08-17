@@ -12,6 +12,8 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
@@ -42,6 +44,11 @@ import java.util.regex.Pattern;
  * @version $Id: SanityChecker.java,v 1.33 2006/06/01 08:16:45 catherineleroy Exp $
  */
 public class SanityChecker {
+
+    /**
+     * Sets up a logger for that class.
+     */
+    private static final Log log = LogFactory.getLog(SanityChecker.class);
 
     private SanityCheckerHelper sch;
 
@@ -407,7 +414,9 @@ public class SanityChecker {
                                                                   "                       and ac like ? " );
 
 
+        beginTransaction();
         annotationSection = new AnnotationSection();
+        commitTransaction();
     }
 
     public boolean interactionIsOnHold( String ac ) throws SQLException {
@@ -472,7 +481,7 @@ public class SanityChecker {
     public void checkHiddenAndObsoleteCv() throws SQLException, IntactException {
         Collection hiddenObsoleteCvs = hiddenObsoleteNotInUsed.getBeans( ControlledvocabBean.class, "EBI-%" );
         //We first check that the hidden or obsolete Cv is not found in the filed database_ac of ia_xref
-        System.out.println( "hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size() );
+        log.info( "hiddenObsoleteCvs.s = " + hiddenObsoleteCvs.size() );
 
         //---------------------------------------------------------------------------------
         //Make sure that the obsolete or hidden cv ac is not used as a database_ac in xref
@@ -826,7 +835,7 @@ public class SanityChecker {
      * @throws SQLException
      */
     public void checkInteractionsBaitAndPrey( List interactorBeans ) throws IntactException, SQLException {
-        //System.out.println( "Checking on Interactions (rule 6) ..." );
+        //if log.isDebugEnabled() log.debug( "Checking on Interactions (rule 6) ..." );
 
         for ( int i = 0; i < interactorBeans.size(); i++ ) {
             InteractorBean interactionBean = (InteractorBean) interactorBeans.get( i );
@@ -905,7 +914,7 @@ public class SanityChecker {
                 switch ( categoryCount ) {
                     case 0:
                         // none of those categories
-                        //System.out.println("Interaction " +interactionAc + " with no categories");
+                        //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + " with no categories");
                         messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CATEGORIES, interactionBean );
                         break;
 
@@ -914,10 +923,10 @@ public class SanityChecker {
                         if ( baitPrey == 1 ) {
                             // bait-prey
                             if ( baitCount == 0 ) {
-                                //System.out.println("Interaction " +interactionAc + "  with no bait");
+                                //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + "  with no bait");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_BAIT, interactionBean );
                             } else if ( preyCount == 0 ) {
-                                //System.out.println("Interaction " +interactionAc + "  with no prey");
+                                //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + "  with no prey");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_PREY, interactionBean );
                             }
                             //if can be only a fluorophore but no donor
@@ -934,22 +943,22 @@ public class SanityChecker {
                         } else if ( enzymeTarget == 1 ) {
                             // enzyme - enzymeTarget
                             if ( enzymeCount == 0 ) {
-                                //System.out.println("Interaction  " +interactionAc + " with no enzyme");
+                                //if log.isDebugEnabled() log.debug("Interaction  " +interactionAc + " with no enzyme");
 
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME, interactionBean );
                             } else if ( enzymeTargetCount == 0 ) {
-                                //System.out.println("Interaction " +interactionAc + "  with no enzyme target");
+                                //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + "  with no enzyme target");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_ENZYME_TARGET, interactionBean );
                             }
 
                         } else if ( self == 1 ) {
                             // it has to be > 1
                             if ( selfCount > 1 ) {
-                                //System.out.println("Interaction " +interactionAc + "  with more then 2 self protein");
+                                //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + "  with more then 2 self protein");
                                 messageSender.addMessage( ReportTopic.INTERACTION_WITH_MORE_THAN_2_SELF_PROTEIN, interactionBean );
                             } else { // = 1
                                 if ( selfStoichiometry < 1F ) {
-                                    //System.out.println("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
+                                    //if log.isDebugEnabled() log.debug("Interaction " +interactionAc + "  self protein and stoichiometry lower than 2");
                                     //  messageSender.addMessage( ReportTopic.INTERACTION_WITH_SELF_PROTEIN_AND_STOICHIOMETRY_LOWER_THAN_2, interactionBean);
                                 }
                             }
@@ -958,7 +967,7 @@ public class SanityChecker {
                             // neutral
                             if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
                                 if ( neutralStoichiometry == 1 ) {
-                                    //System.out.println("Interaction  " +interactionAc + "  with only one neutral");
+                                    //if log.isDebugEnabled() log.debug("Interaction  " +interactionAc + "  with only one neutral");
                                     messageSender.addMessage( ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
                                 }
                             }
@@ -967,7 +976,7 @@ public class SanityChecker {
 
                     default:
                         // > 1 : mixed up categories !
-                        //System.out.println("Interaction  " +interactionAc + "  with mixed component categories");
+                        //if log.isDebugEnabled() log.debug("Interaction  " +interactionAc + "  with mixed component categories");
                         messageSender.addMessage( ReportTopic.INTERACTION_WITH_MIXED_COMPONENT_CATEGORIES, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean));
                 } // switch
             }
@@ -994,7 +1003,7 @@ public class SanityChecker {
      * @throws SQLException
      */
     public void checkComponentOfInteractions( List interactorBeans ) throws SQLException, IntactException {
-        //System.out.println( "Checking on Components (rules 5 and 6) ..." );
+        //if log.isDebugEnabled() log.debug( "Checking on Components (rules 5 and 6) ..." );
 
         for ( int i = 0; i < interactorBeans.size(); i++ ) {
             InteractorBean interactionBean = (InteractorBean) interactorBeans.get( i );
@@ -1006,7 +1015,7 @@ public class SanityChecker {
 
                 if ( componentBeans.size() == 0 ) {
                     //Interaction has no Components!! This is in fact test 5...
-                    //System.out.println("Interaction has no component");
+                    //if log.isDebugEnabled() log.debug("Interaction has no component");
                     messageSender.addMessage( ReportTopic.NO_PROTEIN_CHECK, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
             }
@@ -1042,7 +1051,7 @@ public class SanityChecker {
 
     public void checkProtein( List interactorBeans ) throws SQLException, IntactException {
 
-        //System.out.println( "Checking on Proteins (rules 14 and 16) ..." );
+        //if log.isDebugEnabled() log.debug( "Checking on Proteins (rules 14 and 16) ..." );
 
         //checks 14
         for ( int i = 0; i < interactorBeans.size(); i++ ) {
@@ -1110,27 +1119,34 @@ public class SanityChecker {
      *
      * @throws SQLException
      */
-    public void checkInteractionsComplete( List interactorBeans ) throws SQLException, IntactException {
-        //System.out.println( "Checking on Interactions (rule 7) ..." );
+    public void checkInteractionsComplete( List<InteractorBean> interactorBeans ) throws SQLException, IntactException {
+        //if log.isDebugEnabled() log.debug( "Checking on Interactions (rule 7) ..." );
 
-        for ( int i = 0; i < interactorBeans.size(); i++ ) {
-            InteractorBean interactionBean = (InteractorBean) interactorBeans.get( i );
+        List<Int2ExpBean> int2ExpBeans = sch.getBeans(Int2ExpBean.class, "%");
+        Set<String> acsInt2Exp = new HashSet(int2ExpBeans.size());
+
+        for (Int2ExpBean int2ExpBean : int2ExpBeans) {
+            acsInt2Exp.add(int2ExpBean.getInteraction_ac());
+        }
+
+        for (InteractorBean interactionBean : interactorBeans) {
             String interactionAc = interactionBean.getAc();
 
-            if ( false == interactionIsOnHold( interactionAc ) ) {
+            if (false == interactionIsOnHold(interactionAc)) {
 
                 //check 7
-                if ( sch.getBeans( Int2ExpBean.class, interactionAc ).isEmpty() ) {
+                if (!acsInt2Exp.contains(interactionAc)) {
                     //record it.....
-                    //System.out.println("Interaction "+interactionAc + " with no experiment");
-                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
+                    //if log.isDebugEnabled() log.debug("Interaction "+interactionAc + " with no experiment");
+                    messageSender.addMessage(ReportTopic.INTERACTION_WITH_NO_EXPERIMENT, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
                 }
                 //check 9
-                if ( false == sch.getBeans( InteractorBean.class, interactionAc ).isEmpty() ) {
-                    //System.out.println("Interaction "+interactionAc + " has no interaction type");
+                /*
+                if (false == sch.getBeans(InteractorBean.class, interactionAc).isEmpty()) {
+                    //if log.isDebugEnabled() log.debug("Interaction "+interactionAc + " has no interaction type");
 
-                    messageSender.addMessage( ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean );//, editorUrlBuilder.getEditorUrl(interactionBean) );
-                }
+                    messageSender.addMessage(ReportTopic.INTERACTION_WITH_NO_CVINTERACTIONTYPE, interactionBean);//, editorUrlBuilder.getEditorUrl(interactionBean) );
+                }*/
                 //check 10
                 // 2005-04-14: on-hold ... might be re-introduced later.
 //                if( interaction.getBioSource() == null ) {
@@ -1140,6 +1156,9 @@ public class SanityChecker {
             }
 
         }
+
+        int2ExpBeans.clear();
+        int2ExpBeans = null;
 
     }
 
@@ -1366,7 +1385,7 @@ public class SanityChecker {
                 // e.printStackTrace();
                 //retrieveObject(annotationBean);
                 messageSender.addMessage( annotationBean );
-                //System.out.println("couldn't create httpURL uri" + urlString);
+                //if log.isDebugEnabled() log.debug("couldn't create httpURL uri" + urlString);
             }
 
             // If httpUrl is not null, get the method corresponding to the uri, execute if and analyze the
@@ -1378,7 +1397,7 @@ public class SanityChecker {
                     method = new GetMethod( urlString );
                 } catch ( IllegalArgumentException e ) {
                     //e.printStackTrace();
-                    //System.out.println("Couldn't get method uri" + urlString);
+                    //if log.isDebugEnabled() log.debug("Couldn't get method uri" + urlString);
                     //retrieveObject(annotationBean);
                     messageSender.addMessage( annotationBean );
                 }
@@ -1503,7 +1522,7 @@ public class SanityChecker {
      */
     public void checkNewt( List bioSourceBeans ) throws IntactException, SQLException {
 
-//        System.out.println("Checking bioSource (existing newt identity xref) :");
+//        log.info("Checking bioSource (existing newt identity xref) :");
 
         for ( int i = 0; i < bioSourceBeans.size(); i++ ) {
             boolean hasNewtXref = false;
@@ -1701,10 +1720,10 @@ public class SanityChecker {
         for ( int i = 0; i < annotations.size(); i++ ) {
             AnnotationBean annotationBean = (AnnotationBean) annotations.get( i );
             String topicShortlabel = cvTopics.get( annotationBean.getTopic_ac() );
-//            System.out.println("topicShortLabel " + topicShortlabel);
+//            log.info("topicShortLabel " + topicShortlabel);
             for ( int j = 0; j < usableTopic.size(); j++ ) {
                 String s = usableTopic.get( j );
-//                System.out.println("usable topic " +j + " = "+ s);
+//                log.info("usable topic " +j + " = "+ s);
             }
 
             if ( !usableTopic.contains( topicShortlabel ) ) {
@@ -1735,11 +1754,15 @@ public class SanityChecker {
 
         SanityChecker sanityChecker = new SanityChecker( sanityConfig );
 
+        beginTransaction();
+
         final BaseDao baseDao = IntactContext.getCurrentInstance().getDataContext()
                 .getDaoFactory().getBaseDao();
 
-        System.out.println( "Helper created (User: " + baseDao.getDbUserName() + " " +
+        log.info( "Helper created (User: " + baseDao.getDbUserName() + " " +
                             "Database: " + baseDao.getDbName() + ")" );
+
+        commitTransaction();
 
         List<String> expUsableTopic = sanityChecker.annotationSection.getUsableTopics( Experiment.class.getName() );
         expUsableTopic.add( CvTopic.ACCEPTED );
@@ -1758,6 +1781,8 @@ public class SanityChecker {
         /*
         *     Check on interactor
         */
+        log.info("1. Check on interactor");
+
         SanityCheckerHelper schIntAc = new SanityCheckerHelper();
         schIntAc.addMapping( InteractorBean.class, "SELECT ac, shortlabel, created_user, created, objclass " +
                                                            "FROM ia_interactor " +
@@ -1766,28 +1791,41 @@ public class SanityChecker {
 
 
         List interactorBeans = schIntAc.getBeans( InteractorBean.class, "EBI-%" );
+        log.info("\tCheck: Interactions complete");
         sanityChecker.checkInteractionsComplete( interactorBeans );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: Bait and prey");
         sanityChecker.checkInteractionsBaitAndPrey( interactorBeans );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: Components");
         sanityChecker.checkComponentOfInteractions( interactorBeans );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: One interaction - One experiment");
         sanityChecker.checkOneIntOneExp();
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: Annotations");
         sanityChecker.checkAnnotations( interactorBeans, Interaction.class.getName(), intUsableTopic );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+
+        interactorBeans.clear();
+        interactorBeans = null;
 
         /*
         *     Check on Controlled Vocabullary
         */
+        log.info("2. Check on Controlled Vocabullary");
+        log.info("\tCheck: Hidden and Obsolete cv");
         sanityChecker.checkHiddenAndObsoleteCv();
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: Interaction checker");
         sanityChecker.cvInteractionChecker( sanityChecker.hiddenObsoleteNotInUsed );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
 
         /*
         *     Check on xref
         */
+         log.info("3. Check on Xref");
+
         schIntAc.addMapping( XrefBean.class, "select distinct primaryId " +
                                                      "from ia_controlledvocab_xref, ia_controlledvocab db, ia_controlledvocab q " +
                                                      "where database_ac = db.ac and " +
@@ -1839,32 +1877,52 @@ public class SanityChecker {
                                                      "where ac like ?" );
         //"where ac ='EBI-695273' and ac like ?");
         xrefBeans = schIntAc.getBeans( XrefBean.class, "%" );
+        log.info("\tCheck: Valid primary ID");
         sanityChecker.hasValidPrimaryId( xrefBeans );
+
+        //commitAndBeginTransaction();
+
+        xrefBeans.clear();
+        xrefBeans = null;
 
         /*
         *     Check on Experiment
         */
+         log.info("4. Check on Experiment");
         List experimentBeans = sanityChecker.sch.getBeans( ExperimentBean.class, "EBI-%" );
+        log.info("\tCheck: General");
         sanityChecker.checkExperiment( experimentBeans );
+        log.info("\tCheck: Pubmed IDs");
         sanityChecker.checkExperimentsPubmedIds( experimentBeans );
+        log.info("\tCheck: Annotations");
         sanityChecker.checkAnnotations( experimentBeans, Experiment.class.getName(), expUsableTopic );
         //This is now listed in the correctionAssigner
+        log.info("\tCheck: Interactions reviewed");
         sanityChecker.checkReviewed( experimentBeans );
         //sanityChecker.experimentNotSuperCurated();
 
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+
+        experimentBeans.clear();
+        experimentBeans = null;
 
         /*
         *     Check on BioSource
         */
-
+        log.info("5. Check on BioSource");
         List bioSourceBeans = sanityChecker.sch.getBeans( BioSourceBean.class, "EBI-%" );
-        //System.out.println("The size of bioSource list is " + bioSourceBeans.size());
+        //if log.isDebugEnabled() log.debug("The size of bioSource list is " + bioSourceBeans.size());
+        log.info("\tCheck: General");
         sanityChecker.checkBioSource( bioSourceBeans );
+        log.info("\tCheck: Newt");
         sanityChecker.checkNewt( bioSourceBeans );
+        log.info("\tCheck: Annotations");
         sanityChecker.checkAnnotations( bioSourceBeans, BioSource.class.getName(), bsUsableTopic );
 
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+
+        bioSourceBeans.clear();
+        bioSourceBeans = null;
 
         /*
         *     Check on protein
@@ -1877,22 +1935,33 @@ public class SanityChecker {
                                                            "' AND ac like ?" );
 
         List proteinBeans = schIntAc.getBeans( InteractorBean.class, "%" );
-
+        log.info("\tCheck: General");
         sanityChecker.checkProtein( proteinBeans );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: CRC64");
         sanityChecker.checkCrc64( proteinBeans );
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+        log.info("\tCheck: Annotations");
         sanityChecker.checkAnnotations( proteinBeans, "Protein", protUsableTopic ); // "Protein" -> EditorMenuFactory.PROTEIN
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+
+        proteinBeans.clear();
+        proteinBeans = null;
 
         //already working
         List ranges = sanityChecker.deletionFeatureSch.getBeans( RangeBean.class, "2" );
+        log.info("\tCheck: Feature deletion");
         sanityChecker.checkDeletionFeature( ranges );
+
+        //commitAndBeginTransaction();
+
+        ranges.clear();
+        ranges = null;
 
         /*
         *     Check on annotation
         */
-
+       log.info("6. Check on Annotation - nothing");
         //tested
         schIntAc.addMapping( AnnotationBean.class, "SELECT ac, description, created, created_user " +
                                                            "FROM ia_annotation " +
@@ -1905,31 +1974,41 @@ public class SanityChecker {
         /*
         *    Check on controlledvocab
         */
-
+        log.info("8. Check on CV");
         schIntAc.addMapping( ControlledvocabBean.class, "SELECT ac, objclass, shortlabel, created, created_user " +
                                                                 "FROM ia_controlledvocab " +
                                                                 "WHERE ac = ?" );
         List controlledvocabBeans = schIntAc.getBeans( ControlledvocabBean.class, "%" );
 
+        log.info("\tCheck: Annotations");
         sanityChecker.checkAnnotations( controlledvocabBeans, CvObject.class.getName(), cvUsableTopic );
 
-        commitAndBeginTransaction();
+        //commitAndBeginTransaction();
+
+        controlledvocabBeans.clear();
+        controlledvocabBeans = null;
 
         // try to send emails
         try {
+            log.info("Sending mails");
             sanityChecker.getMessageSender().postEmails( MessageSender.SANITY_CHECK );
 
         } catch ( MessagingException e ) {
             // scould not send emails, then how error ...
             //e.printStackTrace();
+            log.error("Could not send mails: ", e);
 
         }
+
+        //commitTransaction();
 
         return sanityChecker.getMessageSender().getSimpleAdminReport();
     }
 
     private static void beginTransaction() {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        if (!IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        }
     }
 
     private static void commitTransaction() {
@@ -1939,10 +2018,10 @@ public class SanityChecker {
             throw new RuntimeException(e);
         }
     }
-
+      /*
     private static void commitAndBeginTransaction() {
         commitTransaction();
         beginTransaction();
     }
-
+    */
 }
