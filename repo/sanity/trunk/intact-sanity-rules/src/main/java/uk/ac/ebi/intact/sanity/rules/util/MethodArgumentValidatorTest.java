@@ -5,9 +5,10 @@
  */
 package uk.ac.ebi.intact.sanity.rules.util;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import uk.ac.ebi.intact.model.*;
 
 /**
  * TODO comment this

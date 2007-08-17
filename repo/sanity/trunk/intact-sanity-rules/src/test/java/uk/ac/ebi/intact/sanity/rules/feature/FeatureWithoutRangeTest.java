@@ -17,8 +17,8 @@ import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Range;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -53,7 +53,7 @@ public class FeatureWithoutRangeTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
         FeatureWithoutRange rule = new FeatureWithoutRange();
 

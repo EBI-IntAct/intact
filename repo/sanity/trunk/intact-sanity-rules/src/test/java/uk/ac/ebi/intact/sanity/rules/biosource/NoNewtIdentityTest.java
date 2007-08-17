@@ -15,8 +15,8 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.BioSourceXref;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -50,7 +50,7 @@ public class NoNewtIdentityTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
 
         // Test that we get back a message if we give to the check method a bioSource without xref at all.
         BioSource biosource = BioSourceWithNoXrefMock.getMock();

@@ -13,8 +13,8 @@ import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
 import uk.ac.ebi.intact.mocks.cvInteractions.CvInteractionWithNoAnnotationMock;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -48,7 +48,7 @@ public class CvInteractionWithoutUniprotDrExportTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         // Check that if we give the check method a cvInteraction with no annotation it return a message
         CvInteraction cvInteraction = CvInteractionWithNoAnnotationMock.getMock();
         CvInteractionWithoutUniprotDrExport rule = new CvInteractionWithoutUniprotDrExport();

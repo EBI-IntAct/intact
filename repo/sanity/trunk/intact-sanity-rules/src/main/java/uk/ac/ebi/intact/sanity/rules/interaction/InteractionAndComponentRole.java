@@ -5,11 +5,12 @@
  */
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class InteractionAndComponentRole   implements Rule {
     private static final String ONLY_1_NEUTRAL_DESCRIPTION = "ReportTopic.INTERACTION_WITH_ONLY_ONE_NEUTRAL";
     private static final String SUGGESTION = "";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, Interaction.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Interaction interaction = (Interaction) intactObject;
@@ -68,33 +69,33 @@ public class InteractionAndComponentRole   implements Rule {
         for(Component component : components){
             CvObjectXref cvRoleIdentityXref = CvObjectUtils.getPsiMiIdentityXref(component.getCvComponentRole());
             String cvRoleMiRef = cvRoleIdentityXref.getPrimaryId();
-            if(CvComponentRole.BAIT_PSI_REF.equals(cvRoleMiRef)){
+            if(CvExperimentalRole.BAIT_PSI_REF.equals(cvRoleMiRef)){
                 baitCount++;
-            }else if(CvComponentRole.PREY_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.PREY_PSI_REF.equals(cvRoleMiRef)){
                 preyCount++;
-            }else if(CvComponentRole.ENZYME_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.ENZYME_PSI_REF.equals(cvRoleMiRef)){
                 enzymeCount++;
-            }else if(CvComponentRole.ENZYME_TARGET_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.ENZYME_TARGET_PSI_REF.equals(cvRoleMiRef)){
                 enzymeTargetCount++;
-            }else if(CvComponentRole.NEUTRAL_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.NEUTRAL_PSI_REF.equals(cvRoleMiRef)){
                 neutralCount++;
                 neutralStoichiometry = component.getStoichiometry();
-            }else if(CvComponentRole.SELF_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.SELF_PSI_REF.equals(cvRoleMiRef)){
                 selfCount++;
                 selfStoichiometry = component.getStoichiometry();
-            }else if(CvComponentRole.UNSPECIFIED_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.UNSPECIFIED_PSI_REF.equals(cvRoleMiRef)){
                 unspecifiedCount++;
-            }else if(CvComponentRole.FLUROPHORE_ACCEPTOR_MI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.FLUROPHORE_ACCEPTOR_MI_REF.equals(cvRoleMiRef)){
                 fluorophoreAcceptorCount++;
-            }else if(CvComponentRole.FLUROPHORE_DONOR_MI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.FLUROPHORE_DONOR_MI_REF.equals(cvRoleMiRef)){
                 fluorophoreDonorCount++;
-            }else if(CvComponentRole.ELECTRON_ACCEPTOR_MI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.ELECTRON_ACCEPTOR_MI_REF.equals(cvRoleMiRef)){
                 electronAcceptorCount++;
-            }else if(CvComponentRole.ELECTRON_DONOR_MI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.ELECTRON_DONOR_MI_REF.equals(cvRoleMiRef)){
                 electronDonorCount++;
-            }else if(CvComponentRole.INHIBITOR_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.INHIBITOR_PSI_REF.equals(cvRoleMiRef)){
                 inhibitorCount++;
-            }else if(CvComponentRole.INHIBITED_PSI_REF.equals(cvRoleMiRef)){
+            }else if(CvExperimentalRole.INHIBITED_PSI_REF.equals(cvRoleMiRef)){
                 inhibitedCount++;
             }
         }

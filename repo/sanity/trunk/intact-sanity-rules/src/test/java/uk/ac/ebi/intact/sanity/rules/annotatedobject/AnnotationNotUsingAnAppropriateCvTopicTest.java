@@ -13,9 +13,9 @@ import uk.ac.ebi.intact.mocks.ProteinMock;
 import uk.ac.ebi.intact.mocks.cvTopics.UrlMock;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.rules.annotatedObject.AnnotationNotUsingAnAppropriateCvTopic;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
 
 import java.util.Collection;
 
@@ -60,7 +60,7 @@ public class AnnotationNotUsingAnAppropriateCvTopicTest extends TestCase {
             Collection<GeneralMessage> messages =  rule.check(protein);
             
             assertEquals(0,messages.size());
-        } catch (SanityCheckerException e) {
+        } catch (SanityRuleException e) {
             e.printStackTrace();
         }
     }

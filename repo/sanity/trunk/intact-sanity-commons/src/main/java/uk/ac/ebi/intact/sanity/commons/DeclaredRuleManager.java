@@ -39,7 +39,7 @@ public class DeclaredRuleManager {
     private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>() {
         @Override
         protected DeclaredRuleManager initialValue() {
-            InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(RULES_XML_PATH);
+            InputStream is = DeclaredRuleManager.class.getResourceAsStream(RULES_XML_PATH);
 
             DeclaredRules rules = null;
             try {
@@ -55,13 +55,13 @@ public class DeclaredRuleManager {
         return instance.get();
     }
 
-    private List<DeclaredRule> availableRules;
+    private List<DeclaredRule> availableDeclaredRules;
 
-    private DeclaredRuleManager(List<DeclaredRule> availableRules) {
-        this.availableRules = availableRules;
+    private DeclaredRuleManager(List<DeclaredRule> availableDeclaredRules) {
+        this.availableDeclaredRules = availableDeclaredRules;
     }
 
-    public List<DeclaredRule> getRulesForTarget(String targetClass) {
+    public List<DeclaredRule> getDeclaredRulesForTarget(String targetClass) {
         List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
         for (DeclaredRule rule : rules) {
@@ -76,12 +76,13 @@ public class DeclaredRuleManager {
     public Set<String> getAvailableTargetClasses() {
         Set<String> targets = new HashSet<String>();
 
-        for (DeclaredRule rule : availableRules) {
+        for (DeclaredRule rule : availableDeclaredRules) {
             targets.add(rule.getTargetClass());
         }
 
         return targets;
     }
+
 
     public static DeclaredRules readRulesXml(InputStream is) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
@@ -95,7 +96,7 @@ public class DeclaredRuleManager {
         marshaller.marshal(rules, writer);
     }
 
-    public List<DeclaredRule> getAvailableRules() {
-        return availableRules;
+    public List<DeclaredRule> getAvailableDeclaredRules() {
+        return availableDeclaredRules;
     }
 }

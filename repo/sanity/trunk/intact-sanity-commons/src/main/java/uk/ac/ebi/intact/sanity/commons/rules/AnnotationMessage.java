@@ -3,11 +3,10 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.sanity.rules.messages;
+package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.IntactObject;
 
 /**
  * TODO comment this

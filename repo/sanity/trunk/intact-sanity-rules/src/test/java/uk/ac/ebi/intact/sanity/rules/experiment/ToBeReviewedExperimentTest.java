@@ -5,17 +5,16 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
-import uk.ac.ebi.intact.mocks.cvTopics.OnHoldMock;
 import uk.ac.ebi.intact.mocks.cvTopics.ToBeReviewedMock;
+import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -50,7 +49,7 @@ public class ToBeReviewedExperimentTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         ToBeReviewedExperiment rule = new ToBeReviewedExperiment();
 
         // Give the check method an experiment without on-hold annotation and make sure that it returns no message.

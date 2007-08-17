@@ -10,8 +10,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.util.Collection;
 
@@ -44,7 +44,7 @@ public class NotValidCrc64Test extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testCheck() throws SanityCheckerException {
+    public void testCheck() throws SanityRuleException {
         
         Protein protein = P08050Mock.getMock();
         NotValidCrc64 rule = new NotValidCrc64();

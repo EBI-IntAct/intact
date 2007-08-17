@@ -7,10 +7,10 @@ package uk.ac.ebi.intact.sanity.rules.nucleicacid;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.apt.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.exception.SanityCheckerException;
-import uk.ac.ebi.intact.sanity.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.messages.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class NucleicAcidIdentity  implements Rule {
         NON_ALLOWED_IDENTITY_DESCRIPTION = NON_ALLOWED_IDENTITY_DESCRIPTION + ")";
 
     }
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityCheckerException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         MethodArgumentValidator.isValidArgument(intactObject, NucleicAcid.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         NucleicAcid nucleicAcid = (NucleicAcid) intactObject;
