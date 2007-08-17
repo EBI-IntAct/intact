@@ -45,16 +45,19 @@
 </node>
 <node COLOR="#006633" CREATED="1181228864110" ID="Freemind_Link_1539915686" MODIFIED="1181231528235" POSITION="right" TEXT="sanity">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219930350" ID="Freemind_Link_406316997" MODIFIED="1181306889962" TEXT="sanity-rules">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219903504" ID="Freemind_Link_1337513036" MODIFIED="1187354031925" TEXT="intact-sanity-apt">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219903504" ID="Freemind_Link_1337513036" MODIFIED="1181306890546" TEXT="intact-sanity-apt">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219930350" ID="Freemind_Link_406316997" MODIFIED="1187354032661" TEXT="intact-sanity-rules">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181220151246" ID="Freemind_Link_1743155063" MODIFIED="1181306891302" TEXT="maven-sanitychecker-plugin">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1187354015674" ID="Freemind_Link_1615561735" MODIFIED="1187354033537" TEXT="intact-sanity-check">
+<edge COLOR="#808080" WIDTH="thin"/>
+</node>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220151246" ID="Freemind_Link_1743155063" MODIFIED="1187354028033" TEXT="sanity-maven-plugin">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
