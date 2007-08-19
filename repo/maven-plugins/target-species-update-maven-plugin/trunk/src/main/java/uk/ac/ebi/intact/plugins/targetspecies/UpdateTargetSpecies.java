@@ -215,14 +215,14 @@ public class UpdateTargetSpecies {
                 if ( !currentExperiment.getXrefs().contains( xref ) ) {
                     log.debug( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
 
-                    if ( !dryRun ) {
+//                    if ( !dryRun ) {
                         currentExperiment.addXref( xref );
                         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-                    }
+//                    }
                 } else {
                     // only keep in that collection the Xref that do not match the set of BioSource.
 
-                    if ( !dryRun )
+//                    if ( !dryRun )
                         existingTargetXrefs.remove( xref );
                 }
 
