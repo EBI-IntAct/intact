@@ -15,12 +15,20 @@
  */
 package uk.ac.ebi.intact.sanity.commons;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import sun.misc.URLClassPath;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -101,9 +109,47 @@ public class DeclaredRuleManager {
     }
 
     public static void writeRulesXml(DeclaredRules rules, Writer writer) throws Exception {
-        JAXBContext jc = JAXBContext.newInstance(Thread.currentThread().getContextClassLoader().loadClass(DeclaredRule.class.getName()));
-        Marshaller marshaller = jc.createMarshaller();
-        marshaller.marshal(rules, writer);
+        //JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
+        //Marshaller marshaller = jc.createMarshaller();
+        //marshaller.marshal(rules, writer);
+
+        // NOTE: We are using DOM here because it seems to classpath be a problem
+        // with APT when invoking JAXB (with the above code)
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.newDocument();
+
+        Element root = document.createElement("declared-rules");
+        document.appendChild(root);
+
+        for (DeclaredRule declaredRule : rules.getDeclaredRule()) {
+            Element decRuleNode = document.createElement("declared-rule");
+            root.appendChild(decRuleNode);
+
+            Element ruleNameNode = document.createElement("rule-name");
+            decRuleNode.appendChild(ruleNameNode);
+            ruleNameNode.appendChild(document.createTextNode(declaredRule.getRuleName()));
+
+            Element ruleClassNode = document.createElement("rule-class");
+            decRuleNode.appendChild(ruleClassNode);
+            ruleClassNode.appendChild(document.createTextNode(declaredRule.getRuleClass()));
+
+            Element targetClassNode = document.createElement("target-class");
+            decRuleNode.appendChild(targetClassNode);
+            targetClassNode.appendChild(document.createTextNode(declaredRule.getTargetClass()));
+        }
+
+        //set up a transformer
+        TransformerFactory transfac = TransformerFactory.newInstance();
+        Transformer trans = transfac.newTransformer();
+        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        trans.setOutputProperty(OutputKeys.INDENT, "yes");
+
+        //create string from xml tree
+        StreamResult result = new StreamResult(writer);
+        DOMSource source = new DOMSource(document);
+        trans.transform(source, result);
     }
 
     public List<DeclaredRule> getAvailableDeclaredRules() {
@@ -247,5 +293,5 @@ public class DeclaredRuleManager {
 
         return dirs;
     }
-   
+
 }
