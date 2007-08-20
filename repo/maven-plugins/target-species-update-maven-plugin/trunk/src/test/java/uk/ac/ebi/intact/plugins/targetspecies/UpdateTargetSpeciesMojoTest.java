@@ -31,12 +31,14 @@ import java.lang.reflect.Method;
 import uk.ac.ebi.intact.core.unit.*;
 import uk.ac.ebi.intact.core.unit.mock.MockIntactContext;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.CvContext;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
 import uk.ac.ebi.intact.commons.dataset.TestDataset;
 import uk.ac.ebi.intact.commons.dataset.DbUnitTestDataset;
@@ -55,8 +57,12 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase  {
      }
 
     public void testSimpleGeneration() throws Exception {
+        CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        CvTopic noUniprotUpdate = new CvTopic(institution, "no-uniprot-update");
+        cvObjectDao.saveOrUpdate(noUniprotUpdate);
 
-
+        System.out.println("\n\n\nHello\n\n\n");
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
 
@@ -111,18 +117,18 @@ public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase  {
             ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
             experimentDao.saveOrUpdate(exp);
         }
+        System.out.println("XREF COUNT IS " + xrefCount);
         assertTrue(xrefCount > 0);
+
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-
-    }
-@BeforeClass
-public static void begin() throws Exception {
 
     }
 
     @Before
     public final void setUp() throws Exception {
+        super.setUp();
+
         //getDataContext().beginTransaction();
 
         Method currentMethod = IntactTestRunner.getTestMethod();
