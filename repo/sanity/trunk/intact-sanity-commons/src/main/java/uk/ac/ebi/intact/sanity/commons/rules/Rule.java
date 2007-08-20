@@ -17,8 +17,8 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>08-Mar-2007</pre>
  */
-public interface Rule {
+public interface Rule<T extends IntactObject> {
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException;
+    public Collection<GeneralMessage> check(T intactObject) throws SanityRuleException;
 
 }
