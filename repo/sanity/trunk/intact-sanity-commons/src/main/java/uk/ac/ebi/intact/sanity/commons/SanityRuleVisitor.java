@@ -63,7 +63,7 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
         String name = sanityRule.name();
 
         if (name.length() == 0) {
-            name = ruleClassName;
+            name = classDeclaration.getSimpleName();
         }
 
         DeclaredRule rule = new DeclaredRule();

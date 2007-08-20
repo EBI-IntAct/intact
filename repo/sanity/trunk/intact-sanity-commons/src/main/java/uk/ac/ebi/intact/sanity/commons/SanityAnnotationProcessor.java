@@ -54,7 +54,8 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
 
         try {
             File targetDir = createTargetDir();
-            File targetFile = new File(targetDir, "sanity-rules.xml");
+            File targetFile = new File(targetDir, "META-INF/sanity-rules.xml");
+            targetFile.getParentFile().mkdirs();
 
             env.getMessager().printNotice("Writing "+rules.size()+" sanity rules to: "+targetFile);
 
