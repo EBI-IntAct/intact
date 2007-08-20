@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.rules.annotatedObject.BrokenUrl;
 
 import java.util.Collection;
 

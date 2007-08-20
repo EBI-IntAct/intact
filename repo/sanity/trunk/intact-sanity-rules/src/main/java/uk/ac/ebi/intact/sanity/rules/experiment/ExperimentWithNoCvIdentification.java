@@ -27,7 +27,7 @@ import java.util.Collection;
 @SanityRule(target = Experiment.class)
 
 public class ExperimentWithNoCvIdentification implements Rule {
-    private static final String DESCRIPTION = "This/those experiments have no cvIdentification";
+    private static final String DESCRIPTION = "This/these experiments have no cvIdentification";
     private static final String SUGGESTION = "Edit the experiment and add the cvIdentification";
 
 

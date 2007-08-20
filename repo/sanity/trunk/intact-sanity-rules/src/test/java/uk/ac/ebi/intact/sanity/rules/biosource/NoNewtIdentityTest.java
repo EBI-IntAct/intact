@@ -9,7 +9,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.mocks.XrefMock;
-import uk.ac.ebi.intact.mocks.bioSources.BioSourceWithNoXrefMock;
+import uk.ac.ebi.intact.mocks.biosources.BioSourceWithNoXrefMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.NewtMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;

@@ -27,7 +27,7 @@ import java.util.Collection;
 @SanityRule(target = Experiment.class)
 
 public class ExperimentWithNoPubmedXref  implements Rule {
-    private static final String DESCRIPTION = "This/those experiments have no primary-reference to pubmed";
+    private static final String DESCRIPTION = "This/these experiments have no primary-reference to pubmed";
     private static final String SUGGESTION = "Edit the experiment and add the primary-reference to pubmed";
 
 

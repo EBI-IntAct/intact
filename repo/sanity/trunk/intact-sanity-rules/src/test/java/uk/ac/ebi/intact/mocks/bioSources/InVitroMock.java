@@ -3,11 +3,11 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.mocks.bioSources;
+package uk.ac.ebi.intact.mocks.biosources;
 
-import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
+import uk.ac.ebi.intact.model.BioSource;
 
 /**
  * TODO comment this

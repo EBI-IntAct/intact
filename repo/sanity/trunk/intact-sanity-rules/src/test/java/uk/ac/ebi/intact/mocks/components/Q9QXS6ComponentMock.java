@@ -5,13 +5,14 @@
  */
 package uk.ac.ebi.intact.mocks.components;
 
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
-import uk.ac.ebi.intact.mocks.bioSources.MouseBrainMock;
-import uk.ac.ebi.intact.mocks.cvComponentRoles.PreyMock;
+import uk.ac.ebi.intact.mocks.biosources.MouseBrainMock;
+import uk.ac.ebi.intact.mocks.cvbiologicalroles.UnspecifiedBiologicalRoleMock;
+import uk.ac.ebi.intact.mocks.cvexperimentalroles.PreyMock;
 import uk.ac.ebi.intact.mocks.proteins.Q9QXS6Mock;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
 
 /**
  * TODO comment this
@@ -22,7 +23,7 @@ import uk.ac.ebi.intact.mocks.proteins.Q9QXS6Mock;
  */
 public class Q9QXS6ComponentMock {
     public static Component getMock(Interaction interaction){
-        Component component = new Component(InstitutionMock.getMock(),interaction, Q9QXS6Mock.getMock(), PreyMock.getMock());
+        Component component = new Component(InstitutionMock.getMock(),interaction, Q9QXS6Mock.getMock(), PreyMock.getMock(), UnspecifiedBiologicalRoleMock.getMock());
         component.setExpressedIn(MouseBrainMock.getMock());
         component.setStoichiometry(0);
         component = (Component) IntactObjectSetter.setBasicObject(component);

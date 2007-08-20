@@ -27,7 +27,7 @@ import java.util.Collection;
 @SanityRule(target = BioSource.class)
 
 public class NoNewtIdentity  implements Rule {
-    // The 2 next Collection are not usefull yet as for now all bioSources should have at least 1 xref identity to newt.
+    // The 2 next Collection are not usefull yet as for now all biosources should have at least 1 xref identity to newt.
     // But, in case this rule would evolve and be changed to "All bioSource should have at least 1 xref identity
     // to Newt or to X_database", this could be implemented without too much pain :
     // If X_database has a psi-mi id then just add in the static block it's psi-mi to the databaseMis collection. If 

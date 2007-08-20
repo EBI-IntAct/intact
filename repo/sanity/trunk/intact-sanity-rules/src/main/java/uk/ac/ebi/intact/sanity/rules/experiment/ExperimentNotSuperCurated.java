@@ -27,7 +27,7 @@ import java.util.*;
 @SanityRule(target = Experiment.class)
 
 public class ExperimentNotSuperCurated  implements Rule {
-    private static final String DESCRIPTION = "This/those experiments have not been super curated";
+    private static final String DESCRIPTION = "This/these experiments have not been super curated";
     private static final String SUGGESTION = "Ask a super-creator to add and accepted or to-be-reviewed stamp on it.";
     private static Date startingDateSuperCuration;
 

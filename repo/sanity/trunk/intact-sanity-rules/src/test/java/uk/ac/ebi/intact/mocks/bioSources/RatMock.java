@@ -3,15 +3,15 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.mocks.bioSources;
+package uk.ac.ebi.intact.mocks.biosources;
 
-import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.BioSourceXref;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
-import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
+import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.NewtMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.model.BioSource;
+import uk.ac.ebi.intact.model.BioSourceXref;
 
 /**
  * TODO comment this

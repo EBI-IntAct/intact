@@ -28,7 +28,7 @@ import java.util.Collection;
 
 public class MutationAnalysisFeature implements Rule{
 
-    private static final String DESCRIPTION = "This/those Feature(s) are characterizing deletion of more then 2 " +
+    private static final String DESCRIPTION = "This/these Feature(s) are characterizing deletion of more then 2 " +
             "amino-acid and have their CvFeatureIdentification set to " + CvFeatureIdentification.DELETION_ANALYSIS;
     private static final String SUGGESTION = "";
 

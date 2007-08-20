@@ -29,7 +29,7 @@ import java.util.Collection;
 
 public class InteractionWithNoExperiment implements Rule {
 
-    private static final String DESCRIPTION = "This/those Interaction(s) are not attached to any experiment. ";
+    private static final String DESCRIPTION = "This/these Interaction(s) are not attached to any experiment. ";
     private static final String SUGGESTION = "Delete the Interaction(s) or attach them to an Experiment.";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {

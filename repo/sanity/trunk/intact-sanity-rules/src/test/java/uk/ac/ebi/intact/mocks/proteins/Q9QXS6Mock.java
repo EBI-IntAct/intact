@@ -5,19 +5,19 @@
  */
 package uk.ac.ebi.intact.mocks.proteins;
 
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.InteractorXref;
-import uk.ac.ebi.intact.model.InteractorAlias;
-import uk.ac.ebi.intact.mocks.InstitutionMock;
-import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.AliasMock;
-import uk.ac.ebi.intact.mocks.IntactObjectSetter;
-import uk.ac.ebi.intact.mocks.bioSources.MouseMock;
 import uk.ac.ebi.intact.mocks.CvAliasType.GeneNameMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.mocks.InstitutionMock;
+import uk.ac.ebi.intact.mocks.IntactObjectSetter;
+import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.biosources.MouseMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.UniprotMock;
 import uk.ac.ebi.intact.mocks.cvInteractorTypes.ProteinInteractorTypeMock;
+import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.model.InteractorAlias;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.util.Crc64;
 
 /**

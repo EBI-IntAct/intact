@@ -34,7 +34,7 @@ import java.util.Collection;
 @SanityRule(target = Annotation.class)
 
 public class BrokenUrl  implements Rule {
-    private static final String DESCRIPTION = "This/those Url(s) is/are not valid";
+    private static final String DESCRIPTION = "This/these Url(s) is/are not valid";
     private static final String SUGGESTION = "Could be just momentarily broken";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
