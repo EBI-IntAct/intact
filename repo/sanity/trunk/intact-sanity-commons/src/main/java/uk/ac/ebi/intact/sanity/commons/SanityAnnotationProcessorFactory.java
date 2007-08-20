@@ -9,14 +9,13 @@ import com.sun.mirror.apt.AnnotationProcessor;
 import com.sun.mirror.apt.AnnotationProcessorEnvironment;
 import com.sun.mirror.apt.AnnotationProcessorFactory;
 import com.sun.mirror.declaration.AnnotationTypeDeclaration;
+import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
+
 /**
  * TODO comment this
  *
@@ -27,35 +26,29 @@ import java.util.Set;
 public class SanityAnnotationProcessorFactory implements AnnotationProcessorFactory {
 
     // Process only the SanityRule annotation
-  private static final Collection<String> SUPPORTED_ANNOTATIONS
-      = Collections.unmodifiableCollection(Arrays.asList("uk.ac.ebi.intact.sanity.apt.annotation.SanityRule"));
+    private static final Collection<String> SUPPORTED_ANNOTATIONS
+            = Collections.unmodifiableCollection(Arrays.asList(SanityRule.class.getName()));
 
     // No supported options
-  private static final Collection<String> SUPPORTED_OPTIONS = Collections.emptyList();
+    private static final Collection<String> SUPPORTED_OPTIONS = Collections.emptyList();
 
-  private SanityAnnotationProcessor annotationProcessor = null;
+    private SanityAnnotationProcessor annotationProcessor = null;
 
-  public Collection<String> supportedAnnotationTypes() {
-    return SUPPORTED_ANNOTATIONS;
-  }
-
-  public Collection<String> supportedOptions() {
-    return SUPPORTED_OPTIONS;
-  }
-
-  public AnnotationProcessor getProcessorFor(Set<AnnotationTypeDeclaration> atds,
-                                             AnnotationProcessorEnvironment env) {
-      System.out.println("SanityAnnotationProcessorFactory.getProcessorFor");
-      try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("sanityAnnotation.txt"));
-            out.write("aString");
-            out.close();
-        } catch (IOException e) {
-        }
-      if (annotationProcessor == null) {
-      annotationProcessor = new SanityAnnotationProcessor(atds, env);
+    public Collection<String> supportedAnnotationTypes() {
+        return SUPPORTED_ANNOTATIONS;
     }
-    return annotationProcessor;
-  }
+
+    public Collection<String> supportedOptions() {
+        return SUPPORTED_OPTIONS;
+    }
+
+    public AnnotationProcessor getProcessorFor(Set<AnnotationTypeDeclaration> atds,
+                                               AnnotationProcessorEnvironment env) {
+
+        if (annotationProcessor == null) {
+            annotationProcessor = new SanityAnnotationProcessor(atds, env);
+        }
+        return annotationProcessor;
+    }
 
 }
