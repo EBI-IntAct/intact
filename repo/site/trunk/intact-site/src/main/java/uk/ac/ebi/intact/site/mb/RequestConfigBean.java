@@ -24,16 +24,16 @@ import javax.servlet.http.HttpServletRequest;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AppConfigBean
+public class RequestConfigBean
 {
     private String absoluteContextPath;
     private HttpServletRequest request;
 
-    public AppConfigBean()
+    public RequestConfigBean()
     {
         FacesContext context = FacesContext.getCurrentInstance();
         this.request = (HttpServletRequest) context.getExternalContext().getRequest();
-
+       
         this.absoluteContextPath = request.getScheme()+"://" +
                                    request.getServerName()+":" +
                                    request.getServerPort() +
