@@ -108,7 +108,7 @@ import java.util.List;
  * <p/>
  * Could not find an email adress for user: intact
  * <p/>
- * This/those Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range
+ * This/these Range(s) are associated to a sequence which does not corresponds to the protein sequence. And the Range
  * Sequence couldn't be remapped automatically
  * --------------------------------------------------------------------------------------------------------------------------------------------------------------
  * Interaction Ac     	Protein Ac     	Feature Ac     	ToIntervalStart     	FromIntervalEnd     	RangeBean Ac     	Date
@@ -116,7 +116,7 @@ import java.util.List;
  * EBI-39441     	EBI-3573     	EBI-611251     	0     	0     	EBI-611252     	2005-07-04 09:36:01.0     	INTACT
  * EBI-491985     	EBI-29160     	EBI-491987     	1     	1     	EBI-491988     	2005-02-08 16:24:03.0     	INTACT
  * <p/>
- * This/those Range(s) were created when the first Methionine was there, since then the Methionine had been remooved
+ * This/these Range(s) were created when the first Methionine was there, since then the Methionine had been remooved
  * from the Protein Sequence. The Range Sequence has been remapped.
  * -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * Interaction Ac     	Protein Ac     	Feature Ac     	ToIntervalStart     	FromIntervalEnd     	RangeBean Ac     	Date
@@ -124,7 +124,7 @@ import java.util.List;
  * EBI-491630     	EBI-28157     	EBI-491633     	221     	3     	EBI-491634     	2005-02-08 12:17:46.0     	INTACT
  * EBI-491644     	EBI-28157     	EBI-491647     	221     	3     	EBI-491648     	2005-02-08 12:25:28.0     	INTACT
  * <p/>
- *  This/those Range(s) were created when the first Methionine was not there, since then the Methionine had been added
+ *  This/these Range(s) were created when the first Methionine was not there, since then the Methionine had been added
  * to the Protein Sequence. The Range Sequence has been remapped.
  * ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * Interaction Ac     	Protein Ac     	Feature Ac     	ToIntervalStart     	FromIntervalEnd     	RangeBean Ac     	Date

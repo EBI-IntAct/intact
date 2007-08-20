@@ -37,7 +37,7 @@ public class DeclaredRuleManagerTest extends IntactBasicTestCase {
         Assert.assertEquals(1, manager.getAvailableDeclaredRules().size());
         Assert.assertEquals(1, manager.getAvailableTargetClasses().size());
         Assert.assertEquals(1, manager.getDeclaredRulesForTarget(Experiment.class).size());
-        Assert.assertEquals(1, manager.getDeclaredRulesForTarget(AnnotatedObject.class).size());
+        Assert.assertEquals(0, manager.getDeclaredRulesForTarget(AnnotatedObject.class).size());
         Assert.assertEquals(0, manager.getDeclaredRulesForTarget(BioSource.class).size());
 
         DeclaredRuleManager.close();

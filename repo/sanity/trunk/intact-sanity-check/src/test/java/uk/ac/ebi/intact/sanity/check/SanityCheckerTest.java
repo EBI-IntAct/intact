@@ -1,19 +1,18 @@
 package uk.ac.ebi.intact.sanity.check;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.standard.CvObjectPersister;
 import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
+import uk.ac.ebi.intact.core.unit.IntactAbstractTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
-import uk.ac.ebi.intact.model.CvExperimentalRole;
+import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
+import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Arrays;
 
 /**
  * TODO comment this
@@ -21,12 +20,15 @@ import java.util.Map;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SanityCheckerTest extends AbstractSanityCheckTest
+public class SanityCheckerTest extends IntactAbstractTestCase
 {
-
+    @Before
+    public void prepare() throws Exception {
+        RuleRunReport.getInstance().clear();
+    }
 
     @Test
-    @IntactUnitDataset ( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
+    @Ignore
     public void executeSanityCheck_default() throws Exception {
 
         // Add some random data
@@ -39,27 +41,28 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
 
         commitTransaction();
 
+        //RuleRunReport report = SanityChecker.executeSanityCheck(super.getSanityCheckConfig());
         beginTransaction();
+        SanityChecker.checkAllCvObjects();
+        commitTransaction();
 
-        SimpleAdminReport report = SanityChecker.executeSanityCheck(super.getSanityCheckConfig());
+        System.out.println("Messages: "+RuleRunReport.getInstance().getMessages());
 
         //printReport(report);
-        Assert.assertEquals(1, report.getTopicsWithMessages().size());
-        Assert.assertEquals(287, report.getMessagesByTopic(ReportTopic.XREF_WITH_NON_VALID_PRIMARYID).size());
+        //Assert.assertEquals(1, report.getTopicsWithMessages().size());
+        //Assert.assertEquals(287, report.getMessagesByTopic(ReportTopic.XREF_WITH_NON_VALID_PRIMARYID).size());
 
-        commitTransaction();
     }
 
-    private static void printReport(SimpleAdminReport report) {
-        for (Map.Entry<ReportTopic, List<ReportMessage>> entry :  report.getMessages().entrySet()) {
-            System.out.println("=====================================");
-            System.out.println(entry.getKey().getTitle()+":");
-            System.out.println("=====================================");
-            System.out.println(report.getHeaderByTopic(entry.getKey()));
-            System.out.println("-----------------------------------------------------");
-            for (ReportMessage message : entry.getValue()) {
-                System.out.println("\t"+message);
-            }
-        }
+    @Test
+    public void checkCvObjects_noXrefs() throws Exception {
+        CvDatabase cvPubmed = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED);
+        cvPubmed.getXrefs().clear();
+
+        RuleRunReport report = SanityChecker.checkCvObjects(Arrays.asList(cvPubmed));
+
+        Assert.assertEquals(1, report.getMessages().size());
     }
+
+
 }
