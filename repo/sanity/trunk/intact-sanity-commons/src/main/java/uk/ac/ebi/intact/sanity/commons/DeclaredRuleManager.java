@@ -15,16 +15,17 @@
  */
 package uk.ac.ebi.intact.sanity.commons;
 
+import sun.misc.URLClassPath;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.InputStream;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * TODO comment this
@@ -36,23 +37,28 @@ public class DeclaredRuleManager {
 
     public static final String RULES_XML_PATH = "/META-INF/sanity-rules.xml";
 
-    private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>() {
-        @Override
-        protected DeclaredRuleManager initialValue() {
-            InputStream is = DeclaredRuleManager.class.getResourceAsStream(RULES_XML_PATH);
-
-            DeclaredRules rules = null;
-            try {
-                rules = readRulesXml(is);
-            } catch (JAXBException e) {
-                throw new SanityRuleException(e);
-            }
-            return new DeclaredRuleManager(rules.getDeclaredRule());
-        }
-    };
+    private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>();
 
     public static DeclaredRuleManager getInstance() {
-        return instance.get();
+        DeclaredRuleManager declaredRuleManager = instance.get();
+
+        if (declaredRuleManager == null) {
+            List<DeclaredRule> declaredRules = null;
+            try {
+                declaredRules = getDeclaredRulesFromClassPath();
+            } catch (IOException e) {
+                throw new SanityRuleException("Problem getting declared rules from classpath", e);
+            }
+
+            declaredRuleManager = new DeclaredRuleManager(declaredRules);
+            instance.set(declaredRuleManager);
+        }
+
+        return declaredRuleManager;
+    }
+
+    public static void close() {
+        instance.set(null);
     }
 
     private List<DeclaredRule> availableDeclaredRules;
@@ -61,11 +67,18 @@ public class DeclaredRuleManager {
         this.availableDeclaredRules = availableDeclaredRules;
     }
 
-    public List<DeclaredRule> getDeclaredRulesForTarget(String targetClass) {
+    public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass) {
         List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
-        for (DeclaredRule rule : rules) {
-            if (rule.getTargetClass().equals(targetClass)) {
+        for (DeclaredRule rule : availableDeclaredRules) {
+            Class ruleTargetClass;
+            try {
+                ruleTargetClass = Class.forName(rule.getTargetClass());
+            } catch (ClassNotFoundException e) {
+                throw new SanityRuleException("Found declared rule with a target class not found in the classpath: "+rule.getTargetClass());
+            }
+
+            if (targetClass.isAssignableFrom(ruleTargetClass)) {
                 rules.add(rule);
             }
         }
@@ -99,4 +112,76 @@ public class DeclaredRuleManager {
     public List<DeclaredRule> getAvailableDeclaredRules() {
         return availableDeclaredRules;
     }
+
+    protected static List<DeclaredRule> getDeclaredRulesFromClassPath() throws IOException {
+        List<DeclaredRule> declaredRules = new ArrayList<DeclaredRule>();
+
+        for (String classPathFilePath : getClasspathElements()) {
+            File file = new File(classPathFilePath);
+
+            InputStream declaredRulesStream = null;
+
+            if (file.isDirectory()) {
+                File candidateFile = new File(file, RULES_XML_PATH);
+
+                if (candidateFile.isFile()) {
+                    declaredRulesStream = new FileInputStream(candidateFile);
+                }
+            } else {
+                JarFile jarFile = new JarFile(classPathFilePath);
+
+                // get the xml file from META-INF (if existing) - remove the first slash
+                String rulesFile = RULES_XML_PATH;
+
+                if (RULES_XML_PATH.startsWith("/")) {
+                    rulesFile = RULES_XML_PATH.substring(1, RULES_XML_PATH.length());
+                }
+
+                JarEntry jarEntry = jarFile.getJarEntry(rulesFile);
+
+                if (jarEntry != null) {
+                    declaredRulesStream = jarFile.getInputStream(jarEntry);
+                }
+            }
+
+            if (declaredRulesStream != null) {
+                DeclaredRules dr = readDeclaredRules(declaredRulesStream);
+                declaredRules.addAll(dr.getDeclaredRule());
+            }
+        }
+
+        return declaredRules;
+    }
+
+    protected static DeclaredRules readDeclaredRules(InputStream is) {
+        if (is == null) {
+            throw new IllegalStateException("No sanity rules file found: " + RULES_XML_PATH);
+        }
+
+        DeclaredRules rules = null;
+        try {
+            rules = readRulesXml(is);
+        } catch (JAXBException e) {
+            throw new SanityRuleException(e);
+        }
+        return rules;
+    }
+
+    /**
+     * //TODO: this is copied copied from private methods in AnnotationUtil
+     */
+    private static Collection<String> getClasspathElements() {
+        String classPath = System.getProperty("java.class.path");
+
+        URL[] classpathElements = URLClassPath.pathToURLs(classPath);
+
+        Set<String> classPathItems = new HashSet<String>();
+
+        for (URL cpElem : classpathElements) {
+            classPathItems.add(cpElem.getFile());
+        }
+
+        return classPathItems;
+    }
+   
 }

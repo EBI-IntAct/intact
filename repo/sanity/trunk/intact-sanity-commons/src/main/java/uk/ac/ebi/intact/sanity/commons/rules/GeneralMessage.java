@@ -16,10 +16,6 @@ import uk.ac.ebi.intact.model.IntactObject;
  */
 public class GeneralMessage {
 
-    public static final int HIGH_LEVEL = 2;
-    public static final int AVERAGE_LEVEL = 1;
-    public static final int LOW_LEVEL = 0;
-
     public static final String NO_IDEA = "";
     /*
     The description of the rule.
@@ -29,7 +25,7 @@ public class GeneralMessage {
     /*
     The level of gravity of the rule.
      */
-    private int level;
+    private MessageLevel level;
     /*
     The proposed solution if the rule is transgressed
      */
@@ -39,7 +35,26 @@ public class GeneralMessage {
      */
     private IntactObject outLow;
 
+    @Deprecated
     public GeneralMessage(String description, int level, String proposedSolution, IntactObject outLow) {
+        this.description = description;
+        this.proposedSolution = proposedSolution;
+        this.outLow = outLow;
+
+        switch (level) {
+            case 2:
+                this.level = MessageLevel.MAJOR;
+                break;
+            case 1:
+                this.level = MessageLevel.NORMAL;
+                break;
+            case 0:
+                this.level = MessageLevel.MINOR;
+                break;
+        }
+    }
+
+    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLow) {
         this.description = description;
         this.level = level;
         this.proposedSolution = proposedSolution;
@@ -56,11 +71,11 @@ public class GeneralMessage {
         this.description = description;
     }
 
-    public int getLevel() {
+    public MessageLevel getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(MessageLevel level) {
         this.level = level;
     }
 
@@ -79,5 +94,10 @@ public class GeneralMessage {
 
     public void setOutLow(IntactObject outLow) {
         this.outLow = outLow;
+    }
+
+    @Override
+    public String toString() {
+        return "["+level+"] "+description+" (Tip: "+proposedSolution+")";
     }
 }
