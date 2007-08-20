@@ -13,15 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.sanity.commons.rules;
+package uk.ac.ebi.intact.sanity.commons;
 
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
-
-import java.util.Arrays;
 
 /**
  * TODO comment this
@@ -29,18 +28,19 @@ import java.util.Arrays;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class RuleRunnerTest extends IntactBasicTestCase {
+public class DeclaredRuleManagerTest extends IntactBasicTestCase {
 
     @Test
     public void runAvailable_default() throws Exception {
-        Experiment exp = getMockBuilder().createExperimentRandom(1);
+        DeclaredRuleManager manager = DeclaredRuleManager.getInstance();
 
-        RuleRunner.runAvailableRules(Arrays.asList(exp));
-
-        Assert.assertEquals(1, RuleRunReport.getInstance().getMessages().size());
-        Assert.assertEquals(MessageLevel.NORMAL, RuleRunReport.getInstance().getMessages().iterator().next().getLevel());
-
+        Assert.assertEquals(1, manager.getAvailableDeclaredRules().size());
+        Assert.assertEquals(1, manager.getAvailableTargetClasses().size());
+        Assert.assertEquals(1, manager.getDeclaredRulesForTarget(Experiment.class).size());
+        Assert.assertEquals(1, manager.getDeclaredRulesForTarget(AnnotatedObject.class).size());
+        Assert.assertEquals(0, manager.getDeclaredRulesForTarget(BioSource.class).size());
 
         DeclaredRuleManager.close();
     }
+
 }

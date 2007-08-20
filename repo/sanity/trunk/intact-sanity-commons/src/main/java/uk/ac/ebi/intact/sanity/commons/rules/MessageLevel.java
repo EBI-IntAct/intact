@@ -15,21 +15,15 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
-
-import java.util.Arrays;
-import java.util.Collection;
-
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleRule implements Rule {
+public enum MessageLevel {
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        return Arrays.asList(new GeneralMessage("description", MessageLevel.NORMAL, "do this", intactObject));
-    }
+    MAJOR,
+    NORMAL,
+    MINOR
 }

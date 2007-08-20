@@ -34,7 +34,7 @@ public class RuleRunner {
     public static void runAvailableRules(Collection<? extends IntactObject> intactObjects) {
 
         for (IntactObject intactObject : intactObjects) {
-            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass().getName());
+            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass());
 
             for (DeclaredRule declaredRule : declaredRules) {
                 Rule rule = newRuleInstance(declaredRule);
