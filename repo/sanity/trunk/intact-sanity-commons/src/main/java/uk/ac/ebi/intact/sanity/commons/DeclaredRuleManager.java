@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.sanity.commons;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.URLClassPath;
@@ -42,6 +44,8 @@ import java.util.jar.JarFile;
  * @version $Id:RuleManager.java 9493 2007-08-17 14:02:49Z baranda $
  */
 public class DeclaredRuleManager {
+
+    private static final Log log = LogFactory.getLog(DeclaredRuleManager.class);
 
     public static final String RULES_XML_PATH = "/META-INF/sanity-rules.xml";
 
@@ -83,7 +87,7 @@ public class DeclaredRuleManager {
                 throw new SanityRuleException("Found declared rule with a target class not found in the classpath: "+rule.getTargetClass());
             }
 
-            if (targetClass.isAssignableFrom(ruleTargetClass)) {
+            if (ruleTargetClass.isAssignableFrom(targetClass)) {
                 rules.add(rule);
             }
         }
@@ -200,7 +204,15 @@ public class DeclaredRuleManager {
                     declaredRulesStream = new FileInputStream(candidateFile);
                 }
             } else {
-                JarFile jarFile = new JarFile(classPathFilePath);
+                JarFile jarFile = null;
+
+                try {
+                    jarFile = new JarFile(classPathFilePath);
+                }
+                catch (IOException e) {
+                    log.error("Cannot create jar file from: "+classPathFilePath);
+                    continue;
+                }
 
                 // get the xml file from META-INF (if existing) - remove the first slash
                 String rulesFile = RULES_XML_PATH;

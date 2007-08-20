@@ -73,7 +73,7 @@ public class MessageSender {
      * This addMessage is used by the checkHiddenAndObsoleteCv() method from the SanityChecked it permit to obtain a
      * message that look like that :
      * <p/>
-     * This/those Cvs are annotated as hidden or obsolete but are actualy in used in ia_range as fromfuzzytype_ac
+     * This/these Cvs are annotated as hidden or obsolete but are actualy in used in ia_range as fromfuzzytype_ac
      * ----------------------------------------------------------------------------------------------------------
      * Interaction Ac     	Interactor Ac     	Feature Ac     	Range Ac     	When     	User     	Cv Ac     	Cv Shortlabel
      * EBI-457078     	EBI-374862     	EBI-457085     	EBI-457086     	2005-12-19 16:05:51.0     	CLEROY     	EBI-769179
@@ -125,7 +125,7 @@ public class MessageSender {
      * This addMessage is used by the checkHiddenAndObsoleteCv() method from the SanityChecked it permit to obtain a
      * message that look like that :
      * <p/>
-     * This/those Cvs are annotated as hidden or obsolete but are actualy in used in a xref as Reference Qualifier
+     * This/these Cvs are annotated as hidden or obsolete but are actualy in used in a xref as Reference Qualifier
      * -----------------------------------------------------------------------------------------------------------
      * XreferencedBean     	FeatureBean Ac     	Type     	Xref Ac     	Xref primaryId     	Database Ac     	Cv Ac Cv
      * Shortlabel     	When     	User EBI-476945     	     	Experiment     	EBI-769158     	111     	EBI-705816
@@ -860,7 +860,7 @@ public class MessageSender {
         int from = rowValues[0].indexOf(">");
         int to = rowValues[0].lastIndexOf("<");
         String ac = rowValues[0].substring(from + 1, to);
-
+       /*
         simpleAdminReport.addMessage(ac, topic, sb.toString());
 
         if (simpleAdminReport.getHeaderByTopic(topic) == null) {
@@ -872,7 +872,7 @@ public class MessageSender {
             }
 
             simpleAdminReport.addHeader(topic, header.toString());
-        }
+        }  */
     }
 
     /**
