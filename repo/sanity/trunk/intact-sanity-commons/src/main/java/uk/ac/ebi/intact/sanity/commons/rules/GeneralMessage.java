@@ -16,6 +16,15 @@ import uk.ac.ebi.intact.model.IntactObject;
  */
 public class GeneralMessage {
 
+    @Deprecated
+    public static final MessageLevel LOW_LEVEL = MessageLevel.MINOR;
+
+    @Deprecated
+    public static final MessageLevel AVERAGE_LEVEL = MessageLevel.NORMAL;
+
+    @Deprecated
+    public static final MessageLevel HIGH_LEVEL = MessageLevel.MAJOR;
+
     public static final String NO_IDEA = "";
     /*
     The description of the rule.

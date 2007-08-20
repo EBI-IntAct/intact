@@ -54,7 +54,11 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
 
         try {
             File targetDir = createTargetDir();
-            Writer writer = new FileWriter(targetDir);
+            File targetFile = new File(targetDir, "sanity-rules.xml");
+
+            env.getMessager().printNotice("Writing "+rules.size()+" sanity rules to: "+targetFile);
+
+            Writer writer = new FileWriter(targetFile);
 
             DeclaredRules jaxbRules = new DeclaredRules();
             jaxbRules.getDeclaredRule().addAll(rules);
@@ -64,6 +68,7 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
             writer.close();
 
         } catch (Exception e) {
+            e.printStackTrace();
            throw new SanityRuleException(e);
         }
     }

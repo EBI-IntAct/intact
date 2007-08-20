@@ -5,8 +5,12 @@
  */
 package uk.ac.ebi.intact.sanity.commons;
 
+import com.sun.mirror.declaration.AnnotationMirror;
+import com.sun.mirror.declaration.AnnotationTypeElementDeclaration;
+import com.sun.mirror.declaration.AnnotationValue;
 import com.sun.mirror.declaration.ClassDeclaration;
 import com.sun.mirror.util.SimpleDeclarationVisitor;
+import uk.ac.ebi.intact.sanity.commons.annotation.Ignore;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 
 import java.util.ArrayList;
@@ -29,14 +33,32 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
 
     @Override
     public void visitClassDeclaration(ClassDeclaration classDeclaration) {
-        super.visitTypeDeclaration(classDeclaration);
+        visitRule(classDeclaration);
     }
 
     protected void visitRule(ClassDeclaration classDeclaration)
     {
+        Ignore ignoredRule = classDeclaration.getAnnotation(Ignore.class);
+
+        if (ignoredRule != null) {
+            // skip processing the rule
+            return;
+        }
+
         SanityRule sanityRule = classDeclaration.getAnnotation(SanityRule.class);
 
-        Class<?> targetClass = sanityRule.target();
+        String targetClassName = null;
+
+        for (AnnotationMirror annotMirror : classDeclaration.getAnnotationMirrors()) {
+            for (AnnotationTypeElementDeclaration ated : annotMirror.getElementValues().keySet()) {
+                if (ated.getSimpleName().equals("target")) {
+                    AnnotationValue annotValue = annotMirror.getElementValues().get(ated);
+                    targetClassName = annotValue.getValue().toString();
+                    break;
+                }
+            }
+        }
+
         String ruleClassName = classDeclaration.getQualifiedName();
         String name = sanityRule.name();
 
@@ -46,28 +68,11 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
 
         DeclaredRule rule = new DeclaredRule();
         rule.setClazz(ruleClassName);
-        rule.setTargetClass(targetClass.getName());
+        rule.setTargetClass(targetClassName);
         rule.setName(name);
 
-        /*
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter("sanityAnnotation.txt"));
-            out.write("aString");
-            out.close();
-        } catch (IOException e) {
-        }
-        System.out.println("\nSanity Rule:");
-        System.out.println("--------------------");
-
-        for (ClassDeclaration decl : this.getCollectedClassDeclations())
-        {
-            printClassSanityRule(decl);
-        }
-
-        System.out.println("--------------------");
-        System.out.println(this.getCollectedMethodDeclations().size()+" methods with potential threats\n");*/
+        rules.add(rule);
     }
-
 
 
     public List<DeclaredRule> getRules() {

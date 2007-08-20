@@ -18,11 +18,22 @@ import uk.ac.ebi.intact.model.IntactObject;
 public class AnnotationMessage extends GeneralMessage {
     Annotation annotation;
 
+    @Deprecated
     private AnnotationMessage(String description, int level, String proposedSolution, IntactObject outLow) {
         super(description, level, proposedSolution, outLow);
     }
 
+    @Deprecated
     public AnnotationMessage(String description, int level, String proposedSolution, IntactObject outLow, Annotation annotation) {
+        super(description, level, proposedSolution, outLow);
+        this.setAnnotation(annotation);
+    }
+
+    private AnnotationMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLow) {
+        super(description, level, proposedSolution, outLow);
+    }
+
+    public AnnotationMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLow, Annotation annotation) {
         super(description, level, proposedSolution, outLow);
         this.setAnnotation(annotation);
     }

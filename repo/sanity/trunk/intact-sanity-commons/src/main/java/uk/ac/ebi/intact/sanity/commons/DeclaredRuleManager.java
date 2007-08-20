@@ -132,8 +132,6 @@ public class DeclaredRuleManager {
     }
 
     protected void loadDeclaredRulesFromClassPath() throws IOException {
-        List<DeclaredRule> declaredRules = new ArrayList<DeclaredRule>();
-
         // check dirs first
         for (String dir : getDirsFromStackTrace()) {
             File candidateFile = new File(dir, RULES_XML_PATH);
