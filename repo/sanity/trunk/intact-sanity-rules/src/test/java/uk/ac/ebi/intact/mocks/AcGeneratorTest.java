@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.mocks;
 
-import junit.framework.TestCase;
 import junit.framework.Test;
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -40,6 +40,7 @@ public class AcGeneratorTest extends TestCase {
      * Rigourous Test :-)
      */
     public void testgetNextVal(){
+        AcGenerator.reset();
         assertEquals("EBI-1", AcGenerator.getNextVal());
         assertEquals("EBI-2", AcGenerator.getNextVal());
         assertEquals("EBI-3", AcGenerator.getNextVal());

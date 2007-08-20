@@ -28,7 +28,7 @@ import java.util.Collection;
 @SanityRule(target = Experiment.class)
 
 public class ExperimentWithNoInteraction implements Rule {
-    private static final String DESCRIPTION = "This/those experiments have no interaction";
+    private static final String DESCRIPTION = "This/these experiments have no interaction";
     private static final String SUGGESTION = "Edit the experiment and add at least one interaction";
 
 

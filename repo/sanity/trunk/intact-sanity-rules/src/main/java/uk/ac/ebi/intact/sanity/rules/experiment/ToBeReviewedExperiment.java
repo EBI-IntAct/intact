@@ -28,7 +28,7 @@ import java.util.Collection;
 @SanityRule(target = Experiment.class)
 
 public class ToBeReviewedExperiment implements Rule {
-    private static final String DESCRIPTION = "This/those experiments are to be reviewed";
+    private static final String DESCRIPTION = "This/these experiments are to be reviewed";
     private static final String SUGGESTION = "";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {

@@ -5,13 +5,14 @@
  */
 package uk.ac.ebi.intact.mocks.components;
 
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
-import uk.ac.ebi.intact.mocks.bioSources.EcoliMock;
-import uk.ac.ebi.intact.mocks.cvComponentRoles.BaitMock;
+import uk.ac.ebi.intact.mocks.biosources.EcoliMock;
+import uk.ac.ebi.intact.mocks.cvbiologicalroles.UnspecifiedBiologicalRoleMock;
+import uk.ac.ebi.intact.mocks.cvexperimentalroles.BaitMock;
 import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Interaction;
 
 /**
  * TODO comment this
@@ -22,7 +23,7 @@ import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
  */
 public class P08050ComponentMock {
     public static Component getMock(Interaction interaction){
-        Component component = new Component(InstitutionMock.getMock(),interaction, P08050Mock.getMock(), BaitMock.getMock());
+        Component component = new Component(InstitutionMock.getMock(),interaction, P08050Mock.getMock(), BaitMock.getMock(), UnspecifiedBiologicalRoleMock.getMock());
         component.setExpressedIn(EcoliMock.getMock());
         component.setStoichiometry(0);
         component = (Component) IntactObjectSetter.setBasicObject(component);

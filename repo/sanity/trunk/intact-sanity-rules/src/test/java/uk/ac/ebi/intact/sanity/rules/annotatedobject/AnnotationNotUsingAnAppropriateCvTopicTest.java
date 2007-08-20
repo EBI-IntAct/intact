@@ -15,7 +15,6 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.rules.annotatedObject.AnnotationNotUsingAnAppropriateCvTopic;
 
 import java.util.Collection;
 
@@ -58,8 +57,7 @@ public class AnnotationNotUsingAnAppropriateCvTopicTest extends TestCase {
         AnnotationNotUsingAnAppropriateCvTopic rule = new AnnotationNotUsingAnAppropriateCvTopic();
         try {
             Collection<GeneralMessage> messages =  rule.check(protein);
-            
-            assertEquals(0,messages.size());
+            assertEquals(1,messages.size());
         } catch (SanityRuleException e) {
             e.printStackTrace();
         }

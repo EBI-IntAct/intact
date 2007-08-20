@@ -27,7 +27,7 @@ import java.util.Collection;
 
 public class CvInteractionWithoutUniprotDrExport implements Rule {
 
-    private static final String DESCRIPTION = "This/those CvInteraction have uniprot-dr-export annotation";
+    private static final String DESCRIPTION = "This/these CvInteraction have uniprot-dr-export annotation";
     private static final String SUGGESTION = "Add a uniprot-dr-export annotation";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {

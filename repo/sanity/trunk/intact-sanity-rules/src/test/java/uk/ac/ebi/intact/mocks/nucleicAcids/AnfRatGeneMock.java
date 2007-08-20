@@ -5,16 +5,16 @@
  */
 package uk.ac.ebi.intact.mocks.nucleicAcids;
 
-import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.model.NucleicAcidImpl;
-import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
 import uk.ac.ebi.intact.mocks.XrefMock;
+import uk.ac.ebi.intact.mocks.biosources.RatMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.DDBJMock;
-import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.cvInteractorTypes.DnaTypeMock;
-import uk.ac.ebi.intact.mocks.bioSources.RatMock;
+import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.NucleicAcid;
+import uk.ac.ebi.intact.model.NucleicAcidImpl;
 
 /**
  * TODO comment this

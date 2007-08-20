@@ -13,6 +13,10 @@ import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
 import uk.ac.ebi.intact.mocks.cvFeatureType.MutationDecreasingMock;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 

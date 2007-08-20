@@ -10,6 +10,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import uk.ac.ebi.intact.mocks.components.P08050ComponentMock;
 import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
+import uk.ac.ebi.intact.mocks.cvexperimentalroles.*;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.model.Component;
@@ -66,10 +67,10 @@ public class InteractionAndComponentRoleTest extends TestCase {
         interaction.setComponents(new ArrayList<Component>());
         Collection<Component> components = new ArrayList<Component>();
         Component componentA = P08050ComponentMock.getMock(interaction);
-        componentA.setCvComponentRole(BaitMock.getMock());
+        componentA.setCvExperimentalRole(BaitMock.getMock());
         components.add(componentA);
         Component componentB = Q9QXS6ComponentMock.getMock(interaction);
-        componentB.setCvComponentRole(BaitMock.getMock());
+        componentB.setCvExperimentalRole(BaitMock.getMock());
         components.add(componentB);
         interaction.setComponents(components);
         messages =  rule.check(interaction);
@@ -82,8 +83,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /***********************************************
         Give a wrong interaction with 2 preys
         ************************************************/
-        componentA.setCvComponentRole(PreyMock.getMock());
-        componentB.setCvComponentRole(PreyMock.getMock());
+        componentA.setCvExperimentalRole(PreyMock.getMock());
+        componentB.setCvExperimentalRole(PreyMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -94,24 +95,24 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /*****************************************************************************
         Give a right interaction with 1 fluorophore donor and one fluorophore acceptor
         ******************************************************************************/
-        componentA.setCvComponentRole(FluorophoreDonorMock.getMock());
-        componentB.setCvComponentRole(FluorophoreAcceptorMock.getMock());
+        componentA.setCvExperimentalRole(FluorophoreDonorMock.getMock());
+        componentB.setCvExperimentalRole(FluorophoreAcceptorMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(0, messages.size());
 
         /*****************************************************************************
         Give a right interaction with 2 fluorophore donors
         ******************************************************************************/
-        componentA.setCvComponentRole(FluorophoreDonorMock.getMock());
-        componentB.setCvComponentRole(FluorophoreDonorMock.getMock());
+        componentA.setCvExperimentalRole(FluorophoreDonorMock.getMock());
+        componentB.setCvExperimentalRole(FluorophoreDonorMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(0, messages.size());
 
         /******************************************************************
         Give a wrong interaction with 2 fluorophore accepetors and no donor
         *******************************************************************/
-        componentA.setCvComponentRole(FluorophoreAcceptorMock.getMock());
-        componentB.setCvComponentRole(FluorophoreAcceptorMock.getMock());
+        componentA.setCvExperimentalRole(FluorophoreAcceptorMock.getMock());
+        componentB.setCvExperimentalRole(FluorophoreAcceptorMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -122,8 +123,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
         Give a wrong interaction with 2 electron accepetors and no donor
         *******************************************************************/
-        componentA.setCvComponentRole(ElectronAcceptorMock.getMock());
-        componentB.setCvComponentRole(ElectronAcceptorMock.getMock());
+        componentA.setCvExperimentalRole(ElectronAcceptorMock.getMock());
+        componentB.setCvExperimentalRole(ElectronAcceptorMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -134,8 +135,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
         Give a wrong interaction with 2 electron donors and no acceptor
         *******************************************************************/
-        componentA.setCvComponentRole(ElectronDonorMock.getMock());
-        componentB.setCvComponentRole(ElectronDonorMock.getMock());
+        componentA.setCvExperimentalRole(ElectronDonorMock.getMock());
+        componentB.setCvExperimentalRole(ElectronDonorMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -146,8 +147,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
         Give a wrong interaction with 2 enzymes and no enzyme target
         *******************************************************************/
-        componentA.setCvComponentRole(EnzymeMock.getMock());
-        componentB.setCvComponentRole(EnzymeMock.getMock());
+        componentA.setCvExperimentalRole(EnzymeMock.getMock());
+        componentB.setCvExperimentalRole(EnzymeMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -158,8 +159,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
          Give a wrong interaction with 2 enzyme targets and no enzyme
         *******************************************************************/
-        componentA.setCvComponentRole(EnzymeTargetMock.getMock());
-        componentB.setCvComponentRole(EnzymeTargetMock.getMock());
+        componentA.setCvExperimentalRole(EnzymeTargetMock.getMock());
+        componentB.setCvExperimentalRole(EnzymeTargetMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -170,8 +171,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
          Give a wrong interaction with 2 self components and no enzyme
         *******************************************************************/
-        componentA.setCvComponentRole(SelfMock.getMock());
-        componentB.setCvComponentRole(SelfMock.getMock());
+        componentA.setCvExperimentalRole(SelfMock.getMock());
+        componentB.setCvExperimentalRole(SelfMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
@@ -182,7 +183,7 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************
          Give a wrong interaction with only 1 component and stoechiometry 1
         *******************************************************************/
-        componentA.setCvComponentRole(NeutralMock.getMock());
+        componentA.setCvExperimentalRole(NeutralMock.getMock());
         componentA.setStoichiometry(Float.parseFloat("1"));
         components = new ArrayList<Component>();
         components.add(componentA);
@@ -205,7 +206,7 @@ public class InteractionAndComponentRoleTest extends TestCase {
          Give a right interaction with 1 neutral component stoechiometry 1 but as well one inhibited component
         *******************************************************************************************************/
         componentA.setStoichiometry(Float.parseFloat("1"));
-        componentB.setCvComponentRole(InhibitedMock.getMock());
+        componentB.setCvExperimentalRole(InhibitedMock.getMock());
         interaction.addComponent(componentB);
         messages =  rule.check(interaction);
         assertEquals(0, messages.size());
@@ -213,8 +214,8 @@ public class InteractionAndComponentRoleTest extends TestCase {
         /******************************************************************************************************
          Give a wrong interaction with 1 fluorophore, 1 bait donor
         *******************************************************************************************************/
-        componentA.setCvComponentRole(FluorophoreDonorMock.getMock());
-        componentB.setCvComponentRole(BaitMock.getMock());
+        componentA.setCvExperimentalRole(FluorophoreDonorMock.getMock());
+        componentB.setCvExperimentalRole(BaitMock.getMock());
         messages =  rule.check(interaction);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){

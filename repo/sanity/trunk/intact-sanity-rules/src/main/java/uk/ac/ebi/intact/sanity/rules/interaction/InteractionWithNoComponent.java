@@ -29,7 +29,7 @@ import java.util.Collection;
 
 public class InteractionWithNoComponent  implements Rule {
 
-    private static final String DESCRIPTION = "This/those Interaction(s) do not have any Interactor. ";
+    private static final String DESCRIPTION = "This/these Interaction(s) do not have any Interactor. ";
     private static final String SUGGESTION = "Edit the Interaction and add component(s).";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {

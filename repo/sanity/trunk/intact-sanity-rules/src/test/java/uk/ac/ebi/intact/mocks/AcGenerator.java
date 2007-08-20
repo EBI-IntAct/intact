@@ -27,4 +27,8 @@ public class AcGenerator {
 
         return PREFIX + Integer.toString(j);
     }
+
+    public static void reset() {
+        i = 1;
+    }
 }

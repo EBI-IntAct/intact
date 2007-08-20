@@ -29,7 +29,7 @@ import java.util.Collection;
 
 public class FeatureWithoutRange implements Rule {
 
-    private static final String DESCRIPTION = "This/those Feature(s) have no range. ";
+    private static final String DESCRIPTION = "This/these Feature(s) have no range. ";
     private static final String SUGGESTION = "Edit the feature(s) and add a range.";
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {

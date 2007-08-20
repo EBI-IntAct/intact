@@ -67,7 +67,7 @@ public class InteractionAndComponentRole   implements Rule {
 
 
         for(Component component : components){
-            CvObjectXref cvRoleIdentityXref = CvObjectUtils.getPsiMiIdentityXref(component.getCvComponentRole());
+            CvObjectXref cvRoleIdentityXref = CvObjectUtils.getPsiMiIdentityXref(component.getCvExperimentalRole());
             String cvRoleMiRef = cvRoleIdentityXref.getPrimaryId();
             if(CvExperimentalRole.BAIT_PSI_REF.equals(cvRoleMiRef)){
                 baitCount++;

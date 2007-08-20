@@ -29,14 +29,14 @@ import java.util.Collection;
 
 public class NucleicAcidIdentity  implements Rule {
 
-    private static String NON_ALLOWED_IDENTITY_DESCRIPTION = "This/those NucleicAcid(s) have a not allowed " +
+    private static String NON_ALLOWED_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have a not allowed " +
             "identity xref ";
     private static final String NON_ALLOWED_IDENTITY_SUGGESTION = "Edit the NucleicAcid and change the CvXrefQualifier.";
 
-    private static final String MULTIPLE_IDENTITY_DESCRIPTION = "This/those NucleicAcid(s) have more then one xref identity.";
+    private static final String MULTIPLE_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have more then one xref identity.";
     private static final String MULTIPLE_IDENTITY_SUGGESTION = "Edit the NucleicAcid and change the xrefs.";
 
-    private static final String NO_IDENTITY_DESCRIPTION = "This/those NucleicAcid(s) have no identity xref.";
+    private static final String NO_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have no identity xref.";
     private static final String NO_IDENTITY_SUGGESTION = "Edit the NucleicAcid(s) and add an identity xref.";
 
     private static Collection<String> cvDatabaseMis = new ArrayList<String>();

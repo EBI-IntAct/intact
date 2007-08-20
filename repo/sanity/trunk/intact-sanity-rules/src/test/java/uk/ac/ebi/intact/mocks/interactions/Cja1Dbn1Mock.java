@@ -5,19 +5,19 @@
  */
 package uk.ac.ebi.intact.mocks.interactions;
 
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.InteractionImpl;
-import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.mocks.components.P08050ComponentMock;
-import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
-import uk.ac.ebi.intact.mocks.bioSources.InVitroMock;
+import uk.ac.ebi.intact.mocks.biosources.InVitroMock;
+import uk.ac.ebi.intact.mocks.components.P08050ComponentMock;
+import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
 import uk.ac.ebi.intact.mocks.cvInteractionTypes.PhysicalInteractionMock;
+import uk.ac.ebi.intact.model.Component;
+import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.model.InteractionImpl;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * TODO comment this
