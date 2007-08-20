@@ -43,14 +43,7 @@ public class DeclaredRuleManager {
         DeclaredRuleManager declaredRuleManager = instance.get();
 
         if (declaredRuleManager == null) {
-            List<DeclaredRule> declaredRules = null;
-            try {
-                declaredRules = getDeclaredRulesFromClassPath();
-            } catch (IOException e) {
-                throw new SanityRuleException("Problem getting declared rules from classpath", e);
-            }
-
-            declaredRuleManager = new DeclaredRuleManager(declaredRules);
+            declaredRuleManager = new DeclaredRuleManager();
             instance.set(declaredRuleManager);
         }
 
@@ -61,10 +54,14 @@ public class DeclaredRuleManager {
         instance.set(null);
     }
 
-    private List<DeclaredRule> availableDeclaredRules;
+    private List<DeclaredRule> availableDeclaredRules = new ArrayList<DeclaredRule>();
 
-    private DeclaredRuleManager(List<DeclaredRule> availableDeclaredRules) {
-        this.availableDeclaredRules = availableDeclaredRules;
+    private DeclaredRuleManager() {
+        try {
+            loadDeclaredRulesFromClassPath();
+        } catch (IOException e) {
+            throw new SanityRuleException("Problem getting declared rules from classpath", e);
+        }
     }
 
     public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass) {
@@ -113,8 +110,39 @@ public class DeclaredRuleManager {
         return availableDeclaredRules;
     }
 
-    protected static List<DeclaredRule> getDeclaredRulesFromClassPath() throws IOException {
+    public void addDeclaredRule(DeclaredRule declaredRule) {
+        boolean exists = false;
+
+        for (DeclaredRule availableRule : availableDeclaredRules) {
+           if (availableRule.getName().equals(declaredRule.getName())) {
+               exists = true;
+               break;
+           }
+        }
+
+        if (!exists) {
+            availableDeclaredRules.add(declaredRule);
+        }
+    }
+
+    public void addAllDeclaredRules(Collection<DeclaredRule> declaredRules) {
+        for (DeclaredRule declaredRule : declaredRules) {
+            addDeclaredRule(declaredRule);
+        }
+    }
+
+    protected void loadDeclaredRulesFromClassPath() throws IOException {
         List<DeclaredRule> declaredRules = new ArrayList<DeclaredRule>();
+
+        // check dirs first
+        for (String dir : getDirsFromStackTrace()) {
+            File candidateFile = new File(dir, RULES_XML_PATH);
+
+            if (candidateFile.isFile()) {
+                DeclaredRules dr = readDeclaredRules(new FileInputStream(candidateFile));
+                addAllDeclaredRules(dr.getDeclaredRule());
+            }
+        }
 
         for (String classPathFilePath : getClasspathElements()) {
             File file = new File(classPathFilePath);
@@ -146,11 +174,9 @@ public class DeclaredRuleManager {
 
             if (declaredRulesStream != null) {
                 DeclaredRules dr = readDeclaredRules(declaredRulesStream);
-                declaredRules.addAll(dr.getDeclaredRule());
+                addAllDeclaredRules(dr.getDeclaredRule());
             }
         }
-
-        return declaredRules;
     }
 
     protected static DeclaredRules readDeclaredRules(InputStream is) {
@@ -182,6 +208,46 @@ public class DeclaredRuleManager {
         }
 
         return classPathItems;
+    }
+
+    /**
+     * Goes through the stacktrace to get the dirs where the classes are (when they are not in a jar)
+     * //TODO: this is copied copied from private methods in AnnotationUtil
+     */
+    private static Collection<String> getDirsFromStackTrace() {
+        Set<String> dirs = new HashSet<String>();
+
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            String className = ste.getClassName();
+            Class clazz = null;
+
+            try {
+                clazz = Class.forName(className);
+
+                String resClass = "/" + className.replaceAll("\\.", "/") + ".class";
+
+                URL resUrl = clazz.getResource(resClass);
+
+                String completeDir = null;
+                if (resUrl != null) {
+                    completeDir = resUrl.getFile();
+
+                    if (!completeDir.contains(".jar!")) {
+                        String dir = completeDir.substring(0, completeDir.length() - resClass.length());
+
+                        if (dir != null && new File(dir).isDirectory()) {
+                            dirs.add(dir);
+                        }
+                    }
+                }
+
+
+            } catch (ClassNotFoundException e) {
+                // nothing
+            }
+        }
+
+        return dirs;
     }
    
 }
