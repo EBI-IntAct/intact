@@ -100,8 +100,8 @@ public class DeclaredRuleManager {
         return (DeclaredRules) unmarshaller.unmarshal(is);
     }
 
-    public static void writeRulesXml(DeclaredRules rules, Writer writer) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
+    public static void writeRulesXml(DeclaredRules rules, Writer writer) throws Exception {
+        JAXBContext jc = JAXBContext.newInstance(Thread.currentThread().getContextClassLoader().loadClass(DeclaredRule.class.getName()));
         Marshaller marshaller = jc.createMarshaller();
         marshaller.marshal(rules, writer);
     }
@@ -114,7 +114,7 @@ public class DeclaredRuleManager {
         boolean exists = false;
 
         for (DeclaredRule availableRule : availableDeclaredRules) {
-           if (availableRule.getName().equals(declaredRule.getName())) {
+           if (availableRule.getRuleName().equals(declaredRule.getRuleName())) {
                exists = true;
                break;
            }

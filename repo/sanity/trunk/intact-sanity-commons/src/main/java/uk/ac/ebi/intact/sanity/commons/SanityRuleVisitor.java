@@ -67,9 +67,9 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
         }
 
         DeclaredRule rule = new DeclaredRule();
-        rule.setClazz(ruleClassName);
+        rule.setRuleClass(ruleClassName);
         rule.setTargetClass(targetClassName);
-        rule.setName(name);
+        rule.setRuleName(name);
 
         rules.add(rule);
     }
