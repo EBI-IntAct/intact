@@ -13,8 +13,8 @@
 
     <managed-bean>
         <managed-bean-name>appConfigBean</managed-bean-name>
-        <managed-bean-class>uk.ac.ebi.intact.site.mb.AppConfigBean</managed-bean-class>
-        <managed-bean-scope>application</managed-bean-scope>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.RequestConfigBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
     </managed-bean>
     <managed-bean>
         <managed-bean-name>searchBean</managed-bean-name>
