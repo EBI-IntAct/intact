@@ -1,7 +1,7 @@
 <declared-rules>
     <declared-rule>
-        <name>TEST_RULE</name>
-        <class>uk.ac.ebi.intact.sanity.commons.rules.SimpleRule</class>
+        <rule-name>TEST_RULE</rule-name>
+        <rule-class>uk.ac.ebi.intact.sanity.commons.rules.SimpleRule</rule-class>
         <target-class>uk.ac.ebi.intact.model.Experiment</target-class>
     </declared-rule>
 </declared-rules>

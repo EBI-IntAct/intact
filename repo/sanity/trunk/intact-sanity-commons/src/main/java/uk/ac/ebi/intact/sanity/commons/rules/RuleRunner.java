@@ -49,10 +49,10 @@ public class RuleRunner {
         Rule rule = null;
 
         try {
-            Class<?> ruleClass = Thread.currentThread().getContextClassLoader().loadClass(declaredRule.getClazz());
+            Class<?> ruleClass = Thread.currentThread().getContextClassLoader().loadClass(declaredRule.getRuleClass());
             rule = (Rule) ruleClass.newInstance();
         } catch (Exception e) {
-            throw new SanityRuleException("Problem instantiating declared rule: "+declaredRule.getName());
+            throw new SanityRuleException("Problem instantiating declared rule: "+declaredRule.getRuleName());
         }
 
         return rule;
