@@ -23,7 +23,7 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>>
         for (Xref xref : intactObject.getXrefs()) {
             String primaryId = xref.getPrimaryId();
 
-            System.out.println(intactObject.getShortLabel()+" - "+xref.getCvDatabase().getAnnotations());
+            System.out.println("XrefWithNonValidPrimaryId: "+intactObject.getShortLabel()+" - "+xref.getCvDatabase().getAnnotations());
         }
 
         return Collections.EMPTY_LIST;

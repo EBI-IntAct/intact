@@ -7,9 +7,12 @@ package uk.ac.ebi.intact.sanity.check;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
@@ -34,10 +37,7 @@ public class SanityChecker {
 
    public static RuleRunReport executeSanityCheck(SanityCheckConfig sanityConfig) {
 
-       if (log.isInfoEnabled()) log.info("Check on CvObjects");
-       beginTransaction();
-       checkAllCvObjects();
-       commitTransaction();
+       checkAllAnnotatedObjects();
 
        return RuleRunReport.getInstance();
    }
@@ -48,14 +48,46 @@ public class SanityChecker {
 
         if (log.isInfoEnabled()) log.info("\tProcessing "+allCvObjects.size()+" CvObjects");
 
-        checkCvObjects(cvObjectDao.getAll());
+        checkAnnotatedObjects(cvObjectDao.getAll());
     }
 
-    public static RuleRunReport checkCvObjects(Collection<? extends CvObject> cvObjectsToCheck) {
-        RuleRunner.runAvailableRules(cvObjectsToCheck);
+    protected static void checkAllAnnotatedObjects() {
+        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            throw new IntactException("To execute this method the transaction must not be active");
+        }
+
+        AnnotatedObjectDao annotatedObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao();
+
+        if (log.isInfoEnabled()) {
+            //beginTransaction();
+            //int total = annotatedObjectDao.countAll(); // returns 7 results
+            //commitTransaction();
+
+            //log.info("\tProcessing "+total+" Annotated Objects");
+        }
+
+        int firstResult = 0;
+        final int maxResults = 1000;
+
+        Collection<AnnotatedObject> annotatedObjects = null;
+        do {
+            beginTransaction();
+            annotatedObjects = annotatedObjectDao.getAll(firstResult, maxResults);
+
+            checkAnnotatedObjects(annotatedObjects);
+            commitTransaction();
+
+            firstResult = firstResult + maxResults;
+
+        } while (!annotatedObjects.isEmpty());
+    }
+
+    public static RuleRunReport checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
+        RuleRunner.runAvailableRules(annotatedObjectsToCheck);
 
         return RuleRunReport.getInstance();
     }
+
 
     private static void beginTransaction() {
         if (!IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
