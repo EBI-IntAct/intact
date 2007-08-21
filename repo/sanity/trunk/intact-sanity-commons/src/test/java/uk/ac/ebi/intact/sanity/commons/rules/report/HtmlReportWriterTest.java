@@ -78,4 +78,16 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 
         Assert.assertEquals(40, lineCount);
     }
+
+    @Test
+    public void write_alternative() throws Exception {
+        Writer writer = new StringWriter();
+
+        ReportWriter reportWriter = new HtmlReportWriter(writer);
+        reportWriter.write(getAlternativeSanityReport());
+
+        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+
+        Assert.assertEquals(70, lineCount);
+    }
 }

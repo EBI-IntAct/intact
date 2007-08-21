@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
+import uk.ac.ebi.intact.sanity.commons.Field;
 import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityResult;
@@ -76,6 +77,23 @@ public class SimpleReportWriter extends ReportWriter {
         sb.append(NEW_LINE);
         sb.append(separator(levelChar)).append(NEW_LINE);
 
+        sb.append("AC").append("\t").append("Label").append("\t").append("When").append("\t").append("User");
+
+        for (Field field : sanityResult.getInsaneObject().iterator().next().getField()) {
+            sb.append("\t").append(field.getName());
+        }
+        sb.append(NEW_LINE);
+
+        sb.append("--").append("\t").append("-----").append("\t").append("----").append("\t").append("----");
+        for (Field field : sanityResult.getInsaneObject().iterator().next().getField()) {
+            StringBuilder underline = new StringBuilder();
+            for (int i=0; i<field.getName().length(); i++) {
+                underline.append('-');
+            }
+            sb.append("\t").append(underline.toString());
+        }
+        sb.append(NEW_LINE);
+
         for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
             sb.append(insaneObject.getAc());
 
@@ -91,6 +109,15 @@ public class SimpleReportWriter extends ReportWriter {
             sb.append(SimpleDateFormat.getInstance().format(insaneObject.getUpdated().toGregorianCalendar().getTime()));
             sb.append("\t");
             sb.append(insaneObject.getUpdator());
+
+            for (Field field : insaneObject.getField()) {
+                sb.append("\t");
+                if (field.getValue() != null) {
+                    sb.append(field.getValue());
+                } else {
+                    sb.append("-");
+                }
+            }
 
             sb.append(NEW_LINE);
         }

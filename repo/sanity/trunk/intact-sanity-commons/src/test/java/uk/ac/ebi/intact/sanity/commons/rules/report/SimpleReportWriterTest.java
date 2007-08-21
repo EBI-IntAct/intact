@@ -37,8 +37,7 @@ public class SimpleReportWriterTest extends AbstractReportWriterTestCase {
         reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
-
-        Assert.assertEquals(19, lineCount);
+        Assert.assertEquals(23, lineCount);
     }
 
     @Test
@@ -50,6 +49,20 @@ public class SimpleReportWriterTest extends AbstractReportWriterTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(8, lineCount);
+        Assert.assertEquals(10, lineCount);
     }
+
+    @Test
+    public void write_alternative() throws Exception {
+        Writer writer = new StringWriter();
+
+        SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
+        reportWriter.write(getAlternativeSanityReport(), new UserReportFilter("anne"));
+
+        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+
+        Assert.assertEquals(10, lineCount);
+    }
+
+
 }

@@ -16,12 +16,11 @@
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageUtils;
+import uk.ac.ebi.intact.sanity.commons.rules.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +51,32 @@ public class AbstractReportWriterTestCase extends IntactBasicTestCase {
             exp.setUpdated(new Date());
             exp.setUpdator("anne");
             messages.add(new GeneralMessage("description2", MessageLevel.MINOR, "suggestion2", exp));
+        }
+
+        return MessageUtils.toSanityReport(messages);
+    }
+
+    protected SanityReport getAlternativeSanityReport() {
+        List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
+
+        for (int i=0; i<5; i++) {
+            Protein prot = getMockBuilder().createProteinRandom();
+            prot.setAc("PROT-"+i);
+            prot.setUpdated(new Date());
+            prot.setUpdator("peter");
+            messages.add(new XrefMessage("description1", MessageLevel.NORMAL, "suggestion1", prot, prot.getXrefs().iterator().next()));
+        }
+
+        for (int i=0; i<3; i++) {
+            Experiment exp = getMockBuilder().createExperimentRandom(1);
+            exp.setAc("EXP-"+i);
+            exp.setUpdated(new Date());
+            exp.setUpdator("anne");
+
+            Annotation annot = getMockBuilder().createAnnotationRandom();
+            exp.addAnnotation(annot);
+
+            messages.add(new AnnotationMessage("description2", MessageLevel.MINOR, "suggestion2", exp, annot));
         }
 
         return MessageUtils.toSanityReport(messages);
