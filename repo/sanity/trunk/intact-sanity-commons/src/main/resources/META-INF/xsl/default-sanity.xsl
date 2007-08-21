@@ -60,7 +60,7 @@
                                             <td>
                                                 <xsl:choose>
                                                     <xsl:when test="url">
-                                                        <a href="http://lala"><xsl:value-of select="ac"/></a>
+                                                        <a href="{url}"><xsl:value-of select="ac"/></a>
                                                     </xsl:when>
                                                     <xsl:otherwise>
                                                         <xsl:value-of select="ac"/>

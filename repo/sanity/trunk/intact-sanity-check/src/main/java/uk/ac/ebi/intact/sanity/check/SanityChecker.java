@@ -15,6 +15,9 @@ import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.SanityResult;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 
@@ -35,14 +38,27 @@ public class SanityChecker {
      */
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
-   public static RuleRunReport executeSanityCheck(SanityCheckConfig sanityConfig) {
+   public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) {
        RuleRunReport.getInstance().clear();
 
        if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
        checkAllAnnotatedObjects();
 
-       return RuleRunReport.getInstance();
+       SanityReport report = RuleRunReport.getInstance().toSanityReport();
+       RuleRunReport.getInstance().clear();
+
+       if (sanityConfig.getEditorUrl() != null) {
+           EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
+
+           for (SanityResult sanityResult : report.getSanityResult()) {
+               for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
+                   editorUrlBuilder.addEditorUrl(insaneObject);
+               }
+           }
+       }
+
+       return report;
    }
 
     protected static void checkAllCvObjects() {
@@ -111,10 +127,12 @@ public class SanityChecker {
         } while (!annotatedObjects.isEmpty());
     }
 
-    public static RuleRunReport checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
+    public static SanityReport checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
         RuleRunner.runAvailableRules(annotatedObjectsToCheck);
 
-        return RuleRunReport.getInstance();
+        SanityReport report = RuleRunReport.getInstance().toSanityReport();
+
+        return report;
     }
 
 
@@ -131,10 +149,4 @@ public class SanityChecker {
             throw new RuntimeException(e);
         }
     }
-      /*
-    private static void commitAndBeginTransaction() {
-        commitTransaction();
-        beginTransaction();
-    }
-    */
 }

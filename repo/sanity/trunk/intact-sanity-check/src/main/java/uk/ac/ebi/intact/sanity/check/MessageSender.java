@@ -66,7 +66,7 @@ public class MessageSender {
     public MessageSender(SanityCheckConfig sanityConfig) {
         this.sanityConfig = sanityConfig;
         editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
-        simpleAdminReport = new SimpleAdminReport();
+        simpleAdminReport = new SimpleAdminReport(null);
     }
 
     /**

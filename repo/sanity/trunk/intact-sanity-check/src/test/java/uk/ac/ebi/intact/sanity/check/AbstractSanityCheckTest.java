@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.sanity.check;
 
 import org.junit.Before;
-import uk.ac.ebi.intact.core.unit.IntactAbstractTestCase;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.sanity.check.config.Curator;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
@@ -15,7 +15,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AbstractSanityCheckTest extends IntactAbstractTestCase {
+public class AbstractSanityCheckTest extends IntactBasicTestCase {
 
     private SanityCheckConfig sanityCheckConfig;
 
@@ -36,9 +36,11 @@ public class AbstractSanityCheckTest extends IntactAbstractTestCase {
         this.sanityCheckConfig = new SanityCheckConfig(curators);
         sanityCheckConfig.setDisableAdminMails(true);
         sanityCheckConfig.setDisableUserMails(true);
+
+        sanityCheckConfig.setEditorUrl("http://www.ebi.ac.uk/intact/editor");
     }
 
-    public SanityCheckConfig getSanityCheckConfig() {
+    public final SanityCheckConfig getSanityCheckConfig() {
         return sanityCheckConfig;
     }
 }
