@@ -15,16 +15,14 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.SanityResult;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 
 import java.io.IOException;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 /**
  * TODO comment this
@@ -42,52 +40,70 @@ public class SimpleReportWriter extends ReportWriter {
         this.writer = writer;
     }
 
-    protected void writeReport(Collection<GeneralMessage> messages) throws IOException {
-        Map<String,Collection<GeneralMessage>> messagesByDesc = groupMessagesByDescription(messages);
-
-        for (String description : messagesByDesc.keySet()) {
-             List<GeneralMessage> sortedMessages = sortMessagesByLevel(messagesByDesc.get(description));
-
-             StringBuilder sb = prepareMessagesWithSameDescription(sortedMessages);
-             writer.write(sb.toString());
+    protected void writeReport(SanityReport report) throws IOException {
+        for (SanityResult sanityResult : report.getSanityResult()) {
+            writer.write(prepareSanityResult(sanityResult).toString());
+            writer.write(NEW_LINE);
         }
     }
 
-    protected StringBuilder prepareMessagesWithSameDescription(Collection<GeneralMessage> messages) {
+    protected StringBuilder prepareSanityResult(SanityResult sanityResult) {
         StringBuilder sb = new StringBuilder();
 
-        GeneralMessage firstMessage = messages.iterator().next();
+        MessageLevel level = MessageLevel.valueOf(sanityResult.getLevel());
 
-        sb.append("##################################################").append(NEW_LINE);
-        sb.append("# ").append(firstMessage.getDescription()).append(NEW_LINE);
-        sb.append("# Suggestion: ").append(firstMessage.getProposedSolution());
+        char levelChar;
+
+        switch (level) {
+            case MAJOR:
+                levelChar = '#';
+                break;
+            case NORMAL:
+                levelChar = '=';
+                break;
+            case MINOR:
+                levelChar = '-';
+                break;
+            default:
+                levelChar = '?';
+        }
+
+
+        sb.append(separator(levelChar)).append(NEW_LINE);
+        sb.append(levelChar).append(" ").append(sanityResult.getDescription()).append(NEW_LINE);
+        sb.append(levelChar).append(" Suggestion: ").append(sanityResult.getSuggestion()).append(NEW_LINE);
+        sb.append(levelChar).append(" Level: ").append(sanityResult.getLevel());
         sb.append(NEW_LINE);
-        sb.append("##################################################").append(NEW_LINE);
+        sb.append(separator(levelChar)).append(NEW_LINE);
 
-        for (GeneralMessage message : messages) {
-            sb.append("[").append(message.getLevel()).append("] ");
-
-            final IntactObject intactObject = message.getOutLaw();
-
-            sb.append(intactObject.getAc());
+        for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
+            sb.append(insaneObject.getAc());
 
             sb.append("\t");
 
-            if (intactObject instanceof AnnotatedObject) {
-                sb.append(((AnnotatedObject) intactObject).getShortLabel());
+            if (insaneObject.getShortlabel() != null) {
+                sb.append(insaneObject.getShortlabel());
             } else {
                 sb.append("-");
             }
 
             sb.append("\t");
-            sb.append(SimpleDateFormat.getInstance().format(intactObject.getUpdated()));
+            sb.append(SimpleDateFormat.getInstance().format(insaneObject.getUpdated().toGregorianCalendar().getTime()));
             sb.append("\t");
-            sb.append(intactObject.getUpdator());
+            sb.append(insaneObject.getUpdator());
 
             sb.append(NEW_LINE);
         }
 
-        sb.append(NEW_LINE);
+        return sb;
+    }
+
+    protected StringBuilder separator(char charSeparator) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i=0; i<80; i++) {
+           sb.append(charSeparator);
+        }
 
         return sb;
     }

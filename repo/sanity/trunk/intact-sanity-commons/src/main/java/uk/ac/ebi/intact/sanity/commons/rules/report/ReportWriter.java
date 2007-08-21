@@ -17,10 +17,15 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.SanityResult;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * TODO comment this
@@ -35,59 +40,44 @@ public abstract class ReportWriter {
      */
     private static final Log log = LogFactory.getLog(ReportWriter.class);
 
-    public void write(Collection<GeneralMessage> messages) throws IOException{
-        writeReport(messages);
+    public void write(SanityReport report) throws IOException {
+        writeReport(report);
     }
 
-    public void write(Collection<GeneralMessage> originalMessages, ReportFilter ... filters) throws IOException{
+    public void write(SanityReport report, ReportFilter... filters) throws IOException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        if (log.isDebugEnabled()) log.debug("Messages before filtering: "+originalMessages.size());
-
         for (ReportFilter filter : filters) {
-             if (log.isDebugEnabled()) log.debug("\tFiltering with filter: "+filter.getClass().getName());
+            if (log.isDebugEnabled()) log.debug("\tFiltering with filter: " + filter.getClass().getName());
 
-            for (GeneralMessage originalMessage : originalMessages) {
-                if (filter.accept(originalMessage)) {
-                    messages.add(originalMessage);
-                }
-            }
-
-            if (log.isDebugEnabled()) log.debug("\t\t"+messages.size()+" after filtering");
+            filterSanityReport(report, filter);
         }
 
-        writeReport(messages);
+        writeReport(report);
     }
 
-    protected abstract void writeReport(Collection<GeneralMessage> messages) throws IOException;
+    protected void filterSanityReport(SanityReport report, ReportFilter filter) {
+        for (Iterator<SanityResult> iterator = report.getSanityResult().iterator(); iterator.hasNext();) {
+            SanityResult sanityResult = iterator.next();
+            filterSanityResult(sanityResult, filter);
 
-    protected static Map<String,Collection<GeneralMessage>> groupMessagesByDescription(Collection<GeneralMessage> messages) {
-        Map<String,Collection<GeneralMessage>> messagesByDescription = new HashMap<String,Collection<GeneralMessage>>();
-
-        for (GeneralMessage message : messages) {
-            String description = message.getDescription();
-            if (messagesByDescription.containsKey(description)) {
-                messagesByDescription.get(description).add(message);
-            } else {
-                Collection<GeneralMessage> messagesInDesc = new ArrayList<GeneralMessage>();
-                messagesInDesc.add(message);
-                messagesByDescription.put(description, messagesInDesc);
+            if (sanityResult.getInsaneObject().isEmpty()) {
+                iterator.remove();
             }
         }
-
-        return messagesByDescription;
     }
 
-    protected static List<GeneralMessage> sortMessagesByLevel(Collection<GeneralMessage> messages) {
-        List<GeneralMessage> sortedMessages = new ArrayList<GeneralMessage>(messages);
+    protected void filterSanityResult(SanityResult sanityResult, ReportFilter filter) {
+        for (Iterator<InsaneObject> iterator = sanityResult.getInsaneObject().iterator(); iterator.hasNext();) {
+            InsaneObject insaneObject = iterator.next();
 
-        Collections.sort(sortedMessages, new Comparator<GeneralMessage>() {
-
-            public int compare(GeneralMessage o1, GeneralMessage o2) {
-                return o1.getLevel().compareTo(o2.getLevel());
+            if (!filter.accept(insaneObject)) {
+                iterator.remove();
             }
-        });
-
-        return sortedMessages;
+        }
     }
+
+    protected abstract void writeReport(SanityReport report) throws IOException;
+
+
 }

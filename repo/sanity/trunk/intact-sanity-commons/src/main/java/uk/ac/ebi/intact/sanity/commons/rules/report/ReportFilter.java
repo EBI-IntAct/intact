@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 
 /**
  * TODO comment this
@@ -25,5 +25,5 @@ import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
  */
 public interface ReportFilter {
 
-    boolean accept(GeneralMessage message);
+    boolean accept(InsaneObject insaneObject);
 }

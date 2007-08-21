@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="sanity-report">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="1" maxOccurs="unbounded" ref="sanity-result"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="sanity-result">
+    <xs:complexType>
+      <xs:sequence>
+          <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="suggestion" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="level" minOccurs="1" maxOccurs="1">
+              <xs:simpleType>
+                  <xs:restriction base="xs:string">
+                      <xs:enumeration value="MAJOR"/>
+                      <xs:enumeration value="NORMAL"/>
+                      <xs:enumeration value="MINOR"/>
+                  </xs:restriction>
+              </xs:simpleType>
+          </xs:element>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="insane-object"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="insane-object">
+    <xs:complexType>
+      <xs:sequence>
+          <xs:element name="ac" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="shortlabel" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="updated" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="updator" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="objclass" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="field"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="field">
+    <xs:complexType>
+      <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  
+</xs:schema>

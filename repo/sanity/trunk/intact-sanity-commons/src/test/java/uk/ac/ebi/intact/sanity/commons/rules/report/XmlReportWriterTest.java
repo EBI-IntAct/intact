@@ -37,7 +37,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleReportWriterTest extends IntactBasicTestCase {
+public class XmlReportWriterTest extends IntactBasicTestCase {
 
     @Test
     public void write_default() throws Exception {
@@ -63,12 +63,11 @@ public class SimpleReportWriterTest extends IntactBasicTestCase {
 
         Writer writer = new StringWriter();
 
-        SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
+        ReportWriter reportWriter = new XmlReportWriter(writer);
         reportWriter.write(sanityReport);
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
-
-        Assert.assertEquals(19, lineCount);
+        Assert.assertEquals(53, lineCount);
     }
 
     @Test
@@ -95,11 +94,11 @@ public class SimpleReportWriterTest extends IntactBasicTestCase {
 
         Writer writer = new StringWriter();
 
-        SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
+        ReportWriter reportWriter = new XmlReportWriter(writer);
         reportWriter.write(sanityReport, new UserReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(8, lineCount);
+        Assert.assertEquals(23, lineCount);
     }
 }
