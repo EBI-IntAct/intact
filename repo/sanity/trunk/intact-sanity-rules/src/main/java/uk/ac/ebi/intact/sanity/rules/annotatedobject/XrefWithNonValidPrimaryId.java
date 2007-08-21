@@ -2,11 +2,13 @@ package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
+import uk.ac.ebi.intact.sanity.commons.Field;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.XrefMessage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +35,14 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>>
             String idValidationRegexp = getIdValidationRegexp(intactObject);
 
             if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, xref));
+                XrefMessage xrefMessage = new XrefMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, intactObject, xref);
+
+                Field regexField = new Field();
+                regexField.setName("Regexp");
+                regexField.setValue(idValidationRegexp);
+                xrefMessage.getInsaneObject().getField().add(regexField);
+
+                messages.add(xrefMessage);
             }
         }
 
