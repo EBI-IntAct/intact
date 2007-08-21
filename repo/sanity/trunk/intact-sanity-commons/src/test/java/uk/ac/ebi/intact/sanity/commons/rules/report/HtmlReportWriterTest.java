@@ -27,29 +27,31 @@ import java.io.Writer;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class XmlReportWriterTest extends AbstractReportWriterTestCase {
+public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 
     @Test
     public void write_default() throws Exception {
         Writer writer = new StringWriter();
 
-        ReportWriter reportWriter = new XmlReportWriter(writer);
+        ReportWriter reportWriter = new HtmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+
+        System.out.println(writer.toString());
+        System.out.println(lineCount);
+
         Assert.assertEquals(53, lineCount);
     }
 
     @Test
     public void write_filtered() throws Exception {
-       Writer writer = new StringWriter();
+        Writer writer = new StringWriter();
 
-        ReportWriter reportWriter = new XmlReportWriter(writer);
+        ReportWriter reportWriter = new HtmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
-
-        System.out.println(writer.toString());
 
         Assert.assertEquals(23, lineCount);
     }
