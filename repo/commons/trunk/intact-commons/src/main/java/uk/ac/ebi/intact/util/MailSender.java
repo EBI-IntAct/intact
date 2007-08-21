@@ -5,10 +5,7 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.io.FileOutputStream;
@@ -27,47 +24,42 @@ import java.util.Properties;
  */
 public class MailSender {
 
-    private static String DEFAULT_SMTP_HOST = "mailserv.ebi.ac.uk";
     public static final String MAIL_FILE_NAME= "mail.html";
     private static final String NEW_LINE = "<BR>";
 
-    private Session session;
+    private Properties properties;
+
+    public static final Properties EBI_SETTINGS;
+    public static final Properties GMAIL_SETTINGS;
+
+    static {
+        EBI_SETTINGS = new Properties();
+        EBI_SETTINGS.put( "mail.smtp.host", "mailserv.ebi.ac.uk" );
+    }
+
+    static {
+        GMAIL_SETTINGS = new Properties();
+        GMAIL_SETTINGS.put("mail.smtp.host", "smtp.gmail.com");
+        GMAIL_SETTINGS.put("mail.smtp.auth", "true");
+        GMAIL_SETTINGS.put("mail.debug", "true");
+        GMAIL_SETTINGS.put("mail.smtp.port", "465");
+        GMAIL_SETTINGS.put("mail.smtp.socketFactory.port", "465");
+        GMAIL_SETTINGS.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        GMAIL_SETTINGS.put("mail.smtp.socketFactory.fallback", "false");
+    }
 
     @Deprecated
     public MailSender() {
-        boolean debug = true; //false; !!! changed temp
-
-        //Set the host smtp address
-        Properties props = new Properties();
-        props.put( "mail.smtp.host", DEFAULT_SMTP_HOST);
-
-        //props.put("mail.debug", "true"); //!!! temporarily
-        // create some properties and get the default Session
-         session = Session.getDefaultInstance( props, null );
-       // session.setDebug( debug );
+        this(EBI_SETTINGS);
     }
 
     public MailSender(String smptHost) {
-        boolean debug = true; //false; !!! changed temp
-
-        //Set the host smtp address
-        Properties props = new Properties();
-        if( null != smptHost ) {
-            props.put( "mail.smtp.host", smptHost );
-        }
-        //props.put("mail.debug", "true"); //!!! temporarily
-        // create some properties and get the default Session
-         session = Session.getDefaultInstance( props, null );
-       // session.setDebug( debug );
+        this(EBI_SETTINGS);
+        EBI_SETTINGS.put("mail.smtp.host", smptHost);
     }
 
     public MailSender(Properties properties) {
-        boolean debug = true; //false; !!! changed temp
-
-        //props.put("mail.debug", "true"); //!!! temporarily
-        // create some properties and get the default Session
-         session = Session.getDefaultInstance( properties, null );
-       // session.setDebug( debug );
+        this.properties = properties;
     }
 
     /**
@@ -81,7 +73,42 @@ public class MailSender {
      * @throws MessagingException if the message can't be sent.
      */
     public void postMail( String recipients[ ], String subject, String message, String from ) throws MessagingException {
+        Session session = Session.getInstance(properties);
+        postMail(session, recipients, subject, message, from);
+    }
 
+    /**
+     * Send a mail to a set of recipients.
+     *
+     * @param recipients list of mail adresses
+     * @param subject    subject of the mail
+     * @param message    content of the mail
+     * @param from       who wrote that mail
+     *
+     * @throws MessagingException if the message can't be sent.
+     */
+    public void postMailSSL( String recipients[ ], String subject, String message, String from, final PasswordAuthentication auth ) throws MessagingException {
+        Session session = Session.getDefaultInstance(properties,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return auth;
+                    }
+                });
+        postMail(session, recipients, subject, message, from);
+    }
+
+    /**
+     * Send a mail to a set of recipients.
+     *
+     * @param session the session to use
+     * @param recipients list of mail adresses
+     * @param subject    subject of the mail
+     * @param message    content of the mail
+     * @param from       who wrote that mail
+     *
+     * @throws MessagingException if the message can't be sent.
+     */
+    public void postMail( Session session, String recipients[ ], String subject, String message, String from ) throws MessagingException {
         // create a message
         Message msg = new MimeMessage( session );
 
@@ -138,9 +165,9 @@ public class MailSender {
      * @throws MessagingException
      */
     public static void main( String[] args ) throws MessagingException {
-
-        MailSender mailer = new MailSender("mailserv.ebi.ac.uk");
+        MailSender mailer = new MailSender(GMAIL_SETTINGS);
         String[] recipients = {"baranda@ebi.ac.uk"};
-        mailer.postMail( recipients, "test from java", "content", "baranda@ebi.ac.uk" );
+        PasswordAuthentication auth = new PasswordAuthentication("xxxx", "xxxx");
+        mailer.postMailSSL( recipients, "test from java", "content", "baranda@gmail.com", auth );
     }
 }
