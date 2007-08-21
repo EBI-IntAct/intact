@@ -13,18 +13,14 @@ import java.util.Collection;
 public class SimpleAdminReport
 {
     private Collection<GeneralMessage> cvObjectMessages;
+    //private Map<String,Collection<GeneralMessage>>
 
-    public SimpleAdminReport() {
-
+    public SimpleAdminReport(Collection<GeneralMessage> cvObjectMessages) {
+        this.cvObjectMessages = cvObjectMessages;
     }
 
     public Collection<GeneralMessage> getCvObjectMessages()
     {
         return cvObjectMessages;
-    }
-
-    public void setCvObjectMessages(Collection<GeneralMessage> cvObjectMessages)
-    {
-        this.cvObjectMessages = cvObjectMessages;
     }
 }

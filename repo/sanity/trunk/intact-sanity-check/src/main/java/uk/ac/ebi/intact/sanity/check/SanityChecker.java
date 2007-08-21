@@ -10,11 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvObject;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
+import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 
@@ -36,6 +36,9 @@ public class SanityChecker {
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
    public static RuleRunReport executeSanityCheck(SanityCheckConfig sanityConfig) {
+       RuleRunReport.getInstance().clear();
+
+       if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
        checkAllAnnotatedObjects();
 
@@ -52,30 +55,56 @@ public class SanityChecker {
     }
 
     protected static void checkAllAnnotatedObjects() {
+        checkAllAnnotatedObjectsOfType(CvObject.class);
+        checkAllAnnotatedObjectsOfType(Experiment.class);
+        checkAllAnnotatedObjectsOfType(InteractionImpl.class);
+        checkAllAnnotatedObjectsOfType(ProteinImpl.class);
+        checkAllAnnotatedObjectsOfType(NucleicAcidImpl.class);
+        checkAllAnnotatedObjectsOfType(SmallMoleculeImpl.class);
+        checkAllAnnotatedObjectsOfType(BioSource.class);
+        checkAllAnnotatedObjectsOfType(Feature.class);
+        checkAllAnnotatedObjectsOfType(Publication.class);
+    }
+
+    protected static <T extends AnnotatedObject> void checkAllAnnotatedObjectsOfType(Class<T> aoClass) {
+         if (DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(aoClass).isEmpty()) {
+            if (log.isDebugEnabled()) log.debug("No declared rules for: "+aoClass.getName());
+            return;
+        }
+
         if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
             throw new IntactException("To execute this method the transaction must not be active");
         }
 
-        AnnotatedObjectDao annotatedObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao();
+        AnnotatedObjectDao<T> annotatedObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao(aoClass);
 
         if (log.isInfoEnabled()) {
-            //beginTransaction();
-            //int total = annotatedObjectDao.countAll(); // returns 7 results
-            //commitTransaction();
+            beginTransaction();
+            int total = annotatedObjectDao.countAll();
+            commitTransaction();
 
-            //log.info("\tProcessing "+total+" Annotated Objects");
+            log.info("\tGoing to process: "+total+" "+aoClass.getSimpleName()+"s");
         }
 
         int firstResult = 0;
-        final int maxResults = 1000;
+        final int maxResults = 200;
 
-        Collection<AnnotatedObject> annotatedObjects = null;
+        Collection<T> annotatedObjects = null;
         do {
             beginTransaction();
             annotatedObjects = annotatedObjectDao.getAll(firstResult, maxResults);
 
             checkAnnotatedObjects(annotatedObjects);
+
             commitTransaction();
+
+            if (log.isDebugEnabled()) {
+                int processed = firstResult+annotatedObjects.size();
+
+                if (firstResult != processed) {
+                    log.debug("\t\tProcessed "+(firstResult+annotatedObjects.size()));
+                }
+            }
 
             firstResult = firstResult + maxResults;
 

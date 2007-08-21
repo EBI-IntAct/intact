@@ -42,13 +42,13 @@ public class GeneralMessage {
     /*
     The out-low object
      */
-    private IntactObject outLow;
+    private IntactObject outLaw;
 
     @Deprecated
-    public GeneralMessage(String description, int level, String proposedSolution, IntactObject outLow) {
+    public GeneralMessage(String description, int level, String proposedSolution, IntactObject outLaw) {
         this.description = description;
         this.proposedSolution = proposedSolution;
-        this.outLow = outLow;
+        this.outLaw = outLaw;
 
         switch (level) {
             case 2:
@@ -63,11 +63,11 @@ public class GeneralMessage {
         }
     }
 
-    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLow) {
+    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLaw) {
         this.description = description;
         this.level = level;
         this.proposedSolution = proposedSolution;
-        this.outLow = outLow;
+        this.outLaw = outLaw;
     }
 
 
@@ -97,12 +97,12 @@ public class GeneralMessage {
     }
 
 
-    public IntactObject getOutLow() {
-        return outLow;
+    public IntactObject getOutLaw() {
+        return outLaw;
     }
 
-    public void setOutLow(IntactObject outLow) {
-        this.outLow = outLow;
+    public void setOutLaw(IntactObject outLaw) {
+        this.outLaw = outLaw;
     }
 
     @Override
