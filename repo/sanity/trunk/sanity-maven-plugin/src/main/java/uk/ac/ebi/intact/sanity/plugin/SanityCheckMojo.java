@@ -2,13 +2,12 @@ package uk.ac.ebi.intact.sanity.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.sanity.check.SanityChecker;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * TODO comment this
@@ -27,12 +26,7 @@ public class SanityCheckMojo extends AbstractSanityMojo {
         } catch (IntactTransactionException e) {
             throw new MojoExecutionException("Problem committing transaction?");
         }
-        try {
-            SanityChecker.executeSanityCheck(sanityConfig);
-        }
-        catch (SQLException e) {
-            getLog().error(e);
-            throw new MojoExecutionException("Problem executing the sanity check", e);
-        }
+
+        SanityChecker.executeSanityCheck(sanityConfig);
     }
 }

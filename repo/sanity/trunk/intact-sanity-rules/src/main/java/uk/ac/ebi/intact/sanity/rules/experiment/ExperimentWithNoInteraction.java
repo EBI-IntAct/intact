@@ -5,9 +5,9 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -36,8 +36,19 @@ public class ExperimentWithNoInteraction implements Rule {
         MethodArgumentValidator.isValidArgument(intactObject, Experiment.class);
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Experiment experiment = (Experiment) intactObject;
-        Collection<Interaction> interactions = experiment.getInteractions();
-        if(interactions.size() == 0){
+
+        int interactionCount = 0;
+
+        if (experiment.getAc() != null) {
+            interactionCount = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
+        }
+
+        if (interactionCount == 0) {
+            interactionCount = experiment.getInteractions().size();
+        }
+
+        if(interactionCount == 0){
             messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, experiment ));
         }
         return messages;
