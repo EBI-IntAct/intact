@@ -41,7 +41,7 @@ public class MailSender {
         GMAIL_SETTINGS = new Properties();
         GMAIL_SETTINGS.put("mail.smtp.host", "smtp.gmail.com");
         GMAIL_SETTINGS.put("mail.smtp.auth", "true");
-        GMAIL_SETTINGS.put("mail.debug", "true");
+        GMAIL_SETTINGS.put("mail.debug", "false");
         GMAIL_SETTINGS.put("mail.smtp.port", "465");
         GMAIL_SETTINGS.put("mail.smtp.socketFactory.port", "465");
         GMAIL_SETTINGS.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
@@ -168,6 +168,6 @@ public class MailSender {
         MailSender mailer = new MailSender(GMAIL_SETTINGS);
         String[] recipients = {"baranda@ebi.ac.uk"};
         PasswordAuthentication auth = new PasswordAuthentication("xxxx", "xxxx");
-        mailer.postMailSSL( recipients, "test from java", "content", "baranda@gmail.com", auth );
+        mailer.postMailSSL( recipients, "test from java", "content", "baranda@ebi.ac.uk", auth );
     }
 }
