@@ -17,19 +17,9 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageUtils;
 
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * TODO comment this
@@ -37,34 +27,14 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleReportWriterTest extends IntactBasicTestCase {
+public class SimpleReportWriterTest extends AbstractReportWriterTestCase {
 
     @Test
     public void write_default() throws Exception {
-        List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-
-        for (int i=0; i<5; i++) {
-            Protein prot = getMockBuilder().createProteinRandom();
-            prot.setAc("PROT-"+i);
-            prot.setUpdated(new Date());
-            prot.setUpdator("peter");
-            messages.add(new GeneralMessage("description1", MessageLevel.NORMAL, "suggestion1", prot));
-        }
-
-        for (int i=0; i<3; i++) {
-            Experiment exp = getMockBuilder().createExperimentRandom(1);
-            exp.setAc("EXP-"+i);
-            exp.setUpdated(new Date());
-            exp.setUpdator("anne");
-            messages.add(new GeneralMessage("description2", MessageLevel.MINOR, "suggestion2", exp));
-        }
-
-        SanityReport sanityReport = MessageUtils.toSanityReport(messages);
-
         Writer writer = new StringWriter();
 
         SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
-        reportWriter.write(sanityReport);
+        reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
@@ -73,30 +43,10 @@ public class SimpleReportWriterTest extends IntactBasicTestCase {
 
     @Test
     public void write_filtered() throws Exception {
-        List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-
-        for (int i=0; i<5; i++) {
-            Protein prot = getMockBuilder().createProteinRandom();
-            prot.setAc("PROT-"+i);
-            prot.setUpdated(new Date());
-            prot.setUpdator("peter");
-            messages.add(new GeneralMessage("description1", MessageLevel.NORMAL, "suggestion1", prot));
-        }
-
-        for (int i=0; i<3; i++) {
-            Experiment exp = getMockBuilder().createExperimentRandom(1);
-            exp.setAc("EXP-"+i);
-            exp.setUpdated(new Date());
-            exp.setUpdator("anne");
-            messages.add(new GeneralMessage("description2", MessageLevel.MINOR, "suggestion2", exp));
-        }
-
-        SanityReport sanityReport = MessageUtils.toSanityReport(messages);
-
         Writer writer = new StringWriter();
 
         SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
-        reportWriter.write(sanityReport, new UserReportFilter("anne"));
+        reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
