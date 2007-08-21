@@ -30,6 +30,6 @@ import java.util.Collection;
 public class SimpleRule implements Rule {
 
     public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        return Arrays.asList(new GeneralMessage("description", MessageLevel.NORMAL, "do this", intactObject));
+        return Arrays.asList(new GeneralMessage("test-rule description", MessageLevel.NORMAL, "do this", intactObject));
     }
 }

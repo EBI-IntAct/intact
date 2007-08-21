@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.sanity.check;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 
 
 /**
@@ -17,19 +18,20 @@ import uk.ac.ebi.intact.sanity.check.model.*;
  * @version $Id: EditorUrlBuilder.java,v 1.5 2006/05/18 08:34:28 catherineleroy Exp $
  */
 public class EditorUrlBuilder {
-    private static String editorBasicUrl = null;
+    private String editorBasicUrl = null;
 
-    private static final String editorUrl = editorBasicUrl + "/editor/do/secure/edit?";
+    private String editorUrl;
 
     public EditorUrlBuilder(SanityCheckConfig sanityConfig)
     {
-        editorBasicUrl = sanityConfig.getEditorUrl();
+        this.editorBasicUrl = sanityConfig.getEditorUrl();
 
-        if (editorBasicUrl == null) {
-            System.err.println ("Property SanityCheckConfig.editorUrl not configured");
+        if (editorBasicUrl != null) {
+            this.editorUrl = editorBasicUrl + "/do/secure/edit?";
         }
     }
 
+    @Deprecated
     public String getEditorUrl(IntactBean intactBean){
 
         String url = "";
@@ -88,8 +90,14 @@ public class EditorUrlBuilder {
     }
 
     public String getEditorUrl(String type, String ac){
+        type = type.replaceAll("Impl", "");
         String url = editorUrl + "ac=" + ac + "&type=" + type;
         return url;
+    }
+
+    public void addEditorUrl(InsaneObject insaneObject) {
+        String url = getEditorUrl(insaneObject.getObjclass(), insaneObject.getAc());
+        insaneObject.setUrl(url);
     }
 
 }
