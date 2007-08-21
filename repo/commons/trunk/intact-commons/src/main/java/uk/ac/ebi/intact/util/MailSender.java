@@ -219,7 +219,7 @@ public class MailSender {
     public static void main( String[] args ) throws MessagingException {
         MailSender mailer = new MailSender(GMAIL_SETTINGS);
         String[] recipients = {"baranda@ebi.ac.uk"};
-        PasswordAuthentication auth = new PasswordAuthentication("brunoaranda", "aradel03");
+        PasswordAuthentication auth = new PasswordAuthentication("xxx", "xxx");
         mailer.postMailSSL( recipients, "test from java", "<br>content</br>", "baranda@ebi.ac.uk", auth, new File("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html"), new File("F:\\projectes\\intact-current\\commons\\intact-commons\\src\\main\\java\\uk\\ac\\ebi\\intact\\util\\MailSender.java") );
     }
 }
