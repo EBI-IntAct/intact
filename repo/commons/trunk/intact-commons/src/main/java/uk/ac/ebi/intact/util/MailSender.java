@@ -5,9 +5,15 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.util;
 
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
@@ -74,7 +80,7 @@ public class MailSender {
      */
     public void postMail( String recipients[ ], String subject, String message, String from ) throws MessagingException {
         Session session = Session.getInstance(properties);
-        postMail(session, recipients, subject, message, from);
+        postMail(session, recipients, subject, message, from, null);
     }
 
     /**
@@ -94,7 +100,27 @@ public class MailSender {
                         return auth;
                     }
                 });
-        postMail(session, recipients, subject, message, from);
+        postMail(session, recipients, subject, message, from, null);
+    }
+
+    /**
+     * Send a mail to a set of recipients.
+     *
+     * @param recipients list of mail adresses
+     * @param subject    subject of the mail
+     * @param message    content of the mail
+     * @param from       who wrote that mail
+     *
+     * @throws MessagingException if the message can't be sent.
+     */
+    public void postMailSSL( String recipients[ ], String subject, String message, String from, final PasswordAuthentication auth, File ... fileAttachment ) throws MessagingException {
+        Session session = Session.getDefaultInstance(properties,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return auth;
+                    }
+                });
+        postMail(session, recipients, subject, message, from, fileAttachment);
     }
 
     /**
@@ -108,7 +134,7 @@ public class MailSender {
      *
      * @throws MessagingException if the message can't be sent.
      */
-    public void postMail( Session session, String recipients[ ], String subject, String message, String from ) throws MessagingException {
+    public void postMail( Session session, String recipients[ ], String subject, String message, String from, File ... fileAttachments ) throws MessagingException {
         // create a message
         Message msg = new MimeMessage( session );
 
@@ -127,7 +153,33 @@ public class MailSender {
 
         // Setting the Subject and Content Type
         msg.setSubject( subject );
-        msg.setContent( message, "text/html" );
+        //msg.setContent( message, "text/html" );
+
+        // create the message part
+        MimeBodyPart messageBodyPart = new MimeBodyPart();
+
+        //fill message
+        messageBodyPart.setContent( message, "text/html" );
+
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+
+        // Part two is attachment
+        if (fileAttachments != null) {
+            for (File fileAttachment : fileAttachments) {
+                messageBodyPart = new MimeBodyPart();
+                DataSource source =
+                        new FileDataSource(fileAttachment);
+                messageBodyPart.setDataHandler(
+                        new DataHandler(source));
+                messageBodyPart.setFileName(fileAttachment.getName());
+                multipart.addBodyPart(messageBodyPart);
+            }
+        }
+
+        // Put parts in message
+        msg.setContent(multipart);
+
         try {
            Transport.send( msg );
         } catch (Exception e_send) {
@@ -167,7 +219,7 @@ public class MailSender {
     public static void main( String[] args ) throws MessagingException {
         MailSender mailer = new MailSender(GMAIL_SETTINGS);
         String[] recipients = {"baranda@ebi.ac.uk"};
-        PasswordAuthentication auth = new PasswordAuthentication("xxxx", "xxxx");
-        mailer.postMailSSL( recipients, "test from java", "content", "baranda@ebi.ac.uk", auth );
+        PasswordAuthentication auth = new PasswordAuthentication("brunoaranda", "aradel03");
+        mailer.postMailSSL( recipients, "test from java", "<br>content</br>", "baranda@ebi.ac.uk", auth, new File("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html"), new File("F:\\projectes\\intact-current\\commons\\intact-commons\\src\\main\\java\\uk\\ac\\ebi\\intact\\util\\MailSender.java") );
     }
 }
