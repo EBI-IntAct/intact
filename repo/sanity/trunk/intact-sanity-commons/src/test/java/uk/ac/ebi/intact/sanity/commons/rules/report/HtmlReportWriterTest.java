@@ -33,15 +33,38 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
     public void write_default() throws Exception {
         Writer writer = new StringWriter();
 
+//        SanityReport report = getDefaultSanityReport();
+//        for (SanityResult res : report.getSanityResult()) {
+//            for (InsaneObject insane : res.getInsaneObject()) {
+//                if (new Random().nextBoolean()) {
+//                insane.setUrl("http://www.ebi.ac.uk/intact");
+//                }
+//                Field field = new Field();
+//                field.setName("fieldName");
+//                field.setValue("fieldValue");
+//                insane.getField().add(field);
+//            }
+//        }
+
         ReportWriter reportWriter = new HtmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        System.out.println(writer.toString());
-        System.out.println(lineCount);
+//        try {
+//            FileWriter w = new FileWriter("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html");
+//            w.write(writer.toString());
+//            w.close();
+//
+////            MailSender mailSender = new MailSender(MailSender.GMAIL_SETTINGS);
+////            PasswordAuthentication pass = new PasswordAuthentication("brunoaranda", "xxx");
+////            mailSender.postMailSSL(new String[] {"baranda@ebi.ac.uk"}, "Test", writer.toString(), "baranda@ebi.ac.uk", pass);
+//        }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        Assert.assertEquals(53, lineCount);
+        Assert.assertEquals(70, lineCount);
     }
 
     @Test
@@ -53,6 +76,6 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(23, lineCount);
+        Assert.assertEquals(40, lineCount);
     }
 }

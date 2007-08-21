@@ -126,7 +126,7 @@ public class GeneralMessage {
         InsaneObject insaneObject = new InsaneObject();
         insaneObject.setAc(intactObject.getAc());
 
-        if (insaneObject instanceof AnnotatedObject) {
+        if (intactObject instanceof AnnotatedObject) {
             insaneObject.setShortlabel(((AnnotatedObject)intactObject).getShortLabel());
         }
 
@@ -140,6 +140,7 @@ public class GeneralMessage {
         }
 
         insaneObject.setUpdator(intactObject.getUpdator());
+        insaneObject.setObjclass(intactObject.getClass().getSimpleName().replaceAll("Impl", ""));
 
         return insaneObject;
     }
