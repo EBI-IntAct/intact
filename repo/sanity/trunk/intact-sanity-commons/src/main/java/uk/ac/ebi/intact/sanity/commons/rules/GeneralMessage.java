@@ -5,7 +5,14 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import java.util.GregorianCalendar;
 
 /**
  * TODO comment this
@@ -42,13 +49,13 @@ public class GeneralMessage {
     /*
     The out-low object
      */
-    private IntactObject outLaw;
+    private InsaneObject insaneObject;
 
     @Deprecated
-    public GeneralMessage(String description, int level, String proposedSolution, IntactObject outLaw) {
+    public GeneralMessage(String description, int level, String proposedSolution, IntactObject insaneObject) {
         this.description = description;
         this.proposedSolution = proposedSolution;
-        this.outLaw = outLaw;
+        this.insaneObject = toInsaneObject(insaneObject);
 
         switch (level) {
             case 2:
@@ -63,14 +70,19 @@ public class GeneralMessage {
         }
     }
 
-    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLaw) {
+    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject insaneObject) {
         this.description = description;
         this.level = level;
         this.proposedSolution = proposedSolution;
-        this.outLaw = outLaw;
+        this.insaneObject = toInsaneObject(insaneObject);
     }
 
-
+    public GeneralMessage(String description, MessageLevel level, String proposedSolution, InsaneObject insaneObject) {
+        this.description = description;
+        this.level = level;
+        this.proposedSolution = proposedSolution;
+        this.insaneObject = insaneObject;
+    }
 
     public String getDescription() {
         return description;
@@ -97,16 +109,38 @@ public class GeneralMessage {
     }
 
 
-    public IntactObject getOutLaw() {
-        return outLaw;
+    public InsaneObject getInsaneObject() {
+        return insaneObject;
     }
 
-    public void setOutLaw(IntactObject outLaw) {
-        this.outLaw = outLaw;
+    public void setInsaneObject(InsaneObject insaneObject) {
+        this.insaneObject = insaneObject;
     }
 
     @Override
     public String toString() {
         return "["+level+"] "+description+" (Tip: "+proposedSolution+")";
+    }
+
+    public static InsaneObject toInsaneObject(IntactObject intactObject) {
+        InsaneObject insaneObject = new InsaneObject();
+        insaneObject.setAc(intactObject.getAc());
+
+        if (insaneObject instanceof AnnotatedObject) {
+            insaneObject.setShortlabel(((AnnotatedObject)intactObject).getShortLabel());
+        }
+
+        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
+        calendar.setTime(intactObject.getUpdated());
+
+        try {
+            insaneObject.setUpdated(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
+        } catch (DatatypeConfigurationException e) {
+            throw new SanityRuleException("Problem converting to InsaneObject date: "+insaneObject.getUpdated());
+        }
+
+        insaneObject.setUpdator(intactObject.getUpdator());
+
+        return insaneObject;
     }
 }

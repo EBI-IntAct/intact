@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -57,5 +59,9 @@ public class RuleRunReport {
 
     public void clear() {
         messages.clear();
+    }
+
+    public SanityReport toSanityReport() {
+        return MessageUtils.toSanityReport(messages); 
     }
 }

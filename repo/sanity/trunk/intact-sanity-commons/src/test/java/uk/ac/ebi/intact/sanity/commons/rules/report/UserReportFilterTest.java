@@ -39,7 +39,7 @@ public class UserReportFilterTest extends IntactBasicTestCase {
 
         UserReportFilter userReportFilter = new UserReportFilter("Peter");
 
-        Assert.assertTrue(userReportFilter.accept(message));
+        Assert.assertTrue(userReportFilter.accept(message.getInsaneObject()));
     }
     
     @Test
@@ -51,6 +51,6 @@ public class UserReportFilterTest extends IntactBasicTestCase {
 
         UserReportFilter userReportFilter = new UserReportFilter("anne");
 
-        Assert.assertFalse(userReportFilter.accept(message));
+        Assert.assertFalse(userReportFilter.accept(message.getInsaneObject()));
     }
 }

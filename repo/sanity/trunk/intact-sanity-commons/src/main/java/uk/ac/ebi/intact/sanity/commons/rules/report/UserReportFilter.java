@@ -15,8 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 
 /**
  * TODO comment this
@@ -32,11 +31,9 @@ public class UserReportFilter implements ReportFilter {
         this.userName = userName;
     }
 
-    public boolean accept(GeneralMessage message) {
-        IntactObject intactObject = message.getOutLaw();
-
-        if (intactObject != null) {
-            String updator = intactObject.getUpdator();
+    public boolean accept(InsaneObject insaneObject) {
+        if (insaneObject != null) {
+            String updator = insaneObject.getUpdator();
             return updator.equalsIgnoreCase(userName);
         }
 
