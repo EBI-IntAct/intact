@@ -1,13 +1,11 @@
 package uk.ac.ebi.intact.sanity.check;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
 import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
 import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 
@@ -25,10 +23,6 @@ import java.util.Random;
  */
 public class SanityCheckerTest extends AbstractSanityCheckTest
 {
-    @Before
-    public void prepare() throws Exception {
-        RuleRunReport.getInstance().clear();
-    }
 
     @Test
     public void executeSanityCheck_default() throws Exception {
@@ -54,7 +48,6 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
 
         System.out.println(writer.toString());
 
-        System.out.println("Messages: "+RuleRunReport.getInstance().getMessages().size());
         System.out.println("Elapsed time: "+(System.currentTimeMillis()-start)+"ms");
 
     }

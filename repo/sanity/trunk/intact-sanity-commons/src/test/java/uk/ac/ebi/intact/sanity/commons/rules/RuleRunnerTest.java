@@ -20,6 +20,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
 
 import java.util.Arrays;
 
@@ -35,10 +36,10 @@ public class RuleRunnerTest extends IntactBasicTestCase {
     public void runAvailable_default() throws Exception {
         Experiment exp = getMockBuilder().createExperimentRandom(1);
 
-        RuleRunner.runAvailableRules(Arrays.asList(exp));
+        SanityReport report = RuleRunner.runAvailableRules(Arrays.asList(exp));
 
-        Assert.assertEquals(1, RuleRunReport.getInstance().getMessages().size());
-        Assert.assertEquals(MessageLevel.NORMAL, RuleRunReport.getInstance().getMessages().iterator().next().getLevel());
+        Assert.assertEquals(1, report.getSanityResult().size());
+        Assert.assertEquals(MessageLevel.NORMAL.toString(), report.getSanityResult().iterator().next().getLevel());
 
 
         DeclaredRuleManager.close();

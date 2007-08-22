@@ -18,8 +18,10 @@ package uk.ac.ebi.intact.sanity.commons.rules;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRule;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -31,7 +33,7 @@ import java.util.List;
  */
 public class RuleRunner {
 
-    public static void runAvailableRules(Collection<? extends IntactObject> intactObjects) {
+    public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects) {
 
         for (IntactObject intactObject : intactObjects) {
             List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass());
@@ -43,6 +45,11 @@ public class RuleRunner {
                 RuleRunReport.getInstance().addMessages(messages);
             }
         }
+
+        SanityReport report = RuleRunReport.getInstance().toSanityReport();
+        RuleRunReport.getInstance().clear();
+
+        return report;
     }
 
     public static Rule newRuleInstance(DeclaredRule declaredRule) {
@@ -51,11 +58,52 @@ public class RuleRunner {
         try {
             Class<?> ruleClass = Thread.currentThread().getContextClassLoader().loadClass(declaredRule.getRuleClass());
             rule = (Rule) ruleClass.newInstance();
-        } catch (Exception e) {
-            throw new SanityRuleException("Problem instantiating declared rule: "+declaredRule.getRuleName());
+        }
+        catch (Exception e) {
+            throw new SanityRuleException("Problem instantiating declared rule: " + declaredRule.getRuleName());
         }
 
         return rule;
+    }
+
+    protected static class RuleRunReport {
+
+        private static final ThreadLocal<RuleRunReport> instance = new ThreadLocal<RuleRunReport>() {
+            @Override
+            protected RuleRunReport initialValue() {
+                return new RuleRunReport();
+            }
+        };
+
+        public static RuleRunReport getInstance() {
+            return instance.get();
+        }
+
+        private Collection<GeneralMessage> messages;
+
+        public RuleRunReport() {
+            this.messages = new ArrayList<GeneralMessage>();
+        }
+
+        public void addMessage(GeneralMessage message) {
+            messages.add(message);
+        }
+
+        public void addMessages(Collection<GeneralMessage> message) {
+            messages.addAll(message);
+        }
+
+        public Collection<GeneralMessage> getMessages() {
+            return messages;
+        }
+
+        public void clear() {
+            messages.clear();
+        }
+
+        public SanityReport toSanityReport() {
+            return MessageUtils.toSanityReport(messages);
+        }
     }
 
 }

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" version="1.0">
   <xs:element name="sanity-report">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="database" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        <xs:element minOccurs="0" maxOccurs="unbounded" ref="report-attribute"/>
         <xs:element minOccurs="1" maxOccurs="unbounded" ref="sanity-result"/>
       </xs:sequence>
     </xs:complexType>
@@ -42,6 +44,15 @@
   </xs:element>
 
   <xs:element name="field">
+    <xs:complexType>
+      <xs:sequence>
+          <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="report-attribute">
     <xs:complexType>
       <xs:sequence>
           <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1"/>
