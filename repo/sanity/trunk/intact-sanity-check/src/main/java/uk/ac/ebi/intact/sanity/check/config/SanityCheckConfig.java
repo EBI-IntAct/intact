@@ -33,6 +33,8 @@ public class SanityCheckConfig {
     private boolean enableUserMails;
     private boolean enableAdminMails;
 
+    private String emailSubjectPrefix;
+
     public SanityCheckConfig(Collection<? extends Curator> allCurators) {
         this.allCurators = allCurators;
 
@@ -255,5 +257,13 @@ public class SanityCheckConfig {
 
     public void setEnableUserMails(boolean enableUserMails) {
         this.enableUserMails = enableUserMails;
+    }
+
+    public String getEmailSubjectPrefix() {
+        return emailSubjectPrefix;
+    }
+
+    public void setEmailSubjectPrefix(String emailSubjectPrefix) {
+        this.emailSubjectPrefix = emailSubjectPrefix;
     }
 }
