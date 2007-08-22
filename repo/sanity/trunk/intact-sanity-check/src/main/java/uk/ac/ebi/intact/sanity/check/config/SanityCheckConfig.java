@@ -23,13 +23,11 @@ public class SanityCheckConfig {
     private static final String NAME_PROPERTY_DESCRIPTION = "super.curator.name";
     private static final String PERCENTAGE_PROPERTY_DESCRIPTION = "super.curator.percentage";
 
-    private static final String DEFAULT_SMTP_HOST = "mailserv.ebi.ac.uk";
-
     private Collection<? extends Curator> allCurators;
     private List<Curator> curators;
     private List<SuperCurator> superCurators;
     private String editorUrl;
-    private String smtpHost;
+    
     private boolean enableUserMails;
     private boolean enableAdminMails;
 
@@ -51,8 +49,6 @@ public class SanityCheckConfig {
         }
 
         checkSuperCurators();
-
-        this.smtpHost = DEFAULT_SMTP_HOST;
     }
 
     public static SanityCheckConfig loadFromProperties(Properties sanityCheckProperties, Properties correctionAssignerProps) throws Exception {
@@ -233,14 +229,6 @@ public class SanityCheckConfig {
 
     public List<Curator> getCurators() {
         return curators;
-    }
-
-    public void setSmtpHost(String smtpHost) {
-        this.smtpHost = smtpHost;
-    }
-
-    public String getSmtpHost() {
-        return smtpHost;
     }
 
     public boolean isEnableAdminMails() {
