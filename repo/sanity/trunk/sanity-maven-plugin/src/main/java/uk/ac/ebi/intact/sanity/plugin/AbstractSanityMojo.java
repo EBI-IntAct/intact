@@ -47,12 +47,12 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
     /**
      * @parameter
      */
-    protected boolean disableAdminMails;
+    protected boolean enableAdminEmails;
 
     /**
      * @parameter
      */
-    protected boolean disableUserMails;
+    protected boolean enableUserEmails;
 
     /**
      * @parameter
@@ -80,8 +80,8 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
         SanityCheckConfig sanityConfig = new SanityCheckConfig(curators);
         sanityConfig.setEditorUrl(editorUrl);
         sanityConfig.setSmtpHost(smtpHost);
-        sanityConfig.setDisableAdminMails(disableAdminMails);
-        sanityConfig.setDisableUserMails(disableUserMails);
+        sanityConfig.setEnableAdminMails(enableAdminEmails);
+        sanityConfig.setEnableUserMails(enableUserEmails);
 
         executeSanityMojo(sanityConfig);
 

@@ -3,13 +3,10 @@ package uk.ac.ebi.intact.sanity.check.range;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
-import uk.ac.ebi.intact.core.unit.IntactAbstractTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.check.config.Curator;
-import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
-import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
+import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
 import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
 
 import java.util.ArrayList;
@@ -22,7 +19,7 @@ import java.util.List;
  * @version $Id$
  */
 @IntactUnitDataset( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
-public class RangeCheckerTest extends IntactAbstractTestCase
+public class RangeCheckerTest extends AbstractSanityLegacyTest
 {
 
     @Test
@@ -46,23 +43,5 @@ public class RangeCheckerTest extends IntactAbstractTestCase
         checker.check(acs);
 
         commitTransaction();
-    }
-
-    protected SanityCheckConfig getSanityCheckConfig() {
-        List<Curator> curators = new ArrayList<Curator>();
-
-        SuperCurator superJohn = new SuperCurator(100, "John");
-        superJohn.setAdmin(true);
-
-        Curator curatorAnne = new Curator("Anne");
-        Curator curatorSa = new Curator("sa");
-
-        curators.add(superJohn);
-        curators.add(curatorAnne);
-        curators.add(curatorSa);
-
-        SanityCheckConfig sanityCheckConfig = new SanityCheckConfig(curators);
-
-        return sanityCheckConfig;
     }
 }
