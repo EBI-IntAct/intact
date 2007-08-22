@@ -41,11 +41,16 @@ public abstract class UpdateAbstractMojo extends IntactHibernateMojo
      * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
      * @required
      */
-    private File hibernateConfig;
+    protected File hibernateConfig;
 
     public MavenProject getProject()
     {
         return project;
+    }
+
+    public void setHibernateConfig(File hibernateConfig)
+    {
+        this.hibernateConfig = hibernateConfig;
     }
 
     public File getHibernateConfig()
