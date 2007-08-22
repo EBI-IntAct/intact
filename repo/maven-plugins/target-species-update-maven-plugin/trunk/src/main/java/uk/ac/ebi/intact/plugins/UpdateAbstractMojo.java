@@ -57,4 +57,5 @@ public abstract class UpdateAbstractMojo extends IntactHibernateMojo
     {
         return hibernateConfig;
     }
+    
 }
