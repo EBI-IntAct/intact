@@ -7,10 +7,7 @@ import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
-import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -40,13 +37,10 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         }
 
         SanityCheckConfig sanityConfig = getSanityCheckConfig();
-        sanityConfig.setEnableAdminMails(true);
-        sanityConfig.setEnableUserMails(true);
 
         SanityReport report = SanityChecker.executeSanityCheck(sanityConfig);
 
-        SanityReportMailer mailer = new SanityReportMailer(sanityConfig);
-        mailer.mailReports(report);
+        Assert.assertEquals(4, report.getSanityResult().size());
 
     }
 
