@@ -56,7 +56,8 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
 
         PrintStream ps = new PrintStream( statsFile );
 
-        UpdateTargetSpeciesReport report = UpdateTargetSpecies.update( ps, isDryRun(), labelPattern );
+        UpdateTargetSpecies updateTargetSpecies = new UpdateTargetSpecies();
+        //UpdateTargetSpecies.update( ps, isDryRun(), labelPattern );
 
     }
 

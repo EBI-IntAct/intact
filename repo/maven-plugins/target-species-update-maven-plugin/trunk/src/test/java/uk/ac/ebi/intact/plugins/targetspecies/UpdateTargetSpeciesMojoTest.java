@@ -48,7 +48,7 @@ import uk.ac.ebi.intact.commons.dataset.TestDatasetProvider;
 public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase  {
 
      @Test
-     @IntactUnitDataset(  dataset = PsiTestDatasetProvider.INTACT_JUL_06,
+     @IntactUnitDataset( dataset = PsiTestDatasetProvider.INTACT_JUL_06,
                          provider = PsiTestDatasetProvider.class )
      public void export() throws Exception {
 

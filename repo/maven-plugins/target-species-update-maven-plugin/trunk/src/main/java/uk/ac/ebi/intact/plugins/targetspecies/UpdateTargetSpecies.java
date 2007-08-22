@@ -11,8 +11,11 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
+import uk.ac.ebi.intact.model.util.XrefUtils;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
 import java.io.PrintStream;
@@ -51,47 +54,106 @@ public class UpdateTargetSpecies {
     ///////////////////////////
     // Constructor
 
-    private UpdateTargetSpecies() {
+    public UpdateTargetSpecies() {
+        if (getDataContext().isTransactionActive()) {
+            throw new IntactException("Transaction must NOT be active when instantiating UpdateTargetSpecies");
+        }
+
+        beginTransaction();
+        CvObjectDao cvObjectDao = getDataContext().getDaoFactory().getCvObjectDao();
+
+        noUniprotUpdate = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.class, CvTopic.NON_UNIPROT);
+        newt = (CvDatabase) cvObjectDao.getByPsiMiRef( CvDatabase.NEWT_MI_REF );
+        targetSpeciesQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
+
+        commitTransaction();
     }
 
-
-    /**
-     * Collect required CVs. Throws a RuntimeException if one of the object is not found.
-     */
-    public void init() throws IntactException {
-
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
-        // loading required CVs
-        noUniprotUpdate = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvTopic.class, CvTopic.NON_UNIPROT );
-        if ( noUniprotUpdate == null ) {
-            throw new IllegalStateException( "The IntAct database should contain a CvTopic( " +
-                                             CvTopic.NON_UNIPROT + " ). abort." );
-        } else {
-            log.warn( "CvTopic( " + CvTopic.NON_UNIPROT + " ) found." );
+    public void updateExperiment(Experiment experiment) {
+        if (getDataContext().isTransactionActive()) {
+            throw new IntactException("Transaction must NOT be active");
         }
 
-        newt = IntactContext.getCurrentInstance().getCvContext().getByMiRef( CvDatabase.class, CvDatabase.NEWT_MI_REF );
-        if ( newt == null ) {
-            throw new IllegalStateException( "The IntAct database should contain a CvDatabase( " + CvDatabase.NEWT +
-                                             " ) having an Xref( " + CvDatabase.NEWT_MI_REF + " ). abort." );
-        } else {
-            log.debug( "CvDatabase( " + CvDatabase.NEWT + " ) found." );
+        Set<SimpleBioSource> existingBioSources = getExistingBioSources(experiment);
+        Set<SimpleBioSource> allBioSources = getBioSourcesForExperimentInteractions(experiment);
+
+        Collection<SimpleBioSource> bioSourcesToRemove = new ArrayList<SimpleBioSource>(existingBioSources);
+        bioSourcesToRemove.removeAll(allBioSources);
+
+        Collection<SimpleBioSource> bioSourcesToAdd = new ArrayList<SimpleBioSource>(allBioSources);
+        bioSourcesToAdd.removeAll(existingBioSources);
+
+        // refresh the experiment from the db
+        beginTransaction();
+        experiment = getDataContext().getDaoFactory().getExperimentDao().getByAc(experiment.getAc());
+
+        // remove xrefs
+        Collection<ExperimentXref> xrefs = experiment.getXrefs();
+        for (Iterator<ExperimentXref> iterator = xrefs.iterator(); iterator.hasNext();) {
+            ExperimentXref experimentXref = iterator.next();
+
+            if (experimentXref.getCvXrefQualifier().equals(targetSpeciesQualifier)) {
+                for (SimpleBioSource bioSourceToRemove : bioSourcesToRemove) {
+                    if (experimentXref.getPrimaryId().equals(bioSourceToRemove.getTaxId())) {
+                        iterator.remove();
+                        getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class).delete(experimentXref);
+                        break;
+                    }
+                }
+            }
         }
 
-        targetSpeciesQualifier = IntactContext.getCurrentInstance().getCvContext().getByLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
-        if ( targetSpeciesQualifier == null ) {
-            throw new IllegalStateException( "The IntAct database should contain a CvXrefQualifier( " +
-                                             CvXrefQualifier.TARGET_SPECIES + " ). abort." );
-        } else {
-            log.debug( "CvXrefQualifier( " + CvXrefQualifier.TARGET_SPECIES + " ) found" );
+        // add new xrefs
+        for (SimpleBioSource bioSourceToAdd : bioSourcesToAdd) {
+            ExperimentXref xref = new ExperimentXref(experiment.getOwner(), newt,
+                                                      bioSourceToAdd.getTaxId(), bioSourceToAdd.getLabel(), null, targetSpeciesQualifier);
+            experiment.addXref(xref);
         }
 
-        try {
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-        } catch ( IntactTransactionException e ) {
-            throw new IntactException( "Could not commit current transaction.", e );
+        commitTransaction();
+
+    }
+
+    protected DataContext getDataContext() {
+        return IntactContext.getCurrentInstance().getDataContext();
+    }
+
+    protected Set<SimpleBioSource> getExistingBioSources(Experiment experiment) {
+        Set<SimpleBioSource> existingBioSources = new HashSet<SimpleBioSource>();
+
+        for (ExperimentXref xref : getTargetSpeciesXrefs(experiment)) {
+             existingBioSources.add(new SimpleBioSource(xref.getSecondaryId(), xref.getPrimaryId()));
         }
+
+        return existingBioSources;
+    }
+
+    protected Set<SimpleBioSource> getBioSourcesForExperimentInteractions(Experiment experiment) {
+        Set<SimpleBioSource> allBioSources = new HashSet<SimpleBioSource>();
+
+        String experimentAc = experiment.getAc();
+
+        int firstResult = 0;
+        int maxResults = 50;
+        Collection<Interaction> interactions;
+
+        do {
+            beginTransaction();
+            interactions = getDataContext().getDaoFactory()
+                    .getExperimentDao().getInteractionsForExperimentWithAc(experimentAc, firstResult, maxResults);
+
+            for (Interaction interaction : interactions) {
+                for (Component component : interaction.getComponents()) {
+                    BioSource bioSource = component.getInteractor().getBioSource();
+                    allBioSources.add(new SimpleBioSource(bioSource));
+                }
+            }
+            commitTransaction();
+
+            firstResult += maxResults;
+        } while (!interactions.isEmpty());
+
+        return allBioSources;
     }
 
     /**
@@ -113,177 +175,62 @@ public class UpdateTargetSpecies {
         return targets;
     }
 
-    public static UpdateTargetSpeciesReport update( PrintStream ps, boolean dryRun ) {
-        return update( ps, dryRun, null );
+    protected void beginTransaction() {
+        getDataContext().beginTransaction();
     }
 
-    public static UpdateTargetSpeciesReport update( PrintStream ps, boolean dryRun, String labelLike ) {
-        UpdateTargetSpecies updateTarget = new UpdateTargetSpecies();
-        UpdateTargetSpeciesReport report = updateTarget.updateTargetSpecies( ps, dryRun, labelLike );
-
-        return report;
-    }
-
-    public UpdateTargetSpeciesReport updateTargetSpecies( PrintStream ps, boolean dryRun ) {
-        return updateTargetSpecies( ps, dryRun, null );
-    }
-
-    public UpdateTargetSpeciesReport updateTargetSpecies( PrintStream ps, boolean dryRun, String labelLike ) throws IntactException {
-
-        UpdateTargetSpeciesReport report = new UpdateTargetSpeciesReport();
-
-        init();
-
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
-        ExperimentDao edao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-
-        Iterator<Experiment> experimentIterator;
-
-        // get all scrollableExperiments
-        if ( labelLike != null ) {
-            experimentIterator = edao.getByShortLabelLikeIterator( labelLike, true );
-        } else {
-            experimentIterator = edao.getAllIterator();
-        }
-
-        Map<BioSource, BioSourceStat> biosource2count = new HashMap<BioSource, BioSourceStat>( 4 );
-        Set<BioSource> biosources = new HashSet<BioSource>( 4 );
-        Set<String> biosourcesTaxid = new HashSet<String>( 4 );
-
-        Map<String, BioSourceStat[]> stats = new HashMap<String, BioSourceStat[]>();
-
-        while ( experimentIterator.hasNext() ) {
-            currentExperiment = experimentIterator.next();
-
-            log.debug( "Updating " + currentExperiment.getShortLabel() + " (" + currentExperiment.getAc() + ")" );
-
-            // clear collections
-            biosources.clear();
-            biosourcesTaxid.clear();
-            biosource2count.clear();
-
-            // 1. look for distinct list of Protein's biosource
-            Iterator<Interaction> interactionIterator = edao.getInteractionsForExperimentWithAcIterator( currentExperiment.getAc() );
-
-            while ( interactionIterator.hasNext() ) {
-                Interaction interaction = interactionIterator.next();
-
-                for ( Component component : interaction.getComponents() ) {
-                    Interactor i = component.getInteractor();
-                    if ( i instanceof Protein ) {
-                        Protein protein = ( Protein ) i;
-
-                        // we only take into account UniProt Proteins
-                        if ( ProteinUtils.isFromUniprot( protein ) ) {
-                            BioSource bioSource = protein.getBioSource();
-
-                            biosources.add( bioSource );
-                            biosourcesTaxid.add( bioSource.getTaxId() );
-
-                            // update stats for each new proteins
-                            BioSourceStat count = biosource2count.get( bioSource );
-
-                            if ( count == null ) {
-                                count = new BioSourceStat( bioSource.getShortLabel(), bioSource.getTaxId() );
-                                biosource2count.put( bioSource, count );
-                            }
-
-                            count.increment();
-                        }
-                    }
-                } // components
-            } // interactions
-
-            // reload the current experiment here, because to iterate through the interactions the
-            // tansaction is automatically committed to avoid OutOfMemory errors.
-            edao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-            currentExperiment = edao.getByAc( currentExperiment.getAc() );
-
-            // 2. process the list of BioSource.
-            Collection<ExperimentXref> existingTargetXrefs = getTargetSpeciesXrefs( currentExperiment );
-            for ( Iterator iterator1 = biosources.iterator(); iterator1.hasNext(); ) {
-                BioSource bioSource = ( BioSource ) iterator1.next();
-
-                // create the Xref
-                ExperimentXref xref = new ExperimentXref( IntactContext.getCurrentInstance().getInstitution(), newt,
-                                                          bioSource.getTaxId(), bioSource.getShortLabel(),
-                                                          null,
-                                                          targetSpeciesQualifier );
-
-                // add it only if not already there
-                if ( !currentExperiment.getXrefs().contains( xref ) ) {
-                    log.debug( "\tAdding Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
-
-//                    if ( !dryRun ) {
-                        currentExperiment.addXref( xref );
-                        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
-//                    }
-                } else {
-                    // only keep in that collection the Xref that do not match the set of BioSource.
-
-//                    if ( !dryRun )
-                        existingTargetXrefs.remove( xref );
-                }
-
-            } // biosources
-
-            // 3. remove Xref( target-species ) that should not be there
-            for ( ExperimentXref xref : existingTargetXrefs ) {
-                log.debug( "\tRemove Xref(" + xref.getPrimaryId() + ", " + xref.getSecondaryId() + ")" );
-
-                if ( !dryRun ) {
-                    currentExperiment.removeXref( xref );
-                    IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().delete( xref );
-                }
-            }
-
-            // show stats
-            List<BioSourceStat> bioStats = new ArrayList<BioSourceStat>( biosource2count.size() );
-
-            StringBuffer sb = new StringBuffer( 500 );
-            sb.append( StringUtils.rightPad( currentExperiment.getShortLabel(), 25 ) );
-            for ( Iterator<BioSource> iterator1 = biosource2count.keySet().iterator(); iterator1.hasNext(); ) {
-                BioSource bioSource = iterator1.next();
-
-                BioSourceStat stat = biosource2count.get( bioSource );
-                sb.append( stat.getName() ).append( "(" ).append( stat.getTaxid() ).append( "):" );
-                sb.append( stat.getCount() );
-
-                bioStats.add( stat );
-
-                if ( iterator1.hasNext() ) {
-                    sb.append( "  " );
-                }
-            }
-
-            ps.println( sb.toString() );
-
-            // fill the stats
-            stats.put( currentExperiment.getAc(), bioStats.toArray( new BioSourceStat[bioStats.size()] ) );
-
-        } // scrollableExperiments
-
+    protected void commitTransaction() {
         try {
-            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-        } catch ( IntactTransactionException e ) {
-            throw new IntactException( "Could not commit current transaction.", e );
+            getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            throw new IntactException(e);
+        }
+    }
+
+    protected class SimpleBioSource {
+
+        private String taxId;
+        private String label;
+
+        private SimpleBioSource(String label, String taxId) {
+            this.label = label;
+            this.taxId = taxId;
         }
 
-        return report;
+        private SimpleBioSource(BioSource bioSource) {
+            this.label = bioSource.getShortLabel();
+            this.taxId = bioSource.getTaxId();
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public String getTaxId() {
+            return taxId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            SimpleBioSource that = (SimpleBioSource) o;
+
+            if (label != null ? !label.equals(that.label) : that.label != null) return false;
+            if (taxId != null ? !taxId.equals(that.taxId) : that.taxId != null) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result;
+            result = (taxId != null ? taxId.hashCode() : 0);
+            result = 31 * result + (label != null ? label.hashCode() : 0);
+            return result;
+        }
     }
 
 
-    /**
-     * M A I N
-     */
-    public static void main( String[] args ) throws IntactException, SQLException {
-
-        if ( log.isInfoEnabled() ) {
-            log.info( "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() );
-            log.info( "User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() );
-        }
-
-        update( System.out, false ).getStats();
-    }
 }
