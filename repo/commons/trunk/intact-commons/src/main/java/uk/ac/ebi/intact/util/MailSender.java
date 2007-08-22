@@ -93,6 +93,21 @@ public class MailSender {
      *
      * @throws MessagingException if the message can't be sent.
      */
+    public void postMail( String recipients[ ], String subject, String message, String from, File ... fileAttachments ) throws MessagingException {
+        Session session = Session.getInstance(properties);
+        postMail(session, recipients, subject, message, from, fileAttachments);
+    }
+
+    /**
+     * Send a mail to a set of recipients.
+     *
+     * @param recipients list of mail adresses
+     * @param subject    subject of the mail
+     * @param message    content of the mail
+     * @param from       who wrote that mail
+     *
+     * @throws MessagingException if the message can't be sent.
+     */
     public void postMailSSL( String recipients[ ], String subject, String message, String from, final PasswordAuthentication auth ) throws MessagingException {
         Session session = Session.getDefaultInstance(properties,
                 new javax.mail.Authenticator() {
