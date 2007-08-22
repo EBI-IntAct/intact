@@ -42,11 +42,6 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
     /**
      * @parameter
      */
-    protected String smtpHost;
-
-    /**
-     * @parameter
-     */
     protected boolean enableAdminEmails;
 
     /**
@@ -79,7 +74,6 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
 
         SanityCheckConfig sanityConfig = new SanityCheckConfig(curators);
         sanityConfig.setEditorUrl(editorUrl);
-        sanityConfig.setSmtpHost(smtpHost);
         sanityConfig.setEnableAdminMails(enableAdminEmails);
         sanityConfig.setEnableUserMails(enableUserEmails);
 

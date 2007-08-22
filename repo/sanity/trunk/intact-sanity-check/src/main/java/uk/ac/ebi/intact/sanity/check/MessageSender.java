@@ -882,7 +882,7 @@ public class MessageSender {
      */
     public void postEmails(String mailObject) throws MessagingException, IntactException {
 
-        MailSender mailer = new MailSender(sanityConfig.getSmtpHost());
+        MailSender mailer = new MailSender(MailSender.EBI_SETTINGS);
 
         String countType = "";
         System.out.println("");

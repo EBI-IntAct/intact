@@ -16,8 +16,8 @@
                     </curators>
                     <editorUrl>http://www.ebi.ac.uk/intact/editor</editorUrl>
 
-                    <enableAdminMails>true</enableAdminMails>
-                    <enableUserMails>true</enableUserMails>
+                    <enableAdminEmails>false</enableAdminEmails>
+                    <enableUserEmails>false</enableUserEmails>
                 </configuration>
             </plugin>
         </plugins>
