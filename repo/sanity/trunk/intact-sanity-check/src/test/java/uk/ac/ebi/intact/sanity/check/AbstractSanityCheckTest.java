@@ -24,18 +24,18 @@ public class AbstractSanityCheckTest extends IntactBasicTestCase {
         List<Curator> curators = new ArrayList<Curator>();
 
         SuperCurator superJohn = new SuperCurator(100, "John");
+        superJohn.setEmail("barand"+"a@"+"ebi.ac.uk");
         superJohn.setAdmin(true);
 
         Curator curatorAnne = new Curator("Anne");
         Curator curatorSa = new Curator("sa");
+        curatorSa.setEmail("brunoarand"+"a@"+"gm"+"ail.com");
 
         curators.add(superJohn);
         curators.add(curatorAnne);
         curators.add(curatorSa);
 
         this.sanityCheckConfig = new SanityCheckConfig(curators);
-        sanityCheckConfig.setDisableAdminMails(true);
-        sanityCheckConfig.setDisableUserMails(true);
 
         sanityCheckConfig.setEditorUrl("http://www.ebi.ac.uk/intact/editor");
     }

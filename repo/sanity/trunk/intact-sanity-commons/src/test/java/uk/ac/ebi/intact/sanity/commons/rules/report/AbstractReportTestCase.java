@@ -32,7 +32,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AbstractReportWriterTestCase extends IntactBasicTestCase {
+public class AbstractReportTestCase extends IntactBasicTestCase {
 
     protected SanityReport getDefaultSanityReport() {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();

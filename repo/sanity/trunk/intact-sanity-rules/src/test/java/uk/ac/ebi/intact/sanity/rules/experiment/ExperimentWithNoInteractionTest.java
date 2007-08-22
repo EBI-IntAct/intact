@@ -5,9 +5,9 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -24,44 +24,29 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class ExperimentWithNoInteractionTest extends TestCase {
+public class ExperimentWithNoInteractionTest extends IntactBasicTestCase {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public ExperimentWithNoInteractionTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( ExperimentWithNoInteractionTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
+    @Test
     public void testCheck() throws SanityRuleException {
         ExperimentWithNoInteraction rule = new ExperimentWithNoInteraction();
 
         Experiment experiment = ButkevitchMock.getMock();
+        beginTransaction();
         Collection<GeneralMessage> messages = rule.check(experiment);
-        assertEquals(0, messages.size());
+        commitTransaction();
+        Assert.assertEquals(0, messages.size());
 
         Collection<Interaction> interactions = new ArrayList<Interaction>();
         experiment.setInteractions(interactions);
+
+        beginTransaction();
         messages = rule.check(experiment);
-        assertEquals(1, messages.size());
+        commitTransaction();
+        Assert.assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(ExperimentWithNoInteraction.getDescription(), message.getDescription());
-            assertEquals(ExperimentWithNoInteraction.getSuggestion(), message.getProposedSolution());
+            Assert.assertEquals(ExperimentWithNoInteraction.getDescription(), message.getDescription());
+            Assert.assertEquals(ExperimentWithNoInteraction.getSuggestion(), message.getProposedSolution());
         }
     }
 

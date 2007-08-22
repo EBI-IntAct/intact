@@ -19,9 +19,11 @@ import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
 import uk.ac.ebi.intact.util.ElapsedTime;
 
+import javax.mail.MessagingException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
+import java.io.IOException;
 
 /**
  * Checks potential annotation error on IntAct objects.
@@ -38,7 +40,7 @@ public class SanityChecker {
      */
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
-   public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) {
+   public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) throws SanityCheckerException {
        RuleRunnerReport.getInstance().clear();
 
        if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
@@ -80,6 +82,13 @@ public class SanityChecker {
                    editorUrlBuilder.addEditorUrl(insaneObject);
                }
            }
+       }
+
+       try {
+           SanityReportMailer reportMailer = new SanityReportMailer(sanityConfig);
+           reportMailer.mailReports(report);
+       } catch (Exception e) {
+           throw new SanityCheckerException("Exception sending mails", e);
        }
 
        return report;

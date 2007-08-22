@@ -27,7 +27,7 @@ import java.io.Writer;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
+public class HtmlReportWriterTest extends AbstractReportTestCase {
 
     @Test
     public void write_default() throws Exception {

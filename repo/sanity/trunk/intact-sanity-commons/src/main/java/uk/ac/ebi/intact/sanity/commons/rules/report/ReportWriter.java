@@ -42,46 +42,14 @@ public abstract class ReportWriter {
     }
 
     public void write(SanityReport report, ReportFilter... filters) throws IOException {
-        report = cloneSanityReport(report);
+        report = SanityReportUtils.cloneSanityReport(report);
 
-        for (ReportFilter filter : filters) {
-            if (log.isDebugEnabled()) log.debug("\tFiltering with filter: " + filter.getClass().getName());
-
-            filterSanityReport(report, filter);
-        }
+        SanityReportUtils.filterSanityReport(report, filters);
 
         writeReport(report);
     }
 
-    public static SanityReport cloneSanityReport(SanityReport originalReport){
-        SanityReport report = new SanityReport();
-        report.setDatabase(originalReport.getDatabase());
-        report.getReportAttribute().addAll(originalReport.getReportAttribute());
-        report.getSanityResult().addAll(originalReport.getSanityResult());
-
-        return report;
-    }
-
-    protected void filterSanityReport(SanityReport report, ReportFilter filter) {
-        for (Iterator<SanityResult> iterator = report.getSanityResult().iterator(); iterator.hasNext();) {
-            SanityResult sanityResult = iterator.next();
-            filterSanityResult(sanityResult, filter);
-
-            if (sanityResult.getInsaneObject().isEmpty()) {
-                iterator.remove();
-            }
-        }
-    }
-
-    protected void filterSanityResult(SanityResult sanityResult, ReportFilter filter) {
-        for (Iterator<InsaneObject> iterator = sanityResult.getInsaneObject().iterator(); iterator.hasNext();) {
-            InsaneObject insaneObject = iterator.next();
-
-            if (!filter.accept(insaneObject)) {
-                iterator.remove();
-            }
-        }
-    }
+    
 
     protected abstract void writeReport(SanityReport report) throws IOException;
 
