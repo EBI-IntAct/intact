@@ -15,208 +15,55 @@
  */
 package uk.ac.ebi.intact.plugins.targetspecies;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Test;
-import org.junit.BeforeClass;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.runner.RunWith;
+import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.core.persister.standard.CvObjectPersister;
+import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 import java.io.File;
-import java.util.Collection;
-import java.util.Iterator;
-import java.lang.reflect.Method;
 
-import uk.ac.ebi.intact.core.unit.*;
-import uk.ac.ebi.intact.core.unit.mock.MockIntactContext;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.CvContext;
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
-import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
-import uk.ac.ebi.intact.commons.dataset.TestDataset;
-import uk.ac.ebi.intact.commons.dataset.DbUnitTestDataset;
-import uk.ac.ebi.intact.commons.dataset.TestDatasetProvider;
-
-@RunWith(IntactTestRunner.class)
 public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase  {
 
-     @Test
-     @IntactUnitDataset( dataset = PsiTestDatasetProvider.INTACT_JUL_06,
-                         provider = PsiTestDatasetProvider.class )
-     public void export() throws Exception {
-
-         // my test using the data here
-
-     }
-
+    @Test
     public void testSimpleGeneration() throws Exception {
-        CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
-        Institution institution = IntactContext.getCurrentInstance().getInstitution();
-        CvTopic noUniprotUpdate = new CvTopic(institution, "no-uniprot-update");
-        cvObjectDao.saveOrUpdate(noUniprotUpdate);
+        File hibernateConfig = new File(UpdateTargetSpeciesMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 
-        System.out.println("\n\n\nHello\n\n\n");
+        IntactSession session = new StandaloneSession();
+        CustomCoreDataConfig dataConfig = new CustomCoreDataConfig("custom", hibernateConfig, session);
+        IntactContext.initContext(dataConfig, session);
+
+        IntactUnit iu = new IntactUnit();
+        iu.createSchema(true);
+
+        IntactMockBuilder mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution());
+
+        CvDatabase newt = mockBuilder.createCvObject(CvDatabase.class, CvDatabase.NEWT_MI_REF, CvDatabase.NEWT);
+        CvXrefQualifier targetSpeciesQual = mockBuilder.createCvObject(CvXrefQualifier.class, "UNK:0001", CvXrefQualifier.TARGET_SPECIES);
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        CvObjectPersister.getInstance().saveOrUpdate(newt);
+        CvObjectPersister.getInstance().saveOrUpdate(targetSpeciesQual);
+        CvObjectPersister.getInstance().commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ExperimentPersister.getInstance().saveOrUpdate(mockBuilder.createExperimentRandom(3));
+        ExperimentPersister.getInstance().commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
 
         UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
-        mojo.setDryRun(false);
-        mojo.setLog( new SystemStreamLog() );
-
-
-        // MAKE SURE WE DELETE ALL THE XREF TARGET SPECIES IF ANY
-        ExperimentDao expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-        Collection<Experiment> experiments = expDao.getAll();
-        CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
-        CvXrefQualifier targetSpecies = cvContext.getByLabel(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES);
-        CvDatabase newt = cvContext.getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
-        XrefDao<ExperimentXref> xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class);
-        for(Experiment exp : experiments){
-            Collection<ExperimentXref> experimentXrefs = exp.getXrefs();
-            for (Iterator<ExperimentXref> iterator = experimentXrefs.iterator(); iterator.hasNext();) {
-                ExperimentXref experimentXref =  iterator.next();
-                if(newt.equals(experimentXref.getCvDatabase()) && targetSpecies.equals(experimentXref.getCvXrefQualifier())){
-
-                    experimentXref.setParent(null);
-                    xrefDao.delete(experimentXref);
-                    iterator.remove();
-                }
-            }
-            ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-            experimentDao.saveOrUpdate(exp);
-        }
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
-        //EXECUTE THE MOJO
+        mojo.setHibernateConfig(hibernateConfig);
         mojo.executeIntactMojo();
-
-        //CHECK THAT THE XREF TARGET SPECIES ARE BACK
-        expDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-        experiments = expDao.getAll();
-        cvContext = IntactContext.getCurrentInstance().getCvContext();
-        targetSpecies = cvContext.getByLabel(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES);
-        newt = cvContext.getByMiRef(CvDatabase.class, CvDatabase.NEWT_MI_REF);
-        xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao(ExperimentXref.class);
-        int xrefCount = 0;
-        assertTrue(experiments.size()>0);
-        for(Experiment exp : experiments){
-            Collection<ExperimentXref> experimentXrefs = exp.getXrefs();
-            for (Iterator<ExperimentXref> iterator = experimentXrefs.iterator(); iterator.hasNext();) {
-                ExperimentXref experimentXref =  iterator.next();
-                if(newt.equals(experimentXref.getCvDatabase()) && targetSpecies.equals(experimentXref.getCvXrefQualifier())){
-                    xrefCount++;
-                }
-            }
-            ExperimentDao experimentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao();
-            experimentDao.saveOrUpdate(exp);
-        }
-        System.out.println("XREF COUNT IS " + xrefCount);
-        assertTrue(xrefCount > 0);
-
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
-
     }
-
-    @Before
-    public final void setUp() throws Exception {
-        super.setUp();
-
-        //getDataContext().beginTransaction();
-
-        Method currentMethod = IntactTestRunner.getTestMethod();
-
-        if (currentMethod == null) {
-            throw new RuntimeException("This test cannot be run in IDEA");
-        }
-
-        IntactUnit iu = new IntactUnit();
-
-        IgnoreDatabase ignoreDbAnnot = currentMethod.getAnnotation(IgnoreDatabase.class);
-
-        IntactUnitDataset datasetAnnot = null;
-        boolean loadDataset = false;
-
-        // if the ignoreDbAnnot is present at method level, ignore the db, else
-        if (ignoreDbAnnot == null) {
-            // try to get the IntactUnitDataset annotation from the method, and then the class
-            datasetAnnot = currentMethod.getAnnotation(IntactUnitDataset.class);
-
-            if (datasetAnnot == null) {
-                ignoreDbAnnot = currentMethod.getDeclaringClass().getAnnotation(IgnoreDatabase.class);
-
-                if (ignoreDbAnnot == null) {
-                    datasetAnnot = currentMethod.getDeclaringClass().getAnnotation(IntactUnitDataset.class);
-
-                    if (datasetAnnot != null) {
-                        loadDataset = true;
-                    } else {
-                        iu.createSchema();
-                    }
-                }
-            } else {
-                loadDataset = true;
-            }
-        }
-
-        if (loadDataset) {
-            // ensure no MockIntactContext is active
-            if (getIntactContext() instanceof MockIntactContext) {
-                getIntactContext().close();
-            }
-
-            if (datasetAnnot != null) {
-                TestDataset testDataset = getTestDataset(datasetAnnot);
-
-                if (testDataset instanceof DbUnitTestDataset) {
-                    iu.createSchema(false);
-                    getDataContext().beginTransaction();
-                    iu.importTestDataset((DbUnitTestDataset) testDataset);
-                } else {
-                    throw new IntactTestException("Cannot import TestDatasets of type: " + testDataset.getClass().getName());
-                }
-
-                getDataContext().commitTransaction();
-            } else {
-                iu.createSchema();
-            }
-            getDataContext().commitTransaction();
-        }
-
-        getDataContext().beginTransaction();
-    }
-
-    private TestDataset getTestDataset(IntactUnitDataset datasetAnnot) throws Exception {
-        TestDatasetProvider provider = datasetAnnot.provider().newInstance();
-        return provider.getTestDataset(datasetAnnot.dataset());
-    }
-
-    @After
-    public final void tearDown() throws Exception {
-        getDataContext().commitTransaction();
-
-        if (IntactContext.currentInstanceExists()) {
-            IntactContext.getCurrentInstance().close();
-        }
-    }
-    protected IntactContext getIntactContext() {
-        return IntactContext.getCurrentInstance();
-    }
-
-    protected DataContext getDataContext() {
-        return getIntactContext().getDataContext();
-    }
-
-    protected DaoFactory getDaoFactory() {
-        return getDataContext().getDaoFactory();
-    }
-
 }
 

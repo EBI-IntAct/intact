@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.plugins.targetspecies;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -45,7 +46,6 @@ public class UpdateTargetSpecies {
     //////////////////////////
     // Instance variable
 
-    private CvTopic noUniprotUpdate = null;
     private CvDatabase newt = null;
     private CvXrefQualifier targetSpeciesQualifier = null;
 
@@ -62,9 +62,17 @@ public class UpdateTargetSpecies {
         beginTransaction();
         CvObjectDao cvObjectDao = getDataContext().getDaoFactory().getCvObjectDao();
 
-        noUniprotUpdate = (CvTopic) cvObjectDao.getByShortLabel(CvTopic.class, CvTopic.NON_UNIPROT);
         newt = (CvDatabase) cvObjectDao.getByPsiMiRef( CvDatabase.NEWT_MI_REF );
+
+        if (newt == null) {
+            throw new IllegalStateException("Cv is null: "+ CvDatabase.NEWT + "("+ CvDatabase.NEWT_MI_REF + ")");
+        }
+
         targetSpeciesQualifier = (CvXrefQualifier) cvObjectDao.getByShortLabel( CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES );
+
+        if (targetSpeciesQualifier == null) {
+            throw new IllegalStateException("Cv is null: "+ CvXrefQualifier.TARGET_SPECIES);
+        }
 
         commitTransaction();
     }
@@ -74,14 +82,25 @@ public class UpdateTargetSpecies {
             throw new IntactException("Transaction must NOT be active");
         }
 
+        if (log.isDebugEnabled()) log.debug("Updating experiment: "+experiment.getAc()+" ("+experiment.getShortLabel()+")");
+
+        beginTransaction();
+        experiment = getDataContext().getDaoFactory().getExperimentDao().getByAc(experiment.getAc());
+
         Set<SimpleBioSource> existingBioSources = getExistingBioSources(experiment);
         Set<SimpleBioSource> allBioSources = getBioSourcesForExperimentInteractions(experiment);
 
-        Collection<SimpleBioSource> bioSourcesToRemove = new ArrayList<SimpleBioSource>(existingBioSources);
-        bioSourcesToRemove.removeAll(allBioSources);
+        commitTransaction();
 
-        Collection<SimpleBioSource> bioSourcesToAdd = new ArrayList<SimpleBioSource>(allBioSources);
-        bioSourcesToAdd.removeAll(existingBioSources);
+        Collection<SimpleBioSource> bioSourcesToRemove = CollectionUtils.subtract(existingBioSources, allBioSources);
+        Collection<SimpleBioSource> bioSourcesToAdd = CollectionUtils.subtract(allBioSources, existingBioSources);
+
+        if (log.isDebugEnabled()) {
+            log.debug("\tExisting: "+existingBioSources);
+            log.debug("\tRemoving: "+bioSourcesToRemove);
+            log.debug("\tAdding: "+bioSourcesToAdd);
+            log.debug("\tAll: "+allBioSources);
+        }
 
         // refresh the experiment from the db
         beginTransaction();
@@ -163,9 +182,9 @@ public class UpdateTargetSpecies {
      *
      * @return a Collection of Xref. never null.
      */
-    public Collection<ExperimentXref> getTargetSpeciesXrefs( Experiment experiment ) {
+    public List<ExperimentXref> getTargetSpeciesXrefs( Experiment experiment ) {
 
-        Collection<ExperimentXref> targets = new ArrayList<ExperimentXref>();
+        List<ExperimentXref> targets = new ArrayList<ExperimentXref>();
 
         for ( ExperimentXref xref : experiment.getXrefs() ) {
             if ( targetSpeciesQualifier.equals( xref.getCvXrefQualifier() ) ) {
@@ -211,24 +230,27 @@ public class UpdateTargetSpecies {
         }
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(Object o)
+        {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
 
             SimpleBioSource that = (SimpleBioSource) o;
 
-            if (label != null ? !label.equals(that.label) : that.label != null) return false;
-            if (taxId != null ? !taxId.equals(that.taxId) : that.taxId != null) return false;
+            if (!taxId.equals(that.taxId)) return false;
 
             return true;
         }
 
         @Override
-        public int hashCode() {
-            int result;
-            result = (taxId != null ? taxId.hashCode() : 0);
-            result = 31 * result + (label != null ? label.hashCode() : 0);
-            return result;
+        public int hashCode()
+        {
+            return taxId.hashCode();
+        }
+
+        @Override
+        public String toString() {
+            return taxId+"("+label+")";
         }
     }
 
