@@ -5,12 +5,11 @@ import org.junit.Test;
 import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
 import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -30,8 +29,8 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
     public void executeSanityCheck_default() throws Exception {
 
         // Add some random data
-         for (int i=0; i<10; i++) {
-            Experiment exp = getMockBuilder().createExperimentRandom(15);
+         for (int i=0; i<5; i++) {
+            Experiment exp = getMockBuilder().createExperimentRandom(2);
             exp.getXrefs().clear();
 
             beginTransaction();
@@ -40,24 +39,14 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
             commitTransaction();
         }
 
-        //RuleRunReport report = SanityChecker.executeSanityCheck(super.getSanityCheckConfig());
-        long start = System.currentTimeMillis();
-        SanityReport report = SanityChecker.executeSanityCheck(getSanityCheckConfig());
-        
-        StringWriter writer = new StringWriter();
-        ReportWriter reportWriter = new HtmlReportWriter(writer);
-        reportWriter.write(report);
+        SanityCheckConfig sanityConfig = getSanityCheckConfig();
+        sanityConfig.setEnableAdminMails(true);
+        sanityConfig.setEnableUserMails(true);
 
-        try {
-            FileWriter w = new FileWriter("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html");
-            w.write(writer.toString());
-            w.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        SanityReport report = SanityChecker.executeSanityCheck(sanityConfig);
 
-        System.out.println("Elapsed time: "+(System.currentTimeMillis()-start)+"ms");
+        SanityReportMailer mailer = new SanityReportMailer(sanityConfig);
+        mailer.mailReports(report);
 
     }
 

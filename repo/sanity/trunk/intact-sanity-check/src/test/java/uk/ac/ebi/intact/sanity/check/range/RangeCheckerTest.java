@@ -62,8 +62,6 @@ public class RangeCheckerTest extends IntactAbstractTestCase
         curators.add(curatorSa);
 
         SanityCheckConfig sanityCheckConfig = new SanityCheckConfig(curators);
-        sanityCheckConfig.setDisableAdminMails(true);
-        sanityCheckConfig.setDisableUserMails(true);
 
         return sanityCheckConfig;
     }

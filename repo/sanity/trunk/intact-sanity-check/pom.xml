@@ -20,7 +20,12 @@
             <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-rules</artifactId>
         </dependency>
-        
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.commons</groupId>
+            <artifactId>intact-commons</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-persister</artifactId>

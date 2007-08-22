@@ -17,9 +17,9 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 
 import org.junit.Assert;
 import org.junit.Test;
+import uk.ac.ebi.intact.sanity.commons.SanityReport;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import java.util.Map;
 
 /**
  * TODO comment this
@@ -27,29 +27,16 @@ import java.io.Writer;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class XmlReportWriterTest extends AbstractReportTestCase {
+public class SanityReportUtilsTest extends AbstractReportTestCase {
 
     @Test
-    public void write_default() throws Exception {
-        Writer writer = new StringWriter();
+    public void createPersonalizedReports() throws Exception {
+        Map<String, SanityReport> personalizedReports = SanityReportUtils.createPersonalizedReports(getDefaultSanityReport());
 
-        ReportWriter reportWriter = new XmlReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport());
+        Assert.assertEquals(2, personalizedReports.size());
+        Assert.assertEquals(1, personalizedReports.get("anne").getSanityResult().size());
+        Assert.assertEquals(1, personalizedReports.get("peter").getSanityResult().size());
 
-        int lineCount = writer.toString().split("<\\D+>").length;
-
-        Assert.assertEquals(25, lineCount);
     }
 
-    @Test
-    public void write_filtered() throws Exception {
-       Writer writer = new StringWriter();
-
-        ReportWriter reportWriter = new XmlReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
-
-        int lineCount = writer.toString().split("<\\D+>").length;
-
-        Assert.assertEquals(13, lineCount);
-    }
 }

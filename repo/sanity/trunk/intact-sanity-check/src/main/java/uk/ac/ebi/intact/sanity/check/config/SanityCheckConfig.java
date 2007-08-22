@@ -30,8 +30,8 @@ public class SanityCheckConfig {
     private List<SuperCurator> superCurators;
     private String editorUrl;
     private String smtpHost;
-    private boolean disableUserMails;
-    private boolean disableAdminMails;
+    private boolean enableUserMails;
+    private boolean enableAdminMails;
 
     public SanityCheckConfig(Collection<? extends Curator> allCurators) {
         this.allCurators = allCurators;
@@ -241,19 +241,19 @@ public class SanityCheckConfig {
         return smtpHost;
     }
 
-    public boolean isDisableAdminMails() {
-        return disableAdminMails;
+    public boolean isEnableAdminMails() {
+        return enableAdminMails;
     }
 
-    public void setDisableAdminMails(boolean disableAdminMails) {
-        this.disableAdminMails = disableAdminMails;
+    public void setEnableAdminMails(boolean enableAdminMails) {
+        this.enableAdminMails = enableAdminMails;
     }
 
-    public boolean isDisableUserMails() {
-        return disableUserMails;
+    public boolean isEnableUserMails() {
+        return enableUserMails;
     }
 
-    public void setDisableUserMails(boolean disableUserMails) {
-        this.disableUserMails = disableUserMails;
+    public void setEnableUserMails(boolean enableUserMails) {
+        this.enableUserMails = enableUserMails;
     }
 }

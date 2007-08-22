@@ -927,7 +927,7 @@ public class MessageSender {
 
             // don't send mail to curator if no errors
             if (count > 0) {
-                if (!sanityConfig.isDisableUserMails()) {
+                if (sanityConfig.isEnableUserMails()) {
                     System.out.println("Send individual report to " + user + "( " + user + ")");
                     String email = sanityConfig.getCurator(user).getEmail();
 
@@ -1022,7 +1022,7 @@ public class MessageSender {
 
         }
 
-        if (sanityConfig.isDisableAdminMails()) {
+        if (!sanityConfig.isEnableAdminMails()) {
             Collection<String> adminEmails = getAdminEmails();
 
             // Send mail to the administrator
