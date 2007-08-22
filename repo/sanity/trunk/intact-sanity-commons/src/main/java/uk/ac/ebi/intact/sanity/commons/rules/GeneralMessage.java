@@ -130,14 +130,17 @@ public class GeneralMessage {
             insaneObject.setShortlabel(((AnnotatedObject)intactObject).getShortLabel());
         }
 
-        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
-        calendar.setTime(intactObject.getUpdated());
-
-        try {
-            insaneObject.setUpdated(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
-        } catch (DatatypeConfigurationException e) {
-            throw new SanityRuleException("Problem converting to InsaneObject date: "+insaneObject.getUpdated());
+        if (intactObject.getUpdated() != null) {
+            GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
+            calendar.setTime(intactObject.getUpdated());
+            
+            try {
+                insaneObject.setUpdated(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
+            } catch (DatatypeConfigurationException e) {
+                throw new SanityRuleException("Problem converting to InsaneObject date: "+insaneObject.getUpdated());
+            }
         }
+
 
         insaneObject.setUpdator(intactObject.getUpdator());
         insaneObject.setObjclass(intactObject.getClass().getSimpleName().replaceAll("Impl", ""));

@@ -20,11 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityResult;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 
 /**
@@ -45,7 +42,7 @@ public abstract class ReportWriter {
     }
 
     public void write(SanityReport report, ReportFilter... filters) throws IOException {
-        Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
+        report = cloneSanityReport(report);
 
         for (ReportFilter filter : filters) {
             if (log.isDebugEnabled()) log.debug("\tFiltering with filter: " + filter.getClass().getName());
@@ -54,6 +51,15 @@ public abstract class ReportWriter {
         }
 
         writeReport(report);
+    }
+
+    public static SanityReport cloneSanityReport(SanityReport originalReport){
+        SanityReport report = new SanityReport();
+        report.setDatabase(originalReport.getDatabase());
+        report.getReportAttribute().addAll(originalReport.getReportAttribute());
+        report.getSanityResult().addAll(originalReport.getSanityResult());
+
+        return report;
     }
 
     protected void filterSanityReport(SanityReport report, ReportFilter filter) {
