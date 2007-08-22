@@ -38,6 +38,7 @@ public class AbstractSanityCheckTest extends IntactBasicTestCase {
         this.sanityCheckConfig = new SanityCheckConfig(curators);
 
         sanityCheckConfig.setEditorUrl("http://www.ebi.ac.uk/intact/editor");
+        sanityCheckConfig.setEmailSubjectPrefix("[TEST] ");
     }
 
     public final SanityCheckConfig getSanityCheckConfig() {

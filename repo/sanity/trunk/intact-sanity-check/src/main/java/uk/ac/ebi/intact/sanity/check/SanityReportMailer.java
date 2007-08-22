@@ -49,10 +49,16 @@ public class SanityReportMailer {
     }
 
     public void mailReports(SanityReport report) throws IOException, MessagingException {
+        mailReports(report, null);
+    }
+
+    public void mailReports(SanityReport report, String prefix) throws IOException, MessagingException {
         Map<String,SanityReport> insaneCuratorReports = SanityReportUtils.createPersonalizedReports(report);
         Map<String,File> insaneCuratorFiles = reportToTempFile(insaneCuratorReports);
 
         String from = "intact-check@ebi.ac.uk";
+
+        if (prefix == null) prefix = "";
 
         if (sanityConfig.isEnableUserMails()) {
             for (String curatorName : insaneCuratorFiles.keySet()) {
@@ -64,7 +70,7 @@ public class SanityReportMailer {
 
                 String message = reportToHtml(curatorReport);
 
-                String subject = "Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
+                String subject = prefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
                 String recipient = curator.getEmail();
 
                 MailSender mailSender = new MailSender(MailSender.EBI_SETTINGS);
@@ -73,7 +79,7 @@ public class SanityReportMailer {
         }
 
         if (sanityConfig.isEnableAdminMails()) {
-            String subject = "Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
+            String subject = prefix+"Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
             String globalMessage = reportToHtml(report);
 
             Collection<String> adminEMails = getAdminEmails();
