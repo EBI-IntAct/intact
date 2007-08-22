@@ -14,14 +14,14 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
-import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.SanityResult;
-import uk.ac.ebi.intact.sanity.commons.rules.RuleRunReport;
+import uk.ac.ebi.intact.sanity.commons.*;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
+import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
+import uk.ac.ebi.intact.util.ElapsedTime;
 
+import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Date;
 
 /**
  * Checks potential annotation error on IntAct objects.
@@ -39,14 +39,38 @@ public class SanityChecker {
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
    public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) {
-       RuleRunReport.getInstance().clear();
+       RuleRunnerReport.getInstance().clear();
 
        if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
+       long startTime = System.currentTimeMillis();
        checkAllAnnotatedObjects();
+       long elapsedTime = System.currentTimeMillis()-startTime;
 
-       SanityReport report = RuleRunReport.getInstance().toSanityReport();
-       RuleRunReport.getInstance().clear();
+       SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
+       RuleRunnerReport.getInstance().clear();
+
+       // instance name
+       beginTransaction();
+       try {
+           String database = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                   .getBaseDao().getDbName();
+           report.setDatabase(database);
+       }
+       catch (SQLException e) {
+           throw new RuntimeException(e);
+       }
+       commitTransaction();
+
+       ReportAttribute executionDateAtt = new ReportAttribute();
+       executionDateAtt.setName("Date");
+       executionDateAtt.setValue(new Date().toString());
+       report.getReportAttribute().add(executionDateAtt);
+
+       ReportAttribute elapsedTimeAtt = new ReportAttribute();
+       elapsedTimeAtt.setName("Elapsed time");
+       elapsedTimeAtt.setValue(new ElapsedTime((int)elapsedTime/1000).toString());
+       report.getReportAttribute().add(elapsedTimeAtt);
 
        if (sanityConfig.getEditorUrl() != null) {
            EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
@@ -130,9 +154,7 @@ public class SanityChecker {
     public static SanityReport checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
         RuleRunner.runAvailableRules(annotatedObjectsToCheck);
 
-        SanityReport report = RuleRunReport.getInstance().toSanityReport();
-
-        return report;
+        return RuleRunnerReport.getInstance().toSanityReport();
     }
 
 

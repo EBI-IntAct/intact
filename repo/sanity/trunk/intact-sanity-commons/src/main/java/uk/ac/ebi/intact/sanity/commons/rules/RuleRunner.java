@@ -21,7 +21,6 @@ import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -42,14 +41,11 @@ public class RuleRunner {
                 Rule rule = newRuleInstance(declaredRule);
 
                 Collection<GeneralMessage> messages = rule.check(intactObject);
-                RuleRunReport.getInstance().addMessages(messages);
+                RuleRunnerReport.getInstance().addMessages(messages);
             }
         }
 
-        SanityReport report = RuleRunReport.getInstance().toSanityReport();
-        RuleRunReport.getInstance().clear();
-
-        return report;
+        return RuleRunnerReport.getInstance().toSanityReport();
     }
 
     public static Rule newRuleInstance(DeclaredRule declaredRule) {
@@ -64,46 +60,6 @@ public class RuleRunner {
         }
 
         return rule;
-    }
-
-    protected static class RuleRunReport {
-
-        private static final ThreadLocal<RuleRunReport> instance = new ThreadLocal<RuleRunReport>() {
-            @Override
-            protected RuleRunReport initialValue() {
-                return new RuleRunReport();
-            }
-        };
-
-        public static RuleRunReport getInstance() {
-            return instance.get();
-        }
-
-        private Collection<GeneralMessage> messages;
-
-        public RuleRunReport() {
-            this.messages = new ArrayList<GeneralMessage>();
-        }
-
-        public void addMessage(GeneralMessage message) {
-            messages.add(message);
-        }
-
-        public void addMessages(Collection<GeneralMessage> message) {
-            messages.addAll(message);
-        }
-
-        public Collection<GeneralMessage> getMessages() {
-            return messages;
-        }
-
-        public void clear() {
-            messages.clear();
-        }
-
-        public SanityReport toSanityReport() {
-            return MessageUtils.toSanityReport(messages);
-        }
     }
 
 }

@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
 
 import java.util.Arrays;
 
@@ -32,14 +32,19 @@ import java.util.Arrays;
  */
 public class RuleRunnerTest extends IntactBasicTestCase {
 
+    @After
+    public void clear() throws Exception {
+        RuleRunnerReport.getInstance().clear();
+    }
+
     @Test
     public void runAvailable_default() throws Exception {
         Experiment exp = getMockBuilder().createExperimentRandom(1);
 
-        SanityReport report = RuleRunner.runAvailableRules(Arrays.asList(exp));
+        RuleRunner.runAvailableRules(Arrays.asList(exp));
 
-        Assert.assertEquals(1, report.getSanityResult().size());
-        Assert.assertEquals(MessageLevel.NORMAL.toString(), report.getSanityResult().iterator().next().getLevel());
+        Assert.assertEquals(1, RuleRunnerReport.getInstance().getMessages().size());
+        Assert.assertEquals(MessageLevel.NORMAL, RuleRunnerReport.getInstance().getMessages().iterator().next().getLevel());
 
 
         DeclaredRuleManager.close();
