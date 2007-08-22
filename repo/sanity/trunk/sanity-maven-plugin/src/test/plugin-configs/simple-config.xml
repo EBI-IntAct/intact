@@ -18,8 +18,10 @@
 
                     <enableAdminEmails>false</enableAdminEmails>
                     <enableUserEmails>false</enableUserEmails>
+
+                    <emailSubjectPrefix>[MOJO-TEST] </emailSubjectPrefix>
                 </configuration>
             </plugin>
         </plugins>
-     </build>
+     </build>                   
 </project>
