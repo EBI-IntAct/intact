@@ -9,6 +9,8 @@ import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,7 +48,14 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         ReportWriter reportWriter = new HtmlReportWriter(writer);
         reportWriter.write(report);
 
-        System.out.println(writer.toString());
+        try {
+            FileWriter w = new FileWriter("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html");
+            w.write(writer.toString());
+            w.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("Elapsed time: "+(System.currentTimeMillis()-start)+"ms");
 

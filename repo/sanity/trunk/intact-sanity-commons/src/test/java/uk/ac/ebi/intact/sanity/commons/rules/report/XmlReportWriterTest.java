@@ -36,8 +36,9 @@ public class XmlReportWriterTest extends AbstractReportWriterTestCase {
         ReportWriter reportWriter = new XmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport());
 
-        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
-        Assert.assertEquals(53, lineCount);
+        int lineCount = writer.toString().split("<\\D+>").length;
+
+        Assert.assertEquals(25, lineCount);
     }
 
     @Test
@@ -47,10 +48,8 @@ public class XmlReportWriterTest extends AbstractReportWriterTestCase {
         ReportWriter reportWriter = new XmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
 
-        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+        int lineCount = writer.toString().split("<\\D+>").length;
 
-        System.out.println(writer.toString());
-
-        Assert.assertEquals(23, lineCount);
+        Assert.assertEquals(13, lineCount);
     }
 }

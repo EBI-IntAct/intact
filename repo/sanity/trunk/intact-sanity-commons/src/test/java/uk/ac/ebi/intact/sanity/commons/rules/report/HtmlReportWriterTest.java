@@ -55,16 +55,11 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 //            FileWriter w = new FileWriter("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html");
 //            w.write(writer.toString());
 //            w.close();
-//
-////            MailSender mailSender = new MailSender(MailSender.GMAIL_SETTINGS);
-////            PasswordAuthentication pass = new PasswordAuthentication("brunoaranda", "xxx");
-////            mailSender.postMailSSL(new String[] {"baranda@ebi.ac.uk"}, "Test", writer.toString(), "baranda@ebi.ac.uk", pass);
-//        }
 //        catch (IOException e) {
 //            e.printStackTrace();
 //        }
 
-        Assert.assertEquals(70, lineCount);
+        Assert.assertEquals(89, lineCount);
     }
 
     @Test
@@ -76,7 +71,7 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(40, lineCount);
+        Assert.assertEquals(51, lineCount);
     }
 
     @Test
@@ -88,6 +83,6 @@ public class HtmlReportWriterTest extends AbstractReportWriterTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(70, lineCount);
+        Assert.assertEquals(89, lineCount);
     }
 }

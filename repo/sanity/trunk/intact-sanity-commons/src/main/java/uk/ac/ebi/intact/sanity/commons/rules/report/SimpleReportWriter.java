@@ -15,10 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.Field;
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.SanityResult;
+import uk.ac.ebi.intact.sanity.commons.*;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 
 import java.io.IOException;
@@ -42,6 +39,16 @@ public class SimpleReportWriter extends ReportWriter {
     }
 
     protected void writeReport(SanityReport report) throws IOException {
+        if (report.getDatabase() != null) {
+            writer.write("# Instance name: "+report.getDatabase());
+            writer.write(NEW_LINE);
+        }
+
+        for (ReportAttribute attribute : report.getReportAttribute()) {
+            writer.write("# "+attribute.getName()+": "+attribute.getValue());
+            writer.write(NEW_LINE);
+        }
+
         for (SanityResult sanityResult : report.getSanityResult()) {
             writer.write(prepareSanityResult(sanityResult).toString());
             writer.write(NEW_LINE);
@@ -68,7 +75,6 @@ public class SimpleReportWriter extends ReportWriter {
             default:
                 levelChar = '?';
         }
-
 
         sb.append(separator(levelChar)).append(NEW_LINE);
         sb.append(levelChar).append(" ").append(sanityResult.getDescription()).append(NEW_LINE);
