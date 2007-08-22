@@ -20,6 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import sun.misc.URLClassPath;
+import uk.ac.ebi.intact.commons.util.ClassUtils;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -31,11 +32,12 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
 import java.net.URL;
 import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 /**
  * TODO comment this
@@ -84,7 +86,7 @@ public class DeclaredRuleManager {
             try {
                 ruleTargetClass = Class.forName(rule.getTargetClass());
             } catch (ClassNotFoundException e) {
-                throw new SanityRuleException("Found declared rule with a target class not found in the classpath: "+rule.getTargetClass());
+                throw new SanityRuleException("Found declared rule with a target class not found in the classpath: " + rule.getTargetClass());
             }
 
             if (ruleTargetClass.isAssignableFrom(targetClass)) {
@@ -164,10 +166,10 @@ public class DeclaredRuleManager {
         boolean exists = false;
 
         for (DeclaredRule availableRule : availableDeclaredRules) {
-           if (availableRule.getRuleName().equals(declaredRule.getRuleName())) {
-               exists = true;
-               break;
-           }
+            if (availableRule.getRuleName().equals(declaredRule.getRuleName())) {
+                exists = true;
+                break;
+            }
         }
 
         if (!exists) {
@@ -182,55 +184,20 @@ public class DeclaredRuleManager {
     }
 
     protected void loadDeclaredRulesFromClassPath() throws IOException {
-        // check dirs first
-        for (String dir : getDirsFromStackTrace()) {
-            File candidateFile = new File(dir, RULES_XML_PATH);
+        Collection<URL> resources = ClassUtils.searchResourcesInClasspath("META-INF/sanity-rules.xml");
 
-            if (candidateFile.isFile()) {
-                DeclaredRules dr = readDeclaredRules(new FileInputStream(candidateFile));
+        if (log.isDebugEnabled()) log.debug("Found " + resources.size() + " sanity-rules.xml files in the classpath");
+
+        for (URL resource : resources) {
+            try {
+                DeclaredRules dr = readDeclaredRules(resource.openStream());
                 addAllDeclaredRules(dr.getDeclaredRule());
-            }
-        }
 
-        for (String classPathFilePath : getClasspathElements()) {
-            File file = new File(classPathFilePath);
+                if (log.isDebugEnabled())
+                    log.debug("Loaded " + dr.getDeclaredRule().size() + " declared rules from: " + resource);
 
-            InputStream declaredRulesStream = null;
-
-            if (file.isDirectory()) {
-                File candidateFile = new File(file, RULES_XML_PATH);
-
-                if (candidateFile.isFile()) {
-                    declaredRulesStream = new FileInputStream(candidateFile);
-                }
-            } else {
-                JarFile jarFile = null;
-
-                try {
-                    jarFile = new JarFile(classPathFilePath);
-                }
-                catch (IOException e) {
-                    log.error("Cannot create jar file from: "+classPathFilePath);
-                    continue;
-                }
-
-                // get the xml file from META-INF (if existing) - remove the first slash
-                String rulesFile = RULES_XML_PATH;
-
-                if (RULES_XML_PATH.startsWith("/")) {
-                    rulesFile = RULES_XML_PATH.substring(1, RULES_XML_PATH.length());
-                }
-
-                JarEntry jarEntry = jarFile.getJarEntry(rulesFile);
-
-                if (jarEntry != null) {
-                    declaredRulesStream = jarFile.getInputStream(jarEntry);
-                }
-            }
-
-            if (declaredRulesStream != null) {
-                DeclaredRules dr = readDeclaredRules(declaredRulesStream);
-                addAllDeclaredRules(dr.getDeclaredRule());
+            } catch (Throwable t) {
+                throw new SanityRuleException("Problem reading declared rules from resource: " + resource, t);
             }
         }
     }
@@ -305,5 +272,6 @@ public class DeclaredRuleManager {
 
         return dirs;
     }
+
 
 }
