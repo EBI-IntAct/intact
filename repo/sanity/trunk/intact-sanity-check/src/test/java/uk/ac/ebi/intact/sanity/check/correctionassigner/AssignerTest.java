@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.check.AbstractSanityCheckTest;
+import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SanityConfigurationException;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
@@ -25,7 +25,7 @@ import java.util.List;
  * @version $Id$
  */
 @IntactUnitDataset( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
-public class AssignerTest extends AbstractSanityCheckTest
+public class AssignerTest extends AbstractSanityLegacyTest
 {
 
     @Test
