@@ -17,12 +17,14 @@ package uk.ac.ebi.intact.plugins.targetspecies;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.log4j.Priority;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugins.UpdateAbstractMojo;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.util.LogUtils;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -40,6 +42,7 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
      */
     public void executeIntactMojo()
             throws MojoExecutionException, MojoFailureException, IOException {
+        LogUtils.setPrintSql(false);
 
         UpdateTargetSpecies updateTargetSpecies = new UpdateTargetSpecies();
 
@@ -78,5 +81,8 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
         }
     }
 
-
+    protected Priority getLogPriority()
+    {
+        return Priority.DEBUG;
+    }
 }
