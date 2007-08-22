@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.sanity.check;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
@@ -7,6 +8,7 @@ import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,6 +23,11 @@ import java.util.Random;
  */
 public class SanityCheckerTest extends AbstractSanityCheckTest
 {
+
+    @After
+    public void prepare() throws Exception {
+        RuleRunnerReport.getInstance().clear();
+    }
 
     @Test
     public void executeSanityCheck_default() throws Exception {
