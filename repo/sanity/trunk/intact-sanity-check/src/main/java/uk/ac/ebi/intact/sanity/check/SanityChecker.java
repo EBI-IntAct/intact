@@ -19,11 +19,9 @@ import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
 import uk.ac.ebi.intact.util.ElapsedTime;
 
-import javax.mail.MessagingException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
-import java.io.IOException;
 
 /**
  * Checks potential annotation error on IntAct objects.
@@ -40,65 +38,124 @@ public class SanityChecker {
      */
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
-   public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) throws SanityCheckerException {
-       RuleRunnerReport.getInstance().clear();
+    /**
+     * Executes a sanity check for the whole database. Does not send mails, nor provides editor URLs
+     *
+     * @return
+     *
+     * @throws SanityCheckerException
+     */
+    public static SanityReport executeSanityCheck() throws SanityCheckerException {
+        return executeSanityCheck((SanityCheckConfig) null);
+    }
 
-       if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
+    /**
+     * Executes a sanity check for the whole database. Can send mails depending on the SanityCheckConfiguration provided
+     *
+     * @param sanityConfig
+     *
+     * @return
+     *
+     * @throws SanityCheckerException
+     */
+    public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) throws SanityCheckerException {
+        RuleRunnerReport.getInstance().clear();
 
-       long startTime = System.currentTimeMillis();
-       checkAllAnnotatedObjects();
-       long elapsedTime = System.currentTimeMillis()-startTime;
+        if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
-       SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
-       RuleRunnerReport.getInstance().clear();
+        long startTime = System.currentTimeMillis();
+        checkAllAnnotatedObjects();
+        long elapsedTime = System.currentTimeMillis() - startTime;
 
-       // instance name
-       beginTransaction();
-       try {
-           String database = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                   .getBaseDao().getDbName();
-           report.setDatabase(database);
-       }
-       catch (SQLException e) {
-           throw new RuntimeException(e);
-       }
-       commitTransaction();
+        SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
+        RuleRunnerReport.getInstance().clear();
 
-       ReportAttribute executionDateAtt = new ReportAttribute();
-       executionDateAtt.setName("Date");
-       executionDateAtt.setValue(new Date().toString());
-       report.getReportAttribute().add(executionDateAtt);
+        addReportAttributes(report, elapsedTime);
 
-       ReportAttribute elapsedTimeAtt = new ReportAttribute();
-       elapsedTimeAtt.setName("Elapsed time");
-       elapsedTimeAtt.setValue(new ElapsedTime((int)elapsedTime/1000).toString());
-       report.getReportAttribute().add(elapsedTimeAtt);
+        if (sanityConfig != null) {
 
-       if (sanityConfig.getEditorUrl() != null) {
-           EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
+            if (sanityConfig.getEditorUrl() != null) {
+                EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder(sanityConfig);
 
-           for (SanityResult sanityResult : report.getSanityResult()) {
-               for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
-                   editorUrlBuilder.addEditorUrl(insaneObject);
-               }
-           }
-       }
+                for (SanityResult sanityResult : report.getSanityResult()) {
+                    for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
+                        editorUrlBuilder.addEditorUrl(insaneObject);
+                    }
+                }
+            }
 
-       try {
-           SanityReportMailer reportMailer = new SanityReportMailer(sanityConfig);
-           reportMailer.mailReports(report);
-       } catch (Exception e) {
-           throw new SanityCheckerException("Exception sending mails", e);
-       }
+            try {
+                SanityReportMailer reportMailer = new SanityReportMailer(sanityConfig);
+                reportMailer.mailReports(report);
+            } catch (Exception e) {
+                throw new SanityCheckerException("Exception sending mails", e);
+            }
+        } else {
+            if (log.isDebugEnabled()) log.debug("No sanity configuration provided.");
+        }
 
-       return report;
-   }
+        return report;
+    }
+
+    /**
+     * Executes a sanity check for the provided objects. Does not send mails
+     *
+     * @param annotatedObjects
+     */
+    public static SanityReport executeSanityCheck(Collection<? extends AnnotatedObject> annotatedObjects) {
+        RuleRunnerReport.getInstance().clear();
+
+        if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
+
+        boolean inTransaction = IntactContext.getCurrentInstance().getDataContext().isTransactionActive();
+
+        if (!inTransaction) beginTransaction();
+
+        long startTime = System.currentTimeMillis();
+        checkAnnotatedObjects(annotatedObjects);
+        long elapsedTime = System.currentTimeMillis() - startTime;
+
+        if (!inTransaction) commitTransaction();
+
+        SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
+        RuleRunnerReport.getInstance().clear();
+
+        addReportAttributes(report, elapsedTime);
+
+        return report;
+    }
+
+    protected static void addReportAttributes(SanityReport report, long elapsedTime) {
+        // instance name
+        boolean inTransaction = IntactContext.getCurrentInstance().getDataContext().isTransactionActive();
+
+        if (!inTransaction) beginTransaction();
+        try {
+            String database = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getBaseDao().getDbName();
+            report.setDatabase(database);
+        }
+        catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        if (!inTransaction) commitTransaction();
+
+        ReportAttribute executionDateAtt = new ReportAttribute();
+        executionDateAtt.setName("Date");
+        executionDateAtt.setValue(new Date().toString());
+        report.getReportAttribute().add(executionDateAtt);
+
+        ReportAttribute elapsedTimeAtt = new ReportAttribute();
+        elapsedTimeAtt.setName("Elapsed time");
+        elapsedTimeAtt.setValue(new ElapsedTime((int) elapsedTime / 1000).toString());
+        report.getReportAttribute().add(elapsedTimeAtt);
+    }
 
     protected static void checkAllCvObjects() {
         CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
         Collection<CvObject> allCvObjects = cvObjectDao.getAll();
 
-        if (log.isInfoEnabled()) log.info("\tProcessing "+allCvObjects.size()+" CvObjects");
+        if (log.isInfoEnabled()) log.info("\tProcessing " + allCvObjects.size() + " CvObjects");
 
         checkAnnotatedObjects(cvObjectDao.getAll());
     }
@@ -116,8 +173,8 @@ public class SanityChecker {
     }
 
     protected static <T extends AnnotatedObject> void checkAllAnnotatedObjectsOfType(Class<T> aoClass) {
-         if (DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(aoClass).isEmpty()) {
-            if (log.isDebugEnabled()) log.debug("No declared rules for: "+aoClass.getName());
+        if (DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(aoClass).isEmpty()) {
+            if (log.isDebugEnabled()) log.debug("No declared rules for: " + aoClass.getName());
             return;
         }
 
@@ -132,7 +189,7 @@ public class SanityChecker {
             int total = annotatedObjectDao.countAll();
             commitTransaction();
 
-            log.info("\tGoing to process: "+total+" "+aoClass.getSimpleName()+"s");
+            log.info("\tGoing to process: " + total + " " + aoClass.getSimpleName() + "s");
         }
 
         int firstResult = 0;
@@ -148,10 +205,10 @@ public class SanityChecker {
             commitTransaction();
 
             if (log.isDebugEnabled()) {
-                int processed = firstResult+annotatedObjects.size();
+                int processed = firstResult + annotatedObjects.size();
 
                 if (firstResult != processed) {
-                    log.debug("\t\tProcessed "+(firstResult+annotatedObjects.size()));
+                    log.debug("\t\tProcessed " + (firstResult + annotatedObjects.size()));
                 }
             }
 
@@ -160,10 +217,8 @@ public class SanityChecker {
         } while (!annotatedObjects.isEmpty());
     }
 
-    public static SanityReport checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
+    protected static void checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
         RuleRunner.runAvailableRules(annotatedObjectsToCheck);
-
-        return RuleRunnerReport.getInstance().toSanityReport();
     }
 
 

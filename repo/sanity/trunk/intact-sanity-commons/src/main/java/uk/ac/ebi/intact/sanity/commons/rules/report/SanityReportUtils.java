@@ -18,7 +18,12 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityResult;
+import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
+import java.io.PrintStream;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -138,5 +143,23 @@ public class SanityReportUtils {
         }
 
         return insaneObjects;
+    }
+
+    /**
+     * Prints a report in a print stream
+     * @param report
+     * @param ps
+     */
+    public static void printReport(SanityReport report, PrintStream ps) {
+        Writer writer = new StringWriter();
+
+        ReportWriter reportWriter = new SimpleReportWriter(writer);
+        try {
+            reportWriter.write(report);
+        } catch (IOException e) {
+            throw new SanityRuleException("Problem printing report", e);
+        }
+
+        ps.print(writer.toString());
     }
 }
