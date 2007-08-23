@@ -1,10 +1,13 @@
 package uk.ac.ebi.intact.externalservices.searchengine;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
+import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.model.Interaction;
 
-import java.io.File;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * InteractionIndexExporter Tester.
@@ -13,41 +16,22 @@ import java.io.File;
  * @version 1.0
  * @since <pre>11/24/2006</pre>
  */
-public class InteractionIndexExporterTest extends TestCase {
-    public InteractionIndexExporterTest( String name ) {
-        super( name );
-    }
+public class InteractionIndexExporterTest extends AbstractIndexExporterTestCase {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( InteractionIndexExporterTest.class );
-    }
-
-    ////////////////////
-    // Tests
-
+    @Test
     public void testBuildIndex() throws Exception {
-        File aFile = new File( InteractorIndexExporterTest.class.getResource( "/hibernate.cfg.xml" ).getFile() );
-        File outputDir = aFile.getParentFile();
-        System.out.println( "Directory: " + outputDir.getAbsolutePath() );
-        if ( !outputDir.exists() ) {
-            outputDir.mkdirs();
-        }
+        Interaction interaction = getMockBuilder().createInteractionRandomBinary();
 
-        File f = new File( outputDir.getAbsolutePath() + File.separator + "interaction.xml" );
+        persistInteraction(interaction);
 
-        if ( f.exists() ) {
-            f.delete();
-        }
+        Writer writer = new StringWriter();
 
-        IndexExporter exporter = new InteractionIndexExporter( f );
+        IndexExporter exporter = new InteractionIndexExporter( writer );
         exporter.buildIndex();
+
+        System.out.println(writer.toString());
+
+        int lineCount = writer.toString().split(System.getProperty("file.separator")).length;
+        Assert.assertEquals(24, lineCount);
     }
 }

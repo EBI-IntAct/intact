@@ -50,13 +50,17 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
         super( output );
     }
 
+    public InteractionIndexExporter( Writer writer ) {
+        super( writer );
+    }
+
     ////////////////////////////
     // AbstractIndexExporter
 
     public void exportHeader() throws IndexerException {
 
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             writeXmlHeader( out );
 
@@ -73,7 +77,7 @@ public class InteractionIndexExporter extends AbstractIndexExporter<Interaction>
 
     public void exportEntry( Interaction interaction ) throws IndexerException {
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             final String i = INDENT + INDENT;
             final String ii = INDENT + INDENT+ INDENT;
