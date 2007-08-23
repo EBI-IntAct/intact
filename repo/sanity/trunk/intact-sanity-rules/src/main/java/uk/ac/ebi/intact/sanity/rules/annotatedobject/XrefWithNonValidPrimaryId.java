@@ -32,7 +32,7 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>>
         for (Xref xref : intactObject.getXrefs()) {
             String primaryId = xref.getPrimaryId();
 
-            String idValidationRegexp = getIdValidationRegexp(intactObject);
+            String idValidationRegexp = getIdValidationRegexp(xref.getCvDatabase());
 
             if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
                 XrefMessage xrefMessage = new XrefMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, intactObject, xref);
