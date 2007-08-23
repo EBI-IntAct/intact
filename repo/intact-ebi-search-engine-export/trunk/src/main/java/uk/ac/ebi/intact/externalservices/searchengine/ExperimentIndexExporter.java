@@ -35,7 +35,7 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
     public static final Log log = LogFactory.getLog( ExperimentIndexExporter.class );
 
     public static final String INDEX_NAME = "IntAct.Experiment";
-    public static final String DESCRIPTION = "Experimental procedures that allowed to discover molecular interactions";
+    public static final String DESCRIPTION = "Experimental procedures that allowed to discover molecular interactors";
     public static final int CHUNK_SIZE = 10;
 
     ////////////////////////////
@@ -50,13 +50,17 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
         super( output );
     }
 
+    public ExperimentIndexExporter( Writer writer ) {
+        super( writer );
+    }
+
     ////////////////////////////
     // AbstractIndexExporter
 
     public void exportHeader() throws IndexerException {
 
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             writeXmlHeader( out );
 
@@ -100,7 +104,7 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
     public void exportEntry( Experiment experiment ) throws IndexerException {
 
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             final String i = INDENT + INDENT;
             final String ii = INDENT + INDENT+ INDENT;
@@ -130,15 +134,15 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
                     }
                 }
 
-                // Add refs to interactions and experiments
+                // Add refs to interactors and experiments
                 if ( hasLinks ) {
 
                     Set<String> interactors = new HashSet<String>();
 
-                    for ( Interaction interaction : experiment.getInteractions() ) {
+                    for ( Interaction interactor : experiment.getInteractions() ) {
 
-                        writeRef( out, InteractionIndexExporter.INDEX_NAME, interaction.getAc(), iii );
-                        for ( Component c : interaction.getActiveInstances() ) {
+                        writeRef( out, InteractionIndexExporter.INDEX_NAME, interactor.getAc(), iii );
+                        for ( Component c : interactor.getActiveInstances() ) {
                             interactors.add( c.getInteractor().getAc() ); // Build non redundant list
                         }
                     }
@@ -165,8 +169,8 @@ public class ExperimentIndexExporter extends AbstractIndexExporter<Experiment> {
             writeCvTerm( out, experiment.getCvIdentification(), iii );
 
             Set<CvObject> cvs = new HashSet<CvObject>();
-            for ( Interaction interaction : experiment.getInteractions() ) {
-                cvs.add( interaction.getCvInteractionType() );
+            for ( Interaction interactor : experiment.getInteractions() ) {
+                cvs.add( interactor.getCvInteractionType() );
             }
             for ( CvObject cv : cvs ) {
                 writeCvTerm( out, cv, iii );

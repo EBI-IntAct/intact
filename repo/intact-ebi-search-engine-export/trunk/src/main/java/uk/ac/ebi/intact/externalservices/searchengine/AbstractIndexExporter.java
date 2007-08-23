@@ -32,8 +32,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
     public static final String INDENT = "  ";
     public static final String NEW_LINE = "\n"; // Unix style line return.
 
-    private BufferedWriter writer;
-    private File output;
+    private Writer writer;
 
     private CvDatabase intact;
     private CvDatabase psi;
@@ -56,7 +55,19 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
             throw new IllegalArgumentException( "Cannot write on " + output.getAbsolutePath() );
         }
 
-        this.output = output;
+        try {
+            this.writer = new FileWriter(output);
+        } catch (IOException e) {
+            throw new IllegalArgumentException( "Cannot write on " + output.getAbsolutePath(), e );
+        }
+    }
+
+    public AbstractIndexExporter( Writer writer ) {
+        if ( writer == null ) {
+            throw new IllegalArgumentException( "output file must not be null." );
+        }
+
+        this.writer = writer;
     }
 
     ////////////////////////
@@ -69,11 +80,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
     //////////////////////////
     // Utilities
 
-    protected Writer getOutput() throws IOException {
-        if ( writer == null ) {
-            writer = new BufferedWriter( new FileWriter( output ) );
-        }
-
+    protected Writer getOutputWriter() throws IOException {
         return writer;
     }
 
@@ -202,7 +209,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
 
     public void exportEntryListStart() throws IndexerException {
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
             out.write( INDENT + "<entries>" + NEW_LINE );
         } catch ( IOException e ) {
             throw new IndexerException( e );
@@ -211,7 +218,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
 
     public void exportEntryListEnd() throws IndexerException {
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
             out.write( INDENT + "</entries>" + NEW_LINE );
         } catch ( IOException e ) {
             throw new IndexerException( e );
@@ -220,7 +227,7 @@ public abstract class AbstractIndexExporter<T extends AnnotatedObject> implement
 
     public void exportFooter() throws IndexerException {
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
             out.write( "</database>" + NEW_LINE );
         } catch ( IOException e ) {
             throw new IndexerException( e );

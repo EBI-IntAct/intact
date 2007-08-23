@@ -51,13 +51,17 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
         super( output );
     }
 
+    public InteractorIndexExporter( Writer writer ) {
+        super( writer );
+    }
+
     ////////////////////////
     // Export
 
     public void exportHeader() throws IndexerException {
 
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             writeXmlHeader( out );
 
@@ -125,7 +129,7 @@ public class InteractorIndexExporter extends AbstractIndexExporter<Interactor> {
     public void exportEntry( Interactor interactor ) throws IndexerException {
 
         try {
-            Writer out = getOutput();
+            Writer out = getOutputWriter();
 
             final String i = INDENT + INDENT;
             final String ii = INDENT + INDENT + INDENT;
