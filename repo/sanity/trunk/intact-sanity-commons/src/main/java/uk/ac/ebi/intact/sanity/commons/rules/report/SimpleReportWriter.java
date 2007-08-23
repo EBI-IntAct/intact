@@ -53,6 +53,12 @@ public class SimpleReportWriter extends ReportWriter {
             writer.write(prepareSanityResult(sanityResult).toString());
             writer.write(NEW_LINE);
         }
+
+        if (report.getSanityResult().isEmpty()) {
+            writer.write(NEW_LINE);
+            writer.write("No rules failed.");
+            writer.write(NEW_LINE);
+        }
     }
 
     protected StringBuilder prepareSanityResult(SanityResult sanityResult) {

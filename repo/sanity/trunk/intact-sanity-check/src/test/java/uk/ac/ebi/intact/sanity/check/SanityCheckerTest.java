@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.core.persister.standard.InteractorPersister;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.SanityResult;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
 
 import java.util.Arrays;
@@ -48,7 +49,6 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         SanityReport report = SanityChecker.executeSanityCheck(sanityConfig);
 
         Assert.assertEquals(4, report.getSanityResult().size());
-
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         cvPubmed.getXrefs().clear();
         populateAuditable(cvPubmed);
 
-        SanityReport report = SanityChecker.checkAnnotatedObjects(Arrays.asList(cvPubmed));
+        SanityReport report = SanityChecker.executeSanityCheck(Arrays.asList(cvPubmed));
 
         Assert.assertEquals(1, report.getSanityResult().size());
     }
@@ -68,7 +68,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         interaction.setExperiments(Collections.EMPTY_LIST);
         populateAuditable(interaction);
         
-        SanityReport report = SanityChecker.checkAnnotatedObjects(Arrays.asList(interaction));
+        SanityReport report = SanityChecker.executeSanityCheck(Arrays.asList(interaction));
 
         Assert.assertEquals(1, report.getSanityResult().size());
     }
@@ -79,7 +79,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         interaction.setExperiments(Collections.EMPTY_LIST);
         populateAuditable(interaction);
 
-        SanityReport report = SanityChecker.checkAnnotatedObjects(Arrays.asList(interaction));
+        SanityReport report = SanityChecker.executeSanityCheck(Arrays.asList(interaction));
 
         Assert.assertEquals(1, report.getSanityResult().size());
     }
@@ -89,7 +89,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
         Protein protein = getMockBuilder().createProteinRandom();
         populateAuditable(protein);
 
-        SanityReport report = SanityChecker.checkAnnotatedObjects(Arrays.asList(protein));
+        SanityReport report = SanityChecker.executeSanityCheck(Arrays.asList(protein));
 
         Assert.assertEquals(0, report.getSanityResult().size());
     }
