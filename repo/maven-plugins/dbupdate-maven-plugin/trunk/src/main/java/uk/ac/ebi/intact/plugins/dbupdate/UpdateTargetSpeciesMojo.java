@@ -15,73 +15,74 @@
  */
 package uk.ac.ebi.intact.plugins.dbupdate;
 
+import org.apache.log4j.Priority;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import uk.ac.ebi.intact.plugin.MojoUtils;
-import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpeciesReport;
+import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.context.DataContext;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.util.LogUtils;
+import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpecies;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
+import java.util.Collection;
 
 /**
  * Example mojo. This mojo is executed when the goal "target-species" is called.
  *
  * @goal target-species
- *
  * @phase process-resources
  */
-public class UpdateTargetSpeciesMojo
-        extends UpdateAbstractMojo
-{
-
-    /**
-     * @parameter default-value="${project.build.directory}/target-species.stat"
-     * @required
-     */
-    private File statsFile;
-
-    /**
-     * Only experiments with this label-like pattern will be included (in SQL format,
-     * e.g. if the labelPattern go% is used, only those experiments starting with 'go' will be
-     * selected to update)
-     *
-     * @parameter
-     */
-    private String labelPattern;
+public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
 
     /**
      * Main execution method, which is called after hibernate has been initialized
      */
     public void executeIntactMojo()
-        throws MojoExecutionException, MojoFailureException, IOException
-    {
-        MojoUtils.prepareFile(statsFile, true);
+            throws MojoExecutionException, MojoFailureException, IOException {
+        LogUtils.setPrintSql(false);
 
-        PrintStream ps = new PrintStream(statsFile);
+        UpdateTargetSpecies updateTargetSpecies = new UpdateTargetSpecies();
 
-        UpdateTargetSpeciesReport report = UpdateTargetSpecies.update(ps, isDryRun(), labelPattern);
+        int firstResult = 0;
+        int maxResults = 100;
+
+        Collection<Experiment> experiments;
+
+        do {
+            beginTransaction();
+            experiments = getDataContext().getDaoFactory().getExperimentDao().getAll(firstResult, maxResults);
+            commitTransaction();
+
+            for (Experiment experiment : experiments) {
+                updateTargetSpecies.updateExperiment(experiment);
+            }
+
+            firstResult += maxResults;
+        } while (!experiments.isEmpty());
 
     }
 
-    public File getStatsFile()
-    {
-        return statsFile;
+    protected DataContext getDataContext() {
+        return IntactContext.getCurrentInstance().getDataContext();
     }
 
-    public void setStatsFile(File statsFile)
-    {
-        this.statsFile = statsFile;
+    protected void beginTransaction() {
+        getDataContext().beginTransaction();
     }
 
-    public String getLabelPattern()
-    {
-        return labelPattern;
+    protected void commitTransaction() {
+        try {
+            getDataContext().commitTransaction();
+        } catch (IntactTransactionException e) {
+            throw new IntactException(e);
+        }
     }
 
-    public void setLabelPattern(String labelPattern)
+    protected Priority getLogPriority()
     {
-        this.labelPattern = labelPattern;
+        return Priority.DEBUG;
     }
 }

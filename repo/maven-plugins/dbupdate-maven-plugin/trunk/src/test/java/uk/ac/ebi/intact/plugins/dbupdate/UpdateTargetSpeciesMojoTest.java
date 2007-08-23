@@ -15,21 +15,44 @@
  */
 package uk.ac.ebi.intact.plugins.dbupdate;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Test;
+import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.core.persister.standard.CvObjectPersister;
+import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.CvXrefQualifier;
 
 import java.io.File;
 
-public class UpdateTargetSpeciesMojoTest extends AbstractMojoTestCase
-{
+public class UpdateTargetSpeciesMojoTest extends UpdateAbstractMojoTestCase  {
 
+    @Test
     public void testSimpleGeneration() throws Exception {
+        CvDatabase newt = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.NEWT_MI_REF, CvDatabase.NEWT);
+        CvXrefQualifier targetSpeciesQual = getMockBuilder().createCvObject(CvXrefQualifier.class, "UNK:0001", CvXrefQualifier.TARGET_SPECIES);
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        CvObjectPersister.getInstance().saveOrUpdate(newt);
+        CvObjectPersister.getInstance().saveOrUpdate(targetSpeciesQual);
+        CvObjectPersister.getInstance().commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ExperimentPersister.getInstance().saveOrUpdate(getMockBuilder().createExperimentRandom(3));
+        ExperimentPersister.getInstance().commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/target-species-config.xml" );
 
         UpdateTargetSpeciesMojo mojo = (UpdateTargetSpeciesMojo) lookupMojo( "target-species", pluginXmlFile );
-        mojo.setDryRun(false);
-        mojo.setLog( new SystemStreamLog() );
-
-        mojo.execute();
+        mojo.setHibernateConfig(getHibernateConfigFile());
+        mojo.executeIntactMojo();
     }
 }
+
