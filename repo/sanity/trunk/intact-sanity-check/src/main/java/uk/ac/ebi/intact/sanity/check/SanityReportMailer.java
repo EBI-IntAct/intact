@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.SanityReportUtils;
+import uk.ac.ebi.intact.sanity.commons.rules.report.XmlReportWriter;
 import uk.ac.ebi.intact.util.MailSender;
 
 import javax.mail.MessagingException;
@@ -52,13 +53,14 @@ public class SanityReportMailer {
         mailReports(report, null);
     }
 
-    public void mailReports(SanityReport report, String prefix) throws IOException, MessagingException {
+    public void mailReports(SanityReport report, String subjectPrefix) throws IOException, MessagingException {
         Map<String,SanityReport> insaneCuratorReports = SanityReportUtils.createPersonalizedReports(report);
         Map<String,File> insaneCuratorFiles = reportToTempFile(insaneCuratorReports);
+        Map<String,File> insaneCuratorFilesXml = reportToTempFileXml(insaneCuratorReports);
 
         String from = "intact-check@ebi.ac.uk";
 
-        if (prefix == null) prefix = "";
+        if (subjectPrefix == null) subjectPrefix = "";
 
         if (sanityConfig.isEnableUserMails()) {
             for (String curatorName : insaneCuratorFiles.keySet()) {
@@ -67,19 +69,20 @@ public class SanityReportMailer {
                 Curator curator = sanityConfig.getCurator(curatorName);
                 SanityReport curatorReport = insaneCuratorReports.get(curatorName);
                 File curatorReportFile = insaneCuratorFiles.get(curatorName);
+                File curatorReportFileXml = insaneCuratorFilesXml.get(curatorName);
 
                 String message = reportToHtml(curatorReport);
 
-                String subject = prefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
+                String subject = subjectPrefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
                 String recipient = curator.getEmail();
 
                 MailSender mailSender = new MailSender(MailSender.EBI_SETTINGS);
-                mailSender.postMail(new String[] {recipient}, subject, message, from, curatorReportFile);
+                mailSender.postMail(new String[] {recipient}, subject, message, from, curatorReportFile, curatorReportFileXml);
             }
         }
 
         if (sanityConfig.isEnableAdminMails()) {
-            String subject = prefix+"Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
+            String subject = subjectPrefix+"Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
             String globalMessage = reportToHtml(report);
 
             Collection<String> adminEMails = getAdminEmails();
@@ -90,6 +93,8 @@ public class SanityReportMailer {
 
             Collection<File> fileAttachments = new ArrayList<File>(insaneCuratorFiles.values());
             fileAttachments.add(reportToTempFile("admin", report));
+            fileAttachments.add(reportToTempFileXml("admin", report));
+
             File[] attachments = fileAttachments.toArray(new File[insaneCuratorFiles.values().size()]);
 
             MailSender mailSender = new MailSender(MailSender.EBI_SETTINGS);
@@ -116,6 +121,18 @@ public class SanityReportMailer {
         return tempFile;
     }
 
+     protected File reportToTempFileXml(String name, SanityReport report) throws IOException {
+        File tempFile = File.createTempFile(name+"-", ".xml");
+        tempFile.deleteOnExit();
+
+        Writer writer = new FileWriter(tempFile);
+        ReportWriter reportWriter = new XmlReportWriter(writer);
+        reportWriter.write(report);
+        writer.flush();
+
+        return tempFile;
+    }
+
     protected Map<String,File> reportToTempFile(Map<String,SanityReport> insaneCuratorReports) throws IOException {
         Map<String,File> insaneCuratorFiles = new HashMap<String,File>(insaneCuratorReports.size());
 
@@ -124,6 +141,16 @@ public class SanityReportMailer {
         }
 
         return insaneCuratorFiles;
+    }
+
+    protected Map<String,File> reportToTempFileXml(Map<String,SanityReport> insaneCuratorReports) throws IOException {
+        Map<String,File> insaneCuratorFilesXml = new HashMap<String,File>(insaneCuratorReports.size());
+
+        for (Map.Entry<String,SanityReport> entry : insaneCuratorReports.entrySet()) {
+            insaneCuratorFilesXml.put(entry.getKey(), reportToTempFileXml(entry.getKey(), entry.getValue()));
+        }
+
+        return insaneCuratorFilesXml;
     }
 
     protected Set<String> getAdminEmails() {
