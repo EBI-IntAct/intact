@@ -16,17 +16,26 @@
 package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.junit.Test;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
 
 import java.io.File;
 
-public class UpdateExperimentsMojoTest extends AbstractMojoTestCase
+public class UpdateExperimentsMojoTest extends UpdateAbstractMojoTestCase
 {
 
+    @Test
     public void testUpdate() throws Exception {
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ExperimentPersister.getInstance().saveOrUpdate(getMockBuilder().createExperimentRandom(3));
+        ExperimentPersister.getInstance().commit();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/experiments-config.xml" );
 
         UpdateExperimentsMojo mojo = (UpdateExperimentsMojo) lookupMojo( "experiments", pluginXmlFile );
+        mojo.setHibernateConfig(getHibernateConfigFile());
         mojo.setLog( new SystemStreamLog() );
         mojo.setDryRun(false);
 

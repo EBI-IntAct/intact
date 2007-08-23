@@ -26,8 +26,7 @@ import java.io.File;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class UpdateAbstractMojo extends IntactHibernateMojo
-{
+public abstract class UpdateAbstractMojo extends IntactHibernateMojo {
 
     /**
      * Project instance
@@ -43,13 +42,15 @@ public abstract class UpdateAbstractMojo extends IntactHibernateMojo
      */
     private File hibernateConfig;
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
-    public File getHibernateConfig()
-    {
+    public File getHibernateConfig() {
         return hibernateConfig;
+    }
+
+    public void setHibernateConfig(File hibernateConfig) {
+        this.hibernateConfig = hibernateConfig;
     }
 }
