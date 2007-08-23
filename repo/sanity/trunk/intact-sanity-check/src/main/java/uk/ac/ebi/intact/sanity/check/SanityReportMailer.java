@@ -50,7 +50,7 @@ public class SanityReportMailer {
     }
 
     public void mailReports(SanityReport report) throws IOException, MessagingException {
-        mailReports(report, null);
+        mailReports(report, sanityConfig.getEmailSubjectPrefix());
     }
 
     public void mailReports(SanityReport report, String subjectPrefix) throws IOException, MessagingException {
