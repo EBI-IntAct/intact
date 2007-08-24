@@ -22,12 +22,9 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.util.LogUtils;
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpecies;
 
 import java.io.IOException;
-import java.util.Collection;
 
 /**
  * Example mojo. This mojo is executed when the goal "target-species" is called.
@@ -48,23 +45,7 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
         }
 
         UpdateTargetSpecies updateTargetSpecies = new UpdateTargetSpecies();
-
-        int firstResult = 0;
-        int maxResults = 100;
-
-        Collection<Experiment> experiments;
-
-        do {
-            beginTransaction();
-            experiments = getDataContext().getDaoFactory().getExperimentDao().getAll(firstResult, maxResults);
-            commitTransaction();
-
-            for (Experiment experiment : experiments) {
-                updateTargetSpecies.updateExperiment(experiment);
-            }
-
-            firstResult += maxResults;
-        } while (!experiments.isEmpty());
+        updateTargetSpecies.updateAllExperiments();
 
     }
 
@@ -86,7 +67,7 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
 
     protected Priority getLogPriority()
     {
-        LogUtils.setPrintSql(false);
-        return Priority.DEBUG;
+        return Priority.INFO;
     }
+
 }
