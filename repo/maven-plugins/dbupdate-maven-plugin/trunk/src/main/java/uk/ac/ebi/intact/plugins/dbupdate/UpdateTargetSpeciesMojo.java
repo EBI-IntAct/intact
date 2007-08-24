@@ -42,7 +42,10 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
      */
     public void executeIntactMojo()
             throws MojoExecutionException, MojoFailureException, IOException {
-        LogUtils.setPrintSql(false);
+
+        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            commitTransaction();
+        }
 
         UpdateTargetSpecies updateTargetSpecies = new UpdateTargetSpecies();
 
@@ -83,6 +86,7 @@ public class UpdateTargetSpeciesMojo extends UpdateAbstractMojo {
 
     protected Priority getLogPriority()
     {
+        LogUtils.setPrintSql(false);
         return Priority.DEBUG;
     }
 }
