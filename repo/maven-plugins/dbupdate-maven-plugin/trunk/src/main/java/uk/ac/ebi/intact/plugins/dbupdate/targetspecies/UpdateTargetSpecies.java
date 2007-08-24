@@ -5,22 +5,16 @@
  */
 package uk.ac.ebi.intact.plugins.dbupdate.targetspecies;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.collections.CollectionUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.DataContext;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.ProteinUtils;
-import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 
-import java.io.PrintStream;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -49,8 +43,6 @@ public class UpdateTargetSpecies {
     private CvDatabase newt = null;
     private CvXrefQualifier targetSpeciesQualifier = null;
 
-    private Experiment currentExperiment;
-
     ///////////////////////////
     // Constructor
 
@@ -77,12 +69,39 @@ public class UpdateTargetSpecies {
         commitTransaction();
     }
 
+    public void updateAllExperiments() {
+        int firstResult = 0;
+        int maxResults = 100;
+
+        beginTransaction();
+        int total = getDataContext().getDaoFactory().getExperimentDao().countAll();
+        commitTransaction();
+
+        Collection<Experiment> experiments;
+
+        do {
+            beginTransaction();
+            experiments = getDataContext().getDaoFactory().getExperimentDao().getAll(firstResult, maxResults);
+            commitTransaction();
+
+            if (log.isInfoEnabled()) log.info("Processed "+firstResult+" out of "+total);
+
+            for (Experiment experiment : experiments) {
+                updateExperiment(experiment);
+            }
+
+            firstResult += maxResults;
+        } while (!experiments.isEmpty());
+
+        if (log.isInfoEnabled()) log.info("Finished processing "+total+" experiments");
+    }
+
     public void updateExperiment(Experiment experiment) {
         if (getDataContext().isTransactionActive()) {
             throw new IntactException("Transaction must NOT be active");
         }
 
-        if (log.isDebugEnabled()) log.debug("Updating experiment: "+experiment.getAc()+" ("+experiment.getShortLabel()+")");
+        if (log.isInfoEnabled()) log.info("Updating experiment: "+experiment.getAc()+" ("+experiment.getShortLabel()+")");
 
         beginTransaction();
         experiment = getDataContext().getDaoFactory().getExperimentDao().getByAc(experiment.getAc());
@@ -94,12 +113,12 @@ public class UpdateTargetSpecies {
 
         Collection<SimpleBioSource> bioSourcesToRemove = CollectionUtils.subtract(existingBioSources, allBioSources);
         Collection<SimpleBioSource> bioSourcesToAdd = CollectionUtils.subtract(allBioSources, existingBioSources);
-
+        
         if (log.isDebugEnabled()) {
-            log.debug("\tExisting: "+existingBioSources);
+            log.info("\tExisting: "+existingBioSources);
             log.debug("\tRemoving: "+bioSourcesToRemove);
             log.debug("\tAdding: "+bioSourcesToAdd);
-            log.debug("\tAll: "+allBioSources);
+            log.info("\tAll: "+allBioSources);
         }
 
         // refresh the experiment from the db
@@ -164,7 +183,12 @@ public class UpdateTargetSpecies {
             for (Interaction interaction : interactions) {
                 for (Component component : interaction.getComponents()) {
                     BioSource bioSource = component.getInteractor().getBioSource();
-                    allBioSources.add(new SimpleBioSource(bioSource));
+
+                    if (bioSource != null) {
+                        allBioSources.add(new SimpleBioSource(bioSource));
+                    } else {
+                       if (log.isDebugEnabled()) log.debug("Interactor without biosource: "+component.getInteractor()); 
+                    }
                 }
             }
             commitTransaction();
