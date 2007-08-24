@@ -1001,6 +1001,7 @@ public class InteractionViewBean extends AbstractEditViewBean<Interaction> {
         myMenus.put(name, menu);
 
         // Add the Role add menu.
+        log.debug("JUST TO CHECK I'M RUNNING THE GOOD EDITOR");
         name = EditorMenuFactory.EXPROLE;
         menu = myMenus.get(name);
         myMenus.put(name + "_", menuFactory.convertToAddMenu(menu, CvExperimentalRole.NEUTRAL));
