@@ -235,7 +235,7 @@ public class EditorMenuFactory {
             LOGGER.debug("shortLabel = " + shortLabel);
             if(firstPositionCvShortlabel.equals(shortLabel)){
                 LOGGER.debug("removing " + shortLabel + " from list");
-                modMenuIterator.remove();
+//                modMenuIterator.remove();
                 //todo : if not found, send error message.
             }
         }
