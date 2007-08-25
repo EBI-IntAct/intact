@@ -39,12 +39,6 @@
             <version>1.6.2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.datasets</groupId>
-            <artifactId>intact-dataset</artifactId>
-            <version>1.6.0</version>
-            <scope>test</scope>
-        </dependency>
 
     </dependencies>
 
