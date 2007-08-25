@@ -71,6 +71,10 @@ public class FastaExporter {
             throw new NullPointerException("Provided exportedFasta file is null");
         }
 
+        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            throw new IllegalStateException("Transaction must be closed when trying to export to fasta");
+        }
+
         BufferedWriter fastaWriter = new BufferedWriter( new FileWriter( exportedFasta ) );
 
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
@@ -86,7 +90,9 @@ public class FastaExporter {
         out.println( "Loading all proteins." );
 
         // Load protein count using DAO.
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         int proteinCount = proteinDao.countAll();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         out.println( proteinCount + " protein(s) loaded from the database." );
 
@@ -100,6 +106,8 @@ public class FastaExporter {
 
         do
         {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
             proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                     .getProteinDao().getAll(firstResult, maxResults);
 

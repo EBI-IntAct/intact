@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.util.Utilities;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +72,15 @@ public class FastaExportMojo
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
     {
+        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            }
+            catch (IntactTransactionException e) {
+                throw new MojoExecutionException("Problem commiting transaction", e);
+            }
+        }
+
         PrintStream ps = new PrintStream(getOutputFile());
 
         getLog().info("Starting export");
@@ -102,6 +112,11 @@ public class FastaExportMojo
         return hibernateConfig;
     }
 
+    public void setHibernateConfig(File hibernateConfig)
+    {
+        this.hibernateConfig = hibernateConfig;
+    }
+
     public File getExportedFile()
     {
         return exportedFile;
@@ -110,5 +125,15 @@ public class FastaExportMojo
     public void setExportedFile(File exportedFile)
     {
         this.exportedFile = exportedFile;
+    }
+
+    public boolean isGzip()
+    {
+        return gzip;
+    }
+
+    public void setGzip(boolean gzip)
+    {
+        this.gzip = gzip;
     }
 }
