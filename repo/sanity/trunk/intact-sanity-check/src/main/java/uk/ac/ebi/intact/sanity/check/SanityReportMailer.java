@@ -76,7 +76,7 @@ public class SanityReportMailer {
                 String subject = subjectPrefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
                 String recipient = curator.getEmail();
 
-                MailSender mailSender = new MailSender(MailSender.EBI_SETTINGS);
+                MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
                 mailSender.postMail(new String[] {recipient}, subject, message, from, curatorReportFile, curatorReportFileXml);
             }
         }
@@ -97,7 +97,7 @@ public class SanityReportMailer {
 
             File[] attachments = fileAttachments.toArray(new File[insaneCuratorFiles.values().size()]);
 
-            MailSender mailSender = new MailSender(MailSender.EBI_SETTINGS);
+            MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
             mailSender.postMail(recipients, subject, globalMessage, from, attachments);
         }
     }

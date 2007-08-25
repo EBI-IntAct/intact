@@ -1,5 +1,7 @@
 package uk.ac.ebi.intact.sanity.check.config;
 
+import uk.ac.ebi.intact.util.MailSender;
+
 import java.util.*;
 
 /**
@@ -27,6 +29,8 @@ public class SanityCheckConfig {
     private List<Curator> curators;
     private List<SuperCurator> superCurators;
     private String editorUrl;
+
+    private Properties mailerProperties;
     
     private boolean enableUserMails;
     private boolean enableAdminMails;
@@ -47,6 +51,8 @@ public class SanityCheckConfig {
                 curators.add(curator);
             }
         }
+
+        this.mailerProperties = MailSender.EBI_SETTINGS;
 
         checkSuperCurators();
     }
@@ -253,5 +259,13 @@ public class SanityCheckConfig {
 
     public void setEmailSubjectPrefix(String emailSubjectPrefix) {
         this.emailSubjectPrefix = emailSubjectPrefix;
+    }
+
+    public Properties getMailerProperties() {
+        return mailerProperties;
+    }
+
+    public void setMailerProperties(Properties mailerProperties) {
+        this.mailerProperties = mailerProperties;
     }
 }
