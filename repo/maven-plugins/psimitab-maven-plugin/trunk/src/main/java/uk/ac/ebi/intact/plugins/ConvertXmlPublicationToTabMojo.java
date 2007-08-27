@@ -103,7 +103,7 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
-        Map<Integer, Collection<File>> map = builder.build();
+        Map<String, Collection<File>> map = builder.build();
 
         // Prepare XML to TAB converter
         ConvertXml2Tab converter = new ConvertXml2Tab();
@@ -116,8 +116,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         }
 
         // Process datasets
-        for ( Map.Entry<Integer, Collection<File>> entry : map.entrySet() ) {
-            Integer pmid = entry.getKey();
+        for ( Map.Entry<String, Collection<File>> entry : map.entrySet() ) {
+            String pmid = entry.getKey();
             Collection<File> xmlFiles = entry.getValue();
 
             // all files should be from a same directory, pick the first one and get the parent src directory.
