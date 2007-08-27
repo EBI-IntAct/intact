@@ -27,7 +27,7 @@ public class PublicationClusterBuilder {
      */
     public static final Log log = LogFactory.getLog( PublicationClusterBuilder.class );
 
-    public static final Pattern PUBLICATION_PATTERN = Pattern.compile( "(\\d+).*\\.xml" );
+    public static final Pattern PUBLICATION_PATTERN = Pattern.compile( "((?:unassigned)?\\d+).*\\.xml" );
 
 
     private File directory;
@@ -53,12 +53,13 @@ public class PublicationClusterBuilder {
         this.directory = directory;
     }
 
-    public Map<Integer, Collection<File>> build() {
-        Map<Integer, Collection<File>> map = new HashMap<Integer, Collection<File>>();
+    public Map<String, Collection<File>> build() {
+        Map<String, Collection<File>> map = new HashMap<String, Collection<File>>();
 
         // 10688190-01.xml
         // 10688190_negative.xml
         // 11283351_ito-2001-1_01.xml
+        // unassigned*;
 
         Stack<File> stack = new Stack<File>();
         stack.push( directory );
@@ -80,7 +81,7 @@ public class PublicationClusterBuilder {
                             log.error( "Could not match: " + file.getAbsolutePath() );
                         }
                     } else {
-                        Integer pmid = Integer.parseInt( matcher.group( 1 ) );
+                        String pmid =  matcher.group( 1 );
                         Collection<File> associatedFiles = map.get( pmid );
                         if ( associatedFiles == null ) {
                             associatedFiles = new ArrayList<File>( 2 );
