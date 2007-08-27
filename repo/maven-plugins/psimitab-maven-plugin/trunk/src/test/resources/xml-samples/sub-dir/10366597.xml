@@ -76,14 +76,14 @@
        <interactorList>
          <interactor id="4">
            <names>
-             <shortLabel>aip1_yeast</shortLabel>
+             <shortLabel>lala_yeast</shortLabel>
              <fullName>Actin-interacting protein 1</fullName>
-             <alias type="gene name" typeAc="MI:0301">AIP1</alias>
+             <alias type="gene name" typeAc="MI:0301">AIP1_lala</alias>
              <alias type="locus name" typeAc="MI:0305">YMR092C</alias>
              <alias type="orf name" typeAc="MI:0306">YM9582.17C</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P46680" refType="identity" refTypeAc="MI:0356" secondary="aip1_yeast" version="SP_48"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P01234" refType="identity" refTypeAc="MI:0356" secondary="aip1_yeast" version="SP_48"/>
              <secondaryRef db="sgd" dbAc="MI:0484" id="S000004698" secondary="AIP1"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0030479" secondary="C:actin cortical patch"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0005634" secondary="C:nucleus"/>
@@ -115,13 +115,13 @@
          </interactor>
          <interactor id="6">
            <names>
-             <shortLabel>cofi_yeast</shortLabel>
+             <shortLabel>cofri_yeast</shortLabel>
              <fullName>Cofilin</fullName>
-             <alias type="gene name" typeAc="MI:0301">COF1</alias>
+             <alias type="gene name" typeAc="MI:0301">COFr1</alias>
              <alias type="locus name" typeAc="MI:0305">YLL050C</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q03048" refType="identity" refTypeAc="MI:0356" secondary="cofi_yeast" version="SP_48"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q02345" refType="identity" refTypeAc="MI:0356" secondary="cofi_yeast" version="SP_48"/>
              <secondaryRef db="sgd" dbAc="MI:0484" id="S000003973" secondary="COF1"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0030479" secondary="C:actin cortical patch"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0030042" secondary="P:actin filament depolymerizat"/>

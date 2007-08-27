@@ -76,13 +76,13 @@
        <interactorList>
          <interactor id="4">
            <names>
-             <shortLabel>dyr1a_mouse</shortLabel>
+             <shortLabel>Sdyr1a_mouse</shortLabel>
              <fullName>Dual-specificity tyrosine-phosphorylation regulated kinase 1A</fullName>
-             <alias type="gene name" typeAc="MI:0301">Dyrk1a</alias>
+             <alias type="gene name" typeAc="MI:0301">SDyrk1a</alias>
              <alias type="gene name synonym" typeAc="MI:0302">Dyrk</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q61214" refType="identity" refTypeAc="MI:0356" secondary="dyr1a_mouse" version="SP_48"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="S61214" refType="identity" refTypeAc="MI:0356" secondary="dyr1a_mouse" version="SP_48"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000719" secondary="Prot_kinase"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR008271" secondary="Ser_thr_pkin_AS"/>
              <secondaryRef db="intact" dbAc="MI:0469" id="EBI-80344" secondary="dyr1a_mouse"/>

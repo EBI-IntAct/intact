@@ -70,13 +70,13 @@
        <interactorList>
          <interactor id="4">
            <names>
-             <shortLabel>cav1_canfa</shortLabel>
+             <shortLabel>scav1_canfa</shortLabel>
              <fullName>Caveolin-1</fullName>
-             <alias type="gene name" typeAc="MI:0301">CAV1</alias>
+             <alias type="gene name" typeAc="MI:0301">sCAV1</alias>
              <alias type="gene name synonym" typeAc="MI:0302">CAV</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="P33724" refType="identity" refTypeAc="MI:0356" secondary="cav1_canfa" version="SP_47"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q22334" refType="identity" refTypeAc="MI:0356" secondary="cav1_canfa" version="SP_47"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001612" secondary="Caveolin"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0016599" secondary="C:caveolar membrane"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0005198" secondary="F:structural molecule activity"/>

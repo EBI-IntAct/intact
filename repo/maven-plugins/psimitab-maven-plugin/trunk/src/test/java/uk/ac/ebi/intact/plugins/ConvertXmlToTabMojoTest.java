@@ -4,7 +4,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -47,5 +49,14 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         }
 
         assertTrue( tabFile.exists() );
+
+        int lineCount = 0;
+        BufferedReader reader = new BufferedReader(new FileReader(tabFile));
+        while (reader.readLine() != null) {
+            lineCount++;
+        }
+
+        assertEquals(9+1, lineCount);
+
     }
 }

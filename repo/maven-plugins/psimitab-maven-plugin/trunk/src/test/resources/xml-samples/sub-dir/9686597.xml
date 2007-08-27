@@ -72,13 +72,13 @@
        <interactorList>
          <interactor id="4">
            <names>
-             <shortLabel>ly86_mouse</shortLabel>
+             <shortLabel>Zly86_mouse</shortLabel>
              <fullName>Lymphocyte antigen 86 precursor</fullName>
-             <alias type="gene name" typeAc="MI:0301">Ly86</alias>
+             <alias type="gene name" typeAc="MI:0301">ZLy86</alias>
              <alias type="gene name synonym" typeAc="MI:0302">Md1</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="O88188" refType="identity" refTypeAc="MI:0356" secondary="ly86_mouse" version="SP_47"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Z88188" refType="identity" refTypeAc="MI:0356" secondary="ly86_mouse" version="SP_47"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003172" secondary="E1_DerP2_DerF2"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0005615" secondary="C:extracellular space"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
@@ -105,14 +105,14 @@
          </interactor>
          <interactor id="6">
            <names>
-             <shortLabel>cd180_mouse</shortLabel>
+             <shortLabel>Wcd180_mouse</shortLabel>
              <fullName>CD180 antigen precursor</fullName>
-             <alias type="gene name" typeAc="MI:0301">Cd180</alias>
+             <alias type="gene name" typeAc="MI:0301">WCd180</alias>
              <alias type="gene name synonym" typeAc="MI:0302">Rp105</alias>
              <alias type="gene name synonym" typeAc="MI:0302">Ly78</alias>
            </names>
            <xref>
-             <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q62192" refType="identity" refTypeAc="MI:0356" secondary="cd180_mouse" version="SP_48"/>
+             <primaryRef db="uniprotkb" dbAc="MI:0486" id="W62192" refType="identity" refTypeAc="MI:0356" secondary="cd180_mouse" version="SP_48"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001611" secondary="LRR"/>
              <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000483" secondary="LRR_Cterm"/>
              <secondaryRef db="go" dbAc="MI:0448" id="GO:0005615" secondary="C:extracellular space"/>
