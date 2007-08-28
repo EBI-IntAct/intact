@@ -14,6 +14,7 @@
 
 	<name>IntAct Bridges :: Blast</name>
 	<version>2.0-beta-6-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<!-- since 2.0-beta-6-SNAPSHOT -->
 
 	<properties>

@@ -15,47 +15,39 @@
  */
 package uk.ac.ebi.intact.bridges.blast;
 
-import javax.xml.namespace.QName;
-import javax.xml.rpc.ServiceException;
-
-import sun.awt.GlobalCursorManager;
-import uk.ac.ebi.intact.bridges.blast.generated.Data;
-import uk.ac.ebi.intact.bridges.blast.generated.InputParams;
-import uk.ac.ebi.intact.bridges.blast.generated.WSFile;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastService;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastServiceLocator;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.Buffer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.xml.rpc.ServiceException;
+
+import uk.ac.ebi.intact.bridges.blast.generated.Data;
+import uk.ac.ebi.intact.bridges.blast.generated.InputParams;
+import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastService;
+import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastServiceLocator;
+import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
+
 /**
- * TODO comment this
+ * Blast client
  * 
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
 public class BlastClient {
 
-	private double	threshold;
-	private String	tmpDir;
-	private List<String> againstUniprotAc; 
+	private double			threshold;
+	private String			tmpDir;
+	private List<String>	againstUniprotAc;
+	// checks the format of the accession number
+	static String			uniprotTermExpr	= "\\w{6,6}";
 
 	/**
 	 * Constructor
@@ -68,15 +60,13 @@ public class BlastClient {
 		this.tmpDir = "E:\\tmp\\";
 	}
 
-	
-
 	/**
 	 * 
 	 * @param reader
 	 *            where the blast output is
 	 * @return
 	 */
-	public String processResults(String ac1, Reader reader) {
+	private String processResults(String ac1, Reader reader) {
 		String processedAlign = "";
 		BufferedReader br = new BufferedReader(reader);
 		String line;
@@ -89,7 +79,8 @@ public class BlastClient {
 				} else if (start) {
 					if (Pattern.matches("^UNIPROT.*\\w{6,6}.*", line)) {
 						String[] strs = line.split("\\s+");
-						if (ac1.equals(strs[1]) ||( isUniprotAcInHighConfidenceSet(strs[1]) && isBelowThreshold(strs[strs.length - 2]))) {
+						if (ac1.equals(strs[1])
+								|| (isUniprotAcInHighConfidenceSet(strs[1]) && isBelowThreshold(strs[strs.length - 2]))) {
 							processedAlign = processedAlign.concat(strs[1] + ",");
 						}
 					}
@@ -99,14 +90,13 @@ public class BlastClient {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BlastClientException(e);
 		}
 		return processedAlign;
 	}
 
 	private boolean isUniprotAcInHighConfidenceSet(String ac) {
-		if (againstUniprotAc.contains(ac)){
+		if (againstUniprotAc.contains(ac)) {
 			return true;
 		}
 		return false;
@@ -131,6 +121,9 @@ public class BlastClient {
 	 *         uniprotAc1,uniprotAC_align1, uniprotAC_align2,...
 	 */
 	public List<String> blast(List<String> uniprotAc1, List<String> uniprotAc2) {
+		if (uniprotAc1 == null || uniprotAc2 == null) {
+			new BlastClientException(new NullPointerException("the uniprotAc lists must not be null!"));
+		}
 		List<String> alignments = new ArrayList<String>();
 		this.againstUniprotAc = uniprotAc2;
 		for (String ac1 : uniprotAc1) {
@@ -139,17 +132,15 @@ public class BlastClient {
 				// blasting the uniprotAc against uniprot
 				FileWriter fw = new FileWriter(filePath);
 				blastUniprot(ac1, fw);
-				
+
 				// processes the results
 				FileReader fr = new FileReader(filePath);
 				String align = processResults(ac1, fr);
 				alignments.add(align);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				new BlastClientException(e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				new BlastClientException(e);
 			}
 
 		}
@@ -157,7 +148,22 @@ public class BlastClient {
 		return alignments;
 	}
 
-	public void blastUniprot(String uniprotAc, Writer w) {
+	/**
+	 * blasts the specified uniprotAc against uniprot db, and writes the output
+	 * to the specified writer
+	 * 
+	 * @param uniprotAc
+	 * @param writer
+	 */
+	public void blastUniprot(String uniprotAc, Writer writer) {
+		if (!properFormat(uniprotAc)) {
+			new BlastClientException(new IllegalArgumentException("uniprotAc not in the uniprot format: >" + uniprotAc
+					+ "<"));
+		}
+		if (writer == null) {
+			new BlastClientException(new NullPointerException("writer is null!"));
+		}
+
 		InputParams params = new InputParams();
 
 		params.setProgram("blastp");
@@ -179,14 +185,19 @@ public class BlastClient {
 
 			byte[] resultbytes = blast.poll(jobid, "tooloutput");
 			String result = new String(resultbytes);
-			printRawResults(result, w);
+			printRawResults(result, writer);
 		} catch (ServiceException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BlastClientException(e);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BlastClientException(e);
 		}
+	}
+
+	private boolean properFormat(String uniprotAc) {
+		if (Pattern.matches(uniprotTermExpr, uniprotAc)) {
+			return true;
+		}
+		return false;
 	}
 
 	private void printRawResults(String result, Writer w) {
@@ -194,67 +205,23 @@ public class BlastClient {
 			w.append(result);
 			w.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BlastClientException(e);
 		}
 
 	}
-	
-	public void printResults(List<String> results, Writer w) {
+
+	void printResults(List<String> results, Writer w) {
 		for (String result : results) {
 			try {
-				w.append(result +"\n");
+				w.append(result + "\n");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				new BlastClientException(e);
 			}
-		}	
+		}
 		try {
 			w.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			new BlastClientException(e);
 		}
 	}
-
-
-	/*
-	 * private AccessionMapperService accessionMapperService;
-	 * 
-	 * public PicrClient(){
-	 * this("http://www.ebi.ac.uk/Tools/picr/service?wsdl"); }
-	 * 
-	 * public PicrClient(String wsdlUrl){ try { accessionMapperService = new
-	 * AccessionMapperService(new URL(wsdlUrl), new
-	 * QName("http://www.ebi.ac.uk/picr/AccessionMappingService",
-	 * "AccessionMapperService")); } catch (MalformedURLException e) {
-	 * e.printStackTrace(); } }
-	 * 
-	 * public AccessionMapperInterface getAccessionMapperPort() { return
-	 * accessionMapperService.getAccessionMapperPort(); }
-	 * 
-	 * 
-	 * public String getUPI(String accession, PicrSearchDatabase ... databases) {
-	 * List<UPEntry> upEntries =
-	 * getAccessionMapperPort().getUPIForAccession(accession, null,
-	 * databaseEnumToList(databases), null, true);
-	 * 
-	 * if (upEntries.isEmpty()) { return null; }
-	 * 
-	 * return upEntries.iterator().next().getUPI(); }
-	 * 
-	 * private List<String> databaseEnumToList(PicrSearchDatabase ...
-	 * databases) { List<String> databaseNames = new ArrayList<String>(databases.length);
-	 * 
-	 * for (PicrSearchDatabase database : databases) {
-	 * databaseNames.add(database.toString()); }
-	 * 
-	 * return databaseNames; }
-	 * 
-	 * public static void main(String[] args) { PicrClient client = new
-	 * PicrClient();
-	 * 
-	 * System.out.println(client.getUPI("NP_417804",
-	 * PicrSearchDatabase.REFSEQ)); }
-	 */
 }
