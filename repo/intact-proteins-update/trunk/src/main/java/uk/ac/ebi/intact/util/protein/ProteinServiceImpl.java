@@ -297,6 +297,7 @@ public class ProteinServiceImpl implements ProteinService {
             for(Protein protToDelete : proteinsToDelete ){
 //                proteinDao.delete((ProteinImpl) protToDelete);
                 protToDelete.setActiveInstances(new ArrayList());
+                addToDeleteAnnotation(protToDelete);
                 proteinDao.update((ProteinImpl) protToDelete);
                 // Add to the ac to the collection of ac to delete. Will be deleted later. 
                 ProteinToDeleteManager.addProteinAc(protToDelete.getAc());
@@ -358,6 +359,23 @@ public class ProteinServiceImpl implements ProteinService {
             uniprotServiceResult.addAllToProteins(nonUniprotProteins);
 
         return proteins;
+    }
+
+    /**
+     * Given the protein "protein" it will add to it an annotation with cvTopic to-delete.
+     * This is done in case the protein update would fail before the having deleted the protein it need to delete.
+     * In this case we can still delete the protein by had afterwards.
+     * @param protein
+     */
+    public void addToDeleteAnnotation(Protein protein) throws ProteinServiceException {
+        CvTopic toDelete = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, "to-delete");
+        if(toDelete == null){
+            throw new ProteinServiceException("Can not find the to-delete cvTopic");
+        }
+        Institution institution = IntactContext.getCurrentInstance().getInstitution();
+        Annotation annot = new Annotation(institution, toDelete, "ProteinUpdateMessage : this protein should be deleted " +
+                " as it is not reflecting what is not in UniprotKB and is not involved in any interactions.");
+        protein.addAnnotation(annot);
     }
 
     /**
@@ -559,6 +577,8 @@ public class ProteinServiceImpl implements ProteinService {
                     ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
                     //Add the ac to the protein to delete ac collection, as if we would delete it now it would create
                     // bugs due to the use of the ProteinDao.getAll(int minResult, int maxResults) in the updatedProteinMojo.
+                    addToDeleteAnnotation(intactSpliceVariant);
+                    proteinDao.saveOrUpdate((ProteinImpl) intactSpliceVariant);
                     ProteinToDeleteManager.addProteinAc(intactSpliceVariant.getAc());
 //                    proteinDao.delete((ProteinImpl) intactSpliceVariant);
                     uniprotServiceResult.addMessage("The protein " + getProteinDescription(intactSpliceVariant) +
@@ -622,6 +642,8 @@ public class ProteinServiceImpl implements ProteinService {
                         //Add the ac of the protein to the list of acs to delete as if we would delete it now it would
                         // cause bugs in module using this artifact with the ProteinDao.getAll(int minResult,
                         // int maxResults) method.
+                        addToDeleteAnnotation(protein);
+                        proteinDao.saveOrUpdate((ProteinImpl) protein);
                         ProteinToDeleteManager.addProteinAc(protein.getAc());
                         uniprotServiceResult.addMessage("The protein " + getProteinDescription(protein) +
                                 " is a splice which had multiple or no identity, as it is not involved in any interaction" +
