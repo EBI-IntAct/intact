@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.site.mb;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 /**
  * Application scope bean, with configuration stuff
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class RequestConfigBean
+public class RequestConfigBean implements Serializable
 {
     private String absoluteContextPath;
     private HttpServletRequest request;
