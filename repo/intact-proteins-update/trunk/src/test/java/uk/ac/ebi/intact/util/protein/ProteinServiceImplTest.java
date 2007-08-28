@@ -829,8 +829,20 @@ public class ProteinServiceImplTest extends TestCase {
     }
 
     public void testRetrieve_primaryCount1_secondaryCount1() throws Exception{
+
         // clear database content.
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         clearProteinsFromDatabase();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        if(IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, "to-delete") == null) {
+            CvTopic toDelete = new CvTopic(IntactContext.getCurrentInstance().getInstitution(), "to-delete");
+            CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class);
+            cvObjectDao.saveOrUpdate(toDelete);
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
@@ -1210,8 +1222,18 @@ public class ProteinServiceImplTest extends TestCase {
 
 
     public void testRetrieve_spliceVariantFoundInIntactNotInUniprot() throws Exception{
+
         // clear database content.
         clearProteinsFromDatabase();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        if(IntactContext.getCurrentInstance().getCvContext().getByLabel(CvTopic.class, "to-delete") == null) {
+            CvTopic toDelete = new CvTopic(IntactContext.getCurrentInstance().getInstitution(), "to-delete");
+            CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class);
+            cvObjectDao.saveOrUpdate(toDelete);
+        }
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         FlexibleMockUniprotService uniprotService = new FlexibleMockUniprotService();
