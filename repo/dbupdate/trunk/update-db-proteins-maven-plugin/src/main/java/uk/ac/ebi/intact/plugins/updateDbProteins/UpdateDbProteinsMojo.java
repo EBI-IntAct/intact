@@ -56,12 +56,12 @@ public class UpdateDbProteinsMojo
         extends IntactHibernateMojo
 {
 
-    
+
     /**
-         * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
-         * @required
-         */
-        private File hibernateConfig;
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
 
     private int spliceVariantCount = 0;
     private int noUniprotUpdateCount = 0;
@@ -161,9 +161,27 @@ public class UpdateDbProteinsMojo
             for(Protein protein : proteins){
 
                 System.out.print("\nUpdating " +  protein.getAc() + " : " );
-                // if protein does not have a not UniprotUpdate annotation and is not a splice variant then update it.
+                // if protein does not have a no-uniprot-update annotation and is not a splice variant then update it.
                 // We don't need to update the splice variants as they will be updated when updating their master proteins.
                 if(ProteinUtils.isFromUniprot(protein)){
+                    if(ProteinUtils.getUniprotXref(protein) == null){
+                        StringBuilder errorLog = new StringBuilder(512);
+                        String errorFileName = protein.getShortLabel() + "-error.log";
+                        errorLog.append("Updating protein[").append(protein.getAc()).append(",")
+                                .append(protein.getShortLabel()).append(",")
+                                .append("] :").append(NEW_LINE);
+                        errorLog.append("The protein was not updated as it has no uniprot identity xref but no " +
+                                " no-uniprot-update annotation.").append(NEW_LINE);
+                        System.out.println(errorLog);
+
+                        //WRITE ERROR TO FILE (ex : P12345-error.log)
+                        BufferedWriter out = new BufferedWriter(new FileWriter(errorFileName));
+                        out.write(errorLog.toString());
+                        out.flush();
+                        out.close();
+
+                        continue;
+                    }
                     if(!isSpliceVariant(protein)){
 
                         InteractorXref uniprotIdentity = ProteinUtils.getUniprotXref(protein);
@@ -253,13 +271,15 @@ public class UpdateDbProteinsMojo
         proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         for(String ac : acsToDelete){
             Protein protein = proteinDao.getByAc(ac);
-            System.out.println("Deleting protein [" + protein.getAc() + "," + protein.getShortLabel() + "," 
+            System.out.println("Deleting protein [" + protein.getAc() + "," + protein.getShortLabel() + ","
                     + ProteinUtils.getUniprotXref(protein) + "]");
             proteinDao.delete((ProteinImpl) protein);
         }
         commitTransaction();
 
     }
+
+
 
     private String createStatistic(){
         StringBuilder statLog = new StringBuilder();
