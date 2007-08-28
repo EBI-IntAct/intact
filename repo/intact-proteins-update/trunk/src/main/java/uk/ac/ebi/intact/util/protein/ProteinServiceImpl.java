@@ -258,6 +258,7 @@ public class ProteinServiceImpl implements ProteinService {
         } else if ( countPrimary == 0 && countSecondary == 1 ) {
             //Corresponding test : ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount1()
             log.debug( "Found a single IntAct protein by UniProt secondary AC (hint: could be a TrEMBL moved to SP)." );
+            System.out.println("Found a single IntAct protein by UniProt secondary AC (hint: could be a TrEMBL moved to SP)." );
             Protein protein = secondaryProteins.iterator().next();
             proteins.add( protein );
 
@@ -271,43 +272,52 @@ public class ProteinServiceImpl implements ProteinService {
             // Corresponding test : ProteinServiceImplTest.testRetrieve_sequenceUpdate()
             //                      ProteinServiceImplTest.testRetrieve_update_CDC42_CANFA()
             log.debug( "Found in Intact one protein with primaryAc and 0 with secondaryAc." );
+            System.out.println( "Found in Intact one protein with primaryAc and 0 with secondaryAc." );
+
             Protein protein = primaryProteins.iterator().next();
             proteins.add( protein );
             updateProtein( protein, uniprotProtein, proteins );
 
         }else if ( countPrimary == 1 && countSecondary >= 1){
             log.debug("Found in IntAct 1 protein with primaryAc and 1 or more protein on with secondaryAc.");
+            System.out.println("Found in IntAct 1 protein with primaryAc and 1 or more protein on with secondaryAc.");
             StringBuffer sb = new StringBuffer();
             sb.append("Found several protein in IntAct for entry : " + uniprotProtein.getPrimaryAc() + ". 1 with the " +
                     "primaryAc and " + secondaryProteins.size() + " with the secondary acs. We are going to merged those" +
                     " proteins into one.").append( NEW_LINE );
             Protein primaryProt = primaryProteins.iterator().next();
-
+            System.out.println("bla");
             Protein protToBeKept = getProtWithMaxInteraction(primaryProteins.iterator().next(),secondaryProteins);
+            System.out.println("we keep prot " + protToBeKept.getAc());
             sb.append("The protein we keep is : " + protToBeKept.getAc() + "," + protToBeKept.getShortLabel()).append( NEW_LINE );
             List<Protein> proteinsToDelete = new ArrayList<Protein>();
             proteinsToDelete.addAll(secondaryProteins);
             proteinsToDelete.add(primaryProt);
 
             proteinsToDelete.remove(protToBeKept);
-
+            System.out.println("before replaceInActiveInstances");
             replaceInActiveInstances(proteinsToDelete, protToBeKept);
+            System.out.println("after replaceInActiveInstances");
+
             ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
             sb.append("The protein which are going to be merged :").append( NEW_LINE );
+            System.out.println("protein which are going to be merged");
+            System.out.println("proteinsToDelete.size() = " + proteinsToDelete.size());
             for(Protein protToDelete : proteinsToDelete ){
 //                proteinDao.delete((ProteinImpl) protToDelete);
                 protToDelete.setActiveInstances(new ArrayList());
                 addToDeleteAnnotation(protToDelete);
-                proteinDao.update((ProteinImpl) protToDelete);
+                proteinDao.saveOrUpdate((ProteinImpl) protToDelete);
                 // Add to the ac to the collection of ac to delete. Will be deleted later. 
                 ProteinToDeleteManager.addProteinAc(protToDelete.getAc());
-
+                System.out.println("protToDelete.getAc() = " + protToDelete.getAc());
                 sb.append("\t" + protToDelete.getAc() + "," + protToDelete.getShortLabel()).append( NEW_LINE );
             }
-
+            System.out.println("beofre proteins.add");
             proteins.add( protToBeKept );
             updateProtein( protToBeKept, uniprotProtein, proteins );
-            
+            // Message being added.
+            System.out.println("Message being added " + sb);
             uniprotServiceResult.addMessage(sb.toString());
 
         }else {
@@ -316,12 +326,14 @@ public class ProteinServiceImpl implements ProteinService {
 
             String pCount = "Count of protein in Intact for the Uniprot entry primary ac(" + countPrimary + ") for the Uniprot entry secondary ac(s)(" + countSecondary + ")";
             log.error( "Could not update that protein, number of protein found in IntAct: " + pCount );
+            System.out.println( "Could not update that protein, number of protein found in IntAct: " + pCount );
 
             if ( countPrimary > 1 && countSecondary == 0 ) {
                 //corresponding test : testRetrieve_primaryCount2_secondaryCount1()
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching Primary AC: " + uniprotProtein.getPrimaryAc() );
                 sb.append( NEW_LINE ).append( "Matches were:" ).append( NEW_LINE );
+                System.out.println(sb);
                 int i = 1;
                 for ( Protein pp : primaryProteins ) {
                     sb.append( i++ ).append( ". " );
@@ -337,6 +349,7 @@ public class ProteinServiceImpl implements ProteinService {
                 StringBuilder sb = new StringBuilder();
                 sb.append( "More than one IntAct protein is matching secondary AC(s): " + uniprotProtein.getSecondaryAcs() );
                 sb.append( NEW_LINE ).append( "Matches were:" ).append( NEW_LINE );
+                System.out.println(sb);
                 int i = 1;
                 for ( Protein pp : secondaryProteins ) {
                     sb.append( i++ ).append( ". " );
@@ -375,6 +388,8 @@ public class ProteinServiceImpl implements ProteinService {
         Institution institution = IntactContext.getCurrentInstance().getInstitution();
         Annotation annot = new Annotation(institution, toDelete, "ProteinUpdateMessage : this protein should be deleted " +
                 " as it is not reflecting what is not in UniprotKB and is not involved in any interactions.");
+        AnnotationDao annotationDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotationDao();
+        annotationDao.saveOrUpdate(annot);
         protein.addAnnotation(annot);
     }
 
