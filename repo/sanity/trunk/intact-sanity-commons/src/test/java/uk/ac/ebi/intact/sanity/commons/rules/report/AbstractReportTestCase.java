@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
@@ -40,16 +41,22 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
         for (int i=0; i<5; i++) {
             Protein prot = getMockBuilder().createProteinRandom();
             prot.setAc("PROT-"+i);
+            prot.setCreated(new Date(new java.util.Random().nextInt()));
             prot.setUpdated(new Date());
+            prot.setCreator("peter");
             prot.setUpdator("peter");
+            prot.setOwner(new Institution("institution"));
             messages.add(new GeneralMessage("description1", MessageLevel.NORMAL, "suggestion1", prot));
         }
 
         for (int i=0; i<3; i++) {
             Experiment exp = getMockBuilder().createExperimentRandom(1);
             exp.setAc("EXP-"+i);
+            exp.setCreated(new Date(new java.util.Random().nextInt()));
             exp.setUpdated(new Date());
+            exp.setCreator("anne");
             exp.setUpdator("anne");
+            exp.setOwner(new Institution("institution"));
             messages.add(new GeneralMessage("description2", MessageLevel.MINOR, "suggestion2", exp));
         }
 
@@ -62,16 +69,22 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
         for (int i=0; i<5; i++) {
             Protein prot = getMockBuilder().createProteinRandom();
             prot.setAc("PROT-"+i);
+            prot.setCreated(new Date(new java.util.Random().nextInt()));
             prot.setUpdated(new Date());
+            prot.setCreator("peter");
             prot.setUpdator("peter");
+            prot.setOwner(new Institution("institution"));
             messages.add(new XrefMessage("description1", MessageLevel.NORMAL, "suggestion1", prot, prot.getXrefs().iterator().next()));
         }
 
         for (int i=0; i<3; i++) {
             Experiment exp = getMockBuilder().createExperimentRandom(1);
             exp.setAc("EXP-"+i);
+            exp.setCreated(new Date(new java.util.Random().nextInt()));
             exp.setUpdated(new Date());
+            exp.setCreator("anne");
             exp.setUpdator("anne");
+            exp.setOwner(new Institution("institution"));
 
             Annotation annot = getMockBuilder().createAnnotationRandom();
             exp.addAnnotation(annot);
