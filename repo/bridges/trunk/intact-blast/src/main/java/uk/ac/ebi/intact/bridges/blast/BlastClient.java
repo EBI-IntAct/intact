@@ -24,8 +24,8 @@ import java.io.Reader;
 import java.io.Writer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.xml.rpc.ServiceException;
@@ -46,7 +46,7 @@ public class BlastClient {
 
 	private double			threshold;
 	private String			tmpDir;
-	private HashSet<String>	againstUniprotAc;
+	private Set<String>	againstUniprotAc;
 	// checks the format of the accession number
 	static String uniprotTermExpr = "\\w{6,6}";
 
@@ -121,7 +121,7 @@ public class BlastClient {
 	 * @return a list of strings, where each string has the format
 	 *         uniprotAc1,uniprotAC_align1, uniprotAC_align2,...
 	 */
-	public List<String> blast(HashSet<String> uniprotAc1, HashSet<String> uniprotAc2) {
+	public List<String> blast(Set<String> uniprotAc1, Set<String> uniprotAc2) {
 		if (uniprotAc1 == null || uniprotAc2 == null){
 			new BlastClientException(new NullPointerException("the uniprotAc lists must not be null!"));
 		}
