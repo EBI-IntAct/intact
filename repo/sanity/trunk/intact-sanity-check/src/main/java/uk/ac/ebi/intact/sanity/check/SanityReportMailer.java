@@ -44,6 +44,7 @@ public class SanityReportMailer {
     private static final Log log = LogFactory.getLog(SanityReportMailer.class);
 
     private SanityCheckConfig sanityConfig;
+    private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
 
     public SanityReportMailer(SanityCheckConfig sanityConfig) {
         this.sanityConfig = sanityConfig;
@@ -54,30 +55,60 @@ public class SanityReportMailer {
     }
 
     public void mailReports(SanityReport report, String subjectPrefix) throws IOException, MessagingException {
-        Map<String,SanityReport> insaneCuratorReports = SanityReportUtils.createPersonalizedReports(report);
-        Map<String,File> insaneCuratorFiles = reportToTempFile(insaneCuratorReports);
-        Map<String,File> insaneCuratorFilesXml = reportToTempFileXml(insaneCuratorReports);
+        Set<String> allCurators = new HashSet<String>();
+        allCurators.addAll(SanityReportUtils.getInsaneCreatorNames(report));
+        allCurators.addAll(SanityReportUtils.getInsaneUpdatorNames(report));
+
+        Map<String,SanityReport> insaneCreatorReports = SanityReportUtils.createPersonalizedReportsByCreator(report);
+        Map<String,File> insaneCreatorFiles = reportToTempFile(insaneCreatorReports, "created");
+        Map<String,File> insaneCreatorFilesXml = reportToTempFileXml(insaneCreatorReports, "created");
+
+        Map<String,SanityReport> insaneUpdatorReports = SanityReportUtils.createPersonalizedReportsByUpdator(report);
+        Map<String,File> insaneUpdatorFiles = reportToTempFile(insaneUpdatorReports, "updated");
+        Map<String,File> insaneUpdatorFilesXml = reportToTempFileXml(insaneUpdatorReports, "updated");
 
         String from = "intact-check@ebi.ac.uk";
 
         if (subjectPrefix == null) subjectPrefix = "";
 
         if (sanityConfig.isEnableUserMails()) {
-            for (String curatorName : insaneCuratorFiles.keySet()) {
+            for (String curatorName : allCurators) {
                 if (log.isDebugEnabled()) log.debug("Sending sanity check mail to curator: "+curatorName);
 
                 Curator curator = sanityConfig.getCurator(curatorName);
-                SanityReport curatorReport = insaneCuratorReports.get(curatorName);
-                File curatorReportFile = insaneCuratorFiles.get(curatorName);
-                File curatorReportFileXml = insaneCuratorFilesXml.get(curatorName);
+                SanityReport creatorReport = insaneCreatorReports.get(curatorName);
+                SanityReport updatorReport = insaneUpdatorReports.get(curatorName);
 
-                String message = reportToHtml(curatorReport);
+                Collection<File> curatorFiles = new ArrayList<File>();
 
-                String subject = subjectPrefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(curatorReport).size()+" errors";
+                File creatorReportFile = insaneCreatorFiles.get(curatorName);
+                if (creatorReportFile != null) curatorFiles.add(creatorReportFile);
+
+                File creatorReportFileXml = insaneCreatorFilesXml.get(curatorName);
+                if (creatorReportFileXml != null) curatorFiles.add(creatorReportFileXml);
+
+                File updatorReportFile = insaneUpdatorFiles.get(curatorName);
+                if (updatorReportFile != null) curatorFiles.add(updatorReportFile);
+
+                File updatorReportFileXml = insaneUpdatorFilesXml.get(curatorName);
+                if (updatorReportFileXml != null) curatorFiles.add(updatorReportFileXml);
+
+                String message = null;
+                if (!SanityReportUtils.getAllInsaneObject(creatorReport).isEmpty()) {
+                    message = reportToHtml(creatorReport);
+                } else {
+                    message = reportToHtml(updatorReport);
+                }
+
+                String subject = subjectPrefix+"Sanity Check ("+curatorName+") - "+SanityReportUtils.getAllInsaneObject(creatorReport).size()+" errors";
                 String recipient = curator.getEmail();
 
                 MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
-                mailSender.postMail(new String[] {recipient}, subject, message, from, curatorReportFile, curatorReportFileXml);
+                mailSender.postMail(new String[] {recipient}, subject, message, from, curatorFiles.toArray(new File[curatorFiles.size()]));
+            }
+        } else {
+            if (log.isInfoEnabled()) {
+                log.info("Mails to curators are disabled. These is the insane curator list: Created("+insaneCreatorReports.keySet()+"), Updated("+insaneUpdatorReports.keySet()+")");
             }
         }
 
@@ -91,11 +122,11 @@ public class SanityReportMailer {
 
             String[] recipients = adminEMails.toArray(new String[adminEMails.size()]);
 
-            Collection<File> fileAttachments = new ArrayList<File>(insaneCuratorFiles.values());
-            fileAttachments.add(reportToTempFile("admin", report));
-            fileAttachments.add(reportToTempFileXml("admin", report));
+            Collection<File> fileAttachments = new ArrayList<File>(insaneCreatorFiles.values());
+            fileAttachments.add(reportToTempFile("admin", report, "all"));
+            fileAttachments.add(reportToTempFileXml("admin", report, "all"));
 
-            File[] attachments = fileAttachments.toArray(new File[insaneCuratorFiles.values().size()]);
+            File[] attachments = fileAttachments.toArray(new File[insaneCreatorFiles.values().size()]);
 
             MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
             mailSender.postMail(recipients, subject, globalMessage, from, attachments);
@@ -109,8 +140,10 @@ public class SanityReportMailer {
         return writer.toString();
     }
 
-    protected File reportToTempFile(String name, SanityReport report) throws IOException {
-        File tempFile = File.createTempFile(name+"-", ".html");
+    protected File reportToTempFile(String name, SanityReport report, String suffix) throws IOException {
+        File tmpDir = new File(TMP_DIR);
+
+        File tempFile = new File(tmpDir, name+"-"+suffix+".html");
         tempFile.deleteOnExit();
 
         Writer writer = new FileWriter(tempFile);
@@ -121,8 +154,10 @@ public class SanityReportMailer {
         return tempFile;
     }
 
-     protected File reportToTempFileXml(String name, SanityReport report) throws IOException {
-        File tempFile = File.createTempFile(name+"-", ".xml");
+     protected File reportToTempFileXml(String name, SanityReport report, String suffix) throws IOException {
+        File tmpDir = new File(TMP_DIR);
+
+        File tempFile = new File(tmpDir, name+"-"+suffix+".xml");
         tempFile.deleteOnExit();
 
         Writer writer = new FileWriter(tempFile);
@@ -133,21 +168,21 @@ public class SanityReportMailer {
         return tempFile;
     }
 
-    protected Map<String,File> reportToTempFile(Map<String,SanityReport> insaneCuratorReports) throws IOException {
+    protected Map<String,File> reportToTempFile(Map<String,SanityReport> insaneCuratorReports, String suffix) throws IOException {
         Map<String,File> insaneCuratorFiles = new HashMap<String,File>(insaneCuratorReports.size());
 
         for (Map.Entry<String,SanityReport> entry : insaneCuratorReports.entrySet()) {
-            insaneCuratorFiles.put(entry.getKey(), reportToTempFile(entry.getKey(), entry.getValue()));
+            insaneCuratorFiles.put(entry.getKey(), reportToTempFile(entry.getKey(), entry.getValue(), suffix));
         }
 
         return insaneCuratorFiles;
     }
 
-    protected Map<String,File> reportToTempFileXml(Map<String,SanityReport> insaneCuratorReports) throws IOException {
+    protected Map<String,File> reportToTempFileXml(Map<String,SanityReport> insaneCuratorReports, String prefix) throws IOException {
         Map<String,File> insaneCuratorFilesXml = new HashMap<String,File>(insaneCuratorReports.size());
 
         for (Map.Entry<String,SanityReport> entry : insaneCuratorReports.entrySet()) {
-            insaneCuratorFilesXml.put(entry.getKey(), reportToTempFileXml(entry.getKey(), entry.getValue()));
+            insaneCuratorFilesXml.put(entry.getKey(), reportToTempFileXml(entry.getKey(), entry.getValue(), prefix));
         }
 
         return insaneCuratorFilesXml;
