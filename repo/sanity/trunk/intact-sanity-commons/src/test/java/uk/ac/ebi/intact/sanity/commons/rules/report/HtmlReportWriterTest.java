@@ -67,7 +67,7 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
         Writer writer = new StringWriter();
 
         ReportWriter reportWriter = new HtmlReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
+        reportWriter.write(getDefaultSanityReport(), new CreatorReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 

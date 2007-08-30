@@ -35,8 +35,11 @@
           <xs:element name="ac" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="shortlabel" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="created" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
           <xs:element name="updated" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="creator" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="updator" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="owner" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="objclass" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element minOccurs="1" maxOccurs="unbounded" ref="field"/>
       </xs:sequence>

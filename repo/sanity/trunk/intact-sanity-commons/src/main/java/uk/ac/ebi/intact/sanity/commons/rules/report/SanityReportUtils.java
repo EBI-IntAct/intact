@@ -20,10 +20,10 @@ import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityResult;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -122,7 +122,7 @@ public class SanityReportUtils {
 
         for (String insaneUpdatorName : insaneUpdatorNames) {
             SanityReport updatorReport = cloneSanityReport(report);
-            filterSanityReport(updatorReport, new UserReportFilter(insaneUpdatorName));
+            filterSanityReport(updatorReport, new CreatorReportFilter(insaneUpdatorName));
 
             updatorReports.put(insaneUpdatorName, updatorReport);
         }

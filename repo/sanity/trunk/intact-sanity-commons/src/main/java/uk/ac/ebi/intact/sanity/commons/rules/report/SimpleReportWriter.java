@@ -89,7 +89,7 @@ public class SimpleReportWriter extends ReportWriter {
         sb.append(NEW_LINE);
         sb.append(separator(levelChar)).append(NEW_LINE);
 
-        sb.append("AC").append("\t").append("Label").append("\t").append("When").append("\t").append("User");
+        sb.append("AC").append("\t").append("Label").append("\t").append("Created").append("\t").append("Created by").append("Updated").append("\t").append("Updated by").append("\t").append("Owner");
 
         for (Field field : sanityResult.getInsaneObject().iterator().next().getField()) {
             sb.append("\t").append(field.getName());
@@ -118,9 +118,17 @@ public class SimpleReportWriter extends ReportWriter {
             }
 
             sb.append("\t");
+            sb.append(SimpleDateFormat.getInstance().format(insaneObject.getCreated().toGregorianCalendar().getTime()));
+            sb.append("\t");
+            sb.append(insaneObject.getCreator());
+
+            sb.append("\t");
             sb.append(SimpleDateFormat.getInstance().format(insaneObject.getUpdated().toGregorianCalendar().getTime()));
             sb.append("\t");
             sb.append(insaneObject.getUpdator());
+
+            sb.append("\t");
+            sb.append(insaneObject.getOwner());
 
             for (Field field : insaneObject.getField()) {
                 sb.append("\t");

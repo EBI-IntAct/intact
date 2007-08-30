@@ -45,7 +45,7 @@ public class SimpleReportWriterTest extends AbstractReportTestCase {
         Writer writer = new StringWriter();
 
         SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport(), new UserReportFilter("anne"));
+        reportWriter.write(getDefaultSanityReport(), new CreatorReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
@@ -57,7 +57,7 @@ public class SimpleReportWriterTest extends AbstractReportTestCase {
         Writer writer = new StringWriter();
 
         SimpleReportWriter reportWriter = new SimpleReportWriter(writer);
-        reportWriter.write(getAlternativeSanityReport(), new UserReportFilter("anne"));
+        reportWriter.write(getAlternativeSanityReport(), new CreatorReportFilter("anne"));
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 

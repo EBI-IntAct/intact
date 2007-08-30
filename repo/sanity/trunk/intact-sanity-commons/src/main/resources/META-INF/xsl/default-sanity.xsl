@@ -73,8 +73,11 @@
                                         <th>AC</th>
                                         <th>Label</th>
                                         <th>Type</th>
-                                        <th>When</th>
-                                        <th>User</th>
+                                        <th>Created</th>
+                                        <th>Created by</th>
+                                        <th>Updated</th>
+                                        <th>Updated by</th>
+                                        <th>Owner</th>
                                         <xsl:for-each select="insane-object[1]/field">
                                             <th>
                                                 <xsl:value-of select="name"/>
@@ -104,10 +107,19 @@
                                                 <xsl:value-of select="objclass"/>
                                             </td>
                                             <td>
+                                                <xsl:value-of select="created"/>
+                                            </td>
+                                            <td>
+                                                <xsl:value-of select="creator"/>
+                                            </td>
+                                            <td>
                                                 <xsl:value-of select="updated"/>
                                             </td>
                                             <td>
                                                 <xsl:value-of select="updator"/>
+                                            </td>
+                                            <td>
+                                                <xsl:value-of select="owner"/>
                                             </td>
                                             <xsl:for-each select="field">
                                                 <td>

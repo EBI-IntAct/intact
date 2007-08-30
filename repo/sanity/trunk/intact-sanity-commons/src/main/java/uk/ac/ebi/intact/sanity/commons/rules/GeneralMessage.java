@@ -5,13 +5,17 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.BasicObject;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.InsaneObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -130,21 +134,35 @@ public class GeneralMessage {
             insaneObject.setShortlabel(((AnnotatedObject)intactObject).getShortLabel());
         }
 
-        if (intactObject.getUpdated() != null) {
-            GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
-            calendar.setTime(intactObject.getUpdated());
-            
-            try {
-                insaneObject.setUpdated(DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar));
-            } catch (DatatypeConfigurationException e) {
-                throw new SanityRuleException("Problem converting to InsaneObject date: "+insaneObject.getUpdated());
-            }
+        if (intactObject instanceof BasicObject) {
+            insaneObject.setOwner(((BasicObject)intactObject).getOwner().getShortLabel());
+        } else {
+            insaneObject.setOwner(IntactContext.getCurrentInstance().getInstitution().getShortLabel());
         }
 
+        if (intactObject.getCreated() != null) {
+            insaneObject.setCreated(toXmlGregorianCalendar(intactObject.getCreated()));
+        }
 
+        if (intactObject.getUpdated() != null) {
+            insaneObject.setUpdated(toXmlGregorianCalendar(intactObject.getUpdated()));
+        }
+
+        insaneObject.setCreator(intactObject.getCreator());
         insaneObject.setUpdator(intactObject.getUpdator());
         insaneObject.setObjclass(intactObject.getClass().getSimpleName().replaceAll("Impl", ""));
 
         return insaneObject;
+    }
+
+    protected static XMLGregorianCalendar toXmlGregorianCalendar(Date date) {
+        GregorianCalendar calendar = (GregorianCalendar) GregorianCalendar.getInstance();
+        calendar.setTime(date);
+
+        try {
+            return DatatypeFactory.newInstance().newXMLGregorianCalendar(calendar);
+        } catch (DatatypeConfigurationException e) {
+            throw new SanityRuleException("Problem converting to InsaneObject date: "+date);
+        }
     }
 }
