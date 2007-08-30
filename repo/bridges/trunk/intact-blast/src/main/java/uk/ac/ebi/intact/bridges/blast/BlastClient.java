@@ -24,6 +24,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -45,9 +46,9 @@ public class BlastClient {
 
 	private double			threshold;
 	private String			tmpDir;
-	private List<String>	againstUniprotAc;
+	private HashSet<String>	againstUniprotAc;
 	// checks the format of the accession number
-	static String			uniprotTermExpr	= "\\w{6,6}";
+	static String uniprotTermExpr = "\\w{6,6}";
 
 	/**
 	 * Constructor
@@ -120,8 +121,8 @@ public class BlastClient {
 	 * @return a list of strings, where each string has the format
 	 *         uniprotAc1,uniprotAC_align1, uniprotAC_align2,...
 	 */
-	public List<String> blast(List<String> uniprotAc1, List<String> uniprotAc2) {
-		if (uniprotAc1 == null || uniprotAc2 == null) {
+	public List<String> blast(HashSet<String> uniprotAc1, HashSet<String> uniprotAc2) {
+		if (uniprotAc1 == null || uniprotAc2 == null){
 			new BlastClientException(new NullPointerException("the uniprotAc lists must not be null!"));
 		}
 		List<String> alignments = new ArrayList<String>();
@@ -156,14 +157,13 @@ public class BlastClient {
 	 * @param writer
 	 */
 	public void blastUniprot(String uniprotAc, Writer writer) {
-		if (!properFormat(uniprotAc)) {
-			new BlastClientException(new IllegalArgumentException("uniprotAc not in the uniprot format: >" + uniprotAc
-					+ "<"));
+		if (!properFormat(uniprotAc)){
+			new BlastClientException(new IllegalArgumentException("uniprotAc not in the uniprot format: >" + uniprotAc + "<"));
 		}
-		if (writer == null) {
+		if (writer == null){
 			new BlastClientException(new NullPointerException("writer is null!"));
 		}
-
+		
 		InputParams params = new InputParams();
 
 		params.setProgram("blastp");
@@ -192,9 +192,9 @@ public class BlastClient {
 			new BlastClientException(e);
 		}
 	}
-
+	
 	private boolean properFormat(String uniprotAc) {
-		if (Pattern.matches(uniprotTermExpr, uniprotAc)) {
+		if (Pattern.matches(uniprotTermExpr, uniprotAc)){
 			return true;
 		}
 		return false;
