@@ -30,8 +30,8 @@ import java.util.Map;
 public class SanityReportUtilsTest extends AbstractReportTestCase {
 
     @Test
-    public void createPersonalizedReports() throws Exception {
-        Map<String, SanityReport> personalizedReports = SanityReportUtils.createPersonalizedReports(getDefaultSanityReport());
+    public void createPersonalizedReportsByUpdator() throws Exception {
+        Map<String, SanityReport> personalizedReports = SanityReportUtils.createPersonalizedReportsByUpdator(getDefaultSanityReport());
 
         Assert.assertEquals(2, personalizedReports.size());
         Assert.assertEquals(1, personalizedReports.get("anne").getSanityResult().size());
