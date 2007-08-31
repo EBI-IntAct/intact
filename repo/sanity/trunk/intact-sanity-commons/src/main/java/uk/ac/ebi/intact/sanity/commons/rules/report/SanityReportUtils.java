@@ -104,7 +104,7 @@ public class SanityReportUtils {
 
         for (SanityResult result : report.getSanityResult()) {
             for (InsaneObject insaneObject : result.getInsaneObject()) {
-                insaneCurators.add(insaneObject.getUpdator());
+                insaneCurators.add(insaneObject.getUpdator().trim());
             }
         }
 
@@ -112,17 +112,53 @@ public class SanityReportUtils {
     }
 
     /**
+     * Gets the names of the creators present in the insane objects
+     * @param report the report to use
+     * @return names of the insane creators
+     */
+    public static Set<String> getInsaneCreatorNames(SanityReport report) {
+        Set<String> insaneCurators = new HashSet<String>();
+
+        for (SanityResult result : report.getSanityResult()) {
+            for (InsaneObject insaneObject : result.getInsaneObject()) {
+                insaneCurators.add(insaneObject.getUpdator().trim());
+            }
+        }
+
+        return insaneCurators;
+    }
+
+    /**
+     * Creates a Map with the SanityReport for each insane creator
+     * @param report the original report
+     * @return the map with the reports per updator
+     */
+    public static Map<String, SanityReport> createPersonalizedReportsByCreator(SanityReport report) {
+        Map<String, SanityReport> updatorReports = new HashMap<String, SanityReport>();
+        Collection<String> insaneUpdatorNames = getInsaneCreatorNames(report);
+
+        for (String insaneUpdatorName : insaneUpdatorNames) {
+            SanityReport updatorReport = cloneSanityReport(report);
+            filterSanityReport(updatorReport, new CreatorReportFilter(insaneUpdatorName));
+
+            updatorReports.put(insaneUpdatorName, updatorReport);
+        }
+
+        return updatorReports;
+    }
+
+    /**
      * Creates a Map with the SanityReport for each insane updator
      * @param report the original report
      * @return the map with the reports per updator
      */
-    public static Map<String, SanityReport> createPersonalizedReports(SanityReport report) {
+    public static Map<String, SanityReport> createPersonalizedReportsByUpdator(SanityReport report) {
         Map<String, SanityReport> updatorReports = new HashMap<String, SanityReport>();
         Collection<String> insaneUpdatorNames = getInsaneUpdatorNames(report);
 
         for (String insaneUpdatorName : insaneUpdatorNames) {
             SanityReport updatorReport = cloneSanityReport(report);
-            filterSanityReport(updatorReport, new CreatorReportFilter(insaneUpdatorName));
+            filterSanityReport(updatorReport, new UpdatorReportFilter(insaneUpdatorName));
 
             updatorReports.put(insaneUpdatorName, updatorReport);
         }

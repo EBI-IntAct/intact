@@ -23,18 +23,18 @@ import uk.ac.ebi.intact.sanity.commons.InsaneObject;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class UserReportFilter implements ReportFilter {
+public class UpdatorReportFilter implements ReportFilter {
 
     private String userName;
 
-    public UserReportFilter(String userName) {
+    public UpdatorReportFilter(String userName) {
         this.userName = userName;
     }
 
     public boolean accept(InsaneObject insaneObject) {
         if (insaneObject != null) {
-            String updator = insaneObject.getUpdator();
-            return updator.equalsIgnoreCase(userName);
+            String creator = insaneObject.getUpdator();
+            return creator.equalsIgnoreCase(userName);
         }
 
         return true;
