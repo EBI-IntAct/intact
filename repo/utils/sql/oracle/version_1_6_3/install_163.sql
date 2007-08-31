@@ -58,7 +58,7 @@ PROMPT
 
 
 PROMPT *********************************************************************************/
-PROMPT "Update schema version"
+PROMPT "Update schema version to 1.6.3"
 PROMPT
 UPDATE ia_db_info
 set value = '1.6.3'
