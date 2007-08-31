@@ -132,7 +132,7 @@ ALTER TABLE IA_institution2Annot
 set term off
     COMMENT ON TABLE IA_institution2Annot IS
     'IA_Pub2Annot. Link table from Annotation to Publication.';
-    COMMENT ON COLUMN IA_institution2Annot.publication_ac IS
+    COMMENT ON COLUMN IA_institution2Annot.institution_ac IS
     'Refers to a Publication to which the Annotation is linked.';
     COMMENT ON COLUMN IA_institution2Annot.annotation_ac IS
     'Refers to the annotation object linked to the Publication.';
