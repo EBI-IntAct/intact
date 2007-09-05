@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.bridges.blast;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -44,11 +45,10 @@ import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
  */
 public class BlastClient {
 
-	private double			threshold;
-	private String			tmpDir;
+	private double		threshold;
 	private Set<String>	againstUniprotAc;
 	// checks the format of the accession number
-	static String uniprotTermExpr = "\\w{6,6}";
+	static String		uniprotTermExpr	= "\\w{6,6}";
 
 	/**
 	 * Constructor
@@ -58,10 +58,11 @@ public class BlastClient {
 	 */
 	public BlastClient(double threshold) {
 		this.threshold = threshold;
-		this.tmpDir = "E:\\tmp\\";
 	}
 
 	/**
+	 * the result is of the form of
+	 * uniprotAcAligned,uniprotAcAlignment,uniprotAcAlignment2 ...
 	 * 
 	 * @param reader
 	 *            where the blast output is
@@ -81,7 +82,7 @@ public class BlastClient {
 					if (Pattern.matches("^UNIPROT.*\\w{6,6}.*", line)) {
 						String[] strs = line.split("\\s+");
 						if (ac1.equals(strs[1])
-								|| (isUniprotAcInHighConfidenceSet(strs[1]) && isBelowThreshold(strs[strs.length - 2]))) {
+								|| (isUniprotAcInAgainstSet(strs[1]) && isBelowThreshold(strs[strs.length - 2]))) {
 							processedAlign = processedAlign.concat(strs[1] + ",");
 						}
 					}
@@ -96,7 +97,7 @@ public class BlastClient {
 		return processedAlign;
 	}
 
-	private boolean isUniprotAcInHighConfidenceSet(String ac) {
+	private boolean isUniprotAcInAgainstSet(String ac) {
 		if (againstUniprotAc.contains(ac)) {
 			return true;
 		}
@@ -122,20 +123,20 @@ public class BlastClient {
 	 *         uniprotAc1,uniprotAC_align1, uniprotAC_align2,...
 	 */
 	public List<String> blast(Set<String> uniprotAc1, Set<String> uniprotAc2) {
-		if (uniprotAc1 == null || uniprotAc2 == null){
+		if (uniprotAc1 == null || uniprotAc2 == null) {
 			new BlastClientException(new NullPointerException("the uniprotAc lists must not be null!"));
 		}
 		List<String> alignments = new ArrayList<String>();
 		this.againstUniprotAc = uniprotAc2;
 		for (String ac1 : uniprotAc1) {
-			String filePath = tmpDir + "blastOut.txt";
 			try {
+				File tmpFile = File.createTempFile("blastOutput" + ac1 + ".", "txt");
 				// blasting the uniprotAc against uniprot
-				FileWriter fw = new FileWriter(filePath);
+				FileWriter fw = new FileWriter(tmpFile);
 				blastUniprot(ac1, fw);
 
 				// processes the results
-				FileReader fr = new FileReader(filePath);
+				FileReader fr = new FileReader(tmpFile);
 				String align = processResults(ac1, fr);
 				alignments.add(align);
 			} catch (FileNotFoundException e) {
@@ -143,7 +144,6 @@ public class BlastClient {
 			} catch (IOException e) {
 				new BlastClientException(e);
 			}
-
 		}
 
 		return alignments;
@@ -157,13 +157,14 @@ public class BlastClient {
 	 * @param writer
 	 */
 	public void blastUniprot(String uniprotAc, Writer writer) {
-		if (!properFormat(uniprotAc)){
-			new BlastClientException(new IllegalArgumentException("uniprotAc not in the uniprot format: >" + uniprotAc + "<"));
+		if (!properFormat(uniprotAc)) {
+			new BlastClientException(new IllegalArgumentException("uniprotAc not in the uniprot format: >" + uniprotAc
+					+ "<"));
 		}
-		if (writer == null){
+		if (writer == null) {
 			new BlastClientException(new NullPointerException("writer is null!"));
 		}
-		
+
 		InputParams params = new InputParams();
 
 		params.setProgram("blastp");
@@ -192,9 +193,9 @@ public class BlastClient {
 			new BlastClientException(e);
 		}
 	}
-	
+
 	private boolean properFormat(String uniprotAc) {
-		if (Pattern.matches(uniprotTermExpr, uniprotAc)){
+		if (Pattern.matches(uniprotTermExpr, uniprotAc)) {
 			return true;
 		}
 		return false;
@@ -203,7 +204,7 @@ public class BlastClient {
 	private void printRawResults(String result, Writer w) {
 		try {
 			w.append(result);
-			w.flush();
+			w.close();
 		} catch (IOException e) {
 			new BlastClientException(e);
 		}
