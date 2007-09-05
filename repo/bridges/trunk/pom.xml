@@ -12,7 +12,7 @@
     <groupId>uk.ac.ebi.intact.bridges</groupId>
     <artifactId>bridges-master</artifactId>
     <packaging>pom</packaging>
-    <version>2.0-beta-6-SNAPSHOT</version>
+    <version>2.0-beta-7</version>
 
     <name>IntAct Bridges</name>
     <description>Bridges Master POM</description>
@@ -23,9 +23,9 @@
     </properties-->
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/trunk</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/tags/bridges-master-2.0-beta-8</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/tags/bridges-master-2.0-beta-8</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/tags/bridges-master-2.0-beta-8</url>
     </scm>
 
     <modules>
