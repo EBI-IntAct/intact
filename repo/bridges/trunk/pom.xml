@@ -18,9 +18,9 @@
     <description>Bridges Master POM</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/bridges</url>
 
-    <properties>
+    <!--properties>
         <currentVersion>${version}</currentVersion>
-    </properties>
+    </properties-->
 
     <scm>
         <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/trunk</connection>
