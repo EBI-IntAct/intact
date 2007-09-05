@@ -447,7 +447,8 @@ public class AutocompDispatchAction extends AbstractEditorDispatchAction {
         Annotation pubYearAnnot;
 
         CvObjectDao<CvTopic> cvObjectDao = DaoProvider.getDaoFactory().getCvObjectDao(CvTopic.class);
-        CvTopic publicationYear = cvObjectDao.getByShortLabel(CvTopic.PUBLICATION_YEAR );
+        //todo: for next intact-core release replace by CvTopic.PUBLICATION_PSI_MI_REF
+        CvTopic publicationYear = cvObjectDao.getByPsiMiRef("MI:0886");
         if ( publicationYear == null ) {
             System.err.println( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR +
                                 ")... no author list will be attached/updated to the experiment." );
