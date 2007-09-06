@@ -1,0 +1,24 @@
+VERSION 1.6.3
+
+FIX
+* Add missing columns in the ia_component_audit table: shorltabel and fullname
+* Rebuild the corresponding audit trigger
+
+REQUEST
+* add new tables required by new component features:
+      ia_component2exp_preps   : indirection table that allows a component to have 0..n experimental preparations
+      ia_component2part_detect : indirection table that allows a component to have 0..n participant detection methods
+
+* add new tables required by the institution becoming an annotated object
+      ia_institution_xref      : xrefs of institution
+      ia_institution_alias     : aliases of institution
+      ia_institution2annot     : annotations of institution
+
+* update ia_institution so it fits the annotated object requirements
+
+TECHNICAL CHANGES
+    * Updated 1 existing audit table
+    * Added 5 new tables
+    * Added 5 new audit tables
+    * Added 5 new audit triggers
+    * Deleted deprecated column in ia_component (and audit table): IDENTMETHOD_AC 
