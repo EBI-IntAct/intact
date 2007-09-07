@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
@@ -95,7 +96,7 @@ public class XrefUpdaterUtils {
             // that can be IntactCrossReferenceFilter.getFilteredDatabases or an other map associating the name of
             // a database in uniprot to it's psi-mi identifier in IntAct.
             // If the database is not in the given map, we don't add the xref to the intact protein.
-            
+
 //            } else {
 //                if ( log.isDebugEnabled() ) {
 //                    log.debug( "No mapping found for CvDatabase("+db+"), searching by database name instead of MI ref..." );
@@ -115,6 +116,9 @@ public class XrefUpdaterUtils {
             }else{
                 log.info("We are not copying across xref to " + db);
             }
+
+            //UPDATE THE UNIPROT XREF (SECONDARY AND PRIMARY ID)
+            XrefUpdaterUtils.updateUniprotXrefs( protein, uniprotProtein );
 
         }
     }
@@ -227,19 +231,22 @@ public class XrefUpdaterUtils {
         }
 
         // add the xref to the AnnotatedObject
+        xref.setParent(current);
         current.addXref( xref );
 
         // That test is done to avoid to record in the database an Xref
         // which is already linked to that AnnotatedObject.
         if ( xref.getParentAc() == current.getAc() ) {
             try {
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().persist( xref );
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao().saveOrUpdate( xref );
                 log.debug( "CREATED: [" + xref + "]" );
             } catch ( Exception e_xref ) {
                 log.error( "Error while creating an Xref for protein " + current, e_xref );
                 return false;
             }
         }
+        AnnotatedObjectDao annotatedObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao();
+        annotatedObjectDao.saveOrUpdate(current);
 
         return true;
     }
@@ -248,7 +255,7 @@ public class XrefUpdaterUtils {
 
         CvDatabase uniprot = CvHelper.getDatabaseByMi( CvDatabase.UNIPROT_MI_REF );
         CvXrefQualifier identity = CvHelper.getQualifierByMi( CvXrefQualifier.IDENTITY_MI_REF );
-        CvXrefQualifier secondaryAc = CvHelper.getQualifierByMi( CvXrefQualifier.SECONDARY_AC_MI_REF );
+        CvXrefQualifier secondaryAcQual = CvHelper.getQualifierByMi( CvXrefQualifier.SECONDARY_AC_MI_REF );
         Institution owner = CvHelper.getInstitution();
 
         String dbRelease = uniprotProtein.getReleaseVersion();
@@ -260,8 +267,11 @@ public class XrefUpdaterUtils {
         ux.add( new InteractorXref( owner, uniprot, uniprotProtein.getPrimaryAc(), null, dbRelease, identity ) );
 
         log.debug( "Found " + uniprotProtein.getSecondaryAcs().size() + " secondary ACs" );
-        for ( String ac : uniprotProtein.getSecondaryAcs() ) {
-            ux.add( new InteractorXref( owner, uniprot, ac, null, dbRelease, secondaryAc ) );
+        for ( String secondaryAc : uniprotProtein.getSecondaryAcs() ) {
+            InteractorXref interactorXref =   new InteractorXref( owner, uniprot, secondaryAc, null, dbRelease, secondaryAcQual );
+            interactorXref.setParent(protein);
+            ux.add( interactorXref );
+
         }
 
         if ( log.isDebugEnabled() ) {
