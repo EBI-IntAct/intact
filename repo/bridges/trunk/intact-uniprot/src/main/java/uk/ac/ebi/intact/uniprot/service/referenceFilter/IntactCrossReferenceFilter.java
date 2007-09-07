@@ -42,7 +42,7 @@ public class IntactCrossReferenceFilter implements CrossReferenceFilter {
         db2mi.put( format( "pdb" ), "MI:0460");
         db2mi.put( format( "sgd" ), "MI:0484");
         db2mi.put( format( "rgd"), "MI:0483");
-
+        db2mi.put( format("uniprotkb"), "MI:0486");
     }
 
     private String format( String s ) {
