@@ -10,9 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
+import uk.ac.ebi.intact.persistence.dao.*;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
@@ -117,10 +116,59 @@ public class XrefUpdaterUtils {
                 log.info("We are not copying across xref to " + db);
             }
 
-            //UPDATE THE UNIPROT XREF (SECONDARY AND PRIMARY ID)
-            XrefUpdaterUtils.updateUniprotXrefs( protein, uniprotProtein );
+
+
+
 
         }
+        //UPDATE THE UNIPROT XREF (SECONDARY AND PRIMARY ID)
+        XrefUpdaterUtils.updateUniprotXrefs( protein, uniprotProtein );
+
+        // CONVERT ALL THE uniprotProtein crossReferences to intact protein InteractorXref and put them in the convertedXrefs
+        // collection.
+        CvObjectDao<CvDatabase> dbDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class);
+        Collection<Xref> convertedXrefs = new ArrayList<Xref>();
+        for(UniprotXref uniprotXref : uniprotProtein.getCrossReferences()){
+            String db = uniprotXref.getDatabase();
+            String mi = databaseName2mi.get( db.toLowerCase() );
+            CvDatabase cvDatabase = null;
+            if ( mi != null ) {
+                cvDatabase = dbDao.getByPsiMiRef( mi );
+
+                if( cvDatabase == null ) {
+                    log.error( "Could not find CvDatabase by label: " + db );
+                }
+            }
+            convertedXrefs.add(XrefUpdaterUtils.convert(uniprotXref, cvDatabase));
+        }
+
+        // CHECK THAT ALL INTACT XREF STILL EXIST IN UNIPROT, OTHERWISE DELETE THEM
+        XrefDao xrefDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getXrefDao();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        Collection<InteractorXref> xrefs = protein.getXrefs();
+        for (Iterator<InteractorXref> iterator = xrefs.iterator(); iterator.hasNext();) {
+            InteractorXref xref =  iterator.next();
+
+            // Dont's check uniprot xref as those one have been done earlier and as anyway, the uniprot Xref won't have
+            // uniprot xref as intact protein does (the uniprot xref of the intact protein correspond to the primary and
+            // secondary ac of the proteins).
+            CvDatabase cvDb = xref.getCvDatabase();
+            CvObjectXref cvDbMiXref = CvObjectUtils.getPsiMiIdentityXref(cvDb);
+            String cvDbMi = null;
+            if(cvDbMiXref != null){
+                cvDbMi = cvDbMiXref.getPrimaryId();
+
+            }
+            if(CvDatabase.UNIPROT_MI_REF.equals(cvDbMi)){
+                continue;
+            }
+            // If the protein xref does not exist in the uniprot entry anymore delete it.
+            if(!convertedXrefs.contains(xref)){
+                iterator.remove();
+                xrefDao.delete(xref);
+            }
+        }
+        proteinDao.saveOrUpdate((ProteinImpl) protein);
     }
 
     /**
