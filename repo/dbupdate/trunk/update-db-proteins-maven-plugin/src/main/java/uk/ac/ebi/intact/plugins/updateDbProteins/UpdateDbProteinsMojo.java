@@ -113,8 +113,8 @@ public class UpdateDbProteinsMojo
         proteinCount = proteinDao.countAll();
         int iterationCount = proteinCount/CHUNK_SIZE;
 
-        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE P88946");
-        UniprotServiceResult uniprotServResult = service.retrieve("P88946");
+        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE Q8GWA9");
+        UniprotServiceResult uniprotServResult = service.retrieve("Q8GWA9");
         System.out.println("uniprotServResult.getProteins().size() = " + uniprotServResult.getProteins().size());
         System.out.println("uniprotServResult.getErrors().size() = " + uniprotServResult.getErrors().size());
         Map<String,String> errorsTest = uniprotServResult.getErrors();
@@ -140,14 +140,14 @@ public class UpdateDbProteinsMojo
         }
         System.out.println(errorTestLog);
 
-        System.out.println("P88946 UPDATED\n\n\n\n\n\n\n\n");
+        System.out.println("Q8GWA9 UPDATED\n\n\n\n\n\n\n\n");
         System.out.println("BEFORE ASSERT");
+        commitTransaction();
 //        int x = 1;
 //        if(x == 1){
 //            return;
 //        }
 
-        commitTransaction();
 
 
         for(int i=0; i<=iterationCount ; i++){
@@ -339,6 +339,8 @@ public class UpdateDbProteinsMojo
 
     public boolean isSpliceVariant(Protein protein){
         if(spliceVariantAcs.contains(protein.getAc())){
+            return true;
+        }else{
             Collection<InteractorXref> xrefs = protein.getXrefs();
             for(InteractorXref xref : xrefs){
                 CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier());
@@ -358,3 +360,4 @@ public class UpdateDbProteinsMojo
 
 
 }
+
