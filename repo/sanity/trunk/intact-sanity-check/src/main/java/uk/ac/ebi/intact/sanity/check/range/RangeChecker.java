@@ -151,7 +151,7 @@ public class RangeChecker
 
     Institution owner = new Institution( "EBI" );
 
-    MessageSender messageSender;
+//    MessageSender messageSender;
 
     /**
      * Unique instance of SanityCheckerHelper.
@@ -160,12 +160,12 @@ public class RangeChecker
 
     public RangeChecker( SanityCheckConfig sanityConfig )
     {
-        this.messageSender = new MessageSender(sanityConfig);
+//        this.messageSender = new MessageSender(sanityConfig);
     }
 
     public RangeChecker( MessageSender messageSender )
     {
-        this.messageSender = messageSender;
+//        this.messageSender = messageSender;
     }
 
     /**
@@ -259,12 +259,12 @@ public class RangeChecker
             e.printStackTrace();
         }
 
-        try {
-            messageSender.postEmails( "RANGE CHECKER" );
-
-        } catch ( MessagingException e ) {
-            System.out.println( "We failed to send reports by email. They were saved in local files (check *.report)." );
-        }
+//        try {
+//            messageSender.postEmails( "RANGE CHECKER" );
+//
+//        } catch ( MessagingException e ) {
+//            System.out.println( "We failed to send reports by email. They were saved in local files (check *.report)." );
+//        }
     }
 
     /**
@@ -429,7 +429,7 @@ public class RangeChecker
 
                             SanityCheckerHelper sch = getCheckerHelper( );
                             RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
-                            messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M, rangeBean );
+//                            messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_SUPPRESSING_THE_M, rangeBean );
 
                             mSuppCount++;
                             mSuppChangeReport.append( "\n\nProtein Ac: " ).append( polymer.getAc() );
@@ -475,7 +475,7 @@ public class RangeChecker
 
                                 SanityCheckerHelper sch = getCheckerHelper( );
                                 RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
-                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M, rangeBean );
+//                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_SAVED_BY_ADDING_THE_M, rangeBean );
 
                                 mAddedCount++;
 
@@ -513,7 +513,7 @@ public class RangeChecker
 
                                 SanityCheckerHelper sch = getCheckerHelper();
                                 RangeBean rangeBean = sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
-                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ, rangeBean );
+//                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ, rangeBean );
 
                                 notEqualReport.append( "\n\nProtein Ac: " ).append( polymer.getAc() );
                                 notEqualReport.append( "\tRange Ac:" ).append( range.getAc() );
