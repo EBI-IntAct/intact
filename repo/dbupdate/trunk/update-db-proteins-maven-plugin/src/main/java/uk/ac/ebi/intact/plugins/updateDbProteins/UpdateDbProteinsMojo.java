@@ -113,8 +113,8 @@ public class UpdateDbProteinsMojo
         proteinCount = proteinDao.countAll();
         int iterationCount = proteinCount/CHUNK_SIZE;
 
-        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE Q8GWA9");
-        UniprotServiceResult uniprotServResult = service.retrieve("Q8GWA9");
+        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE P0A6T1");
+        UniprotServiceResult uniprotServResult = service.retrieve("P0A6T1");
         System.out.println("uniprotServResult.getProteins().size() = " + uniprotServResult.getProteins().size());
         System.out.println("uniprotServResult.getErrors().size() = " + uniprotServResult.getErrors().size());
         Map<String,String> errorsTest = uniprotServResult.getErrors();
@@ -140,13 +140,13 @@ public class UpdateDbProteinsMojo
         }
         System.out.println(errorTestLog);
 
-        System.out.println("Q8GWA9 UPDATED\n\n\n\n\n\n\n\n");
+        System.out.println("P0A6T1 UPDATED\n\n\n\n\n\n\n\n");
         System.out.println("BEFORE ASSERT");
         commitTransaction();
-//        int x = 1;
-//        if(x == 1){
-//            return;
-//        }
+        int x = 1;
+        if(x == 1){
+            return;
+        }
 
 
 
@@ -343,10 +343,12 @@ public class UpdateDbProteinsMojo
         }else{
             Collection<InteractorXref> xrefs = protein.getXrefs();
             for(InteractorXref xref : xrefs){
-                CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier());
-                if(qualifierIdentity != null && CvXrefQualifier.ISOFORM_PARENT_MI_REF.equals(qualifierIdentity.getPrimaryId())){
-                    spliceVariantAcs.add(protein.getAc());
-                    return true;
+                if(xref.getCvXrefQualifier() != null){
+                    CvObjectXref qualifierIdentity = CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier());
+                    if(qualifierIdentity != null && CvXrefQualifier.ISOFORM_PARENT_MI_REF.equals(qualifierIdentity.getPrimaryId())){
+                        spliceVariantAcs.add(protein.getAc());
+                        return true;
+                    }
                 }
             }
         }
