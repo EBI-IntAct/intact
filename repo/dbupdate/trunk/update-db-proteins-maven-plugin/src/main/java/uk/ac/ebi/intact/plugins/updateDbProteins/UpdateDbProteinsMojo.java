@@ -143,10 +143,10 @@ public class UpdateDbProteinsMojo
         System.out.println("P0A6T1 UPDATED\n\n\n\n\n\n\n\n");
         System.out.println("BEFORE ASSERT");
         commitTransaction();
-        int x = 1;
-        if(x == 1){
-            return;
-        }
+//        int x = 1;
+//        if(x == 1){
+//            return;
+//        }
 
 
 
