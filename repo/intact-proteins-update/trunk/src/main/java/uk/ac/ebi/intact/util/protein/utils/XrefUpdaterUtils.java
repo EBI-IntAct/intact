@@ -139,7 +139,11 @@ public class XrefUpdaterUtils {
                     log.error( "Could not find CvDatabase by label: " + db );
                 }
             }
-            convertedXrefs.add(XrefUpdaterUtils.convert(uniprotXref, cvDatabase));
+            if(cvDatabase!=null){
+                convertedXrefs.add(XrefUpdaterUtils.convert(uniprotXref, cvDatabase));
+            }else{
+                log.info("cvDatabase " + db + " could not be found, the uniprot crossRef won't be converted to intact xref");
+            }
         }
 
         // CHECK THAT ALL INTACT XREF STILL EXIST IN UNIPROT, OTHERWISE DELETE THEM
