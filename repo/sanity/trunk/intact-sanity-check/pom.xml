@@ -15,6 +15,16 @@
 
     <name>IntAct Sanity :: Sanity Check</name>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>uk.ac.ebi.intact.plugins</groupId>
+                <artifactId>hibernateconfig-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+
     <dependencies>
         <!-- delete this one -->
         <dependency>
