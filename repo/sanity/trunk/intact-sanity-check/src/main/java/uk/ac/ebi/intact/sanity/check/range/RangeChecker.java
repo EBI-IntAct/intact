@@ -6,9 +6,11 @@ in the root directory of this distribution.
 package uk.ac.ebi.intact.sanity.check.range;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 import uk.ac.ebi.intact.sanity.check.MessageSender;
 import uk.ac.ebi.intact.sanity.check.ReportTopic;
 import uk.ac.ebi.intact.sanity.check.SanityCheckerHelper;
@@ -158,6 +160,10 @@ public class RangeChecker
      */
     private SanityCheckerHelper sch = null;
 
+    public RangeChecker(){
+
+    }
+
     public RangeChecker( SanityCheckConfig sanityConfig )
     {
 //        this.messageSender = new MessageSender(sanityConfig);
@@ -183,11 +189,11 @@ public class RangeChecker
             statement = connection.createStatement();
 
             rs = statement.executeQuery( "SELECT distinct p.ac\n" +
-                                         "FROM ia_interactor p, ia_component c, ia_feature f, ia_range r\n" +
-                                         "WHERE     p.objclass not like '%Interaction%'\n" +
-                                         "      AND p.ac = c.interactor_ac\n" +
-                                         "      AND c.ac = f.component_ac\n" +
-                                         "      AND r.feature_ac = f.ac" );
+                    "FROM ia_interactor p, ia_component c, ia_feature f, ia_range r\n" +
+                    "WHERE     p.objclass not like '%Interaction%'\n" +
+                    "      AND p.ac = c.interactor_ac\n" +
+                    "      AND c.ac = f.component_ac\n" +
+                    "      AND r.feature_ac = f.ac" );
 
             while ( rs.next() ) {
                 acs.add( rs.getString( 1 ) );
@@ -209,6 +215,7 @@ public class RangeChecker
      */
     public void check( Collection<String> proteins ) throws IntactException, SQLException {
 
+
         if ( proteins == null ) {
             throw new IllegalArgumentException( "The parameter 'protein' should not be null" );
         }
@@ -216,8 +223,11 @@ public class RangeChecker
         int count = 0;
         for (String ac : proteins)
         {
+            System.out.println("Check range for protein ac : " + ac);
             Polymer polymer = getDaoFactory().getPolymerDao().getByAc(ac);
-
+            if(polymer!= null){
+                System.out.println("\t...protein loaded");
+            }
             checkRange(polymer);
 
             count++;
@@ -307,8 +317,8 @@ public class RangeChecker
         // We create an artificial range called seqCalculator which will just be used to calculate the sequence to
         // return using the method setSequence and getSequence of a range.
         Range seqCalculator = new Range( owner, range.getFromIntervalStart(), range.getToIntervalStart(), proteinSeq );
-        seqCalculator.setFromCvFuzzyType( range.getFromCvFuzzyType() );
-        seqCalculator.setSequence( proteinSeq );
+//        seqCalculator.setFromCvFuzzyType( range.getFromCvFuzzyType() );
+//        seqCalculator.setSequence( proteinSeq );
 
         return seqCalculator.getSequence();
 
@@ -389,13 +399,13 @@ public class RangeChecker
         // build it
         sch = new SanityCheckerHelper();
         sch.addMapping(RangeBean.class, "select c.interactor_ac, c.interaction_ac, r.ac, r.updated, r.userstamp, " +
-                                                 "       r.feature_ac, r.fromintervalstart, r.fromintervalend, r.fromfuzzytype_ac, " +
-                                                 "       r.tofuzzytype_ac, r.fromintervalend, r.tointervalend, r.fromintervalstart, " +
-                                                 "       r.tointervalstart, r.created_user " +
-                                                 "from ia_range r, ia_feature f, ia_component c " +
-                                                 "where r.feature_ac = f.ac " +
-                                                 "      and f.component_ac = c.ac " +
-                                                 "      and r.ac = ?" );
+                "       r.feature_ac, r.fromintervalstart, r.fromintervalend, r.fromfuzzytype_ac, " +
+                "       r.tofuzzytype_ac, r.fromintervalend, r.tointervalend, r.fromintervalstart, " +
+                "       r.tointervalstart, r.created_user " +
+                "from ia_range r, ia_feature f, ia_component c " +
+                "where r.feature_ac = f.ac " +
+                "      and f.component_ac = c.ac " +
+                "      and r.ac = ?" );
         return sch;
     }
 
@@ -409,10 +419,25 @@ public class RangeChecker
                 Range range = (Range) iterator.next();
 
                 String rangeSeqStored = range.getSequence();
-
+                System.out.println("\trangeSeqStored = " + rangeSeqStored);
                 if ( rangeSeqStored != null ) {
                     String expectedRangeSeq = getExpectedRangeSequence( polymerSequence, range );
-                    if ( expectedRangeSeq.equals( rangeSeqStored ) ) {
+                    System.out.println("\texpectedRangeSeq = " + expectedRangeSeq);
+                    if(expectedRangeSeq == null){
+                        System.out.println("\t...Could not automatically set range");
+                        notEqual++;
+
+                        SanityCheckerHelper sch = getCheckerHelper();
+                        RangeBean rangeBean = sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
+//                                messageSender.addMessage(ReportTopic.RANGE_SEQUENCE_NOT_EQUAL_TO_PROTEIN_SEQ, rangeBean );
+
+                        notEqualReport.append( "\n\nProtein Ac: " ).append( polymer.getAc() );
+                        notEqualReport.append( "\tRange Ac:" ).append( range.getAc() );
+                        notEqualReport.append( "\nRange seq stored: " ).append( rangeSeqStored );
+                        notEqualReport.append( "\nRange seq expect: " ).append( expectedRangeSeq ).append( "\n\n" );
+
+                    }else if ( expectedRangeSeq.equals( rangeSeqStored ) ) {
+                        System.out.println("\t...Sequence are equal nothing to change.");
                         equal++;
                     } else {
                         int fromIntervalStart = range.getFromIntervalStart();
@@ -421,11 +446,12 @@ public class RangeChecker
                         int toIntervalEnd = range.getToIntervalEnd();
                         CvFuzzyType fromCvFuzzyType = range.getFromCvFuzzyType();
 
-                        // Here we assume that the polymer sequence had it's first methionine when the range was created
+                        // Here we suppose that the polymer sequence had it's first methionine when the range was created
                         // but was later removed during a polymer update.
                         String mSupp = getRangeSeqMSupp( polymerSequence, range );
 
                         if ( rangeSeqStored.equals( mSupp ) ) {
+                            System.out.println("\t...an M was suppressed");
 
                             SanityCheckerHelper sch = getCheckerHelper( );
                             RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -443,18 +469,22 @@ public class RangeChecker
                             if ( ( fromCvFuzzyType != null && !( fromCvFuzzyType.isCTerminal() || fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined() ) ) || fromCvFuzzyType == null )
                             {
                                 if ( fromIntervalStart != 0 ) {
+                                    System.out.println("\tfromIntervalStart = " + (fromIntervalStart-1));
                                     range.setFromIntervalStart( fromIntervalStart - 1 );
                                     mSuppChangeReport.append( "\n-1 fis: " ).append( fromIntervalStart );
                                 }
                                 if ( fromIntervalEnd != 0 ) {
+                                    System.out.println("\tfromIntervalEnd = " + (fromIntervalEnd-1));
                                     range.setFromIntervalEnd( fromIntervalEnd - 1 );
                                     mSuppChangeReport.append( "\t-1 fie: " ).append( fromIntervalEnd );
                                 }
                                 if ( toIntervalStart != 0 ) {
+                                    System.out.println("\ttoIntervalStart = " + (toIntervalStart-1));
                                     range.setToIntervalStart( toIntervalStart - 1 );
                                     mSuppChangeReport.append( "\t-1 tis: " ).append( toIntervalStart );
                                 }
                                 if ( toIntervalEnd != 0 ) {
+                                    System.out.println("\ttoIntervalEnd = " + (toIntervalEnd-1));
                                     range.setToIntervalEnd( toIntervalEnd - 1 );
                                     mSuppChangeReport.append( "\t-1 tie: " ).append( toIntervalEnd );
                                 }
@@ -468,10 +498,11 @@ public class RangeChecker
                             mSuppChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n\n" );
 
                         } else {
-                            // Here we assume that the polymer sequence hadn't it's first methionine when the range was
+                            // Here we suppose that the polymer sequence hadn't it's first methionine when the range was
                             // created but was later added during a polymer update.
                             String mAdded = getRangeSeqMadded( polymerSequence, range, owner );
                             if ( rangeSeqStored.equals( mAdded ) ) {
+                                System.out.println("\t...an M was added");
 
                                 SanityCheckerHelper sch = getCheckerHelper( );
                                 RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -488,12 +519,17 @@ public class RangeChecker
                                 // Check that is fromCvFuzzyType == undetermined, fromIntervalStart... == 0
 
                                 if ( ( fromCvFuzzyType != null &&
-                                       !( fromCvFuzzyType.isCTerminal() || fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined() ) ) || fromCvFuzzyType == null )
+                                        !( fromCvFuzzyType.isCTerminal() || fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined() ) ) || fromCvFuzzyType == null )
                                 {
                                     mAddedChangeReport.append( "\n+1 fis: " ).append( fromIntervalStart );
                                     mAddedChangeReport.append( "\t fie: " ).append( fromIntervalEnd );
                                     mAddedChangeReport.append( "\t tis: " ).append( toIntervalStart );
                                     mAddedChangeReport.append( "\t tie: " ).append( toIntervalEnd );
+
+                                    System.out.println("\t...fromIntervalStart = " + (fromIntervalStart + 1));
+                                    System.out.println("\t...fromIntervalEnd = " + (fromIntervalEnd + 1));
+                                    System.out.println("\t...toIntervalEnd = " + (toIntervalEnd + 1));
+                                    System.out.println("\t...toIntervalStart = " + (toIntervalStart + 1));
 
                                     range.setFromIntervalStart( fromIntervalStart + 1 );
                                     range.setFromIntervalEnd( fromIntervalEnd + 1 );
@@ -508,7 +544,7 @@ public class RangeChecker
                                 mAddedChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n" );
 
                             } else {
-
+                                System.out.println("\t...Could not automatically set range");
                                 notEqual++;
 
                                 SanityCheckerHelper sch = getCheckerHelper();
@@ -532,7 +568,7 @@ public class RangeChecker
                     if ( polymerSequence != null && polymerSequence.length() > 0 ) {
                         // if the polymer has a sequence, set that missing sequence on the range.
                         System.err.print( "ERROR - Polymer '" + polymer.getShortLabel() + "' (" + polymer.getAc() + ")" +
-                                          " has a range (" + range.getAc() + ") without sequence ... " );
+                                " has a range (" + range.getAc() + ") without sequence ... " );
                         System.out.flush();
                         range.setSequence( polymerSequence );
                         String s = range.getSequence();
@@ -562,5 +598,35 @@ public class RangeChecker
 
     private static DaoFactory getDaoFactory( ) {
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+    }
+
+    public void checkRangeEntireDatabase() throws SQLException, IntactTransactionException {
+        int proteinCount;
+        int CHUNK_SIZE = 50;
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+        proteinCount = proteinDao.countAll();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        int iterationCount = proteinCount/CHUNK_SIZE;
+        for(int i=0; i<=iterationCount ; i++){
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+            proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+            Collection<ProteinImpl> proteins;
+
+            proteins = proteinDao.getAll((i*CHUNK_SIZE), CHUNK_SIZE);
+
+            Collection<String> proteinAcs = new ArrayList<String>();
+            for(Protein protein : proteins){
+                proteinAcs.add(protein.getAc());
+            }
+
+            RangeChecker rangeChecker = new RangeChecker();
+            rangeChecker.check(proteinAcs);
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        }
     }
 }
