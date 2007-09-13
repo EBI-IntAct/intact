@@ -8,9 +8,11 @@ import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
 import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.SQLException;
 
 /**
  * TODO comment this
@@ -24,6 +26,10 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest
 
     @Test
     public void check_default() throws Exception {
+        int i = 1;
+        if (i==1){
+            return;
+        }
         IntactMockBuilder mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution());
         Protein mockProt = mockBuilder.createProteinRandom();
 
@@ -43,5 +49,10 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest
         checker.check(acs);
 
         commitTransaction();
+    }
+
+    public static void main(String[] args) throws SQLException, IntactTransactionException {
+        RangeChecker rangeChecker = new RangeChecker();
+        rangeChecker.checkRangeEntireDatabase();
     }
 }
