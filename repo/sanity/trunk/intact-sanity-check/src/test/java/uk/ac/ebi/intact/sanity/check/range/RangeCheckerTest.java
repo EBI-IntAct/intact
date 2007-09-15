@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactTransactionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.sql.SQLException;
+import java.io.IOException;
 
 /**
  * TODO comment this
@@ -51,7 +52,13 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest
         commitTransaction();
     }
 
-    public static void main(String[] args) throws SQLException, IntactTransactionException {
+    @Test
+    public void runProteinUpdate() throws SQLException, IOException, IntactTransactionException {
+        RangeChecker rangeChecker = new RangeChecker();
+        rangeChecker.checkRangeEntireDatabase();
+    }
+
+    public static void main(String[] args) throws SQLException, IntactTransactionException, IOException {
         RangeChecker rangeChecker = new RangeChecker();
         rangeChecker.checkRangeEntireDatabase();
     }
