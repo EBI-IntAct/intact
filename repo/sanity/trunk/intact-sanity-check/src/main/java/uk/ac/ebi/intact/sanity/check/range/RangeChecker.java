@@ -144,7 +144,7 @@ public class RangeChecker
     int equal = 0;
     int mSuppCount = 0;
     int mAddedCount = 0;
-    int notEqual = 0;
+    int notEqualCount = 0;
 
     // Buffers containing the checker's report.
     StringBuffer mAddedChangeReport = new StringBuffer( 1024 * 1024 );
@@ -159,6 +159,12 @@ public class RangeChecker
      * Unique instance of SanityCheckerHelper.
      */
     private SanityCheckerHelper sch = null;
+
+    private BufferedWriter notEqual = null;
+    private BufferedWriter mAdded = null;
+    private BufferedWriter mSupp = null;
+
+
 
     public RangeChecker(){
 
@@ -213,8 +219,8 @@ public class RangeChecker
     /**
      * @param proteins
      */
-    public void check( Collection<String> proteins ) throws IntactException, SQLException {
-
+    public void check( Collection<String> proteins ) throws IntactException, SQLException, IOException {
+        initializeBuffers();
 
         if ( proteins == null ) {
             throw new IllegalArgumentException( "The parameter 'protein' should not be null" );
@@ -223,11 +229,11 @@ public class RangeChecker
         int count = 0;
         for (String ac : proteins)
         {
-            System.out.println("Check range for protein ac : " + ac);
+//            System.out.println("Check range for protein ac : " + ac);
             Polymer polymer = getDaoFactory().getPolymerDao().getByAc(ac);
-            if(polymer!= null){
-                System.out.println("\t...protein loaded");
-            }
+//            if(polymer!= null){
+//                System.out.println("\t...protein loaded");
+//            }
             checkRange(polymer);
 
             count++;
@@ -245,29 +251,9 @@ public class RangeChecker
             }
         }
 
-        try {
-            BufferedWriter out = new BufferedWriter( new FileWriter( "mAdded.report" ) );
-            out.write( mAddedChangeReport.toString() );
-            out.close();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
-
-        try {
-            BufferedWriter out = new BufferedWriter( new FileWriter( "mSupp.report" ) );
-            out.write( mSuppChangeReport.toString() );
-            out.close();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
-
-        try {
-            BufferedWriter out = new BufferedWriter( new FileWriter( "notEqual.report" ) );
-            out.write( notEqual );
-            out.close();
-        } catch ( IOException e ) {
-            e.printStackTrace();
-        }
+        fillBuffers();
+        
+        closeBuffers();
 
 //        try {
 //            messageSender.postEmails( "RANGE CHECKER" );
@@ -275,6 +261,72 @@ public class RangeChecker
 //        } catch ( MessagingException e ) {
 //            System.out.println( "We failed to send reports by email. They were saved in local files (check *.report)." );
 //        }
+    }
+
+    private void fillBuffers() throws IOException {
+        try {
+            mAdded.write( mAddedChangeReport.toString() );
+            mAdded.flush();
+        } catch ( IOException e ) {
+            throw new IOException("Could not write to file : mAdded.report");
+        }
+
+        try {
+            mSupp.write( mSuppChangeReport.toString() );
+            mSupp.flush();
+        } catch ( IOException e ) {
+            throw new IOException("Could not write to file : mSupp.report");
+        }
+
+        try {
+            notEqual.write( notEqualReport.toString() );
+            notEqual.flush();
+        } catch ( IOException e ) {
+            throw new IOException("Could not write to file : notEqual.report");
+        }
+    }
+
+    private void initializeBuffers() throws IOException {
+        try {
+           mAdded = new BufferedWriter( new FileWriter( "mAdded.report",true ) );
+        } catch ( IOException e ) {
+            throw new IOException("Could not initialize file : mAdded.report");
+        }
+
+        try {
+            mSupp = new BufferedWriter( new FileWriter( "mSupp.report",true ) );
+        } catch ( IOException e ) {
+            throw new IOException("Could not initialize file : mSupp.report");
+        }
+
+        try {
+            FileWriter fileWriter = new FileWriter( "notEqual.report",true );
+//            System.out.println("fileWriter. = " + fileWriter.);
+            notEqual = new BufferedWriter( fileWriter );
+
+        } catch ( IOException e ) {
+            throw new IOException("Could not initialize file : notEqual.report");
+        }
+    }
+
+    private void closeBuffers() throws IOException {
+        try {
+           mAdded.close();
+        } catch ( IOException e ) {
+            throw new IOException("Could not close file : mAdded.report");
+        }
+
+        try {
+            mSupp.close();
+        } catch ( IOException e ) {
+            throw new IOException("Could not close file : mSupp.report");
+        }
+
+        try {
+            notEqual.close();
+        } catch ( IOException e ) {
+            throw new IOException("Could not close file : notEqual.report");
+        }
     }
 
     /**
@@ -317,9 +369,10 @@ public class RangeChecker
         // We create an artificial range called seqCalculator which will just be used to calculate the sequence to
         // return using the method setSequence and getSequence of a range.
         Range seqCalculator = new Range( owner, range.getFromIntervalStart(), range.getToIntervalStart(), proteinSeq );
-//        seqCalculator.setFromCvFuzzyType( range.getFromCvFuzzyType() );
-//        seqCalculator.setSequence( proteinSeq );
-
+        seqCalculator.setFromCvFuzzyType( range.getFromCvFuzzyType() );
+        seqCalculator.setToCvFuzzyType(range.getToCvFuzzyType());
+        seqCalculator.setSequence( proteinSeq );
+        seqCalculator.prepareSequence(proteinSeq);
         return seqCalculator.getSequence();
 
     }
@@ -419,13 +472,13 @@ public class RangeChecker
                 Range range = (Range) iterator.next();
 
                 String rangeSeqStored = range.getSequence();
-                System.out.println("\trangeSeqStored = " + rangeSeqStored);
+//                System.out.println("\trangeSeqStored = " + rangeSeqStored);
                 if ( rangeSeqStored != null ) {
                     String expectedRangeSeq = getExpectedRangeSequence( polymerSequence, range );
-                    System.out.println("\texpectedRangeSeq = " + expectedRangeSeq);
+//                    System.out.println("\texpectedRangeSeq = " + expectedRangeSeq);
                     if(expectedRangeSeq == null){
-                        System.out.println("\t...Could not automatically set range");
-                        notEqual++;
+//                        System.out.println("\t...Could not automatically set range");
+                        notEqualCount++;
 
                         SanityCheckerHelper sch = getCheckerHelper();
                         RangeBean rangeBean = sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -437,7 +490,7 @@ public class RangeChecker
                         notEqualReport.append( "\nRange seq expect: " ).append( expectedRangeSeq ).append( "\n\n" );
 
                     }else if ( expectedRangeSeq.equals( rangeSeqStored ) ) {
-                        System.out.println("\t...Sequence are equal nothing to change.");
+//                        System.out.println("\t...Sequence are equal nothing to change.");
                         equal++;
                     } else {
                         int fromIntervalStart = range.getFromIntervalStart();
@@ -451,7 +504,7 @@ public class RangeChecker
                         String mSupp = getRangeSeqMSupp( polymerSequence, range );
 
                         if ( rangeSeqStored.equals( mSupp ) ) {
-                            System.out.println("\t...an M was suppressed");
+//                            System.out.println("\t...an M was suppressed");
 
                             SanityCheckerHelper sch = getCheckerHelper( );
                             RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -465,31 +518,31 @@ public class RangeChecker
 
                             //M A L D KJGJDKKSK
                             //1 2 3 4
-                            System.out.println( "mSuppCount = " + mSuppCount );
+//                            System.out.println( "mSuppCount = " + mSuppCount );
                             if ( ( fromCvFuzzyType != null && !( fromCvFuzzyType.isCTerminal() || fromCvFuzzyType.isNTerminal() || fromCvFuzzyType.isUndetermined() ) ) || fromCvFuzzyType == null )
                             {
                                 if ( fromIntervalStart != 0 ) {
-                                    System.out.println("\tfromIntervalStart = " + (fromIntervalStart-1));
+//                                    System.out.println("\tfromIntervalStart = " + (fromIntervalStart-1));
                                     range.setFromIntervalStart( fromIntervalStart - 1 );
                                     mSuppChangeReport.append( "\n-1 fis: " ).append( fromIntervalStart );
                                 }
                                 if ( fromIntervalEnd != 0 ) {
-                                    System.out.println("\tfromIntervalEnd = " + (fromIntervalEnd-1));
+//                                    System.out.println("\tfromIntervalEnd = " + (fromIntervalEnd-1));
                                     range.setFromIntervalEnd( fromIntervalEnd - 1 );
                                     mSuppChangeReport.append( "\t-1 fie: " ).append( fromIntervalEnd );
                                 }
                                 if ( toIntervalStart != 0 ) {
-                                    System.out.println("\ttoIntervalStart = " + (toIntervalStart-1));
+//                                    System.out.println("\ttoIntervalStart = " + (toIntervalStart-1));
                                     range.setToIntervalStart( toIntervalStart - 1 );
                                     mSuppChangeReport.append( "\t-1 tis: " ).append( toIntervalStart );
                                 }
                                 if ( toIntervalEnd != 0 ) {
-                                    System.out.println("\ttoIntervalEnd = " + (toIntervalEnd-1));
+//                                    System.out.println("\ttoIntervalEnd = " + (toIntervalEnd-1));
                                     range.setToIntervalEnd( toIntervalEnd - 1 );
                                     mSuppChangeReport.append( "\t-1 tie: " ).append( toIntervalEnd );
                                 }
                             }
-                            System.out.println( "range.getSequence before = " + range.getSequence() );
+//                            System.out.println( "range.getSequence before = " + range.getSequence() );
                             range.setSequence( polymerSequence );
 
                             getDaoFactory().getRangeDao().update( range );
@@ -502,7 +555,7 @@ public class RangeChecker
                             // created but was later added during a polymer update.
                             String mAdded = getRangeSeqMadded( polymerSequence, range, owner );
                             if ( rangeSeqStored.equals( mAdded ) ) {
-                                System.out.println("\t...an M was added");
+//                                System.out.println("\t...an M was added");
 
                                 SanityCheckerHelper sch = getCheckerHelper( );
                                 RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -526,10 +579,10 @@ public class RangeChecker
                                     mAddedChangeReport.append( "\t tis: " ).append( toIntervalStart );
                                     mAddedChangeReport.append( "\t tie: " ).append( toIntervalEnd );
 
-                                    System.out.println("\t...fromIntervalStart = " + (fromIntervalStart + 1));
-                                    System.out.println("\t...fromIntervalEnd = " + (fromIntervalEnd + 1));
-                                    System.out.println("\t...toIntervalEnd = " + (toIntervalEnd + 1));
-                                    System.out.println("\t...toIntervalStart = " + (toIntervalStart + 1));
+//                                    System.out.println("\t...fromIntervalStart = " + (fromIntervalStart + 1));
+//                                    System.out.println("\t...fromIntervalEnd = " + (fromIntervalEnd + 1));
+//                                    System.out.println("\t...toIntervalEnd = " + (toIntervalEnd + 1));
+//                                    System.out.println("\t...toIntervalStart = " + (toIntervalStart + 1));
 
                                     range.setFromIntervalStart( fromIntervalStart + 1 );
                                     range.setFromIntervalEnd( fromIntervalEnd + 1 );
@@ -544,8 +597,8 @@ public class RangeChecker
                                 mAddedChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n" );
 
                             } else {
-                                System.out.println("\t...Could not automatically set range");
-                                notEqual++;
+//                                System.out.println("\t...Could not automatically set range");
+                                notEqualCount++;
 
                                 SanityCheckerHelper sch = getCheckerHelper();
                                 RangeBean rangeBean = sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -570,18 +623,18 @@ public class RangeChecker
                         System.err.print( "ERROR - Polymer '" + polymer.getShortLabel() + "' (" + polymer.getAc() + ")" +
                                 " has a range (" + range.getAc() + ") without sequence ... " );
                         System.out.flush();
-                        range.setSequence( polymerSequence );
+                        range.setSequence(range.prepareSequence(polymerSequence));
                         String s = range.getSequence();
                         if ( s != null && s.length() > 0 ) {
-                            getDaoFactory().getRangeDao().update( range );
-                            System.out.println( "Fixed." );
-                            System.out.println( "Range.getSequence() [length=" + range.getSequence().length() + "]: " + range.getSequence() );
+                            getDaoFactory().getRangeDao().saveOrUpdate( range );
+//                            System.out.println( "Fixed." );
+//                            System.out.println( "Range.getSequence() [length=" + range.getSequence().length() + "]: " + range.getSequence() );
                         } else {
-                            System.out.println( "NOT fixed." );
-                            System.out.println( "WARNING - Could not generate a sequence for that range" );
+//                            System.out.println( "NOT fixed." );
+                            System.out.println( "\nWARNING - Could not generate a sequence for that range " + range.getAc() );
                         }
 
-                        System.out.println( range );
+//                        System.out.println( range );
                     }
                 }
                 range = null;
@@ -600,14 +653,32 @@ public class RangeChecker
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
     }
 
-    public void checkRangeEntireDatabase() throws SQLException, IntactTransactionException {
+    public void checkRangeEntireDatabase() throws SQLException, IntactTransactionException, IOException {
         int proteinCount;
+//        int CHUNK_SIZE = 1;
         int CHUNK_SIZE = 50;
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
         proteinCount = proteinDao.countAll();
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+
+        // FOR TESTING START
+//        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+//        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+//        Protein prot = proteinDao.getByAc("EBI-2869");
+//        RangeChecker rangeChecker = new RangeChecker();
+//        Collection<String> acs = new ArrayList<String>();
+//        acs.add(prot.getAc());
+//        rangeChecker.check(acs);
+//        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+//        int j = 1;
+//        if (j == 1){
+//            return;
+//        }
+        // FOR TESTING END
+
 
         int iterationCount = proteinCount/CHUNK_SIZE;
         for(int i=0; i<=iterationCount ; i++){
@@ -626,7 +697,6 @@ public class RangeChecker
             RangeChecker rangeChecker = new RangeChecker();
             rangeChecker.check(proteinAcs);
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
         }
     }
 }
