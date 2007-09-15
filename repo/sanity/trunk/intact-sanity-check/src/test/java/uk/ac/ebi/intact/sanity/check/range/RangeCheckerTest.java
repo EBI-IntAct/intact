@@ -53,13 +53,13 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest
     }
 
     @Test
-    public void runProteinUpdate() throws Exception {
+    public void check_checkRangeEntireDatabase() throws Exception {
         RangeChecker rangeChecker = new RangeChecker();
         rangeChecker.checkRangeEntireDatabase();
     }
 
-    public static void main(String[] args) throws SQLException, IntactTransactionException, IOException {
-        RangeChecker rangeChecker = new RangeChecker();
-        rangeChecker.checkRangeEntireDatabase();
-    }
+//    public static void main(String[] args) throws SQLException, IntactTransactionException, IOException {
+//        RangeChecker rangeChecker = new RangeChecker();
+//        rangeChecker.checkRangeEntireDatabase();
+//    }
 }
