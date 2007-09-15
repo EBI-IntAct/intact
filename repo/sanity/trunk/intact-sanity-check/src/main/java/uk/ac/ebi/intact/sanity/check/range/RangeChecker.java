@@ -659,7 +659,7 @@ public class RangeChecker
     public void checkRangeEntireDatabase() throws SQLException, IntactTransactionException, IOException {
         int proteinCount;
 //        int CHUNK_SIZE = 1;
-        int CHUNK_SIZE = 1;
+        int CHUNK_SIZE = 5;
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
