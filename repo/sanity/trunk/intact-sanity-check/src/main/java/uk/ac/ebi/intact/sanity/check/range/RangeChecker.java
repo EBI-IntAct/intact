@@ -229,7 +229,7 @@ public class RangeChecker
         int count = 0;
         for (String ac : proteins)
         {
-//            System.out.println("Check range for protein ac : " + ac);
+            System.out.println("Check range for protein ac : " + ac);
             Polymer polymer = getDaoFactory().getPolymerDao().getByAc(ac);
 //            if(polymer!= null){
 //                System.out.println("\t...protein loaded");
@@ -238,17 +238,17 @@ public class RangeChecker
 
             count++;
 
-            if ((count % 10) == 0)
-            {
-
-                System.out.print(".");
-                System.out.flush();
-
-                if ((count % 500) == 0)
-                {
-                    System.out.println("\t" + count);
-                }
-            }
+//            if ((count % 10) == 0)
+//            {
+//
+//                System.out.print(".");
+//                System.out.flush();
+//
+//                if ((count % 500) == 0)
+//                {
+//                    System.out.println("\t" + count);
+//                }
+//            }
         }
 
         fillBuffers();
@@ -470,7 +470,7 @@ public class RangeChecker
             Collection ranges = getRangesFromPolymer( polymer );
             for ( Iterator iterator = ranges.iterator(); iterator.hasNext(); ) {
                 Range range = (Range) iterator.next();
-
+                System.out.println("\trange.getAc() = " + range.getAc());
                 String rangeSeqStored = range.getSequence();
 //                System.out.println("\trangeSeqStored = " + rangeSeqStored);
                 if ( rangeSeqStored != null ) {
@@ -490,7 +490,7 @@ public class RangeChecker
                         notEqualReport.append( "\nRange seq expect: " ).append( expectedRangeSeq ).append( "\n\n" );
 
                     }else if ( expectedRangeSeq.equals( rangeSeqStored ) ) {
-//                        System.out.println("\t...Sequence are equal nothing to change.");
+                        System.out.println("\t...Sequence are equal.");
                         equal++;
                     } else {
                         int fromIntervalStart = range.getFromIntervalStart();
@@ -504,7 +504,7 @@ public class RangeChecker
                         String mSupp = getRangeSeqMSupp( polymerSequence, range );
 
                         if ( rangeSeqStored.equals( mSupp ) ) {
-//                            System.out.println("\t...an M was suppressed");
+                            System.out.println("\t...an M was suppressed");
 
                             SanityCheckerHelper sch = getCheckerHelper( );
                             RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -543,7 +543,7 @@ public class RangeChecker
                                 }
                             }
 //                            System.out.println( "range.getSequence before = " + range.getSequence() );
-                            range.setSequence( polymerSequence );
+                            range.setSequence( range.prepareSequence(polymerSequence) );
 
                             getDaoFactory().getRangeDao().update( range );
 
@@ -555,7 +555,7 @@ public class RangeChecker
                             // created but was later added during a polymer update.
                             String mAdded = getRangeSeqMadded( polymerSequence, range, owner );
                             if ( rangeSeqStored.equals( mAdded ) ) {
-//                                System.out.println("\t...an M was added");
+                                System.out.println("\t...an M was added");
 
                                 SanityCheckerHelper sch = getCheckerHelper( );
                                 RangeBean rangeBean = (RangeBean) sch.getBeans(RangeBean.class, range.getAc() ).get( 0 );
@@ -590,7 +590,7 @@ public class RangeChecker
                                     range.setToIntervalEnd( toIntervalEnd + 1 );
                                 }
 
-                                range.setSequence( polymerSequence );
+                                range.setSequence( range.prepareSequence(polymerSequence) );
                                 getDaoFactory().getRangeDao().update( range );
 
                                 mAddedChangeReport.append( "\nPrevious range: " ).append( rangeSeqStored );
@@ -625,13 +625,16 @@ public class RangeChecker
                         System.out.flush();
                         range.setSequence(range.prepareSequence(polymerSequence));
                         String s = range.getSequence();
+                        System.out.println("s = " + s);
                         if ( s != null && s.length() > 0 ) {
+                            System.out.println("\t...range seq was null but was added.");
                             getDaoFactory().getRangeDao().saveOrUpdate( range );
 //                            System.out.println( "Fixed." );
 //                            System.out.println( "Range.getSequence() [length=" + range.getSequence().length() + "]: " + range.getSequence() );
                         } else {
+                            System.out.println("\t...range seq was null and could not be calculated.");
 //                            System.out.println( "NOT fixed." );
-                            System.out.println( "\nWARNING - Could not generate a sequence for that range " + range.getAc() );
+                            System.out.println( "\t...WARNING - Could not generate a sequence for that range " + range.getAc() );
                         }
 
 //                        System.out.println( range );
@@ -656,7 +659,7 @@ public class RangeChecker
     public void checkRangeEntireDatabase() throws SQLException, IntactTransactionException, IOException {
         int proteinCount;
 //        int CHUNK_SIZE = 1;
-        int CHUNK_SIZE = 50;
+        int CHUNK_SIZE = 1;
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
@@ -667,7 +670,7 @@ public class RangeChecker
         // FOR TESTING START
 //        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 //        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-//        Protein prot = proteinDao.getByAc("EBI-2869");
+//        Protein prot = proteinDao.getByAc("EBI-301077");
 //        RangeChecker rangeChecker = new RangeChecker();
 //        Collection<String> acs = new ArrayList<String>();
 //        acs.add(prot.getAc());
@@ -694,7 +697,7 @@ public class RangeChecker
                 proteinAcs.add(protein.getAc());
             }
 
-            RangeChecker rangeChecker = new RangeChecker();
+            rangeChecker = new RangeChecker();
             rangeChecker.check(proteinAcs);
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
