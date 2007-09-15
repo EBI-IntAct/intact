@@ -697,7 +697,7 @@ public class RangeChecker
                 proteinAcs.add(protein.getAc());
             }
 
-            rangeChecker = new RangeChecker();
+            RangeChecker rangeChecker = new RangeChecker();
             rangeChecker.check(proteinAcs);
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
