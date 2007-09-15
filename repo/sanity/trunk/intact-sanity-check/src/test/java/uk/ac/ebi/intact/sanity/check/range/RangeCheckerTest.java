@@ -58,8 +58,8 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest
         rangeChecker.checkRangeEntireDatabase();
     }
 
-//    public static void main(String[] args) throws SQLException, IntactTransactionException, IOException {
-//        RangeChecker rangeChecker = new RangeChecker();
-//        rangeChecker.checkRangeEntireDatabase();
-//    }
+    public static void main(String[] args) throws SQLException, IntactTransactionException, IOException {
+        RangeChecker rangeChecker = new RangeChecker();
+        rangeChecker.checkRangeEntireDatabase();
+    }
 }
