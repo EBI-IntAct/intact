@@ -231,31 +231,40 @@ public class ProteinServiceImpl implements ProteinService {
 
         Collection<Protein> nonUniprotProteins = new ArrayList<Protein>( 1 );
         String taxid = String.valueOf( uniprotProtein.getOrganism().getTaxid() );
+        System.out.println("TAXID = " + taxid);
+        System.out.println("UNIPROT PROTEIN = [" + uniprotProtein.getPrimaryAc() + ", " + uniprotProtein.getOrganism().getName() + "]");
 
         // Collection IntAct protein based on UniProt primary AC
+
         Collection<Protein> primaryProteins = searchIntactByPrimaryAc( uniprotProtein );
+        System.out.println("SIZE OF THE PRIMARY PROTEINS primaryProteins.size() = " + primaryProteins.size());
         if ( !primaryProteins.isEmpty() ) {
-            primaryProteins = filterByTaxid( primaryProteins, taxid );
-            nonUniprotProteins.addAll( removeAndGetNonUniprotProteins( primaryProteins ) );
+                primaryProteins = filterByTaxid( primaryProteins, taxid );
+                nonUniprotProteins.addAll( removeAndGetNonUniprotProteins( primaryProteins ) );
         }
         int countPrimary = primaryProteins.size();
+        System.out.println("SIZE OF THE PRIMARY PROTEINS AFTER FILTERING ON THE TAXID primaryProteins.size() = " + primaryProteins.size());
 
         // Collection IntAct protein based on UniProt secondary ACs
         Collection<Protein> secondaryProteins = searchIntactBySecondaryAc( uniprotProtein );
+        System.out.println("SIZE OF THE SECONDARY ACS PROTEIN secondaryProteins.size() = " + secondaryProteins.size());
         if ( !secondaryProteins.isEmpty() ) {
             secondaryProteins = filterByTaxid( secondaryProteins, taxid );
             nonUniprotProteins.addAll( removeAndGetNonUniprotProteins( secondaryProteins ) );
         }
         int countSecondary = secondaryProteins.size();
+        System.out.println("SIZE OF THE SECONDARY ACS PROTEIN AFTER FILTERING ON THE TAXID secondaryProteins.size() = " + secondaryProteins.size());
+
 
         if ( countPrimary == 0 && countSecondary == 0 ) {
-
+            System.out.println("NO PRIMARY NO SECONDARY");
             log.debug( "Could not find IntAct protein by UniProt primary or secondary AC." );
             Protein protein = createMinimalisticProtein( uniprotProtein );
             proteins.add( protein );
             updateProtein( protein, uniprotProtein, proteins );
 
         } else if ( countPrimary == 0 && countSecondary == 1 ) {
+            System.out.println("NO PRIMARY, 1 SECONDARY");
             //Corresponding test : ProteinServiceImplTest.testRetrieve_primaryCount0_secondaryCount1()
             log.debug( "Found a single IntAct protein by UniProt secondary AC (hint: could be a TrEMBL moved to SP)." );
             System.out.println("Found a single IntAct protein by UniProt secondary AC (hint: could be a TrEMBL moved to SP)." );
@@ -269,6 +278,7 @@ public class ProteinServiceImpl implements ProteinService {
             updateProtein( protein, uniprotProtein, proteins );
 
         } else if ( countPrimary == 1 && countSecondary == 0 ) {
+            System.out.println("1 PRIMARY and NO SECONDARY");
             // Corresponding test : ProteinServiceImplTest.testRetrieve_sequenceUpdate()
             //                      ProteinServiceImplTest.testRetrieve_update_CDC42_CANFA()
             log.debug( "Found in Intact one protein with primaryAc and 0 with secondaryAc." );
@@ -279,8 +289,8 @@ public class ProteinServiceImpl implements ProteinService {
             updateProtein( protein, uniprotProtein, proteins );
 
         }else if ( countPrimary == 1 && countSecondary >= 1){
+            System.out.println("1 PRIMARY AND 1 SECONDARY");
             log.debug("Found in IntAct 1 protein with primaryAc and 1 or more protein on with secondaryAc.");
-            System.out.println("Found in IntAct 1 protein with primaryAc and 1 or more protein on with secondaryAc.");
             StringBuffer sb = new StringBuffer();
             sb.append("Found several protein in IntAct for entry : " + uniprotProtein.getPrimaryAc() + ". 1 with the " +
                     "primaryAc and " + secondaryProteins.size() + " with the secondary acs. We are going to merged those" +
@@ -303,7 +313,19 @@ public class ProteinServiceImpl implements ProteinService {
             sb.append("The protein which are going to be merged :").append( NEW_LINE );
             System.out.println("protein which are going to be merged");
             System.out.println("proteinsToDelete.size() = " + proteinsToDelete.size());
+
+            CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class,"intact-secondary");
+            Institution owner = IntactContext.getCurrentInstance().getInstitution();
+            CvDatabase intact = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
+
             for(Protein protToDelete : proteinsToDelete ){
+
+                // On the protein that we are going to keep add the protein ac of the one we are going to delete as
+                // intact-secondary xref. That way, a user can still search for the protein ac he used to search with
+                // even if it has been deleted.
+                InteractorXref xref = new InteractorXref(owner,intact, protToDelete.getAc(), intactSecondary);
+                xref.setParent(protToBeKept);
+                protToBeKept.addXref(xref);
 //                proteinDao.delete((ProteinImpl) protToDelete);
                 protToDelete.setActiveInstances(new ArrayList());
                 addToDeleteAnnotation(protToDelete);
@@ -315,6 +337,7 @@ public class ProteinServiceImpl implements ProteinService {
             }
             System.out.println("beofre proteins.add");
             proteins.add( protToBeKept );
+            proteinDao.saveOrUpdate((ProteinImpl) protToBeKept);
             updateProtein( protToBeKept, uniprotProtein, proteins );
             // Message being added.
             System.out.println("Message being added " + sb);
