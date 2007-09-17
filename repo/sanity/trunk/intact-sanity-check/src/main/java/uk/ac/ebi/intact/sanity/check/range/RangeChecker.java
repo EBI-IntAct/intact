@@ -62,8 +62,7 @@ import java.util.List;
  * ---------------------------------------------------------------
  * <p/>
  * The automatic remapped of the sequence is possible only when the change on the protein sequence is just a remooving
- * or
- * or a re-adding the first Methionine amino-acid.
+ * or a re-adding of the first Methionine amino-acid.
  * <p/>
  * How are ranges sequences calculated and how do we automatically remapped?
  * ----------------------------------------------------------------------
@@ -89,6 +88,9 @@ import java.util.List;
  * from which you want to check the range sequence.
  * RangeChecker rangeChecker = new RangeChecker();
  * rangeChecker.check(proteins); //Protein being a collection of Protein
+ * <p/>
+ * <p>
+ * If you want to check the entire database ranges call checkRangeEntireDatabase()
  * <p/>
  * What will the call of the method do?
  * ------------------------------------
@@ -399,7 +401,7 @@ public class RangeChecker
         seqCalculator.setToIntervalEnd( range.getToIntervalEnd() );
         seqCalculator.setToIntervalStart( range.getToIntervalStart() );
 
-        seqCalculator.setSequence( "M" + proteinSeq );
+        seqCalculator.prepareSequence( "M" + proteinSeq );
 
         return seqCalculator.getSequence();
 
@@ -430,7 +432,7 @@ public class RangeChecker
         seqCalculator.setToIntervalStart( range.getToIntervalStart() );
 
 
-        seqCalculator.setSequence( proteinSeq.substring( 1, proteinSeq.length() ) );
+        seqCalculator.prepareSequence( proteinSeq.substring( 1, proteinSeq.length() ) );
 
         return seqCalculator.getSequence();
     }
@@ -475,6 +477,7 @@ public class RangeChecker
 //                System.out.println("\trangeSeqStored = " + rangeSeqStored);
                 if ( rangeSeqStored != null ) {
                     String expectedRangeSeq = getExpectedRangeSequence( polymerSequence, range );
+//                    System.out.println("rangeSeqStored = " + rangeSeqStored);
 //                    System.out.println("\texpectedRangeSeq = " + expectedRangeSeq);
                     if(expectedRangeSeq == null){
 //                        System.out.println("\t...Could not automatically set range");
@@ -502,7 +505,7 @@ public class RangeChecker
                         // Here we suppose that the polymer sequence had it's first methionine when the range was created
                         // but was later removed during a polymer update.
                         String mSupp = getRangeSeqMSupp( polymerSequence, range );
-
+//                        System.out.println("mSupp = " + mSupp);
                         if ( rangeSeqStored.equals( mSupp ) ) {
                             System.out.println("\t...an M was suppressed");
 
@@ -554,6 +557,7 @@ public class RangeChecker
                             // Here we suppose that the polymer sequence hadn't it's first methionine when the range was
                             // created but was later added during a polymer update.
                             String mAdded = getRangeSeqMadded( polymerSequence, range, owner );
+//                            System.out.println("mAdded = " + mAdded);
                             if ( rangeSeqStored.equals( mAdded ) ) {
                                 System.out.println("\t...an M was added");
 
@@ -597,7 +601,7 @@ public class RangeChecker
                                 mAddedChangeReport.append( "\nNew range     : " ).append( range.getSequence() ).append( "\n" );
 
                             } else {
-//                                System.out.println("\t...Could not automatically set range");
+                                System.out.println("\t...Could not automatically set range");
                                 notEqualCount++;
 
                                 SanityCheckerHelper sch = getCheckerHelper();
@@ -670,11 +674,11 @@ public class RangeChecker
         // FOR TESTING START
 //        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 //        proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-//        Protein prot = proteinDao.getByAc("EBI-301077");
-//        RangeChecker rangeChecker = new RangeChecker();
+//        Protein prot = proteinDao.getByAc("EBI-1348");
+//        RangeChecker rangeCheckerTest = new RangeChecker();
 //        Collection<String> acs = new ArrayList<String>();
 //        acs.add(prot.getAc());
-//        rangeChecker.check(acs);
+//        rangeCheckerTest.check(acs);
 //        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 //        int j = 1;
 //        if (j == 1){
