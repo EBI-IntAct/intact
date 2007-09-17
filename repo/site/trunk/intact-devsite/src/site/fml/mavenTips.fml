@@ -2,6 +2,17 @@
 <faqs title="Maven tips for IntAct developers">
 <part id="about">
     <faq>
+      <question>How to get the classpath of an artifact ?</question>
+      <answer>
+        <p>
+          Go in the pom.xml directory of yourartifact and type :
+          <pre>
+            mvn dependency:build-classpath
+          </pre>
+        </p>
+      </answer>
+    </faq>
+    <faq>
       <question>How to run an IntAct web-application in Jetty ?</question>
       <answer>
         <p>
