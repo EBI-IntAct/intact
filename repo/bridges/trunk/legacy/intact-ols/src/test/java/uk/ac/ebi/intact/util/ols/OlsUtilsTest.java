@@ -21,7 +21,7 @@ public class OlsUtilsTest extends TestCase {
 
         Term term = OlsUtils.getMiTerm(miTermId);
         assertNotNull(term);
-        assertEquals(10, term.getChildren().size());
+        assertEquals(11, term.getChildren().size());
     }
 
     public void testGetOntologyTerm_singleTerm() throws Exception {
