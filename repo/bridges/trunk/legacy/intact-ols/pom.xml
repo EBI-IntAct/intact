@@ -10,8 +10,8 @@
     <groupId>uk.ac.ebi.intact.util</groupId>
     <artifactId>intact-ols</artifactId>
     <packaging>jar</packaging>
-    <version>1.2-SNAPSHOT</version>
-    <name>IntAct Bridges :: Legacy :: OLS Client (Deprecated; use the pride intact-ols module)</name>
+    <version>2.0-beta-6-SNAPSHOT</version>
+    <name>IntAct Bridges :: Legacy :: OLS Client</name>
     <description>Client for the OLS Web Service</description>
 
     <scm>

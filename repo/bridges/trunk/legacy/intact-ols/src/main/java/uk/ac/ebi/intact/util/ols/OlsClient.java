@@ -57,6 +57,11 @@ public class OlsClient {
         Map map = new OlsClient().getOntologyQuery().getTermChildren("MI:0001", "MI", 1, new int[]{0, 1, 2, 3, 4, 5, 6});
         System.out.println(map);
 
-        System.out.println(new OlsClient().getOntologyQuery().getTermById("MI:0001", "MI"));
+        Query ontologyQuery = new OlsClient().getOntologyQuery();
+        String exampleTerm = ontologyQuery.getTermById("MI:0001", "MI");
+        System.out.println(exampleTerm);
+
+        Term term = OlsUtils.getTerm("MI:0001", "MI");
+        System.out.println(term.getExactSynonim());
     }
 }
