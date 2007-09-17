@@ -63,9 +63,7 @@ public class OlsUtils {
     }
 
     private static void populateChildren( Term term, String ontology, Query ontologyQuery ) throws RemoteException {
-        System.out.println( "term.getId() = " + term.getId() );
         Map<String, String> childrenMap = ontologyQuery.getTermChildren( term.getId(), ontology, 1, new int[0] );
-        System.out.println( "Found " + childrenMap.size() + " children in the map" );
 
         for ( Map.Entry<String, String> entry : childrenMap.entrySet() ) {
             Term child = getTerm(entry.getKey(), ontology);
