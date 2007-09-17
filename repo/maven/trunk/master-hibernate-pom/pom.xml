@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -17,9 +19,9 @@
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-16</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-16</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-16</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
     </scm>
 
     <properties>
@@ -228,13 +230,11 @@
             <artifactId>hibernate-validator</artifactId>
             <version>3.0.0.ga</version>
         </dependency>
-
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
-            <version>0.9.0.4</version>
+            <version>0.9.1</version>
         </dependency>
-
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -242,7 +242,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 
     <repositories>
         <!-- EBI repositories -->
