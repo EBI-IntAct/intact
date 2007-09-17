@@ -3,7 +3,13 @@
  */
 package uk.ac.ebi.intact.bridges.blast;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.junit.After;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,16 +18,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
  * @author iarmean
  * 
  */
+@Ignore
 public class BlastClientTest {
 
 	/**
