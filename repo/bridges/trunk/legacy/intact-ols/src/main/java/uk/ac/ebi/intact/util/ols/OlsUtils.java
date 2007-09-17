@@ -15,6 +15,7 @@ import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * Utility giving access to some of the ontologies supported by OLS.
@@ -54,9 +55,7 @@ public class OlsUtils {
         OlsClient olsClient = new OlsClient();
         Query ontologyQuery = olsClient.getOntologyQuery();
 
-        String termName = ontologyQuery.getTermById( miTermId, PSI_MI_ONTOLOGY );
-
-        Term term = new Term( miTermId, termName );
+        Term term = getTerm( miTermId, PSI_MI_ONTOLOGY );
 
         populateChildren( term, PSI_MI_ONTOLOGY, ontologyQuery );
 
@@ -69,10 +68,20 @@ public class OlsUtils {
         System.out.println( "Found " + childrenMap.size() + " children in the map" );
 
         for ( Map.Entry<String, String> entry : childrenMap.entrySet() ) {
-            Term child = new Term( entry.getKey(), entry.getValue() );
+            Term child = getTerm(entry.getKey(), ontology);
             populateChildren( child, ontology, ontologyQuery );
             term.addChild( child );
         }
+    }
+
+    protected static Term getTerm(String id, String ontologyId) throws RemoteException {
+        OlsClient olsClient = new OlsClient();
+        Query ontologyQuery = olsClient.getOntologyQuery();
+
+        String termName = ontologyQuery.getTermById( id, ontologyId );
+        Map termMetadata = ontologyQuery.getTermMetadata(id, ontologyId);
+
+        return new Term( id, termName, termMetadata);
     }
 
     ///////////////////////////
@@ -87,12 +96,7 @@ public class OlsUtils {
      * @return the term, including the children
      */
     public static Term getOntologyTerm( String taxid, boolean includeChildren ) throws RemoteException, ServiceException {
-        OlsClient olsClient = new OlsClient();
-        Query ontologyQuery = olsClient.getOntologyQuery();
-
-        String termName = ontologyQuery.getTermById( taxid, NEWT_ONTOLOGY );
-
-        Term term = new Term( taxid, termName );
+        Term term = getTerm( taxid, NEWT_ONTOLOGY );
 
         if ( includeChildren ) {
             populateOntologyChildren( term, true );

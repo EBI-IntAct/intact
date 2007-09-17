@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.ols;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Represents a term in OLS
@@ -20,8 +21,11 @@ public class Term implements Serializable {
 
     private String id;
     private String name;
+    private String exactSynonim;
+    private String definition;
     private Term parent;
     private Collection<Term> children;
+    private Map<String,String> metadata;
 
     /**
      * Constructs a new Term
@@ -36,10 +40,11 @@ public class Term implements Serializable {
      * @param id   the id for the term
      * @param name name of the term
      */
-    public Term(String id, String name) {
+    public Term(String id, String name, Map<String,String> metadata) {
         this.id = id;
         this.name = name;
         this.children = new ArrayList<Term>();
+        this.metadata = metadata;
     }
 
     public String getId() {
@@ -77,6 +82,22 @@ public class Term implements Serializable {
 
     public void setParent(Term parent) {
         this.parent = parent;
+    }
+
+    public String getDefinition() {
+        return metadata.get("definition");
+    }
+
+    public String getExactSynonim() {
+        return metadata.get("exact_synonym");
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
     @Override
