@@ -15,23 +15,7 @@
 
     <name>IntAct Sanity :: Sanity Check</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>hibernateconfig-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-
     <dependencies>
-        <!-- delete this one -->
-        <dependency>
-            <groupId>uk.ac.ebi.intact.dataexchange</groupId>
-            <artifactId>intact-enricher</artifactId>
-            <version>2.0.0-SNAPSHOT</version>
-        </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-rules</artifactId>
