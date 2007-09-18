@@ -204,7 +204,7 @@ public class SanityCheckConfig {
             return curator;
         }
 
-        throw new SanityConfigurationException("No curator found with name: " + name);
+        return null;
     }
 
     public SuperCurator getSuperCurator(String name) {
