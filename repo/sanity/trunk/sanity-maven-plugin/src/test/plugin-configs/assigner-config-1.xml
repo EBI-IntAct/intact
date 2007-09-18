@@ -1,0 +1,47 @@
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>sanity-maven-plugin</artifactId>
+                <configuration>
+                    <curators>
+                        <superCurator>
+                            <name>jyoti</name>
+                            <admin>true</admin>
+                            <percentage>33</percentage>
+                        </superCurator>
+                        <superCurator>
+                            <name>orchard</name>
+                            <admin>true</admin>
+                            <percentage>34</percentage>
+                        </superCurator>
+                        <superCurator>
+                            <name>davet</name>
+                            <admin>true</admin>
+                            <percentage>33</percentage>
+                        </superCurator>
+
+                        <curator>
+                            <name>skerrien</name>
+                            <admin>true</admin>
+                        </curator>
+                        <curator>
+                            <name>cleroy</name>
+                            <admin>true</admin>
+                        </curator>
+                        <curator>
+                            <name>baranda</name>
+                            <admin>true</admin>
+                        </curator>
+                    </curators>
+                    <editorUrl>http://www.ebi.ac.uk/intact/editor</editorUrl>
+
+                    <enableAdminEmails>true</enableAdminEmails>
+                    <enableUserEmails>true</enableUserEmails>
+
+                    <emailSubjectPrefix>[MOJO-TEST]</emailSubjectPrefix>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
