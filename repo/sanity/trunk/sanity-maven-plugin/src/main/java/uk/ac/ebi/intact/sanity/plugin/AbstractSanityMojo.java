@@ -8,6 +8,7 @@ import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -96,5 +97,25 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
 
     public File getHibernateConfig() {
         return hibernateConfig;
+    }
+
+    public List<Curator> getCurators() {
+        return Collections.unmodifiableList( curators );
+    }
+
+    public String getEditorUrl() {
+        return editorUrl;
+    }
+
+    public boolean isEnableAdminEmails() {
+        return enableAdminEmails;
+    }
+
+    public boolean isEnableUserEmails() {
+        return enableUserEmails;
+    }
+
+    public String getEmailSubjectPrefix() {
+        return emailSubjectPrefix;
     }
 }
