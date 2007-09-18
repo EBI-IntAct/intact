@@ -76,6 +76,12 @@ public class SanityReportMailer {
                 if (log.isDebugEnabled()) log.debug("Sending sanity check mail to curator: "+curatorName);
 
                 Curator curator = sanityConfig.getCurator(curatorName);
+
+                if (curator == null){
+                    log.warn("Curator not found: "+curatorName+". Mail won't be sent.");
+                    continue;
+                }
+
                 SanityReport creatorReport = insaneCreatorReports.get(curatorName);
                 SanityReport updatorReport = insaneUpdatorReports.get(curatorName);
 

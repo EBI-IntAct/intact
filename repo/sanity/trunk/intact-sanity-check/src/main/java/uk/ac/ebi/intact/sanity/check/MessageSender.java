@@ -929,11 +929,12 @@ public class MessageSender {
             if (count > 0) {
                 if (sanityConfig.isEnableUserMails()) {
                     System.out.println("Send individual report to " + user + "( " + user + ")");
-                    String email = sanityConfig.getCurator(user).getEmail();
+                    Curator curator = sanityConfig.getCurator(user);
 
-                    if (email != null) {
-                        String[] recipients = new String[1];
-                        recipients[0] = email;
+                    if (curator != null) {
+                        String email = curator.getEmail();
+
+                        String[] recipients = new String[] { email };
 
                         // send mail
                         //if(MessageSender.SANITY_CHECK.equals(mailObject)){
@@ -951,9 +952,6 @@ public class MessageSender {
 
                         // keep track of unknown users
                         unknownUsers.add(user.toLowerCase());
-
-                        System.err.println("Could not find that user, here is the content of his report:");
-                        //System.err.println( fullReport.toString() );
 
                     }
                 }
