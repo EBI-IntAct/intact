@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.bridges.blast;
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version $Id: BlastClient.java 9577 2007-08-24 14:34:55Z irina-armean $
  */
-public class BlastClientException extends RuntimeException {
+public class BlastClientException extends Exception {
 
 	/**
 	 * 
