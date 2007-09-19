@@ -12,15 +12,19 @@ import uk.ac.ebi.intact.application.editor.struts.framework.AbstractEditorAction
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionActionForm;
 import uk.ac.ebi.intact.application.editor.struts.view.interaction.InteractionViewBean;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.NucleicAcidImpl;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.SmallMoleculeImpl;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.searchengine.ResultWrapper;
+import uk.ac.ebi.intact.util.protein.ProteinService;
+import uk.ac.ebi.intact.util.protein.ProteinServiceFactory;
+import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
+import uk.ac.ebi.intact.util.MailSender;
+import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +77,15 @@ public class ProteinSearchAction extends AbstractEditorAction {
             throws Exception {
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
+
+        MailSender mailSender = new MailSender();
+        String emails[] = {"rodrigue@ebi.ac.uk"};//,"cleroy@ebi.ac.uk"};
+                mailSender.postMail(emails,"Catherine : la plus belle pour toi.", "Dans ma generosite que tout le monde sait infinie, je t'ai " +
+                        "donne la copine la plus divine qui puisse exister sur cette terre\n Dieu","dieu@ciel.univers");
+                String email[] = {"cleroy@ebi.ac.uk"};//,"cleroy@ebi.ac.uk"};
+                        mailSender.postMail(email,"Nicolas : le plus beau pour toi.", "Dans ma generosite que tout le monde sait infinie, je t'ai " +
+                                "donne le copain le plus divin qui puisse exister sur cette terre\n Dieu","dieu@ciel.univers");
+
 
         String ac = intform.getProtSearchAC();
         String spAc = intform.getProtSearchSpAC();
@@ -128,23 +141,43 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // The maximum proteins allowed.
         int max = getService().getInteger("protein.search.limit");
 
+        UniprotRemoteService uniprotRemoteService = new UniprotRemoteService();
         // The wrapper to hold lookup result.
+        ProteinService proteinService = ProteinServiceFactory.getInstance().buildProteinService(uniprotRemoteService);
+
+        LOGGER.debug("ProteinSearchAction.execute 1");
         ResultWrapper rw = null;
+        UniprotServiceResult uniprotServiceResult = null;
 
         if (param.equals("spAc")) {
-            rw = user.getSPTRProteins(value, max);
+            try{
+                LOGGER.debug("ProteinSearchAction.execute 2");
+                uniprotServiceResult = proteinService.retrieve(value);
+            }catch(Exception e){
+                LOGGER.error(e.getMessage() + e.getStackTrace() + e.getCause());
+                // This can only happen when problems with creating an internal helper
+                // This error is already logged from the User class.
+                ActionMessages errors = new ActionMessages();
+                errors.add(ActionMessages.GLOBAL_MESSAGE, new ActionMessage("error.intact"));
+                saveErrors(request, errors);
+                return mapping.findForward(FAILURE);
+            }
         }
         else {
+            LOGGER.debug("ProteinSearchAction.execute 3");
             try {
                 rw = user.lookup(ProteinImpl.class, param, value, max);
                 if(rw.isEmpty()){
                     rw = user.lookup(NucleicAcidImpl.class, param, value,max);
+                    LOGGER.debug("ProteinSearchAction.execute 4");
                 }
                 if(rw.isEmpty()){
                     rw = user.lookup(SmallMoleculeImpl.class, param, value,max);
+                    LOGGER.debug("ProteinSearchAction.execute 5");
                 }
             }
             catch (IntactException ie) {
+                LOGGER.error(ie);
                 // This can only happen when problems with creating an internal helper
                 // This error is already logged from the User class.
                 ActionMessages errors = new ActionMessages();
@@ -154,7 +187,8 @@ public class ProteinSearchAction extends AbstractEditorAction {
             }
         }
         // Check the size
-        if (rw.isTooLarge()) {
+        if ((rw != null && rw.isTooLarge()) || (uniprotServiceResult != null && uniprotServiceResult.getProteins().size() > max )) {
+            LOGGER.debug("ProteinSearchAction.execute 6");
             ActionMessages errors = new ActionMessages();
             errors.add("int.interact.search", new ActionMessage("error.int.interact.search.many",
                     Integer.toString(rw.getPossibleResultSize()), param, Integer.toString(max)));
@@ -165,17 +199,28 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
 
         // Search found any results?
-        if (rw.isEmpty()) {
+        if ((rw != null && rw.isEmpty()) || (uniprotServiceResult != null && uniprotServiceResult.getProteins().isEmpty())) {
             // The error to display on the web page.
             ActionMessages errors = new ActionMessages();
             // Log the error if we have one.
-            Exception exp = user.getProteinParseException();
-            if (exp != null) {
-                LOGGER.error("", exp);
+//            Exception exp = user.getProteinParseException();
+//            if (exp != null) {
+//                LOGGER.error("", exp);
+//                errors.add("int.interact.search",
+//                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + ac));
+//            }else
+            if(uniprotServiceResult != null && !uniprotServiceResult.getErrors().isEmpty() ){
+                Map<String,String> map = uniprotServiceResult.getErrors();
+                Set<Map.Entry<String,String>> set = map.entrySet();
+                Iterator<Map.Entry<String,String>> iterator = set.iterator();
+                while(iterator.hasNext()){
+                    Map.Entry<String,String> entry = iterator.next();
+                    LOGGER.error("An error occured while searching for protein : " + value + " : \n" + entry.getKey() +
+                    "\n" + entry.getValue());
+                }
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + ac));
-            }
-            else {
+                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + value));
+            } else {
                 errors.add("int.interact.search",
                         new ActionMessage("error.int.interact.search.empty", param + " : " + ac));
             }
@@ -186,11 +231,21 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
 
-        for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
-            Interactor interactor = (Interactor) iter.next();
-            view.addInteractor(interactor);
+        if( rw != null && !rw.getResult().isEmpty()) {
+            for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
+                Interactor interactor = (Interactor) iter.next();
+                view.addInteractor(interactor);
+            }
+        }else if(uniprotServiceResult != null && !uniprotServiceResult.getProteins().isEmpty()){
+            for(Protein protein : uniprotServiceResult.getProteins()){
+                view.addInteractor(protein);
+            }
+        }else{
+            throw new IntactException("If we have reach this line, it means that rw.getResult() and uniprotServiceResult.getProteins" +
+                    " were empty which is normally not possible as we check it previously.");
         }
-        
+
+
         // The anchor is set via the Search protein button.
         setAnchor(request, intform);
         return mapping.getInputForward();
