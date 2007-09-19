@@ -48,7 +48,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest
 
         SanityReport report = SanityChecker.executeSanityCheck(sanityConfig);
 
-        Assert.assertEquals(4, report.getSanityResult().size());
+        Assert.assertEquals(3, report.getSanityResult().size());
     }
 
     @Test
