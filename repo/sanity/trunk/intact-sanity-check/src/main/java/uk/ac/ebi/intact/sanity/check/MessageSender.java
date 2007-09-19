@@ -945,7 +945,11 @@ public class MessageSender {
                         mailer.postMail(recipients,
                                 mailObject + " - " + TIME + " (" + count + " " + countType + (count > 1 ? "s" : "") + ")",
                                 fullReport.toString(),
-                                "cleroy@ebi.ac.uk");
+                                "intact-help@ebi.ac.uk");
+
+                        System.out.println( "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
+                        System.out.println( "Report for " + user + "(" + email + "): " + fullReport.toString());
+
                         //System.out.println("FULL REPORT for User : " + fullReport.toString());
                     }
                     else {
@@ -1008,7 +1012,6 @@ public class MessageSender {
 
                 fullReport.append("</table>").append(NEW_LINE);
             } // topics
-
         }
         else {
             if (mailObject.equals(MessageSender.SANITY_CHECK)) {
@@ -1017,26 +1020,17 @@ public class MessageSender {
             else if (mailObject.equals(MessageSender.CORRECTION_ASSIGNMENT)) {
                 fullReport.append("No correction to assign.");
             }
-
         }
 
-        if (!sanityConfig.isEnableAdminMails()) {
+        if (sanityConfig.isEnableAdminMails()) {
             Collection<String> adminEmails = getAdminEmails();
 
-            // Send mail to the administrator
-            String[] recipients = new String[adminEmails.size()];
-            int i = 0;
-            for (String email : adminEmails) {
-                recipients[i++] = email;
-            }
-
             // always send mail to admin, even if no errors
-
             if (!adminEmails.isEmpty()) {
-                mailer.postMail(recipients,
+                mailer.postMail(adminEmails.toArray(new String[adminEmails.size()]),
                         mailObject + " (ADMIN) - " + TIME + " (" + errorCount + " " + countType + (errorCount > 1 ? "s" : "") + ")",
                         fullReport.toString(),
-                        "cleroy@ebi.ac.uk");
+                        "intact-help@ebi.ac.uk");
                 //System.out.println( "FULL REPORT for Admin : " + fullReport.toString() );
             }
         }
