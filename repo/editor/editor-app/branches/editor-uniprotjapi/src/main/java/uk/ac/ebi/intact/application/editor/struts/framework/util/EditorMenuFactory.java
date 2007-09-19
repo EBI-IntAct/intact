@@ -235,7 +235,8 @@ public class EditorMenuFactory {
             LOGGER.debug("shortLabel = " + shortLabel);
             if(firstPositionCvShortlabel.equals(shortLabel)){
                 LOGGER.debug("removing " + shortLabel + " from list");
-                modMenuIterator.remove();
+                //MODIF-2007-9-19
+                //modMenuIterator.remove();
                 //todo : if not found, send error message.
             }
         }
@@ -351,6 +352,8 @@ public class EditorMenuFactory {
      * create an Intact helper to access persistent system.
      */
     public List<String> getProteinMenu(int mode) throws IntactException {
+        ourProteinMiRefs.add("MI:0327");
+        ourProteinMiRefs.add("MI:0326");
         return getPolymerMenu(mode, ourProteinMiRefs);
     }
 
