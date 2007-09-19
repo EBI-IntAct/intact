@@ -519,39 +519,39 @@ public class EditUser implements EditUserI, HttpSessionBindingListener {
         // view in the search page.
     }
 
-    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
-        // The result wrapper to return.
-        ResultWrapper rw = null;
+//    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException {
+//        // The result wrapper to return.
+//        ResultWrapper rw = null;
+//
+//        // Set the helper as it has already been closed.
+//        Collection prots;
+//
+//            prots = getMyProteinFactory().insertSPTrProteins(pid);
+//
+//        if (prots.size() > max) {
+//            // Exceeds the maximum size.
+//            rw = new ResultWrapper(prots.size(), max);
+//        }
+//        else if (prots.isEmpty()) {
+//            rw = new ResultWrapper(0, max);
+//        }
+//        else {
+//            // Within allowed range
+//            rw = new ResultWrapper(prots, max);
+//        }
+//        return rw;
+//    }
 
-        // Set the helper as it has already been closed.
-        Collection prots;
-
-            prots = getMyProteinFactory().insertSPTrProteins(pid);
-
-        if (prots.size() > max) {
-            // Exceeds the maximum size.
-            rw = new ResultWrapper(prots.size(), max);
-        }
-        else if (prots.isEmpty()) {
-            rw = new ResultWrapper(0, max);
-        }
-        else {
-            // Within allowed range
-            rw = new ResultWrapper(prots, max);
-        }
-        return rw;
-    }
-
-    public Exception getProteinParseException() {
-        // Map of exceptions.
-        Map map = getMyProteinFactory().getParsingExceptions();
-        // Only interested in the first entry as the parsing is limited to a
-        // single entry. Guard against empty exceptions
-        if (!map.values().isEmpty()) {
-            return (Exception) map.values().iterator().next();
-        }
-        return null;
-    }
+//    public Exception getProteinParseException() {
+//        // Map of exceptions.
+//        Map map = getMyProteinFactory().getParsingExceptions();
+//        // Only interested in the first entry as the parsing is limited to a
+//        // single entry. Guard against empty exceptions
+//        if (!map.values().isEmpty()) {
+//            return (Exception) map.values().iterator().next();
+//        }
+//        return null;
+//    }
 
     public UpdateProteinsI getMyProteinFactory(){
         if(IntactContext.getCurrentInstance().getDataContext().isTransactionActive()){
