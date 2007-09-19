@@ -310,6 +310,7 @@ public class ProteinServiceImpl implements ProteinService {
             System.out.println("after replaceInActiveInstances");
 
             ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
+            ComponentDao componentDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentDao();
             sb.append("The protein which are going to be merged :").append( NEW_LINE );
             System.out.println("protein which are going to be merged");
             System.out.println("proteinsToDelete.size() = " + proteinsToDelete.size());
@@ -326,7 +327,6 @@ public class ProteinServiceImpl implements ProteinService {
                 InteractorXref xref = new InteractorXref(owner,intact, protToDelete.getAc(), intactSecondary);
                 xref.setParent(protToBeKept);
                 protToBeKept.addXref(xref);
-//                proteinDao.delete((ProteinImpl) protToDelete);
                 protToDelete.setActiveInstances(new ArrayList());
                 addToDeleteAnnotation(protToDelete);
                 proteinDao.saveOrUpdate((ProteinImpl) protToDelete);
@@ -450,8 +450,11 @@ public class ProteinServiceImpl implements ProteinService {
             for (int j=0; j < componentArray.length; j++) {
                 Component component =  componentArray[j];
                 replacer.addActiveInstance(component);
+                //This will set the interactor of the component to null so you have after to set the interactor again.
                 protein.removeActiveInstance(component);
+                component.setInteractor(replacer);
                 componentDao.saveOrUpdate(component);
+                System.out.println("Component saved");
             }
             proteinDao.saveOrUpdate((ProteinImpl) protein);
         }
