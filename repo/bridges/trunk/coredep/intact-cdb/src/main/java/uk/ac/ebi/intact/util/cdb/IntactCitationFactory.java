@@ -5,10 +5,6 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
-//import HTTPClient.*;
-//import org.apache.soap.transport.*;
-//import oracle.soap.transport.*;
-
 import uk.ac.ebi.cdb.webservice.Citation;
 import uk.ac.ebi.cdb.webservice.Author;
 import uk.ac.ebi.intact.bridges.citexplore.CitexploreClient;
@@ -27,15 +23,17 @@ import java.util.regex.Pattern;
  */
 public class IntactCitationFactory {
 
-    private static IntactCitationFactory ourInstance;
+    private static ThreadLocal<IntactCitationFactory> ourInstance = new ThreadLocal<IntactCitationFactory>() {
+        @Override
+        protected IntactCitationFactory initialValue() {
+            return new IntactCitationFactory();
+        }
+    };
     ///////////////////////////
     // Singleton's methods
 
     public static IntactCitationFactory getInstance() {
-        if (ourInstance == null) {
-            ourInstance = new IntactCitationFactory();
-        }
-        return ourInstance;
+        return ourInstance.get();
     }
 
     private IntactCitationFactory() {
