@@ -28,6 +28,10 @@ import uk.ac.ebi.intact.bridges.blast.generated.InputParams;
 import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastService;
 import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastServiceLocator;
 import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
+import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
+import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.Job;
 
 /**
  * Blast client
@@ -38,7 +42,7 @@ import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
 public class BlastClient {
 	// checks the format of the accession number
 	private static String		uniprotTermExpr	= "\\w{6,6}";
-	private static String		done			= "DONE";
+
 	// true for xml formated output, false otherwise
 	private boolean				fileFormatXml	= true;
 	private String				email;
@@ -47,9 +51,14 @@ public class BlastClient {
 	/**
 	 * Constructor
 	 * 
+	 * @throws BlastClientException
+	 * 
 	 */
-	public BlastClient() {
-		email = "iarmean@ebi.ac.uk";
+	public BlastClient(String email) throws BlastClientException {
+		if (email == null) {
+			throw new IllegalArgumentException("Email must not be null!");
+		}
+		this.email = email;
 		WSWUBlastService service = new WSWUBlastServiceLocator();
 		try {
 			blast = service.getWSWUBlast();
@@ -74,19 +83,12 @@ public class BlastClient {
 	public boolean isFileFormatXml() {
 		return fileFormatXml;
 	}
-	
+
 	/**
 	 * @return the email
 	 */
 	public String getEmail() {
 		return email;
-	}
-
-	/**
-	 * @param email the email to set
-	 */
-	public void setEmail(String email) {
-		this.email = email;
 	}
 
 	// ////////////////
@@ -97,12 +99,18 @@ public class BlastClient {
 	 * 
 	 * @param uniprotAc
 	 * @return the Job (job id and the blasted protein)
+	 * @throws BlastClientException
 	 */
-	public Job blast(String uniprotAc) {
-
-		if (!isUniprotAcFormat(uniprotAc)) {
-			throw new BlastClientException(new IllegalArgumentException("UniprotAc not in the uniprot format: '"
-					+ uniprotAc + "'"));
+	public Job blast(BlastInput blastInput) throws BlastClientException {
+		if (blastInput == null) {
+			throw new IllegalArgumentException("BlastInput mus not be null!");
+		}
+		if (blastInput.getUniprotAc() == null) {
+			throw new IllegalArgumentException("BlastInput uniprotAc mus not be null!");
+		}
+		if (!isUniprotAcFormat(blastInput.getUniprotAc().getAcNr())) {
+			throw new IllegalArgumentException("UniprotAc not in the uniprot format: '"
+					+ blastInput.getUniprotAc().getAcNr() + "'");
 		}
 
 		InputParams params = new InputParams();
@@ -110,17 +118,17 @@ public class BlastClient {
 		params.setDatabase("uniprot");
 		params.setEmail(email);
 
-		params.setAsync(new Boolean(true)); // set the submissions asynchronous
+		params.setAsync(Boolean.TRUE); // set the submissions asynchronous
 
 		Data inputs[] = new Data[1];
 		Data input = new Data();
 		input.setType("sequence");
-		input.setContent("uniprot:" + uniprotAc);
+		input.setContent("uniprot:" + blastInput.getUniprotAc().getAcNr());
 		inputs[0] = input;
 
 		Job job = null;
 		try {
-			job = new Job(blast.runWUBlast(params, inputs), uniprotAc);
+			job = new Job(blast.runWUBlast(params, inputs), blastInput);
 		} catch (RemoteException e) {
 			throw new BlastClientException(e);
 		}
@@ -133,17 +141,19 @@ public class BlastClient {
 	 * @param set
 	 *            of uniprotAcs
 	 * @return a list of Job objects
+	 * @throws BlastClientException
 	 */
-	public List<Job> blast(Set<String> uniprotAcSet) {
-		if (uniprotAcSet == null) {
-			throw new BlastClientException(new NullPointerException("The uniprotAc set must not be null!"));
+	public List<Job> blast(Set<BlastInput> blastInputSet) throws BlastClientException {
+		if (blastInputSet == null) {
+			throw new IllegalArgumentException("BlastInputSet set must not be null!");
 		}
+		if (blastInputSet.size() == 0) {
+			throw new IllegalArgumentException("BlastInputSet must not be empty!");
+		}
+
 		List<Job> jobs = new ArrayList<Job>();
-		for (String ac : uniprotAcSet) {
-			if (!isUniprotAcFormat(ac)) {
-				new BlastClientException("Ac '" + ac + "' is not in the proper/expected format!");
-			}
-			Job job = blast(ac);
+		for (BlastInput blastInput : blastInputSet) {
+			Job job = blast(blastInput);
 			if (job != null) {
 				jobs.add(job);
 			}
@@ -154,9 +164,25 @@ public class BlastClient {
 	/**
 	 * @return status of the job (RUNNING | PENDING | NOT_FOUND | FAILED | DONE)
 	 */
-	public String checkStatus(String jobid) {
+	public BlastJobStatus checkStatus(Job job) {
 		try {
-			return blast.checkStatus(jobid);
+			String status = blast.checkStatus(job.getId());
+			if (status.equals("DONE")) {
+				job.setStatus(BlastJobStatus.DONE);
+				return job.getStatus();
+			} else if (status.equals("RUNNING")) {
+				job.setStatus(BlastJobStatus.RUNNING);
+				return job.getStatus();
+			} else if (status.equals("PENDING")) {
+				job.setStatus(BlastJobStatus.PENDING);
+				return job.getStatus();
+			} else if (status.equals("NOT_FOUND")) {
+				job.setStatus(BlastJobStatus.NOT_FOUND);
+				return job.getStatus();
+			} else if (status.equals("FAILED")) {
+				job.setStatus(BlastJobStatus.FAILED);
+				return job.getStatus();
+			}
 		} catch (RemoteException e) {
 			new BlastClientException(e);
 		}
@@ -170,13 +196,9 @@ public class BlastClient {
 	 * @return true or false
 	 */
 	public boolean isFinished(Job job) {
-		try {
-			String status = blast.checkStatus(job.getId());
-			if (done.equals(status)) {
-				return true;
-			}
-		} catch (RemoteException e) {
-			new BlastClientException(e);
+		BlastJobStatus status = checkStatus(job);
+		if (BlastJobStatus.DONE.equals(status)) {
+			return true;
 		}
 		return false;
 	}
@@ -185,21 +207,23 @@ public class BlastClient {
 	 * Retrieves the result if the job is finished.
 	 * 
 	 * @param job
-	 * @return string
+	 * @return string: the output in xml format or
 	 */
-	public String getResult(Job job) {
+	public BlastResult getResult(Job job) {
 		String result = null;
-		if (isFinished(job)) {
+		BlastJobStatus status = checkStatus(job);
+		if (BlastJobStatus.DONE.equals(status)) {
 			try {
 				String type = (fileFormatXml ? "toolxml" : "tooloutput");
 				byte[] resultbytes = blast.poll(job.getId(), type);
 				result = new String(resultbytes);
-
+	
+				job.setBlastResult(new BlastResult(result, fileFormatXml));
 			} catch (RemoteException e) {
 				new BlastClientException(e);
 			}
 		}
-		return result;
+		return job.getBlastResult();
 	}
 
 	/**
@@ -216,5 +240,4 @@ public class BlastClient {
 		return false;
 	}
 
-	
 }
