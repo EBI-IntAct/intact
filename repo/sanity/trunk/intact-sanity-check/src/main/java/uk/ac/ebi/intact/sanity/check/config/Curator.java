@@ -73,6 +73,6 @@ public class Curator
 
     @Override
     public String toString() {
-        return "Curator{"+getName()+" - "+getEmail()+"}";
+        return "Curator{"+getName()+" - "+getEmail()+" - admin:"+admin+"}";
     }
 }
