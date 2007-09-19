@@ -8,7 +8,9 @@ package uk.ac.ebi.intact.sanity.check.correctionassigner;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -21,7 +23,7 @@ import java.util.*;
 
 /**
  * Class that stores experiments and gives access to them according to criteria. Criteria can be of type: on-hold,
- * assigned. not-assigned or to-be-reviewed.
+ * assigned, not-assigned or to-be-reviewed.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id: ExperimentLister.java,v 1.4 2006/04/13 12:38:57 skerrien Exp $
@@ -36,7 +38,6 @@ public class ExperimentLister {
      * super-curator for correction
      */
     private Collection notAssignedExperiments = new ArrayList();
-
 
     /**
      * Collection of experimentBeans : being created after september 2005 having no annotation to-be-reviewed or
@@ -66,9 +67,6 @@ public class ExperimentLister {
      */
     private HashMap assignedPmid2creator = new HashMap();
 
-//    public void removeElementFromAssignedPmid2creator(String pmid){
-//        assignedPmid2creator.remove(pmid);
-    //    }
     private static boolean DEBUG = false;
 
     private Collection<SuperCurator> superCurators;
@@ -147,10 +145,6 @@ public class ExperimentLister {
         return notAssignedPmid2creator;
     }
 
-//    public void addElementInNotAssignedPmid2creator(String pmid, String creator){
-//        notAssignedPmid2creator.put(pmid, creator.toLowerCase());
-//    }
-
     public Collection getOnHoldExperiments() {
         return onHoldExperiments;
     }
@@ -163,10 +157,6 @@ public class ExperimentLister {
         return notAcceptedNotToBeReviewed;
     }
 
-//    public void addExp2NotAcceptedNotToBeReviewed(ComparableExperimentBean exp){
-//        notAcceptedNotToBeReviewed.add(exp);
-//    }
-
     /**
      * Via the sanityCheckerHelper this method is using the dbUtils library to get the Collection notAssignedExperiments
      * of experimentBeans being to assigned to a reviewer for correction.
@@ -177,59 +167,45 @@ public class ExperimentLister {
     private void fillNotAssignedExpCollection() throws Exception, SQLException {
 
         if ( DEBUG ) {
-            System.out.println( "Searching for experiment not accepted, to-be-reviewed and not assigned : " );
+            System.out.println( "Searching for experiment not accepted, not to-be-reviewed and not assigned : " );
         }
 
         CvHolder holder = getCvHolder();
 
         SanityCheckerHelper sch = new SanityCheckerHelper();
 
-        sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId " +
-                                                        "from ia_experiment e, ia_experiment_xref x " +
-                                                        "where x.parent_ac = e.ac and " +
-                                                        "x.database_ac = '" + holder.pubmed.getAc() + "' and " +
-                                                        "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and " +
-                                                        "e.ac not in ( " +
-                                                        "select e.ac " +
-                                                        "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
-                                                        "where e.ac=e2a.experiment_ac and " +
-                                                        "e2a.annotation_ac=a.ac and " +
-                                                        "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') " +
-                                                        "union " +
-                                                        "select e.ac " +
-                                                        "from ia_experiment e, ia_exp2annot e2a, ia_annotation a " +
-                                                        "where e.ac=e2a.experiment_ac and " +
-                                                        "e2a.annotation_ac=a.ac and " +
-                                                        "a.topic_ac in  ('" + holder.reviewer.getAc() + "') " +
-                                                        ") " +
-                                                        "and e.created >  " + getToDateSqlFirstSep2005() + " and e.ac like ? " +
-                                                        "order by created_user" );
+
+        String sql = "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
+                     "from ia_experiment e, ia_experiment_xref x \n" +
+                     "where x.parent_ac = e.ac and \n" +
+                     "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
+                     "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and \n" +
+                     "e.ac not in ( \n" +
+                     "             select e.ac \n" +
+                     "             from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
+                     "             where e.ac=e2a.experiment_ac and \n" +
+                     "                   e2a.annotation_ac=a.ac and \n" +
+                     "                   a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') \n" +
+                     "             union \n" +
+                     "             select e.ac \n" +
+                     "             from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
+                     "             where e.ac=e2a.experiment_ac and \n" +
+                     "                   e2a.annotation_ac=a.ac and \n" +
+                     "                   a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
+                     "            ) \n" +
+                     "and e.created >  " + getToDateSqlFirstSep2005() + " and e.ac like ? \n" +
+                     "order by created_user";
+
+        sch.addMapping( ComparableExperimentBean.class, sql );
         if ( DEBUG ) {
             System.out.println( "... Here is the request done\n\n" );
-            System.out.println( "select e.ac, e.created_user, e.created, e.shortlabel, x.primaryId as pubmedId \n" +
-                                "from ia_experiment e, ia_experiment_xref x \n" +
-                                "where x.parent_ac = e.ac and \n" +
-                                "x.database_ac = '" + holder.pubmed.getAc() + "' and \n" +
-                                "x.qualifier_ac = '" + holder.primaryRef.getAc() + "' and \n" +
-                                "e.ac not in ( \n" +
-                                "select e.ac \n" +
-                                "from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
-                                "where e.ac=e2a.experiment_ac and \n" +
-                                "e2a.annotation_ac=a.ac and \n" +
-                                "a.topic_ac in  ('" + holder.accepted.getAc() + "','" + holder.toBeReviewed.getAc() + "') \n" +
-                                "union \n" +
-                                "select e.ac \n" +
-                                "from ia_experiment e, ia_exp2annot e2a, ia_annotation a \n" +
-                                "where e.ac=e2a.experiment_ac and \n" +
-                                "e2a.annotation_ac=a.ac and \n" +
-                                "a.topic_ac in  ('" + holder.reviewer.getAc() + "') \n" +
-                                ") \n" +
-                                "and e.created >  " + getToDateSqlFirstSep2005() + " and e.ac like ? \n" +
-                                "order by created_user\n\n" );
+            System.out.println( sql + "\n\n" );
         }
+
         notAssignedExperiments = sch.getBeans( ComparableExperimentBean.class, "%" );
+
         if ( DEBUG ) {
-            System.out.println( "..." + notAssignedExperiments.size() + " experiments found." );
+            System.out.println( "..." + notAssignedExperiments.size() + " not assigned experiments found." );
         }
     }
 
@@ -240,7 +216,6 @@ public class ExperimentLister {
      * @throws IntactException
      * @throws SQLException
      */
-
     private void fillAssignedExpCollection() throws Exception, SQLException {
         if ( DEBUG ) {
             System.out.println( "Searching for experiments assigned and not accepted or to-be-reviewed : " );
@@ -292,7 +267,6 @@ public class ExperimentLister {
         }
     }
 
-
     /**
      * If a superCurator is away we should re-assigne its corrections to somebody else and stoppe assigning him new
      * corrections. The fact that a superCurator is away can be seen in the fact that it's method getPercentage return 0
@@ -311,6 +285,10 @@ public class ExperimentLister {
         for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
             SuperCurator sc = ( SuperCurator ) iterator.next();
             if ( sc.getPercentage() == 0 ) {
+                if ( DEBUG ) {
+                    System.out.println( sc.getName() + " has a percentage of assignement of 0% ... remove her from all experiments" );
+                    // TODO what about experiment that are already accepted.
+                }
                 SanityCheckerHelper sch = new SanityCheckerHelper();
                 sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
                                                                 "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
@@ -319,9 +297,12 @@ public class ExperimentLister {
                                                                 "and a.topic_ac = '" + cvHolder.reviewer.getAc() + "' " +
                                                                 "and a.description = ? " );
                 Collection experiments = sch.getBeans( ComparableExperimentBean.class, sc.getName().toLowerCase() );
+
+                // TODO what about experiment that are already accepted.
+
                 if ( DEBUG ) {
-                    System.out.println( "... curator " + sc.getName() + "is away and have " + experiments.size() +
-                                        " experiments to review : " );
+                    System.out.println( "... curator " + sc.getName() + " is away (assignement: 0%) and has " +
+                                        experiments.size() + " experiments to review : " );
                 }
                 for ( Iterator iterator1 = experiments.iterator(); iterator1.hasNext(); ) {
                     ComparableExperimentBean comparableExperimentBean = ( ComparableExperimentBean ) iterator1.next();
@@ -332,7 +313,7 @@ public class ExperimentLister {
                     removeReviewerAnnotation( comparableExperimentBean.getAc() );
                 }
                 if ( DEBUG ) {
-                    System.out.println( "They will be re-assigned to the others super-curators." );
+                    System.out.println( "They will be re-assigned to the other super-curators." );
                 }
             }
         }
@@ -348,18 +329,34 @@ public class ExperimentLister {
         //Get the util.model.Experiment object corresponding to this experiment ac.
         Experiment experiment = getDaoFactory().getExperimentDao().getByAc( expAc );
 
+        boolean updated = false;
+
         Collection annotations = experiment.getAnnotations();
         for ( Iterator iterator = annotations.iterator(); iterator.hasNext(); ) {
             Annotation annotation = ( Annotation ) iterator.next();
             if ( annotation.getCvTopic().getShortLabel().equals( CvTopic.REVIEWER ) ) {
+                if ( DEBUG )
+                    System.out.println( "Found annotation REVIEWER on experiment: " + experiment.getShortLabel() + " ... deleting it" );
                 iterator.remove();
+                // TODO fails here to delete the annotation ... transaction is not commited ?!
                 getDaoFactory().getAnnotationDao().delete( annotation );
                 experiment.removeAnnotation( annotation );
-
+                updated = true;
             }
         }
 
-        getDaoFactory().getExperimentDao().update( experiment );
+        if ( updated ) {
+            getDaoFactory().getExperimentDao().update( experiment );
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+            } catch ( IntactTransactionException e ) {
+                throw new RuntimeException( e );
+            }
+        } else {
+            if ( DEBUG )
+                System.out.println( "Could not find an annotation REVIEWER on experiment: " + experiment.getShortLabel() );
+        }
     }
 
     /**
