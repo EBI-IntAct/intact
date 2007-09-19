@@ -78,15 +78,6 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // The form.
         InteractionActionForm intform = (InteractionActionForm) form;
 
-        MailSender mailSender = new MailSender();
-        String emails[] = {"rodrigue@ebi.ac.uk"};//,"cleroy@ebi.ac.uk"};
-                mailSender.postMail(emails,"Catherine : la plus belle pour toi.", "Dans ma generosite que tout le monde sait infinie, je t'ai " +
-                        "donne la copine la plus divine qui puisse exister sur cette terre\n Dieu","dieu@ciel.univers");
-                String email[] = {"cleroy@ebi.ac.uk"};//,"cleroy@ebi.ac.uk"};
-                        mailSender.postMail(email,"Nicolas : le plus beau pour toi.", "Dans ma generosite que tout le monde sait infinie, je t'ai " +
-                                "donne le copain le plus divin qui puisse exister sur cette terre\n Dieu","dieu@ciel.univers");
-
-
         String ac = intform.getProtSearchAC();
         String spAc = intform.getProtSearchSpAC();
         String shortLabel = intform.getProtSearchLabel();
@@ -153,6 +144,11 @@ public class ProteinSearchAction extends AbstractEditorAction {
             try{
                 LOGGER.debug("ProteinSearchAction.execute 2");
                 uniprotServiceResult = proteinService.retrieve(value);
+                LOGGER.debug("uniprotServiceResult.getProteins().size()" + uniprotServiceResult.getProteins().size());
+                for(Protein protein : uniprotServiceResult.getProteins()){
+                    LOGGER.debug("uniprotServiceResult protein.getShortLabel() = " + protein.getShortLabel());
+                    LOGGER.debug("uniprotServiceResult protein.getAc() = " + protein.getAc());   
+                }
             }catch(Exception e){
                 LOGGER.error(e.getMessage() + e.getStackTrace() + e.getCause());
                 // This can only happen when problems with creating an internal helper
@@ -230,6 +226,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
         }
         // Can safely cast it as we have the correct editor view bean.
         InteractionViewBean view = (InteractionViewBean) user.getView();
+
 
         if( rw != null && !rw.getResult().isEmpty()) {
             for (Iterator iter = rw.getResult().iterator(); iter.hasNext();) {
