@@ -113,8 +113,9 @@ public class UpdateDbProteinsMojo
         proteinCount = proteinDao.countAll();
         int iterationCount = proteinCount/CHUNK_SIZE;
 
-        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE P0A6T1");
-        UniprotServiceResult uniprotServResult = service.retrieve("P0A6T1");
+//        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE P12385");
+        System.out.println("\n\n\n\n\n\n\n\n ABOUT TO UPDATE Q5T482");
+        UniprotServiceResult uniprotServResult = service.retrieve("Q5T482");
         System.out.println("uniprotServResult.getProteins().size() = " + uniprotServResult.getProteins().size());
         System.out.println("uniprotServResult.getErrors().size() = " + uniprotServResult.getErrors().size());
         Map<String,String> errorsTest = uniprotServResult.getErrors();
@@ -140,7 +141,7 @@ public class UpdateDbProteinsMojo
         }
         System.out.println(errorTestLog);
 
-        System.out.println("P0A6T1 UPDATED\n\n\n\n\n\n\n\n");
+        System.out.println("Q5T482 UPDATED\n\n\n\n\n\n\n\n");
         System.out.println("BEFORE ASSERT");
         commitTransaction();
 //        int x = 1;
@@ -269,12 +270,14 @@ public class UpdateDbProteinsMojo
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         Collection<String> acsToDelete = ProteinToDeleteManager.getAcToDelete();
         proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
-        for(String ac : acsToDelete){
-            Protein protein = proteinDao.getByAc(ac);
-            System.out.println("Deleting protein [" + protein.getAc() + "," + protein.getShortLabel() + ","
-                    + ProteinUtils.getUniprotXref(protein) + "]");
-            proteinDao.delete((ProteinImpl) protein);
-        }
+// todo : I have commented this peace of code as we can't delete proteins if we dont' check first if they have splice variant
+        //involved in an interaction. Add the check an un-comment the delete lines. I have deleted those manually (see sql on confluence)
+//        for(String ac : acsToDelete){
+//            Protein protein = proteinDao.getByAc(ac);
+//            System.out.println("Deleting protein [" + protein.getAc() + "," + protein.getShortLabel() + ","
+//                    + ProteinUtils.getUniprotXref(protein) + "]");
+//            proteinDao.delete((ProteinImpl) protein);
+//        }
         commitTransaction();
 
     }
