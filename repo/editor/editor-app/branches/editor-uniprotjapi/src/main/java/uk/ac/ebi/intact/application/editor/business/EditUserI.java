@@ -166,13 +166,13 @@ public interface EditUserI extends IntactUserI, Serializable {
      * @param max the maximum number of proteins allowed.
      * @return a wrapper containing<code>Protein</code> instances for <code>pid</code>.
      */
-    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException;
+//    public ResultWrapper getSPTRProteins(String pid, int max) throws IntactException;
 
     /**
      * Returns the last protein parse exception.
      * @return the last protein parse exception`.
      */
-    public Exception getProteinParseException();
+//    public Exception getProteinParseException();
 
     /**
      * Utility method to handle the logic for lookup.
