@@ -340,6 +340,12 @@ public class EditorMenuFactory {
      * create an Intact helper to access persistent system.
      */
     public List<String> getNucleicAcidMenu(int mode) throws IntactException {
+        CvHelper cvHelper = new CvHelper();
+        CvInteractorType nucleicAcid = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvInteractorType.class, CvInteractorType.NUCLEIC_ACID_MI_REF);
+        Collection<String> nucleicAcidMIs = new ArrayList<String>();
+        ourNucleicAcidMiRefs = cvHelper.getChildrenMiRefs(nucleicAcid, nucleicAcidMIs);
+                    ourNucleicAcidMiRefs.add(CvInteractorType.NUCLEIC_ACID_MI_REF);
+
         return getPolymerMenu(mode, ourNucleicAcidMiRefs);
     }
 
