@@ -3,7 +3,7 @@
  * rights reserved. Please see the file LICENSE in the root directory of this
  * distribution.
  */
-package uk.ac.ebi.intact.bridges.blast;
+package uk.ac.ebi.intact.bridges.blast.client;
 
 import static org.junit.Assert.*;
 

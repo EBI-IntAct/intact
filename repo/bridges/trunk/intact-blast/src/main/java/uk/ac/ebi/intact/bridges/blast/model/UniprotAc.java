@@ -29,6 +29,8 @@ public class UniprotAc {
 		}
 		if (Pattern.matches(uniprotTermExpr, accessionNr)) {
 			this.acNr = accessionNr;
+		}else {
+			throw new IllegalArgumentException("Ac must be be built out of 6 characters!");
 		}
 	}
 
