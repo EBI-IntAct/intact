@@ -18,7 +18,10 @@ import uk.ac.ebi.intact.util.protein.ProteinService;
 import uk.ac.ebi.intact.util.protein.ProteinServiceFactory;
 import uk.ac.ebi.intact.util.protein.utils.UniprotServiceResult;
 import uk.ac.ebi.intact.util.MailSender;
+import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
+import uk.ac.ebi.intact.bridges.taxonomy.NewtTaxonomyService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -132,9 +135,20 @@ public class ProteinSearchAction extends AbstractEditorAction {
         // The maximum proteins allowed.
         int max = getService().getInteger("protein.search.limit");
 
-        UniprotRemoteService uniprotRemoteService = new UniprotRemoteService();
-        // The wrapper to hold lookup result.
-        ProteinService proteinService = ProteinServiceFactory.getInstance().buildProteinService(uniprotRemoteService);
+        UniprotService uniprotRemoteService = new UniprotRemoteService();
+        ProteinService proteinService = ProteinServiceFactory.getInstance().buildProteinService( uniprotRemoteService );
+        proteinService.setBioSourceService( BioSourceServiceFactory.getInstance().buildBioSourceService( new NewtTaxonomyService() ) );
+
+        LOGGER.debug("Getting horse biosource");
+        BioSource horse = BioSourceServiceFactory.getInstance().buildBioSourceService( new NewtTaxonomyService() ).getBiosourceByTaxid("9796");
+        if(horse == null){
+            LOGGER.debug("!!!!!!!!! HORSE NULL !!!!!!!!!!");
+        }
+        LOGGER.debug("Horse biosource got : " + horse.getShortLabel());
+
+//        UniprotRemoteService uniprotRemoteService = new UniprotRemoteService();
+//        // The wrapper to hold lookup result.
+//        ProteinService proteinService = ProteinServiceFactory.getInstance().buildProteinService(uniprotRemoteService);
 
         LOGGER.debug("ProteinSearchAction.execute 1");
         ResultWrapper rw = null;
