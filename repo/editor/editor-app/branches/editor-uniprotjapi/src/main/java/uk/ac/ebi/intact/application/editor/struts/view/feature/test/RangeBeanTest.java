@@ -589,12 +589,12 @@ public class RangeBeanTest extends TestCase {
     private void doTestGetRange() throws IntactException {
         CvContext cvContext = IntactContext.getCurrentInstance().getCvContext();
 
-        CvFuzzyType lessThan = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.LESS_THAN);
-        CvFuzzyType greaterThan = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.GREATER_THAN);
-        CvFuzzyType undetermined = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.UNDETERMINED);
-        CvFuzzyType range = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.RANGE);
-        CvFuzzyType ct = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.C_TERMINAL);
-        CvFuzzyType nt = (CvFuzzyType) cvContext.getByLabel(CvFuzzyType.N_TERMINAL);
+        CvFuzzyType lessThan = cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.LESS_THAN);
+        CvFuzzyType greaterThan =  cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.GREATER_THAN);
+        CvFuzzyType undetermined = cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.UNDETERMINED);
+        CvFuzzyType range = cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.RANGE);
+        CvFuzzyType ct = cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.C_TERMINAL);
+        CvFuzzyType nt = cvContext.getByLabel(CvFuzzyType.class,CvFuzzyType.N_TERMINAL);
 
         RangeBean bean = null;
 
