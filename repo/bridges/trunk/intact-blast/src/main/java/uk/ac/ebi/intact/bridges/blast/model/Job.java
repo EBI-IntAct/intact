@@ -21,7 +21,7 @@ public class Job {
 	private String			id;
 	private BlastInput		blastInput;
 	private BlastJobStatus	status;
-	private BlastResult		blastResult;
+	private BlastOutput		blastResult;
 
 	public Job(String id, BlastInput blastInput) {
 		this.id = id;
@@ -63,7 +63,7 @@ public class Job {
 	/**
 	 * @return the blastResult
 	 */
-	public BlastResult getBlastResult() {
+	public BlastOutput getBlastResult() {
 		return blastResult;
 	}
 
@@ -71,7 +71,7 @@ public class Job {
 	 * @param blastResult
 	 *            the blastResult to set
 	 */
-	public void setBlastResult(BlastResult blastResult) {
+	public void setBlastResult(BlastOutput blastResult) {
 		if (blastResult == null){
 			throw new IllegalArgumentException("BlastResult must not be null!");
 		}

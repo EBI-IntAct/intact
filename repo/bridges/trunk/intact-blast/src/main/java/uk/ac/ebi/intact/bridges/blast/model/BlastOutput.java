@@ -16,12 +16,12 @@ package uk.ac.ebi.intact.bridges.blast.model;
  * 19 Sep 2007
  * </pre>
  */
-public class BlastResult {
+public class BlastOutput {
 
 	private String	result;
 	private boolean	isXmlFormat;
 
-	public BlastResult(String result, boolean isXmlFormat) {
+	public BlastOutput(String result, boolean isXmlFormat) {
 		if (result == null) {
 			throw new IllegalArgumentException("Result must not be null!");
 		}

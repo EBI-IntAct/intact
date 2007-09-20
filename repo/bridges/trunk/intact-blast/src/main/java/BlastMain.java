@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import uk.ac.ebi.intact.bridges.blast.BlastClient;
-import uk.ac.ebi.intact.bridges.blast.BlastClientException;
+import uk.ac.ebi.intact.bridges.blast.client.BlastClient;
+import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
-import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
@@ -61,7 +61,7 @@ public class BlastMain {
 				status = bc.checkStatus(job);
 			}
 			if (BlastJobStatus.DONE.equals(status)) {
-				BlastResult result = bc.getResult(job); // whe done, get the results
+				BlastOutput result = bc.getResult(job); // whe done, get the results
 				assertNotNull(result);
 				System.out.println(job);
 			} else {
