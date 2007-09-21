@@ -188,25 +188,25 @@ public class UpdateExperimentAnnotationsFromPudmed {
             // Collecting necessary vocabularies
             CvObjectDao<CvTopic> cvTopicDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class);
 
-            CvTopic authorList = cvTopicDao.getByShortLabel(CvTopic.AUTHOR_LIST); // unique
+            CvTopic authorList = cvTopicDao.getByPsiMiRef(CvTopic.AUTHOR_LIST_MI_REF); // unique
 
             if ( authorList == null ) {
-                throw new IntactException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST + ") in your intact node. abort update." );
+                throw new IntactException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST_MI_REF + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic journal = cvTopicDao.getByShortLabel(CvTopic.JOURNAL );        // unique
+            CvTopic journal = cvTopicDao.getByShortLabel( "MI:0885" );        // unique
             if ( journal == null ) {
-                throw new IntactException( "Could not find CvTopic(" + CvTopic.JOURNAL + ") in your intact node. abort update." );
+                throw new IntactException( "Could not find CvTopic(" + CvTopic.JOURNAL + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic year = cvTopicDao.getByShortLabel(CvTopic.PUBLICATION_YEAR );  // unique
+            CvTopic year = cvTopicDao.getByShortLabel( "MI:0886" );  // unique
             if ( year == null ) {
-                throw new IntactException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR + ") in your intact node. abort update." );
+                throw new IntactException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic email = cvTopicDao.getByShortLabel(CvTopic.CONTACT_EMAIL );    // not unique
+            CvTopic email = cvTopicDao.getByShortLabel( CvTopic.CONTACT_EMAIL_MI_REF );    // not unique
             if ( email == null ) {
-                throw new IntactException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL + ") in your intact node. abort update." );
+                throw new IntactException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL + ") by MI in your intact node. abort update." );
             }
 
             ///////////////////////////////////////
