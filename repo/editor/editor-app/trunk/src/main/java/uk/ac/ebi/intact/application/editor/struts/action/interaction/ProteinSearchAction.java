@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.util.biosource.BioSourceServiceFactory;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
 import uk.ac.ebi.intact.bridges.taxonomy.NewtTaxonomyService;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -154,6 +155,11 @@ public class ProteinSearchAction extends AbstractEditorAction {
         ResultWrapper rw = null;
         UniprotServiceResult uniprotServiceResult = null;
 
+        LOGGER.debug("Searching for the intactSecondary");
+        CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByShortLabel(CvXrefQualifier.class,"intact-secondary");
+//        CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class,"intact-secondary");
+        LOGGER.debug("intactSecondary.getShortLabel()" + intactSecondary.getShortLabel());
+                
         if (param.equals("spAc")) {
             try{
                 LOGGER.debug("ProteinSearchAction.execute 2");
@@ -208,6 +214,7 @@ public class ProteinSearchAction extends AbstractEditorAction {
             return mapping.getInputForward();
         }
 
+
         // Search found any results?
         if ((rw != null && rw.isEmpty()) || (uniprotServiceResult != null && uniprotServiceResult.getProteins().isEmpty())) {
             // The error to display on the web page.
@@ -219,17 +226,20 @@ public class ProteinSearchAction extends AbstractEditorAction {
 //                errors.add("int.interact.search",
 //                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + ac));
 //            }else
-            if(uniprotServiceResult != null && !uniprotServiceResult.getErrors().isEmpty() ){
+            if(param.equals("spAc")){//uniprotServiceResult != null && !uniprotServiceResult.getErrors().isEmpty() ){
                 Map<String,String> map = uniprotServiceResult.getErrors();
                 Set<Map.Entry<String,String>> set = map.entrySet();
                 Iterator<Map.Entry<String,String>> iterator = set.iterator();
+                String message =  "An error occured while searching for protein : " ;
                 while(iterator.hasNext()){
                     Map.Entry<String,String> entry = iterator.next();
+                    message = message +   value + " : \n" + entry.getKey() +
+                            "\n" + entry.getValue();
                     LOGGER.error("An error occured while searching for protein : " + value + " : \n" + entry.getKey() +
-                    "\n" + entry.getValue());
+                            "\n" + entry.getValue());
                 }
                 errors.add("int.interact.search",
-                        new ActionMessage("error.int.interact.search.empty.parse", param + " : " + value));
+                        new ActionMessage("error.int.interact.search.empty.parse", message/*param + " : " + value*/));
             } else {
                 errors.add("int.interact.search",
                         new ActionMessage("error.int.interact.search.empty", param + " : " + ac));
