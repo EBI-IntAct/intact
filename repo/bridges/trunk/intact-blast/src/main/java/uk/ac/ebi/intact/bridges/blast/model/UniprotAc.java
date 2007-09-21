@@ -29,7 +29,7 @@ public class UniprotAc {
 		}
 		if (Pattern.matches(uniprotTermExpr, accessionNr)) {
 			this.acNr = accessionNr;
-		}else {
+		} else {
 			throw new IllegalArgumentException("Ac must be be built out of 6 characters!");
 		}
 	}
@@ -44,6 +44,30 @@ public class UniprotAc {
 	@Override
 	public String toString() {
 		return acNr;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof UniprotAc) {
+			UniprotAc ac = (UniprotAc) obj;
+			return this.acNr.equals(ac.acNr);
+		}
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.acNr.hashCode();
 	}
 
 }

@@ -25,6 +25,7 @@ import uk.ac.ebi.intact.bridges.blast.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.EbiWsWUBlast;
 import uk.ac.ebi.intact.bridges.blast.Hit;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
+import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
 /**
@@ -40,13 +41,13 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  */
 public class BlastEbiWsTest {
 
-	private AbstractBlastService			wsBlast;
-	private File			testDir;
+	private AbstractBlastService	wsBlast;
+	private File					testDir;
 
 	// for test
-	private BlastJobEntity	jobEntity;
-	private String			jobId;
-	private String			uniAc;
+	private BlastJobEntity			jobEntity;
+	private String					jobId;
+	private String					uniAc;
 
 	/**
 	 * @throws java.lang.Exception
@@ -57,14 +58,6 @@ public class BlastEbiWsTest {
 		testDir = new File(testDir, "BlastStrategyTest");
 		testDir.mkdir();
 
-		// String dirPath = "/ebi/sp/pro5/";
-		// dirPath = "/net/nfs7/vol22/sp-pro5";
-		// File testFile = new File(dirPath, "20071016_iarmean");
-		// testFile.mkdir();
-
-//		String dirPath = "E:/";
-//		File workDir = new File(dirPath, "20071016_iarmean");
-//		workDir.mkdir();
 		String email = "iarmean@ebi.ac.uk";
 		wsBlast = new EbiWsWUBlast(testDir, email);
 
@@ -82,20 +75,47 @@ public class BlastEbiWsTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link AbstractBlastService#submitJob(java.lang.String)}.
-	 * @throws BlastServiceException 
+	 * Test method for {@link AbstractBlastService#submitJob(java.lang.String)}.
+	 * 
+	 * @throws BlastServiceException
 	 */
 	@Test
 	public final void testSubmitJob() throws BlastServiceException {
 		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("Q23451"));
+
 		assertNotNull(jobEntity);
+		BlastResult result = wsBlast.fetchResult(jobEntity);
+		while (result == null
+				&& !(jobEntity.getStatus().equals(BlastJobStatus.NOT_FOUND) || jobEntity.getStatus().equals(
+						BlastJobStatus.FAILED))) {
+			result = wsBlast.fetchResult(jobEntity);
+		}
+		assertNotNull(result);
 	}
 
 	/**
-	 * Test method for
-	 * {@link AbstractBlastService#submitJobs(java.util.Set)}.
-	 * @throws BlastServiceException 
+	 * Test method for {@link AbstractBlastService#submitJobs(java.util.Set)}.
+	 * 
+	 * @throws BlastServiceException
+	 */
+	@Test
+	public final void testSubmitJobsBadUniprotAc() throws BlastServiceException {
+		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
+		uniprotAcs.add(new UniprotAc("Q9V586"));
+		uniprotAcs.add(new UniprotAc("Q9V902"));
+		List<BlastJobEntity> jobs = wsBlast.submitJobs(uniprotAcs);
+
+		assertNotNull(jobs);
+		for (BlastJobEntity jobEntity : jobs) {
+			assertNotNull(jobEntity);
+			assertEquals(BlastJobStatus.FAILED, jobEntity.getStatus());
+		}
+	}
+
+	/**
+	 * Test method for {@link AbstractBlastService#submitJobs(java.util.Set)}.
+	 * 
+	 * @throws BlastServiceException
 	 */
 	@Test
 	public final void testSubmitJobs() throws BlastServiceException {
@@ -104,13 +124,18 @@ public class BlastEbiWsTest {
 		uniprotAcs.add(new UniprotAc("P12345"));
 		List<BlastJobEntity> jobs = wsBlast.submitJobs(uniprotAcs);
 		assertNotNull(jobs);
+		List<BlastResult> results = wsBlast.fetchAvailableBlasts(jobs);
+		while (results.size() != jobs.size()) {
+			results = wsBlast.fetchAvailableBlasts(jobs);
+		}
 		assertEquals(uniprotAcs.size(), jobs.size());
 	}
 
 	/**
 	 * Test method for
 	 * {@link AbstractBlastService#fetchAvailableBlasts(java.util.Set)}.
-	 * @throws BlastServiceException 
+	 * 
+	 * @throws BlastServiceException
 	 */
 	@Test
 	public final void testFetchAvailableBlastsSetOfString() throws BlastServiceException {
@@ -132,7 +157,8 @@ public class BlastEbiWsTest {
 	/**
 	 * Test method for
 	 * {@link AbstractBlastService#fetchAvailableBlasts(java.util.List)}.
-	 * @throws BlastServiceException 
+	 * 
+	 * @throws BlastServiceException
 	 */
 	@Test
 	public final void testFetchAvailableBlastsListOfBlastJobEntity() throws BlastServiceException {
@@ -165,22 +191,22 @@ public class BlastEbiWsTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private File getTargetDirectory() {
 		String outputDirPath = BlastEbiWsTest.class.getResource("/").getFile();
 		Assert.assertNotNull(outputDirPath);
 		File outputDir = new File(outputDirPath);
 		// we are in src/main/resources , move 3 up
 
-		// TODO: for eclipse use : 
-		outputDir = outputDir.getParentFile().getParentFile().getParentFile();
-		// TODO: for unix, cygwin use: outputDir = outputDir.getParentFile();
+		// TODO: for eclipse use : outputDir = outputDir.getParentFile().getParentFile().getParentFile();
+		// TODO: for unix, cygwin use:
+		outputDir = outputDir.getParentFile();
 
 		// we are in confidence-score folder, move 1 down, in target folder
 		String outputPath;
-		// TODO: for eclipse use: 
-		outputPath = outputDir.getPath() + "/target/";
-		// TODO: for unix, cygwin use: outputPath = outputDir.getPath();
+		// TODO: for eclipse use: outputPath = outputDir.getPath() + "/target/";
+		// TODO: for unix, cygwin use:
+		outputPath = outputDir.getPath();
 
 		outputDir = new File(outputPath);
 		outputDir.mkdir();

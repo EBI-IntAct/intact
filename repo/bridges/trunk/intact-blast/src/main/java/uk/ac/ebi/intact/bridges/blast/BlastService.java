@@ -53,6 +53,8 @@ public interface BlastService {
 	public List<BlastJobEntity> fetchFailedJobs() throws BlastServiceException;
 	
 	public List<BlastJobEntity> fetchNotFoundJobs() throws BlastServiceException;
+	
+	public List<BlastJobEntity> fetchRunningJobs() throws BlastServiceException;
 
 	/**
 	 * Retrieves from DB

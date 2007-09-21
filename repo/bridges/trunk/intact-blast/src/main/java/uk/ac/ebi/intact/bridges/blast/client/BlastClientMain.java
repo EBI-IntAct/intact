@@ -1,3 +1,4 @@
+package uk.ac.ebi.intact.bridges.blast.client;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
@@ -5,8 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import uk.ac.ebi.intact.bridges.blast.client.BlastClient;
-import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
@@ -30,7 +29,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * 17 Sep 2007
  * </pre>
  */
-public class BlastMain {
+public class BlastClientMain {
 
 	/**
 	 * @param args

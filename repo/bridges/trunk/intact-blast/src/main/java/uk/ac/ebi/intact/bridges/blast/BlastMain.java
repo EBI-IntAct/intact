@@ -13,6 +13,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import junit.framework.Assert;
+
 import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
@@ -60,8 +62,7 @@ public class BlastMain {
 	}
 
 	private static void getBlasts(Set<UniprotAc> prots) throws BlastServiceException {
-		String testDirPath = "E:/";
-		File testDir = new File(testDirPath, "20071016_iarmean");
+		File testDir = new File(getTargetDirectory().getPath(), "20071016_iarmean");
 		testDir.mkdir();
 
 		long start = System.currentTimeMillis();
@@ -104,5 +105,30 @@ public class BlastMain {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private static File getTargetDirectory() {
+		String outputDirPath = BlastEbiWsTest.class.getResource("/").getFile();
+		Assert.assertNotNull(outputDirPath);
+		File outputDir = new File(outputDirPath);
+		// we are in src/main/resources , move 3 up
+
+		// TODO: for eclipse use : outputDir = outputDir.getParentFile().getParentFile().getParentFile();
+		// TODO: for unix, cygwin use:
+		outputDir = outputDir.getParentFile();
+
+		// we are in confidence-score folder, move 1 down, in target folder
+		String outputPath;
+		// TODO: for eclipse use: outputPath = outputDir.getPath() + "/target/";
+		// TODO: for unix, cygwin use:
+		outputPath = outputDir.getPath();
+
+		outputDir = new File(outputPath);
+		outputDir.mkdir();
+
+		Assert.assertNotNull(outputDir);
+		Assert.assertTrue(outputDir.getAbsolutePath(), outputDir.isDirectory());
+		Assert.assertEquals("target", outputDir.getName());
+		return outputDir;
 	}
 }

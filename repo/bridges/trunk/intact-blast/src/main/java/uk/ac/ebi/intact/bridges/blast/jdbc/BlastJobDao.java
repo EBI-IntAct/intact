@@ -197,7 +197,7 @@ public class BlastJobDao {
 		if (job.getJobid() == null || job.getUniprotAc() == null || job.getTimestamp() == null) {
 			throw new IllegalArgumentException("Job mut contain not null data, please check the data!");
 		}
-		if (existsInDb(job.getJobid(), job.getUniprotAc())) {
+		if (existsInDb(new UniprotAc(job.getUniprotAc()))) {
 			throw new IllegalArgumentException("UniprotAc already in the Db!");
 		}
 		try {
@@ -405,7 +405,6 @@ public class BlastJobDao {
 		}
 
 		return jobs.get(0);
-
 	}
 
 	/**
@@ -550,27 +549,27 @@ public class BlastJobDao {
 	}
 
 	private BlastJobStatus getStatus(String status) {
-		if (BlastJobStatus.DONE.toString().equals(status)) {
+		if (BlastJobStatus.RUNNING.toString().equals(status)) {
+			return BlastJobStatus.RUNNING;
+		} else if (BlastJobStatus.PENDING.toString().equals(status)) {
+			return BlastJobStatus.PENDING;
+		} else if (BlastJobStatus.DONE.toString().equals(status)) {
 			return BlastJobStatus.DONE;
 		} else if (BlastJobStatus.FAILED.toString().equals(status)) {
 			return BlastJobStatus.FAILED;
 		} else if (BlastJobStatus.NOT_FOUND.toString().equals(status)) {
 			return BlastJobStatus.NOT_FOUND;
-		} else if (BlastJobStatus.PENDING.toString().equals(status)) {
-			return BlastJobStatus.PENDING;
-		} else if (BlastJobStatus.RUNNING.toString().equals(status)) {
-			return BlastJobStatus.RUNNING;
-		}
+		} 
 		return null;
 	}
 
-//	private boolean existsInDb(UniprotAc uniprotAc) throws BlastJdbcException {
-//		BlastJobEntity job = getJobByAc(uniprotAc);
-//		if (job == null) {
-//			return false;
-//		}
-//		return true;
-//	}
+	private boolean existsInDb(UniprotAc uniprotAc) throws BlastJdbcException {
+		BlastJobEntity job = getJobByAc(uniprotAc);
+		if (job == null) {
+			return false;
+		}
+		return true;
+	}
 
 	private boolean existsInDb(String jobid, String uniprotAc) throws BlastJdbcException {
 		BlastJobEntity job = getJobById(jobid);
