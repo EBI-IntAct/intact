@@ -315,7 +315,9 @@ public class ProteinServiceImpl implements ProteinService {
             System.out.println("protein which are going to be merged");
             System.out.println("proteinsToDelete.size() = " + proteinsToDelete.size());
 
-            CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class,"intact-secondary");
+	    CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao().getByShortLabel(CvXrefQualifier.class,"intact-secondary");
+
+	    //            CvXrefQualifier intactSecondary = IntactContext.getCurrentInstance().getCvContext().getByLabel(CvXrefQualifier.class,"intact-secondary");
             Institution owner = IntactContext.getCurrentInstance().getInstitution();
             CvDatabase intact = IntactContext.getCurrentInstance().getCvContext().getByMiRef(CvDatabase.class, CvDatabase.INTACT_MI_REF);
 
