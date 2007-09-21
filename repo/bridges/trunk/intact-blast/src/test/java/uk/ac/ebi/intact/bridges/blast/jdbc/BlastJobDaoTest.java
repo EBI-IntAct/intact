@@ -89,9 +89,6 @@ public class BlastJobDaoTest {
 
 		assertionEquals(blastJob, job1);
 		assertionEquals(blastJob2, job2);
-
-		// assertEquals(blastJob.getJobid(),job1.getJobid());
-		// assertEquals(blastJob2.getJobid(), job2.getJobid());
 	}
 
 	@Test
@@ -112,8 +109,6 @@ public class BlastJobDaoTest {
 		BlastJobEntity job = blastJobDao.getJobById(blastJob.getJobid());
 
 		assertionEquals(blastJob, job);
-
-		// assertEquals(blastJob.getJobid(), job.getJobid());
 	}
 
 	@Test

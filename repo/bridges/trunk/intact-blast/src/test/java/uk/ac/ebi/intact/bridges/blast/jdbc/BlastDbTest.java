@@ -12,8 +12,8 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastDb;
 
 public class BlastDbTest {
 
-	BlastDb db;
-	
+	BlastDb	db;
+
 	@Before
 	public void setUp() throws Exception {
 		db = new BlastDb();
@@ -25,26 +25,16 @@ public class BlastDbTest {
 	}
 
 	@Test
-	public final void testCreateJobTable() {
+	public final void testCreateJobTable() throws BlastJdbcException {
 		Connection conn = db.getConn();
 		assertNotNull(conn);
-		try {
-			db.createJobTable("dbTest");
-			assertTrue(db.jobTableExists("dbTest"));
-		} catch (BlastJdbcException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+		db.createJobTable("dbTest");
+		assertTrue(db.jobTableExists("dbTest"));
 	}
 
 	@Test
-	public final void testDropJobTable() {
-		try {
-			db.dropJobTable("dbTest");
-			assertFalse(db.jobTableExists("dbTest"));
-		} catch (BlastJdbcException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
+	public final void testDropJobTable() throws BlastJdbcException {
+		db.dropJobTable("dbTest");
+		assertFalse(db.jobTableExists("dbTest"));
 	}
 }
