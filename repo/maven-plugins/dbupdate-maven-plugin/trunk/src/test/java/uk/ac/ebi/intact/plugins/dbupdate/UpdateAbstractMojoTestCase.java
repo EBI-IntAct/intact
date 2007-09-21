@@ -32,7 +32,7 @@ import java.io.File;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class UpdateAbstractMojoTestCase extends AbstractMojoTestCase {
+public abstract class UpdateAbstractMojoTestCase extends AbstractMojoTestCase {
 
     private IntactMockBuilder mockBuilder;
     private File hibernateConfigFile;
