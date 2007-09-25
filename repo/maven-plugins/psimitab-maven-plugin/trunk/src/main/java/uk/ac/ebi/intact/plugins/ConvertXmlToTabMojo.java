@@ -78,7 +78,7 @@ public class ConvertXmlToTabMojo extends IntactAbstractMojo {
         // config
         converter.setOverwriteOutputFile( true );
         converter.setExpansionStrategy(new SpokeWithoutBaitExpansion() );
-        converter.setInteractorPairCluctering(true);
+        converter.setInteractorPairClustering(true);
 
         Collection<File> inputFiles = new ArrayList<File>();
         if (files != null) {
