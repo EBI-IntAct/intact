@@ -109,7 +109,7 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         ConvertXml2Tab converter = new ConvertXml2Tab();
         converter.setOverwriteOutputFile( true );
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
-        converter.setInteractorPairCluctering( true );
+        converter.setInteractorPairClustering( true );
 
         if ( logWriter != null ) {
             converter.setLogWriter( logWriter );
