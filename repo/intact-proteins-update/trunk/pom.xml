@@ -79,6 +79,12 @@
             <scope>provided</scope>
         </dependency>
 
+ <dependency>
+    <groupId>commons-collections</groupId>
+    <artifactId>commons-collections</artifactId>
+    <version>3.2</version>
+</dependency>
+
         <!-- Only kept here so the old code doesn't break ... will be removed before next release  -->
        <!-- <dependency>
             <groupId>uk.ac.ebi.intact.util</groupId>
