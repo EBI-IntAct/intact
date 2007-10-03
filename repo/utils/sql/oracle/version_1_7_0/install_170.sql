@@ -46,6 +46,12 @@ PROMPT
 
 
 PROMPT *********************************************************************************/
+PROMPT "Creating sequence..."
+PROMPT
+@150_create_sequence.sql
+
+
+PROMPT *********************************************************************************/
 PROMPT "Update schema version to 1.7.0"
 PROMPT
 UPDATE ia_db_info
