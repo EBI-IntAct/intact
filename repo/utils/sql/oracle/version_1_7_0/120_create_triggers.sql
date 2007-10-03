@@ -1,7 +1,7 @@
 PROMPT Creating audit trigger for ia_imex_import
 create or replace trigger trgAud_ia_imex_import
 	before update or delete
-	on ia_imex_object
+	on ia_imex_import
 	for each row
 
 declare
