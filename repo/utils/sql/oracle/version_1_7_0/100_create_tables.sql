@@ -2,7 +2,7 @@
 PROMPT Creating table "IA_IMEX_IMPORT"
 
 CREATE TABLE IA_IMEX_IMPORT (
-          id                 VARCHAR2(50)    NOT NULL PRIMARY KEY
+          id                 INTEGER    NOT NULL PRIMARY KEY
 	    , original_filename  VARCHAR2(200)	 NOT NULL
         , status             VARCHAR2(10)	 NOT NULL
         , pmid               VARCHAR2(50)	 NOT NULL
