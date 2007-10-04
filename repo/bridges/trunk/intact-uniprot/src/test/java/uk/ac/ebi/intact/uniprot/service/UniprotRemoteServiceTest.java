@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.uniprot.service;
 
+import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -91,6 +92,13 @@ public class UniprotRemoteServiceTest extends TestCase {
     public void testRetrieveByUniprotId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve("CDC2_HUMAN");
         assertEquals("P06493", prots.iterator().next().getPrimaryAc());
+    }
+
+    public void testRetrieveByUniprotId_noGeneNames() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve("O58917");
+
+        UniprotProtein uniprotProtein = prots.iterator().next();
+        Assert.assertTrue(uniprotProtein.getGenes().isEmpty());
     }
 
     public void testRetrieveBySpliceVariantId() throws Exception {

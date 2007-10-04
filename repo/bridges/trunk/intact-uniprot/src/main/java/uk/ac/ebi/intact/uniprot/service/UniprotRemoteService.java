@@ -287,8 +287,9 @@ public class UniprotRemoteService extends AbstractUniprotService {
         log.debug( "Processing " + genes.size() + " gene names..." );
 
         for ( Gene gene : genes ) {
-
-            protein.getGenes().add( gene.getGeneName().getValue() );
+            if (gene.hasGeneName() ) {
+                protein.getGenes().add( gene.getGeneName().getValue() );
+            }
 
             for ( GeneNameSynonym synonym : gene.getGeneNameSynonyms() ) {
                 protein.getSynomyms().add( synonym.getValue() );

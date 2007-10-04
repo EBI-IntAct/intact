@@ -35,6 +35,7 @@ import java.util.*;
  * @version $Id$
  * @since <pre>15-Sep-2006</pre>
  */
+@Deprecated
 public class YaspService extends AbstractUniprotService {
 
     /**
