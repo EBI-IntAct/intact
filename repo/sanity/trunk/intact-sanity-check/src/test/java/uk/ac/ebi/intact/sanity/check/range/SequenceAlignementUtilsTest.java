@@ -27,6 +27,10 @@ public class SequenceAlignementUtilsTest {
     public static final String QUERY_3 = "SSWWAHVEMGPPDPILGVTEAY";
     public static final String TARGET_3 = "SWWAHVE";
 
+    // multiple overlappin matches
+    public static final String QUERY_4 = "ABBBBBA";
+    public static final String TARGET_4 = "BBB";
+
     @Test
     public void needlemanWunch() {
         try {
@@ -100,7 +104,12 @@ public class SequenceAlignementUtilsTest {
         Assert.assertNotNull( matches );
         Assert.assertEquals( 1, matches.size() );
         Assert.assertTrue( matches.toString(), matches.contains( 2 ) );
+
+        matches = SequenceAlignementUtils.findExactMatches( QUERY_4, TARGET_4 );
+        Assert.assertNotNull( matches );
+        Assert.assertEquals( 3, matches.size() );
+        Assert.assertTrue( matches.toString(), matches.contains( 2 ) );
+        Assert.assertTrue( matches.toString(), matches.contains( 3 ) );
+        Assert.assertTrue( matches.toString(), matches.contains( 4 ) );
     }
-
-
 }
