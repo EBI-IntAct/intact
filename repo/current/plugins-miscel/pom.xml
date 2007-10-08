@@ -48,7 +48,6 @@
         <module>psimitab-indexer-maven-plugin</module>
         <module>predict-maven-plugin</module>
         <module>update-component-role-maven-plugin</module>
-        <module>target-species-update-maven-plugin</module>
     </modules>
 
     <dependencyManagement>
