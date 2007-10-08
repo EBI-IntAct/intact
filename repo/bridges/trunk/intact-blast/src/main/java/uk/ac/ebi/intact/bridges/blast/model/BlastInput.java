@@ -19,6 +19,7 @@ package uk.ac.ebi.intact.bridges.blast.model;
 public class BlastInput {
 
 	private UniprotAc	uniprotAc;
+	private Sequence		sequence;
 
 	public BlastInput(UniprotAc uniprotAc) {
 		if (uniprotAc == null) {
@@ -27,6 +28,16 @@ public class BlastInput {
 		this.uniprotAc = uniprotAc;
 	}
 
+	public BlastInput(UniprotAc uniprotAc, Sequence seq) {
+		if (uniprotAc == null) {
+			throw new IllegalArgumentException("UniprotAc must not be null!");
+		}
+		if(seq == null){
+			throw new IllegalArgumentException("Sequence must not be null!");
+		}
+		this.uniprotAc = uniprotAc;
+		this.sequence = seq;
+	}
 	/**
 	 * @return the uniprotAc
 	 */
@@ -34,9 +45,21 @@ public class BlastInput {
 		return uniprotAc;
 	}
 
+	/**
+	 * @return the sequence
+	 */
+	public Sequence getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence the sequence to set
+	 */
+	public void setSequence(Sequence sequence) {
+		this.sequence = sequence;
+	}
 	@Override
 	public String toString() {
 		return uniprotAc.toString();
 	}
-
 }

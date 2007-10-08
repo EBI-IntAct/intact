@@ -29,9 +29,11 @@ public class BlastDbMain {
 	 */
 	public static void main(String[] args) {
 		String tableName = "testBlastDb";
+		File dbFolder = new File("E:/tmp/testFolderDB");
+		dbFolder.mkdir();
 		BlastJobDao blastJobDao;
 		try {
-			blastJobDao = new BlastJobDao(tableName);
+			blastJobDao = new BlastJobDao(dbFolder, tableName);
 			BlastJobEntity toSave = new BlastJobEntity("3", "P12345", BlastJobStatus.DONE, new File("C:/tmp/"), Timestamp.valueOf("2007-10-20 10:30:25"));
 			blastJobDao.saveJob(toSave);
 			BlastJobEntity readJob = blastJobDao.getJobById("3");

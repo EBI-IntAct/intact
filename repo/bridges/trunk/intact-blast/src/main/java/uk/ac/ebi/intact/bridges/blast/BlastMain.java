@@ -17,6 +17,8 @@ import junit.framework.Assert;
 
 import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.Hit;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
 /**
@@ -37,19 +39,56 @@ public class BlastMain {
 	 * @throws BlastClientException 
 	 */
 	public static void main(String[] args) throws BlastServiceException {
-		Set<UniprotAc> prots = new HashSet<UniprotAc>();
-		prots.add(new UniprotAc(""));
+		
+	//	getSpecificResult();
+		importCsv();
+		
+//		
+//		Set<UniprotAc> prots = new HashSet<UniprotAc>();
+//		prots.add(new UniprotAc("Q94AH9"));
+//
+//		int total = prots.size();
+//
+//		System.out.println(total + " proteins to process");
+//		while (prots.size() > 20) {
+//			Set<UniprotAc> toGet = only20(prots, 20);
+//			getBlasts(toGet);
+//		}
+//		if (prots.size() != 0 && prots.size() <= 20) {
+//			getBlasts(prots);
+//		}
+	}
 
-		int total = prots.size();
+	private static void importCsv() throws BlastServiceException {
+		File testDir = new File(getTargetDirectory().getPath(), "20071016_iarmean");
+		testDir.mkdir();
+		long start = System.currentTimeMillis();
+		String email = "iarmean@ebi.ac.uk";
+		String tableName = "job";
+		int nr = 20;
+		File dbFile =  new File (getTargetDirectory().getPath(), "dbFolder");
+		BlastService blast = new EbiWsWUBlast(dbFile,tableName, testDir, email, nr);
+		File csvFile = new File("dump.csv");
+		blast.importCsv(csvFile);
+		
+	}
+	
+	private static void getSpecificResult() throws BlastServiceException {
+		File testDir = new File(getTargetDirectory().getPath(), "20071016_iarmean");
+		testDir.mkdir();
 
-		System.out.println(total + " proteins to process");
-		while (prots.size() > 20) {
-			Set<UniprotAc> toGet = only20(prots, 20);
-			getBlasts(toGet);
-		}
-		if (prots.size() != 0 && prots.size() <= 20) {
-			getBlasts(prots);
-		}
+		long start = System.currentTimeMillis();
+		String email = "iarmean@ebi.ac.uk";
+		String tableName = "job";
+		int nr = 20;
+		File dbFolder = new File (getTargetDirectory().getPath(), "dbFolder");
+		dbFolder.mkdir();
+		BlastService blast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
+		
+		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>();
+		uniprotAcs.add(new UniprotAc("P14734"));
+		List<BlastResult> results = blast.fetchAvailableBlasts(uniprotAcs);
+		
 	}
 
 	private static Set<UniprotAc> only20(Set<UniprotAc> prots, int nr) {
@@ -67,9 +106,13 @@ public class BlastMain {
 
 		long start = System.currentTimeMillis();
 		String email = "iarmean@ebi.ac.uk";
-		BlastService blast = new EbiWsWUBlast(testDir, email);
+		String tableName = "job";
+		int nr = 20;
+		File dbFolder = new File (getTargetDirectory().getPath(), "dbFolder");
+		BlastService blast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
 
 		List<BlastJobEntity> jobs = new ArrayList<BlastJobEntity>();
+
 		for (UniprotAc prot : prots) {
 			BlastJobEntity job = blast.submitJob(prot);
 			if (job != null) {
@@ -77,17 +120,20 @@ public class BlastMain {
 			}
 		}
 
-		// List<BlastJobEntity> jobs = blast.submitJobs(prots);
-		List<BlastJobEntity> pendingJobs = blast.fetchPendingJobs();
-		while (pendingJobs.size() != 0) {
+		// List<BlastJobEntity> jobs = blast.submitJobs(prots)
+		
+		List<BlastJobEntity> runningJobs = blast.fetchRunningJobs();
+		while (runningJobs.size() != 0) {
 			try {
 				Thread.sleep(5000); // 5 000 millisec = 5 sec
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			pendingJobs = blast.fetchPendingJobs();
+			runningJobs = blast.fetchRunningJobs();
 		}
+		
+		List<BlastResult> results = blast.fetchAvailableBlasts(jobs);
 		long end = System.currentTimeMillis();
 		System.out.println("time for " + prots.size() + " prots : " + (end - start) + " milisec");
 

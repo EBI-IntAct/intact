@@ -3,9 +3,10 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.bridges.blast;
+package uk.ac.ebi.intact.bridges.blast.model;
 
 import java.util.List;
+
 
 /**
  * TODO comment this ... someday

@@ -21,11 +21,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import uk.ac.ebi.intact.bridges.blast.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.EbiWsWUBlast;
-import uk.ac.ebi.intact.bridges.blast.Hit;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.Hit;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
 /**
@@ -43,11 +43,7 @@ public class BlastEbiWsTest {
 
 	private AbstractBlastService	wsBlast;
 	private File					testDir;
-
-	// for test
-	private BlastJobEntity			jobEntity;
-	private String					jobId;
-	private String					uniAc;
+	private File					dbFolder;
 
 	/**
 	 * @throws java.lang.Exception
@@ -59,12 +55,11 @@ public class BlastEbiWsTest {
 		testDir.mkdir();
 
 		String email = "iarmean@ebi.ac.uk";
-		wsBlast = new EbiWsWUBlast(testDir, email);
-
-		jobId = "blast-20070917-12102329";
-		uniAc = "P17795";
-		jobEntity = new BlastJobEntity(jobId);
-		jobEntity.setUniprotAc(uniAc);
+		String tableName = "BlastEbiWsTest";
+		int nr = 20;
+		dbFolder = new File("testDbFolder");
+		dbFolder.mkdir();
+		wsBlast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
 	}
 
 	/**
@@ -72,6 +67,7 @@ public class BlastEbiWsTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
+		wsBlast.close();
 	}
 
 	/**
@@ -81,7 +77,7 @@ public class BlastEbiWsTest {
 	 */
 	@Test
 	public final void testSubmitJob() throws BlastServiceException {
-		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("Q23451"));
+		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("P40344"));
 
 		assertNotNull(jobEntity);
 		BlastResult result = wsBlast.fetchResult(jobEntity);
@@ -148,8 +144,7 @@ public class BlastEbiWsTest {
 			try {
 				printResult(blastResult, new FileWriter(f));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new BlastServiceException(e);
 			}
 		}
 	}
@@ -172,13 +167,12 @@ public class BlastEbiWsTest {
 			try {
 				printResult(blastResult, new FileWriter(f));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new BlastServiceException(e);
 			}
 		}
 	}
 
-	private void printResult(BlastResult result, Writer writer) {
+	private void printResult(BlastResult result, Writer writer) throws BlastServiceException {
 		try {
 			writer.append(result.getUniprotAc() + " - alignmenthits \n");
 			for (Hit hit : result.getHits()) {
@@ -187,8 +181,7 @@ public class BlastEbiWsTest {
 			}
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BlastServiceException(e);
 		}
 	}
 
@@ -198,7 +191,8 @@ public class BlastEbiWsTest {
 		File outputDir = new File(outputDirPath);
 		// we are in src/main/resources , move 3 up
 
-		// TODO: for eclipse use : outputDir = outputDir.getParentFile().getParentFile().getParentFile();
+		// TODO: for eclipse use : outputDir =
+		// outputDir.getParentFile().getParentFile().getParentFile();
 		// TODO: for unix, cygwin use:
 		outputDir = outputDir.getParentFile();
 

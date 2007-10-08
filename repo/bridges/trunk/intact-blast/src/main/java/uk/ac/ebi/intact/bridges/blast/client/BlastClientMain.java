@@ -39,7 +39,8 @@ public class BlastClientMain {
 		String email = "iarmean@ebi.ac.uk";	
 		runAsync(email);
 	}
-	
+
+
 	private static void runAsync(String email) throws BlastClientException {
 		BlastClient bc = new BlastClient(email);
 		Set<BlastInput> blastInputs = new HashSet<BlastInput>();

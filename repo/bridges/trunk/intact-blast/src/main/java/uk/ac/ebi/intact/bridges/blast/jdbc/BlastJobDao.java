@@ -6,7 +6,11 @@
 package uk.ac.ebi.intact.bridges.blast.jdbc;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.sql.Connection;
+import java.sql.ResultSetMetaData;
 import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -53,27 +57,41 @@ public class BlastJobDao {
 
 	private static Statement			stat;
 
+	private static String				tableName;
+
 	/**
 	 * Constructor
-	 * @throws BlastJdbcException 
+	 * 
+	 * @throws BlastJdbcException
 	 */
-	public BlastJobDao(String tableName) throws BlastJdbcException {
-		BlastDb blastDb = new BlastDb();
+	public BlastJobDao(File dbFolder, String tableName) throws BlastJdbcException {
+		BlastDb blastDb = new BlastDb(dbFolder);
 		conn = blastDb.getConn();
 		stat = blastDb.getStat();
+		BlastJobDao.tableName = tableName;
 		blastDb.createJobTable(tableName);
 		initPreparedStat();
+	}
+
+
+	public void close() throws BlastJdbcException {
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		}
 	}
 
 	// /////////////////
 	// public Methods
 	/**
 	 * Deletes all the entries in the JOB table.
-	 * @throws BlastJdbcException 
+	 * 
+	 * @throws BlastJdbcException
 	 */
 	public void deleteJobs() throws BlastJdbcException {
 		try {
-			String delete = "DELETE FROM Job;";
+			String delete = "DELETE FROM " + tableName + ";";
 			stat.execute(delete);
 		} catch (SQLException e) {
 			throw new BlastJdbcException(e);
@@ -103,7 +121,7 @@ public class BlastJobDao {
 	 * Deletes the JOB entry with the specified job id.
 	 * 
 	 * @param jobid
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void deleteJobById(String jobid) throws BlastJdbcException {
 		if (jobid == null) {
@@ -126,7 +144,7 @@ public class BlastJobDao {
 	 * 
 	 * @param set
 	 *            of jobids
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void deleteJobsByIds(Set<String> jobids) throws BlastJdbcException {
 		if (jobids == null) {
@@ -144,7 +162,7 @@ public class BlastJobDao {
 	 * Deletes the JOB entry with the specified uniprotAc.
 	 * 
 	 * @param uniprotAc
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void deleteJobByAc(UniprotAc uniprotAc) throws BlastJdbcException {
 		if (uniprotAc == null) {
@@ -170,7 +188,7 @@ public class BlastJobDao {
 	 * 
 	 * @param set
 	 *            of uniprotAcs
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void deleteJobsByAcs(Set<UniprotAc> uniprotAcs) throws BlastJdbcException {
 		if (uniprotAcs == null) {
@@ -188,7 +206,7 @@ public class BlastJobDao {
 	 * Saves the specified jobEntity in the DB.
 	 * 
 	 * @param job
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void saveJob(BlastJobEntity job) throws BlastJdbcException {
 		if (job == null) {
@@ -216,7 +234,7 @@ public class BlastJobDao {
 	 * Saves the list of jobEntities to the DB.
 	 * 
 	 * @param jobs
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public void saveJobs(List<BlastJobEntity> jobs) throws BlastJdbcException {
 		if (jobs == null) {
@@ -257,12 +275,12 @@ public class BlastJobDao {
 	 * Retrieves the list of jobs in the DB
 	 * 
 	 * @return list of jobs (an empty list if there are no jobs in the DB)
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public List<BlastJobEntity> selectAllJobs() throws BlastJdbcException {
 		List<BlastJobEntity> jobs = new ArrayList<BlastJobEntity>();
 		try {
-			ResultSet rs = stat.executeQuery("SELECT * FROM Job");
+			ResultSet rs = stat.executeQuery("SELECT * FROM " + tableName);
 
 			while (rs.next()) {
 				String path = rs.getString("resultPath");
@@ -288,7 +306,7 @@ public class BlastJobDao {
 	 * 
 	 * @param jobid
 	 * @return BlastJobEntity, or null
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public BlastJobEntity getJobById(String jobid) throws BlastJdbcException {
 		if (jobid == null) {
@@ -308,7 +326,8 @@ public class BlastJobDao {
 				}
 
 				BlastJobStatus status = getStatus(rs.getString("status"));
-				BlastJobEntity newJob = new BlastJobEntity(jobId, uniAc, status, new File(path), rs.getTimestamp("timestamp"));
+				BlastJobEntity newJob = new BlastJobEntity(jobId, uniAc, status, new File(path), rs
+						.getTimestamp("timestamp"));
 				jobs.add(newJob);
 			}
 
@@ -368,7 +387,7 @@ public class BlastJobDao {
 	 * 
 	 * @param jobid
 	 * @return BlastJobEntity, can be null
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public BlastJobEntity getJobByAc(UniprotAc uniprotAc) throws BlastJdbcException {
 		if (uniprotAc == null) {
@@ -386,9 +405,10 @@ public class BlastJobDao {
 				if (path == null) {
 					path = "tmpAux";
 				}
-				
+
 				BlastJobStatus status = getStatus(rs.getString("status"));
-				BlastJobEntity newJob = new BlastJobEntity(jobId, uniAc, status, new File(path), rs.getTimestamp("timestamp"));
+				BlastJobEntity newJob = new BlastJobEntity(jobId, uniAc, status, new File(path), rs
+						.getTimestamp("timestamp"));
 				jobs.add(newJob);
 			}
 
@@ -411,10 +431,10 @@ public class BlastJobDao {
 	 * to test
 	 * 
 	 * @return list of blast job entities
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public List<BlastJobEntity> getJobsByStatus(BlastJobStatus status) throws BlastJdbcException {
-		if (status == null){
+		if (status == null) {
 			throw new IllegalArgumentException("Status must not be null!");
 		}
 		List<BlastJobEntity> jobs = new ArrayList<BlastJobEntity>();
@@ -426,9 +446,10 @@ public class BlastJobDao {
 				if (path == null) {
 					path = "tmpAux";
 				}
-				
+
 				BlastJobStatus statusFromDb = getStatus(rs.getString("status"));
-				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"), statusFromDb, new File(path), rs.getTimestamp("timestamp"));
+				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"),
+						statusFromDb, new File(path), rs.getTimestamp("timestamp"));
 				jobs.add(newJob);
 			}
 
@@ -441,11 +462,12 @@ public class BlastJobDao {
 	}
 
 	/**
-	 * Retrieves the jobEntities with the specified Timestamp ('yyyy-mm-dd hh:mm:ss')
+	 * Retrieves the jobEntities with the specified Timestamp ('yyyy-mm-dd
+	 * hh:mm:ss')
 	 * 
 	 * @param timestamp
 	 * @return list of jobEntities, never null, but can be empty
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public List<BlastJobEntity> getJobsByTimestamp(Timestamp timestamp) throws BlastJdbcException {
 		if (timestamp == null) {
@@ -461,9 +483,10 @@ public class BlastJobDao {
 				if (path == null) {
 					path = "tmpAux";
 				}
-				
+
 				BlastJobStatus status = getStatus(rs.getString("status"));
-				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"), status, new File(path), rs.getTimestamp("timestamp"));
+				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"), status,
+						new File(path), rs.getTimestamp("timestamp"));
 				jobs.add(newJob);
 			}
 
@@ -481,7 +504,7 @@ public class BlastJobDao {
 	 * 
 	 * @param uniprotAc
 	 * @return a blast job entity, can be null
-	 * @throws BlastJdbcException 
+	 * @throws BlastJdbcException
 	 */
 	public BlastJobEntity getJobByAcAndLatestDate(String uniprotAc) throws BlastJdbcException {
 		if (uniprotAc == null) {
@@ -497,9 +520,10 @@ public class BlastJobDao {
 				if (path == null) {
 					path = "tmpAux";
 				}
-				
+
 				BlastJobStatus status = getStatus(rs.getString("status"));
-				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"),status, new File(path), rs.getTimestamp("timestamp"));
+				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"), status,
+						new File(path), rs.getTimestamp("timestamp"));
 				jobs.add(newJob);
 			}
 
@@ -517,30 +541,83 @@ public class BlastJobDao {
 		return jobs.get(0);
 	}
 
+	public void exportCSV(File csvFile) throws BlastJdbcException {
+		try {
+			Writer w = new FileWriter(csvFile);
+			ResultSet rs = stat.executeQuery("CALL CSVWRITE('" + csvFile.getPath() + "', 'SELECT * FROM " + tableName
+					+ "');");
+			rs.close();
+
+			try {
+				w.close();
+			} catch (IOException e) {
+				throw new BlastJdbcException(e);
+			}
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		} catch (IOException e) {
+			throw new BlastJdbcException(e);
+		}
+	}
+
+	public void importCSV(File csvFile) throws BlastJdbcException {
+		try {
+			ResultSet rs = stat.executeQuery("SELECT * FROM CSVREAD('" + csvFile.getPath() + "');");
+			// ResultSet rs = Csv.read("test.csv", null, null);
+			ResultSetMetaData meta = rs.getMetaData();
+			while (rs.next()) {
+				String path = rs.getString("resultPath");
+				if (path == null) {
+					path = "tmpAux";
+				}
+
+				Timestamp time = rs.getTimestamp("timestamp");
+
+				BlastJobStatus status = getStatus(rs.getString("status"));
+				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"), status,
+						new File(path), time);
+				try {
+					saveJob(newJob);
+				} catch (IllegalArgumentException e) {
+					String msg = e.getMessage();
+					if (!msg.contains("UniprotAc already in the Db!")) {
+						throw e;
+					}
+				}
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		}
+	}
+
 	// /////////////////
 	// private Methods
 	private void initPreparedStat() throws BlastJdbcException {
 		try {
-			String insertSql = "INSERT INTO Job VALUES (?, ?, ?, ?, ?)";
+			String insertSql = "INSERT INTO " + tableName
+					+ "(jobid, uniprotAc, status, resultPath, timestamp) VALUES (?, ?, ?, ?, ?)";
 			insertStat = conn.prepareStatement(insertSql);
-			String selectSql = "SELECT * FROM Job WHERE jobid = ?";
+			String selectSql = "SELECT * FROM " + tableName + " WHERE jobid = ?";
 			selectWhereIdStat = conn.prepareStatement(selectSql);
-			String selectTimestampSql = "SELECT * FROM Job Where timestamp = ?";
+			String selectTimestampSql = "SELECT * FROM " + tableName + " WHERE timestamp = ?";
 			selectWhereTimestampStat = conn.prepareStatement(selectTimestampSql);
-			String selectAcSql = "SELECT * FROM Job Where uniprotAc = ?";
+			String selectAcSql = "SELECT * FROM " + tableName + " Where uniprotAc = ?";
 			selectWhereUniprotAcStat = conn.prepareStatement(selectAcSql);
-			String selectAcTimestampSql = "SELECT * FROM Job WHERE timestamp = (SELECT MAX(timestamp) FROM Job WHERE uniprotAc = ?)";
+			String selectAcTimestampSql = "SELECT * FROM " + tableName
+					+ " WHERE timestamp = (SELECT MAX(timestamp) FROM " + tableName + " WHERE uniprotAc = ?)";
 			selectWhereUniproAcLatestDateStat = conn.prepareStatement(selectAcTimestampSql);
-			String selectPendingSql = "SELECt * FROM Job WHERE status =?;";
+			String selectPendingSql = "SELECt * FROM " + tableName + " WHERE status =?;";
 			selectWhereStatusStat = conn.prepareStatement(selectPendingSql);
 
-			String updateJobSql = "UPDATE Job SET status= ?, timestamp =?, resultPath =? WHERE jobid= ? AND uniprotAc=?;";
+			String updateJobSql = "UPDATE " + tableName
+					+ " SET status= ?, timestamp =?, resultPath =? WHERE jobid= ? AND uniprotAc=?;";
 			updateJobStat = conn.prepareStatement(updateJobSql);
 
-			String deleteByIdSql = "DELETE FROM Job WHERE jobid = ?";
+			String deleteByIdSql = "DELETE FROM " + tableName + " WHERE jobid = ?";
 			deleteByIdStat = conn.prepareStatement(deleteByIdSql);
 
-			String deleteByAcSql = "DELETE FROM Job WHERE uniprotAc = ?";
+			String deleteByAcSql = "DELETE FROM " + tableName + " WHERE uniprotAc = ?";
 			deleteByAcStat = conn.prepareStatement(deleteByAcSql);
 
 		} catch (SQLException e) {
@@ -559,7 +636,7 @@ public class BlastJobDao {
 			return BlastJobStatus.FAILED;
 		} else if (BlastJobStatus.NOT_FOUND.toString().equals(status)) {
 			return BlastJobStatus.NOT_FOUND;
-		} 
+		}
 		return null;
 	}
 

@@ -79,11 +79,16 @@ public class BlastJobEntity {
 		this.resultFile = result;
 	}
 
+	/**
+	 * 
+	 * @return patrent \ fileName
+	 */
 	public String getResultPath() {
 		if (resultFile == null) {
 			return null;
 		}
-		return resultFile.getPath();
+		String relative = resultFile.getParent() + "\\" + resultFile.getName(); 
+		return relative;
 	}
 
 	public Timestamp getTimestamp() {
@@ -105,7 +110,7 @@ public class BlastJobEntity {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		//FIXME: test if it works
+		//TODO: test if it works
 		if (obj instanceof BlastJobEntity){
 			BlastJobEntity job = (BlastJobEntity) obj;
 			if (!jobid.equals(job.getJobid())){
@@ -127,14 +132,12 @@ public class BlastJobEntity {
 		return false;
 	}
 
-	//FIXME: create hashCode method
-//	/* (non-Javadoc)
-//	 * @see java.lang.Object#hashCode()
-//	 */
-//	@Override
-//	public int hashCode() {
-//		// TODO Auto-generated method stub
-//		return super.hashCode();
-//	}
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return uniprotAc.hashCode();
+	}
 
 }

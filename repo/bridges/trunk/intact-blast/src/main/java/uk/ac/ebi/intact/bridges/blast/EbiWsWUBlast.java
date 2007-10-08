@@ -19,6 +19,8 @@ import uk.ac.ebi.intact.bridges.blast.client.BlastClient;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.Hit;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 import uk.ac.ebi.intact.confidence.blastmapping.BlastMappingException;
@@ -47,7 +49,8 @@ public class EbiWsWUBlast extends AbstractBlastService {
 
 	// ///////////////
 	// Constructor
-	public EbiWsWUBlast(File workDir, String email) throws BlastServiceException {
+	public EbiWsWUBlast(File dbFolder, String tableName, File workDir, String email, int nrPerSubmission) throws BlastServiceException {
+		super(dbFolder, tableName, nrPerSubmission);
 		this.setWorkDir(workDir);
 		try {
 			bc = new BlastClient(email);
@@ -75,7 +78,7 @@ public class EbiWsWUBlast extends AbstractBlastService {
 		return bc.getResult(job);
 	}
 
-	public BlastResult processOutput(File blastFile) {
+	public BlastResult processOutput(File blastFile) throws BlastClientException {
 		return parseXmlOutput(blastFile);
 	}
 
@@ -89,9 +92,11 @@ public class EbiWsWUBlast extends AbstractBlastService {
 		return toBlast;
 	}
 
-	private BlastResult parseXmlOutput(File xmlFile) {
+	private BlastResult parseXmlOutput(File xmlFile) throws BlastClientException {
 		// BlastResult result = new BlastResult();
-		String uniprotAc = "";
+		String fileName = xmlFile.getName();
+		String [] strs = fileName.split("\\.");
+		String uniprotAc = strs[0];
 		List<Hit> blastHits = new ArrayList<Hit>();
 		BlastMappingReader bmr = new BlastMappingReader();
 
@@ -100,24 +105,20 @@ public class EbiWsWUBlast extends AbstractBlastService {
 
 			List<THit> xmlHits = appResult.getSequenceSimilaritySearchResult().getHits().getHit();
 			for (THit hit : xmlHits) {
-				if (uniprotAc.equals("")) {
-					uniprotAc = hit.getAc();
-				} else {
-					String accession = hit.getAc();
-					// a value that will never be < threshold
-					Float evalue = new Float(1000);
-					List<TAlignment> alignments = hit.getAlignments().getAlignment();
-					// FIXME: change :takes the last alignment
-					// TODO: throw exception if alignments.size() >1
-					for (TAlignment align : alignments) {
-						evalue = align.getExpectation();
-					}
-					blastHits.add(new Hit(accession, evalue));
+				String accession = hit.getAc();
+				String desc = hit.getDescription();
+				if (desc.contains("Isoform")){
+					accession = hit.getId();
 				}
+				// a value that will never be < threshold
+				Float evalue = new Float(1000);
+				List<TAlignment> alignments = hit.getAlignments().getAlignment();
+				// takes the first of the alignments (highest identity)
+				evalue = alignments.get(0).getExpectation();
+				blastHits.add(new Hit(accession, evalue));
 			}
 		} catch (BlastMappingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BlastClientException(e);
 		}
 		if (uniprotAc.equals("") && blastHits.size() == 0) {
 			log.debug("NO BlastResult was found, see file " + xmlFile.getPath());
