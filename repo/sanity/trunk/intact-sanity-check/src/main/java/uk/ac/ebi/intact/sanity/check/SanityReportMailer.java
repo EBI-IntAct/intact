@@ -91,13 +91,13 @@ public class SanityReportMailer {
                 if (creatorReportFile != null) curatorFiles.add(creatorReportFile);
 
                 File creatorReportFileXml = insaneCreatorFilesXml.get(curatorName);
-                if (creatorReportFileXml != null) curatorFiles.add(creatorReportFileXml);
+                if (creatorReportFileXml != null && curator.isXmlReport()) curatorFiles.add(creatorReportFileXml);
 
                 File updatorReportFile = insaneUpdatorFiles.get(curatorName);
                 if (updatorReportFile != null) curatorFiles.add(updatorReportFile);
 
                 File updatorReportFileXml = insaneUpdatorFilesXml.get(curatorName);
-                if (updatorReportFileXml != null) curatorFiles.add(updatorReportFileXml);
+                if (updatorReportFileXml != null && curator.isXmlReport()) curatorFiles.add(updatorReportFileXml);
 
                 String message = null;
                 if (!SanityReportUtils.getAllInsaneObject(creatorReport).isEmpty()) {
@@ -122,20 +122,30 @@ public class SanityReportMailer {
             String subject = subjectPrefix+"Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
             String globalMessage = reportToHtml(report);
 
-            Collection<String> adminEMails = getAdminEmails();
+            Collection<String> recipientsWithoutXmlReport = getAdminEmails(false);
+            Collection<String> recipientsWithXmlReport = getAdminEmails(true);
 
-            if (log.isDebugEnabled()) log.debug("Sending sanity check mail to admins: "+adminEMails);
+            if (log.isDebugEnabled()) {
+                log.debug("Sending sanity check mail to admins, without XML report: "+recipientsWithoutXmlReport);
+                log.debug("Sending sanity check mail to admins, with XML report: "+recipientsWithXmlReport);
+            }
 
-            String[] recipients = adminEMails.toArray(new String[adminEMails.size()]);
+            String[] recipientsWithoutXml = recipientsWithoutXmlReport.toArray(new String[recipientsWithoutXmlReport.size()]);
+            String[] recipientsWithXml = recipientsWithoutXmlReport.toArray(new String[recipientsWithoutXmlReport.size()]);
 
-            Collection<File> fileAttachments = new ArrayList<File>(insaneCreatorFiles.values());
-            fileAttachments.add(reportToTempFile("admin", report, "all"));
-            fileAttachments.add(reportToTempFileXml("admin", report, "all"));
+            Collection<File> fileAttachmentsWithoutXmlReport = new ArrayList<File>(insaneCreatorFiles.values());
+            fileAttachmentsWithoutXmlReport.add(reportToTempFile("admin", report, "all"));
 
-            File[] attachments = fileAttachments.toArray(new File[insaneCreatorFiles.values().size()]);
+            Collection<File> fileAttachmentsWithXmlReport = new ArrayList<File>(insaneCreatorFiles.values());
+            fileAttachmentsWithXmlReport.add(reportToTempFile("admin", report, "all"));
+            fileAttachmentsWithXmlReport.add(reportToTempFileXml("admin", report, "all"));
+
+            File[] attachmentsWithoutXmlReport = fileAttachmentsWithoutXmlReport.toArray(new File[insaneCreatorFiles.values().size()]);
+            File[] attachmentsWithXmlReport = fileAttachmentsWithXmlReport.toArray(new File[insaneCreatorFiles.values().size()]);
 
             MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
-            mailSender.postMail(recipients, subject, globalMessage, from, attachments);
+            mailSender.postMail(recipientsWithoutXml, subject, globalMessage, from, attachmentsWithoutXmlReport);
+            mailSender.postMail(recipientsWithXml, subject, globalMessage, from, attachmentsWithXmlReport);
         }
     }
 
@@ -194,12 +204,16 @@ public class SanityReportMailer {
         return insaneCuratorFilesXml;
     }
 
-    protected Set<String> getAdminEmails() {
+    protected Set<String> getAdminEmails(boolean xmlReport) {
         Set<String> mails = new HashSet<String>();
 
         for (Curator curator : sanityConfig.getAllCurators()) {
             if (curator.isAdmin()) {
-                mails.add(curator.getEmail());
+                if (xmlReport) {
+                    if (curator.isXmlReport()) mails.add(curator.getEmail());
+                } else {
+                    mails.add(curator.getEmail());
+                }
             }
         }
 
