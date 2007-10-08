@@ -10,16 +10,16 @@
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>intact-hibernate-master</artifactId>
     <packaging>pom</packaging>
-    <version>18</version>
+    <version>19-SNAPSHOT</version>
 
     <url>http://www.ebi.ac.uk/~intact/devsite/${artifactId}</url>
     <name>Master POMs :: Master Hibernate POM</name>
     <description>This is a master POM that contains the data access (hibernate) configuration</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-18</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/intact-hibernate-master-18</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/intact-hibernate-master-18</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk</url>
     </scm>
 
     <properties>
