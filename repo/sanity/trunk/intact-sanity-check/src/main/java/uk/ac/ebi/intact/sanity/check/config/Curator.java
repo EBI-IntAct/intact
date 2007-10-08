@@ -11,6 +11,7 @@ public class Curator
     private String name;
     private String email;
     private boolean admin;
+    private boolean xmlReport;
 
     public Curator()
     {
@@ -52,6 +53,14 @@ public class Curator
     public void setAdmin(boolean admin)
     {
         this.admin = admin;
+    }
+
+    public boolean isXmlReport() {
+        return xmlReport;
+    }
+
+    public void setXmlReport(boolean xmlReport) {
+        this.xmlReport = xmlReport;
     }
 
     @Override
