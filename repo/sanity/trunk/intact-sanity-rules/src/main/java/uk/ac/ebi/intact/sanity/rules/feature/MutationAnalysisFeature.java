@@ -37,7 +37,10 @@ public class MutationAnalysisFeature implements Rule{
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Feature feature = (Feature) intactObject;
 
-        //feature.getCvFeatureType() can't return null
+        if (feature.getCvFeatureType() == null) {
+            return messages;
+        }
+
         CvObjectXref cvFeatureTypeIdentity = CvObjectUtils.getPsiMiIdentityXref(feature.getCvFeatureType());
 
         if(CvFeatureType.MUTATION_DECREASING_MI_REF.equals(cvFeatureTypeIdentity.getPrimaryId()) ||
