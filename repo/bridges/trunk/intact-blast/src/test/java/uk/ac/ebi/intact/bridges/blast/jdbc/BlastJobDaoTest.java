@@ -22,14 +22,15 @@ public class BlastJobDaoTest {
 
 	@Before
 	public void setUp() throws Exception {
-		String tableName = "Job";
-		blastJobDao = new BlastJobDao(tableName);
+		String tableName = "BlastJobDaoTest";
+		File dbFolder = new File("testDbFolder");
+		blastJobDao = new BlastJobDao(dbFolder, tableName);
 		blastJobDao.deleteJobs();
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		blastJobDao.deleteJobs();
+		blastJobDao.close();
 	}
 
 	@Test
@@ -46,7 +47,7 @@ public class BlastJobDaoTest {
 		List<BlastJobEntity> jobs = blastJobDao.selectAllJobs();
 		assertNotNull(jobs); // should never be null
 		assertEquals(4, jobs.size());
-		blastJobDao.deleteJobs();
+		blastJobDao.deleteJobs(Arrays.asList(blastJob, blastJob1, blastJob2, blastJob3));
 		List<BlastJobEntity> empty = blastJobDao.selectAllJobs();
 		assertNotNull(empty); // should never be null
 		assertEquals(0, empty.size());
@@ -173,6 +174,26 @@ public class BlastJobDaoTest {
 		assertionEquals(blastJob, jobEntity);
 	}
 
+	@Test
+	public final void testExportJob() throws BlastJdbcException {
+		File csvFile = new File("testExportJob.csv");
+		BlastJobEntity blastJob = new BlastJobEntity("blastJobDaoTestExport1", "P23456", BlastJobStatus.DONE, new File(
+				"test2"), Timestamp.valueOf("2007-09-13 10:40:25"));
+		BlastJobEntity blastJob2 = new BlastJobEntity("blastJobDaoExport2", "P12345", BlastJobStatus.DONE, new File(
+				"test2b"), Timestamp.valueOf("2007-10-21 10:40:25"));
+		blastJobDao.saveJobs(Arrays.asList(blastJob, blastJob2));
+		blastJobDao.exportCSV(csvFile);
+		System.out.println(csvFile.getAbsolutePath());
+
+	}
+	
+	@Test
+	public final void testImportJob() throws BlastJdbcException {
+		File csvFile = new File("testExportJob.csv");
+		blastJobDao.importCSV(csvFile);
+		blastJobDao.exportCSV(new File("testExportInportJob.csv"));
+	}
+	
 	private void assertionEquals(BlastJobEntity expected, BlastJobEntity observed) {
 		assertEquals(expected.getJobid(), observed.getJobid());
 		assertEquals(expected.getUniprotAc(), observed.getUniprotAc());

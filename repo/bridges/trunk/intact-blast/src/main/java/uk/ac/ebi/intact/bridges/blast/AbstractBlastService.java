@@ -26,6 +26,8 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobDao;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
+import uk.ac.ebi.intact.bridges.blast.model.Hit;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
@@ -51,29 +53,39 @@ public abstract class AbstractBlastService implements BlastService {
 	private BlastJobDao		blastJobDao;
 	private File			workDir;
 
+	private int				nrSubmission;											// nr
+																					// of
+																					// proteins
+																					// to
+																					// be
+																					// blasted
+																					// at a
+																					// time
+
 	// protected boolean isXmlFormat;
 
 	// ///////////////
 	// Constructor
-	AbstractBlastService() throws BlastServiceException {
+	AbstractBlastService(File dbFolder, String tableName, int nrPerSubmission) throws BlastServiceException {
 		try {
-			blastJobDao = new BlastJobDao("job");
+			blastJobDao = new BlastJobDao(dbFolder, tableName);
 		} catch (BlastJdbcException e) {
 			throw new BlastServiceException(e);
 		}
+		nrSubmission = nrPerSubmission;
 	}
 
 	// ///////////////
 	// Getters/setters
 	public void setWorkDir(File workDir) {
 		if (!workDir.exists()) {
-			throw new IllegalArgumentException("WorkDir must exist!");
+			throw new IllegalArgumentException("WorkDir must exist! " + workDir.getPath());
 		}
 		if (!workDir.isDirectory()) {
-			throw new IllegalArgumentException("WorkDir must be a directory!");
+			throw new IllegalArgumentException("WorkDir must be a directory! " + workDir.getPath());
 		}
 		if (!workDir.canWrite()) {
-			throw new IllegalArgumentException("WorkDir must be writable!");
+			throw new IllegalArgumentException("WorkDir must be writable! " + workDir.getPath());
 		}
 		this.workDir = workDir;
 	}
@@ -84,6 +96,32 @@ public abstract class AbstractBlastService implements BlastService {
 
 	// ///////////////
 	// inherited
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uk.ac.ebi.intact.bridges.blast.BlastService#exportCsv(java.io.File)
+	 */
+	public void exportCsv(File csvFile) throws BlastServiceException {
+		try {
+			blastJobDao.exportCSV(csvFile);
+		} catch (BlastJdbcException e) {
+			throw new BlastServiceException(e);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see uk.ac.ebi.intact.bridges.blast.BlastService#importCsv(java.io.File)
+	 */
+	public void importCsv(File csvFile) throws BlastServiceException {
+		try {
+			blastJobDao.importCSV(csvFile);
+		} catch (BlastJdbcException e) {
+			throw new BlastServiceException(e);
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -151,17 +189,13 @@ public abstract class AbstractBlastService implements BlastService {
 			} else {
 				Set<UniprotAc> prots = notIncluded(jobEntities, uniprotAcs);
 				if (prots.size() != 0) {
-					while (prots.size() > 20) {
-						Set<UniprotAc> toGet = only20(prots, 20);
-						// FIXME: if blasts fails , try to save that in the db
-						// as failed
-						//TODO: test it, although it should work
+					while (prots.size() > nrSubmission) {
+						Set<UniprotAc> toGet = onlyN(prots, nrSubmission);
+						// TODO: test it, although it should work
 						List<Job> jobs = runBlast(toGet);
 						jobEntities.addAll(saveSubmittedJobs(jobs));
 					}
 					if (prots.size() != 0 && prots.size() <= 20) {
-						// FIXME: if blasts fails , try to save that in the db
-						// as failed
 						List<Job> jobs = runBlast(prots);
 						jobEntities.addAll(saveSubmittedJobs(jobs));
 					}
@@ -190,7 +224,9 @@ public abstract class AbstractBlastService implements BlastService {
 		if (uniprotAcs.size() == 0) {
 			throw new IllegalArgumentException("UniprotAcs mut not be empty!");
 		}
+
 		List<BlastResult> results = new ArrayList<BlastResult>(uniprotAcs.size());
+		refreshDb();
 		for (UniprotAc ac : uniprotAcs) {
 			BlastResult result = resultAvailableInDB(ac);
 			if (result != null) {
@@ -226,10 +262,19 @@ public abstract class AbstractBlastService implements BlastService {
 		try {
 			for (BlastJobEntity jobEntity : jobs) {
 				BlastJobEntity job = blastJobDao.getJobById(jobEntity.getJobid());
-				// TODO: log if a job is null (not found in the db)
-				if (job != null && BlastJobStatus.DONE.equals(job.getStatus())) {
-					BlastResult res = fetchResult(job);
-					results.add(res);
+				if (job != null) {
+					if (BlastJobStatus.DONE.equals(job.getStatus())) {
+						BlastResult res = fetchResult(job);
+						results.add(res);
+					} else if (BlastJobStatus.FAILED.equals(jobEntity.getStatus())
+							|| BlastJobStatus.NOT_FOUND.equals(job.getStatus())) {
+						BlastResult res = new BlastResult(job.getUniprotAc(), new ArrayList<Hit>());
+						results.add(res);
+					}
+				} else {
+					if (job == null) {
+						log.info("JobEntity not in DB: " + jobEntity);
+					}
 				}
 			}
 			return results;
@@ -252,11 +297,20 @@ public abstract class AbstractBlastService implements BlastService {
 		}
 		if (!BlastJobStatus.DONE.equals(job.getStatus()) || job.getResultPath() == null) {
 			refreshJob(job);
-			return null;
+			if (!BlastJobStatus.DONE.equals(job.getStatus())) {
+				return null;
+			}
 		}
 
-		File blastFile = job.getResult();
-		return processOutput(blastFile);
+		File resultDbFile = job.getResult();
+
+		// TODO: is this the final solution?
+		File blastFile = new File(this.workDir, job.getUniprotAc() + ".xml");
+		try {
+			return processOutput(blastFile);
+		} catch (BlastClientException e) {
+			throw new BlastServiceException(e);
+		}
 	}
 
 	/*
@@ -279,7 +333,7 @@ public abstract class AbstractBlastService implements BlastService {
 	 * @see uk.ac.ebi.intact.bridges.blast.BlastService#fetchFailedJobs()
 	 */
 	public List<BlastJobEntity> fetchFailedJobs() throws BlastServiceException {
-		refreshDb();
+		refreshFailed();
 		try {
 			return blastJobDao.getJobsByStatus(BlastJobStatus.FAILED);
 		} catch (BlastJdbcException e) {
@@ -350,9 +404,18 @@ public abstract class AbstractBlastService implements BlastService {
 		}
 	}
 
+	// TODO: remove after test
+	public void close() throws BlastServiceException {
+		try {
+			blastJobDao.close();
+		} catch (BlastJdbcException e) {
+			throw new BlastServiceException(e);
+		}
+	}
+
 	// //////////////////////
 	// private Methods
-	private static Set<UniprotAc> only20(Set<UniprotAc> prots, int nr) {
+	private static Set<UniprotAc> onlyN(Set<UniprotAc> prots, int nr) {
 		Set<UniprotAc> protsSmall = new HashSet<UniprotAc>(nr);
 		for (int i = 0; i < nr; i++) {
 			protsSmall.add((UniprotAc) prots.toArray()[i]);
@@ -379,14 +442,17 @@ public abstract class AbstractBlastService implements BlastService {
 					log.info("Job not found or failed! " + job.getJobid() + ":" + job.getUniprotAc());
 				}
 			} catch (BlastClientException e) {
-				throw new BlastServiceException(e);
+				throw new BlastServiceException(e + job.toString());
 			}
 		}
 	}
 
 	private void refreshJobs(List<BlastJobEntity> jobs) throws BlastServiceException {
 		for (BlastJobEntity jobEntity : jobs) {
-			refreshJob(jobEntity);
+			if (jobEntity.getStatus().equals(BlastJobStatus.RUNNING)
+					|| (jobEntity.getStatus().equals(BlastJobStatus.PENDING))) {
+				refreshJob(jobEntity);
+			}
 		}
 	}
 
@@ -398,9 +464,25 @@ public abstract class AbstractBlastService implements BlastService {
 			for (BlastJobEntity jobEntity : jobs) {
 				// in case the set did not work, i prevent the refreshing of a
 				// refreshed job
-				if (!jobEntity.getStatus().equals(BlastJobStatus.DONE)) {
+				// TODO: do i really need this if?\
+				if (jobEntity.getStatus().equals(BlastJobStatus.RUNNING)
+						|| (jobEntity.getStatus().equals(BlastJobStatus.PENDING))) {
 					refreshJob(jobEntity);
 				}
+			}
+		} catch (BlastJdbcException e) {
+			throw new BlastServiceException(e);
+		}
+	}
+
+	private void refreshFailed() throws BlastServiceException {
+		try {
+			Set<BlastJobEntity> jobs = new HashSet<BlastJobEntity>();
+			jobs.addAll(blastJobDao.getJobsByStatus(BlastJobStatus.FAILED));
+			for (BlastJobEntity jobEntity : jobs) {
+				// in case the set did not work, i prevent the refreshing of a
+				// refreshed job
+				refreshJob(jobEntity);
 			}
 		} catch (BlastJdbcException e) {
 			throw new BlastServiceException(e);
@@ -467,7 +549,7 @@ public abstract class AbstractBlastService implements BlastService {
 		BlastJobEntity job;
 		try {
 			job = blastJobDao.getJobByAc(uniprotAc);
-			if (BlastJobStatus.DONE.equals(job.getStatus()) && job.getResultPath() != null) {
+			if (job != null && BlastJobStatus.DONE.equals(job.getStatus()) && job.getResultPath() != null) {
 				BlastResult result = fetchResult(job);
 				return result;
 			}
@@ -513,13 +595,12 @@ public abstract class AbstractBlastService implements BlastService {
 		return tmpFile;
 	}
 
-	private void writeResults(String result, Writer writer) {
+	private void writeResults(String result, Writer writer) throws BlastServiceException {
 		try {
 			writer.append(result);
 			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new BlastServiceException(e);
 		}
 	}
 
@@ -533,7 +614,7 @@ public abstract class AbstractBlastService implements BlastService {
 
 	protected abstract BlastOutput getResult(Job job) throws BlastClientException;
 
-	protected abstract BlastResult processOutput(File blastFile);
+	protected abstract BlastResult processOutput(File blastFile) throws BlastClientException;
 
 	// /////////////
 	// any use?

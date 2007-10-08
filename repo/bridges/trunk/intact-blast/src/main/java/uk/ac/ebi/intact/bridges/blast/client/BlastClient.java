@@ -19,7 +19,6 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 import javax.xml.rpc.ServiceException;
 
@@ -40,9 +39,6 @@ import uk.ac.ebi.intact.bridges.blast.model.Job;
  * @version $Id: BlastClient.java 9729 2007-09-19 11:03:02Z irina-armean $
  */
 public class BlastClient {
-	// checks the format of the accession number
-	private static String		uniprotTermExpr	= "\\w{6,6}";
-
 	// true for xml formated output, false otherwise
 	private boolean				fileFormatXml	= true;
 	private String				email;
@@ -108,10 +104,6 @@ public class BlastClient {
 		if (blastInput.getUniprotAc() == null) {
 			throw new IllegalArgumentException("BlastInput uniprotAc mus not be null!");
 		}
-		if (!isUniprotAcFormat(blastInput.getUniprotAc().getAcNr())) {
-			throw new IllegalArgumentException("UniprotAc not in the uniprot format: '"
-					+ blastInput.getUniprotAc().getAcNr() + "'");
-		}
 
 		InputParams params = new InputParams();
 		params.setProgram("blastp");
@@ -123,7 +115,8 @@ public class BlastClient {
 		Data inputs[] = new Data[1];
 		Data input = new Data();
 		input.setType("sequence");
-		input.setContent("uniprot:" + blastInput.getUniprotAc().getAcNr());
+		String content = getSpecificContent(blastInput);
+		input.setContent(content); //"uniprot:" + blastInput.getUniprotAc().getAcNr());
 		inputs[0] = input;
 
 		Job job = null;
@@ -143,6 +136,62 @@ public class BlastClient {
 		return job;
 	}
 
+	private String getSpecificContent(BlastInput blastInput) {
+		String ac = blastInput.getUniprotAc().getAcNr();
+		String[] aux = ac.split("-");
+		String content ="";
+//		if (aux.length == 2) {
+//			content = blastInput.getSequence().getSeq();
+//		} else if (aux.length == 1){
+//			content = "uniprot:"+blastInput.getUniprotAc().getAcNr();
+//		} else {
+//			content ="";
+//		}
+		//TODO: remove when testing with splice variants
+		content = "uniprot:"+blastInput.getUniprotAc().getAcNr();
+		return content;
+	}
+
+	//TODO: remove after play phase
+	//FIXME: not working, set sequence as content
+	public Job blastSeq(BlastInput blastInput) throws BlastClientException {
+		if (blastInput == null) {
+			throw new IllegalArgumentException("BlastInput mus not be null!");
+		}
+		if (blastInput.getUniprotAc() == null) {
+			throw new IllegalArgumentException("BlastInput uniprotAc mus not be null!");
+		}
+
+		InputParams params = new InputParams();
+		params.setProgram("blastp");
+		params.setDatabase("uniprot");
+		params.setEmail(email);
+
+		params.setAsync(Boolean.TRUE); // set the submissions asynchronous
+
+		Data inputs[] = new Data[1];
+		Data input = new Data();
+		input.setType("sequence");
+		input.setContent(blastInput.getSequence().getSeq());
+		inputs[0] = input;
+
+		Job job = null;
+		try {
+			job = new Job(blast.runWUBlast(params, inputs), blastInput);
+			checkStatus(job);
+		} catch (RemoteException e) {
+			//FIXME: ask sam : axisfault
+			String message = e.getMessage();
+			if (message.startsWith("could not fetch entry")){
+				job = new Job("failed " + blastInput.toString(), blastInput);
+				job.setStatus(BlastJobStatus.FAILED);
+			} else {
+				throw new BlastClientException(e);
+			}
+		}
+		return job;
+	}
+	
 	/**
 	 * Blasts a list of uniprotAc against uniprot.
 	 * 
@@ -236,19 +285,4 @@ public class BlastClient {
 		}
 		return job.getBlastResult();
 	}
-
-	/**
-	 * Tests if the specified string has a valid uniprot accession number
-	 * format.
-	 * 
-	 * @param uniprotAc
-	 * @return true or false
-	 */
-	private boolean isUniprotAcFormat(String uniprotAc) {
-		if (Pattern.matches(uniprotTermExpr, uniprotAc)) {
-			return true;
-		}
-		return false;
-	}
-
 }

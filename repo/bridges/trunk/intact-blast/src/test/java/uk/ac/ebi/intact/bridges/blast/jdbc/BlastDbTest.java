@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.bridges.blast.jdbc;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.sql.Connection;
 
 import org.junit.After;
@@ -13,10 +14,12 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastDb;
 public class BlastDbTest {
 
 	BlastDb	db;
+	File	dbFolder;
 
 	@Before
 	public void setUp() throws Exception {
-		db = new BlastDb();
+		dbFolder = new File("BlastDbTestFolder");
+		db = new BlastDb(dbFolder);
 	}
 
 	@After

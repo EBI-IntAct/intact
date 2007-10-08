@@ -5,10 +5,12 @@
  */
 package uk.ac.ebi.intact.bridges.blast;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
 /**
@@ -23,6 +25,11 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * </pre>
  */
 public interface BlastService {
+	
+	public void importCsv(File csvFile) throws BlastServiceException;
+	
+	public void exportCsv(File csvFile) throws BlastServiceException;
+	
 	public BlastJobEntity submitJob(UniprotAc uniprotAc) throws BlastServiceException;
 
 	public List<BlastJobEntity> submitJobs(Set<UniprotAc> uniprotAcs) throws BlastServiceException;
@@ -77,4 +84,5 @@ public interface BlastService {
 	
 	public void deleteJobs(List<BlastJobEntity> jobs) throws BlastServiceException;
 
+	public void close() throws BlastServiceException;
 }

@@ -20,17 +20,18 @@ import java.util.regex.Pattern;
  */
 public class UniprotAc {
 	private String	acNr;
-	// TODO: ask sam for a proper regex
-	private String	uniprotTermExpr	= "\\w{6,6}";
+	private String uniprotTermExpr = "[A-Z][0-9][A-Z0-9]{3}[0-9]|[A-Z][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10}";
 
 	public UniprotAc(String accessionNr) {
 		if (accessionNr == null) {
-			throw new IllegalArgumentException("Ac must not be null!");
+			throw new IllegalArgumentException("Ac must not be null! " + accessionNr);
 		}
 		if (Pattern.matches(uniprotTermExpr, accessionNr)) {
 			this.acNr = accessionNr;
-		} else {
-			throw new IllegalArgumentException("Ac must be be built out of 6 characters!");
+		}
+		else{
+			throw new IllegalArgumentException("Ac must be a valid uniprotAc! " + accessionNr);
+			
 		}
 	}
 
@@ -69,5 +70,4 @@ public class UniprotAc {
 	public int hashCode() {
 		return this.acNr.hashCode();
 	}
-
 }

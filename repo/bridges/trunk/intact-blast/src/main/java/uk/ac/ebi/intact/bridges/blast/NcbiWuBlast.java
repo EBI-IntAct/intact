@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
+import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
@@ -33,7 +34,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 public class NcbiWuBlast extends AbstractBlastService {
 
 	NcbiWuBlast() throws BlastServiceException {
-		super();
+		super(new File("testDir"), "testTableName", 20);
 		// TODO Auto-generated constructor stub
 	}
 

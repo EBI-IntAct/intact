@@ -5,6 +5,7 @@
  */
 package uk.ac.ebi.intact.bridges.blast.jdbc;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
@@ -28,10 +29,10 @@ public class BlastDb {
 	private Connection	conn;
 	private Statement	stat;
 
-	public BlastDb() throws BlastJdbcException {
+	public BlastDb(File dbFolder) throws BlastJdbcException {
 		try {
 			Class.forName("org.h2.Driver");
-			conn = DriverManager.getConnection("jdbc:h2:blastDb/blast", "sa", "");
+			conn = DriverManager.getConnection("jdbc:h2:" + dbFolder.getPath() + "/blast", "sa", "");//blastDb/blast", "sa", "");
 			stat = conn.createStatement();
 		} catch (ClassNotFoundException e) {
 			throw new BlastJdbcException(e);
