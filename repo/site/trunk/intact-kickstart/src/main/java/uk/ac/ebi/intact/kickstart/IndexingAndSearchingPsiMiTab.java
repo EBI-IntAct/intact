@@ -51,7 +51,7 @@ public class IndexingAndSearchingPsiMiTab {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 
-            System.out.println("\tInteraction: "+interactorIdA+"-"+interactorIdB);
+            System.out.println("\t"+interactorIdA+" interacts with "+interactorIdB);
         }
     }
 }
