@@ -74,6 +74,10 @@ public class ExportPsiData {
         // to export
         IntactEntry intactEntry = new IntactEntry(interactions);
 
+        // NOTE: as an alternative to create the IntactEntry object, the following commented statement could be used:
+
+        //IntactEntry intactEntry = IntactEntryFactory.createIntactEntry(intactContext).addPublicationId("16469704");
+
         // In this example we will export using a StringWriter, but you could provide other writers here
         Writer writer = new StringWriter();
 
