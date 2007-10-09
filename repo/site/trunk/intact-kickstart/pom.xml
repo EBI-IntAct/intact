@@ -28,6 +28,13 @@
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
 
+        <!-- Conversion to PSI-MI TAB -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>intact-psimitab</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- Database drivers - Comment/uncomment the one/s you need -->
 
         <!-- PostgreSQL -->
