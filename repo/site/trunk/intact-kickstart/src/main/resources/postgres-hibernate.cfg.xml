@@ -13,9 +13,11 @@
         <!-- Settings for a local HSQL (testing) database. -->
         <property name="dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="connection.driver_class">org.postgresql.Driver</property>
+
         <property name="connection.url">jdbc:postgresql://localhost:5432/intact-db</property>
+
         <property name="connection.username">intact</property>
-        <property name="connection.password"></property>
+        <property name="connection.password">changeme</property>
 
         <property name ="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>
 
