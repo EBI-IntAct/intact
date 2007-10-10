@@ -39,6 +39,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * 17 Sep 2007
  * </pre>
  */
+@org.junit.Ignore
 public class BlastEbiWsTest {
 
 	private AbstractBlastService	wsBlast;
