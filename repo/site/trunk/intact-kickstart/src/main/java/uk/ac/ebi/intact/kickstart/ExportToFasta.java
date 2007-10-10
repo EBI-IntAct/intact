@@ -91,6 +91,5 @@ public class ExportToFasta {
 
         // Note that we could have just gotten all the database proteins using the ProteinDao,
         // but for educational purposes it is good to understand how the information is organized.
-
     }
 }

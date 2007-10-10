@@ -27,7 +27,7 @@ import java.io.PrintStream;
 import java.net.URL;
 
 /**
- * Example of how to import or update the controlled vocabularies in the database
+ * Example of how to import or update the controlled vocabularies in the database.
  *
  * @version $Id$
  */
@@ -60,7 +60,6 @@ public class ImportControlledVocabularies {
 
         // Don't forget to commit the transaction
         dataContext.commitTransaction();
-
     }
 
     private static File createFileFromURL(URL url) throws Exception {
