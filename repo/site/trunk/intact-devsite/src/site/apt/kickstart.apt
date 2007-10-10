@@ -1,0 +1,219 @@
+ -----
+ Kick Start
+ -----
+ Samuel Kerrien
+ -----
+ 10 Oct 2007
+ -----
+
+I) Introduction
+
+ The aim of this page is to give IntAct users an overview of how to perform a local installation of the IntAct framework.
+ This is going to cover the installation of the database, import/export of data...
+
+
+II) Prerequisites
+
+ In the following tutorial, we will assume that you ahve already installed the following packages:
+
+  * {{{http://subversion.tigris.org/project_packages.html}SVN 1.3 or 1.4}}
+
+  * {{{http://maven.apache.org/download.html}Maven 2.x}}
+  
+  * {{{http://tomcat.apache.org/download-55.cgi}Tomcat 5.5.x}}
+
+ Please refer to their respective installation note to get more information.
+
+
+III) Setup your database management system
+
+ [[1]] Install PostgreSQL 8.x or above (please refer to the postgreSQL web site should you require support).\
+       note: do install pgAdmin III as we will need it later.
+
+ [[2]] You now have to create a database for IntAct in PostgreSQL
+
+	[[a]] Open PgAdmin III
+
+	[[b]] in the left panel, right click on the postgreSQL server you want to use and 'connect' to it.
+
+	[[c]] Create a new user: 'intact' and give it the right to create database.
+          In the version of pgAdminIII we have done this procedure with (v1.6.3) we haven't found a GUI
+          to create the user (though I'm sure it was available in previous version ... bug ?). We have
+          consequently used a little bit of DDL to create our user:
+
+----------------------
+CREATE USER intact WITH encrypted password 'change-me' CREATEDB;
+----------------------
+
+	[[d]] Create a new 'database': intact-db
+	   set the owner to 'intact'
+           If you are more confortable with the DDL way, do execute:
+
+----------------------
+CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL_ASCII' TABLESPACE = pg_default;
+----------------------
+
+	[[e]] You can now open a Shell and type:
+
+-----------------------------------
+psql -h localhost -p 5432 intact-db "intact"
+-----------------------------------
+
+
+ [[3]] You are now ready to work with this database.
+
+  At any stage you can do a backup of your database by using pgAdmin III
+	[[a]] Right click on 'intact-db' under 'Databases' and select 'Backup'.
+
+	[[b]] input into the form where you want to save the dataabse backup (eg. C:\intact.backup)
+
+	[[c]] Press 'OK'
+
+ Reloading a backup is about as easy:
+	[[a]] Right click on 'intact-db' under 'Databases' and select 'Restore'.
+
+	[[b]] Choose the appropriate option 'only data'
+
+
+IV) Create the IntAct database schema
+
+ Check out the schema creation for the script from SVN
+ svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0
+ in this directory you will find a file called 'create_schema.ddl'
+
+	[[a]] Back to pgAdmin III, select 'intact-db' under 'Databases'
+
+	[[b]] open a Query Tool (Tools > Query Tool)
+
+	[[c]] Copy the content of '{{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0/create_schema.ddl}create_schema.ddl}}'
+	and paste it into the top left window of the Query Tool and execute it (press F5 or Query > Execute).
+
+	[[d]] You should now have 45 tables and 3 sequences created in 'intact-db'.
+
+
+V) Preparing your Maven Configuration
+
+	[[a]] Updating your maven settings so it contains the profile that will allow you to connect
+           to your PostgreSQL database. This configuration can be found in ${home.directory}/.m2/settings.xml
+           Should you not have this file yet, feel free to start with the one we provide {{{kickstart/settings.xml}here}}.
+
+	[[b]] Add the PostgreSQL profile that describes how to connext to the database we have just created:
+
+--------------------------------------------
+<profile>
+        <id>pg-intact</id>
+        <properties>
+            <db>postgres</db>
+            <db.host>localhost</db.host>
+            <db.port>5432</db.port>
+            <db.alias>intact-db</db.alias>
+            <db.user>intact</db.user>
+            <db.password>change-me</db.password>
+
+            <sessionFactoryName>PG_INTACT_LOCAL</sessionFactoryName>
+        </properties>
+</profile>
+--------------------------------------------
+
+	This profile will have to be specified on the command line (-Ppg-intact) when you try to build an
+    application that relies on a database access. Note that a profile is specific to a database instance.
+
+
+VI) Using the IntAct API though Kick Start
+
+	[[a]] Check out the IntAct KickStart application
+
+----------------------------------------
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart
+----------------------------------------
+
+	[[b]] Configure your favorite IDE and open this project
+
+	[[c]] Now we are going to run a series of Java program, the goal is two-fold:
+	      Firstly, to help you initializing your local IntAct database with real data.
+	      Secondaly, to take you though examples that highlight how to use the IntAct API.
+	      The first thing to do is to load IntAct with controlled vocabularies (CVs). Cvs are a corner stone of the
+          IntAct data model. They allow to represent unambiguously concept such as database (eg. UniProt), interaction
+          detection method (eg. yeast two hybrid), participant identification (eg. mass spectrometry) ...
+
+----------------------------------------
+Now you are going to run your first program: ImportControlledVocabularies
+----------------------------------------
+
+	      Note: Once this is completed, you should have over 1,100 rows inserted in the table ia_controlledvocab.
+
+	[[d]] Now we are going to import some interaction data.
+
+----------------------------------------
+Run the following program: ImportPsiData
+----------------------------------------
+
+	      This program uses a PSI-MI XML 2.5 file that is stored locally in the intact-kickstart.
+          Of course, feel free to alter this program to load your own data file, for instance, found on the intact web site.
+ 	      There are currently over 3000 scientific publication manually annotated on the web site.
+	      You can download more data on : {{ftp://ftp.ebi.ac.uk/pub/databases/intact/current/psi25}} \
+
+	[[e]] Now we are going to use the intact-core API to browse the data model and extract some data.
+          In this example we are going to browse all interactions available in the database and export all protein's
+	      sequence involved in FASTA format.
+
+----------------------------------------
+Run the program: ExportToFasta
+----------------------------------------
+
+	      Note that if you take a closer look at the programs provided we have left a lot of comments for you to read,
+	      their purpose being to explain how things are managed in the API.
+
+	[[f]] Now we are going to export some of the data we have stored in the database in PSI-MI XML 2.5 format.
+
+----------------------------------------
+Run the program: ExportToPsiXml
+----------------------------------------
+
+	      This program selects all interactions involved in the publication having the shortlabel '16469704' which
+	      essentially is its pubmed accession number. The XML output is printed on the screen.
+	      Should you need to export the data you have stored in your local instance of IntAct, you could use this
+	      script as a starting point.
+
+	[[g]] In this stage we are going to export the interactions of a publication in PSI-MITAB2.5 format.
+
+----------------------------------------
+Run the program: ExportToPsiMiTab
+----------------------------------------
+
+	      This format provides a very simple tabular format on IntAct binary interactions. Now obviously not all
+	      interaction in the data have to be binary, but you can parameterize the converter to expand any n-ary
+	      interaction into binary using, for instance, the Spoke model (bianry interactions between bait and each preys).
+
+	[[h]] Here we are going to index a PSI-MITAB2.5 file (provided in the kickstart application) and do a search on
+	      the indexed data.
+
+----------------------------------------
+Run the program: IndexingAndSearchingPsiMiTab
+----------------------------------------
+
+
+VI) Running web applications on your local database
+
+    [[1]] Browsing the database using Search
+
+----------------------------------------
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/service/trunk/search/legacy/search-app
+cd search-app
+mvn clean -Ddb=postgres -Ppg-intact jetty:run
+----------------------------------------
+
+    [[2]] Editing the database using Editor
+
+----------------------------------------
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/service/trunk/editor/editor-app
+cd editor-app
+mvn clean -Ddb=postgres -Ppg-intact jetty:run
+----------------------------------------
+
+
+VII) Want to go further ?
+
+ Should you need help to run the IntAct Kick Start or have any other requests, please send an email to
+ intact-help.ebi.ac.uk 
+
