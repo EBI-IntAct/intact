@@ -5,3 +5,5 @@ target
 velocity.log
 release.properties
 projectFilesBackup
+.project
+.classpath
