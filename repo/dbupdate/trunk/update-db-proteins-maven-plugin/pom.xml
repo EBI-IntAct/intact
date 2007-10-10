@@ -9,69 +9,29 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.dbupdate.plugins</groupId>
     <artifactId>update-db-proteins-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.0-SNAPSHOT</version>
-    <name>IntAct Database Update :: Plugins :: update-db-proteins-maven-plugin</name>
-    <description>Plugin for IntAct</description>
 
+    <version>2.0.0-SNAPSHOT</version>
 
-    <!--todo : find out why we have to comment this when doing mvn deploy-->
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>hibernateconfig-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <name>IntAct Database Update :: Plugins :: Proteins Update Plugin</name>
 
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>
             <artifactId>intact-plugin</artifactId>
-            <version> 1.3.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>1.0-beta-1</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.util</groupId>
+            <groupId>uk.ac.ebi.intact.dbupdate</groupId>
             <artifactId>intact-proteins-update</artifactId>
-            <version>1.6.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
+            <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.6.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-project</artifactId>
-            <version>2.0.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>2.0.4</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven.shared</groupId>
-            <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>1.0-beta-1</version>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
