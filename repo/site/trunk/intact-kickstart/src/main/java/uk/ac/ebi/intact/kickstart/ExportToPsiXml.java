@@ -90,6 +90,5 @@ public class ExportToPsiXml {
 
         // And don't forget to commit the transaction
         dataContext.commitTransaction();
-
     }
 }

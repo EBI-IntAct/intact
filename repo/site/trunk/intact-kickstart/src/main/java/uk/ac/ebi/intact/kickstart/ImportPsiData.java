@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 
 /**
- * Example of how to import data from PSI-MI XML 2.5 files
+ * Example of how to import data from PSI-MI XML 2.5 files.
  *
  * @version $Id$
  */
@@ -39,6 +39,5 @@ public class ImportPsiData {
         File fileToImport = new File(ImportPsiData.class.getResource("/intact_2006-07-19.xml").getFile());
 
         PsiExchange.importIntoIntact(new FileInputStream(fileToImport), false);
-
     }
 }

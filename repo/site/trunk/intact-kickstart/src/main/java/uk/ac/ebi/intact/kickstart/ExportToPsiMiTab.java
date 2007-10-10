@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.kickstart;
 
 import psidev.psi.mi.tab.PsimiTabWriter;
+import psidev.psi.mi.tab.expansion.SpokeExpansion;
 import psidev.psi.mi.tab.converter.xml2tab.Xml2Tab;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.xml.model.EntrySet;
@@ -29,7 +30,7 @@ import java.io.File;
 import java.util.Collection;
 
 /**
- * Example that shows how to export interacting polymer sequences to Fasta format.
+ * Example that shows how to export interactions to PSI-MITAB2.5 format.
  *
  * @version $Id$
  */
@@ -62,19 +63,21 @@ public class ExportToPsiMiTab {
         // And don't forget to commit the transaction
         dataContext.commitTransaction();
 
+        // Setup a interaction expansion strategy that is going to transform n-ary interactions into binaries using
+        // the spoke expansion algorithm
         Xml2Tab xml2tab = new Xml2Tab();
+        xml2tab.setExpansionStrategy( new SpokeExpansion() );
+
+        // Perform the conversion and collect binary interactions
         Collection<BinaryInteraction> binaryInteractions = xml2tab.convert(entrySet);
 
         // We will print the interactions in the console, but you could write the interactions
         // to a file or to a String using the appropriate parameters in the following code.
-        System.out.println("\n\nPSI-MI Formatted output:\n\n");
+        System.out.println("\n\nPSI-MITAB2.5 Formatted output:\n\n");
 
         // We use the PsimiTabWriter to write the binary interactions to the writer.
         // There exists a PsimiTabReader, that reads psimitab files.
         PsimiTabWriter psimitabWriter = new PsimiTabWriter();
         psimitabWriter.write(binaryInteractions, System.out);
-
-
-
     }
 }

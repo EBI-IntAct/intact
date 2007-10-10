@@ -23,7 +23,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import java.io.InputStream;
 
 /**
- * TODO comment this
+ * Example of how to index and search PSI-MITAB2.5 data.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -32,6 +32,7 @@ public class IndexingAndSearchingPsiMiTab {
 
     public static void main(String[] args) throws Exception {
 
+        // Load a PSI-MITAB2.5 file stored locally
         InputStream psimitabFileStream = IndexingAndSearchingPsiMiTab.class.getResourceAsStream("/16469705.txt");
 
         // The next statement creates a Lucene index in memory.
