@@ -24,7 +24,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.ac.ebi.intact</groupId>
+            <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-core</artifactId>
             <version>1.7.0</version>
         </dependency>
