@@ -14,6 +14,7 @@
 </node>
 <node CREATED="1184856102864" ID="Freemind_Link_1600959279" MODIFIED="1184856106709" TEXT="intact-picr"/>
 <node CREATED="1185528168392" ID="Freemind_Link_1577258806" MODIFIED="1185528172685" TEXT="intact-citexplore"/>
+<node CREATED="1192022872532" ID="Freemind_Link_553339319" MODIFIED="1192022880210" TEXT="blast-mapping-parser"/>
 <node CREATED="1187862054656" ID="Freemind_Link_899460905" MODIFIED="1187862061258" TEXT="intact-blast"/>
 <node CREATED="1184856095206" ID="Freemind_Link_187827585" MODIFIED="1184856098312" TEXT="legacy">
 <node CREATED="1181219890339" ID="Freemind_Link_991036459" MODIFIED="1184856130649" TEXT="intact-ols">
@@ -43,6 +44,7 @@
 <edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
+<node CREATED="1192022893660" ID="Freemind_Link_806639155" MODIFIED="1192022898490" TEXT="intact-kickstart"/>
 </node>
 <node COLOR="#006633" CREATED="1181228864110" ID="Freemind_Link_1539915686" MODIFIED="1181231528235" POSITION="right" TEXT="sanity">
 <font NAME="SansSerif" SIZE="12"/>
@@ -165,8 +167,8 @@
 </node>
 <node COLOR="#006633" CREATED="1181230107393" ID="Freemind_Link_1895027714" MODIFIED="1181231526250" POSITION="right" TEXT="dbupdate">
 <font NAME="SansSerif" SIZE="12"/>
-<node CREATED="1181219892745" ID="Freemind_Link_732003769" MODIFIED="1181306905692" TEXT="intact-proteins-update">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219892745" ID="Freemind_Link_732003769" MODIFIED="1192022857170" TEXT="intact-proteins-update">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220166659" ID="Freemind_Link_1923902743" MODIFIED="1181307033277" TEXT="target-species-update-maven-plugin">
@@ -177,8 +179,8 @@
 <edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node CREATED="1181219842826" ID="Freemind_Link_1292216880" MODIFIED="1181306907382" TEXT="intact-biosource-update">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181219842826" ID="Freemind_Link_1292216880" MODIFIED="1192022854781" TEXT="intact-biosource-update">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220130934" ID="Freemind_Link_828800315" MODIFIED="1181307038798" TEXT="dbupdate-maven-plugin">
@@ -297,13 +299,14 @@
 <node CREATED="1181219935182" ID="Freemind_Link_378551552" MODIFIED="1181231030077" TEXT="search-engine"/>
 </node>
 </node>
-<node CREATED="1181227524699" ID="Freemind_Link_1470825556" MODIFIED="1181306868044" TEXT="editor">
-<edge COLOR="#ffb894" WIDTH="thin"/>
+<node CREATED="1181227524699" ID="Freemind_Link_1470825556" MODIFIED="1192022911654" TEXT="editor">
+<edge COLOR="#808080" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 <node BACKGROUND_COLOR="#fdfa79" CREATED="1181219765767" ID="Freemind_Link_661530968" MODIFIED="1181231391251" TEXT="editor-app">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node BACKGROUND_COLOR="#fdb679" CREATED="1181220148850" ID="Freemind_Link_1073685225" MODIFIED="1181231461381" TEXT="maven-editortopics-plugin">
+<node BACKGROUND_COLOR="#fdb679" CREATED="1181220148850" ID="Freemind_Link_1073685225" MODIFIED="1192022915977" TEXT="maven-editortopics-plugin">
+<edge COLOR="#ffb894" WIDTH="thin"/>
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
@@ -369,6 +372,9 @@
 </node>
 <node COLOR="#006633" CREATED="1181927312102" ID="Freemind_Link_1682801276" MODIFIED="1181927319712" POSITION="right" TEXT="unit-dataset">
 <edge COLOR="#808080" WIDTH="thin"/>
+<node BACKGROUND_COLOR="#fdb679" CREATED="1192023017700" ID="Freemind_Link_730216241" MODIFIED="1192023029323" TEXT="dbunit-dataset-maven-plugin">
+<edge COLOR="#808080" WIDTH="thin"/>
+</node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1183033128273" ID="Freemind_Link_70182069" MODIFIED="1183033140798" TEXT="dataset-import-maven-plugin">
 <edge COLOR="#808080" WIDTH="thin"/>
 </node>
