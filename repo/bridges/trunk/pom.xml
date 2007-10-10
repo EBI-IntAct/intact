@@ -33,6 +33,7 @@
        <module>intact-citexplore</module>
        <module>intact-taxonomy</module>
        <module>intact-uniprot</module>
+       <module>blast-mapping-parser</module>
        <module>intact-blast</module>
        <module>coredep</module>
     </modules>
