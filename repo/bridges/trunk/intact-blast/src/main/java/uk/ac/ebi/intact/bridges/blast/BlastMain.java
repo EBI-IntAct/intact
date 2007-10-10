@@ -154,7 +154,7 @@ public class BlastMain {
 	}
 	
 	private static File getTargetDirectory() {
-		String outputDirPath = BlastEbiWsTest.class.getResource("/").getFile();
+		String outputDirPath = BlastMain.class.getResource("/").getFile();
 		Assert.assertNotNull(outputDirPath);
 		File outputDir = new File(outputDirPath);
 		// we are in src/main/resources , move 3 up

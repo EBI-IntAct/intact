@@ -16,6 +16,7 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
+@org.junit.Ignore
 public class BlastJobDaoTest {
 
 	BlastJobDao	blastJobDao;
