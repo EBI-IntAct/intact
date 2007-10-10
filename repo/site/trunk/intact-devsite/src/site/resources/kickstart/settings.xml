@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings xmlns="http://maven.apache.org/POM/4.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/settings-1.0.0.xsd">
+
+    <profiles>
+        <!-- ================================================================ -->
+        <!--                        H2 (UNIT TEST DB)                         -->
+        <!-- ================================================================ -->
+
+        <profile>
+            <id>h2test</id>
+            <properties>
+                <db>h2</db>
+                <db.alias>target/h2-test</db.alias>
+                <db.user>sa</db.user>
+                <db.password></db.password>
+                <db.hbm2ddlAuto>create</db.hbm2ddlAuto>
+                
+                <sessionFactoryName>H2_INTACT_TEST</sessionFactoryName>
+            </properties>
+        </profile>
+
+        <!-- ================================================================ -->
+        <!--                        POSTGRESQL                                -->
+        <!-- ================================================================ -->
+
+        <profile>
+            <id>pg-intact</id>
+            <properties>
+                <db>postgres</db>
+                <db.host>localhost</db.host>
+                <db.port>5432</db.port>
+                <db.alias>intact-db</db.alias>
+                <db.user>intact</db.user>
+                <db.password>binary</db.password>
+
+                <sessionFactoryName>PG_INTACT_LOCAL</sessionFactoryName>
+            </properties>
+        </profile>
+    </profiles>
+</settings>
