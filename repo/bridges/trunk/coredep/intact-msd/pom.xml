@@ -16,9 +16,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>uk.ac.ebi.intact.util</groupId>
+            <groupId>uk.ac.ebi.intact.bridges.coredep</groupId>
             <artifactId>intact-cdb</artifactId>
-            <version>1.0</version>
+            <version>${version}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
