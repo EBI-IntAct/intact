@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 
 /**
  * ExperimentShortlabelGenerator Tester.
@@ -26,28 +26,12 @@ import junit.framework.TestSuite;
  * @version $Id$
  * @since <pre>07/15/2005</pre>
  */
-public class ExperimentShortlabelGeneratorTest extends TestCase
+public class ExperimentShortlabelGeneratorTest extends IntactBasicTestCase
 {
-    public ExperimentShortlabelGeneratorTest( String name ) {
-        super( name );
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( ExperimentShortlabelGeneratorTest.class );
-    }
-
-
     /////////////////////
     // Tests
 
+    @Test
     public void testGetSuffix() {
         ExperimentShortlabelGenerator esg = new ExperimentShortlabelGenerator();
 
@@ -71,11 +55,13 @@ public class ExperimentShortlabelGeneratorTest extends TestCase
         assertEquals( "-1", esg.getSuffix( "author2", 2004, "pubmed2" ) );
     }
 
+    @Test
     public void testGetCharacter() {
         ExperimentShortlabelGenerator.SuffixBean sb = new ExperimentShortlabelGenerator.SuffixBean( "f" );
         assertEquals( "f", sb.getCharacter() );
     }
 
+    @Test
     public void testGetNextCount() {
 
         ExperimentShortlabelGenerator.SuffixBean sb = new ExperimentShortlabelGenerator.SuffixBean( "f" );
@@ -93,21 +79,25 @@ public class ExperimentShortlabelGeneratorTest extends TestCase
         assertEquals( 5, sb.getNextCount() );
     }
 
+    @Test
     public void testGetAuthor() {
         ExperimentShortlabelGenerator.SuffixKey sk = new ExperimentShortlabelGenerator.SuffixKey( "author", 2005 );
         assertEquals( "author", sk.getAuthor() );
     }
 
+    @Test
     public void testGetYear() {
         ExperimentShortlabelGenerator.SuffixKey sk = new ExperimentShortlabelGenerator.SuffixKey( "author", 2005 );
         assertEquals( 2005, sk.getYear() );
     }
 
+    @Test
     public void testGetNextChar() {
         ExperimentShortlabelGenerator.SuffixKey sk = new ExperimentShortlabelGenerator.SuffixKey( "author", 2005 );
         assertEquals( 2005, sk.getYear() );
     }
 
+    @Test
     public void testgetNextChar() {
         ExperimentShortlabelGenerator.SuffixKey sk = new ExperimentShortlabelGenerator.SuffixKey( "author", 2005 );
         assertEquals( "", sk.getNextChar() );
