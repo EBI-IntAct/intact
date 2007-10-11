@@ -38,7 +38,7 @@ I) Binary Search Client
 ----------------
 
 
-  [[b]] If you are not using Maven, just get the sources from the {{{http://sourceforge.net/project/showfiles.php?group_id=62732}SourceForge downloads}}.
+  [[b]] If you are not using Maven, you can get the client from {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}SourceForge downloads}}.
 
 
  You can see an example on how to use the web service client {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java}here}}.
