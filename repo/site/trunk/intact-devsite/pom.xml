@@ -28,5 +28,14 @@
             </plugin>
         </plugins>
     </reporting>
+
+    <distributionManagement>
+        <site>
+            <id>intact-site</id>
+            <name>Intact devsite</name>
+            <url>${site.remote.basedir}</url>
+        </site>
+    </distributionManagement>    
+
 </project>
 
