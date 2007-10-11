@@ -38,6 +38,6 @@ Installation and Configuration
 
  Refer to {{{kickstart.html}Local Installataion}} to install your own version of IntAct. 
 
- You can download the released {{{http://sourceforge.net/project/showfiles.php?group_id=62732}source bundles}} at <SourceForge>
- or checkout the bleeding edge code with subversion from the repository. See the <Source Repository> section in the
- Project Information tab of any of the modules.
+ You can download the released web service clients {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}source bundles}} at <SourceForge>
+
+ Or checkout the bleeding edge code with subversion from the repository. 
