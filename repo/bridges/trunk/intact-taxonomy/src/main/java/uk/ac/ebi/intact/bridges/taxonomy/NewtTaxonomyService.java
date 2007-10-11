@@ -124,6 +124,18 @@ public class NewtTaxonomyService implements TaxonomyService {
             term = new TaxonomyTerm( -2 );
             term.setScientificName( "Chemical synthesis" );
             term.setCommonName( "Chemical synthesis" );
+        } else if ( taxid == -3 ) {
+            term = new TaxonomyTerm( -3 );
+            term.setScientificName( "Unknown" );
+            term.setCommonName( "Uunknown" );
+        } else if ( taxid == -4 ) {
+            term = new TaxonomyTerm( -4 );
+            term.setScientificName( "In vivo" );
+            term.setCommonName( "In vivo" );
+        } else if ( taxid == -5 ) {
+            term = new TaxonomyTerm( -5 );
+            term.setScientificName( "In Silico" );
+            term.setCommonName( "In Silico" );
         }
 
         if ( term == null ) {
