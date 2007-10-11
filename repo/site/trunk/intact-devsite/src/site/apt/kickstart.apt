@@ -11,6 +11,8 @@ I) Introduction
  The aim of this page is to give IntAct users an overview of how to perform a local installation of the IntAct framework.
  This is going to cover the installation of the database, import/export of data...
 
+ The following information correspond to the IntAct 1.7.0 version.
+
 
 II) Prerequisites
 
@@ -19,13 +21,24 @@ II) Prerequisites
   * {{{http://subversion.tigris.org/project_packages.html}SVN 1.3 or 1.4}}
 
   * {{{http://maven.apache.org/download.html}Maven 2.x}}
+
+  * Supported databases are Oracle (used in production at the EBI), PostgreSQL and H2, but it should work
+  with any database that supports sequences.
   
-  * {{{http://tomcat.apache.org/download-55.cgi}Tomcat 5.5.x}}
+  * {{{http://tomcat.apache.org/download-55.cgi}Tomcat 5.5.x}} (optional)
 
  Please refer to their respective installation note to get more information.
 
 
 III) Setup your database management system
+
+ The following steps explain how to setup the database using Postgres. For Oracle the steps are similar but you will need
+ this DDL: '{{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0/create_schema.ddl}create_schema.ddl}}'.
+ If you need help with an Oracle installaction, send a mail to intact-help.ebi.ac.uk.
+
+ With PostgreSQL you can use the pgAmin III tool, which is provided by default with the
+ Windows PostreSQL and can be installed in Linux as well. In addition, all the commands used can be run directly
+ in the 'psql' shell.
 
  [[1]] Install PostgreSQL 8.x or above (please refer to the postgreSQL web site should you require support).\
        note: do install pgAdmin III as we will need it later.
@@ -50,7 +63,7 @@ CREATE USER intact WITH encrypted password 'change-me' CREATEDB;
            If you are more confortable with the DDL way, do execute:
 
 ----------------------
-CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL_ASCII' TABLESPACE = pg_default;
+CREATE DATABASE "intact-db" WITH OWNER = intact ENCODING = 'SQL_ASCII';
 ----------------------
 
 	[[e]] You can now open a Shell and type:
@@ -81,7 +94,9 @@ IV) Create the IntAct database schema
  svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0
  in this directory you will find a file called 'create_schema.ddl'
 
-	[[a]] Back to pgAdmin III, select 'intact-db' under 'Databases'
+  [[1]] Using pgAdmin III:
+
+	[[a]] Back to pgAdmin III, select 'intact-db' under 'Databases'.
 
 	[[b]] open a Query Tool (Tools > Query Tool)
 
@@ -90,6 +105,27 @@ IV) Create the IntAct database schema
 
 	[[d]] You should now have 45 tables and 3 sequences created in 'intact-db'.
 
+
+  [[2]] Using the 'psql' command:
+
+    [[a]] Start the 'psql' shell.
+
+---------------------------------------
+psql -d intact-db -U intact
+---------------------------------------
+
+    [[b]] Download the DDL from {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0/create_schema.ddl}create_schema.ddl}} in import it
+     into PostgreSQL with the following command:
+
+---------------------------------------
+\i /path/to/the/downloaded/create_schema.ddl
+---------------------------------------
+
+    [[c]] You can check that all the tables are there executing:
+
+---------------------------------------
+\d
+---------------------------------------
 
 V) Preparing your Maven Configuration
 
@@ -121,13 +157,29 @@ V) Preparing your Maven Configuration
 
 VI) Using the IntAct API though Kick Start
 
+ The Kick Start application contains some examples that should help get you started. They are simple and only show a small
+ part of the API, but they should cover the most important parts.
+
 	[[a]] Check out the IntAct KickStart application
 
 ----------------------------------------
 svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart
 ----------------------------------------
 
-	[[b]] Configure your favorite IDE and open this project
+	[[b]] Configure your favorite IDE and open this project. As IntAct builds are Maven based, this is straight-forward.
+	Maven already contains plugins to generate the project files for your IDE. For instance, you can execute:
+
+--------------------------------------------
+mvn eclipse:eclipse
+--------------------------------------------
+
+    or
+
+--------------------------------------------
+mvn idea:idea
+--------------------------------------------
+
+    and open the project in your IDE.
 
 	[[c]] Now we are going to run a series of Java program, the goal is two-fold:
 	      Firstly, to help you initializing your local IntAct database with real data.
@@ -211,8 +263,24 @@ cd editor-app
 mvn clean -Ddb=postgres -Ppg-intact jetty:run
 ----------------------------------------
 
+     [[3]] Optionally, you can create a war file for each application and deploy it in any Web Container.
+     At the EBI we run all our production applications in Tomcat 5.5.x, so it is the most tested. To create the
+     war file:
 
-VII) Want to go further ?
+----------------------------------------
+cd search-app (or editor-app...)
+mvn clean package
+----------------------------------------
+
+     [[4]] And a war file will be created under 'search-app/target' ready to use.
+
+
+VII) Web application customization
+
+ You can tweak some parameters from the web applications, such as the prefix for the created objects, the name
+ of the owner, etc. Check {{{webapp_install.html}this section}} for more information.
+
+VIII) Want to go further ?
 
  Should you need help to run the IntAct Kick Start or have any other requests, please send an email to
  intact-help.ebi.ac.uk 
