@@ -69,16 +69,20 @@ public class TaxonomyTermTest extends TestCase {
         assertEquals( -2, t.getTaxid() );
         t.setTaxid( -3 );
         assertEquals( -3, t.getTaxid() );
+        t.setTaxid( -4 );
+        assertEquals( -4, t.getTaxid() );
+        t.setTaxid( -5 );
+        assertEquals( -5, t.getTaxid() );
 
         try {
-            t.setTaxid( -4 );
-            fail( "-4 is not a valid taxid" );
+            t.setTaxid( -6 );
+            fail( "-6 is not a valid taxid" );
         } catch ( Exception e ) {
             // ok
         }
         try {
-            t.setTaxid( -5 );
-            fail( "-5 is not a valid taxid" );
+            t.setTaxid( -7 );
+            fail( "-7 is not a valid taxid" );
         } catch ( Exception e ) {
             // ok
         }
@@ -107,5 +111,4 @@ public class TaxonomyTermTest extends TestCase {
         t.addParent( new TaxonomyTerm( 3 ) );
         assertEquals( 2, t.getParents().size() );
     }
-
 }
