@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2002 The European Bioinformatics Institute, and others.
- * All rights reserved. Please see the file LICENSE
- * in the root directory of this distribution.
+ * Copyright (c) 2002 The European Bioinformatics Institute, and others. All
+ * rights reserved. Please see the file LICENSE in the root directory of this
+ * distribution.
  */
 package uk.ac.ebi.intact.bridges.blast.model;
 
@@ -11,12 +11,16 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
- /**
+/**
  * TODO comment this ... someday
- *
+ * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version
- * @since <pre>28 Sep 2007</pre>
+ * @since
+ * 
+ * <pre>
+ * 28 Sep 2007
+ * </pre>
  */
 public class UniprotAcTest {
 
@@ -35,7 +39,8 @@ public class UniprotAcTest {
 	}
 
 	/**
-	 * Test method for {@link uk.ac.ebi.intact.bridges.blast.model.UniprotAc#UniprotAc(java.lang.String)}.
+	 * Test method for
+	 * {@link uk.ac.ebi.intact.bridges.blast.model.UniprotAc#UniprotAc(java.lang.String)}.
 	 */
 	@Test
 	public final void testUniprotAc() {
@@ -46,5 +51,4 @@ public class UniprotAcTest {
 		UniprotAc uniAc3 = new UniprotAc("P12345-10");
 		assertNotNull(uniAc3);
 	}
-
 }

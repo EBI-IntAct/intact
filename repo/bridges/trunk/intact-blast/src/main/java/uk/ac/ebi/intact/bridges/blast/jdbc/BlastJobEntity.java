@@ -87,8 +87,7 @@ public class BlastJobEntity {
 		if (resultFile == null) {
 			return null;
 		}
-		String relative = resultFile.getParent() + "\\" + resultFile.getName(); 
-		return relative;
+		return resultFile.getPath();
 	}
 
 	public Timestamp getTimestamp() {
