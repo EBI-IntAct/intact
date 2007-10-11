@@ -54,60 +54,10 @@ host    all         all         127.0.0.0         255.0.0.0         trust
     (you can also replace the '8.x' in the URL with your specific PostgreSQL version)
 
 
-Database Schema
 
- Before installing any of the IntAct modules you need to create the database schema. To create the intact tables from
- scratch or to update an existing schema you have to use the corresponding SQL files.
-
- First: download the scripts and SQL files needed:
-
-+----------+
-svn co https://svn.sourceforge.net/svnroot/intact/repo/utils
-+----------+
-
-      [Note:] A maven plugin is planned to do all this work, in an easier way
-
-* Creating a new schema
-
- There are sample data files in the data directory, and to populate your database with this data simply type
-
-+------+
-cd utils/scripts/postgres
-./testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV  (postgres - quotes can be omitted if no password)
-+------+
-
- or
-
-+-------+
-cd utils/scripts/oracle
-./testfill.sh 'user/pwd' <dbname> small | medium | large | onlyCV (oracle)
-+-------+
-
- "small" is for minimal tests, will need \< 5 minutes. "large" is full, real data from the Ho and Gavin experiments,
- will run ca. 30 minutes.
-
- You should then check your database using an appropriate tool (eg pgaccess for postgres/linux) to make sure you have the
- intact tables and that they are populated.
-
-* Updating an existing schema
-
- To update an existing schema you need to execute the SQL files for your database that you can find in the folders:
-
-+-------+
-utils/sql/$DB_NAME/version_X_X_X
-+-------+
-
- You need to check what current schema version in your database, by executing the SQL command:
 
 +-------+
 SELECT value from IA_DB_INFO where dbi_key = 'schema_version';
 +-------+
-
- And then all you have to do is to execute sequentially the SQL 'install_XXX.sql' for each of the version_X_X_X folders
- that are higher than your version, until you reach the newest one.
-
- More information about the different IntAct database schema can be found {{{database.html/}here}}. 
-
-               [Note:] It is not possible to upgrade to the last version of postgres yet
 
  

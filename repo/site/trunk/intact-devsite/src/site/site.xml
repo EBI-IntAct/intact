@@ -21,15 +21,13 @@
 
         <menu name="IntAct">
             <item name="Overview" href="overview.html"/>
-            <item name="General Installation" href="general_install.html"/>
             <item name="Local Installation" href="kickstart.html"/>
-            <item name="Module Installation" href="webapp_install.html"/>
             <item name="Database" href="database.html"/>
             <item name="Downloads" href="downloads.html"/>
             <item name="FAQ" href="faq_intact.html"/>
         </menu>
 
-        <menu name="Modules">
+        <menu name="Modules (outdated)">
             <item name="Libraries" href="modules/libraries.html">
                 <!--
                 <item name="Intact Core" href="intact-core/index.html"/>
