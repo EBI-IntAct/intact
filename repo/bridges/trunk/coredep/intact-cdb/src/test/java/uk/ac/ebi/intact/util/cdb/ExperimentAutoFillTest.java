@@ -5,52 +5,48 @@
  */
 package uk.ac.ebi.intact.util.cdb;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.model.Experiment;
 
 /**
  * TODO comment this
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Bruno Aranda
  * @version $Id$
  * @since TODO
  */
-public class ExperimentAutoFillTest  extends TestCase {
-    public ExperimentAutoFillTest( String name ) {
-	super( name );
+public class ExperimentAutoFillTest extends IntactBasicTestCase {
+
+    @Test
+    public void experimentAutoFill_default() throws Exception {
+
+        ExperimentAutoFill eaf = new ExperimentAutoFill("15084279");
+
+        Assert.assertEquals("Drebrin is a novel connexin-43 binding partner that links gap junctions to the submembrane cytoskeleton.",
+                            eaf.getFullname());
+
+        beginTransaction();
+        Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
+        Assert.assertEquals("butkevich-2004-1", eaf.getShortlabel(true));
+        commitTransaction();
     }
 
-    public void setUp() throws Exception {
-	super.setUp();
-    }
+    @Test
+    public void testGetFullname() throws Exception {
 
-    public void tearDown() throws Exception {
-	super.tearDown();
-    }
+        Experiment exp = getMockBuilder().createExperimentEmpty("butkevich-2004-2");
+        exp.getPublication().setShortLabel("15084279");
+        PersisterHelper.saveOrUpdate(exp);
 
-    public static Test suite() {
-	return new TestSuite( ExperimentShortlabelGeneratorTest.class );
-    }
+        ExperimentAutoFill eaf = new ExperimentAutoFill("15084279");
 
-
-    /////////////////////
-    // Tests
-
-    public void testGetFullname() {
-
-	ExperimentAutoFill eaf = null;
-	try {                              
-	    eaf = new ExperimentAutoFill("15084279");
-	} catch (PublicationNotFoundException e) {
-	    fail();
-	    e.printStackTrace();
-	} catch (UnexpectedException e) {
-	    fail();
-	    e.printStackTrace();
-	}
-	assertEquals("Drebrin is a novel connexin-43 binding partner that links gap junctions to the submembrane cytoskeleton.",
-		     eaf.getFullname());
+        beginTransaction();
+        Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
+        Assert.assertEquals("butkevich-2004-3", eaf.getShortlabel(true));
+        commitTransaction();
     }
 
 }
