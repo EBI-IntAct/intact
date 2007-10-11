@@ -1,0 +1,45 @@
+ -----
+ Kick Start
+ -----
+ Bruno Aranda
+ -----
+ 11 Oct 2007
+ -----
+
+I) Binary Search Client
+
+ The most convenient way to access IntAct data remotely and programmaticaly is using the Binary Search Client.
+
+  [[a]] If you are using Maven (recommended), just include this dependency in the POM file:
+
+----------------
+<!-- Binary Search Client -->
+<dependency>
+    <groupId>uk.ac.ebi.intact.service.search.binary</groupId>
+    <artifactId>wsclient</artifactId>
+    <version>1.6.0-beta-2</version>
+</dependency>
+----------------
+
+  Don't forget to include the EBI repository in your POM file:
+
+----------------
+<repositories>
+    <!-- EBI repositories - Where the IntAct artifacts are stored -->
+    <repository>
+        <id>ebi-repo</id>
+        <name>The EBI internal repository</name>
+        <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+    </repository>
+
+    ...
+
+</repositories>
+----------------
+
+
+  [[b]] If you are not using Maven, just get the sources from the {{{http://sourceforge.net/project/showfiles.php?group_id=62732}SourceForge downloads}}.
+
+
+ You can see an example on how to use the web service client {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java}here}}.
+
