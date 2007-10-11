@@ -35,6 +35,13 @@
             <version>1.3.0</version>
         </dependency>
 
+        <!-- Binary Search Client -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.service.search.binary</groupId>
+            <artifactId>wsclient</artifactId>
+            <version>1.6.0-beta-2</version>
+        </dependency>
+
         <!-- Database drivers - Comment/uncomment the one/s you need -->
 
         <!-- PostgreSQL -->

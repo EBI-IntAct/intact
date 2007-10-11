@@ -54,5 +54,7 @@ public class IndexingAndSearchingPsiMiTab {
 
             System.out.println("\t"+interactorIdA+" interacts with "+interactorIdB);
         }
+
+        // The BinaryInteraction object contains all the relevant information for an interaction
     }
 }
