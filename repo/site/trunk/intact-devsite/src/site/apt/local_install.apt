@@ -192,6 +192,8 @@ mvn idea:idea
 Now you are going to run your first program: ImportControlledVocabularies
 ----------------------------------------
 
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportControlledVocabularies.java}here}}.
+
 	      Note: Once this is completed, you should have over 1,100 rows inserted in the table ia_controlledvocab.
 
 	[[d]] Now we are going to import some interaction data.
@@ -199,6 +201,8 @@ Now you are going to run your first program: ImportControlledVocabularies
 ----------------------------------------
 Run the following program: ImportPsiData
 ----------------------------------------
+
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ImportPsiData.java}here}}.
 
 	      This program uses a PSI-MI XML 2.5 file that is stored locally in the intact-kickstart.
           Of course, feel free to alter this program to load your own data file, for instance, found on the intact web site.
@@ -213,6 +217,8 @@ Run the following program: ImportPsiData
 Run the program: ExportToFasta
 ----------------------------------------
 
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToFasta.java}here}}.
+
 	      Note that if you take a closer look at the programs provided we have left a lot of comments for you to read,
 	      their purpose being to explain how things are managed in the API.
 
@@ -221,6 +227,8 @@ Run the program: ExportToFasta
 ----------------------------------------
 Run the program: ExportToPsiXml
 ----------------------------------------
+
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToPsiXml.java}here}}.
 
 	      This program selects all interactions involved in the publication having the shortlabel '16469704' which
 	      essentially is its pubmed accession number. The XML output is printed on the screen.
@@ -233,6 +241,8 @@ Run the program: ExportToPsiXml
 Run the program: ExportToPsiMiTab
 ----------------------------------------
 
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/ExportToPsiMiTab.java}here}}.
+
 	      This format provides a very simple tabular format on IntAct binary interactions. Now obviously not all
 	      interaction in the data have to be binary, but you can parameterize the converter to expand any n-ary
 	      interaction into binary using, for instance, the Spoke model (bianry interactions between bait and each preys).
@@ -243,6 +253,18 @@ Run the program: ExportToPsiMiTab
 ----------------------------------------
 Run the program: IndexingAndSearchingPsiMiTab
 ----------------------------------------
+
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/IndexingAndSearchingPsiMiTab.java}here}}.
+
+    [[i]] You can even use the Binary Search Client to do a remote query to the IntAct database. This is the most conveinent way
+          to access IntAct data remotely.
+
+----------------------------------------
+Run the program: RemoteBinarySearch
+----------------------------------------
+
+          You can take a look at its source {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java}here}}.
+
 
 
 VI) Running web applications on your local database
