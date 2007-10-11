@@ -52,15 +52,8 @@ public abstract class AbstractBlastService implements BlastService {
 
 	private BlastJobDao		blastJobDao;
 	private File			workDir;
-
-	private int				nrSubmission;											// nr
-																					// of
-																					// proteins
-																					// to
-																					// be
-																					// blasted
-																					// at a
-																					// time
+	// nr of proteins to be blasted at a time
+	private int				nrSubmission;											
 
 	// protected boolean isXmlFormat;
 
@@ -160,6 +153,44 @@ public abstract class AbstractBlastService implements BlastService {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see uk.ac.ebi.intact.bridges.blast.BlastService#submitJob(uk.ac.ebi.intact.bridges.blast.model.BlastInput)
+	 */
+	public BlastJobEntity submitJob(BlastInput blastInput) throws BlastServiceException {
+		if (blastInput == null || blastInput.getUniprotAc() == null || blastInput.getSequence() == null) {
+			throw new IllegalArgumentException("BlastInput(Uniprot, Seq) must not be null!");
+		}
+		if (blastInput.getUniprotAc().getAcNr() == null ) {
+			throw new IllegalArgumentException("UniprotAc.getAcNr() must not be null!");
+		}
+		if (blastInput.getSequence().getSeq() == null ) {
+			throw new IllegalArgumentException("Sequence.getSeq() must not be null!");
+		}
+		try {
+			BlastJobEntity jobEntity = blastJobDao.getJobByAc(blastInput.getUniprotAc());
+			if (jobEntity != null) {
+				if (BlastJobStatus.RUNNING.equals(jobEntity.getStatus())
+						|| BlastJobStatus.PENDING.equals(jobEntity.getStatus())) {
+					refreshJob(jobEntity);
+				}
+				// FIXME: look into the uniprot, intact update policy and
+				// caching of
+				// the results, ask sam what this was about
+				return jobEntity;
+			} else {
+				Job job = null;
+				try {
+					job = runBlast(blastInput);
+				} catch (BlastClientException e) {
+					throw new BlastServiceException(e);
+				}
+				return saveSubmittedJob(job);
+			}
+		} catch (BlastJdbcException e) {
+			throw new BlastServiceException(e);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -173,7 +204,6 @@ public abstract class AbstractBlastService implements BlastService {
 	 * @result list of BlastJobEntities , never null
 	 */
 	public List<BlastJobEntity> submitJobs(Set<UniprotAc> uniprotAcs) throws BlastServiceException {
-		// TODO: 20.09.2007 test this method (only 20)
 		if (uniprotAcs == null) {
 			throw new IllegalArgumentException("UniprotAcs must not be null!");
 		}
@@ -181,10 +211,10 @@ public abstract class AbstractBlastService implements BlastService {
 			throw new IllegalArgumentException("UniprotAcs mut not be empty!");
 		}
 		try {
-			List<BlastJobEntity> jobEntities = blastJobDao.getJobsByAc(uniprotAcs);
-
+			List<BlastJobEntity> jobEntities = blastJobDao.getJobsByAc(uniprotAcs);			
+			
 			if (jobEntities.size() == 0) {
-				List<Job> jobs = runBlast(uniprotAcs);
+				List<Job> jobs = runBlastOnlyNrATime(uniprotAcs, nrSubmission);
 				return saveSubmittedJobs(jobs);
 			} else {
 				Set<UniprotAc> prots = notIncluded(jobEntities, uniprotAcs);
@@ -192,11 +222,11 @@ public abstract class AbstractBlastService implements BlastService {
 					while (prots.size() > nrSubmission) {
 						Set<UniprotAc> toGet = onlyN(prots, nrSubmission);
 						// TODO: test it, although it should work
-						List<Job> jobs = runBlast(toGet);
+						List<Job> jobs = runBlastOnlyNrATime(toGet, nrSubmission);
 						jobEntities.addAll(saveSubmittedJobs(jobs));
 					}
 					if (prots.size() != 0 && prots.size() <= 20) {
-						List<Job> jobs = runBlast(prots);
+						List<Job> jobs = runBlastOnlyNrATime(prots, nrSubmission);
 						jobEntities.addAll(saveSubmittedJobs(jobs));
 					}
 				}
@@ -204,6 +234,22 @@ public abstract class AbstractBlastService implements BlastService {
 			}
 		} catch (BlastJdbcException e) {
 			throw new BlastServiceException(e);
+		} 
+	}
+
+	private List<Job> runBlastOnlyNrATime(Set<UniprotAc> uniprotAcs, int nrRunningJobs) throws BlastServiceException {
+		List<BlastJobEntity> runningJobs = fetchRunningJobs();
+		while (runningJobs.size() > nrRunningJobs){
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				throw new BlastServiceException(e);
+			}
+			runningJobs = fetchRunningJobs();
+		}
+		
+		try {
+			return runBlast(uniprotAcs);
 		} catch (BlastClientException e) {
 			throw new BlastServiceException(e);
 		}
@@ -483,6 +529,8 @@ public abstract class AbstractBlastService implements BlastService {
 				// in case the set did not work, i prevent the refreshing of a
 				// refreshed job
 				refreshJob(jobEntity);
+				blastJobDao.deleteJob(jobEntity);
+				BlastJobEntity job= submitJob(new UniprotAc(jobEntity.getUniprotAc()));
 			}
 		} catch (BlastJdbcException e) {
 			throw new BlastServiceException(e);
@@ -534,6 +582,9 @@ public abstract class AbstractBlastService implements BlastService {
 
 	private void saveResult(BlastJobEntity job, BlastOutput result) throws BlastServiceException {
 		File resultFile = writeResultsToWorkDir(job, result);
+		if (resultFile == null){
+			throw new NullPointerException("ResultFile must not be null!");
+		}
 		job.setResult(resultFile);
 		job.setStatus(BlastJobStatus.DONE);
 		try {
@@ -609,6 +660,8 @@ public abstract class AbstractBlastService implements BlastService {
 	protected abstract List<Job> runBlast(Set<UniprotAc> uniprotAcs) throws BlastClientException;
 
 	protected abstract Job runBlast(UniprotAc uniprotAc) throws BlastClientException;
+	
+	protected abstract Job runBlast(BlastInput blastInput) throws BlastClientException;
 
 	protected abstract BlastJobStatus checkStatus(Job job) throws BlastClientException;
 

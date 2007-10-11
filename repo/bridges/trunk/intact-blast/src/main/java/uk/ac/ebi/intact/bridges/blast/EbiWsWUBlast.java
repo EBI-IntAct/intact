@@ -49,7 +49,8 @@ public class EbiWsWUBlast extends AbstractBlastService {
 
 	// ///////////////
 	// Constructor
-	public EbiWsWUBlast(File dbFolder, String tableName, File workDir, String email, int nrPerSubmission) throws BlastServiceException {
+	public EbiWsWUBlast(File dbFolder, String tableName, File workDir, String email, int nrPerSubmission)
+			throws BlastServiceException {
 		super(dbFolder, tableName, nrPerSubmission);
 		this.setWorkDir(workDir);
 		try {
@@ -63,6 +64,11 @@ public class EbiWsWUBlast extends AbstractBlastService {
 	// public Methods
 	public Job runBlast(UniprotAc uniprotAc) throws BlastClientException {
 		return bc.blast(new BlastInput(uniprotAc));
+	}
+
+	@Override
+	public Job runBlast(BlastInput blastInput) throws BlastClientException {
+		return bc.blast(blastInput);
 	}
 
 	public List<Job> runBlast(Set<UniprotAc> uniprotAcs) throws BlastClientException {
@@ -95,19 +101,22 @@ public class EbiWsWUBlast extends AbstractBlastService {
 	private BlastResult parseXmlOutput(File xmlFile) throws BlastClientException {
 		// BlastResult result = new BlastResult();
 		String fileName = xmlFile.getName();
-		String [] strs = fileName.split("\\.");
+		String[] strs = fileName.split("\\.");
 		String uniprotAc = strs[0];
 		List<Hit> blastHits = new ArrayList<Hit>();
 		BlastMappingReader bmr = new BlastMappingReader();
 
 		try {
+			if (log.isInfoEnabled()) {
+				log.info("reading xml : " + xmlFile.getPath());
+			}
 			EBIApplicationResult appResult = bmr.read(xmlFile);
 
 			List<THit> xmlHits = appResult.getSequenceSimilaritySearchResult().getHits().getHit();
 			for (THit hit : xmlHits) {
 				String accession = hit.getAc();
 				String desc = hit.getDescription();
-				if (desc.contains("Isoform")){
+				if (desc.contains("Isoform")) {
 					accession = hit.getId();
 				}
 				// a value that will never be < threshold
@@ -125,4 +134,5 @@ public class EbiWsWUBlast extends AbstractBlastService {
 		}
 		return new BlastResult(uniprotAc, blastHits);
 	}
+
 }

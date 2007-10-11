@@ -22,15 +22,15 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
-import uk.ac.ebi.intact.bridges.blast.generated.Data;
-import uk.ac.ebi.intact.bridges.blast.generated.InputParams;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastService;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlastServiceLocator;
-import uk.ac.ebi.intact.bridges.blast.generated.WSWUBlast_PortType;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
+import uk.ac.ebi.www.WSWUBlast.Data;
+import uk.ac.ebi.www.WSWUBlast.InputParams;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlast;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlastService;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
 
 /**
  * Blast client
@@ -40,9 +40,9 @@ import uk.ac.ebi.intact.bridges.blast.model.Job;
  */
 public class BlastClient {
 	// true for xml formated output, false otherwise
-	private boolean				fileFormatXml	= true;
-	private String				email;
-	private WSWUBlast_PortType	blast;
+	private boolean		fileFormatXml	= true;
+	private String		email;
+	private WSWUBlast	blast;
 
 	/**
 	 * Constructor
@@ -109,6 +109,7 @@ public class BlastClient {
 		params.setProgram("blastp");
 		params.setDatabase("uniprot");
 		params.setEmail(email);
+		params.setNumal(100);
 
 		params.setAsync(Boolean.TRUE); // set the submissions asynchronous
 
@@ -116,7 +117,8 @@ public class BlastClient {
 		Data input = new Data();
 		input.setType("sequence");
 		String content = getSpecificContent(blastInput);
-		input.setContent(content); //"uniprot:" + blastInput.getUniprotAc().getAcNr());
+		input.setContent(content); // "uniprot:" +
+									// blastInput.getUniprotAc().getAcNr());
 		inputs[0] = input;
 
 		Job job = null;
@@ -124,9 +126,9 @@ public class BlastClient {
 			job = new Job(blast.runWUBlast(params, inputs), blastInput);
 			checkStatus(job);
 		} catch (RemoteException e) {
-			//FIXME: ask sam : axisfault
+			// FIXME: ask sam : axisfault
 			String message = e.getMessage();
-			if (message.startsWith("could not fetch entry")){
+			if (message.startsWith("could not fetch entry")) {
 				job = new Job("failed " + blastInput.toString(), blastInput);
 				job.setStatus(BlastJobStatus.FAILED);
 			} else {
@@ -136,25 +138,21 @@ public class BlastClient {
 		return job;
 	}
 
-	private String getSpecificContent(BlastInput blastInput) {
+	protected String getSpecificContent(BlastInput blastInput) {
 		String ac = blastInput.getUniprotAc().getAcNr();
 		String[] aux = ac.split("-");
-		String content ="";
-//		if (aux.length == 2) {
-//			content = blastInput.getSequence().getSeq();
-//		} else if (aux.length == 1){
-//			content = "uniprot:"+blastInput.getUniprotAc().getAcNr();
-//		} else {
-//			content ="";
-//		}
-		//TODO: remove when testing with splice variants
-		content = "uniprot:"+blastInput.getUniprotAc().getAcNr();
-		return content;
+		String content = "";
+		if (aux.length == 2 && blastInput.getSequence() != null && blastInput.getSequence().getSeq() != null) {
+			content = blastInput.getSequence().getSeq();
+			return content;
+		} else {
+			content = "uniprot:" + blastInput.getUniprotAc().getAcNr();
+			return content;
+		}
 	}
 
-	//TODO: remove after play phase
-	//FIXME: not working, set sequence as content
-	public Job blastSeq(BlastInput blastInput) throws BlastClientException {
+	// TODO: remove after play phase
+	protected Job blastSeq(BlastInput blastInput) throws BlastClientException {
 		if (blastInput == null) {
 			throw new IllegalArgumentException("BlastInput mus not be null!");
 		}
@@ -166,6 +164,7 @@ public class BlastClient {
 		params.setProgram("blastp");
 		params.setDatabase("uniprot");
 		params.setEmail(email);
+		params.setNumal(100);
 
 		params.setAsync(Boolean.TRUE); // set the submissions asynchronous
 
@@ -180,9 +179,9 @@ public class BlastClient {
 			job = new Job(blast.runWUBlast(params, inputs), blastInput);
 			checkStatus(job);
 		} catch (RemoteException e) {
-			//FIXME: ask sam : axisfault
+			// FIXME: ask sam : axisfault
 			String message = e.getMessage();
-			if (message.startsWith("could not fetch entry")){
+			if (message.startsWith("could not fetch entry")) {
 				job = new Job("failed " + blastInput.toString(), blastInput);
 				job.setStatus(BlastJobStatus.FAILED);
 			} else {
@@ -191,7 +190,7 @@ public class BlastClient {
 		}
 		return job;
 	}
-	
+
 	/**
 	 * Blasts a list of uniprotAc against uniprot.
 	 * 
@@ -220,7 +219,7 @@ public class BlastClient {
 
 	/**
 	 * @return status of the job (RUNNING | PENDING | NOT_FOUND | FAILED | DONE)
-	 * @throws BlastClientException 
+	 * @throws BlastClientException
 	 */
 	public BlastJobStatus checkStatus(Job job) throws BlastClientException {
 		try {
@@ -252,7 +251,7 @@ public class BlastClient {
 	 * 
 	 * @param job
 	 * @return true or false
-	 * @throws BlastClientException 
+	 * @throws BlastClientException
 	 */
 	public boolean isFinished(Job job) throws BlastClientException {
 		BlastJobStatus status = checkStatus(job);
@@ -267,7 +266,7 @@ public class BlastClient {
 	 * 
 	 * @param job
 	 * @return string: the output in xml format or
-	 * @throws BlastClientException 
+	 * @throws BlastClientException
 	 */
 	public BlastOutput getResult(Job job) throws BlastClientException {
 		String result = null;
@@ -277,7 +276,7 @@ public class BlastClient {
 				String type = (fileFormatXml ? "toolxml" : "tooloutput");
 				byte[] resultbytes = blast.poll(job.getId(), type);
 				result = new String(resultbytes);
-	
+
 				job.setBlastResult(new BlastOutput(result, fileFormatXml));
 			} catch (RemoteException e) {
 				throw new BlastClientException(e);

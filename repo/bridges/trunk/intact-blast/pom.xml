@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<artifactId>bridges-master</artifactId>
 		<groupId>uk.ac.ebi.intact.bridges</groupId>
@@ -22,15 +24,19 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>axistools-maven-plugin</artifactId>
+				<version>1.0</version>
 				<configuration>
 					<urls>
 						<url>
 							http://www.ebi.ac.uk/Tools/webservices/wsdl/WSWUBlast.wsdl
 						</url>
 					</urls>
-					<packageSpace>
+					<generatePackage>
 						uk.ac.ebi.intact.bridges.blast.generated
-					</packageSpace>
+					</generatePackage>
+					<!-- <packageSpace>
+						uk.ac.ebi.intact.bridges.blast.generated
+					</packageSpace> -->
 					<testCases>false</testCases>
 					<serverSide>false</serverSide>
 					<subPackageByFileName>false</subPackageByFileName>
@@ -94,21 +100,21 @@
 			<artifactId>activation</artifactId>
 			<version>1.1</version>
 		</dependency>
-		
+
 		<!-- for the blast h2 db -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.0.20070617</version>
 		</dependency>
-		
+
 		<!-- for xml parser -->
 		<dependency>
 			<groupId>uk.ac.ebi.intact.bridges</groupId>
 			<artifactId>blast-mapping-parser</artifactId>
 			<version>${version}</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<!-- EBI repositories -->
@@ -136,5 +142,14 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
+	<pluginRepositories>
+		<pluginRepository>
+			<id>java.net</id>
+			<name>java.net Maven Repository</name>
+			<url>
+				https://maven-repository.dev.java.net/nonav/repository
+			</url>
+			<layout>legacy</layout>
+		</pluginRepository>
+	</pluginRepositories>
 </project>

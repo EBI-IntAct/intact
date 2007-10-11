@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
+import junit.framework.Assert;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,15 +18,17 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
-@org.junit.Ignore
 public class BlastJobDaoTest {
 
 	BlastJobDao	blastJobDao;
+	File		testDir;
 
 	@Before
 	public void setUp() throws Exception {
-		String tableName = "BlastJobDaoTest";
-		File dbFolder = new File("testDbFolder");
+		testDir = getTargetDirectory();
+		File dbFolder = new File(testDir, "BlastDbTest");
+		dbFolder.deleteOnExit();
+		String tableName = "jobTest";
 		blastJobDao = new BlastJobDao(dbFolder, tableName);
 		blastJobDao.deleteJobs();
 	}
@@ -167,7 +171,7 @@ public class BlastJobDaoTest {
 				"test2"), Timestamp.valueOf("2007-09-13 10:20:25"));
 		blastJobDao.saveJob(blastJob);
 		blastJob.setStatus(BlastJobStatus.DONE);
-		blastJob.setResult(new File("newFile"));
+		blastJob.setResult(new File(testDir, "newFile"));
 		blastJob.setTimestamp(Timestamp.valueOf("2007-12-31 10:20:25"));
 		blastJobDao.updateJob(blastJob);
 		BlastJobEntity jobEntity = blastJobDao.getJobById(blastJob.getJobid());
@@ -177,29 +181,40 @@ public class BlastJobDaoTest {
 
 	@Test
 	public final void testExportJob() throws BlastJdbcException {
-		File csvFile = new File("testExportJob.csv");
+		File csvFile = new File(testDir, "testExportJob.csv");
 		BlastJobEntity blastJob = new BlastJobEntity("blastJobDaoTestExport1", "P23456", BlastJobStatus.DONE, new File(
 				"test2"), Timestamp.valueOf("2007-09-13 10:40:25"));
 		BlastJobEntity blastJob2 = new BlastJobEntity("blastJobDaoExport2", "P12345", BlastJobStatus.DONE, new File(
 				"test2b"), Timestamp.valueOf("2007-10-21 10:40:25"));
 		blastJobDao.saveJobs(Arrays.asList(blastJob, blastJob2));
 		blastJobDao.exportCSV(csvFile);
-		System.out.println(csvFile.getAbsolutePath());
-
+		assertTrue(csvFile.exists());
 	}
-	
+
 	@Test
 	public final void testImportJob() throws BlastJdbcException {
-		File csvFile = new File("testExportJob.csv");
+		File csvFile = new File(testDir, "testExportJob.csv");
 		blastJobDao.importCSV(csvFile);
-		blastJobDao.exportCSV(new File("testExportInportJob.csv"));
+		blastJobDao.exportCSV(new File(testDir, "testExportInportJob.csv"));
 	}
-	
+
 	private void assertionEquals(BlastJobEntity expected, BlastJobEntity observed) {
 		assertEquals(expected.getJobid(), observed.getJobid());
 		assertEquals(expected.getUniprotAc(), observed.getUniprotAc());
 		assertEquals(expected.getStatus(), observed.getStatus());
 		assertEquals(expected.getResultPath(), observed.getResultPath());
 		assertEquals(expected.getTimestamp(), observed.getTimestamp());
+	}
+
+	private File getTargetDirectory() {
+		String outputDirPath = BlastDbTest.class.getResource("/").getFile();
+		Assert.assertNotNull(outputDirPath);
+		File outputDir = new File(outputDirPath);
+		// we are in intact-blast/target/test-classes , move 1 up
+		outputDir = outputDir.getParentFile();
+		Assert.assertNotNull(outputDir);
+		Assert.assertTrue(outputDir.getAbsolutePath(), outputDir.isDirectory());
+		Assert.assertEquals("target", outputDir.getName());
+		return outputDir;
 	}
 }

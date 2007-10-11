@@ -39,7 +39,6 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * 17 Sep 2007
  * </pre>
  */
-@org.junit.Ignore
 public class BlastEbiWsTest {
 
 	private AbstractBlastService	wsBlast;
@@ -56,9 +55,10 @@ public class BlastEbiWsTest {
 		testDir.mkdir();
 
 		String email = "iarmean@ebi.ac.uk";
-		String tableName = "BlastEbiWsTest";
+		String tableName = "jobTest";
 		int nr = 20;
-		dbFolder = new File("testDbFolder");
+		dbFolder = new File(testDir, "BlastDbTest");
+		dbFolder.deleteOnExit();
 		dbFolder.mkdir();
 		wsBlast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
 	}
@@ -119,6 +119,7 @@ public class BlastEbiWsTest {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
 		uniprotAcs.add(new UniprotAc("P12345"));
+		uniprotAcs.add(new UniprotAc("R12345"));
 		List<BlastJobEntity> jobs = wsBlast.submitJobs(uniprotAcs);
 		assertNotNull(jobs);
 		List<BlastResult> results = wsBlast.fetchAvailableBlasts(jobs);
@@ -173,6 +174,8 @@ public class BlastEbiWsTest {
 		}
 	}
 
+	// TODO: test resubmission of failed examples
+
 	private void printResult(BlastResult result, Writer writer) throws BlastServiceException {
 		try {
 			writer.append(result.getUniprotAc() + " - alignmenthits \n");
@@ -190,22 +193,8 @@ public class BlastEbiWsTest {
 		String outputDirPath = BlastEbiWsTest.class.getResource("/").getFile();
 		Assert.assertNotNull(outputDirPath);
 		File outputDir = new File(outputDirPath);
-		// we are in src/main/resources , move 3 up
-
-		// TODO: for eclipse use : outputDir =
-		// outputDir.getParentFile().getParentFile().getParentFile();
-		// TODO: for unix, cygwin use:
+		// we are in intact-blast/target/test-classes , move 1 up
 		outputDir = outputDir.getParentFile();
-
-		// we are in confidence-score folder, move 1 down, in target folder
-		String outputPath;
-		// TODO: for eclipse use: outputPath = outputDir.getPath() + "/target/";
-		// TODO: for unix, cygwin use:
-		outputPath = outputDir.getPath();
-
-		outputDir = new File(outputPath);
-		outputDir.mkdir();
-
 		Assert.assertNotNull(outputDir);
 		Assert.assertTrue(outputDir.getAbsolutePath(), outputDir.isDirectory());
 		Assert.assertEquals("target", outputDir.getName());

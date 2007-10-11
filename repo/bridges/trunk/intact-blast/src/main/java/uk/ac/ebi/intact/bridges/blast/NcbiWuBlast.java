@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
+import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
@@ -110,6 +112,12 @@ public class NcbiWuBlast extends AbstractBlastService {
 		return null;
 	}
 
+	@Override
+	public Job runBlast(BlastInput blastInput) throws BlastClientException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public BlastResult processOutput(File blastFile) {
 		//processTxtOutput(ac, againstProteins);
 		return null;
@@ -119,6 +127,8 @@ public class NcbiWuBlast extends AbstractBlastService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 //	private void runBlast(Set<String> uniprotAc) {
 //		List<Job> jobs = bc.blast(uniprotAc);

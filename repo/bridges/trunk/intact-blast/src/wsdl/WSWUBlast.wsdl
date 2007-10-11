@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wsdl:definitions name="WSWUBlast"
+<definitions name="WSWUBlast"
 	targetNamespace="http://www.ebi.ac.uk/WSWUBlast"
 	xmlns="http://schemas.xmlsoap.org/wsdl/"
 	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
 	xmlns:tns="http://www.ebi.ac.uk/WSWUBlast"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
 	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-
 	
-    <documentation>
+	<documentation> 
 	Documentation for this service can be found at http://www.ebi.ac.uk/Tools/webservices
 	</documentation>
 	
@@ -370,7 +369,7 @@
   </port>
 </service>
 
-</wsdl:definitions>
+</definitions>
 
 
 

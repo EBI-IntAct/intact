@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
+import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
@@ -31,6 +32,8 @@ public interface BlastService {
 	public void exportCsv(File csvFile) throws BlastServiceException;
 	
 	public BlastJobEntity submitJob(UniprotAc uniprotAc) throws BlastServiceException;
+	
+	public BlastJobEntity submitJob(BlastInput blastInput) throws BlastServiceException;
 
 	public List<BlastJobEntity> submitJobs(Set<UniprotAc> uniprotAcs) throws BlastServiceException;
 
