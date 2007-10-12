@@ -27,32 +27,6 @@ public class ExperimentAutoFill {
 
     private static final Log log = LogFactory.getLog(ExperimentAutoFill.class);
 
-    /////////////////////////
-    // Inner Class
-
-    private Comparator creationDateComparator = new Comparator() {
-        public int compare( Object o1, Object o2 ) {
-
-            if ( !( o1 instanceof Experiment ) ) {
-                throw new ClassCastException();
-            }
-
-            if ( !( o2 instanceof Experiment ) ) {
-                throw new ClassCastException();
-            }
-
-            Experiment experiment1 = (Experiment) o1;
-            Experiment experiment2 = (Experiment) o2;
-
-            return experiment1.getCreated().compareTo( experiment2.getCreated() );
-        }
-    };
-
-    ////////////////////////
-    // Instance variable
-
-    private String pubmedID = null;
-
     //////////////////////
     // Constructor
 
@@ -69,8 +43,6 @@ public class ExperimentAutoFill {
         } catch ( NumberFormatException e ) {
             throw e;
         }
-
-        this.pubmedID = pubmedID;
 
         try {
 
@@ -102,36 +74,6 @@ public class ExperimentAutoFill {
                                                                   PublicationNotFoundException {
         IntactCitationFactory intactCitationFactory = IntactCitationFactory.getInstance();
         return intactCitationFactory.buildCitation( pubmedID );
-    }
-
-    /**
-     * Retreive a pubmed ID from an IntAct experience. <br> That information should be found in Xref( CvDatabase( pubmed
-     * ), CvXrefQualifier( primary-reference ) ).
-     *
-     * @param experiment the experiment from which we try to retreive the pubmedId.
-     *
-     * @return the pubmedId as a String or null if none were found.
-     */
-    private String getPubmedId( Experiment experiment ) {
-
-        if ( experiment == null ) {
-            return null;
-        }
-
-        String pubmedId = null;
-        for ( Iterator iterator = experiment.getXrefs().iterator(); iterator.hasNext() && pubmedId == null; ) {
-            Xref xref = (Xref) iterator.next();
-
-            if ( CvDatabase.PUBMED.equals( xref.getCvDatabase().getShortLabel() ) ) {
-
-                if ( CvXrefQualifier.PRIMARY_REFERENCE.equals( xref.getCvXrefQualifier().getShortLabel() ) ) {
-
-                    pubmedId = xref.getPrimaryId();
-                }
-            }
-        }
-
-        return pubmedId;
     }
 
     ////////////////////////////
