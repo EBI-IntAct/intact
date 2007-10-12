@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.util.cdb;
 
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
 
 /**
@@ -45,7 +45,7 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
 
         beginTransaction();
         Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
-        Assert.assertEquals("butkevich-2004-3", eaf.getShortlabel(true));
+        Assert.assertEquals("butkevich-2004-1", eaf.getShortlabel(true));
         commitTransaction();
     }
 
