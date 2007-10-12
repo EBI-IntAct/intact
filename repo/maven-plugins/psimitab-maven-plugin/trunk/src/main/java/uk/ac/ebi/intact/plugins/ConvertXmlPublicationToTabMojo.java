@@ -7,10 +7,13 @@ package uk.ac.ebi.intact.plugins;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+
+import psidev.psi.mi.tab.converter.xml2tab.ColumnHandler;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.*;
+import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Map;
 
@@ -54,8 +57,26 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
      * @parameter
      */
     private String fileExtension;
+    
+    /**
+     * Class that is going to hold the data. An extension of BinaryInteractionImpl could be used to hold extra columns that
+     * the ColumnsHandler fill up.
+     * 
+     * @parameter
+     * @see ColumnHandler
+     */
+	private String binaryInteractionClass = "psidev.psi.mi.tab.model.BinaryInteractionImpl";
 
+    /**
+     * Allows to tweak the production of the columns and also to add extra columns.
+     * The ColumnHandler has to be specific to a BinaryInteractionImpl.
+     *
+     * @parameter
+     * @see BinaryInteractionImpl
+     */
+	private String columnHandler;
 
+	
     public void execute() throws MojoExecutionException {
 
         File srcDir = new File( sourceDirectoryPath );
@@ -100,6 +121,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
         System.out.println( "parameter 'logFilePath' = " + logFilePath );
         System.out.println( "parameter 'fileExtension' = " + fileExtension );
+        System.out.println( "parameter 'binaryInteractionClass' = " + binaryInteractionClass);
+        System.out.println( "parameter 'columnHandler' = " + columnHandler);
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -111,6 +134,19 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairClustering( true );
 
+        try {
+			converter.setBinaryInteractionClass( Class.forName(binaryInteractionClass) );
+
+			if (columnHandler != null){
+				Constructor constructor = Class.forName(columnHandler).getConstructor(new Class[]{});
+	        	converter.setColumnHandler( (ColumnHandler) constructor.newInstance(new Object[]{}) );
+	        }
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		
         if ( logWriter != null ) {
             converter.setLogWriter( logWriter );
         }
