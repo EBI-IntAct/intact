@@ -5,11 +5,11 @@
                 <artifactId>psimitab-maven-plugin</artifactId>
 
                 <configuration>
-
-                    <tabFile>C:\2006-10-31\pmidMIF25\pmid\2003.csv</tabFile>
+					<!-- These parameters are going to be set at runtime -->
+                    <tabFile></tabFile>
 
                     <files>
-                        <file>C:\2006-10-31\pmidMIF25\pmid\test</file>
+                        <file></file>
                     </files>
 
                 </configuration>

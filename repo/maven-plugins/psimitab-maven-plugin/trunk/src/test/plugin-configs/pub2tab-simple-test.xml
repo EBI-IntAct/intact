@@ -5,8 +5,8 @@
                 <artifactId>psimitab-maven-plugin</artifactId>
 
                 <configuration>
-
-                    <directoryPath>C:\2006-10-31\pmidMIF25\pmid\2003</directoryPath>
+					<!-- These parameters are going to be set at runtime -->
+                    <directoryPath></directoryPath>
 
                 </configuration>
             </plugin>
