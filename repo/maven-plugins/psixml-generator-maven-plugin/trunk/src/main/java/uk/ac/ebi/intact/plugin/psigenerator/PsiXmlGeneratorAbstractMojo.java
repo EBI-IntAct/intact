@@ -12,7 +12,7 @@ import uk.ac.ebi.intact.application.dataConversion.ExperimentListItem;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
-import uk.ac.ebi.intact.plugins.targetspecies.UpdateTargetSpecies;
+import uk.ac.ebi.intact.plugins.dbupdate.targetspecies.UpdateTargetSpecies;
 
 import java.io.*;
 import java.util.Collection;
@@ -190,8 +190,8 @@ public abstract class PsiXmlGeneratorAbstractMojo extends IntactHibernateMojo
         // update targetspecies if required
         if (updateTargetSpecies)
         {
-            getLog().info("Updating target-species");
-            UpdateTargetSpecies.update(output, isDryRun(), searchPattern );
+            getLog().info("Updating target-species for all experiments");
+            new UpdateTargetSpecies().updateAllExperiments();
         }
     }
 
