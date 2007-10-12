@@ -32,6 +32,9 @@
 
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
+
+        <core.version>1.7.1</core.version>
+        <bridges.version>2.0.1-SNAPSHOT</bridges.version>
     </properties>
 
     <modules>
@@ -71,8 +74,27 @@
                 <type>zip</type>
                 <scope>test</scope>
             </dependency>
-        </dependencies>
-        
+       
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-core</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.core</groupId>
+            <artifactId>intact-persister</artifactId>
+            <version>${core.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges.coredep</groupId>
+            <artifactId>intact-cdb</artifactId>
+            <version>${bridges.version}</version>
+        </dependency>
+
+       </dependencies>
+
+            
     </dependencyManagement>
 
     <dependencies>
