@@ -19,6 +19,7 @@ import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 import java.io.File;
 
@@ -27,10 +28,7 @@ public class UpdateExperimentsMojoTest extends UpdateAbstractMojoTestCase
 
     @Test
     public void testUpdate() throws Exception {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-        ExperimentPersister.getInstance().saveOrUpdate(getMockBuilder().createExperimentRandom(3));
-        ExperimentPersister.getInstance().commit();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        PersisterHelper.saveOrUpdate(getMockBuilder().createExperimentRandom(3));
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/experiments-config.xml" );
 

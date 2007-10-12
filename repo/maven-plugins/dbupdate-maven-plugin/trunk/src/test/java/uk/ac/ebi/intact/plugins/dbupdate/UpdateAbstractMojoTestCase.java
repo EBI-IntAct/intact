@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.model.Institution;
 
 import java.io.File;
 
@@ -47,7 +48,7 @@ public abstract class UpdateAbstractMojoTestCase extends AbstractMojoTestCase {
         CustomCoreDataConfig dataConfig = new CustomCoreDataConfig("custom", hibernateConfigFile, session);
         IntactContext.initContext(dataConfig, session);
 
-        mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution());
+        mockBuilder = new IntactMockBuilder(new Institution("TestInstitution"));
     }
 
     @After
