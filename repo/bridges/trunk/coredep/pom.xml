@@ -26,8 +26,18 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-core</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.1</version>
         </dependency>
      </dependencies>
+
+    <dependencyManagement>
+        <dependencies>
+             <dependency>
+                <groupId>uk.ac.ebi.intact.core</groupId>
+                <artifactId>intact-persister</artifactId>
+                <version>1.7.1</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
