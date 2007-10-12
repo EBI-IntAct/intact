@@ -9,11 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ExperimentUtils;
-import uk.ac.ebi.intact.util.DebugUtil;
-
-import java.util.*;
 
 /**
  * Module used to collect information from CitExplore in order to prefill an Experiment (shortlabel, fullname, Xref,
@@ -26,6 +22,8 @@ import java.util.*;
 public class ExperimentAutoFill {
 
     private static final Log log = LogFactory.getLog(ExperimentAutoFill.class);
+
+    private String pubmedID;
 
     //////////////////////
     // Constructor
@@ -43,6 +41,8 @@ public class ExperimentAutoFill {
         } catch ( NumberFormatException e ) {
             throw e;
         }
+
+        this.pubmedID = pubmedID;
 
         try {
 
@@ -133,7 +133,7 @@ public class ExperimentAutoFill {
         String experimentShortlabel = authorLastName + "-" + year;
 
         if (accessDatabase) {
-            experimentShortlabel = ExperimentUtils.syncShortLabelWithDb(experimentShortlabel);
+            experimentShortlabel = ExperimentUtils.syncShortLabelWithDb(experimentShortlabel, pubmedID);
         }
 
         return experimentShortlabel;
