@@ -73,18 +73,10 @@
 <font NAME="SansSerif" SIZE="12"/>
 <node CREATED="1181220016126" ID="Freemind_Link_339196956" MODIFIED="1181231030330" TEXT="intact-psixml-converters"/>
 <node CREATED="1181220019649" ID="Freemind_Link_1793249273" MODIFIED="1181231030328" TEXT="intact-psixml-exchange"/>
-<node CREATED="1181220025324" ID="Freemind_Link_1813445305" MODIFIED="1181231030325" TEXT="intact-psixml-processor"/>
-<node CREATED="1181220028507" ID="Freemind_Link_313334292" MODIFIED="1185889434714" TEXT="intact-psixml-tools">
-<icon BUILTIN="clanbomber"/>
-</node>
-<node CREATED="1181220030659" ID="Freemind_Link_1907791552" MODIFIED="1185889439938" TEXT="intact-psixml-upload">
-<icon BUILTIN="clanbomber"/>
-</node>
-<node CREATED="1181220032989" ID="Freemind_Link_460551093" MODIFIED="1185889443513" TEXT="intact-psixml-upload-extensions">
-<icon BUILTIN="clanbomber"/>
-</node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181219997687" ID="_" MODIFIED="1181231461388" TEXT="psixml-source-generator-maven-plugin&#xa;"/>
-<node CREATED="1181220210838" ID="Freemind_Link_692197070" MODIFIED="1185889421767" TEXT="intact-psi-validator"/>
+<node CREATED="1181220210838" ID="Freemind_Link_692197070" MODIFIED="1192434565745" TEXT="intact-psi-validator">
+<edge COLOR="#ffb894" WIDTH="thin"/>
+</node>
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220161503" ID="Freemind_Link_165922696" MODIFIED="1181307055010" TEXT="psixml-generator-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
 </node>
@@ -111,7 +103,9 @@
 </node>
 </node>
 </node>
+<node CREATED="1184577886167" ID="Freemind_Link_1681646863" MODIFIED="1184577921153" TEXT="intact-enricher"/>
 <node CREATED="1185793253542" ID="Freemind_Link_1906959819" MODIFIED="1185793256230" TEXT="imex">
+<node CREATED="1192434624315" ID="Freemind_Link_750236080" MODIFIED="1192434631126" TEXT="intact-imex-repository"/>
 <node CREATED="1185793304604" ID="Freemind_Link_63970314" MODIFIED="1185793309097" TEXT="intact-imex-import"/>
 </node>
 <node CREATED="1184857829203" ID="Freemind_Link_1592349400" MODIFIED="1184857834229" TEXT="intact-cvtools"/>
@@ -145,7 +139,6 @@
 <font NAME="SansSerif" SIZE="12"/>
 </node>
 </node>
-<node CREATED="1184577886167" ID="Freemind_Link_1681646863" MODIFIED="1184577921153" TEXT="intact-enricher"/>
 <node CREATED="1181554401954" ID="Freemind_Link_1094858423" MODIFIED="1181554405395" TEXT="plugins">
 <node BACKGROUND_COLOR="#fdb679" CREATED="1181220145843" ID="Freemind_Link_740683974" MODIFIED="1181307035242" TEXT="lucene-maven-plugin">
 <edge COLOR="#ffb894" WIDTH="thin"/>
