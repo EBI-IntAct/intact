@@ -221,7 +221,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
 
             // journal
             String currentJournal = getAnnotationValue(experiment, journal);
-            if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 && !eaf.getJournal().equals(journal)) {
+            if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 && !eaf.getJournal().equals(currentJournal)) {
                 UpdatedValue uv = addUniqueAnnotation(  experiment, journal, eaf.getJournal(), dryRun );
                 report.setJournalListValue(uv);
             }
