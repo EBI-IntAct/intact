@@ -46,13 +46,18 @@ public class XrefMessage extends GeneralMessage {
 
         fields.add(dbField);
 
-        if (xref.getCvXrefQualifier() != null) {
-            Field qualField = new Field();
-            qualField.setName("Xref Qualifier ID");
-            qualField.setValue(CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier()).getPrimaryId());
 
-            fields.add(qualField);
+        Field qualField = new Field();
+        qualField.setName("Xref Qualifier ID");
+
+        if (xref.getCvXrefQualifier() != null) {
+            qualField.setValue(CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier()).getPrimaryId());
+        } else {
+            qualField.setValue("");
         }
+
+        fields.add(qualField);
+
 
         return fields;
     }
