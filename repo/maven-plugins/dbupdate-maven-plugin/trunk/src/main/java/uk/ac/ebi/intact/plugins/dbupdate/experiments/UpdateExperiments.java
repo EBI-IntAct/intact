@@ -8,10 +8,7 @@ package uk.ac.ebi.intact.plugins.dbupdate.experiments;
 import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ExperimentShortlabelGenerator;
 import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
@@ -98,13 +95,18 @@ public class UpdateExperiments {
      * @param experiment      the experiemnt to update
      */
     public static UpdateSingleExperimentReport updateExperiment(  Experiment experiment, PrintStream printStream, boolean dryRun ) {
-
         String dryRunMode = (dryRun)? " (DRY RUN MODE)" : "";
 
         UpdateSingleExperimentReport report = new UpdateSingleExperimentReport(experiment.getAc(), experiment.getShortLabel());
 
         printStream.println( "=======================================================================================" );
         printStream.println( "Updating experiment"+dryRunMode+": " + experiment.getAc() + " " + experiment.getShortLabel() );
+
+        if (isCuratedComplex(experiment)) {
+            printStream.println(" [SKIP] This is a curated complex.");
+            report.setInvalidMessage(experiment.getShortLabel() + " is a curated complex.");
+            return report;
+        }
 
         // find experiment pubmed id
         String pubmedId = getPubmedId( experiment );
@@ -206,6 +208,22 @@ public class UpdateExperiments {
         }
 
         return report;
+    }
+
+    private static boolean isCuratedComplex(Experiment experiment) {
+        for (Annotation annotation : experiment.getAnnotations()) {
+            final CvTopic cvTopic = annotation.getCvTopic();
+
+            if (cvTopic == null) {
+                continue;
+            }
+
+            if (CvTopic.CURATED_COMPLEX.equals(cvTopic.getShortLabel())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, boolean dryRun) throws SQLException
