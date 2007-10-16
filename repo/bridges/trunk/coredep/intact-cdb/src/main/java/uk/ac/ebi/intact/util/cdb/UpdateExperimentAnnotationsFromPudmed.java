@@ -213,25 +213,29 @@ public class UpdateExperimentAnnotationsFromPudmed {
             // Updating experiment's annotation
 
             // author-list
-            if ( eaf.getAuthorList() != null && eaf.getAuthorList().length() != 0 ) {
+            String currentAuthorList = getAnnotationValue(experiment, authorList);
+            if ( eaf.getAuthorList() != null && eaf.getAuthorList().length() != 0  && !eaf.getAuthorList().equals(currentAuthorList)) {
                 UpdatedValue uv = addUniqueAnnotation(  experiment, authorList, eaf.getAuthorList(), dryRun );
                 report.setAuthorListValue(uv);
             }
 
             // journal
-            if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 ) {
+            String currentJournal = getAnnotationValue(experiment, journal);
+            if ( eaf.getJournal() != null && eaf.getJournal().length() != 0 && !eaf.getJournal().equals(journal)) {
                 UpdatedValue uv = addUniqueAnnotation(  experiment, journal, eaf.getJournal(), dryRun );
                 report.setJournalListValue(uv);
             }
 
             // year of publication
-            if ( eaf.getYear() != -1 ) {
+            String currentPubYear = getAnnotationValue(experiment, year);
+            if ( eaf.getYear() != -1 && !String.valueOf(eaf.getYear()).equals(currentPubYear)) {
                 UpdatedValue uv = addUniqueAnnotation(  experiment, year, Integer.toString( eaf.getYear() ), dryRun );
                 report.setYearListValue(uv);
             }
 
             // email - if not there yet, add it.
-            if ( eaf.getAuthorEmail() != null && eaf.getAuthorEmail().length() != 0 ) {
+            String currentAuthorEmail = getAnnotationValue(experiment, email);
+            if ( eaf.getAuthorEmail() != null && eaf.getAuthorEmail().length() != 0 && !eaf.getAuthorEmail().equals(currentAuthorEmail)) {
                 Annotation annotation = new Annotation( IntactContext.getCurrentInstance().getInstitution(), email );
                 annotation.setAnnotationText( eaf.getAuthorEmail() );
                 if ( ! experiment.getAnnotations().contains( annotation ) ) {
@@ -252,6 +256,16 @@ public class UpdateExperimentAnnotationsFromPudmed {
         }
 
         return report;
+    }
+
+    private static String getAnnotationValue(Experiment experiment, CvTopic topic) {
+        for (Annotation annotation : experiment.getAnnotations()) {
+            if (topic.equals(annotation.getCvTopic())) {
+                return annotation.getAnnotationText();
+            }
+        }
+
+        return null;
     }
 
     /**
