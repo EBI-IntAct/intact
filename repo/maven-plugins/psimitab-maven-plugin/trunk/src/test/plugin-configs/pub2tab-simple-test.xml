@@ -6,6 +6,9 @@
 
                 <configuration>
 					<!-- These parameters are going to be set at runtime -->
+                    <binaryInteractionClass>lala</binaryInteractionClass>
+                    <columnHandler>foobar</columnHandler>
+
                     <directoryPath></directoryPath>
 
                 </configuration>
