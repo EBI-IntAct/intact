@@ -14,7 +14,6 @@ import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-
 /**
  * ConvertXmlToTabMojo Tester.
  *
@@ -61,14 +60,16 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         }
 
         assertEquals( 9 + 1, lineCount );
-
     }
 
     public void testExecutewithIntActBinaryInteraction() throws Exception {
 
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-simple-test.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-intact.xml" );
 
-        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupEmptyMojo( "xml2tab", pluginXmlFile );
+        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
+
+        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
+        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
 
         File rootDir = new File( getBasedir(), "target" + File.separator + "test-classes" + File.separator + "xml-samples" );
 
@@ -77,10 +78,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
 
         // set output file
         setVariableValueToObject( mojo, "tabFile", tabFile.getAbsolutePath() );
-
-        // set configuration
-        setVariableValueToObject( mojo, "binaryInteractionClass", "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction" );
-        setVariableValueToObject( mojo, "columnHandler", "uk.ac.ebi.intact.psimitab.IntActColumnHandler" );
 
         // set input files
         Collection<String> files = new ArrayList<String>();
@@ -103,10 +100,10 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-simple-test.xml" );
 
-        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupEmptyMojo( "xml2tab", pluginXmlFile );
+        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
 
-        assertEquals( "lala2", mojo.getBinaryInteractionClass() );
-        assertEquals( "foobar2", mojo.getColumnHandler() );
+        assertNull( mojo.getBinaryInteractionClass() );
+        assertNull( mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -146,13 +143,11 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
             }
         }
 
-
         File srcDir = new File( getBasedir(), root + File.separator + "pmid" );
 
         // set input files
         Collection files = new ArrayList();
         files.add( srcDir.getAbsolutePath() );
-
 
         setVariableValueToObject( mojo, "files", files );
         File tabFile = new File( srcDir.getAbsolutePath() + File.separator + "all.txt" );
@@ -168,14 +163,16 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         reader.setColumnHandler( new IntActColumnHandler() );
 
         reader.read( tabFile );
-
     }
 
     public void testAdditionalColumn() throws Exception {
 
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-simple-test.xml" );
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-intact.xml" );
 
-        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupEmptyMojo( "xml2tab", pluginXmlFile );
+        ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
+
+        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
+        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -213,7 +210,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
                 bis.close();
             }
         }
-
 
         File srcDir = new File( getBasedir(), root + File.separator + "pmid" );
 
@@ -237,7 +233,5 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         reader.setColumnHandler( new IntActColumnHandler() );
 
         reader.read( tabFile );
-
     }
-
 }

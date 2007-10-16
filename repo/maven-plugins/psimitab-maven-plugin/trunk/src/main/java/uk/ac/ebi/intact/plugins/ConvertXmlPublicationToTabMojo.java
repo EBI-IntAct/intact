@@ -5,9 +5,7 @@
  */
 package uk.ac.ebi.intact.plugins;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
 import psidev.psi.mi.tab.converter.xml2tab.ColumnHandler;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
@@ -58,14 +56,14 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
 
     ///////////////////////////////
     // Implements abstract method
-    
+
     public void execute() throws MojoExecutionException {
 
         File srcDir = new File( sourceDirectoryPath );
-        if ( ! srcDir.exists() ) {
+        if ( !srcDir.exists() ) {
             throw new MojoExecutionException( "Source directory does not exist: " + sourceDirectoryPath );
         }
-        if ( ! srcDir.canRead() ) {
+        if ( !srcDir.canRead() ) {
             throw new MojoExecutionException( "Source directory cannot be read: " + sourceDirectoryPath );
         }
 
@@ -74,8 +72,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
             throw new MojoExecutionException( "Target directory exists but cannot be written: " + targetDirectoryPath );
         }
 
-        if( fileExtension == null || fileExtension.trim().length() == 0 ) {
-            System.out.println( "Setting the file extension to default: '" + DEFAULT_FILE_EXTENSION + "'");
+        if ( fileExtension == null || fileExtension.trim().length() == 0 ) {
+            System.out.println( "Setting the file extension to default: '" + DEFAULT_FILE_EXTENSION + "'" );
             fileExtension = DEFAULT_FILE_EXTENSION;
         }
 
@@ -103,8 +101,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
         System.out.println( "parameter 'logFilePath' = " + logFilePath );
         System.out.println( "parameter 'fileExtension' = " + fileExtension );
-        System.out.println( "parameter 'binaryInteractionClass' = " + getBinaryInteractionClass());
-        System.out.println( "parameter 'columnHandler' = " + getColumnHandler());
+        System.out.println( "parameter 'binaryInteractionClass' = " + getBinaryInteractionClass() );
+        System.out.println( "parameter 'columnHandler' = " + getColumnHandler() );
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -116,18 +114,26 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairClustering( true );
 
-        try {
-			converter.setBinaryInteractionClass( Class.forName(getBinaryInteractionClass()) );
+        if ( hasBinaryInteractionClass() ) {
 
-			if (getColumnHandler() != null){
-				Constructor constructor = Class.forName(getColumnHandler()).getConstructor(new Class[]{});
-	        	converter.setColumnHandler( (ColumnHandler) constructor.newInstance(new Object[]{}) );
-	        }
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
-		
+            if(getLog().isWarnEnabled()) {
+                getLog().warn( "Using BinaryInteraction class: " + getBinaryInteractionClass() );
+                getLog().warn( "Using ColumnHandler class: " + getColumnHandler() );
+            }
+
+            try {
+                converter.setBinaryInteractionClass( Class.forName( getBinaryInteractionClass() ) );
+
+                if ( getColumnHandler() != null ) {
+                    Constructor constructor = Class.forName( getColumnHandler() ).getConstructor( new Class[]{} );
+                    converter.setColumnHandler( ( ColumnHandler ) constructor.newInstance( new Object[]{} ) );
+                }
+
+            } catch ( Exception e ) {
+                throw new MojoExecutionException( "Could not instanciate provided classes, see nested exception", e );
+            }
+        }
+
         if ( logWriter != null ) {
             converter.setLogWriter( logWriter );
         }

@@ -19,13 +19,14 @@ public abstract class AbstractPsimitabConverterMojo extends IntactAbstractMojo {
     // Mojo parameters
 
     /**
-     * Class that is going to hold the data. An extension of BinaryInteractionImpl could be used to hold extra columns that
-     * the ColumnsHandler fill up.
+     * Class that is going to hold the data. An extension of BinaryInteractionImpl could be used to hold extra
+     * columns that the ColumnsHandler fill up.
      *
-     * @parameter
      * @see psidev.psi.mi.tab.converter.xml2tab.ColumnHandler
+     * 
+     * @parameter
      */
-    private String binaryInteractionClass = "psidev.psi.mi.tab.model.BinaryInteractionImpl";
+    private String binaryInteractionClass;
 
     /**
      * Allows to tweak the production of the columns and also to add extra columns.
@@ -55,11 +56,27 @@ public abstract class AbstractPsimitabConverterMojo extends IntactAbstractMojo {
         return binaryInteractionClass;
     }
 
+    public boolean hasBinaryInteractionClass() {
+        return binaryInteractionClass != null && binaryInteractionClass.trim().length() > 0;
+    }
+
     public String getColumnHandler() {
         return columnHandler;
     }
 
+    public boolean hasColumnHandler() {
+        return columnHandler != null && columnHandler.trim().length() > 0;
+    }
+
     public MavenProject getProject() {
         return project;
+    }
+
+    public void setBinaryInteractionClass( String binaryInteractionClass ) {
+        this.binaryInteractionClass = binaryInteractionClass;
+    }
+
+    public void setColumnHandler( String columnHandler ) {
+        this.columnHandler = columnHandler;
     }
 }

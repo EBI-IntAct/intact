@@ -19,10 +19,8 @@ package uk.ac.ebi.intact.plugins;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.project.MavenProject;
 import psidev.psi.mi.tab.converter.xml2tab.ColumnHandler;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
-import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.File;
@@ -76,15 +74,23 @@ public class ConvertXmlToTabMojo extends AbstractPsimitabConverterMojo {
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairClustering( true );
 
-        try {
-            converter.setBinaryInteractionClass( Class.forName( getBinaryInteractionClass() ) );
+        if ( hasBinaryInteractionClass() ) {
 
-            if ( getColumnHandler() != null ) {
-                Constructor constructor = Class.forName( getColumnHandler() ).getConstructor( new Class[]{} );
-                converter.setColumnHandler( ( ColumnHandler ) constructor.newInstance( new Object[]{} ) );
+            if ( getLog().isWarnEnabled() ) {
+                getLog().warn( "Using BinaryInteraction class: " + getBinaryInteractionClass() );
+                getLog().warn( "Using ColumnHandler class: " + getColumnHandler() );
             }
-        } catch ( Exception e ) {
-            e.printStackTrace();
+
+            try {
+                converter.setBinaryInteractionClass( Class.forName( getBinaryInteractionClass() ) );
+
+                if ( getColumnHandler() != null ) {
+                    Constructor constructor = Class.forName( getColumnHandler() ).getConstructor( new Class[]{} );
+                    converter.setColumnHandler( ( ColumnHandler ) constructor.newInstance( new Object[]{} ) );
+                }
+            } catch ( Exception e ) {
+                throw new MojoExecutionException( "Could not instanciate provided classes, see nested exception", e );
+            }
         }
 
         Collection<File> inputFiles = new ArrayList<File>();
