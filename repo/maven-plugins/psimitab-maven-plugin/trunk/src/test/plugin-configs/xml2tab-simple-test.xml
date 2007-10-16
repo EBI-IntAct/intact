@@ -6,6 +6,9 @@
 
                 <configuration>
 					<!-- These parameters are going to be set at runtime -->
+                    <binaryInteractionClass>lala2</binaryInteractionClass>
+                    <columnHandler>foobar2</columnHandler>
+
                     <tabFile></tabFile>
 
                     <files>

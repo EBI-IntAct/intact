@@ -23,9 +23,7 @@ import java.util.Map;
  * @goal pub2tab
  * @phase process-sources
  */
-public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
-
-    public static final String DEFAULT_FILE_EXTENSION = "txt";
+public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMojo {
 
     /**
      * Source directory to be processed.
@@ -57,26 +55,10 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
      * @parameter
      */
     private String fileExtension;
+
+    ///////////////////////////////
+    // Implements abstract method
     
-    /**
-     * Class that is going to hold the data. An extension of BinaryInteractionImpl could be used to hold extra columns that
-     * the ColumnsHandler fill up.
-     * 
-     * @parameter
-     * @see ColumnHandler
-     */
-	private String binaryInteractionClass = "psidev.psi.mi.tab.model.BinaryInteractionImpl";
-
-    /**
-     * Allows to tweak the production of the columns and also to add extra columns.
-     * The ColumnHandler has to be specific to a BinaryInteractionImpl.
-     *
-     * @parameter
-     * @see BinaryInteractionImpl
-     */
-	private String columnHandler;
-
-	
     public void execute() throws MojoExecutionException {
 
         File srcDir = new File( sourceDirectoryPath );
@@ -121,8 +103,8 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
         System.out.println( "parameter 'logFilePath' = " + logFilePath );
         System.out.println( "parameter 'fileExtension' = " + fileExtension );
-        System.out.println( "parameter 'binaryInteractionClass' = " + binaryInteractionClass);
-        System.out.println( "parameter 'columnHandler' = " + columnHandler);
+        System.out.println( "parameter 'binaryInteractionClass' = " + getBinaryInteractionClass());
+        System.out.println( "parameter 'columnHandler' = " + getColumnHandler());
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -135,17 +117,16 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
         converter.setInteractorPairClustering( true );
 
         try {
-			converter.setBinaryInteractionClass( Class.forName(binaryInteractionClass) );
+			converter.setBinaryInteractionClass( Class.forName(getBinaryInteractionClass()) );
 
-			if (columnHandler != null){
-				Constructor constructor = Class.forName(columnHandler).getConstructor(new Class[]{});
+			if (getColumnHandler() != null){
+				Constructor constructor = Class.forName(getColumnHandler()).getConstructor(new Class[]{});
 	        	converter.setColumnHandler( (ColumnHandler) constructor.newInstance(new Object[]{}) );
 	        }
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
-		
 		
         if ( logWriter != null ) {
             converter.setLogWriter( logWriter );
@@ -160,19 +141,14 @@ public class ConvertXmlPublicationToTabMojo extends AbstractMojo {
             File file = xmlFiles.iterator().next();
             File fileRootDir = file.getParentFile();
 
-//            System.out.println( "file = " + file.getAbsolutePath() );
-
             // extract sub structure
             int idx = fileRootDir.getAbsolutePath().indexOf( srcDir.getAbsolutePath() );
             if ( idx == -1 ) {
                 throw new IllegalStateException( "\"" + fileRootDir.getAbsolutePath() + "\".indexOf(\"" + srcDir.getAbsolutePath() + "\") returned -1 !!" );
             }
             idx += sourceDirectoryPath.length();
-//            System.out.println( "idx = " + idx );
             int len = fileRootDir.getAbsolutePath().length();
-//            System.out.println( "len = " + len );
             File targetDir = new File( trgDir, fileRootDir.getAbsolutePath().substring( idx, len ) );
-//            System.out.println( "targetDir = " + targetDir.getAbsolutePath() );
 
             // build potential missing sub-directory
             targetDir.mkdirs();
