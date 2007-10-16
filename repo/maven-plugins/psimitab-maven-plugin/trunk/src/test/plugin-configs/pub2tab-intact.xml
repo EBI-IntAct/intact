@@ -6,6 +6,8 @@
 
                 <configuration>
 					<!-- These parameters are going to be set at runtime -->
+                    <binaryInteractionClass>uk.ac.ebi.intact.psimitab.IntActBinaryInteraction</binaryInteractionClass>
+                    <columnHandler>uk.ac.ebi.intact.psimitab.IntActColumnHandler</columnHandler>
 
                 </configuration>
             </plugin>
