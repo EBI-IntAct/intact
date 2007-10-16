@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.plugins.dbupdate.experiments;
 
 import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -152,6 +153,10 @@ public class UpdateSingleExperimentReport
 
     public boolean addWarningMessage(String o)
     {
+        if (warningMessages == null) {
+            warningMessages = new ArrayList<String>();
+        }
+        
         return warningMessages.add(o);
     }
 
