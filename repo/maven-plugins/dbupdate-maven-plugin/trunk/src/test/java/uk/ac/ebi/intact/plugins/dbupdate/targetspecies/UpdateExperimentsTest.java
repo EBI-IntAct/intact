@@ -56,6 +56,8 @@ public class UpdateExperimentsTest extends IntactBasicTestCase {
         new MandatoryTopicsCvPrimer(getDaoFactory()).createCVs();
 
         Experiment exp = getMockBuilder().createExperimentEmpty("rauramo-1975-1", "1234567");
+        Annotation annot = getMockBuilder().createAnnotation("Rauramo L., Lagerspetz K., Engblom P., Punnonen R.", CvTopic.AUTHOR_LIST_MI_REF, CvTopic.AUTHOR_LIST);
+        exp.addAnnotation(annot);
 
         PersisterHelper.saveOrUpdate(exp);
 
@@ -65,7 +67,7 @@ public class UpdateExperimentsTest extends IntactBasicTestCase {
 
         final UpdateSingleExperimentReport singleExperimentReport = reports.iterator().next();
         Assert.assertFalse(singleExperimentReport.isInvalid());
-        Assert.assertTrue(singleExperimentReport.isAuthorListUpdated());
+        Assert.assertFalse(singleExperimentReport.isAuthorListUpdated());
         Assert.assertTrue(singleExperimentReport.isFullNameUpdated());
         Assert.assertTrue(singleExperimentReport.isJournalUpdated());
         Assert.assertTrue(singleExperimentReport.isYearUpdated());
