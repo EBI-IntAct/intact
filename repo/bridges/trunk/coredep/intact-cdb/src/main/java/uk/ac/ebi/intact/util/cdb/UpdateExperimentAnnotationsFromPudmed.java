@@ -194,17 +194,17 @@ public class UpdateExperimentAnnotationsFromPudmed {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.AUTHOR_LIST_MI_REF + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic journal = cvTopicDao.getByShortLabel( "MI:0885" );        // unique
+            CvTopic journal = cvTopicDao.getByPsiMiRef(CvTopic.JOURNAL_MI_REF);        // unique
             if ( journal == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.JOURNAL + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic year = cvTopicDao.getByShortLabel( "MI:0886" );  // unique
+            CvTopic year = cvTopicDao.getByPsiMiRef(CvTopic.PUBLICATION_YEAR_MI_REF);  // unique
             if ( year == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.PUBLICATION_YEAR + ") by MI in your intact node. abort update." );
             }
 
-            CvTopic email = cvTopicDao.getByShortLabel( CvTopic.CONTACT_EMAIL_MI_REF );    // not unique
+            CvTopic email = cvTopicDao.getByPsiMiRef( CvTopic.CONTACT_EMAIL_MI_REF );    // not unique
             if ( email == null ) {
                 throw new IntactException( "Could not find CvTopic(" + CvTopic.CONTACT_EMAIL + ") by MI in your intact node. abort update." );
             }
