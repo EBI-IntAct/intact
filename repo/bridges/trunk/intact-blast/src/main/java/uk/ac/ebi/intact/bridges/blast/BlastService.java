@@ -36,6 +36,10 @@ public interface BlastService {
 	public BlastJobEntity submitJob(BlastInput blastInput) throws BlastServiceException;
 
 	public List<BlastJobEntity> submitJobs(Set<UniprotAc> uniprotAcs) throws BlastServiceException;
+	
+	public BlastResult fetchAvailableBlast(UniprotAc uniprotAc) throws BlastServiceException;
+	
+	public BlastResult fetchAvailableBlast(BlastJobEntity job) throws BlastServiceException;
 
 	/**
 	 * Retrieves from DB
@@ -76,16 +80,12 @@ public interface BlastService {
 
 	//TODO: is this method really needed? 
 	public List<BlastJobEntity> fetchJobEntities(Set<UniprotAc> uniprotAcs) throws BlastServiceException ;
-
-	//public BlastJobEntity refreshDB();
-
-//	public void refreshJob(BlastJobEntity job);
-
-//	public void refreshJobs(List<BlastJobEntity> jobs);
 	
 	public void deleteJob(BlastJobEntity job) throws BlastServiceException;
 	
 	public void deleteJobs(List<BlastJobEntity> jobs) throws BlastServiceException;
+	
+	public void deleteJobsAll() throws BlastServiceException;
 
 	public void close() throws BlastServiceException;
 }

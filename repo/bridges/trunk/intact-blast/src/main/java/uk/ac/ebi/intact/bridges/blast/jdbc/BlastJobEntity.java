@@ -81,7 +81,7 @@ public class BlastJobEntity {
 
 	/**
 	 * 
-	 * @return patrent \ fileName
+	 * @return path
 	 */
 	public String getResultPath() {
 		if (resultFile == null) {
@@ -100,7 +100,7 @@ public class BlastJobEntity {
 
 	@Override
 	public String toString() {
-		String str = jobid + ":" + uniprotAc + ":" + status + ":" + resultFile.getPath() + ":" + timestamp;
+		String str = jobid + ":" + uniprotAc + ":" + status + ":" + (resultFile == null ? "null" : resultFile.getPath()) + ":" + timestamp;
 		return str;
 	}
 

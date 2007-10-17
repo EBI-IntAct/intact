@@ -56,13 +56,12 @@ public class BlastDb {
 		try {
 			DatabaseMetaData dbMeta = conn.getMetaData();
 
-			// check if "employee" table is there
+			// check if "job" table is there
 			tableName= tableName.toUpperCase();
 			ResultSet checkTable = dbMeta.getTables(null, null, tableName, null);
 			String tableFound = null;
 			while (checkTable.next()) {
 				tableFound = checkTable.getString("TABLE_NAME");
-				// System.out.println(tableName);
 			}
 			if (tableFound != null) {
 				return true;

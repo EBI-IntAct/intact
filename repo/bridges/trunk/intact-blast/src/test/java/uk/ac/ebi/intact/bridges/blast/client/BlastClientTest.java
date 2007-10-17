@@ -56,34 +56,66 @@ public class BlastClientTest {
 	}
 
 	@Test
+	//@Ignore
 	public final void testBlastClient() throws BlastClientException {
 		assertTrue(true);
-		// BlastClient bc = new BlastClient("iarmean@ebi.ac.uk");
-		// Job job = new Job("blast-20071009-14520134", new BlastInput(new
-		// UniprotAc("P07149")));
-		// bc.checkStatus(job);
-		// while (!BlastJobStatus.DONE.equals(job.getStatus())) {
-		// try {
-		// Thread.sleep(5000);
-		// } catch (InterruptedException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		//
-		// bc.checkStatus(job);
-		// }
-		// bc.getResult(job);
-		// BlastOutput result = job.getBlastResult();
-		// FileWriter fw;
-		// try {
-		// fw = new FileWriter(new File("E:/P07149.xml"));
-		// fw.append(result.getResult());
-		// fw.close();
-		// } catch (IOException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+		 BlastClient bc = new BlastClient("iarmean@ebi.ac.uk");
+		 // blast-20071016-14295764:Q86Y22
+		Job job = new Job("blast-20071016-14295764", new BlastInput(new UniprotAc("Q86Y22")));
+		bc.checkStatus(job);
+		while (!BlastJobStatus.DONE.equals(job.getStatus())) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 
+			bc.checkStatus(job);
+		}
+		bc.getResult(job);
+		BlastOutput result = job.getBlastResult();
+		FileWriter fw;
+		try {
+			fw = new FileWriter(new File("E:/20071016_iarmean/" + job.getBlastInput().getUniprotAc().getAcNr()+".xml"));
+			System.out.println("done.");
+			fw.append(new String(result.getResult()));
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
+	@Test
+	@Ignore
+	public final void testBlastAc() throws BlastClientException {
+		BlastClient bc = new BlastClient("iarmean@ebi.ac.uk");
+		UniprotAc ac = new UniprotAc("Q9VQS6");
+		Job job = bc.blast(new BlastInput(ac));
+
+		while (!BlastJobStatus.DONE.equals(job.getStatus())) {
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			bc.checkStatus(job);
+		}
+		bc.getResult(job);
+		BlastOutput result = job.getBlastResult();
+		FileWriter fw;
+		try {
+			fw = new FileWriter(new File(testDir, ac.getAcNr() + ".xml"));
+			fw.append(new String(result.getResult()));
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Test
@@ -110,7 +142,7 @@ public class BlastClientTest {
 		FileWriter fw;
 		try {
 			fw = new FileWriter(new File(testDir, ac.getAcNr() + ".xml"));
-			fw.append(result.getResult());
+			fw.append(new String(result.getResult()));
 			fw.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -141,7 +173,7 @@ public class BlastClientTest {
 		FileWriter fw;
 		try {
 			fw = new FileWriter(new File(testDir, ac.getAcNr() + ".xml"));
-			fw.append(result.getResult());
+			fw.append(new String(result.getResult()));
 			fw.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

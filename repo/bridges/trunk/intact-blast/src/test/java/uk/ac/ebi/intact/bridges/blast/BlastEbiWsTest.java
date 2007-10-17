@@ -19,6 +19,7 @@ import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import uk.ac.ebi.intact.bridges.blast.EbiWsWUBlast;
@@ -57,8 +58,7 @@ public class BlastEbiWsTest {
 		String email = "iarmean@ebi.ac.uk";
 		String tableName = "jobTest";
 		int nr = 20;
-		dbFolder = new File(testDir, "BlastDbTest");
-		dbFolder.deleteOnExit();
+		dbFolder = new File(getTargetDirectory(), "BlastDbTest");
 		dbFolder.mkdir();
 		wsBlast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
 	}
@@ -77,8 +77,9 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
+	@Ignore
 	public final void testSubmitJob() throws BlastServiceException {
-		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("P40344"));
+		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("P40348"));
 
 		assertNotNull(jobEntity);
 		BlastResult result = wsBlast.fetchResult(jobEntity);
@@ -96,6 +97,7 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
+	@Ignore
 	public final void testSubmitJobsBadUniprotAc() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q9V586"));
@@ -115,6 +117,7 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
+	@Ignore
 	public final void testSubmitJobs() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
@@ -136,6 +139,7 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
+	@Ignore
 	public final void testFetchAvailableBlastsSetOfString() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
@@ -158,6 +162,7 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
+	@Ignore
 	public final void testFetchAvailableBlastsListOfBlastJobEntity() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
