@@ -39,7 +39,7 @@ import uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
  * @version $Id: BlastClient.java 9729 2007-09-19 11:03:02Z irina-armean $
  */
 public class BlastClient {
-	// true for xml formated output, false otherwise
+	// true for XML formated output, false otherwise
 	private boolean		fileFormatXml	= true;
 	private String		email;
 	private WSWUBlast	blast;
@@ -117,8 +117,7 @@ public class BlastClient {
 		Data input = new Data();
 		input.setType("sequence");
 		String content = getSpecificContent(blastInput);
-		input.setContent(content); // "uniprot:" +
-									// blastInput.getUniprotAc().getAcNr());
+		input.setContent(content); 
 		inputs[0] = input;
 
 		Job job = null;
@@ -254,6 +253,9 @@ public class BlastClient {
 	 * @throws BlastClientException
 	 */
 	public boolean isFinished(Job job) throws BlastClientException {
+		if (BlastJobStatus.DONE.equals(job.getStatus())){
+			return true;
+		}
 		BlastJobStatus status = checkStatus(job);
 		if (BlastJobStatus.DONE.equals(status)) {
 			return true;
@@ -269,15 +271,14 @@ public class BlastClient {
 	 * @throws BlastClientException
 	 */
 	public BlastOutput getResult(Job job) throws BlastClientException {
-		String result = null;
-		BlastJobStatus status = checkStatus(job);
-		if (BlastJobStatus.DONE.equals(status)) {
+		if (!BlastJobStatus.DONE.equals(job.getStatus())) {
+			checkStatus(job);
+		}
+		if (BlastJobStatus.DONE.equals(job.getStatus())) {
 			try {
 				String type = (fileFormatXml ? "toolxml" : "tooloutput");
 				byte[] resultbytes = blast.poll(job.getId(), type);
-				result = new String(resultbytes);
-
-				job.setBlastResult(new BlastOutput(result, fileFormatXml));
+				job.setBlastResult(new BlastOutput(resultbytes, fileFormatXml));
 			} catch (RemoteException e) {
 				throw new BlastClientException(e);
 			}

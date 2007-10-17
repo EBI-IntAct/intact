@@ -80,6 +80,6 @@ public class Job {
 	
 	@Override
 	public String toString() {
-		return id + ": " + blastInput + ": " + blastResult;
+		return id + ": " + blastInput + ": " + status.toString() +": " + blastResult;
 	}
 }

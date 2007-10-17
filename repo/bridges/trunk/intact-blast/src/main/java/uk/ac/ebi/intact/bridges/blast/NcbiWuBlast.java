@@ -46,6 +46,42 @@ public class NcbiWuBlast extends AbstractBlastService {
 	// TODO : this blast will use the cmd line wublast, and get and file/txt
 	// output
 
+	public BlastJobStatus checkStatus(Job job) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getResult(Job job, Boolean isXml) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Job> runBlast(Set<UniprotAc> uniprotAcs) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Job runBlast(UniprotAc uniprotAc) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Job runBlast(BlastInput blastInput) throws BlastClientException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BlastOutput getResult(Job job) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public BlastResult processOutput(File blastFile) {
+		//processTxtOutput(ac, againstProteins);
+		return null;
+	}
+
 	private String processTxtOutput(String ac, Set<String> againstProteins) {
 		String result = "";
 
@@ -92,96 +128,60 @@ public class NcbiWuBlast extends AbstractBlastService {
 		return result;
 	}
 
-	public BlastJobStatus checkStatus(Job job) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getResult(Job job, Boolean isXml) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<Job> runBlast(Set<UniprotAc> uniprotAcs) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Job runBlast(UniprotAc uniprotAc) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Job runBlast(BlastInput blastInput) throws BlastClientException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public BlastResult processOutput(File blastFile) {
-		//processTxtOutput(ac, againstProteins);
-		return null;
-	}
-
-	public BlastOutput getResult(Job job) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	
-
-//	private void runBlast(Set<String> uniprotAc) {
-//		List<Job> jobs = bc.blast(uniprotAc);
-//
-//		try {
-//			saveJobs(jobs, new FileWriter(new File(workDir, "jobList.txt")));
-//		} catch (IOException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
-//
-//		if (jobs.size() == 0) {
-//			return false;
-//		}
-//
-//		List<Job> notFinishedJobs = jobs;
-//		for (Job job : jobs) {
-//			String result = "";
-//			String status = bc.checkStatus(job.getId());
-//			while (status.equals("RUNNING")) {
-//				try {
-//					Thread.sleep(10000); // 10 000 millisec = 10 sec
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//
-//				status = bc.checkStatus(job.getId()); // check for the job
-//				// status
-//			}
-//
-//			if (status.equals("DONE")) {
-//				result = bc.getResult(job); // when done, get the results
-//				saveResult(job,result, true);
-//				
-//				
-//				
-////				try {
-////					
-////					saveJobeDone(job, new FileWriter(new File(workDir, "jobsDone.txt"), true));
-////				} catch (IOException e) {
-////					// TODO Auto-generated catch block
-////					e.printStackTrace();
-////				}
-////				notFinishedJobs.remove(job);
-////				result = bc.getResult(job); // when done, get the results
-////				writeResultsToWorkDir(job, result);
-////				processBlastOutput(job.getUniprotAc(), bc.isFileFormatXml(), againstProteins, writer);
-//			} else {
-//				log.info("Error with job: " + job + " (" + result + ")");
-//			}
-//		}
-//		return true;
-//	}
+	// private void runBlast(Set<String> uniprotAc) {
+	// List<Job> jobs = bc.blast(uniprotAc);
+	//
+	// try {
+	// saveJobs(jobs, new FileWriter(new File(workDir, "jobList.txt")));
+	// } catch (IOException e1) {
+	// // TODO Auto-generated catch block
+	// e1.printStackTrace();
+	// }
+	//
+	// if (jobs.size() == 0) {
+	// return false;
+	// }
+	//
+	// List<Job> notFinishedJobs = jobs;
+	// for (Job job : jobs) {
+	// String result = "";
+	// String status = bc.checkStatus(job.getId());
+	// while (status.equals("RUNNING")) {
+	// try {
+	// Thread.sleep(10000); // 10 000 millisec = 10 sec
+	// } catch (InterruptedException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	//
+	// status = bc.checkStatus(job.getId()); // check for the job
+	// // status
+	// }
+	//
+	// if (status.equals("DONE")) {
+	// result = bc.getResult(job); // when done, get the results
+	// saveResult(job,result, true);
+	//				
+	//				
+	//				
+	// // try {
+	// //
+	// // saveJobeDone(job, new FileWriter(new File(workDir, "jobsDone.txt"),
+	// true));
+	// // } catch (IOException e) {
+	// // // TODO Auto-generated catch block
+	// // e.printStackTrace();
+	// // }
+	// // notFinishedJobs.remove(job);
+	// // result = bc.getResult(job); // when done, get the results
+	// // writeResultsToWorkDir(job, result);
+	// // processBlastOutput(job.getUniprotAc(), bc.isFileFormatXml(),
+	// againstProteins, writer);
+	// } else {
+	// log.info("Error with job: " + job + " (" + result + ")");
+	// }
+	// }
+	// return true;
+	// }
 
 }

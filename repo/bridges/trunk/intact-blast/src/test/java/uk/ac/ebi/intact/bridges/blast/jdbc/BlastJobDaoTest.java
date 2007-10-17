@@ -72,13 +72,18 @@ public class BlastJobDaoTest {
 	}
 
 	@Test
-	public final void testSaveJob() throws BlastJdbcException {
+	public final void testSaveJobAndCount() throws BlastJdbcException {
 		BlastJobEntity blastJob = new BlastJobEntity("blastJobDaoTest1", "P34567", BlastJobStatus.DONE, new File(
 				"test1"), Timestamp.valueOf("2007-09-13 10:40:25"));
 		blastJobDao.saveJob(blastJob);
 		BlastJobEntity job = blastJobDao.getJobById(blastJob.getJobid());
 		assertNotNull(job); // this can be null
 		assertionEquals(blastJob, job);
+		
+		//
+		int total = blastJobDao.countJobs();
+		assertFalse(total == -1);
+		assertTrue(total == 1);
 	}
 
 	@Test

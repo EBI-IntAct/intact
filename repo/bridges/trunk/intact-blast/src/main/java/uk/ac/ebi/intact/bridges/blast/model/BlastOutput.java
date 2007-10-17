@@ -13,15 +13,15 @@ package uk.ac.ebi.intact.bridges.blast.model;
  * @since
  * 
  * <pre>
- * 19 Sep 2007
+ * 19 Sep. 2007
  * </pre>
  */
 public class BlastOutput {
 
-	private String	result;
+	private byte[]	result;
 	private boolean	isXmlFormat;
 
-	public BlastOutput(String result, boolean isXmlFormat) {
+	public BlastOutput(byte[] result, boolean isXmlFormat) {
 		if (result == null) {
 			throw new IllegalArgumentException("Result must not be null!");
 		}
@@ -33,7 +33,7 @@ public class BlastOutput {
 	/**
 	 * @return the result
 	 */
-	public String getResult() {
+	public byte[] getResult() {
 		return result;
 	}
 

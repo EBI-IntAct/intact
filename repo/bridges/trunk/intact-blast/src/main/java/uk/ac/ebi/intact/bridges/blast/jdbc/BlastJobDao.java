@@ -73,7 +73,6 @@ public class BlastJobDao {
 		initPreparedStat();
 	}
 
-
 	public void close() throws BlastJdbcException {
 		try {
 			conn.close();
@@ -301,6 +300,33 @@ public class BlastJobDao {
 		return jobs;
 	}
 
+	public int countJobs() throws BlastJdbcException {
+		int nr = -1;
+		try {
+			ResultSet rs = stat.executeQuery("SELECT count(*) FROM " + tableName);
+			while (rs.next()) {
+				nr = rs.getInt(1);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		}
+		return nr;
+	}
+
+	public int countJobs(BlastJobStatus status) throws BlastJdbcException{
+		int nr = -1;
+		try {
+			ResultSet rs = stat.executeQuery("SELECT count(*) FROM " + tableName + " WHERE status ='" + status.toString() +"'");
+			while (rs.next()) {
+				nr = rs.getInt(1);
+			}
+			rs.close();
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		}
+		return nr;
+	}
 	/**
 	 * Retrieves the job with the specified jobid
 	 * 
@@ -451,6 +477,43 @@ public class BlastJobDao {
 				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"),
 						statusFromDb, new File(path), rs.getTimestamp("timestamp"));
 				jobs.add(newJob);
+			}
+
+			rs.close();
+		} catch (SQLException e) {
+			throw new BlastJdbcException(e);
+		}
+
+		return jobs;
+	}
+	
+	public List<BlastJobEntity> getNrJobsByStatus(int nr, BlastJobStatus status) throws BlastJdbcException {
+		if (status == null) {
+			throw new IllegalArgumentException("Status must not be null!");
+		}
+		int totalJobs = countJobs(status);
+		if (log.isDebugEnabled()){
+			log.debug("totalNrJobs ("+ status +"): " + totalJobs);
+		}
+		if (totalJobs < nr){
+			nr = totalJobs;
+		}
+		List<BlastJobEntity> jobs = new ArrayList<BlastJobEntity>(nr);
+		try {
+			selectWhereStatusStat.setString(1, status.toString());
+			ResultSet rs = selectWhereStatusStat.executeQuery();
+			int i = 0;
+			while (rs.next() && i <nr) {
+				String path = rs.getString("resultPath");
+				if (path == null) {
+					path = "tmpAux";
+				}
+
+				BlastJobStatus statusFromDb = getStatus(rs.getString("status"));
+				BlastJobEntity newJob = new BlastJobEntity(rs.getString("jobid"), rs.getString("uniprotAc"),
+						statusFromDb, new File(path), rs.getTimestamp("timestamp"));
+				jobs.add(newJob);
+				i++;
 			}
 
 			rs.close();

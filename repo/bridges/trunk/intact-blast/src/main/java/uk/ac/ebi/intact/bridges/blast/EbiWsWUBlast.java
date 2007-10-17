@@ -107,8 +107,8 @@ public class EbiWsWUBlast extends AbstractBlastService {
 		BlastMappingReader bmr = new BlastMappingReader();
 
 		try {
-			if (log.isInfoEnabled()) {
-				log.info("reading xml : " + xmlFile.getPath());
+			if (log.isDebugEnabled()) {
+				log.debug("reading xml : " + xmlFile.getPath());
 			}
 			EBIApplicationResult appResult = bmr.read(xmlFile);
 
