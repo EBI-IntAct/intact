@@ -49,4 +49,9 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
         commitTransaction();
     }
 
+    @Test (expected = InvalidPubmedException.class)
+    public void experimentAutoFill_wrongPubmedId() throws Exception {
+         new ExperimentAutoFill("unassigned2");
+    }
+
 }

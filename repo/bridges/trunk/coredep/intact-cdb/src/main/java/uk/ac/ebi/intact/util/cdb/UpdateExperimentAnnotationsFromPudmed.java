@@ -174,9 +174,7 @@ public class UpdateExperimentAnnotationsFromPudmed {
             throw new IllegalArgumentException( "you must give a non null experiment." );
         }
 
-        if ( pubmedId == null ) {
-            throw new IllegalArgumentException( "you must give a non null pubmed Id." );
-        }
+        PubmedIdChecker.ensureValidFormat(pubmedId);
 
         ///////////////////////
         // starting update
