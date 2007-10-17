@@ -31,16 +31,7 @@ public class ExperimentAutoFill {
     public ExperimentAutoFill( String pubmedID ) throws PublicationNotFoundException,
                                                         UnexpectedException {
 
-        if ( pubmedID == null ) {
-            throw new NullPointerException();
-        }
-
-        try {
-            // check that it is an Integer
-            Integer.parseInt( pubmedID );
-        } catch ( NumberFormatException e ) {
-            throw e;
-        }
+        PubmedIdChecker.ensureValidFormat(pubmedID);
 
         this.pubmedID = pubmedID;
 
