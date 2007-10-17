@@ -21,6 +21,8 @@ import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdateSingleExperimentReport;
 import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdateExperiments;
 import uk.ac.ebi.intact.plugins.dbupdate.experiments.UpdatedValue;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.*;
 import java.sql.SQLException;
@@ -66,17 +68,15 @@ public class UpdateExperimentsMojo extends UpdateAbstractMojo
     public void executeIntactMojo()
         throws MojoExecutionException, MojoFailureException, IOException
      {
+         try {
+             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+         } catch (IntactTransactionException e) {
+             throw new MojoExecutionException("Problem committing transaction", e);
+         }
+
          PrintStream ps = new PrintStream(getOutputFile());
 
-         List<UpdateSingleExperimentReport> expReports = null;
-         try
-         {
-             expReports = UpdateExperiments.startUpdate(ps, labelPattern, isDryRun());
-         }
-         catch (SQLException e)
-         {
-             e.printStackTrace();
-         }
+         List<UpdateSingleExperimentReport> expReports =  UpdateExperiments.startUpdate(ps, labelPattern, isDryRun());
 
          // write experiments to files
          MojoUtils.prepareFile(invalidFile, true);
