@@ -43,7 +43,6 @@ public class UpdateExperimentsTest extends IntactBasicTestCase {
     @Before
     public void before() throws Exception {
         SchemaUtils.createSchema();
-        beginTransaction();
     }
 
     @After
@@ -53,7 +52,9 @@ public class UpdateExperimentsTest extends IntactBasicTestCase {
 
     @Test
     public void normal() throws Exception {
+        beginTransaction();
         new MandatoryTopicsCvPrimer(getDaoFactory()).createCVs();
+        commitTransaction();
 
         Experiment exp = getMockBuilder().createExperimentEmpty("rauramo-1975-1", "1234567");
         Annotation annot = getMockBuilder().createAnnotation("Rauramo L., Lagerspetz K., Engblom P., Punnonen R.", CvTopic.AUTHOR_LIST_MI_REF, CvTopic.AUTHOR_LIST);
@@ -72,6 +73,20 @@ public class UpdateExperimentsTest extends IntactBasicTestCase {
         Assert.assertTrue(singleExperimentReport.isJournalUpdated());
         Assert.assertTrue(singleExperimentReport.isYearUpdated());
         Assert.assertFalse(singleExperimentReport.isShortLabelUpdated());
+    }
+
+    @Test
+    public void normal_withPattern() throws Exception {
+        beginTransaction();
+        new MandatoryTopicsCvPrimer(getDaoFactory()).createCVs();
+        commitTransaction();
+
+        PersisterHelper.saveOrUpdate(getMockBuilder().createExperimentEmpty("rauramo-1975-1", "1234567"));
+        PersisterHelper.saveOrUpdate(getMockBuilder().createExperimentEmpty("lala-2007-1", "1234568"));
+
+        List<UpdateSingleExperimentReport> reports = UpdateExperiments.startUpdate(System.out, "lala%", false);
+
+        Assert.assertEquals(1, reports.size());
     }
 
     @Test

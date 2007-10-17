@@ -6,14 +6,17 @@
 package uk.ac.ebi.intact.plugins.dbupdate.experiments;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.Query;
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ExperimentShortlabelGenerator;
-import uk.ac.ebi.intact.util.HttpProxyManager;
 import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.intact.util.cdb.IntactCitation;
 import uk.ac.ebi.intact.util.cdb.IntactCitationFactory;
+import uk.ac.ebi.intact.util.cdb.PubmedIdChecker;
 import uk.ac.ebi.intact.util.cdb.UpdateExperimentAnnotationsFromPudmed;
 
 import java.io.PrintStream;
@@ -112,10 +115,18 @@ public class UpdateExperiments {
         String pubmedId = getPubmedId( experiment );
 
         if ( pubmedId == null ) {
-            printStream.println( experiment.getShortLabel() + " doesn't have a primary-reference pubmed id." );
-
-            report.setInvalidMessage(experiment.getShortLabel() + " doesn't have a primary-reference pubmed id.");
+            final String message = experiment.getShortLabel() + " doesn't have a primary-reference pubmed id.";
+            printStream.println(message);
+            report.setInvalidMessage(message);
             
+            return report;
+        }
+
+        if (!PubmedIdChecker.isPubmedId(pubmedId)) {
+            final String message = experiment.getShortLabel() + " doesn't have a valid pubmed id: " + pubmedId;
+            printStream.println(message);
+            report.setInvalidMessage(message);
+
             return report;
         }
 
@@ -228,47 +239,49 @@ public class UpdateExperiments {
 
     public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, boolean dryRun) throws SQLException
     {
-        return startUpdate(printStream, null, dryRun);
+        return startUpdate(printStream, "%", dryRun);
     }
 
-    public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, String expLabelPattern, boolean dryRun) throws SQLException
+    public static List<UpdateSingleExperimentReport> startUpdate(PrintStream printStream, String expLabelPattern, boolean dryRun)
     {
-        String restrictionSql = "";
+        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
 
-        if (expLabelPattern != null && !expLabelPattern.equals("%"))
-        {
-            restrictionSql = "WHERE shortlabel LIKE '"+expLabelPattern+"'";
+        if (dataContext.isTransactionActive()) {
+            throw new IntactException("To start the update the transaction must NOT be active. Commit any existing transaction first");
         }
 
-        // retreive all experiment ACs
-            printStream.print( "Loading experiments ... " );
-            printStream.flush();
-            Connection connection = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery( "SELECT ac FROM ia_experiment "+restrictionSql+" ORDER BY created" );
-            List experimentAcs = new ArrayList();
-            while ( resultSet.next() ) {
-                experimentAcs.add( resultSet.getString( 1 ) );
+        dataContext.beginTransaction();
+
+        Query query = dataContext.getDaoFactory().getExperimentDao().getSession()
+                .createQuery("select exp.ac from Experiment exp where exp.shortLabel like :label order by exp.created");
+        query.setString("label", expLabelPattern);
+
+        List<String> experimentAcs = query.list();
+
+        try {
+            dataContext.commitTransaction();
+        } catch (IntactTransactionException e) {
+            throw new IntactException(e);
+        }
+
+        List<UpdateSingleExperimentReport> reports = new LinkedList<UpdateSingleExperimentReport>();
+
+        for (String ac : experimentAcs) {
+            dataContext.beginTransaction();
+
+            // get the experiment
+            Experiment experiment = dataContext.getDaoFactory().getExperimentDao().getByAc(ac);
+
+            UpdateSingleExperimentReport report = updateExperiment(experiment, printStream, dryRun);
+
+            try {
+                dataContext.commitTransaction();
+            } catch (IntactTransactionException e) {
+                throw new IntactException(e);
             }
-            resultSet.close();
-            statement.close();
-            connection = null; // release the connection, don't close it, the helper is doing that for us.
 
-            printStream.println( experimentAcs.size() + " experiment's AC loaded." );
-
-            List<UpdateSingleExperimentReport> reports = new LinkedList<UpdateSingleExperimentReport>();
-
-            for ( Iterator iterator = experimentAcs.iterator(); iterator.hasNext(); ) {
-                String ac = (String) iterator.next();
-
-                // get the experiment
-                Experiment experiment = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().getByAc(ac);
-
-                UpdateSingleExperimentReport report = updateExperiment(  experiment, printStream, dryRun );
-                reports.add(report);
-
-                iterator.remove(); // empty the collection as we go
-            }
+            reports.add(report);
+        }
 
         return reports;
     }
@@ -281,6 +294,10 @@ public class UpdateExperiments {
     private static void printReport( UpdateExperimentAnnotationsFromPudmed.UpdateReport report, PrintStream printStream ) {
         if ( report.isAuthorListUpdated() ) {
             printStream.println( "author list updated" );
+        }
+
+        if ( report.isAuthorEmailUpdated() ) {
+            printStream.println( "author email updated" );
         }
 
         if ( report.isContactUpdated() ) {
@@ -296,27 +313,4 @@ public class UpdateExperiments {
         }
     }
 
-    ////////////////////////
-    // M A I N
-
-    public static void main( String[] args ) throws IntactException, SQLException {
-
-        try {
-            // setup HTTP proxy, cf. intactCore/config/proxy.properties
-            HttpProxyManager.setup();
-        } catch ( HttpProxyManager.ProxyConfigurationNotFound e ) {
-            System.err.println( e.getMessage() );
-        }
-        
-            try {
-                System.out.println("Helper created (User: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbUserName() + " " +
-                                    "Database: " + IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().getDbName() + ")" );
-            } catch ( Exception e ) {
-                e.printStackTrace();
-            }
-
-            // retreive all experiment ACs
-            startUpdate(System.out, false);
-
-    }
 }
