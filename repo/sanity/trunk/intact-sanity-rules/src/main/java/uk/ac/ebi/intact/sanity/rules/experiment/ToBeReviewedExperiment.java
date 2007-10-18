@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Check on experiment to-be-reviewed.
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule(target = Experiment.class)

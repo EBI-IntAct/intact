@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Checks on experiment having no pubmed primary-reference.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule( target = Experiment.class )

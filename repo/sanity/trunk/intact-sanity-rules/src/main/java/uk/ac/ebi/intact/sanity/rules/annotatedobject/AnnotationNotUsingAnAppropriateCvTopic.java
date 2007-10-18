@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * Checks on Annotation having a CvTopic not having an Annotation used-in-class.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
