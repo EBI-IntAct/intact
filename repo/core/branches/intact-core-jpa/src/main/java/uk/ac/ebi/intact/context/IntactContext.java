@@ -4,10 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
+import uk.ac.ebi.intact.config.IntactPersistence;
 import uk.ac.ebi.intact.config.impl.*;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Institution;
 
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -52,7 +54,7 @@ public class IntactContext implements Serializable {
     }
 
     public static void initStandaloneContext() {
-        initContext( null, null );
+        initContext( (EntityManagerFactory)null, null );
     }
 
     public static void initStandaloneContext(File hibernateFile) {
@@ -65,6 +67,15 @@ public class IntactContext implements Serializable {
         IntactSession session = new StandaloneSession();
         DataConfig dataConfig = new InMemoryDataConfig(session);
         initContext( dataConfig, session );
+    }
+
+    public static void initContext( EntityManagerFactory entityManagerFactory, IntactSession session ) {
+        if (entityManagerFactory == null) {
+            entityManagerFactory = IntactPersistence.createEntityManagerFactoryInMemory();
+        }
+
+        JpaCoreDataConfig dataConfig = new JpaCoreDataConfig(session, entityManagerFactory);
+        initContext(dataConfig, session);
     }
 
     public static void initContext( DataConfig defaultDataConfig, IntactSession session ) {
@@ -167,4 +178,6 @@ public class IntactContext implements Serializable {
 
         return dataConfig;
     }
+
+
 }
