@@ -28,12 +28,18 @@ public enum MessageDefinition {
     ////////////////////////
     // BioSource
 
-    BIOSOURCE_WITHOUT_NEWT_XREF( BioSource.class, BIOSOURCE, 1, "BioSource without Newt Xref", INFO ),
+    BIOSOURCE_WITHOUT_NEWT_XREF( BioSource.class, BIOSOURCE, 1, "BioSource without Newt Xref", INFO,
+                                 "Add a Newt Identity Xref according to the bioSource taxid" ),
 
     ////////////////////////
     // CvObject
 
-    INTERACTION_DETECTION( CvObject.class, CV, 1, "Interaction detection method without annotation uniprot-de-export", ERROR ),
+    INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT( CvInteraction.class, CV, 1,
+                                                  "Interaction detection method without annotation uniprot-de-export",
+                                                  ERROR, "Add a uniprot-dr-export annotation" ),
+
+    TOPIC_WITHOUT_USED_IN_CLASS( CvTopic.class, CV, 2, "Topic without annotation 'used-in-class'", WARNING ),
+
 
     ////////////////////////
     // Experiment
@@ -48,16 +54,19 @@ public enum MessageDefinition {
 
     EXPERIMENT_WITHOUT_PARTICIPANT_DETECT( Experiment.class, EXPERIMENT, 5, "Experiment without participant detection method", ERROR ),
 
-    EXPERIMENT_WITHOUT_INTERACTION( Experiment.class, EXPERIMENT, 6, "Experiment without interactions", ERROR ),
+    EXPERIMENT_WITHOUT_INTERACTION( Experiment.class, EXPERIMENT, 6, "Experiment without interactions", ERROR,
+                                    "Edit the experiment and add at least one interaction"),
 
     EXPERIMENT_TO_BE_REVIEWED( Experiment.class, EXPERIMENT, 7, "Experiment marked as 'To be reviewed'", INFO ),
 
-    EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR ),
+    EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR,
+                               "Edit the experiment and add the primary-reference to pubmed"),
 
     ////////////////////////
     // Feature
 
-    FEATURE_WITHOUT_TYPE( Feature.class, FEATURE, 1, "A feature type is mandatory and was not found", ERROR ),
+    FEATURE_WITHOUT_TYPE( Feature.class, FEATURE, 1, "A feature type is mandatory and was not found", ERROR,
+                          "Edit the feature and add a range"),
 
     FEATURE_WITHOUT_RANGE( Feature.class, FEATURE, 2, "Feature without ranges specified", ERROR ),
 
