@@ -27,91 +27,25 @@ import java.util.GregorianCalendar;
  */
 public class GeneralMessage {
 
-    @Deprecated
-    public static final MessageLevel LOW_LEVEL = MessageLevel.INFO;
+    private MessageDefinition messageDefinition;
 
-    @Deprecated
-    public static final MessageLevel AVERAGE_LEVEL = MessageLevel.WARNING;
-
-    @Deprecated
-    public static final MessageLevel HIGH_LEVEL = MessageLevel.ERROR;
-
-    public static final String NO_IDEA = "";
-    /*
-    The description of the rule.
-    ex : An experiment should always be linked to an interaction.
-     */
-    private String description;
-    /*
-    The level of gravity of the rule.
-     */
-    private MessageLevel level;
-    /*
-    The proposed solution if the rule is transgressed
-     */
-    private String proposedSolution;
     /*
     The out-low object
      */
     private InsaneObject insaneObject;
 
-    @Deprecated
-    public GeneralMessage(String description, int level, String proposedSolution, IntactObject insaneObject) {
-        this.description = description;
-        this.proposedSolution = proposedSolution;
-        this.insaneObject = toInsaneObject(insaneObject);
-
-        switch (level) {
-            case 2:
-                this.level = MessageLevel.ERROR;
-                break;
-            case 1:
-                this.level = MessageLevel.WARNING;
-                break;
-            case 0:
-                this.level = MessageLevel.ERROR;
-                break;
-        }
-    }
-
-    public GeneralMessage(String description, MessageLevel level, String proposedSolution, IntactObject insaneObject) {
-        this.description = description;
-        this.level = level;
-        this.proposedSolution = proposedSolution;
+    public GeneralMessage(MessageDefinition messageDefinition, IntactObject insaneObject) {
+        this.messageDefinition = messageDefinition;
         this.insaneObject = toInsaneObject(insaneObject);
     }
 
-    public GeneralMessage(String description, MessageLevel level, String proposedSolution, InsaneObject insaneObject) {
-        this.description = description;
-        this.level = level;
-        this.proposedSolution = proposedSolution;
-        this.insaneObject = insaneObject;
+    public MessageDefinition getMessageDefinition() {
+        return messageDefinition;
     }
 
-    public String getDescription() {
-        return description;
+    public void setMessageDefinition(MessageDefinition messageDefinition) {
+        this.messageDefinition = messageDefinition;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public MessageLevel getLevel() {
-        return level;
-    }
-
-    public void setLevel(MessageLevel level) {
-        this.level = level;
-    }
-
-    public String getProposedSolution() {
-        return proposedSolution;
-    }
-
-    public void setProposedSolution(String proposedSolution) {
-        this.proposedSolution = proposedSolution;
-    }
-
 
     public InsaneObject getInsaneObject() {
         return insaneObject;
@@ -123,7 +57,7 @@ public class GeneralMessage {
 
     @Override
     public String toString() {
-        return "["+level+"] "+description+" (Tip: "+proposedSolution+")";
+        return messageDefinition + " -> "+insaneObject.getShortlabel();
     }
 
     public static InsaneObject toInsaneObject(IntactObject intactObject) {

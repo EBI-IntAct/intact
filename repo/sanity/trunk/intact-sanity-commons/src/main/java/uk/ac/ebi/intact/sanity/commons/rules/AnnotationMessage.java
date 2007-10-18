@@ -22,16 +22,8 @@ import java.util.Collection;
 public class AnnotationMessage extends GeneralMessage {
     private Annotation annotation;
 
-    @Deprecated
-    public AnnotationMessage(String description, int level, String proposedSolution, IntactObject outLaw, Annotation annotation) {
-        super(description, level, proposedSolution, outLaw);
-        this.setAnnotation(annotation);
-
-        getInsaneObject().getField().addAll(fieldsForAnnotation(annotation));
-    }
-
-    public AnnotationMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLaw, Annotation annotation) {
-        super(description, level, proposedSolution, outLaw);
+    public AnnotationMessage(MessageDefinition messageDefinition, IntactObject outLaw, Annotation annotation) {
+        super(messageDefinition, outLaw);
         this.setAnnotation(annotation);
 
         getInsaneObject().getField().addAll(fieldsForAnnotation(annotation));

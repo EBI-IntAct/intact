@@ -30,21 +30,21 @@ public class MessageUtils {
 
     private MessageUtils() {}
 
-    public static Map<String,Collection<GeneralMessage>> groupMessagesByDescription(Collection<GeneralMessage> messages) {
-        Map<String,Collection<GeneralMessage>> messagesByDescription = new HashMap<String,Collection<GeneralMessage>>();
+    public static Map<String,Collection<GeneralMessage>> groupMessagesByKey(Collection<GeneralMessage> messages) {
+        Map<String,Collection<GeneralMessage>> messagesByKey = new HashMap<String,Collection<GeneralMessage>>();
 
         for (GeneralMessage message : messages) {
-            String description = message.getDescription();
-            if (messagesByDescription.containsKey(description)) {
-                messagesByDescription.get(description).add(message);
+            String key = message.getMessageDefinition().getKey();
+            if (messagesByKey.containsKey(key)) {
+                messagesByKey.get(key).add(message);
             } else {
                 Collection<GeneralMessage> messagesInDesc = new ArrayList<GeneralMessage>();
                 messagesInDesc.add(message);
-                messagesByDescription.put(description, messagesInDesc);
+                messagesByKey.put(key, messagesInDesc);
             }
         }
 
-        return messagesByDescription;
+        return messagesByKey;
     }
 
     public static List<GeneralMessage> sortMessagesByLevel(Collection<GeneralMessage> messages) {
@@ -53,7 +53,7 @@ public class MessageUtils {
         Collections.sort(sortedMessages, new Comparator<GeneralMessage>() {
 
             public int compare(GeneralMessage o1, GeneralMessage o2) {
-                return o1.getLevel().compareTo(o2.getLevel());
+                return o1.getMessageDefinition().getLevel().compareTo(o2.getMessageDefinition().getLevel());
             }
         });
 
@@ -63,15 +63,15 @@ public class MessageUtils {
     public static SanityReport toSanityReport(Collection<GeneralMessage> messages) {
          SanityReport report = new SanityReport();
 
-        Map<String,Collection<GeneralMessage>> messagesByDesc = MessageUtils.groupMessagesByDescription(messages);
+        Map<String,Collection<GeneralMessage>> messagesByKey = MessageUtils.groupMessagesByKey(messages);
 
-        for (String description : messagesByDesc.keySet()) {
-             Collection<GeneralMessage> messagesInDesc = messagesByDesc.get(description);
+        for (String description : messagesByKey.keySet()) {
+             Collection<GeneralMessage> messagesInDesc = messagesByKey.get(description);
 
              // use the first message to get the level and suggestion
             GeneralMessage firstMessage = messagesInDesc.iterator().next();
-            MessageLevel level = firstMessage.getLevel();
-            String suggestion = firstMessage.getProposedSolution();
+            MessageLevel level = firstMessage.getMessageDefinition().getLevel();
+            String suggestion = firstMessage.getMessageDefinition().getSuggestion();
 
             SanityResult sanityResult = new SanityResult();
             sanityResult.setDescription(description);
