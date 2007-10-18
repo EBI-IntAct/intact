@@ -1494,7 +1494,7 @@ public class MessageSender {
     private Collection<String> getAdminEmails() {
         List<String> emails = new ArrayList<String>();
 
-        for (Curator curator : sanityConfig.getCurators()) {
+        for (Curator curator : sanityConfig.getAllCurators()) {
             if (curator.isAdmin()) {
                 emails.add(curator.getEmail());
             }
