@@ -37,11 +37,11 @@ public class MessageUtilsTest extends IntactBasicTestCase {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         for (int i = 0; i < 5; i++) {
-            messages.add(new GeneralMessage("description1", MessageLevel.NORMAL, "suggestion1", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage("description1", MessageLevel.WARNING, "suggestion1", getMockBuilder().createProteinRandom()));
         }
 
         for (int i = 0; i < 3; i++) {
-            messages.add(new GeneralMessage("description2", MessageLevel.NORMAL, "suggestion2", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage("description2", MessageLevel.WARNING, "suggestion2", getMockBuilder().createProteinRandom()));
         }
 
         Map<String, Collection<GeneralMessage>> messagesByDesc = MessageUtils.groupMessagesByDescription(messages);
@@ -56,15 +56,15 @@ public class MessageUtilsTest extends IntactBasicTestCase {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         for (int i = 0; i < 3; i++) {
-            messages.add(new GeneralMessage("desc2", MessageLevel.NORMAL, "suggestion2", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage("desc2", MessageLevel.WARNING, "suggestion2", getMockBuilder().createProteinRandom()));
         }
 
         for (int i = 0; i < 5; i++) {
-            messages.add(new GeneralMessage("desc", MessageLevel.MAJOR, "suggestion1", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage("desc", MessageLevel.ERROR, "suggestion1", getMockBuilder().createProteinRandom()));
         }
 
         for (int i = 0; i < 1; i++) {
-            messages.add(new GeneralMessage("desc3", MessageLevel.MINOR, "suggestion3", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage("desc3", MessageLevel.INFO, "suggestion3", getMockBuilder().createProteinRandom()));
         }
 
         List<GeneralMessage> messagesByLevel = MessageUtils.sortMessagesByLevel(messages);
@@ -76,21 +76,21 @@ public class MessageUtilsTest extends IntactBasicTestCase {
 
         for (GeneralMessage message : messagesByLevel) {
             if (!majorProcessed) {
-                if (message.getLevel() == MessageLevel.NORMAL) {
+                if (message.getLevel() == MessageLevel.WARNING) {
                     majorProcessed = true;
-                } else if (message.getLevel() == MessageLevel.MINOR) {
+                } else if (message.getLevel() == MessageLevel.INFO) {
                     Assert.fail("Sorting failed");
                 }
             } else if (!normalProcessed) {
-                if (message.getLevel() == MessageLevel.MAJOR) {
+                if (message.getLevel() == MessageLevel.ERROR) {
                     Assert.fail("Sorting failed");
-                } else if (message.getLevel() == MessageLevel.MINOR) {
+                } else if (message.getLevel() == MessageLevel.INFO) {
                     normalProcessed = true;
                 }
             } else {
-                if (message.getLevel() == MessageLevel.MAJOR) {
+                if (message.getLevel() == MessageLevel.ERROR) {
                     Assert.fail("Sorting failed");
-                } else if (message.getLevel() == MessageLevel.NORMAL) {
+                } else if (message.getLevel() == MessageLevel.WARNING) {
                     Assert.fail("Sorting failed");
                 }
             }
@@ -106,7 +106,7 @@ public class MessageUtilsTest extends IntactBasicTestCase {
             prot.setAc("PROT-"+i);
             prot.setUpdated(new Date());
             prot.setUpdator("peter");
-            messages.add(new GeneralMessage("description1", MessageLevel.NORMAL, "suggestion1", prot));
+            messages.add(new GeneralMessage("description1", MessageLevel.WARNING, "suggestion1", prot));
         }
 
         for (int i=0; i<3; i++) {
@@ -114,7 +114,7 @@ public class MessageUtilsTest extends IntactBasicTestCase {
             exp.setAc("EXP-"+i);
             exp.setUpdated(new Date());
             exp.setUpdator("anne");
-            messages.add(new GeneralMessage("description2", MessageLevel.MINOR, "suggestion2", exp));
+            messages.add(new GeneralMessage("description2", MessageLevel.INFO, "suggestion2", exp));
         }
 
         SanityReport sanityReport = MessageUtils.toSanityReport(messages);

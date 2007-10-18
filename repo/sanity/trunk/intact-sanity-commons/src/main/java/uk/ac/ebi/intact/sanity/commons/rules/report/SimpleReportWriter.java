@@ -69,13 +69,13 @@ public class SimpleReportWriter extends ReportWriter {
         char levelChar;
 
         switch (level) {
-            case MAJOR:
+            case ERROR:
                 levelChar = '#';
                 break;
-            case NORMAL:
+            case WARNING:
                 levelChar = '=';
                 break;
-            case MINOR:
+            case INFO:
                 levelChar = '-';
                 break;
             default:

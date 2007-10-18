@@ -36,7 +36,7 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
         prot.setCreator("peter");
         prot.setUpdator("anne");
 
-        GeneralMessage message = new GeneralMessage("desc", MessageLevel.NORMAL, "solution", prot);
+        GeneralMessage message = new GeneralMessage("desc", MessageLevel.INFO, "solution", prot);
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("Peter");
 
@@ -49,7 +49,7 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
         prot.setCreator("peter");
         prot.setUpdator("anne");
 
-        GeneralMessage message = new GeneralMessage("desc", MessageLevel.NORMAL, "solution", prot);
+        GeneralMessage message = new GeneralMessage("desc", MessageLevel.INFO, "solution", prot);
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("anne");
 

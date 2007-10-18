@@ -28,13 +28,13 @@ import java.util.GregorianCalendar;
 public class GeneralMessage {
 
     @Deprecated
-    public static final MessageLevel LOW_LEVEL = MessageLevel.MINOR;
+    public static final MessageLevel LOW_LEVEL = MessageLevel.INFO;
 
     @Deprecated
-    public static final MessageLevel AVERAGE_LEVEL = MessageLevel.NORMAL;
+    public static final MessageLevel AVERAGE_LEVEL = MessageLevel.WARNING;
 
     @Deprecated
-    public static final MessageLevel HIGH_LEVEL = MessageLevel.MAJOR;
+    public static final MessageLevel HIGH_LEVEL = MessageLevel.ERROR;
 
     public static final String NO_IDEA = "";
     /*
@@ -63,13 +63,13 @@ public class GeneralMessage {
 
         switch (level) {
             case 2:
-                this.level = MessageLevel.MAJOR;
+                this.level = MessageLevel.ERROR;
                 break;
             case 1:
-                this.level = MessageLevel.NORMAL;
+                this.level = MessageLevel.WARNING;
                 break;
             case 0:
-                this.level = MessageLevel.MINOR;
+                this.level = MessageLevel.ERROR;
                 break;
         }
     }
