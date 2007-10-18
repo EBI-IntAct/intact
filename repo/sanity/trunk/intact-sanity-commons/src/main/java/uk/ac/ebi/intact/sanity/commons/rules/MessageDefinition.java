@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.sanity.commons.rules;
 
 import static uk.ac.ebi.intact.sanity.commons.rules.KeyPrefix.*;
 
+import java.io.PrintStream;
+
 /**
  * Definition of the messages.
  *
@@ -33,7 +35,7 @@ public enum MessageDefinition {
     ////////////////////////
     // Experiment
 
-    EXPERIMENT_NOT_SUPER_CURATED(  EXPERIMENT, 1, "" ),
+    EXPERIMENT_NOT_SUPER_CURATED(  EXPERIMENT, 1, "Experiment not Super-Curated" ),
 
     EXPERIMENT_ON_HOLD( EXPERIMENT, 2, "Experiment marked as 'On hold'" ),
 
@@ -127,5 +129,20 @@ public enum MessageDefinition {
 
     public String getSuggestion() {
         return suggestion;
+    }
+
+    @Override
+    public String toString() {
+        return "["+key+"] " + description + ((suggestion == null)? "" : " ("+suggestion+")");
+    }
+
+    public static void printAll(PrintStream ps) {
+        for (MessageDefinition messageDefinition : values()) {
+            ps.println(messageDefinition);
+        }
+    }
+
+    public static void main(String[] args) {
+        MessageDefinition.printAll(System.out);
     }
 }
