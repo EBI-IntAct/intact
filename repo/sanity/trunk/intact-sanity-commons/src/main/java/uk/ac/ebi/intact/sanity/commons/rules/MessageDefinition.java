@@ -1,5 +1,6 @@
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import uk.ac.ebi.intact.model.IntactObject;
 import static uk.ac.ebi.intact.sanity.commons.rules.KeyPrefix.*;
 
 import java.io.PrintStream;
@@ -35,7 +36,7 @@ public enum MessageDefinition {
     ////////////////////////
     // Experiment
 
-    EXPERIMENT_NOT_SUPER_CURATED(  EXPERIMENT, 1, "Experiment not Super-Curated" ),
+    EXPERIMENT_NOT_SUPER_CURATED( EXPERIMENT, 1, "Experiment not Super-Curated" ),
 
     EXPERIMENT_ON_HOLD( EXPERIMENT, 2, "Experiment marked as 'On hold'" ),
 
@@ -78,42 +79,53 @@ public enum MessageDefinition {
 
     PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xref found" ),
 
-    PROTEIN_UNIPROT_WRONG_AC ( PROTEIN, 4, "Wrong format for the Uniprot AC" ),
+    PROTEIN_UNIPROT_WRONG_AC( PROTEIN, 4, "Wrong format for the Uniprot AC" ),
 
     ////////////////////////
     // Nucleid Acid
 
-    NUC_ACID_IDENTITY_INCORRECT ( NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref" ),
+    NUC_ACID_IDENTITY_INCORRECT( NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref" ),
 
-    NUC_ACID_IDENTITY_MISSING ( NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref");
+    NUC_ACID_IDENTITY_MISSING( NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref" );
 
     ////////////////////////
     // Instance variable
 
-    String key;
-    String description;
-    String suggestion;
+    private String key;
+    private String description;
+    private String suggestion;
+    private Class<? extends IntactObject> targetClass;
+    private MessageLevel level;
 
     //////////////////
     // Constructors
 
-    MessageDefinition(String keyPrefix, int id, String description, String suggestion) {
-        this( keyPrefix, id, description );
+    MessageDefinition( Class<? extends IntactObject> clazz, String keyPrefix, int id, String description, MessageLevel level, String suggestion ) {
+        this( clazz, keyPrefix, id, description, level );
         this.suggestion = suggestion;
     }
 
-    MessageDefinition(String keyPrefix, int id, String description ) {
-        if( keyPrefix == null || keyPrefix.trim().length() == 0 ) {
+    MessageDefinition( Class<? extends IntactObject> clazz, String keyPrefix, int id, String description, MessageLevel level ) {
+
+        if ( clazz == null ) {
+            throw new IllegalArgumentException( "You must give a non null class" );
+        }
+        if ( keyPrefix == null || keyPrefix.trim().length() == 0 ) {
             throw new IllegalArgumentException( "You must give a non null key prefix" );
         }
-        if( id <= 0 ) {
+        if ( id <= 0 ) {
             throw new IllegalArgumentException( "You must give a positive identifier" );
         }
-        if( description == null || description.trim().length() == 0 ) {
+        if ( description == null || description.trim().length() == 0 ) {
             throw new IllegalArgumentException( "You must give a non null description" );
         }
+        if( level == null ) {
+            throw new IllegalArgumentException( "You must give a non null level" );
+        }
+        this.targetClass = clazz;
         this.key = keyPrefix + String.valueOf( id );
         this.description = description;
+        this.level = level;
     }
 
     ///////////////
@@ -131,18 +143,26 @@ public enum MessageDefinition {
         return suggestion;
     }
 
-    @Override
-    public String toString() {
-        return "["+key+"] " + description + ((suggestion == null)? "" : " ("+suggestion+")");
+    public Class<? extends IntactObject> getTargetClass() {
+        return targetClass;
     }
 
-    public static void printAll(PrintStream ps) {
-        for (MessageDefinition messageDefinition : values()) {
-            ps.println(messageDefinition);
+    public MessageLevel getLevel() {
+        return level;
+    }
+
+    @Override
+    public String toString() {
+        return "[" + key + "] " + description + ( ( suggestion == null ) ? "" : " (" + suggestion + ")" );
+    }
+
+    public static void printAll( PrintStream ps ) {
+        for ( MessageDefinition messageDefinition : values() ) {
+            ps.println( messageDefinition );
         }
     }
 
-    public static void main(String[] args) {
-        MessageDefinition.printAll(System.out);
+    public static void main( String[] args ) {
+        MessageDefinition.printAll( System.out );
     }
 }
