@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
 
 import java.util.ArrayList;
@@ -28,24 +29,13 @@ import java.util.Collection;
 
 public class ToBeReviewedExperiment implements Rule<Experiment> {
 
-    private static final String DESCRIPTION = "This/these experiments are to be reviewed";
-    private static final String SUGGESTION = "";
-
     // TODO what about experiments imported through IMEx ?
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(CommonMethods.isToBeReviewed(experiment)){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING,SUGGESTION,experiment));
+            messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_TO_BE_REVIEWED, experiment));
         }
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

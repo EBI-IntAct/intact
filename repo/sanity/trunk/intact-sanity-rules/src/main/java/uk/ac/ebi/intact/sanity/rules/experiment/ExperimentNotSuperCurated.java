@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
 
 import java.util.*;
@@ -26,9 +27,8 @@ import java.util.*;
 @SanityRule(target = Experiment.class)
 
 public class ExperimentNotSuperCurated  implements Rule<Experiment> {
-    private static final String DESCRIPTION = "This/these experiments have not been super curated";
-    private static final String SUGGESTION = "Ask a super-creator to add and accepted or to-be-reviewed stamp on it.";
-    private static Date startingDateSuperCuration;
+
+    private static final Date startingDateSuperCuration;
 
     static{
         Calendar calendar = new GregorianCalendar();
@@ -41,18 +41,10 @@ public class ExperimentNotSuperCurated  implements Rule<Experiment> {
 
         if(startingDateSuperCuration.before(experiment.getCreated())){
             if(!CommonMethods.isAccepted(experiment) && !CommonMethods.isToBeReviewed(experiment)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING,SUGGESTION, experiment));
+                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_NOT_SUPER_CURATED, experiment));
             }
         }
 
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }
