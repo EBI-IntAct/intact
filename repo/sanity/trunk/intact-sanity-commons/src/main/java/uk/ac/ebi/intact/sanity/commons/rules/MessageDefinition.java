@@ -59,28 +59,13 @@ public enum MessageDefinition {
     ////////////////////////
     // Interaction
 
-    INTERACTION_ROLES_NO_CATEGORY( INTERACTION, 1, "" ),
+    INTERACTION_ROLES_NO_CATEGORY( INTERACTION, 1, "Interaction without any recognized categories" ),
 
-    INTERACTION_ROLES_MIXED_CATEGORIES( INTERACTION, 2, "" ),
+    INTERACTION_ROLES_MIXED_CATEGORIES( INTERACTION, 2, "Interaction with mixed component roles" ),
 
-    INTERACTION_ROLES_NO_PREY( INTERACTION, 3, "" ),
+    INTERACTION_WITHOUT_COMPONENT( INTERACTION, 3, "Interaction without Components" ),
 
-    INTERACTION_ROLES_NO_BAIT( INTERACTION, 4, "" ),
-
-    INTERACTION_ROLES_NO_FLUOROPHORE_DONOR( INTERACTION, 5, "" ),
-
-    INTERACTION_ROLES_NO_ELECTRON_ACCEPTOR( INTERACTION, 6, "" ),
-
-    INTERACTION_ROLES_NO_ENZYME( INTERACTION, 7, "" ),
-
-    INTERACTION_ROLES_MORE_THAN_2_SELF( INTERACTION, 8, "" ),
-
-    INTERACTION_ROLES_ONLY_1_NEUTRAL( INTERACTION, 9, "" ),
-
-
-    INTERACTION_WITHOUT_COMPONENT( INTERACTION, 10, "Interaction without Components" ),
-
-    INTERACTION_WITHOUT_EXPERIMENT( INTERACTION, 11, "Interaction not associated to an Experiment" ),
+    INTERACTION_WITHOUT_EXPERIMENT( INTERACTION, 4, "Interaction not associated to an Experiment" ),
 
     ////////////////////////
     // Protein
@@ -91,7 +76,7 @@ public enum MessageDefinition {
 
     PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xref found" ),
 
-    PROTEIN_UNIPROT_WRONG_ID ( PROTEIN, 4, "Wrong format for the Uniprot identifier" ),
+    PROTEIN_UNIPROT_WRONG_AC ( PROTEIN, 4, "Wrong format for the Uniprot AC" ),
 
     ////////////////////////
     // Nucleid Acid
