@@ -24,8 +24,8 @@ public class XrefMessage extends GeneralMessage {
 
     private Xref xref;
 
-    public XrefMessage(String description, MessageLevel level, String proposedSolution, IntactObject outLaw, Xref xref) {
-        super(description, level, proposedSolution, outLaw);
+    public XrefMessage(MessageDefinition messageDefinition, IntactObject outLaw, Xref xref) {
+        super(messageDefinition, outLaw);
         this.xref = xref;
 
         getInsaneObject().getField().addAll(fieldsForXref(xref));
