@@ -32,6 +32,16 @@ import java.util.List;
  */
 public class RuleRunner {
 
+    private RuleRunner() {}
+
+    /**
+     * Runs all the available rules found in the classpath and adds the messages in the
+     * <code>RuleRunnerReport</code>. The <code>RuleRunnerReport</code> is a thread local class
+     * and it is NOT cleared after executing the method, so this method can be run several times
+     * adding the messages to the same instance.
+     * @param intactObjects
+     * @return
+     */
     public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects) {
 
         for (IntactObject intactObject : intactObjects) {

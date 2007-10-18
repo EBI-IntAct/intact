@@ -122,30 +122,25 @@ public class SanityReportMailer {
             String subject = subjectPrefix+"Sanity Check (ADMIN) - "+SanityReportUtils.getAllInsaneObject(report).size()+" errors";
             String globalMessage = reportToHtml(report);
 
-            Collection<String> recipientsWithoutXmlReport = getAdminEmails(false);
-            Collection<String> recipientsWithXmlReport = getAdminEmails(true);
+            MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
 
-            if (log.isDebugEnabled()) {
-                log.debug("Sending sanity check mail to admins, without XML report: "+recipientsWithoutXmlReport);
-                log.debug("Sending sanity check mail to admins, with XML report: "+recipientsWithXmlReport);
+            for (Curator curator : sanityConfig.getAllCurators()) {
+                if (curator.isAdmin()) {
+
+                    Collection<File> attachments = new ArrayList<File>();
+
+                    if (curator.isIncludeAllReports()) {
+                        attachments.addAll(insaneUpdatorFiles.values());
+                    }
+
+                    if (curator.isXmlReport()) {
+                        attachments.add(reportToTempFileXml("admin", report, "all"));
+                    }
+
+                    mailSender.postMail(new String[] {curator.getEmail()}, subject, globalMessage, from, attachments.toArray(new File[attachments.size()]));
+                }
             }
 
-            String[] recipientsWithoutXml = recipientsWithoutXmlReport.toArray(new String[recipientsWithoutXmlReport.size()]);
-            String[] recipientsWithXml = recipientsWithoutXmlReport.toArray(new String[recipientsWithoutXmlReport.size()]);
-
-            Collection<File> fileAttachmentsWithoutXmlReport = new ArrayList<File>(insaneCreatorFiles.values());
-            fileAttachmentsWithoutXmlReport.add(reportToTempFile("admin", report, "all"));
-
-            Collection<File> fileAttachmentsWithXmlReport = new ArrayList<File>(insaneCreatorFiles.values());
-            fileAttachmentsWithXmlReport.add(reportToTempFile("admin", report, "all"));
-            fileAttachmentsWithXmlReport.add(reportToTempFileXml("admin", report, "all"));
-
-            File[] attachmentsWithoutXmlReport = fileAttachmentsWithoutXmlReport.toArray(new File[insaneCreatorFiles.values().size()]);
-            File[] attachmentsWithXmlReport = fileAttachmentsWithXmlReport.toArray(new File[insaneCreatorFiles.values().size()]);
-
-            MailSender mailSender = new MailSender(sanityConfig.getMailerProperties());
-            mailSender.postMail(recipientsWithoutXml, subject, globalMessage, from, attachmentsWithoutXmlReport);
-            mailSender.postMail(recipientsWithXml, subject, globalMessage, from, attachmentsWithXmlReport);
         }
     }
 
@@ -202,22 +197,6 @@ public class SanityReportMailer {
         }
 
         return insaneCuratorFilesXml;
-    }
-
-    protected Set<String> getAdminEmails(boolean xmlReport) {
-        Set<String> mails = new HashSet<String>();
-
-        for (Curator curator : sanityConfig.getAllCurators()) {
-            if (curator.isAdmin()) {
-                if (xmlReport) {
-                    if (curator.isXmlReport()) mails.add(curator.getEmail());
-                } else {
-                    mails.add(curator.getEmail());
-                }
-            }
-        }
-
-        return mails;
     }
 
     

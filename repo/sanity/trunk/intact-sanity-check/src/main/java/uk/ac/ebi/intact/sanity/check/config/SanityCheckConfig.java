@@ -57,6 +57,7 @@ public class SanityCheckConfig {
         checkSuperCurators();
     }
 
+    @Deprecated
     public static SanityCheckConfig loadFromProperties(Properties sanityCheckProperties, Properties correctionAssignerProps) throws Exception {
         List<Curator> allCurators = new ArrayList<Curator>();
 
