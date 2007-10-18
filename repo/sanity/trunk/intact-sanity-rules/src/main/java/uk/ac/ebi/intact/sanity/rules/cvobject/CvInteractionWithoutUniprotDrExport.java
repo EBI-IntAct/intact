@@ -9,18 +9,18 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Checks that a CvInteraction has an annotation uniprot-dr-export.
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule(target = CvObject.class)
@@ -35,7 +35,8 @@ public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
 
         if(cvObject instanceof CvInteraction){
             if (!hasUniprotDrExportAnnotation(cvObject)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, cvObject ) );
+                messages.add(new GeneralMessage( MessageDefinition.INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT,
+                                                 cvObject ) );
             }
         }
 
@@ -50,13 +51,5 @@ public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
             }
         }
         return false;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

@@ -5,25 +5,21 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.Field;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.commons.rules.XrefMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Xref's primaryId checker.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@SanityRule (target = AnnotatedObject.class)
-public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
 
-    private static final String DESCRIPTION = "Xref primary ID is invalid. It does not match the regex expected.";
-    private static final String SUGGESTION = "Fix the primary ID";
+@SanityRule (target = AnnotatedObject.class)
+
+public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
 
     public Collection<GeneralMessage> check(AnnotatedObject<?,?> intactObject) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
@@ -34,7 +30,7 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
             String idValidationRegexp = getIdValidationRegexp(xref.getCvDatabase());
 
             if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
-                XrefMessage xrefMessage = new XrefMessage(DESCRIPTION, MessageLevel.WARNING, SUGGESTION, intactObject, xref);
+                XrefMessage xrefMessage = new XrefMessage( MessageDefinition.XREF_INVALID_PRIMARYID, intactObject, xref);
 
                 Field regexField = new Field();
                 regexField.setName("Regexp");

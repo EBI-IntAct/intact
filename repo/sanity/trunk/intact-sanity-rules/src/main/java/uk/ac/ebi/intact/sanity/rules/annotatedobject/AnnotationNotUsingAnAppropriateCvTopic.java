@@ -10,10 +10,7 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.commons.rules.AnnotationMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,12 +29,6 @@ import java.util.Map;
 
 public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObject> {
 
-    private static final String CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION = "This/these object(s) have annotation using CvTopic which are hidden or obsolete Cvs";
-    private static final String CVTOPIC_NOT_APPROPRIATE_MSG_SUGGESTION = "Change cvTopic";
-
-    private static final String CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_DESCRIPTION = "CvTopic having no used-in-class annotation";
-    private static final String CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_SUGGESTION = "Add a used-in-class annotation";
-
     private static Map<String,Annotation> CACHE = new HashMap<String,Annotation>();
 
     public Collection<GeneralMessage> check(AnnotatedObject intactObject) throws SanityRuleException {
@@ -55,19 +46,14 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObj
             }
             if(usedInClass == null){
                 //No usedInClass annotation for this cvTopic
-                messages.add(new GeneralMessage(CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_DESCRIPTION,
-                        MessageLevel.WARNING,
-                        CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_SUGGESTION,
-                        cvTopic));
+                messages.add(new GeneralMessage( MessageDefinition.TOPIC_WITHOUT_USED_IN_CLASS, cvTopic ) );
             }else{
                 // annotation.getAnnotationText() can't be null as this is checked in the getUsedInClassAnnotation
                 // method.
                 if(!usedInClass.getAnnotationText().contains(intactObject.getClass().getSimpleName())){
-                    messages.add(new AnnotationMessage(CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION,
-                            MessageLevel.INFO,
-                            CVTOPIC_NOT_APPROPRIATE_MSG_SUGGESTION,
-                            intactObject,
-                            annotation));
+                    messages.add(new AnnotationMessage(MessageDefinition.ANNOTATION_WITH_WRONG_TOPIC,
+                                                       intactObject,
+                                                       annotation));
                 }
             }
         }
