@@ -17,4 +17,5 @@ public interface KeyPrefix {
     static final String CV = "CV-";
     static final String FEATURE = "FTR-";
     static final String PUBLICATION = "PUB-";
+    static final String BIOSOURCE = "BS-";
 }
