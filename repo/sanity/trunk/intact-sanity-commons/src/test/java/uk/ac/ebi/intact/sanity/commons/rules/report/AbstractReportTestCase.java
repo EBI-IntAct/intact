@@ -46,7 +46,7 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
             prot.setCreator("peter");
             prot.setUpdator("peter");
             prot.setOwner(new Institution("institution"));
-            messages.add(new GeneralMessage("description1", MessageLevel.WARNING, "suggestion1", prot));
+            messages.add(new GeneralMessage(MessageDefinition.EXPERIMENT_WITHOUT_BIOSOURCE, prot));
         }
 
         for (int i=0; i<3; i++) {
@@ -57,7 +57,7 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
             exp.setCreator("anne");
             exp.setUpdator("anne");
             exp.setOwner(new Institution("institution"));
-            messages.add(new GeneralMessage("description2", MessageLevel.INFO, "suggestion2", exp));
+            messages.add(new GeneralMessage(MessageDefinition.BROKEN_URL, exp));
         }
 
         return MessageUtils.toSanityReport(messages);
@@ -74,7 +74,7 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
             prot.setCreator("peter");
             prot.setUpdator("peter");
             prot.setOwner(new Institution("institution"));
-            messages.add(new XrefMessage("description1", MessageLevel.WARNING, "suggestion1", prot, prot.getXrefs().iterator().next()));
+            messages.add(new XrefMessage(MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, prot, prot.getXrefs().iterator().next()));
         }
 
         for (int i=0; i<3; i++) {
@@ -89,7 +89,7 @@ public class AbstractReportTestCase extends IntactBasicTestCase {
             Annotation annot = getMockBuilder().createAnnotationRandom();
             exp.addAnnotation(annot);
 
-            messages.add(new AnnotationMessage("description2", MessageLevel.INFO, "suggestion2", exp, annot));
+            messages.add(new AnnotationMessage(MessageDefinition.EXPERIMENT_ON_HOLD, exp, annot));
         }
 
         return MessageUtils.toSanityReport(messages);

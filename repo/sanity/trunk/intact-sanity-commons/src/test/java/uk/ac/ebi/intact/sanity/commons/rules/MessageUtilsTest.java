@@ -37,18 +37,18 @@ public class MessageUtilsTest extends IntactBasicTestCase {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         for (int i = 0; i < 5; i++) {
-            messages.add(new GeneralMessage("description1", MessageLevel.WARNING, "suggestion1", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage(MessageDefinition.BROKEN_URL, getMockBuilder().createProteinRandom()));
         }
 
         for (int i = 0; i < 3; i++) {
-            messages.add(new GeneralMessage("description2", MessageLevel.WARNING, "suggestion2", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage(MessageDefinition.PROTEIN_UNIPROT_NO_XREF, getMockBuilder().createProteinRandom()));
         }
 
-        Map<String, Collection<GeneralMessage>> messagesByDesc = MessageUtils.groupMessagesByDescription(messages);
+        Map<String, Collection<GeneralMessage>> messagesByKey = MessageUtils.groupMessagesByKey(messages);
 
-        Assert.assertEquals(2, messagesByDesc.size());
-        Assert.assertEquals(5, messagesByDesc.get("description1").size());
-        Assert.assertEquals(3, messagesByDesc.get("description2").size());
+        Assert.assertEquals(2, messagesByKey.size());
+        Assert.assertEquals(5, messagesByKey.get(MessageDefinition.BROKEN_URL.getKey()).size());
+        Assert.assertEquals(3, messagesByKey.get(MessageDefinition.PROTEIN_UNIPROT_NO_XREF.getKey()).size());
     }
 
     @Test
@@ -56,15 +56,15 @@ public class MessageUtilsTest extends IntactBasicTestCase {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         for (int i = 0; i < 3; i++) {
-            messages.add(new GeneralMessage("desc2", MessageLevel.WARNING, "suggestion2", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage(MessageDefinition.ANNOTATION_WITH_WRONG_TOPIC, getMockBuilder().createAnnotationRandom()));
         }
 
         for (int i = 0; i < 5; i++) {
-            messages.add(new GeneralMessage("desc", MessageLevel.ERROR, "suggestion1", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage(MessageDefinition.EXPERIMENT_WITHOUT_INTERACTION, getMockBuilder().createExperimentEmpty()));
         }
 
         for (int i = 0; i < 1; i++) {
-            messages.add(new GeneralMessage("desc3", MessageLevel.INFO, "suggestion3", getMockBuilder().createProteinRandom()));
+            messages.add(new GeneralMessage(MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, getMockBuilder().createBioSourceRandom()));
         }
 
         List<GeneralMessage> messagesByLevel = MessageUtils.sortMessagesByLevel(messages);
@@ -76,21 +76,21 @@ public class MessageUtilsTest extends IntactBasicTestCase {
 
         for (GeneralMessage message : messagesByLevel) {
             if (!majorProcessed) {
-                if (message.getLevel() == MessageLevel.WARNING) {
+                if (message.getMessageDefinition().getLevel() == MessageLevel.WARNING) {
                     majorProcessed = true;
-                } else if (message.getLevel() == MessageLevel.INFO) {
+                } else if (message.getMessageDefinition().getLevel() == MessageLevel.INFO) {
                     Assert.fail("Sorting failed");
                 }
             } else if (!normalProcessed) {
-                if (message.getLevel() == MessageLevel.ERROR) {
+                if (message.getMessageDefinition().getLevel() == MessageLevel.ERROR) {
                     Assert.fail("Sorting failed");
-                } else if (message.getLevel() == MessageLevel.INFO) {
+                } else if (message.getMessageDefinition().getLevel() == MessageLevel.INFO) {
                     normalProcessed = true;
                 }
             } else {
-                if (message.getLevel() == MessageLevel.ERROR) {
+                if (message.getMessageDefinition().getLevel() == MessageLevel.ERROR) {
                     Assert.fail("Sorting failed");
-                } else if (message.getLevel() == MessageLevel.WARNING) {
+                } else if (message.getMessageDefinition().getLevel() == MessageLevel.WARNING) {
                     Assert.fail("Sorting failed");
                 }
             }
@@ -106,7 +106,7 @@ public class MessageUtilsTest extends IntactBasicTestCase {
             prot.setAc("PROT-"+i);
             prot.setUpdated(new Date());
             prot.setUpdator("peter");
-            messages.add(new GeneralMessage("description1", MessageLevel.WARNING, "suggestion1", prot));
+            messages.add(new GeneralMessage(MessageDefinition.BROKEN_URL, prot));
         }
 
         for (int i=0; i<3; i++) {
@@ -114,14 +114,14 @@ public class MessageUtilsTest extends IntactBasicTestCase {
             exp.setAc("EXP-"+i);
             exp.setUpdated(new Date());
             exp.setUpdator("anne");
-            messages.add(new GeneralMessage("description2", MessageLevel.INFO, "suggestion2", exp));
+            messages.add(new GeneralMessage(MessageDefinition.EXPERIMENT_ON_HOLD, exp));
         }
 
         SanityReport sanityReport = MessageUtils.toSanityReport(messages);
 
         Assert.assertEquals(2, sanityReport.getSanityResult().size());
-        Assert.assertEquals(5, sanityReport.getSanityResult().get(0).getInsaneObject().size());
-        Assert.assertEquals(3, sanityReport.getSanityResult().get(1).getInsaneObject().size());
+        Assert.assertEquals(3, sanityReport.getSanityResult().get(0).getInsaneObject().size());
+        Assert.assertEquals(5, sanityReport.getSanityResult().get(1).getInsaneObject().size());
     }
 
 

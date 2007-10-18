@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 /**
  * TODO comment this
@@ -36,7 +37,7 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
         prot.setCreator("peter");
         prot.setUpdator("anne");
 
-        GeneralMessage message = new GeneralMessage("desc", MessageLevel.INFO, "solution", prot);
+        GeneralMessage message = new GeneralMessage(MessageDefinition.EXPERIMENT_NOT_SUPER_CURATED, prot);
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("Peter");
 
@@ -49,7 +50,7 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
         prot.setCreator("peter");
         prot.setUpdator("anne");
 
-        GeneralMessage message = new GeneralMessage("desc", MessageLevel.INFO, "solution", prot);
+        GeneralMessage message = new GeneralMessage(MessageDefinition.BROKEN_URL, prot);
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("anne");
 

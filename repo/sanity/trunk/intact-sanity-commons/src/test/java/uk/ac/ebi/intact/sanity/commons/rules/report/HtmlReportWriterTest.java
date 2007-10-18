@@ -33,33 +33,12 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
     public void write_default() throws Exception {
         Writer writer = new StringWriter();
 
-//        SanityReport report = getDefaultSanityReport();
-//        for (SanityResult res : report.getSanityResult()) {
-//            for (InsaneObject insane : res.getInsaneObject()) {
-//                if (new Random().nextBoolean()) {
-//                insane.setUrl("http://www.ebi.ac.uk/intact");
-//                }
-//                Field field = new Field();
-//                field.setName("fieldName");
-//                field.setValue("fieldValue");
-//                insane.getField().add(field);
-//            }
-//        }
-
         ReportWriter reportWriter = new HtmlReportWriter(writer);
         reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-//        try {
-//            FileWriter w = new FileWriter("F:\\projectes\\intact-current\\sanity\\intact-sanity-commons\\src\\main\\resources\\META-INF\\xsl\\test.html");
-//            w.write(writer.toString());
-//            w.close();
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        Assert.assertEquals(89, lineCount);
+        Assert.assertEquals(85, lineCount);
     }
 
     @Test
@@ -71,7 +50,7 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(51, lineCount);
+        Assert.assertEquals(49, lineCount);
     }
 
     @Test
@@ -83,6 +62,6 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(89, lineCount);
+        Assert.assertEquals(85, lineCount);
     }
 }

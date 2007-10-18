@@ -21,7 +21,7 @@ public enum MessageDefinition {
 
     ANNOTATION_WITH_WRONG_TOPIC( AnnotatedObject.class, ANNOTATED_OBJECT, 1, "Objects with annotation using hidden or obsolete CvTopic", WARNING ),
 
-    BROKEN_URL( AnnotatedObject.class, ANNOTATED_OBJECT, 2, "Invalid URLs", INFO ),
+    BROKEN_URL( AnnotatedObject.class, ANNOTATED_OBJECT, 2, "Invalid URLs", WARNING ),
 
     XREF_INVALID_PRIMARYID( AnnotatedObject.class, ANNOTATED_OBJECT, 3, "Xref primary ID not matching CvDatabase regular expression", ERROR ),
 
