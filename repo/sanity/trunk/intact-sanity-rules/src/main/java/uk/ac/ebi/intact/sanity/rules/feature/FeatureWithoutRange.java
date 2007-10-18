@@ -9,40 +9,29 @@ import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Checks for feature without range.
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule(target = Feature.class)
 
 public class FeatureWithoutRange implements Rule<Feature> {
 
-    private static final String DESCRIPTION = "This/these Feature(s) have no range. ";
-    private static final String SUGGESTION = "Edit the feature(s) and add a range.";
-
     public Collection<GeneralMessage> check(Feature feature) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(feature.getRanges().isEmpty()){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, feature));
+            messages.add(new GeneralMessage( MessageDefinition.FEATURE_WITHOUT_RANGE, feature));
         }
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

@@ -17,11 +17,11 @@ import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
 import java.util.*;
 
 /**
- * TODO comment this
+ * Checks on experiment not super-curated.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule(target = Experiment.class)
