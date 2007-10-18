@@ -49,7 +49,7 @@ public class ProteinUniprotAc implements Rule<ProteinImpl> {
             String uniprotAc = uniprotXref.getPrimaryId();
 
             if (!uniprotAc.matches(UNIPROT_AC_REGEXP)) {
-                messages.add(new XrefMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, protein, uniprotXref));
+                messages.add(new XrefMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, protein, uniprotXref));
             }
         }
 

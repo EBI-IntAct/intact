@@ -36,7 +36,7 @@ public class ToBeReviewedExperiment implements Rule<Experiment> {
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(CommonMethods.isToBeReviewed(experiment)){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL,SUGGESTION,experiment));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING,SUGGESTION,experiment));
         }
         return messages;
     }

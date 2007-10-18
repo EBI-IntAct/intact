@@ -123,34 +123,34 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
         boolean isAMixedCategoryInteraction = false;
         switch ( categoryCountWithoutInhibCat ) {
             case 0:
-                messages.add( new GeneralMessage( NO_CATEGORY_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                messages.add( new GeneralMessage( NO_CATEGORY_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                 break;
             case 1:
                 if ( baitPrey == 1 ) {
                     if ( baitCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_BAIT_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_BAIT_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     } else if ( preyCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_PREY_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_PREY_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     }
                 } else if ( fluorophoreAcceptorDonor == 1 ) {
                     if ( fluorophoreDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_FLUOROPHORE_DONOR_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_FLUOROPHORE_DONOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     }
                 } else if ( electronAcceptorDonor == 1 ) {
                     if ( electronAcceptorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ELECTRON_ACCEPTOR_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_ELECTRON_ACCEPTOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     } else if ( electronDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ELECTRON_DONOR_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_ELECTRON_DONOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     }
                 } else if ( enzymeTarget == 1 ) {
                     if ( enzymeCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ENZYME_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_ENZYME_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     } else if ( enzymeTargetCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ENZYME_TARGET_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( NO_ENZYME_TARGET_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     }
                 } else if ( self == 1 ) {
                     if ( selfCount > 1 ) {
-                        messages.add( new GeneralMessage( MORE_THAN_2_SELF_PROTEIN_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MORE_THAN_2_SELF_PROTEIN_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                     } else {
                         if ( selfStoichiometry < 1F ) {
 
@@ -159,20 +159,20 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
                 } else {
                     if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
                         if ( neutralStoichiometry == 1 ) {
-                            messages.add( new GeneralMessage( ONLY_1_NEUTRAL_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                            messages.add( new GeneralMessage( ONLY_1_NEUTRAL_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                         }
                     }
                 }
                 break;
             default:
                 isAMixedCategoryInteraction = true;
-                messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+                messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
                 break;
         }
         // It was no mixed interaction counting all categories but not InhibitedInhibitor, we now check if there's no
         // mixed interaction counting all categories but not Neutral
         if ( categoryCountWithoutNeutralCat > 1 && isAMixedCategoryInteraction == false ) {
-            messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, interaction ) );
+            messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
         }
 
         return messages;

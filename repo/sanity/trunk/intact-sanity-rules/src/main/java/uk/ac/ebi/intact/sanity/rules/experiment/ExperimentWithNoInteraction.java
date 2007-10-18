@@ -45,7 +45,7 @@ public class ExperimentWithNoInteraction implements Rule<Experiment> {
         }
 
         if(interactionCount == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, experiment ));
         }
         return messages;
     }

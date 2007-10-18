@@ -34,7 +34,7 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
             String idValidationRegexp = getIdValidationRegexp(xref.getCvDatabase());
 
             if (idValidationRegexp != null && !primaryId.matches(idValidationRegexp)) {
-                XrefMessage xrefMessage = new XrefMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, intactObject, xref);
+                XrefMessage xrefMessage = new XrefMessage(DESCRIPTION, MessageLevel.WARNING, SUGGESTION, intactObject, xref);
 
                 Field regexField = new Field();
                 regexField.setName("Regexp");

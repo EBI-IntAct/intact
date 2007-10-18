@@ -38,7 +38,7 @@ public class NotValidCrc64 implements Rule<Protein> {
             String calculatedCrc64 = Crc64.getCrc64(sequence);
             String storedCrc64 = protein.getCrc64();
             if(!calculatedCrc64.equals(storedCrc64)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MINOR, SUGGESTION, protein));
+                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.INFO, SUGGESTION, protein));
             }
         }
         return messages;

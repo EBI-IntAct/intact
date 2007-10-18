@@ -33,7 +33,7 @@ public class FeatureWithoutRange implements Rule<Feature> {
     public Collection<GeneralMessage> check(Feature feature) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(feature.getRanges().isEmpty()){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, feature));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, feature));
         }
         return messages;
     }

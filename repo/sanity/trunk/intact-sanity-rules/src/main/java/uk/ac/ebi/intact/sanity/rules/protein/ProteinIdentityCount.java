@@ -13,7 +13,6 @@ import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,9 +56,9 @@ public class ProteinIdentityCount implements Rule<Protein> {
                 }
             }
             if(uniprotIdentityCount == 0){
-                messages.add(new GeneralMessage(NO_UNIPROT_DESCRIPTION, MessageLevel.MAJOR, NO_UNIPROT_SUGGESTION, protein));
+                messages.add(new GeneralMessage(NO_UNIPROT_DESCRIPTION, MessageLevel.ERROR, NO_UNIPROT_SUGGESTION, protein));
             }else if(uniprotIdentityCount > 1){
-                messages.add(new GeneralMessage(MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.MAJOR, MULTIPLE_IDENTITY_SUGGESTION, protein));
+                messages.add(new GeneralMessage(MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.ERROR, MULTIPLE_IDENTITY_SUGGESTION, protein));
             }
         }
 

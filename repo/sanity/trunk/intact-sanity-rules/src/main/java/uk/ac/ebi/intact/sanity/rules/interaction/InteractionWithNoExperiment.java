@@ -5,7 +5,6 @@
  */
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
-import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
@@ -34,7 +33,7 @@ public class InteractionWithNoExperiment implements Rule<Interaction> {
     public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(interaction.getExperiments().isEmpty()){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, interaction));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING, SUGGESTION, interaction));
         }
         return messages;
     }

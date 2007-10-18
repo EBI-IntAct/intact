@@ -35,7 +35,7 @@ public class InteractionWithNoComponent  implements Rule<Interaction> {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Collection<Component> components = interaction.getComponents();
         if(components.size() == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MINOR, SUGGESTION, interaction));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.INFO, SUGGESTION, interaction));
         }
         return messages;
     }
