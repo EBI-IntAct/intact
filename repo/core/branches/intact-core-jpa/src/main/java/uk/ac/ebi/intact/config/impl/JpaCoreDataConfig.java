@@ -27,16 +27,19 @@ import java.io.*;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InMemoryDataConfig extends AbstractJpaDataConfig {
+public class JpaCoreDataConfig extends AbstractJpaDataConfig {
 
-    public static final String NAME = "uk.ac.ebi.intact.config.IN_MEMORY";
+    public static final String NAME = "uk.ac.ebi.intact.config.JPA_CORE";
 
-    public InMemoryDataConfig(IntactSession session) {
+    private EntityManagerFactory entityManagerFactory;
+
+    public JpaCoreDataConfig(IntactSession session, EntityManagerFactory entityManagerFactory) {
         super(session);
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     public EntityManagerFactory getSessionFactory() {
-        return IntactPersistence.createEntityManagerFactory("intact-core-mem");
+        return entityManagerFactory;
     }
 
     @Override

@@ -10,13 +10,17 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.ejb.HibernateEntityManager;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import uk.ac.ebi.intact.config.impl.AbstractJpaDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
 import java.io.Serializable;
 import java.sql.Connection;
 
@@ -33,14 +37,14 @@ public class DaoFactory implements Serializable {
 
     private static final String DAO_FACTORY_ATT_NAME = DaoFactory.class.getName();
 
-    private AbstractHibernateDataConfig dataConfig;
+    private DataConfig dataConfig;
 
     private IntactSession intactSession;
 
     private IntactTransaction currentTransaction;
 
     protected DaoFactory( DataConfig dataConfig, IntactSession intactSession ) {
-        this.dataConfig = ( AbstractHibernateDataConfig ) dataConfig;
+        this.dataConfig = dataConfig;
         this.intactSession = intactSession;
     }
 
@@ -231,29 +235,55 @@ public class DaoFactory implements Serializable {
     }
 
     public IntactTransaction beginTransaction() {
-        log.debug( "Starting transaction..." );
-        Transaction transaction = getCurrentSession().beginTransaction();
-
-        // wrap it
-        currentTransaction = new IntactTransaction( intactSession, transaction );
+        if (isJpa()) {
+           log.debug( "Starting JPA transaction..." );
+            EntityTransaction transaction = ((AbstractJpaDataConfig) dataConfig).getSessionFactory().createEntityManager().getTransaction();
+            transaction.begin();
+            currentTransaction = new JpaIntactTransaction( intactSession, transaction);
+        } else {
+            log.debug( "Starting Hibernate transaction..." );
+            Transaction transaction = getCurrentSession().beginTransaction();
+            currentTransaction = new IntactTransaction( intactSession, transaction );
+        }
 
         return currentTransaction;
     }
 
     public synchronized Session getCurrentSession() {
-        Session session = dataConfig.getSessionFactory().getCurrentSession();
+
+        Session session = getSessionFromSessionFactory(dataConfig);
 
         if (!dataConfig.isAutoFlush()) {
             session.setFlushMode(FlushMode.MANUAL);
         }
 
         if ( !session.isOpen() ) {
+            // this only should happen for hibernate data configs
             if ( log.isDebugEnabled() ) {
                 log.debug( "Opening new session because the current is closed" );
             }
-            session = dataConfig.getSessionFactory().openSession();
+            session = ((AbstractHibernateDataConfig)dataConfig).getSessionFactory().openSession();
         }
 
+        return session;
+    }
+
+    protected boolean isJpa() {
+        return (dataConfig instanceof AbstractJpaDataConfig);
+    }
+
+    protected Session getSessionFromSessionFactory(DataConfig dataConfig) {
+        Session session;
+        if (dataConfig instanceof AbstractHibernateDataConfig) {
+            AbstractHibernateDataConfig hibernateDataConfig = (AbstractHibernateDataConfig) dataConfig;
+            session = hibernateDataConfig.getSessionFactory().getCurrentSession();
+        } else if (dataConfig instanceof AbstractJpaDataConfig) {
+            AbstractJpaDataConfig jpaDataConfig = (AbstractJpaDataConfig) dataConfig;
+            HibernateEntityManager hibernateEntityManager = (HibernateEntityManager) jpaDataConfig.getSessionFactory().createEntityManager();
+            session = hibernateEntityManager.getSession();
+        } else {
+            throw new IllegalStateException("Wrong DataConfig found: "+dataConfig);
+        }
         return session;
     }
 
