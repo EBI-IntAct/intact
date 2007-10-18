@@ -6,13 +6,12 @@
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
 import uk.ac.ebi.intact.model.Component;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,18 +26,16 @@ import java.util.Collection;
 
 @SanityRule(target = Interaction.class)
 
-public class InteractionWithNoComponent  implements Rule {
+public class InteractionWithNoComponent  implements Rule<Interaction> {
 
     private static final String DESCRIPTION = "This/these Interaction(s) do not have any Interactor. ";
     private static final String SUGGESTION = "Edit the Interaction and add component(s).";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Interaction.class);
+    public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Interaction interaction = (Interaction) intactObject;
         Collection<Component> components = interaction.getComponents();
         if(components.size() == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.AVERAGE_LEVEL, SUGGESTION, interaction));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MINOR, SUGGESTION, interaction));
         }
         return messages;
     }

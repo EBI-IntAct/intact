@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -26,21 +27,17 @@ import java.util.Collection;
 
 @SanityRule(target = Experiment.class)
 
-public class ExperimentWithNoCvInteraction implements Rule {
+public class ExperimentWithNoCvInteraction implements Rule<Experiment> {
     private static final String DESCRIPTION = "This/these experiments have no cvInteraction";
     private static final String SUGGESTION = "Edit the experiment and add the cvInteraction";
 
-
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Experiment.class);
+    public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Experiment experiment = (Experiment) intactObject;
         if(experiment.getCvInteraction() == null){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, experiment ));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ));
         }
         return messages;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;
@@ -49,5 +46,4 @@ public class ExperimentWithNoCvInteraction implements Rule {
     public static String getSuggestion() {
         return SUGGESTION;
     }
-
 }

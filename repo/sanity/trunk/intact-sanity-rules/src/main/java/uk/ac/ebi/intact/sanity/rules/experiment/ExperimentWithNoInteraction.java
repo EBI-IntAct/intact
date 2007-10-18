@@ -7,12 +7,11 @@ package uk.ac.ebi.intact.sanity.rules.experiment;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,33 +26,29 @@ import java.util.Collection;
 
 @SanityRule(target = Experiment.class)
 
-public class ExperimentWithNoInteraction implements Rule {
+public class ExperimentWithNoInteraction implements Rule<Experiment> {
     private static final String DESCRIPTION = "This/these experiments have no interaction";
     private static final String SUGGESTION = "Edit the experiment and add at least one interaction";
 
-
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Experiment.class);
+    public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Experiment experiment = (Experiment) intactObject;
 
         int interactionCount = 0;
 
         if (experiment.getAc() != null) {
             interactionCount = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                 .getExperimentDao().countInteractionsForExperimentWithAc(experiment.getAc());
-        }
+        } 
 
         if (interactionCount == 0) {
             interactionCount = experiment.getInteractions().size();
         }
 
         if(interactionCount == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, experiment ));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ));
         }
         return messages;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;

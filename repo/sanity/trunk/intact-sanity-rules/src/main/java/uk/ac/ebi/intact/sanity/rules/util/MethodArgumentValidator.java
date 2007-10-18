@@ -15,7 +15,9 @@ import uk.ac.ebi.intact.model.IntactObject;
  * @version $Id$
  * @since TODO
  */
+@Deprecated
 public class MethodArgumentValidator {
+
     /**
      * Check that intactObject is not null and of class clazz.
      * @param intactObject, the IntactObject to check
@@ -23,7 +25,10 @@ public class MethodArgumentValidator {
      * @return true
      * @throws NullPointerException if the IntactObject is null
      *         IllegalArgumentException if the intactObject is not a class or sub-class of clazz.
+     * 
+     * @deprecated One should be using the Generics type at the level of the Rule instead of checking at runtime.
      */
+    @Deprecated
     public static boolean isValidArgument(IntactObject intactObject, Class clazz){
         if(intactObject == null){
             throw new NullPointerException("The given IntactObject is null");

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
@@ -27,20 +28,17 @@ import java.util.Collection;
 
 @SanityRule(target = Experiment.class)
 
-public class ExperimentOnHold implements Rule {
+public class ExperimentOnHold implements Rule<Experiment> {
     private static final String DESCRIPTION = "This/these experiments are on hold";
     private static final String SUGGESTION = "";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Experiment.class);
+    public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Experiment experiment = (Experiment) intactObject;
         if(CommonMethods.isOnHold(experiment)){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.AVERAGE_LEVEL,SUGGESTION,experiment));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL,SUGGESTION,experiment));
         }
         return messages;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;
