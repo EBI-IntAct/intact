@@ -44,7 +44,7 @@ public class RuleRunnerTest extends IntactBasicTestCase {
         RuleRunner.runAvailableRules(Arrays.asList(exp));
 
         Assert.assertEquals(1, RuleRunnerReport.getInstance().getMessages().size());
-        Assert.assertEquals(MessageLevel.INFO, RuleRunnerReport.getInstance().getMessages().iterator().next().getLevel());
+        Assert.assertEquals(MessageLevel.WARNING, RuleRunnerReport.getInstance().getMessages().iterator().next().getMessageDefinition().getLevel());
 
 
         DeclaredRuleManager.close();

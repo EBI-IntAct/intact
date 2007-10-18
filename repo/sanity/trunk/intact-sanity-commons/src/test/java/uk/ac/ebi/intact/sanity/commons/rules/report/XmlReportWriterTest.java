@@ -38,7 +38,7 @@ public class XmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split("<\\D+>").length;
 
-        Assert.assertEquals(33, lineCount);
+        Assert.assertEquals(31, lineCount);
     }
 
     @Test
@@ -50,6 +50,6 @@ public class XmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split("<\\D+>").length;
 
-        Assert.assertEquals(16, lineCount);
+        Assert.assertEquals(15, lineCount);
     }
 }
