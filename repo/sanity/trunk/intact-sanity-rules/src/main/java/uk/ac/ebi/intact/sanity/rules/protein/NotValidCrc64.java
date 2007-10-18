@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.util.Crc64;
 
@@ -28,9 +28,6 @@ import java.util.Collection;
 
 public class NotValidCrc64 implements Rule<Protein> {
 
-    private static final String DESCRIPTION = "This those Proteins have a crc64 that does not correspond to their sequence.";
-    private static final String SUGGESTION = "Ask a developper to fix that.";
-
     public Collection<GeneralMessage> check(Protein protein) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         String sequence = protein.getSequence();
@@ -38,17 +35,9 @@ public class NotValidCrc64 implements Rule<Protein> {
             String calculatedCrc64 = Crc64.getCrc64(sequence);
             String storedCrc64 = protein.getCrc64();
             if(!calculatedCrc64.equals(storedCrc64)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.INFO, SUGGESTION, protein));
+                messages.add(new GeneralMessage(MessageDefinition.PROTEIN_INCORRECT_CRC64, protein));
             }
         }
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

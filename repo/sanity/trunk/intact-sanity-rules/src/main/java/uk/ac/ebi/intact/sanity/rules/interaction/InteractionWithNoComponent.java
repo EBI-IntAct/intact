@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
@@ -28,23 +28,12 @@ import java.util.Collection;
 
 public class InteractionWithNoComponent  implements Rule<Interaction> {
 
-    private static final String DESCRIPTION = "This/these Interaction(s) do not have any Interactor. ";
-    private static final String SUGGESTION = "Edit the Interaction and add component(s).";
-
     public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         Collection<Component> components = interaction.getComponents();
         if(components.size() == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.INFO, SUGGESTION, interaction));
+            messages.add(new GeneralMessage(MessageDefinition.INTERACTION_WITHOUT_COMPONENT, interaction));
         }
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

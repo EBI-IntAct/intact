@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
@@ -24,25 +24,13 @@ import java.util.Collection;
  */
 
 @SanityRule(target = Interaction.class)
-
 public class InteractionWithNoExperiment implements Rule<Interaction> {
-
-    private static final String DESCRIPTION = "This/these Interaction(s) are not attached to any experiment. ";
-    private static final String SUGGESTION = "Delete the Interaction(s) or attach them to an Experiment.";
 
     public Collection<GeneralMessage> check(Interaction interaction) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(interaction.getExperiments().isEmpty()){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING, SUGGESTION, interaction));
+            messages.add(new GeneralMessage(MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction));
         }
         return messages;
-    }
-
-    public static String getDescription() {
-        return DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
     }
 }

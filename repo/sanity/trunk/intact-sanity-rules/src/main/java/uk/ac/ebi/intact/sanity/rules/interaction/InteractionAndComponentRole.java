@@ -13,7 +13,7 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
@@ -123,34 +123,34 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
         boolean isAMixedCategoryInteraction = false;
         switch ( categoryCountWithoutInhibCat ) {
             case 0:
-                messages.add( new GeneralMessage( NO_CATEGORY_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                messages.add( new GeneralMessage(MessageDefinition.INTERACTION_ROLES_NO_CATEGORY, interaction ) );
                 break;
             case 1:
                 if ( baitPrey == 1 ) {
                     if ( baitCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_BAIT_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     } else if ( preyCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_PREY_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     }
                 } else if ( fluorophoreAcceptorDonor == 1 ) {
                     if ( fluorophoreDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_FLUOROPHORE_DONOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     }
                 } else if ( electronAcceptorDonor == 1 ) {
                     if ( electronAcceptorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ELECTRON_ACCEPTOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     } else if ( electronDonorCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ELECTRON_DONOR_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     }
                 } else if ( enzymeTarget == 1 ) {
                     if ( enzymeCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ENZYME_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     } else if ( enzymeTargetCount == 0 ) {
-                        messages.add( new GeneralMessage( NO_ENZYME_TARGET_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     }
                 } else if ( self == 1 ) {
                     if ( selfCount > 1 ) {
-                        messages.add( new GeneralMessage( MORE_THAN_2_SELF_PROTEIN_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                        messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                     } else {
                         if ( selfStoichiometry < 1F ) {
 
@@ -159,71 +159,23 @@ public class InteractionAndComponentRole implements Rule<Interaction> {
                 } else {
                     if ( neutralCount == 1 && inhibitedInhibitor == 0 ) {
                         if ( neutralStoichiometry == 1 ) {
-                            messages.add( new GeneralMessage( ONLY_1_NEUTRAL_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                         }
                     }
                 }
                 break;
             default:
                 isAMixedCategoryInteraction = true;
-                messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+                messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
                 break;
         }
         // It was no mixed interaction counting all categories but not InhibitedInhibitor, we now check if there's no
         // mixed interaction counting all categories but not Neutral
         if ( categoryCountWithoutNeutralCat > 1 && isAMixedCategoryInteraction == false ) {
-            messages.add( new GeneralMessage( MIXED_CATEGORIES_DESCRIPTION, MessageLevel.ERROR, SUGGESTION, interaction ) );
+            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_ROLES_MIXED_CATEGORIES, interaction ) );
         }
 
         return messages;
     }
 
-
-    public static String getMixedCategoriesDescription() {
-        return MIXED_CATEGORIES_DESCRIPTION;
-    }
-
-    public static String getMoreThan2SelfProteinDescription() {
-        return MORE_THAN_2_SELF_PROTEIN_DESCRIPTION;
-    }
-
-    public static String getNoBaitDescription() {
-        return NO_BAIT_DESCRIPTION;
-    }
-
-    public static String getNoCategoryDescription() {
-        return NO_CATEGORY_DESCRIPTION;
-    }
-
-    public static String getNoElectronAcceptorDescription() {
-        return NO_ELECTRON_ACCEPTOR_DESCRIPTION;
-    }
-
-    public static String getNoElectronDonorDescription() {
-        return NO_ELECTRON_DONOR_DESCRIPTION;
-    }
-
-    public static String getNoEnzymeDescription() {
-        return NO_ENZYME_DESCRIPTION;
-    }
-
-    public static String getNoEnzymeTargetDescription() {
-        return NO_ENZYME_TARGET_DESCRIPTION;
-    }
-
-    public static String getNoFluorophoreDonorDescription() {
-        return NO_FLUOROPHORE_DONOR_DESCRIPTION;
-    }
-
-    public static String getNoPreyDescription() {
-        return NO_PREY_DESCRIPTION;
-    }
-
-    public static String getOnly1NeutralDescription() {
-        return ONLY_1_NEUTRAL_DESCRIPTION;
-    }
-
-    public static String getSuggestion() {
-        return SUGGESTION;
-    }
 }
