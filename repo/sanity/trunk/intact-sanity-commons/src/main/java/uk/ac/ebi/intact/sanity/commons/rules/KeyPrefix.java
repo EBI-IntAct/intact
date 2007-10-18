@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.sanity.commons.rules;
  * @since 2.0.0
  */
 public interface KeyPrefix {
+    static final String ANNOTATED_OBJECT = "AO-";
     static final String EXPERIMENT = "EXP-";
     static final String INTERACTION = "INT-";
     static final String PROTEIN = "PROT-";
