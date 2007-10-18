@@ -63,9 +63,25 @@ public enum MessageDefinition {
 
     INTERACTION_WITHOUT_COMPONENT( INTERACTION, 1, "" ),
 
-    INTERACTION_WITHOUT_EXPERIMENT( INTERACTION, 1, "" );
+    INTERACTION_WITHOUT_EXPERIMENT( INTERACTION, 1, "" ),
 
-    // Bruno
+    ////////////////////////
+    // Protein
+
+    PROTEIN_INCORRECT_CRC64( PROTEIN, 1, "Incorrect CRC64 checksum for the protein sequence", "A developer should fix it" ),
+
+    PROTEIN_UNIPROT_NO_XREF( PROTEIN, 2, "Missing Uniprot identity xref" ),
+
+    PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xrefs found" ),
+
+    PROTEIN_UNIPROT_WRONG_ID ( PROTEIN, 4, "Wrong format for the Uniprot identifier" ),
+
+    ////////////////////////
+    // Nucleid Acid
+
+    NUC_ACID_IDENTITY_INCORRECT ( NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref" ),
+
+    NUC_ACID_IDENTITY_MISSING ( NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref");
 
     ////////////////////////
     // Instance variable
