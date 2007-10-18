@@ -20,8 +20,7 @@ import java.util.Collection;
  * @version $Id$
  */
 @SanityRule (target = AnnotatedObject.class)
-public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>>
-{
+public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
 
     private static final String DESCRIPTION = "Xref primary ID is invalid. It does not match the regex expected.";
     private static final String SUGGESTION = "Fix the primary ID";

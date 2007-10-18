@@ -28,7 +28,7 @@ import java.util.Collection;
 
 @SanityRule(target = Protein.class)
 
-public class ProteinIdentityCount implements Rule {
+public class ProteinIdentityCount implements Rule<Protein> {
 
     private static final String NO_UNIPROT_DESCRIPTION = "These Proteins have no xref identity to UniProt.";
     private static final String NO_UNIPROT_SUGGESTION = "Edit the Protein and add an identity xref to UniProt.";
@@ -37,15 +37,13 @@ public class ProteinIdentityCount implements Rule {
     private static final String MULTIPLE_IDENTITY_SUGGESTION = "";
 
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-
-        MethodArgumentValidator.isValidArgument(intactObject, Protein.class);
+    public Collection<GeneralMessage> check(Protein protein) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Protein protein = (Protein) intactObject;
 
         if(!CommonMethods.isNoUniprotUpdate(protein)){
             int uniprotIdentityCount = 0;
             Collection<InteractorXref> xrefs = protein.getXrefs();
+
             for(InteractorXref xref : xrefs){
                 CvXrefQualifier qualifier = xref.getCvXrefQualifier();
                 if(qualifier != null){
@@ -63,12 +61,10 @@ public class ProteinIdentityCount implements Rule {
             }else if(uniprotIdentityCount > 1){
                 messages.add(new GeneralMessage(MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.MAJOR, MULTIPLE_IDENTITY_SUGGESTION, protein));
             }
-
         }
 
         return messages;
     }
-
 
     public static String getMultipleIdentityDescription() {
         return MULTIPLE_IDENTITY_DESCRIPTION;

@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ import java.util.Collection;
 
 @SanityRule(target = BioSource.class)
 
-public class NoNewtIdentity  implements Rule {
+public class NoNewtIdentity implements Rule<BioSource> {
     // The 2 next Collection are not usefull yet as for now all biosources should have at least 1 xref identity to newt.
     // But, in case this rule would evolve and be changed to "All bioSource should have at least 1 xref identity
     // to Newt or to X_database", this could be implemented without too much pain :
@@ -44,12 +45,10 @@ public class NoNewtIdentity  implements Rule {
         databaseMis.add(CvDatabase.NEWT_MI_REF);
     }
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, BioSource.class);
-        BioSource bioSource = (BioSource) intactObject;
-        Collection<GeneralMessage> messages = new ArrayList();
+    public Collection<GeneralMessage> check(BioSource bs) throws SanityRuleException {
+        Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        Collection<BioSourceXref> xrefs = bioSource.getXrefs();
+        Collection<BioSourceXref> xrefs = bs.getXrefs();
         int validIdentityXref = 0;
         for(BioSourceXref bioSourceXref : xrefs){
             CvObjectXref cvQualifierIdentityXref = CvObjectUtils.getPsiMiIdentityXref(bioSourceXref.getCvXrefQualifier());
@@ -68,7 +67,7 @@ public class NoNewtIdentity  implements Rule {
         }
 
         if(validIdentityXref == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.AVERAGE_LEVEL, SUGGESTION, bioSource));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, bs));
         }
 
         return messages;

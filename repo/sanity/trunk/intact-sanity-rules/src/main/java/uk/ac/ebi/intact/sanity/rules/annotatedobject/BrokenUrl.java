@@ -10,14 +10,17 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.AnnotatedObject;
+import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.AnnotationMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,29 +34,22 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule(target = Annotation.class)
+@SanityRule( target = AnnotatedObject.class )
 
-public class BrokenUrl  implements Rule {
+public class BrokenUrl implements Rule<AnnotatedObject> {
     private static final String DESCRIPTION = "This/these Url(s) is/are not valid";
     private static final String SUGGESTION = "Could be just momentarily broken";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, AnnotatedObject.class);
-
-        AnnotatedObject annotatedObject = (AnnotatedObject) intactObject;
-
+    public Collection<GeneralMessage> check( AnnotatedObject ao ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-
-
-
-        Collection<Annotation> annotations = annotatedObject.getAnnotations();
-        for(Annotation annotation : annotations){
+        Collection<Annotation> annotations = ao.getAnnotations();
+        for ( Annotation annotation : annotations ) {
             String topicMi = null;
-            CvObjectXref topicIdentityXref = CvObjectUtils.getPsiMiIdentityXref(annotation.getCvTopic());
-            if(topicIdentityXref != null){
+            CvObjectXref topicIdentityXref = CvObjectUtils.getPsiMiIdentityXref( annotation.getCvTopic() );
+            if ( topicIdentityXref != null ) {
                 topicMi = topicIdentityXref.getPrimaryId();
             }
-            if(CvTopic.URL_MI_REF.equals(topicMi)){
+            if ( CvTopic.URL_MI_REF.equals( topicMi ) ) {
 
                 String urlString = annotation.getAnnotationText();
 
@@ -63,7 +59,7 @@ public class BrokenUrl  implements Rule {
                 try {
                     httpUrl = new HttpURL( urlString );
                 } catch ( URIException e ) {
-                    messages.add(new GeneralMessage(DESCRIPTION,GeneralMessage.LOW_LEVEL,SUGGESTION, annotatedObject));
+                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
                     return messages;
                 }
 
@@ -75,7 +71,7 @@ public class BrokenUrl  implements Rule {
                     try {
                         method = new GetMethod( urlString );
                     } catch ( IllegalArgumentException e ) {
-                        messages.add(new AnnotationMessage(DESCRIPTION,GeneralMessage.LOW_LEVEL,SUGGESTION, annotatedObject,annotation));
+                        messages.add( new AnnotationMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao, annotation ) );
                         return messages;//e.printStackTrace();
                         //System.out.println("Couldn't get method uri" + urlString);
                         //retrieveObject(annotationBean);
@@ -85,14 +81,14 @@ public class BrokenUrl  implements Rule {
                         try {
                             statusCode = client.executeMethod( method );
                         } catch ( IOException e ) {
-                            messages.add(new GeneralMessage(DESCRIPTION,GeneralMessage.LOW_LEVEL,SUGGESTION, annotatedObject));
+                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
                             return messages;
                         }
                         //retrieveObject(annotationBean);
                     }
                     if ( statusCode != -1 ) {
                         if ( statusCode >= 300 && statusCode < 600 ) {
-                            messages.add(new GeneralMessage(DESCRIPTION,GeneralMessage.LOW_LEVEL,SUGGESTION, annotatedObject));
+                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
                             return messages;
                             //retrieveObject(annotationBean);
                         }

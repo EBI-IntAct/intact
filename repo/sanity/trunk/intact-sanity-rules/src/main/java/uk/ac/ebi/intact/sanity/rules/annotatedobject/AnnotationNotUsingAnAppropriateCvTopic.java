@@ -23,16 +23,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO comment this
+ *
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 
-@SanityRule(target = Annotation.class)
+@SanityRule(target = AnnotatedObject.class)
 
-public class AnnotationNotUsingAnAppropriateCvTopic implements Rule {
+public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObject> {
 
     private static final String CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION = "This/these object(s) have annotation using CvTopic which are hidden or obsolete Cvs";
     private static final String CVTOPIC_NOT_APPROPRIATE_MSG_SUGGESTION = "Change cvTopic";
@@ -42,14 +42,11 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule {
 
     private static Map<String,Annotation> CACHE = new HashMap<String,Annotation>();
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-
-        MethodArgumentValidator.isValidArgument(intactObject, AnnotatedObject.class);
+    public Collection<GeneralMessage> check(AnnotatedObject intactObject) throws SanityRuleException {
 
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-
-        AnnotatedObject annotatedObject = (AnnotatedObject) intactObject;
-        Collection<Annotation> annotations = annotatedObject.getAnnotations();
+        
+        Collection<Annotation> annotations = intactObject.getAnnotations();
         for(Annotation annotation  : annotations){
             CvTopic cvTopic = annotation.getCvTopic();
             Annotation usedInClass = null;
@@ -76,8 +73,8 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule {
                 }
             }
         }
-        return messages;
 
+        return messages;
     }
 
     private Annotation getUsedInClassAnnotation(CvTopic cvTopic){
@@ -93,6 +90,4 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule {
         }
         return null;
     }
-
-
 }

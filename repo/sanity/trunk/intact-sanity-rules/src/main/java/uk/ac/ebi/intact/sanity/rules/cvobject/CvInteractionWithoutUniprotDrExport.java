@@ -26,31 +26,24 @@ import java.util.Collection;
 
 @SanityRule(target = CvObject.class)
 
-public class CvInteractionWithoutUniprotDrExport implements Rule {
+public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
 
     private static final String DESCRIPTION = "This/these CvInteraction have uniprot-dr-export annotation";
     private static final String SUGGESTION = "Add a uniprot-dr-export annotation";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, CvObject.class);
-        CvObject cvObject = (CvObject) intactObject;
+    public Collection<GeneralMessage> check(CvObject cvObject) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
         if(cvObject instanceof CvInteraction){
             if (!hasUniprotDrExportAnnotation(cvObject)){
-                messages.add(new GeneralMessage(DESCRIPTION,
-                        MessageLevel.MAJOR,
-                        SUGGESTION,
-                        cvObject));
+                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, cvObject ) );
             }
-
         }
-        
+
         return messages;
     }
 
-    private boolean hasUniprotDrExportAnnotation(CvObject
-            cvObject){
+    private boolean hasUniprotDrExportAnnotation(CvObject cvObject ) {
         Collection<Annotation> annotations = cvObject.getAnnotations();
         for(Annotation annotation : annotations){
             if(CvTopic.UNIPROT_DR_EXPORT.equals(annotation.getCvTopic().getShortLabel())){
@@ -59,7 +52,6 @@ public class CvInteractionWithoutUniprotDrExport implements Rule {
         }
         return false;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;

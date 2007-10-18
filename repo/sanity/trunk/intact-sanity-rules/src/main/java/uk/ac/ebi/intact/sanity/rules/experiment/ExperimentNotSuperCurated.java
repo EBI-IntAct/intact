@@ -6,13 +6,12 @@
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.*;
 
@@ -26,7 +25,7 @@ import java.util.*;
 
 @SanityRule(target = Experiment.class)
 
-public class ExperimentNotSuperCurated  implements Rule {
+public class ExperimentNotSuperCurated  implements Rule<Experiment> {
     private static final String DESCRIPTION = "This/these experiments have not been super curated";
     private static final String SUGGESTION = "Ask a super-creator to add and accepted or to-be-reviewed stamp on it.";
     private static Date startingDateSuperCuration;
@@ -35,23 +34,19 @@ public class ExperimentNotSuperCurated  implements Rule {
         Calendar calendar = new GregorianCalendar();
         calendar.set(2005, Calendar.SEPTEMBER, 1);
         startingDateSuperCuration = calendar.getTime();
-
     }
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Experiment.class);
+    public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Experiment experiment = (Experiment) intactObject;
 
         if(startingDateSuperCuration.before(experiment.getCreated())){
             if(!CommonMethods.isAccepted(experiment) && !CommonMethods.isToBeReviewed(experiment)){
-                messages.add(new GeneralMessage(DESCRIPTION,GeneralMessage.AVERAGE_LEVEL,SUGGESTION, experiment));    
+                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL,SUGGESTION, experiment));    
             }
         }
 
         return messages;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;

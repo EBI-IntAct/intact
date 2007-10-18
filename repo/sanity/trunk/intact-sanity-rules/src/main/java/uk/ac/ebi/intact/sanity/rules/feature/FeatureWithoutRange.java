@@ -6,13 +6,11 @@
 package uk.ac.ebi.intact.sanity.rules.feature;
 
 import uk.ac.ebi.intact.model.Feature;
-import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,22 +25,18 @@ import java.util.Collection;
 
 @SanityRule(target = Feature.class)
 
-public class FeatureWithoutRange implements Rule {
+public class FeatureWithoutRange implements Rule<Feature> {
 
     private static final String DESCRIPTION = "This/these Feature(s) have no range. ";
     private static final String SUGGESTION = "Edit the feature(s) and add a range.";
 
-    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
-        MethodArgumentValidator.isValidArgument(intactObject, Feature.class);
+    public Collection<GeneralMessage> check(Feature feature) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        Feature feature = (Feature) intactObject;
-        Collection<Range> ranges = feature.getRanges();
-        if(0 == ranges.size()){
-            messages.add(new GeneralMessage(DESCRIPTION, GeneralMessage.HIGH_LEVEL, SUGGESTION, feature));
+        if(feature.getRanges().isEmpty()){
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, feature));
         }
         return messages;
     }
-
 
     public static String getDescription() {
         return DESCRIPTION;
