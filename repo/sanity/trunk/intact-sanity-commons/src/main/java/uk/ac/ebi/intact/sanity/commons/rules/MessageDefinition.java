@@ -5,7 +5,10 @@ import static uk.ac.ebi.intact.sanity.commons.rules.KeyPrefix.*;
 import static uk.ac.ebi.intact.sanity.commons.rules.MessageLevel.*;
 
 import java.io.PrintStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Definition of the messages.
@@ -70,6 +73,8 @@ public enum MessageDefinition {
 
     FEATURE_WITHOUT_RANGE( Feature.class, FEATURE, 2, "Feature without ranges specified", ERROR ),
 
+    FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Deletion feature longer than 2 amino-acids", WARNING),
+
     ////////////////////////
     // Interaction
 
@@ -77,7 +82,7 @@ public enum MessageDefinition {
 
     INTERACTION_ROLES_MIXED_CATEGORIES( Interaction.class, INTERACTION, 2, "Interaction with mixed component roles", ERROR ),
 
-    INTERACTION_WITHOUT_COMPONENT( Interaction.class, INTERACTION, 3, "Interaction without Components", ERROR ),
+    INTERACTION_WITHOUT_COMPONENT( Interaction.class, INTERACTION, 3, "Interaction without Components", WARNING ),
 
     INTERACTION_WITHOUT_EXPERIMENT( Interaction.class, INTERACTION, 4, "Interaction not associated to an Experiment", ERROR ),
 
@@ -90,14 +95,18 @@ public enum MessageDefinition {
 
     PROTEIN_UNIPROT_MULTIPLE_XREF( Protein.class, PROTEIN, 3, "More than one identity xref found", ERROR ),
 
-    PROTEIN_UNIPROT_WRONG_AC( Protein.class, PROTEIN, 4, "Wrong format for the Uniprot AC", ERROR ),
-
     ////////////////////////
     // Nucleid Acid
 
-    NUC_ACID_IDENTITY_INCORRECT( NucleicAcid.class, NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref", ERROR ),
+    NUC_ACID_IDENTITY_INVALID_DB( NucleicAcid.class, NUCLEIC_ACID, 1, "Nucleic acid with wrong database for identity xref", ERROR,
+                                  "Valid databases: " + CvDatabase.ENTREZ_GENE_MI_REF+" ("+CvDatabase.ENTREZ_GENE+"), "
+                                                        + CvDatabase.DDBG_MI_REF+" ("+CvDatabase.DDBG+"), "
+                                                        + CvDatabase.FLYBASE_MI_REF+" ("+CvDatabase.FLYBASE+"), "
+                                                        + CvDatabase.ENSEMBL_MI_REF+" ("+CvDatabase.ENSEMBL+")"),
 
-    NUC_ACID_IDENTITY_MISSING( NucleicAcid.class, NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref", ERROR );
+    NUC_ACID_IDENTITY_MISSING( NucleicAcid.class, NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref", ERROR ),
+
+    NUC_ACID_IDENTITY_MULTIPLE( NucleicAcid.class, NUCLEIC_ACID, 2, "Multiple identity xrefs for Nucleic Acid", ERROR );
 
     ////////////////////////
     // Instance variable

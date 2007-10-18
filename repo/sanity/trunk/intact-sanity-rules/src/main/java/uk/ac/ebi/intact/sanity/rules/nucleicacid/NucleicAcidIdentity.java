@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
@@ -25,18 +25,7 @@ import java.util.Collection;
  */
 
 @SanityRule( target = NucleicAcid.class )
-
 public class NucleicAcidIdentity implements Rule<NucleicAcid> {
-
-    private static String NON_ALLOWED_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have a not allowed " +
-                                                             "identity xref ";
-    private static final String NON_ALLOWED_IDENTITY_SUGGESTION = "Edit the NucleicAcid and change the CvXrefQualifier.";
-
-    private static final String MULTIPLE_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have more then one xref identity.";
-    private static final String MULTIPLE_IDENTITY_SUGGESTION = "Edit the NucleicAcid and change the xrefs.";
-
-    private static final String NO_IDENTITY_DESCRIPTION = "This/these NucleicAcid(s) have no identity xref.";
-    private static final String NO_IDENTITY_SUGGESTION = "Edit the NucleicAcid(s) and add an identity xref.";
 
     private static Collection<String> cvDatabaseMis = new ArrayList<String>();
 
@@ -45,13 +34,6 @@ public class NucleicAcidIdentity implements Rule<NucleicAcid> {
         cvDatabaseMis.add( CvDatabase.ENTREZ_GENE_MI_REF );
         cvDatabaseMis.add( CvDatabase.FLYBASE_MI_REF );
         cvDatabaseMis.add( CvDatabase.ENSEMBL_MI_REF );
-
-        NON_ALLOWED_IDENTITY_DESCRIPTION = NON_ALLOWED_IDENTITY_DESCRIPTION + "(";
-        for ( String mi : cvDatabaseMis ) {
-            NON_ALLOWED_IDENTITY_DESCRIPTION = NON_ALLOWED_IDENTITY_DESCRIPTION + mi + " ";
-        }
-        NON_ALLOWED_IDENTITY_DESCRIPTION = NON_ALLOWED_IDENTITY_DESCRIPTION + ")";
-
     }
 
     public Collection<GeneralMessage> check( NucleicAcid nucleicAcid ) throws SanityRuleException {
@@ -67,42 +49,18 @@ public class NucleicAcidIdentity implements Rule<NucleicAcid> {
                     if ( cvDatabaseMis.contains( databaseIdentity.getPrimaryId() ) ) {
                         identityCount++;
                     } else {
-                        messages.add( new GeneralMessage( NON_ALLOWED_IDENTITY_DESCRIPTION, GeneralMessage.AVERAGE_LEVEL, NON_ALLOWED_IDENTITY_SUGGESTION, nucleicAcid ) );
+                        messages.add( new GeneralMessage(MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB, nucleicAcid ) );
                     }
                 }
             }
         }
         if ( identityCount > 1 ) {
-            messages.add( new GeneralMessage( MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.WARNING, MULTIPLE_IDENTITY_SUGGESTION, nucleicAcid ) );
+            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MULTIPLE, nucleicAcid ) );
         } else if ( identityCount == 0 ) {
-            messages.add( new GeneralMessage( NO_IDENTITY_DESCRIPTION, MessageLevel.WARNING, NO_IDENTITY_SUGGESTION, nucleicAcid ) );
+            messages.add( new GeneralMessage( MessageDefinition.NUC_ACID_IDENTITY_MISSING, nucleicAcid ) );
         }
 
         return messages;
     }
 
-
-    public static String getMultipleIdentityDescription() {
-        return MULTIPLE_IDENTITY_DESCRIPTION;
-    }
-
-    public static String getMultipleIdentitySuggestion() {
-        return MULTIPLE_IDENTITY_SUGGESTION;
-    }
-
-    public static String getNoIdentityDescription() {
-        return NO_IDENTITY_DESCRIPTION;
-    }
-
-    public static String getNoIdentitySuggestion() {
-        return NO_IDENTITY_SUGGESTION;
-    }
-
-    public static String getNonAllowedIdentityDescription() {
-        return NON_ALLOWED_IDENTITY_DESCRIPTION;
-    }
-
-    public static String getNonAllowedIdentitySuggestion() {
-        return NON_ALLOWED_IDENTITY_SUGGESTION;
-    }
 }

@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
@@ -43,7 +43,7 @@ public class MutationAnalysisFeature implements Rule<Feature> {
 
         if ( CvFeatureType.MUTATION_DECREASING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
              CvFeatureType.MUTATION_INCREASING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
-             CvFeatureType.MUTATION.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
+             CvFeatureType.MUTATION_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
              CvFeatureType.MUTATION_DISRUPTING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() )
                 ) {
             Collection<Range> ranges = feature.getRanges();
@@ -51,7 +51,7 @@ public class MutationAnalysisFeature implements Rule<Feature> {
                 // tointervalstart - r.fromintervalend
                 int width = range.getToIntervalStart() - range.getFromIntervalEnd();
                 if ( width > 2 ) {
-                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.WARNING, SUGGESTION, feature ) );
+                    messages.add( new GeneralMessage(MessageDefinition.FEATURE_DELETION_FEATURE_TOO_LONG, feature ) );
                 }
             }
         }
