@@ -12,6 +12,7 @@ public class Curator
     private String email;
     private boolean admin;
     private boolean xmlReport;
+    private boolean includeAllReports;
 
     public Curator()
     {
@@ -63,6 +64,14 @@ public class Curator
         this.xmlReport = xmlReport;
     }
 
+    public boolean isIncludeAllReports() {
+        return includeAllReports;
+    }
+
+    public void setIncludeAllReports(boolean includeAllReports) {
+        this.includeAllReports = includeAllReports;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -82,6 +91,7 @@ public class Curator
 
     @Override
     public String toString() {
-        return "Curator{"+getName()+" - "+getEmail()+" - admin:"+admin+"}";
+        return "Curator{"+getName()+" - "+getEmail()+" - admin:"+admin+
+               " - include All reports: "+includeAllReports+" - include XML report: "+xmlReport+"}";
     }
 }
