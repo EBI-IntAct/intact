@@ -51,7 +51,7 @@ public class MutationAnalysisFeature implements Rule<Feature> {
                 // tointervalstart - r.fromintervalend
                 int width = range.getToIntervalStart() - range.getFromIntervalEnd();
                 if ( width > 2 ) {
-                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, feature ) );
+                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.WARNING, SUGGESTION, feature ) );
                 }
             }
         }

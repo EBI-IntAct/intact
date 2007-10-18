@@ -59,7 +59,7 @@ public class BrokenUrl implements Rule<AnnotatedObject> {
                 try {
                     httpUrl = new HttpURL( urlString );
                 } catch ( URIException e ) {
-                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
+                    messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.INFO, SUGGESTION, ao ) );
                     return messages;
                 }
 
@@ -71,7 +71,7 @@ public class BrokenUrl implements Rule<AnnotatedObject> {
                     try {
                         method = new GetMethod( urlString );
                     } catch ( IllegalArgumentException e ) {
-                        messages.add( new AnnotationMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao, annotation ) );
+                        messages.add( new AnnotationMessage( DESCRIPTION, MessageLevel.INFO, SUGGESTION, ao, annotation ) );
                         return messages;//e.printStackTrace();
                         //System.out.println("Couldn't get method uri" + urlString);
                         //retrieveObject(annotationBean);
@@ -81,14 +81,14 @@ public class BrokenUrl implements Rule<AnnotatedObject> {
                         try {
                             statusCode = client.executeMethod( method );
                         } catch ( IOException e ) {
-                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
+                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.INFO, SUGGESTION, ao ) );
                             return messages;
                         }
                         //retrieveObject(annotationBean);
                     }
                     if ( statusCode != -1 ) {
                         if ( statusCode >= 300 && statusCode < 600 ) {
-                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MINOR, SUGGESTION, ao ) );
+                            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.INFO, SUGGESTION, ao ) );
                             return messages;
                             //retrieveObject(annotationBean);
                         }

@@ -11,7 +11,6 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +35,7 @@ public class CvInteractionWithoutUniprotDrExport implements Rule<CvObject> {
 
         if(cvObject instanceof CvInteraction){
             if (!hasUniprotDrExportAnnotation(cvObject)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, cvObject ) );
+                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, cvObject ) );
             }
         }
 

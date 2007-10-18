@@ -6,13 +6,11 @@
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +32,7 @@ public class ExperimentWithNoCvInteraction implements Rule<Experiment> {
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(experiment.getCvInteraction() == null){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, experiment ));
         }
         return messages;
     }

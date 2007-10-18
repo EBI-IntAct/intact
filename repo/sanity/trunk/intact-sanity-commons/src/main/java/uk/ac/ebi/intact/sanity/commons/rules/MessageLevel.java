@@ -23,7 +23,7 @@ package uk.ac.ebi.intact.sanity.commons.rules;
  */
 public enum MessageLevel {
 
-    MAJOR,
-    NORMAL,
-    MINOR
+    ERROR,
+    WARNING,
+    INFO
 }

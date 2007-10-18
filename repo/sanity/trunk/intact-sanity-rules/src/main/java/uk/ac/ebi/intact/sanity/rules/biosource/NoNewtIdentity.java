@@ -12,7 +12,6 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -67,7 +66,7 @@ public class NoNewtIdentity implements Rule<BioSource> {
         }
 
         if(validIdentityXref == 0){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL, SUGGESTION, bs));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING, SUGGESTION, bs));
         }
 
         return messages;

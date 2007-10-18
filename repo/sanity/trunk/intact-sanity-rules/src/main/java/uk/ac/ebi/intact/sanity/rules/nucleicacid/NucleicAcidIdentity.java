@@ -73,9 +73,9 @@ public class NucleicAcidIdentity implements Rule<NucleicAcid> {
             }
         }
         if ( identityCount > 1 ) {
-            messages.add( new GeneralMessage( MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.NORMAL, MULTIPLE_IDENTITY_SUGGESTION, nucleicAcid ) );
+            messages.add( new GeneralMessage( MULTIPLE_IDENTITY_DESCRIPTION, MessageLevel.WARNING, MULTIPLE_IDENTITY_SUGGESTION, nucleicAcid ) );
         } else if ( identityCount == 0 ) {
-            messages.add( new GeneralMessage( NO_IDENTITY_DESCRIPTION, MessageLevel.NORMAL, NO_IDENTITY_SUGGESTION, nucleicAcid ) );
+            messages.add( new GeneralMessage( NO_IDENTITY_DESCRIPTION, MessageLevel.WARNING, NO_IDENTITY_SUGGESTION, nucleicAcid ) );
         }
 
         return messages;

@@ -8,14 +8,12 @@ package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.AnnotationMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.rules.util.MethodArgumentValidator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,7 +56,7 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObj
             if(usedInClass == null){
                 //No usedInClass annotation for this cvTopic
                 messages.add(new GeneralMessage(CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_DESCRIPTION,
-                        MessageLevel.NORMAL,
+                        MessageLevel.WARNING,
                         CVTOPIC_WITHOUT_USED_IN_CLASS_MSG_SUGGESTION,
                         cvTopic));
             }else{
@@ -66,7 +64,7 @@ public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObj
                 // method.
                 if(!usedInClass.getAnnotationText().contains(intactObject.getClass().getSimpleName())){
                     messages.add(new AnnotationMessage(CVTOPIC_NOT_APPROPRIATE_MSG_DESCRIPTION,
-                            MessageLevel.MINOR,
+                            MessageLevel.INFO,
                             CVTOPIC_NOT_APPROPRIATE_MSG_SUGGESTION,
                             intactObject,
                             annotation));

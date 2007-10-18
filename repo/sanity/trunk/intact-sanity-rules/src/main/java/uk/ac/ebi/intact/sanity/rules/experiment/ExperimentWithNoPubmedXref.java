@@ -34,7 +34,7 @@ public class ExperimentWithNoPubmedXref implements Rule<Experiment> {
     public Collection<GeneralMessage> check( Experiment experiment ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if ( !hasPrimaryRefToPubmed( experiment ) ) {
-            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ) );
+            messages.add( new GeneralMessage( DESCRIPTION, MessageLevel.ERROR, SUGGESTION, experiment ) );
         }
         return messages;
     }

@@ -41,7 +41,7 @@ public class ExperimentNotSuperCurated  implements Rule<Experiment> {
 
         if(startingDateSuperCuration.before(experiment.getCreated())){
             if(!CommonMethods.isAccepted(experiment) && !CommonMethods.isToBeReviewed(experiment)){
-                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.NORMAL,SUGGESTION, experiment));    
+                messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.WARNING,SUGGESTION, experiment));
             }
         }
 

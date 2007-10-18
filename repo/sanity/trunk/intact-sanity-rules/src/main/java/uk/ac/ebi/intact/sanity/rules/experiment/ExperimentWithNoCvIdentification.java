@@ -32,7 +32,7 @@ public class ExperimentWithNoCvIdentification implements Rule<Experiment> {
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
         if(experiment.getCvIdentification() == null){
-            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.MAJOR, SUGGESTION, experiment ));
+            messages.add(new GeneralMessage(DESCRIPTION, MessageLevel.ERROR, SUGGESTION, experiment ));
         }
         return messages;
     }
