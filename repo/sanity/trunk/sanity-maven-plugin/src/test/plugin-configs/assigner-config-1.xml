@@ -36,8 +36,8 @@
                     </curators>
                     <editorUrl>http://www.ebi.ac.uk/intact/editor</editorUrl>
 
-                    <enableAdminEmails>true</enableAdminEmails>
-                    <enableUserEmails>true</enableUserEmails>
+                    <enableAdminEmails>false</enableAdminEmails>
+                    <enableUserEmails>false</enableUserEmails>
 
                     <emailSubjectPrefix>[MOJO-TEST]</emailSubjectPrefix>
                 </configuration>
