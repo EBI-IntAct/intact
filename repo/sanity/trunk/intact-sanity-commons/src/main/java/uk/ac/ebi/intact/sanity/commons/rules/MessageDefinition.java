@@ -1,9 +1,11 @@
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.*;
 import static uk.ac.ebi.intact.sanity.commons.rules.KeyPrefix.*;
+import static uk.ac.ebi.intact.sanity.commons.rules.MessageLevel.*;
 
 import java.io.PrintStream;
+import java.util.*;
 
 /**
  * Definition of the messages.
@@ -17,76 +19,76 @@ public enum MessageDefinition {
     /////////////////////////
     // Annotated Objects
 
-    ANNOTATION_WITH_WRONG_TOPIC( ANNOTATED_OBJECT, 1, "Objects with annotation using hidden or obsolete CvTopic" ),
+    ANNOTATION_WITH_WRONG_TOPIC( AnnotatedObject.class, ANNOTATED_OBJECT, 1, "Objects with annotation using hidden or obsolete CvTopic", WARNING ),
 
-    BROKEN_URL( ANNOTATED_OBJECT, 2, "Invalid URLs" ),
+    BROKEN_URL( AnnotatedObject.class, ANNOTATED_OBJECT, 2, "Invalid URLs", INFO ),
 
-    XREF_INVALID_PRIMARYID( ANNOTATED_OBJECT, 3, "Xref primary ID not matching CvDatabase regular expression" ),
+    XREF_INVALID_PRIMARYID( AnnotatedObject.class, ANNOTATED_OBJECT, 3, "Xref primary ID not matching CvDatabase regular expression", ERROR ),
 
     ////////////////////////
     // BioSource
 
-    BIOSOURCE_WITHOUT_NEWT_XREF( BIOSOURCE, 1, "BioSource without Newt Xref" ),
+    BIOSOURCE_WITHOUT_NEWT_XREF( BioSource.class, BIOSOURCE, 1, "BioSource without Newt Xref", INFO ),
 
     ////////////////////////
     // CvObject
 
-    INTERACTION_DETECTION( CV, 1, "Interaction detection method without annotation unniprot-de-export" ),
+    INTERACTION_DETECTION( CvObject.class, CV, 1, "Interaction detection method without annotation uniprot-de-export", ERROR ),
 
     ////////////////////////
     // Experiment
 
-    EXPERIMENT_NOT_SUPER_CURATED( EXPERIMENT, 1, "Experiment not Super-Curated" ),
+    EXPERIMENT_NOT_SUPER_CURATED( Experiment.class, EXPERIMENT, 1, "Experiment not Super-Curated", INFO ),
 
-    EXPERIMENT_ON_HOLD( EXPERIMENT, 2, "Experiment marked as 'On hold'" ),
+    EXPERIMENT_ON_HOLD( Experiment.class, EXPERIMENT, 2, "Experiment marked as 'On hold'", INFO ),
 
-    EXPERIMENT_WITHOUT_BIOSOURCE( EXPERIMENT, 3, "Experiment without host organism" ),
+    EXPERIMENT_WITHOUT_BIOSOURCE( Experiment.class, EXPERIMENT, 3, "Experiment without host organism", WARNING ),
 
-    EXPERIMENT_WITHOUT_INTERACTION_DETECT( EXPERIMENT, 4, "Experiment without interaction detection method " ),
+    EXPERIMENT_WITHOUT_INTERACTION_DETECT( Experiment.class, EXPERIMENT, 4, "Experiment without interaction detection method ", ERROR ),
 
-    EXPERIMENT_WITHOUT_PARTICIPANT_DETECT( EXPERIMENT, 5, "Experiment without participant detection method" ),
+    EXPERIMENT_WITHOUT_PARTICIPANT_DETECT( Experiment.class, EXPERIMENT, 5, "Experiment without participant detection method", ERROR ),
 
-    EXPERIMENT_WITHOUT_INTERACTION( EXPERIMENT, 6, "Experiment without interactions" ),
+    EXPERIMENT_WITHOUT_INTERACTION( Experiment.class, EXPERIMENT, 6, "Experiment without interactions", ERROR ),
 
-    EXPERIMENT_TO_BE_REVIEWED( EXPERIMENT, 7, "Experiment marked as 'To be reviewed'" ),
+    EXPERIMENT_TO_BE_REVIEWED( Experiment.class, EXPERIMENT, 7, "Experiment marked as 'To be reviewed'", INFO ),
 
-    EXPERIMENT_WITHOUT_PUBMED( EXPERIMENT, 8, "No Pubmed ID found for experiment" ),
+    EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR ),
 
     ////////////////////////
     // Feature
 
-    FEATURE_WITHOUT_TYPE( FEATURE, 1, "A feature type is mandatory and was not found" ),
+    FEATURE_WITHOUT_TYPE( Feature.class, FEATURE, 1, "A feature type is mandatory and was not found", ERROR ),
 
-    FEATURE_WITHOUT_RANGE( FEATURE, 2, "Feature without ranges specified" ),
+    FEATURE_WITHOUT_RANGE( Feature.class, FEATURE, 2, "Feature without ranges specified", ERROR ),
 
     ////////////////////////
     // Interaction
 
-    INTERACTION_ROLES_NO_CATEGORY( INTERACTION, 1, "Interaction without any recognized categories" ),
+    INTERACTION_ROLES_NO_CATEGORY( Interaction.class, INTERACTION, 1, "Interaction without any recognized categories", ERROR ),
 
-    INTERACTION_ROLES_MIXED_CATEGORIES( INTERACTION, 2, "Interaction with mixed component roles" ),
+    INTERACTION_ROLES_MIXED_CATEGORIES( Interaction.class, INTERACTION, 2, "Interaction with mixed component roles", ERROR ),
 
-    INTERACTION_WITHOUT_COMPONENT( INTERACTION, 3, "Interaction without Components" ),
+    INTERACTION_WITHOUT_COMPONENT( Interaction.class, INTERACTION, 3, "Interaction without Components", ERROR ),
 
-    INTERACTION_WITHOUT_EXPERIMENT( INTERACTION, 4, "Interaction not associated to an Experiment" ),
+    INTERACTION_WITHOUT_EXPERIMENT( Interaction.class, INTERACTION, 4, "Interaction not associated to an Experiment", ERROR ),
 
     ////////////////////////
     // Protein
 
-    PROTEIN_INCORRECT_CRC64( PROTEIN, 1, "Incorrect CRC64 checksum for the protein sequence", "A developer should fix it" ),
+    PROTEIN_INCORRECT_CRC64( Protein.class, PROTEIN, 1, "Incorrect CRC64 checksum for the protein sequence", ERROR , "A developer should fix it" ),
 
-    PROTEIN_UNIPROT_NO_XREF( PROTEIN, 2, "Missing Uniprot identity xref" ),
+    PROTEIN_UNIPROT_NO_XREF( Protein.class, PROTEIN, 2, "Missing Uniprot identity xref", ERROR ),
 
-    PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xref found" ),
+    PROTEIN_UNIPROT_MULTIPLE_XREF( Protein.class, PROTEIN, 3, "More than one identity xref found", ERROR ),
 
-    PROTEIN_UNIPROT_WRONG_AC( PROTEIN, 4, "Wrong format for the Uniprot AC" ),
+    PROTEIN_UNIPROT_WRONG_AC( Protein.class, PROTEIN, 4, "Wrong format for the Uniprot AC", ERROR ),
 
     ////////////////////////
     // Nucleid Acid
 
-    NUC_ACID_IDENTITY_INCORRECT( NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref" ),
+    NUC_ACID_IDENTITY_INCORRECT( NucleicAcid.class, NUCLEIC_ACID, 1, "Nucleic acid with wrong qualifier for identity xref", ERROR ),
 
-    NUC_ACID_IDENTITY_MISSING( NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref" );
+    NUC_ACID_IDENTITY_MISSING( NucleicAcid.class, NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref", ERROR );
 
     ////////////////////////
     // Instance variable
@@ -122,6 +124,7 @@ public enum MessageDefinition {
         if( level == null ) {
             throw new IllegalArgumentException( "You must give a non null level" );
         }
+
         this.targetClass = clazz;
         this.key = keyPrefix + String.valueOf( id );
         this.description = description;
@@ -153,12 +156,48 @@ public enum MessageDefinition {
 
     @Override
     public String toString() {
-        return "[" + key + "] " + description + ( ( suggestion == null ) ? "" : " (" + suggestion + ")" );
+        return "[" + key + "] " + level + " - " + description + ( ( suggestion == null ) ? "" : " (" + suggestion + ")" );
+    }
+
+    public static MessageDefinition[] valuesByTargetClass(Class<? extends IntactObject> clazz) {
+        return valuesByTargetClass( clazz, true );
+    }
+
+    public static MessageDefinition[] valuesByTargetClass(Class<? extends IntactObject> clazz, boolean excludeSubclasses) {
+        Collection<MessageDefinition> messageDefinitions = new ArrayList<MessageDefinition>();
+
+        for (MessageDefinition messageDefinition : values()) {
+            if (excludeSubclasses) {
+                if (clazz.equals(messageDefinition.getTargetClass())) {
+                    messageDefinitions.add(messageDefinition);
+                }
+            } else if (clazz.isAssignableFrom(messageDefinition.getTargetClass())) {
+                messageDefinitions.add(messageDefinition);
+            }
+        }
+
+        return messageDefinitions.toArray(new MessageDefinition[messageDefinitions.size()]);
+    }
+
+    public static Set<Class<? extends IntactObject>> allTargetClasses() {
+        Set<Class<? extends IntactObject>> classes = new LinkedHashSet<Class<? extends IntactObject>>();
+
+        for (MessageDefinition messageDefinition : values()) {
+            classes.add(messageDefinition.getTargetClass());
+        }
+
+        return classes;
     }
 
     public static void printAll( PrintStream ps ) {
-        for ( MessageDefinition messageDefinition : values() ) {
-            ps.println( messageDefinition );
+        for (Class<? extends IntactObject> targetClass : allTargetClasses()) {
+            ps.println(targetClass.getSimpleName()+":");
+
+            for ( MessageDefinition messageDefinition : valuesByTargetClass(targetClass, true) ) {
+                ps.println( "   "+messageDefinition );
+            }
+
+            ps.println();
         }
     }
 
