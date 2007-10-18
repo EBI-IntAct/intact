@@ -35,26 +35,26 @@ public enum MessageDefinition {
 
     EXPERIMENT_NOT_SUPER_CURATED(  EXPERIMENT, 1, "" ),
 
-    EXPERIMENT_ON_HOLD( EXPERIMENT, 2, "" ),
+    EXPERIMENT_ON_HOLD( EXPERIMENT, 2, "Experiment marked as 'On hold'" ),
 
-    EXPERIMENT_WITHOUT_BIOSOURCE( EXPERIMENT, 3, "" ),
+    EXPERIMENT_WITHOUT_BIOSOURCE( EXPERIMENT, 3, "Experiment without host organism" ),
 
-    EXPERIMENT_WITHOUT_INTERACTION_DETECT( EXPERIMENT, 4, "" ),
+    EXPERIMENT_WITHOUT_INTERACTION_DETECT( EXPERIMENT, 4, "Experiment without interaction detection method " ),
 
-    EXPERIMENT_WITHOUT_PARTICIPANT_DETECT( EXPERIMENT, 5, "" ),
+    EXPERIMENT_WITHOUT_PARTICIPANT_DETECT( EXPERIMENT, 5, "Experiment without participant detection method" ),
 
-    EXPERIMENT_WITHOUT_INTERACTION( EXPERIMENT, 6, "" ),
+    EXPERIMENT_WITHOUT_INTERACTION( EXPERIMENT, 6, "Experiment without interactions" ),
 
-    EXPERIMENT_TO_BE_REVIEWED( EXPERIMENT, 7, "" ),
+    EXPERIMENT_TO_BE_REVIEWED( EXPERIMENT, 7, "Experiment marked as 'To be reviewed'" ),
 
-    EXPERIMENT_WITHOUT_PUBMED( EXPERIMENT, 8, "" ),
+    EXPERIMENT_WITHOUT_PUBMED( EXPERIMENT, 8, "No Pubmed ID found for experiment" ),
 
     ////////////////////////
     // Feature
 
-    FEATURE_WITHOUT_TYPE( FEATURE, 1, "" ),
+    FEATURE_WITHOUT_TYPE( FEATURE, 1, "A feature type is mandatory and was not found" ),
 
-    FEATURE_WITHOUT_RANGE( FEATURE, 2, "" ),
+    FEATURE_WITHOUT_RANGE( FEATURE, 2, "Feature without ranges specified" ),
 
     ////////////////////////
     // Interaction
@@ -89,7 +89,7 @@ public enum MessageDefinition {
 
     PROTEIN_UNIPROT_NO_XREF( PROTEIN, 2, "Missing Uniprot identity xref" ),
 
-    PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xrefs found" ),
+    PROTEIN_UNIPROT_MULTIPLE_XREF( PROTEIN, 3, "More than one identity xref found" ),
 
     PROTEIN_UNIPROT_WRONG_ID ( PROTEIN, 4, "Wrong format for the Uniprot identifier" ),
 
