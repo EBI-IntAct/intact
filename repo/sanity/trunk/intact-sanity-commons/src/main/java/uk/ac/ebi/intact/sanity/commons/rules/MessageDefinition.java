@@ -66,6 +66,9 @@ public enum MessageDefinition {
     EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR,
                                "Edit the experiment and add the primary-reference to PubMed or a DOI if a PubMed is not available"),
 
+    EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF ( Experiment.class, EXPERIMENT, 9, "Experiment with more than one primary-reference to PubMed or DOI", ERROR,
+                                      "Remove any redundant or wrong primary reference, giving preference to PubMed"),
+
     ////////////////////////
     // Feature
 
