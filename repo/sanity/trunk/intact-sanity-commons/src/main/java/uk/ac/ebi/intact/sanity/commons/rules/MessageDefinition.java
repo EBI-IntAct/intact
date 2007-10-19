@@ -77,6 +77,24 @@ public enum MessageDefinition {
     FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Mutation feature longer than 2 amino-acids",
                                         WARNING, "Change to binding site (or child term)"),
 
+    FEATURE_WITH_INCOMPATIBLE_INTERACTOR ( Feature.class, FEATURE, 4,
+                                           "Feature on a non polymer interactor having a non undertermined range",
+                                           WARNING, "set the range to undertermined or update the interactor"),
+
+    UNDETERMINED_RANGE_WITH_BOUNDARIES( Feature.class, FEATURE, 5,
+                                        "Feature range set to undertermined and having to/from boundaries", WARNING ),
+
+    DETERMINED_RANGE_WITHOUT_BOUNDARIES( Feature.class, FEATURE, 6,
+                                           "Feature range not set to undertermined and having no to/from boundaries",
+                                           WARNING ),
+
+    DETERMINED_RANGE_WITHOUT_SEQUENCE( Feature.class, FEATURE, 7,
+                                       "Feature range with to/from boundaries but no underlying interactor's sequence",
+                                       WARNING ),
+
+    RANGE_AND_INTERACTOR_BOUNDARIES_MISMATCH ( Feature.class, FEATURE, 8,
+                                               "Range and interactor's boundaries mismatch", WARNING ),
+
     ////////////////////////
     // Interaction
 
