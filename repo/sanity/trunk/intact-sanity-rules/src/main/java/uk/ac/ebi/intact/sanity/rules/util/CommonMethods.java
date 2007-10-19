@@ -5,7 +5,6 @@
  */
 package uk.ac.ebi.intact.sanity.rules.util;
 
-import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Protein;
@@ -20,38 +19,6 @@ import java.util.Collection;
  * @since TODO
  */
 public class CommonMethods {
-
-    public static boolean isOnHold(AnnotatedObject annotatedObject){
-        boolean isOnHold = false;
-        Collection<Annotation> annotations = annotatedObject.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(CvTopic.ON_HOLD.equals(annotation.getCvTopic().getShortLabel())){
-                isOnHold = true;
-                break;
-            }
-        }
-        return isOnHold;
-    }
-
-     public static boolean isToBeReviewed(AnnotatedObject annotatedObject){
-        Collection<Annotation> annotations = annotatedObject.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(CvTopic.TO_BE_REVIEWED.equals(annotation.getCvTopic().getShortLabel())){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isAccepted(AnnotatedObject annotatedObject){
-        Collection<Annotation> annotations = annotatedObject.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(CvTopic.ACCEPTED.equals(annotation.getCvTopic().getShortLabel())){
-                return true;
-            }
-        }
-        return false;
-    }
 
     public static boolean isNoUniprotUpdate(Protein protein){
         Collection<Annotation> annotations = protein.getAnnotations();
