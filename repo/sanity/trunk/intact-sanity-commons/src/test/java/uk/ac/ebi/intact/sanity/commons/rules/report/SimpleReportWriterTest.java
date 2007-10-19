@@ -22,7 +22,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * TODO comment this
+ * SimpleReportWriter tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -37,6 +37,7 @@ public class SimpleReportWriterTest extends AbstractReportTestCase {
         reportWriter.write(getDefaultSanityReport());
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+
         Assert.assertEquals(23, lineCount);
     }
 
@@ -63,6 +64,4 @@ public class SimpleReportWriterTest extends AbstractReportTestCase {
 
         Assert.assertEquals(10, lineCount);
     }
-
-
 }

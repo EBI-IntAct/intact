@@ -83,7 +83,8 @@ public class SimpleReportWriter extends ReportWriter {
         }
 
         sb.append(separator(levelChar)).append(NEW_LINE);
-        sb.append(levelChar).append(" ").append(sanityResult.getDescription()).append(NEW_LINE);
+        sb.append(levelChar).append(" ").append('[').append(sanityResult.getKey()).append(']');
+        sb.append(" ").append(sanityResult.getDescription()).append(NEW_LINE);
         sb.append(levelChar).append(" Suggestion: ").append(sanityResult.getSuggestion()).append(NEW_LINE);
         sb.append(levelChar).append(" Level: ").append(sanityResult.getLevel());
         sb.append(NEW_LINE);

@@ -57,6 +57,8 @@ public class SanityReportUtils {
 
     protected static SanityResult cloneSanityResult(SanityResult originalResult) {
         SanityResult result = new SanityResult();
+        result.setKey(originalResult.getKey());
+        result.setTargetClass(originalResult.getTargetClass());
         result.setDescription(originalResult.getDescription());
         result.setLevel(originalResult.getLevel());
         result.setSuggestion(originalResult.getSuggestion());
