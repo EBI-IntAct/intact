@@ -73,7 +73,8 @@ public enum MessageDefinition {
 
     FEATURE_WITHOUT_RANGE( Feature.class, FEATURE, 2, "Feature without ranges specified", ERROR ),
 
-    FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Deletion feature longer than 2 amino-acids", WARNING),
+    FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Mutation feature with range longer than 2 amino acid",
+                                        WARNING, "Change the feature type to binding site (or child term)"),
 
     ////////////////////////
     // Interaction
