@@ -5,16 +5,15 @@
  */
 package uk.ac.ebi.intact.sanity.rules.cvobject;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
 import uk.ac.ebi.intact.mocks.cvInteractions.CvInteractionWithNoAnnotationMock;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvInteraction;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
@@ -25,38 +24,17 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class CvInteractionWithoutUniprotDrExportTest extends TestCase {
+public class CvInteractionWithoutUniprotDrExportTest {
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public CvInteractionWithoutUniprotDrExportTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( CvInteractionWithoutUniprotDrExportTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         // Check that if we give the check method a cvInteraction with no annotation it return a message
         CvInteraction cvInteraction = CvInteractionWithNoAnnotationMock.getMock();
         CvInteractionWithoutUniprotDrExport rule = new CvInteractionWithoutUniprotDrExport();
         Collection<GeneralMessage> messages = rule.check(cvInteraction);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(CvInteractionWithoutUniprotDrExport.getDescription(),message.getDescription());
-            assertEquals(CvInteractionWithoutUniprotDrExport.getSuggestion(),message.getProposedSolution());
+            assertEquals(MessageDefinition.INTERACTION_DETECTION_WITHOUT_UNIPROT_EXPORT,message.getMessageDefinition());
         }
 
         // Check that if we give the check method a cvInteraction with the uniprot-dr-export annotation, it does not

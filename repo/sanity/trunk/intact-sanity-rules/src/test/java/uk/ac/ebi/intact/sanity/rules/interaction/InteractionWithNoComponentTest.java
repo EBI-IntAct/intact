@@ -5,15 +5,14 @@
  */
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,31 +24,11 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class InteractionWithNoComponentTest extends TestCase {
+public class InteractionWithNoComponentTest {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public InteractionWithNoComponentTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( InteractionWithNoComponentTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
 
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
         InteractionWithNoComponent rule = new InteractionWithNoComponent();
@@ -62,8 +41,7 @@ public class InteractionWithNoComponentTest extends TestCase {
         messages =  rule.check(interaction);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(InteractionWithNoComponent.getDescription(), message.getDescription());
-            assertEquals(InteractionWithNoComponent.getSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.INTERACTION_WITHOUT_COMPONENT, message.getMessageDefinition());
         }
 
     }

@@ -5,14 +5,13 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.*;
 
@@ -23,31 +22,11 @@ import java.util.*;
  * @version $Id$
  * @since TODO
  */
-public class ExperimentNotSuperCuratedTest extends TestCase {
+public class ExperimentNotSuperCuratedTest {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public ExperimentNotSuperCuratedTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( ExperimentNotSuperCuratedTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         ExperimentNotSuperCurated rule = new ExperimentNotSuperCurated();
 
         // Give the check method an experiment newer then september 2005 and super-curated, check that it return no error
@@ -63,8 +42,7 @@ public class ExperimentNotSuperCuratedTest extends TestCase {
         messages =  rule.check(experiment);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(ExperimentNotSuperCurated.getDescription(), message.getDescription());
-            assertEquals(ExperimentNotSuperCurated.getSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.EXPERIMENT_NOT_SUPER_CURATED, message.getMessageDefinition());
         }
 
         // Give the check method an experiment older then september 2005 and not super-curated, check that it returns no

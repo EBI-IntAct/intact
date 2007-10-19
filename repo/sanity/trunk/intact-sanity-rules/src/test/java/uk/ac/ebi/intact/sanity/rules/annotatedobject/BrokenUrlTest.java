@@ -5,9 +5,8 @@
  */
 package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
 import uk.ac.ebi.intact.mocks.ProteinMock;
 import uk.ac.ebi.intact.mocks.cvTopics.UrlMock;
@@ -15,6 +14,7 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
@@ -25,30 +25,11 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class BrokenUrlTest  extends TestCase {
+public class BrokenUrlTest  {
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public BrokenUrlTest( String testName )
-    {
-        super( testName );
-    }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( BrokenUrlTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws SanityRuleException {
         Protein protein = ProteinMock.getMock();
 
         Annotation annotation = AnnotationMock.getMock(UrlMock.getMock(),"http://www.google.co.uk");
@@ -67,8 +48,7 @@ public class BrokenUrlTest  extends TestCase {
         messages = rule.check(protein);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(BrokenUrl.getDescription(), message.getDescription());
-            assertEquals(BrokenUrl.getSuggestion(),message.getProposedSolution());
+            assertEquals(MessageDefinition.BROKEN_URL, message.getMessageDefinition());
         }
 
     }

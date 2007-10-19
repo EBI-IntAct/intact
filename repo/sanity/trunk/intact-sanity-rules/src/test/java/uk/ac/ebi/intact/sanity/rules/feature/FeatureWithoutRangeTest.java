@@ -5,9 +5,8 @@
  */
 package uk.ac.ebi.intact.sanity.rules.feature;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.InstitutionMock;
 import uk.ac.ebi.intact.mocks.components.Q9QXS6ComponentMock;
 import uk.ac.ebi.intact.mocks.cvFeatureType.MutationDecreasingMock;
@@ -17,8 +16,8 @@ import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Feature;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Range;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
@@ -29,31 +28,11 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class FeatureWithoutRangeTest extends TestCase {
+public class FeatureWithoutRangeTest {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public FeatureWithoutRangeTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( FeatureWithoutRangeTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
         FeatureWithoutRange rule = new FeatureWithoutRange();
 
@@ -69,8 +48,7 @@ public class FeatureWithoutRangeTest extends TestCase {
         messages = rule.check(feature);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(FeatureWithoutRange.getDescription(), message.getDescription());
-            assertEquals(FeatureWithoutRange.getSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.FEATURE_WITHOUT_RANGE, message.getMessageDefinition());
         }
 
     }
