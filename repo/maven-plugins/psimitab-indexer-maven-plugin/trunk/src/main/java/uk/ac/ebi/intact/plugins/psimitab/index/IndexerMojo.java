@@ -15,14 +15,16 @@
  */
 package uk.ac.ebi.intact.plugins.psimitab.index;
 
-import org.apache.maven.plugin.AbstractMojo;
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.psimitab.PsimitabTools;
-import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 
-import java.io.File;
+import psidev.psi.mi.search.index.AbstractIndexWriter;
+import psidev.psi.mi.search.index.impl.PsimiTabIndexWriter;
+import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
+import uk.ac.ebi.intact.psimitab.PsimitabTools;
 
 /**
  * Goal which creates a Lucene index from a PSIMITAB file.
@@ -69,15 +71,19 @@ public class IndexerMojo extends IntactAbstractMojo {
      * @parameter expression="${intact.psimitab.index.containsHeader}" default-value="true"
      */
     private boolean containsHeader = true;
-
+    
+    /**
+     * A indexWriter extends AbstractIndexWriter by default PsimiTabIndexWriter
+     */
+    private AbstractIndexWriter indexWriter = new PsimiTabIndexWriter();
+    
     /**
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         enableLogging();
-        
         try {
-            PsimitabTools.buildIndex(indexDirectory, psimitabFile, createIndex, containsHeader);
+            PsimitabTools.buildIndex(indexDirectory, psimitabFile, createIndex, containsHeader, indexWriter);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed index creation", e);
         }
@@ -122,4 +128,8 @@ public class IndexerMojo extends IntactAbstractMojo {
     public MavenProject getProject() {
         return project;
     }
+
+	public void setIndexWriter(AbstractIndexWriter indexWriter) {
+		this.indexWriter = indexWriter;
+	}
 }
