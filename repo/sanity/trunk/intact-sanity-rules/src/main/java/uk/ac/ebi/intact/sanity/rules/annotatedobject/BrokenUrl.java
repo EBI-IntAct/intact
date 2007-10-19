@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,8 +32,7 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule( target = AnnotatedObject.class )
-
+@SanityRule(target = AnnotatedObject.class, group = { RuleGroup.INTACT, RuleGroup.IMEX }) 
 public class BrokenUrl implements Rule<AnnotatedObject> {
 
     public Collection<GeneralMessage> check( AnnotatedObject ao ) throws SanityRuleException {

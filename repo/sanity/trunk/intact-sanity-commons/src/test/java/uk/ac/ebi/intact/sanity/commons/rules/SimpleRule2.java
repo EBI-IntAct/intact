@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import java.util.Arrays;
@@ -27,9 +27,9 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleRule implements Rule<Experiment> {
+public class SimpleRule2 implements Rule {
 
-    public Collection<GeneralMessage> check(Experiment intactObject) throws SanityRuleException {
+    public Collection<GeneralMessage> check(IntactObject intactObject) throws SanityRuleException {
         return Arrays.asList(new GeneralMessage(MessageDefinition.BROKEN_URL, intactObject));
     }
 }

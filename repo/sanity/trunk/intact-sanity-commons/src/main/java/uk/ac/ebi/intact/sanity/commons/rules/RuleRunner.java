@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRule;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
@@ -23,6 +25,7 @@ import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * TODO comment this
@@ -31,6 +34,11 @@ import java.util.List;
  * @version $Id$
  */
 public class RuleRunner {
+
+    /**
+     * Sets up a logger for that class.
+     */
+    private static final Log log = LogFactory.getLog(RuleRunner.class);
 
     private RuleRunner() {}
 
@@ -43,12 +51,33 @@ public class RuleRunner {
      * @return
      */
     public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects) {
+        final Set<String> availableGroups = DeclaredRuleManager.getInstance().getAvailableGroups();
+
+        if (log.isDebugEnabled()) log.debug("Running all rules for "+intactObjects.size()+" objects, in rule groups "+availableGroups);
+
+        return runAvailableRules(intactObjects, availableGroups.toArray(new String[availableGroups.size()]));
+    }
+
+    /**
+     * Runs all the available rules found in the classpath and adds the messages in the
+     * <code>RuleRunnerReport</code>. The <code>RuleRunnerReport</code> is a thread local class
+     * and it is NOT cleared after executing the method, so this method can be run several times
+     * adding the messages to the same instance.
+     * @param intactObjects
+     * @return
+     */
+    public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects, String... groupNames) {
+        if (DeclaredRuleManager.getInstance().getAvailableDeclaredRules().isEmpty()) {
+            throw new SanityRuleException("No declared rules found");
+        }
 
         for (IntactObject intactObject : intactObjects) {
-            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass());
+            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass(), groupNames);
 
             for (DeclaredRule declaredRule : declaredRules) {
                 Rule rule = newRuleInstance(declaredRule);
+
+                if (log.isDebugEnabled()) log.debug("Running rule: "+declaredRule.getRuleName()+" (target: "+declaredRule.getTargetClass()+")");
 
                 Collection<GeneralMessage> messages = rule.check(intactObject);
                 RuleRunnerReport.getInstance().addMessages(messages);

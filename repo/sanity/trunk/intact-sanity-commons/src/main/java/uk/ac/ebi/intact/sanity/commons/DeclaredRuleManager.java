@@ -19,7 +19,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import sun.misc.URLClassPath;
 import uk.ac.ebi.intact.commons.util.ClassUtils;
 
 import javax.xml.bind.JAXBContext;
@@ -32,7 +31,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
@@ -78,7 +76,22 @@ public class DeclaredRuleManager {
         }
     }
 
+    public Set<String> getAvailableGroups() {
+        Set<String> groups = new HashSet<String>();
+
+        for (DeclaredRule rule : availableDeclaredRules) {
+            groups.addAll(rule.getGroups().getGroup());
+        }
+
+        return groups;
+    }
+
     public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass) {
+        final Set<String> availableGroups = getAvailableGroups();
+        return getDeclaredRulesForTarget(targetClass, availableGroups.toArray(new String[availableGroups.size()]));
+    }
+
+    public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass, String ... groups) {
         List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
         for (DeclaredRule rule : availableDeclaredRules) {
@@ -89,7 +102,20 @@ public class DeclaredRuleManager {
                 throw new SanityRuleException("Found declared rule with a target class not found in the classpath: " + rule.getTargetClass());
             }
 
-            if (ruleTargetClass.isAssignableFrom(targetClass)) {
+            if (ruleTargetClass.isAssignableFrom(targetClass) &&
+                    isDeclaredRuleInGroup(rule, groups)) {
+                rules.add(rule);
+            }
+        }
+
+        return rules;
+    }
+
+    public List<DeclaredRule> getDeclaredRulesForGroup(String ... groups) {
+        List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
+
+        for (DeclaredRule rule : availableDeclaredRules) {
+            if (isDeclaredRuleInGroup(rule, groups)) {
                 rules.add(rule);
             }
         }
@@ -144,6 +170,17 @@ public class DeclaredRuleManager {
             Element targetClassNode = document.createElement("target-class");
             decRuleNode.appendChild(targetClassNode);
             targetClassNode.appendChild(document.createTextNode(declaredRule.getTargetClass()));
+
+            Element groupsNode = document.createElement("groups");
+            decRuleNode.appendChild(groupsNode);
+
+            if (declaredRule.getGroups() != null) {
+                for (String groupName : declaredRule.getGroups().getGroup()) {
+                    Element groupNode = document.createElement("group");
+                    groupsNode.appendChild(groupNode);
+                    groupNode.appendChild(document.createTextNode(groupName));
+                }
+            }
         }
 
         //set up a transformer
@@ -214,6 +251,16 @@ public class DeclaredRuleManager {
             throw new SanityRuleException(e);
         }
         return rules;
+    }
+
+    protected static boolean isDeclaredRuleInGroup(DeclaredRule rule, String ... groupNames) {
+        for (String groupName : rule.getGroups().getGroup()) {
+            if (Arrays.binarySearch(groupNames, groupName) > -1) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
  

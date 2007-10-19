@@ -47,6 +47,16 @@ public class RuleRunnerReport {
     }
 
     public SanityReport toSanityReport() {
-        return MessageUtils.toSanityReport(messages);
+       return toSanityReport(false);
+    }
+
+    public SanityReport toSanityReport(boolean clearRuleRunnerReport) {
+        SanityReport report = MessageUtils.toSanityReport(messages);
+
+        if (clearRuleRunnerReport) {
+            clear();
+        }
+        
+        return report;
     }
 }

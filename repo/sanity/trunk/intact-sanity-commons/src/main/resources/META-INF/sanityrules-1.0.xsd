@@ -14,8 +14,17 @@
           <xs:element name="rule-name" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="rule-class" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="target-class" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="groups">
+              <xs:complexType>
+                  <xs:sequence>
+                      <xs:element minOccurs="1" maxOccurs="unbounded" ref="group"/>
+                  </xs:sequence>
+              </xs:complexType>
+          </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>
+
+   <xs:element name="group" type="xs:string"/>
   
 </xs:schema>

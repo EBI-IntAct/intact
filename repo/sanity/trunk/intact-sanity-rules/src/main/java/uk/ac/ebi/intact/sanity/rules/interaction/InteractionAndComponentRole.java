@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,8 +28,7 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule( target = Interaction.class )
-
+@SanityRule( target = Interaction.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
 public class InteractionAndComponentRole implements Rule<Interaction> {
 
     private static final String NO_CATEGORY_DESCRIPTION = "ReportTopic.INTERACTION_WITH_NO_CATEGORIES";

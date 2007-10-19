@@ -22,6 +22,7 @@ import uk.ac.ebi.intact.util.ElapsedTime;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * Checks potential annotation error on IntAct objects.
@@ -39,7 +40,8 @@ public class SanityChecker {
     private static final Log log = LogFactory.getLog(SanityChecker.class);
 
     /**
-     * Executes a sanity check for the whole database. Does not send mails, nor provides editor URLs
+     * Executes a sanity check for the whole database, including all rule groups.
+     * Does not send mails, nor provides editor URLs.
      *
      * @return
      *
@@ -50,7 +52,20 @@ public class SanityChecker {
     }
 
     /**
-     * Executes a sanity check for the whole database. Can send mails depending on the SanityCheckConfiguration provided
+     * Executes a sanity check for the whole database, for the rule groups specified.
+     * Does not send mails, nor provides editor URLs.
+     *
+     * @return
+     *
+     * @throws SanityCheckerException
+     */
+    public static SanityReport executeSanityCheck(String... groupNames) throws SanityCheckerException {
+        return executeSanityCheck((SanityCheckConfig) null, groupNames);
+    }
+
+    /**
+     * Executes a sanity check for the whole database, including all rule groups.
+     * Can send mails depending on the SanityCheckConfiguration provided.
      *
      * @param sanityConfig
      *
@@ -59,16 +74,30 @@ public class SanityChecker {
      * @throws SanityCheckerException
      */
     public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig) throws SanityCheckerException {
+        final Set<String> availableGroups = DeclaredRuleManager.getInstance().getAvailableGroups();
+        return executeSanityCheck(sanityConfig, availableGroups.toArray(new String[availableGroups.size()]));
+    }
+
+    /**
+     * Executes a sanity check for the whole database, for the rule groups specified.
+     * Can send mails depending on the SanityCheckConfiguration provided.
+     *
+     * @param sanityConfig
+     *
+     * @return
+     *
+     * @throws SanityCheckerException
+     */
+    public static SanityReport executeSanityCheck(SanityCheckConfig sanityConfig, String... groupNames) throws SanityCheckerException {
         RuleRunnerReport.getInstance().clear();
 
         if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
         long startTime = System.currentTimeMillis();
-        checkAllAnnotatedObjects();
+        checkAllAnnotatedObjects(groupNames);
         long elapsedTime = System.currentTimeMillis() - startTime;
 
-        SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
-        RuleRunnerReport.getInstance().clear();
+        SanityReport report = RuleRunnerReport.getInstance().toSanityReport(true);
 
         addReportAttributes(report, elapsedTime);
 
@@ -98,11 +127,21 @@ public class SanityChecker {
     }
 
     /**
-     * Executes a sanity check for the provided objects. Does not send mails
+     * Executes a sanity check for the provided objects. Does not send mails.
      *
      * @param annotatedObjects
      */
     public static SanityReport executeSanityCheck(Collection<? extends AnnotatedObject> annotatedObjects) {
+        final Set<String> availableGroups = DeclaredRuleManager.getInstance().getAvailableGroups();
+        return executeSanityCheck(annotatedObjects, availableGroups.toArray(new String[availableGroups.size()]));
+    }
+
+    /**
+     * Executes a sanity check for the provided objects. Does not send mails.
+     *
+     * @param annotatedObjects
+     */
+    public static SanityReport executeSanityCheck(Collection<? extends AnnotatedObject> annotatedObjects, String... groupNames) {
         RuleRunnerReport.getInstance().clear();
 
         if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
@@ -112,7 +151,7 @@ public class SanityChecker {
         if (!inTransaction) beginTransaction();
 
         long startTime = System.currentTimeMillis();
-        checkAnnotatedObjects(annotatedObjects);
+        checkAnnotatedObjects(annotatedObjects, groupNames);
         long elapsedTime = System.currentTimeMillis() - startTime;
 
         if (!inTransaction) commitTransaction();
@@ -151,29 +190,29 @@ public class SanityChecker {
         report.getReportAttribute().add(elapsedTimeAtt);
     }
 
-    protected static void checkAllCvObjects() {
+    protected static void checkAllCvObjects(String... groupNames) {
         CvObjectDao cvObjectDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao();
         Collection<CvObject> allCvObjects = cvObjectDao.getAll();
 
         if (log.isInfoEnabled()) log.info("\tProcessing " + allCvObjects.size() + " CvObjects");
 
-        checkAnnotatedObjects(cvObjectDao.getAll());
+        checkAnnotatedObjects(cvObjectDao.getAll(), groupNames);
     }
 
-    protected static void checkAllAnnotatedObjects() {
-        checkAllAnnotatedObjectsOfType(CvObject.class);
-        checkAllAnnotatedObjectsOfType(Experiment.class);
-        checkAllAnnotatedObjectsOfType(InteractionImpl.class);
-        checkAllAnnotatedObjectsOfType(ProteinImpl.class);
-        checkAllAnnotatedObjectsOfType(NucleicAcidImpl.class);
-        checkAllAnnotatedObjectsOfType(SmallMoleculeImpl.class);
-        checkAllAnnotatedObjectsOfType(BioSource.class);
-        checkAllAnnotatedObjectsOfType(Feature.class);
-        checkAllAnnotatedObjectsOfType(Publication.class);
+    protected static void checkAllAnnotatedObjects(String... groupNames) {
+        checkAllAnnotatedObjectsOfType(CvObject.class, groupNames);
+        checkAllAnnotatedObjectsOfType(Experiment.class, groupNames);
+        checkAllAnnotatedObjectsOfType(InteractionImpl.class, groupNames);
+        checkAllAnnotatedObjectsOfType(ProteinImpl.class, groupNames);
+        checkAllAnnotatedObjectsOfType(NucleicAcidImpl.class, groupNames);
+        checkAllAnnotatedObjectsOfType(SmallMoleculeImpl.class, groupNames);
+        checkAllAnnotatedObjectsOfType(BioSource.class, groupNames);
+        checkAllAnnotatedObjectsOfType(Feature.class, groupNames);
+        checkAllAnnotatedObjectsOfType(Publication.class, groupNames);
     }
 
-    protected static <T extends AnnotatedObject> void checkAllAnnotatedObjectsOfType(Class<T> aoClass) {
-        if (DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(aoClass).isEmpty()) {
+    protected static <T extends AnnotatedObject> void checkAllAnnotatedObjectsOfType(Class<T> aoClass, String... groupNames) {
+        if (DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(aoClass, groupNames).isEmpty()) {
             if (log.isDebugEnabled()) log.debug("No declared rules for: " + aoClass.getName());
             return;
         }
@@ -200,7 +239,7 @@ public class SanityChecker {
             beginTransaction();
             annotatedObjects = annotatedObjectDao.getAll(firstResult, maxResults);
 
-            checkAnnotatedObjects(annotatedObjects);
+            checkAnnotatedObjects(annotatedObjects, groupNames);
 
             commitTransaction();
 
@@ -217,8 +256,12 @@ public class SanityChecker {
         } while (!annotatedObjects.isEmpty());
     }
 
-    protected static void checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck) {
-        RuleRunner.runAvailableRules(annotatedObjectsToCheck);
+    protected static void checkAnnotatedObjects(Collection<? extends AnnotatedObject> annotatedObjectsToCheck, String... groupNames) {
+        if (groupNames.length == 0) {
+            throw new IllegalArgumentException("No rule groups provided");
+        }
+
+        RuleRunner.runAvailableRules(annotatedObjectsToCheck, groupNames);
     }
 
 

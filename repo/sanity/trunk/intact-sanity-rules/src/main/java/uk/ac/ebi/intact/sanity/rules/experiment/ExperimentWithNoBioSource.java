@@ -10,8 +10,8 @@ import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +24,7 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule(target = Experiment.class)
-
+@SanityRule(target = Experiment.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
 public class ExperimentWithNoBioSource implements Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {

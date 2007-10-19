@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,8 +26,7 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule(target = Protein.class)
-
+@SanityRule(target = Protein.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
 public class ProteinIdentityCount implements Rule<Protein> {
 
     private static final String NO_UNIPROT_DESCRIPTION = "These Proteins have no xref identity to UniProt.";
