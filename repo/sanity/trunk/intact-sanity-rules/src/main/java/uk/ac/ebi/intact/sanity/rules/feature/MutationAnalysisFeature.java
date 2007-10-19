@@ -17,20 +17,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * Check that when feature type is mutation, the range is no longer than 2AA.
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule( target = Feature.class )
 
 public class MutationAnalysisFeature implements Rule<Feature> {
-
-    private static final String DESCRIPTION = "This/these Feature(s) are characterizing deletion of more then 2 " +
-                                              "amino-acid and have their CvFeatureIdentification set to " + CvFeatureIdentification.DELETION_ANALYSIS;
-    private static final String SUGGESTION = "";
 
     public Collection<GeneralMessage> check( Feature feature ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
