@@ -22,11 +22,11 @@ public enum MessageDefinition {
     /////////////////////////
     // Annotated Objects
 
-    ANNOTATION_WITH_WRONG_TOPIC( AnnotatedObject.class, ANNOTATED_OBJECT, 1, "Objects with annotation using hidden or obsolete CvTopic", WARNING ),
+    ANNOTATION_WITH_WRONG_TOPIC( AnnotatedObject.class, ANNOTATED_OBJECT, 1, "Objects with annotation using hidden or obsolete CvTopic", WARNING, "Check CVs and remap to allowed/current term" ),
 
-    BROKEN_URL( AnnotatedObject.class, ANNOTATED_OBJECT, 2, "Invalid URLs", WARNING ),
+    BROKEN_URL( AnnotatedObject.class, ANNOTATED_OBJECT, 2, "Invalid URLs", WARNING, "Update URL or remove if it cannot be remapped" ),
 
-    XREF_INVALID_PRIMARYID( AnnotatedObject.class, ANNOTATED_OBJECT, 3, "Xref primary ID not matching CvDatabase regular expression", ERROR ),
+    XREF_INVALID_PRIMARYID( AnnotatedObject.class, ANNOTATED_OBJECT, 3, "Xref primary ID not matching CvDatabase regular expression", ERROR, "Update Xref or request change to regular expression, as appropriate" ),
 
     ////////////////////////
     // BioSource
@@ -41,7 +41,8 @@ public enum MessageDefinition {
                                                   "Interaction detection method without annotation uniprot-de-export",
                                                   ERROR, "Add a uniprot-dr-export annotation" ),
 
-    TOPIC_WITHOUT_USED_IN_CLASS( CvTopic.class, CV, 2, "Topic without annotation 'used-in-class'", WARNING ),
+    TOPIC_WITHOUT_USED_IN_CLASS( CvTopic.class, CV, 2, "Topic without annotation 'used-in-class'", WARNING,
+                                 "Add 'used-in-class' if you wish to restrict which editors the term is visible in" ),
 
 
     ////////////////////////
@@ -63,18 +64,18 @@ public enum MessageDefinition {
     EXPERIMENT_TO_BE_REVIEWED( Experiment.class, EXPERIMENT, 7, "Experiment marked as 'To be reviewed'", INFO ),
 
     EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR,
-                               "Edit the experiment and add the primary-reference to pubmed"),
+                               "Edit the experiment and add the primary-reference to PubMed or a DOI if a PubMed is not available"),
 
     ////////////////////////
     // Feature
 
     FEATURE_WITHOUT_TYPE( Feature.class, FEATURE, 1, "A feature type is mandatory and was not found", ERROR,
-                          "Edit the feature and add a range"),
+                          "Edit the feature and add a type"),
 
     FEATURE_WITHOUT_RANGE( Feature.class, FEATURE, 2, "Feature without ranges specified", ERROR ),
 
-    FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Mutation feature with range longer than 2 amino acid",
-                                        WARNING, "Change the feature type to binding site (or child term)"),
+    FEATURE_DELETION_FEATURE_TOO_LONG ( Feature.class, FEATURE, 3, "Mutation feature longer than 2 amino-acids",
+                                        WARNING, "Change to binding site (or child term)"),
 
     ////////////////////////
     // Interaction
@@ -107,7 +108,8 @@ public enum MessageDefinition {
 
     NUC_ACID_IDENTITY_MISSING( NucleicAcid.class, NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref", ERROR ),
 
-    NUC_ACID_IDENTITY_MULTIPLE( NucleicAcid.class, NUCLEIC_ACID, 2, "Multiple identity xrefs for Nucleic Acid", ERROR );
+    NUC_ACID_IDENTITY_MULTIPLE( NucleicAcid.class, NUCLEIC_ACID, 2, "Multiple identity xrefs for Nucleic Acid", ERROR,
+                                "Correct to one of the following in the given order of preference -> EMBL genome sequence, Ensembl, FlyBase, GeneID");
 
     ////////////////////////
     // Instance variable
