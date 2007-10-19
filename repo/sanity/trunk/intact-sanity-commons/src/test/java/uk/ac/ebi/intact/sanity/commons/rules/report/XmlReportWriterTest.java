@@ -22,7 +22,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * TODO comment this
+ * XmlReportWriter tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

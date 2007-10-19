@@ -34,8 +34,8 @@
                     <ul>
                         <xsl:for-each select="sanity-report/sanity-result">
                             <li>
-                                <a href="#{description}">
-                                    <xsl:value-of select="description"/>
+                                <a href="#{key}">
+                                    [<xsl:value-of select="key"/>] &#160;<xsl:value-of select="description"/>
                                 </a>
                                 &#160;
                                 <strong>(<xsl:value-of select="count(insane-object)"/>)
@@ -45,18 +45,18 @@
                     </ul>
                     <xsl:for-each select="sanity-report/sanity-result">
                         <div style="display:block">
-                            <a id="{description}">
-                                <xsl:if test="level = 'MAJOR'">
+                            <a id="{key}">
+                                <xsl:if test="level = 'ERROR'">
                                     <h2 style="color:red">
                                         <xsl:value-of select="description"/>
                                     </h2>
                                 </xsl:if>
-                                <xsl:if test="level = 'NORMAL'">
+                                <xsl:if test="level = 'WARNING'">
                                     <h2 style="color:tomato">
                                         <xsl:value-of select="description"/>
                                     </h2>
                                 </xsl:if>
-                                <xsl:if test="level = 'MINOR'">
+                                <xsl:if test="level = 'INFO'">
                                     <h2 style="color:orange">
                                         <xsl:value-of select="description"/>
                                     </h2>

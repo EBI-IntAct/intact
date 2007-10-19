@@ -13,14 +13,16 @@
   <xs:element name="sanity-result">
     <xs:complexType>
       <xs:sequence>
+          <xs:element name="key" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="targetClass" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="description" type="xs:string" minOccurs="1" maxOccurs="1"/>
           <xs:element name="suggestion" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="level" minOccurs="1" maxOccurs="1">
               <xs:simpleType>
                   <xs:restriction base="xs:string">
-                      <xs:enumeration value="MAJOR"/>
-                      <xs:enumeration value="NORMAL"/>
-                      <xs:enumeration value="MINOR"/>
+                      <xs:enumeration value="ERROR"/>
+                      <xs:enumeration value="WARNING"/>
+                      <xs:enumeration value="INFO"/>
                   </xs:restriction>
               </xs:simpleType>
           </xs:element>

@@ -22,7 +22,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 /**
- * TODO comment this
+ * HtmlReportWriter tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -38,7 +38,7 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(85, lineCount);
+        Assert.assertEquals(91, lineCount);
     }
 
     @Test
@@ -50,7 +50,7 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(49, lineCount);
+        Assert.assertEquals(52, lineCount);
     }
 
     @Test
@@ -62,6 +62,6 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
 
         int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
 
-        Assert.assertEquals(85, lineCount);
+        Assert.assertEquals(91, lineCount);
     }
 }

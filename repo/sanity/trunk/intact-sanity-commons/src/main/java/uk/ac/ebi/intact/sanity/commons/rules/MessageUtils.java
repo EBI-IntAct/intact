@@ -28,6 +28,7 @@ import java.util.*;
  */
 public class MessageUtils {
 
+
     private MessageUtils() {}
 
     public static Map<String,Collection<GeneralMessage>> groupMessagesByKey(Collection<GeneralMessage> messages) {
@@ -65,24 +66,27 @@ public class MessageUtils {
 
         Map<String,Collection<GeneralMessage>> messagesByKey = MessageUtils.groupMessagesByKey(messages);
 
-        for (String description : messagesByKey.keySet()) {
-             Collection<GeneralMessage> messagesInDesc = messagesByKey.get(description);
+        for (String key : messagesByKey.keySet()) {
+             Collection<GeneralMessage> messagesforKey = messagesByKey.get(key);
 
              // use the first message to get the level and suggestion
-            GeneralMessage firstMessage = messagesInDesc.iterator().next();
+            GeneralMessage firstMessage = messagesforKey.iterator().next();
             MessageLevel level = firstMessage.getMessageDefinition().getLevel();
             String suggestion = firstMessage.getMessageDefinition().getSuggestion();
+            String description = firstMessage.getMessageDefinition().getDescription();
+            String target = firstMessage.getMessageDefinition().getTargetClass().getName();
 
             SanityResult sanityResult = new SanityResult();
+            sanityResult.setKey(key);
+            sanityResult.setTargetClass(target);
             sanityResult.setDescription(description);
             sanityResult.setLevel(level.toString());
             sanityResult.setSuggestion(suggestion);
             report.getSanityResult().add(sanityResult);
 
-            for (GeneralMessage message : messagesInDesc) {
+            for (GeneralMessage message : messagesforKey) {
                 sanityResult.getInsaneObject().add(message.getInsaneObject());
             }
-
         }
 
         return report;
