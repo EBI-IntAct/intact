@@ -5,9 +5,8 @@
  */
 package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.AnnotationMock;
 import uk.ac.ebi.intact.mocks.ProteinMock;
 import uk.ac.ebi.intact.mocks.cvTopics.UrlMock;
@@ -25,30 +24,10 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class AnnotationNotUsingAnAppropriateCvTopicTest extends TestCase {
+public class AnnotationNotUsingAnAppropriateCvTopicTest {
 
-   /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AnnotationNotUsingAnAppropriateCvTopicTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AnnotationNotUsingAnAppropriateCvTopicTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck()
+    @Test
+    public void check()
     {
         Protein protein = ProteinMock.getMock();
         Annotation url = AnnotationMock.getMock(UrlMock.getMock(),"http://www.ebi.uniprot.org/uniprot-srv/uniProtView.do?proteinId=AATM_RABIT&pager.offset=null");
@@ -57,7 +36,7 @@ public class AnnotationNotUsingAnAppropriateCvTopicTest extends TestCase {
         AnnotationNotUsingAnAppropriateCvTopic rule = new AnnotationNotUsingAnAppropriateCvTopic();
         try {
             Collection<GeneralMessage> messages =  rule.check(protein);
-            assertEquals(1,messages.size());
+            Assert.assertEquals(1,messages.size());
         } catch (SanityRuleException e) {
             e.printStackTrace();
         }

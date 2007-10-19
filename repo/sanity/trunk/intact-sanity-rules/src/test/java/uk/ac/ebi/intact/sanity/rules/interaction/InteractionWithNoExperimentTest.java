@@ -5,14 +5,13 @@
  */
 package uk.ac.ebi.intact.sanity.rules.interaction;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
@@ -23,31 +22,11 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class InteractionWithNoExperimentTest extends TestCase {
+public class InteractionWithNoExperimentTest {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public InteractionWithNoExperimentTest( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( InteractionWithNoExperimentTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
         InteractionWithNoExperiment rule = new InteractionWithNoExperiment();
         Collection<GeneralMessage> messages =  rule.check(interaction);
@@ -58,8 +37,7 @@ public class InteractionWithNoExperimentTest extends TestCase {
         messages =  rule.check(interaction);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(InteractionWithNoExperiment.getDescription(), message.getDescription());
-            assertEquals(InteractionWithNoExperiment.getSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, message.getMessageDefinition());
         }
         
     }

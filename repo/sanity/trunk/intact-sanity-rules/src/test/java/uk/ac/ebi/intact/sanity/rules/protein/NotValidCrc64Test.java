@@ -5,13 +5,12 @@
  */
 package uk.ac.ebi.intact.sanity.rules.protein;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
@@ -22,29 +21,10 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class NotValidCrc64Test extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public NotValidCrc64Test ( String testName )
-    {
-        super( testName );
-    }
+public class NotValidCrc64Test {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( NotValidCrc64Test.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         
         Protein protein = P08050Mock.getMock();
         NotValidCrc64 rule = new NotValidCrc64();
@@ -55,8 +35,7 @@ public class NotValidCrc64Test extends TestCase {
         messages = rule.check(protein);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(NotValidCrc64.getDescription(), message.getDescription());
-            assertEquals(NotValidCrc64.getSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.PROTEIN_INCORRECT_CRC64, message.getMessageDefinition());
         }
 
 

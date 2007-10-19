@@ -5,17 +5,16 @@
  */
 package uk.ac.ebi.intact.sanity.rules.protein;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.UniprotMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.proteins.P08050Mock;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,29 +26,10 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class ProteinIdentityCountTest extends TestCase {
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public ProteinIdentityCountTest( String testName )
-    {
-        super( testName );
-    }
+public class ProteinIdentityCountTest {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( ProteinIdentityCountTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
 
         Protein protein = P08050Mock.getMock();
         ProteinIdentityCount rule = new ProteinIdentityCount();
@@ -61,16 +41,14 @@ public class ProteinIdentityCountTest extends TestCase {
         messages = rule.check(protein);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(ProteinIdentityCount.getMultipleIdentityDescription(), message.getDescription());
-            assertEquals(ProteinIdentityCount.getMultipleIdentitySuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF, message.getMessageDefinition());
         }
 
         protein.setXrefs(new ArrayList<InteractorXref>());
         messages = rule.check(protein);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(ProteinIdentityCount.getNoUniprotDescription(), message.getDescription());
-            assertEquals(ProteinIdentityCount.getNoUniprotSuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.PROTEIN_UNIPROT_NO_XREF, message.getMessageDefinition());
         }
     }
 

@@ -5,9 +5,9 @@
  */
 package uk.ac.ebi.intact.sanity.rules.nucleicacid;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.DDBJMock;
 import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
@@ -15,8 +15,8 @@ import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.mocks.nucleicAcids.AnfRatGeneMock;
 import uk.ac.ebi.intact.model.InteractorXref;
 import uk.ac.ebi.intact.model.NucleicAcid;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,31 +28,11 @@ import java.util.Collection;
  * @version $Id$
  * @since TODO
  */
-public class NucleicAcidIdentityTest extends TestCase {
+public class NucleicAcidIdentityTest {
 
 
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public NucleicAcidIdentityTest ( String testName )
-    {
-        super( testName );
-    }
-
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( NucleicAcidIdentityTest.class );
-    }
-
-    /**
-     * Rigourous Test :-)
-     */
-    public void testCheck() throws SanityRuleException {
+    @Test
+    public void check() throws Exception {
         /***************************************************************
          Test with a right Nucleic Acid that has one identity to DDBJ
         ****************************************************************/
@@ -69,8 +49,7 @@ public class NucleicAcidIdentityTest extends TestCase {
         messages = rule.check(na);
         assertEquals(1, messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(NucleicAcidIdentity.getMultipleIdentityDescription(), message.getDescription());
-            assertEquals(NucleicAcidIdentity.getMultipleIdentitySuggestion(), message.getProposedSolution());
+            assertEquals(MessageDefinition.NUC_ACID_IDENTITY_MULTIPLE, message.getMessageDefinition());
         }
 
         /***************************************************************
@@ -85,12 +64,10 @@ public class NucleicAcidIdentityTest extends TestCase {
         boolean hasNotAllowedIdentity = false;
         boolean hasNoIdentity = false;
         for(GeneralMessage message : messages){
-            if(NucleicAcidIdentity.getNonAllowedIdentityDescription().equals(message.getDescription())){
-                assertEquals(NucleicAcidIdentity.getNonAllowedIdentitySuggestion(),message.getProposedSolution());
+            if(MessageDefinition.NUC_ACID_IDENTITY_INVALID_DB == message.getMessageDefinition()){
                 hasNotAllowedIdentity = true;
             }
-            else if(NucleicAcidIdentity.getNoIdentityDescription().equals(message.getDescription())){
-                assertEquals(NucleicAcidIdentity.getNoIdentitySuggestion(),message.getProposedSolution());
+            else if(MessageDefinition.NUC_ACID_IDENTITY_MISSING == message.getMessageDefinition()){
                 hasNoIdentity = true;
             }
         }
@@ -105,8 +82,7 @@ public class NucleicAcidIdentityTest extends TestCase {
         messages = rule.check(na);
         assertEquals(1,messages.size());
         for(GeneralMessage message : messages){
-            assertEquals(NucleicAcidIdentity.getNoIdentityDescription(),message.getDescription());
-            assertEquals(NucleicAcidIdentity.getNoIdentitySuggestion(),message.getProposedSolution());
+            assertEquals(MessageDefinition.NUC_ACID_IDENTITY_MISSING,message.getMessageDefinition());
         }
 
     }
