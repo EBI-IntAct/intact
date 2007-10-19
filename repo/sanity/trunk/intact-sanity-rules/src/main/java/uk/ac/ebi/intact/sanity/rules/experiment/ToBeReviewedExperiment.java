@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +25,7 @@ import java.util.Collection;
  * @since 2.0.0
  */
 
-@SanityRule(target = Experiment.class)
-
+@SanityRule(target = Experiment.class, group = RuleGroup.INTACT )
 public class ToBeReviewedExperiment implements Rule<Experiment> {
 
     // TODO what about experiments imported through IMEx ?

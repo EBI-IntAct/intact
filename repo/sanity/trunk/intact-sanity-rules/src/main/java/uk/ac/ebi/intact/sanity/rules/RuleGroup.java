@@ -13,23 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.sanity.commons.rules;
-
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
-
-import java.util.Arrays;
-import java.util.Collection;
+package uk.ac.ebi.intact.sanity.rules;
 
 /**
- * TODO comment this
+ * Constants used to define the default groups
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class SimpleRule implements Rule<Experiment> {
+public interface RuleGroup {
 
-    public Collection<GeneralMessage> check(Experiment intactObject) throws SanityRuleException {
-        return Arrays.asList(new GeneralMessage(MessageDefinition.BROKEN_URL, intactObject));
-    }
+    /**
+     * Used in rules that apply to Intact curation standards.
+     */
+    static final String INTACT = "intact";
+
+    /**
+     * Used in rules that require database access.
+     */
+    static final String INTACT_DB = "intact_db";
+
+    /**
+     * User in rules that apply to IMEx standards
+     */
+    static final String IMEX = "imex";
+
 }

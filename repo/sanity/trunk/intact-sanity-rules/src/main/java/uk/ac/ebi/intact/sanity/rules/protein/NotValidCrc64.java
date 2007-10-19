@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 import uk.ac.ebi.intact.util.Crc64;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ import java.util.Collection;
  * @since TODO
  */
 
-@SanityRule(target = Protein.class)
-
+@SanityRule(target = Protein.class, group = RuleGroup.INTACT )
 public class NotValidCrc64 implements Rule<Protein> {
 
     public Collection<GeneralMessage> check(Protein protein) throws SanityRuleException {

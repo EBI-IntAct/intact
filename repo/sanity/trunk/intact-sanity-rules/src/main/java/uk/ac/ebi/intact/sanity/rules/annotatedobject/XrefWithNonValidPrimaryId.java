@@ -6,6 +6,7 @@ import uk.ac.ebi.intact.sanity.commons.Field;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +18,7 @@ import java.util.Collection;
  * @version $Id$
  */
 
-@SanityRule (target = AnnotatedObject.class)
-
+@SanityRule (target = AnnotatedObject.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
 public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
 
     public Collection<GeneralMessage> check(AnnotatedObject<?,?> intactObject) throws SanityRuleException {

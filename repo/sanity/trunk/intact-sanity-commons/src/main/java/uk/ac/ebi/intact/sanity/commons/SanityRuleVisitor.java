@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * TODO comment this
@@ -66,10 +67,16 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
             name = classDeclaration.getSimpleName();
         }
 
+        String[] groups = sanityRule.group();
+
         DeclaredRule rule = new DeclaredRule();
         rule.setRuleClass(ruleClassName);
         rule.setTargetClass(targetClassName);
         rule.setRuleName(name);
+
+        DeclaredRule.Groups ruleGroups = new DeclaredRule.Groups();
+        ruleGroups.getGroup().addAll(Arrays.asList(groups));
+        rule.setGroups(ruleGroups);
 
         rules.add(rule);
     }

@@ -3,5 +3,17 @@
         <rule-name>TEST_RULE</rule-name>
         <rule-class>uk.ac.ebi.intact.sanity.commons.rules.SimpleRule</rule-class>
         <target-class>uk.ac.ebi.intact.model.Experiment</target-class>
+        <groups>
+            <group>group1</group>
+        </groups>
+    </declared-rule>
+    <declared-rule>
+        <rule-name>TEST_RULE_2</rule-name>
+        <rule-class>uk.ac.ebi.intact.sanity.commons.rules.SimpleRule2</rule-class>
+        <target-class>uk.ac.ebi.intact.model.Protein</target-class>
+        <groups>
+            <group>group1</group>
+            <group>group2</group>
+        </groups>
     </declared-rule>
 </declared-rules>

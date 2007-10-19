@@ -23,9 +23,7 @@ public @interface SanityRule {
 
     Class target();
 
-    //String key();
+    String[] group();
 
     String name() default "";
-
-    //boolean requiresDatabase() default false;
 }

@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.Protein;
 
 /**
  * TODO comment this
@@ -34,11 +35,16 @@ public class DeclaredRuleManagerTest extends IntactBasicTestCase {
     public void runAvailable_default() throws Exception {
         DeclaredRuleManager manager = DeclaredRuleManager.getInstance();
 
-        Assert.assertEquals(1, manager.getAvailableDeclaredRules().size());
-        Assert.assertEquals(1, manager.getAvailableTargetClasses().size());
+        Assert.assertEquals(2, manager.getAvailableDeclaredRules().size());
+        Assert.assertEquals(2, manager.getAvailableTargetClasses().size());
+        Assert.assertEquals(2, manager.getAvailableGroups().size());
         Assert.assertEquals(1, manager.getDeclaredRulesForTarget(Experiment.class).size());
+        Assert.assertEquals(1, manager.getDeclaredRulesForTarget(Protein.class).size());
         Assert.assertEquals(0, manager.getDeclaredRulesForTarget(AnnotatedObject.class).size());
         Assert.assertEquals(0, manager.getDeclaredRulesForTarget(BioSource.class).size());
+        Assert.assertEquals(2, manager.getDeclaredRulesForGroup("group1").size());
+        Assert.assertEquals(1, manager.getDeclaredRulesForTarget(Experiment.class, "group1").size());
+        Assert.assertEquals(1, manager.getDeclaredRulesForGroup("group2").size());
 
         DeclaredRuleManager.close();
     }

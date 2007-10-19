@@ -11,6 +11,7 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,8 +26,7 @@ import java.util.Map;
  * @since 2.0
  */
 
-@SanityRule(target = AnnotatedObject.class)
-
+@SanityRule(target = AnnotatedObject.class, group = RuleGroup.INTACT)
 public class AnnotationNotUsingAnAppropriateCvTopic implements Rule<AnnotatedObject> {
 
     private static Map<String,Annotation> CACHE = new HashMap<String,Annotation>();

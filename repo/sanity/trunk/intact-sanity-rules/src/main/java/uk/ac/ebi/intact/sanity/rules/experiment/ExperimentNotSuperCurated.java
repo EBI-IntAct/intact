@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import uk.ac.ebi.intact.sanity.commons.rules.Rule;
+import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
 import java.util.*;
 
@@ -23,8 +24,7 @@ import java.util.*;
  * @since 2.0.0
  */
 
-@SanityRule(target = Experiment.class)
-
+@SanityRule(target = Experiment.class, group = RuleGroup.INTACT )
 public class ExperimentNotSuperCurated  implements Rule<Experiment> {
 
     private static final Date startingDateSuperCuration;
