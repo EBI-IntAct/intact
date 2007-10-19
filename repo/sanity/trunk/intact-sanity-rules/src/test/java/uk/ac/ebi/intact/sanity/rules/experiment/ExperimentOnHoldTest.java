@@ -5,43 +5,103 @@
  */
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
+import org.junit.After;
 import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.mocks.AnnotationMock;
-import uk.ac.ebi.intact.mocks.cvTopics.OnHoldMock;
-import uk.ac.ebi.intact.mocks.experiments.ButkevitchMock;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.core.util.SchemaUtils;
 import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 
 import java.util.Collection;
 
 /**
  * TODO comment this
  *
- * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Bruno Aranda
  * @version $Id$
- * @since TODO
  */
-public class ExperimentOnHoldTest {
+public class ExperimentOnHoldTest extends IntactBasicTestCase {
+
+    @Before
+    public void before() throws Exception {
+        SchemaUtils.createSchema();
+    }
+
+    @After
+    public void after() throws Exception {
+        commitTransaction();
+    }
+    
+    @Test
+    public void check_notOnHold() throws Exception {
+        Experiment experiment = getMockBuilder().createExperimentEmpty();
+
+        ExperimentOnHold rule = new ExperimentOnHold();
+        beginTransaction();
+        Collection<GeneralMessage> messages = rule.check(experiment);
+        commitTransaction();
+
+        assertEquals(0, messages.size());
+    }
+    
+    @Test
+    public void check_onHold() throws Exception {
+        Experiment experiment = getMockBuilder().createExperimentEmpty();
+        Annotation annotation = getMockBuilder().createAnnotation("", "IA:0", CvTopic.ON_HOLD);
+        experiment.addAnnotation(annotation);
+
+        ExperimentOnHold rule = new ExperimentOnHold();
+        beginTransaction();
+        Collection<GeneralMessage> messages = rule.check(experiment);
+        commitTransaction();
+
+        assertEquals(1, messages.size());
+    }
 
     @Test
-    public void check() throws Exception {
-        ExperimentOnHold rule = new ExperimentOnHold();
+    public void check_notOnHold_checkingPubmed() throws Exception {
+        Experiment experiment = getMockBuilder().createExperimentEmpty("lala-2005-1", "1234");
 
-        // Give the check method an experiment without on-hold annotation and make sure that it returns no message.
-        Experiment experiment = ButkevitchMock.getMock();
-        Collection<GeneralMessage> messages =  rule.check(experiment);
-        assertEquals(0,messages.size());
+        PersisterHelper.saveOrUpdate(experiment);
 
-        // Give the check method an experiment with 1 on-hold annotation and make sure that it returns 1 message
-        Annotation annotation = AnnotationMock.getMock(OnHoldMock.getMock(),"waiting for data" );
+        Experiment exp2 = getMockBuilder().createExperimentEmpty("br-2009-1", "4321");
+        Annotation annotation = getMockBuilder().createAnnotation("", "IA:0", CvTopic.ON_HOLD);
         experiment.addAnnotation(annotation);
-        messages =  rule.check(experiment);
-        assertEquals(1,messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.EXPERIMENT_ON_HOLD, message.getMessageDefinition());
-        }
+
+        PersisterHelper.saveOrUpdate(exp2);
+
+        ExperimentOnHold rule = new ExperimentOnHold();
+        beginTransaction();
+        Experiment refreshedExp = getDaoFactory().getExperimentDao().getByShortLabel("lala-2005-1");
+        Collection<GeneralMessage> messages = rule.check(refreshedExp);
+        commitTransaction();
+
+        assertEquals(0, messages.size());
+    }
+
+    @Test
+    public void check_onHold_checkingPubmed() throws Exception {
+        Experiment experiment = getMockBuilder().createExperimentEmpty("lala-2005-1", "1234");
+
+        PersisterHelper.saveOrUpdate(experiment);
+
+        Experiment exp2 = getMockBuilder().createExperimentEmpty("lala-2005-4", "1234");
+        Annotation annotation = getMockBuilder().createAnnotation("", "IA:0", CvTopic.ON_HOLD);
+        exp2.addAnnotation(annotation);
+
+        PersisterHelper.saveOrUpdate(exp2);
+
+        ExperimentOnHold rule = new ExperimentOnHold();
+        beginTransaction();
+        Experiment refreshedExp = getDaoFactory().getExperimentDao().getByShortLabel("lala-2005-1");
+        Collection<GeneralMessage> messages = rule.check(refreshedExp);
+        commitTransaction();
+
+        assertEquals(1, messages.size());
     }
 }
