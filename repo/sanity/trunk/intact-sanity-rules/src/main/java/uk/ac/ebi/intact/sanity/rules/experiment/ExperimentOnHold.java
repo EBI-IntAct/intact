@@ -6,13 +6,12 @@
 package uk.ac.ebi.intact.sanity.rules.experiment;
 
 import uk.ac.ebi.intact.model.Experiment;
+import uk.ac.ebi.intact.model.util.ExperimentUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
-import uk.ac.ebi.intact.sanity.commons.rules.Rule;
-import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
-import uk.ac.ebi.intact.sanity.rules.util.CommonMethods;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,7 +30,7 @@ public class ExperimentOnHold implements Rule<Experiment> {
 
     public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
-        if(CommonMethods.isOnHold(experiment)){
+        if(ExperimentUtils.isOnHold(experiment)){
             messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_ON_HOLD, experiment));
         }
         return messages;
