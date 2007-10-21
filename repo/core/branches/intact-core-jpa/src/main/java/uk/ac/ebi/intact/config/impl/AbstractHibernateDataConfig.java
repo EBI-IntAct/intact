@@ -11,9 +11,9 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
+import org.hibernate.ejb.Ejb3Configuration;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.ConfigurationException;
 import uk.ac.ebi.intact.config.DataConfig;
@@ -22,8 +22,6 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.persistence.util.ImportFromClasspathEntityResolver;
 import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
@@ -42,16 +40,16 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Configuration> {
+public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Ejb3Configuration> {
 
     private static final Log log = LogFactory.getLog( AbstractHibernateDataConfig.class );
 
     private static final String INTERCEPTOR_CLASS = "hibernate.util.interceptor_class";
     private static final String NOT_DEFINED_JDBC_DRIVER = "NOT_DEFINED";
 
-    private Configuration configuration;
+    private Ejb3Configuration configuration;
 
-    private SessionFactory sessionFactory;
+    private EntityManagerFactory entityManagerFactory;
 
     private List<String> packagesWithEntities;
 
@@ -96,7 +94,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 for ( Class clazz : annotatedClasses ) {
                     if (!getExcludedEntities().contains(clazz.getName())) {
                         if (log.isDebugEnabled())log.debug( "Adding annotated class to hibernate: " + clazz.getName() );
-                        ( ( AnnotationConfiguration ) configuration ).addAnnotatedClass( clazz );
+                        ( configuration ).addAnnotatedClass( clazz );
                     } else {
                         if (log.isDebugEnabled()) log.debug( "Excluded entity: "+clazz.getName());
                     }
@@ -126,15 +124,15 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                 log.info( "Reading from config file: " + cfgFile );
 
                 try {
-                    configuration.configure( cfgFile );
+                    configuration.getHibernateConfiguration().configure(cfgFile);
                 }
                 catch ( Throwable t ) {
-                    throw new ConfigurationException( "Couldn't configure hibernate using file: " + cfgFile );
+                    throw new ConfigurationException( "Couldn't configure hibernate using file: " + cfgFile, t );
                 }
             } else {
                 log.info( "Reading from default config file" );
                 try {
-                    configuration.configure();
+                    configuration.configure( "intact-core-nofile" );
                 }
                 catch ( Throwable t ) {
                     throw new ConfigurationException( "Couldn't configure hibernate using default file", t );
@@ -144,20 +142,20 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             // Set global interceptor from configuration
             setInterceptor( configuration, null );
 
-            log.debug( "Session is webapp: " + getSession().isWebapp() + " / SessionFactory name: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+            log.debug( "Session is webapp: " + getSession().isWebapp() + " / SessionFactory name: " + configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) );
 
             checkConfiguration( configuration );
 
-            if ( getSession().isWebapp() && configuration.getProperty( Environment.SESSION_FACTORY_NAME ) != null ) {
+            if ( getSession().isWebapp() && configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) != null ) {
                 // Let Hibernate bind the factory to JNDI
-                log.debug( "Building webapp sessionFactory: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
-                configuration.buildSessionFactory();
+                log.debug( "Building webapp sessionFactory: " + configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) );
+                configuration.buildEntityManagerFactory();
             } else {
                 // or use static variable handling
                 configuration.getProperties().remove( Environment.SESSION_FACTORY_NAME );
 
                 log.debug( "Building standalone sessionFactory" );
-                sessionFactory = configuration.buildSessionFactory();
+                entityManagerFactory = configuration.buildEntityManagerFactory();
             }
 
         }
@@ -169,11 +167,11 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         setInitialized( true );
     }
 
-    private void checkConfiguration( Configuration config ) throws ConfigurationException {
+    private void checkConfiguration( Ejb3Configuration config ) throws ConfigurationException {
         String hibernateFile = ( getConfigFile() != null ) ? getConfigFile().toString() :
                                AbstractHibernateDataConfig.class.getResource( "/hibernate.cfg.xml" ).getFile();
 
-        String driver = config.getProperty( Environment.DRIVER );
+        String driver = config.getHibernateConfiguration().getProperty( Environment.DRIVER );
 
         if ( driver.equals( NOT_DEFINED_JDBC_DRIVER ) ) {
             try {
@@ -186,7 +184,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         }
     }
 
-    private String configPropertiesDump( Configuration config ) throws IOException {
+    private String configPropertiesDump( Ejb3Configuration config ) throws IOException {
         StringWriter writer = new StringWriter();
         PrintWriter pWriter = new PrintWriter( writer );
 
@@ -208,19 +206,22 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     }
 
     @Override
+    @Deprecated
     public SessionFactory getSessionFactory() {
+        /*
         if ( sessionFactory != null ) {
             return sessionFactory;
         }
 
         if ( getSession().isWebapp() ) {
             try {
-                getConfiguration().configure(getConfigFile());
-                String sessionFactoryName = configuration.getProperty( Environment.SESSION_FACTORY_NAME );
+                getConfiguration().addFile(getConfigFile());
+                getConfiguration().buildEntityManagerFactory();
+                String sessionFactoryName = configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME );
                 log.debug( "Looking up sessionFactory from JNDI: " + sessionFactoryName );
 
                 if ( sessionFactoryName != null ) {
-                    sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                    sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME ) );
 
                     setInitialized( true );
                 }
@@ -231,7 +232,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
                            "with a different classloader" );
             }
             catch ( NamingException ne ) {
-                log.debug( "SessionFactory not found in JNDI: " + configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                log.debug( "SessionFactory not found in JNDI: " + configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) );
             }
         }
 
@@ -243,7 +244,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             }
 
             try {
-                sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getProperty( Environment.SESSION_FACTORY_NAME ) );
+                sessionFactory = ( SessionFactory ) new InitialContext().lookup( configuration.getHibernateConfiguration().getProperty( Environment.SESSION_FACTORY_NAME ) );
             }
             catch ( NamingException e ) {
                 throw new IntactException( "SessionFactory could not be retrieved from JNDI: " + Environment.SESSION_FACTORY_NAME );
@@ -251,22 +252,26 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         }
 
         return sessionFactory;
+        */
+        return ((HibernateEntityManagerFactory)getEntityManagerFactory()).getSessionFactory();
     }
 
     public EntityManagerFactory getEntityManagerFactory() {
-        throw new UnsupportedOperationException();
+        return entityManagerFactory;
     }
 
+    @Deprecated
     public void closeSessionFactory() {
-        if ( sessionFactory != null ) {
-            sessionFactory.close();
-        }
+        closeEntityManagerFactory();
     }
 
-    @Override
-    public Configuration getConfiguration() {
+    public void closeEntityManagerFactory() {
+        entityManagerFactory.close();
+    }
+
+    public Ejb3Configuration getConfiguration() {
         if ( configuration == null ) {
-            configuration = new AnnotationConfiguration();
+            configuration = new Ejb3Configuration();
         }
 
         return configuration;
@@ -288,8 +293,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
      * Either sets the given interceptor on the configuration or looks
      * it up from configuration if null.
      */
-    private void setInterceptor( Configuration configuration, Interceptor interceptor ) {
-        String interceptorName = configuration.getProperty( INTERCEPTOR_CLASS );
+    private void setInterceptor( Ejb3Configuration configuration, Interceptor interceptor ) {
+        String interceptorName = configuration.getHibernateConfiguration().getProperty( INTERCEPTOR_CLASS );
         if ( interceptor == null && interceptorName != null ) {
             try {
                 Class interceptorClass =
@@ -307,7 +312,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
     }
 
     public void flushSession() {
-        sessionFactory.getCurrentSession().flush();
+        getSessionFactory().getCurrentSession().flush();
     }
 
     public boolean isConfigurable() {
