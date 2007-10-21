@@ -32,7 +32,7 @@ public class StandardCoreDataConfigTest {
 
         assertEquals(StandardCoreDataConfig.NAME, IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getName());
         assertEquals(1, IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().countAll());
-
+        
         IntactContext.getCurrentInstance().close();
     }
 

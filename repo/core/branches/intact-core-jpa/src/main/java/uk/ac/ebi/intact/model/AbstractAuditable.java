@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.model;
 
+import uk.ac.ebi.intact.model.event.IntactObjectEventListener;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -25,6 +27,7 @@ import java.util.Date;
  * @version $Id$
  */
 @MappedSuperclass
+@EntityListeners(value = {IntactObjectEventListener.class})
 public abstract class AbstractAuditable implements Auditable {
 
     ///////////////////////////////////////
@@ -52,19 +55,6 @@ public abstract class AbstractAuditable implements Auditable {
 
 
     public AbstractAuditable() {
-    }
-
-    @PrePersist
-    public void beforePersisting() {
-        if (created == null) {
-            created = new Date();
-        }
-        updated = new Date();
-    }
-
-    @PreUpdate
-    public void beforeUpdating() {
-        updated = new Date();
     }
 
     @Temporal( value = TemporalType.TIMESTAMP )
