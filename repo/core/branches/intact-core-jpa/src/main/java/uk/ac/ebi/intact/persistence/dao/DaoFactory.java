@@ -252,8 +252,8 @@ public class DaoFactory implements Serializable {
             if (log.isDebugEnabled()) log.debug("Committing transaction");
 
             currentEntityManager.getTransaction().commit();
-            currentTransaction = null;
             currentEntityManager.close();
+            currentTransaction = null;
         } else {
             if (log.isWarnEnabled()) log.warn("Attempted commit on a transaction that was not active");
         }

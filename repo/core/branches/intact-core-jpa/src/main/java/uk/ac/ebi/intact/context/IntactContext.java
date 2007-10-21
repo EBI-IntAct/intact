@@ -4,12 +4,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.config.IntactPersistence;
 import uk.ac.ebi.intact.config.impl.*;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Institution;
 
-import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -54,7 +52,7 @@ public class IntactContext implements Serializable {
     }
 
     public static void initStandaloneContext() {
-        initContext( (EntityManagerFactory)null, new StandaloneSession() );
+        initContext( (String)null, new StandaloneSession() );
     }
 
     public static void initStandaloneContext(File hibernateFile) {
@@ -69,12 +67,12 @@ public class IntactContext implements Serializable {
         initContext( dataConfig, session );
     }
 
-    public static void initContext( EntityManagerFactory entityManagerFactory, IntactSession session ) {
+    public static void initContext( String persistenceUnitName, IntactSession session ) {
         DataConfig dataConfig;
 
-        if (entityManagerFactory != null) {
-            entityManagerFactory = IntactPersistence.createEntityManagerFactoryInMemory();
-            dataConfig = new JpaCoreDataConfig(session, entityManagerFactory);
+        if (persistenceUnitName != null) {
+            persistenceUnitName = "intact-core-mem";
+            dataConfig = new JpaCoreDataConfig(session, persistenceUnitName);
         } else {
             dataConfig = calculateDefaultDataConfig(session);
         }

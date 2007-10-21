@@ -59,7 +59,7 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
         return Arrays.asList("uk.ac.ebi.intact.model.SearchItem");
     }
 
-    @Override
+    @Override                             
     public Ejb3Configuration getConfiguration() {
         Ejb3Configuration configuration = super.getConfiguration();
 

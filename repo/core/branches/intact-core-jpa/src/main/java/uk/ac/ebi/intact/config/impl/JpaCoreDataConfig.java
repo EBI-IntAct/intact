@@ -15,9 +15,11 @@
  */
 package uk.ac.ebi.intact.config.impl;
 
+import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManagerFactory;
+import java.util.Map;
 
 /**
  * This configuration uses a memory database (H2)
@@ -29,20 +31,39 @@ public class JpaCoreDataConfig extends AbstractJpaDataConfig {
 
     public static final String NAME = "uk.ac.ebi.intact.config.JPA_CORE";
 
+    private String persistenceUnitName;
     private EntityManagerFactory entityManagerFactory;
+    private Ejb3Configuration configuration;
 
-    public JpaCoreDataConfig(IntactSession session, EntityManagerFactory entityManagerFactory) {
+    public JpaCoreDataConfig(IntactSession session, String persistenceUnitName) {
         super(session);
-        this.entityManagerFactory = entityManagerFactory;
+        this.persistenceUnitName = persistenceUnitName;
     }
 
     @Deprecated
     public EntityManagerFactory getSessionFactory() {
-        return entityManagerFactory;
+        return getEntityManagerFactory();
     }
 
     public EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
+            entityManagerFactory = buildEntityManagerFactory(null);
+        }
         return entityManagerFactory;
+    }
+
+    protected EntityManagerFactory buildEntityManagerFactory(Map props) {
+        configuration = new Ejb3Configuration();
+        configuration = configuration.configure(persistenceUnitName, props);
+        return configuration.buildEntityManagerFactory();
+    }
+
+    public Ejb3Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public String getPersistenceUnitName() {
+        return persistenceUnitName;
     }
 
     @Override

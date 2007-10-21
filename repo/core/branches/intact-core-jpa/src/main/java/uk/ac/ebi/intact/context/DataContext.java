@@ -74,6 +74,10 @@ public class DataContext implements Serializable {
     public void commitTransaction( String dataConfigName ) throws IntactTransactionException {
         DaoFactory daoFactory = getDaoFactory( dataConfigName );
 
+        if (log.isDebugEnabled()) {
+           log.debug( "Committing transaction for: " + dataConfigName );
+        }
+
         daoFactory.commitTransaction();
         /*
         if ( daoFactory.isTransactionActive() ) {

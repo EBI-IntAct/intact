@@ -23,18 +23,13 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.ejb.Ejb3Configuration;
-import org.hibernate.ejb.HibernateEntityManagerFactory;
-import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
-import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 
-import javax.persistence.EntityManagerFactory;
-import java.lang.reflect.Field;
 import java.util.Properties;
 
 /**
@@ -58,7 +53,7 @@ public class SchemaUtils {
      * @return an array containing the SQL statements
      */
     public static String[] generateCreateSchemaDDL(String dialect) {
-        Ejb3Configuration ejb3Cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        Ejb3Configuration ejb3Cfg = (Ejb3Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
         Configuration cfg = ejb3Cfg.getHibernateConfiguration();
 
         Properties props = new Properties();
@@ -144,18 +139,10 @@ public class SchemaUtils {
     }
 
     protected static SchemaExport newSchemaExport() {
-        EntityManagerFactory entityManagerFactory = IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getEntityManagerFactory();
-        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) ((HibernateEntityManagerFactory)entityManagerFactory).getSessionFactory();
-
-        SchemaExport se =  null;
-        try {
-            Field schemaExportField = sessionFactoryImpl.getClass().getDeclaredField("schemaExport");
-            schemaExportField.setAccessible(true);
-            se = (SchemaExport) schemaExportField.get(sessionFactoryImpl);
-        }
-        catch (Exception e) {
-            throw new IntactException("Problem creating SchemaExport", e);
-        }
+        Ejb3Configuration ejb3Config = (Ejb3Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
+        Configuration config = ejb3Config.getHibernateConfiguration();
+        
+        SchemaExport se =  new SchemaExport(config);
         return se;
     }
 
