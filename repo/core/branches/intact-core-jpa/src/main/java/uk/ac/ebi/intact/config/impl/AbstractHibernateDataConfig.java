@@ -133,7 +133,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
             } else {
                 log.info( "Reading from default config file" );
                 try {
-                    configuration.configure( "intact-core-nofile" );
+                    configuration.getHibernateConfiguration().configure();
                 }
                 catch ( Throwable t ) {
                     throw new ConfigurationException( "Couldn't configure hibernate using default file", t );
@@ -145,12 +145,12 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
 
             log.debug( "Session is webapp: " + getSession().isWebapp() + " / SessionFactory name: " + configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) );
 
-            checkConfiguration( configuration );
+            checkConfiguration( configuration.getHibernateConfiguration() );
 
             if ( getSession().isWebapp() && configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) != null ) {
                 // Let Hibernate bind the factory to JNDI
                 log.debug( "Building webapp sessionFactory: " + configuration.getProperties().get( Environment.SESSION_FACTORY_NAME ) );
-                configuration.buildEntityManagerFactory();
+                entityManagerFactory = configuration.buildEntityManagerFactory();
             } else {
                 // or use static variable handling
                 configuration.getProperties().remove( Environment.SESSION_FACTORY_NAME );
@@ -168,11 +168,11 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         setInitialized( true );
     }
 
-    private void checkConfiguration( Ejb3Configuration config ) throws ConfigurationException {
+    private void checkConfiguration( Configuration config ) throws ConfigurationException {
         String hibernateFile = ( getConfigFile() != null ) ? getConfigFile().toString() :
-                               AbstractHibernateDataConfig.class.getResource( "/hibernate.cfg.xml" ).getFile();
+                               Thread.currentThread().getContextClassLoader().getResource( "/hibernate.cfg.xml" ).getFile();
 
-        String driver = config.getHibernateConfiguration().getProperty( Environment.DRIVER );
+        String driver = config.getProperty( Environment.DRIVER );
 
         if ( driver.equals( NOT_DEFINED_JDBC_DRIVER ) ) {
             try {
@@ -185,7 +185,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         }
     }
 
-    private String configPropertiesDump( Ejb3Configuration config ) throws IOException {
+    private String configPropertiesDump( Configuration config ) throws IOException {
         StringWriter writer = new StringWriter();
         PrintWriter pWriter = new PrintWriter( writer );
 

@@ -18,6 +18,7 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.FlushModeType;
 import java.io.Serializable;
@@ -262,7 +263,18 @@ public class DaoFactory implements Serializable {
     public EntityManager getEntityManager() {
             if (currentEntityManager == null || !currentEntityManager.isOpen()) {
                 if (log.isDebugEnabled()) log.debug("Creating new EntityManager");
-                currentEntityManager = dataConfig.getEntityManagerFactory().createEntityManager();
+
+                if (dataConfig == null) {
+                    throw new IllegalStateException("No DataConfig found");
+                }
+
+                EntityManagerFactory entityManagerFactory = dataConfig.getEntityManagerFactory();
+
+                if (entityManagerFactory == null) {
+                    throw new IllegalStateException("Null EntityManagerFactory for DataConfig with name: "+dataConfig.getName());
+                }
+
+                currentEntityManager = entityManagerFactory.createEntityManager();
 
                 if (!dataConfig.isAutoFlush()) {
                     if (log.isDebugEnabled()) log.debug("Data-config is not autoflush. Using flush mode: "+ FlushModeType.COMMIT);
