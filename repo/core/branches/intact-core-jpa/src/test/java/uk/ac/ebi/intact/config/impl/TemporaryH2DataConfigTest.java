@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.config.impl;
 
-import static junit.framework.Assert.assertEquals;
+import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -20,9 +20,9 @@ public class TemporaryH2DataConfigTest {
         IntactSession session = new StandaloneSession();
         IntactContext.initContext(new TemporaryH2DataConfig(session), session);
 
-        assertEquals(TemporaryH2DataConfig.NAME, IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getName());
-
-        SchemaUtils.createSchema();
+        SchemaUtils.createSchema(false);
+ 
+        Assert.assertTrue(IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInstitutionDao().getAll().isEmpty());
 
         IntactContext.getCurrentInstance().close();
     }

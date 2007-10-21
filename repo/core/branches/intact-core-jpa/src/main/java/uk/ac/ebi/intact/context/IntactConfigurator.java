@@ -23,8 +23,10 @@ import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.IntactTransaction;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Class to initialize IntAct, and to initialize IntactContexts
@@ -78,7 +80,18 @@ public class IntactConfigurator {
      * @throws IntactInitializationError if something unexpected happends during loading or a check fails
      */
     public static void initIntact( IntactSession session ) throws IntactInitializationError {
-        log.info( "Initializing intact-core with session of class: " + session.getClass() );
+        if (log.isInfoEnabled()) {
+            Properties buildInfoProps = new Properties();
+            try {
+                buildInfoProps.load(IntactConfigurator.class.getResourceAsStream("/META-INF/BuildInfo.properties"));
+            }
+            catch (IOException e) {
+                throw new IntactInitializationError("Problem loading build info properties", e);
+            }
+            String version = buildInfoProps.getProperty("version");
+
+            log.info("Initializing intact-core (" + version + ") with session of class: " + session.getClass());
+        }
 
         if ( isInitialized( session ) ) {
             throw new IntactInitializationError( "IntAct already initialized" );

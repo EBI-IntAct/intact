@@ -16,7 +16,7 @@
 package uk.ac.ebi.intact.config.impl;
 
 import org.hibernate.cfg.Environment;
-import uk.ac.ebi.intact.config.IntactPersistence;
+import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManagerFactory;
@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class TemporaryH2DataConfig extends AbstractJpaDataConfig {
+public class TemporaryH2DataConfig extends JpaCoreDataConfig {
 
     public static final String NAME = "uk.ac.ebi.intact.config.TEMPORARY_H2";
 
@@ -52,13 +52,18 @@ public class TemporaryH2DataConfig extends AbstractJpaDataConfig {
     }
 
     private String connectionUrl = CONNECTION_PROTOCOL+CONNECTION_FILE_DEFAULT;
+    private static final String PERSISTENCE_UNIT_NAME = "intact-core-temp";
 
     public TemporaryH2DataConfig(IntactSession session) {
-        super(session);
+        super(session, PERSISTENCE_UNIT_NAME);
+
+        if (session.containsInitParam(IntactEnvironment.TEMP_H2.getFqn())) {
+            connectionUrl = "jdbc:h2:"+session.getInitParam(IntactEnvironment.TEMP_H2.getFqn());
+        }
     }
 
     public TemporaryH2DataConfig(IntactSession session, String connectionUrl) {
-        super(session);
+        super(session, PERSISTENCE_UNIT_NAME);
         this.connectionUrl = connectionUrl;
     }
 
@@ -66,11 +71,12 @@ public class TemporaryH2DataConfig extends AbstractJpaDataConfig {
         if (entityManagerFactory == null) {
             Map<String,String> map = new HashMap<String,String>();
             map.put(Environment.URL, connectionUrl);
-            entityManagerFactory = IntactPersistence.createEntityManagerFactory("intact-core-temp", map);
+
+            entityManagerFactory = buildEntityManagerFactory(map);
         }
+        
         return entityManagerFactory;
     }
-
 
     @Override
     public String getName() {

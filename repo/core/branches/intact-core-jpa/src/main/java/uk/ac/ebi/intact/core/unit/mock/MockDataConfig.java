@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.core.unit.mock;
 
-import uk.ac.ebi.intact.config.impl.AbstractJpaDataConfig;
+import uk.ac.ebi.intact.config.impl.JpaCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManagerFactory;
@@ -26,12 +26,12 @@ import javax.persistence.EntityManagerFactory;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class MockDataConfig extends AbstractJpaDataConfig {
+public class MockDataConfig extends JpaCoreDataConfig {
 
     private IntactSession intactSession;
 
     public MockDataConfig(IntactSession intactSession) {
-        super(intactSession);
+        super(intactSession, null);
         this.intactSession = intactSession;
     }
 
