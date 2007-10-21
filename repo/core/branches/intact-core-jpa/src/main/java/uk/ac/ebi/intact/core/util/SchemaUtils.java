@@ -22,6 +22,7 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
@@ -57,7 +58,8 @@ public class SchemaUtils {
      * @return an array containing the SQL statements
      */
     public static String[] generateCreateSchemaDDL(String dialect) {
-         Configuration cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        Ejb3Configuration ejb3Cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        Configuration cfg = ejb3Cfg.getHibernateConfiguration();
 
         Properties props = new Properties();
         props.put(Environment.DIALECT, dialect);
@@ -87,7 +89,8 @@ public class SchemaUtils {
      * @return an array containing the SQL statements
      */
     public static String[] generateDropSchemaDDL(String dialect) {
-         Configuration cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        Ejb3Configuration ejb3Cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        Configuration cfg = ejb3Cfg.getHibernateConfiguration();
 
         Properties props = new Properties();
         props.put(Environment.DIALECT, dialect);

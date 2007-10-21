@@ -9,11 +9,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.FlushMode;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.ejb.HibernateEntityManager;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.config.impl.AbstractJpaDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
@@ -238,19 +236,13 @@ public class DaoFactory implements Serializable {
     }
 
     public IntactTransaction beginTransaction() {
-        if (isJpa()) {
-           log.debug( "Starting JPA transaction..." );
-            EntityTransaction transaction = getEntityManager().getTransaction();
-            if (!transaction.isActive()) {
-                transaction.begin();
-            }
-
-            currentTransaction = new JpaIntactTransaction( intactSession, transaction);
-        } else {
-            log.debug( "Starting Hibernate transaction..." );
-            Transaction transaction = getCurrentSession().beginTransaction();
-            currentTransaction = new IntactTransaction( intactSession, transaction );
+        log.debug("Starting transaction...");
+        EntityTransaction transaction = getEntityManager().getTransaction();
+        if (!transaction.isActive()) {
+            transaction.begin();
         }
+
+        currentTransaction = new JpaIntactTransaction( intactSession, transaction);
 
         return currentTransaction;
     }
@@ -268,7 +260,6 @@ public class DaoFactory implements Serializable {
     }
 
     public EntityManager getEntityManager() {
-        if (isJpa()) {
             if (currentEntityManager == null || !currentEntityManager.isOpen()) {
                 if (log.isDebugEnabled()) log.debug("Creating new EntityManager");
                 currentEntityManager = dataConfig.getEntityManagerFactory().createEntityManager();
@@ -279,9 +270,6 @@ public class DaoFactory implements Serializable {
                 }
             }
             return currentEntityManager;
-        } else {
-            throw new IllegalStateException("Cannot get an EntityManager from a non-JPA data-config");
-        }
     }
 
     public void setEntityManager(EntityManager entityManager) {
@@ -308,23 +296,9 @@ public class DaoFactory implements Serializable {
         return session;
     }
 
-    protected boolean isJpa() {
-        return (dataConfig instanceof AbstractJpaDataConfig);
-    }
 
     protected Session getSessionFromSessionFactory(DataConfig dataConfig) {
-        Session session;
-        if (dataConfig instanceof AbstractHibernateDataConfig) {
-            AbstractHibernateDataConfig hibernateDataConfig = (AbstractHibernateDataConfig) dataConfig;
-            session = hibernateDataConfig.getSessionFactory().getCurrentSession();
-        } else if (dataConfig instanceof AbstractJpaDataConfig) {
-            AbstractJpaDataConfig jpaDataConfig = (AbstractJpaDataConfig) dataConfig;
-            HibernateEntityManager hibernateEntityManager = (HibernateEntityManager) jpaDataConfig.getSessionFactory().createEntityManager();
-            session = hibernateEntityManager.getSession();
-        } else {
-            throw new IllegalStateException("Wrong DataConfig found: "+dataConfig);
-        }
-        return session;
+        return ((HibernateEntityManager)dataConfig.getEntityManagerFactory().createEntityManager()).getSession();
     }
 
     public boolean isTransactionActive() {

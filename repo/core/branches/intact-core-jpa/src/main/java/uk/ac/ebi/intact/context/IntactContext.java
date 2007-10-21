@@ -5,10 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.IntactPersistence;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
-import uk.ac.ebi.intact.config.impl.InMemoryDataConfig;
-import uk.ac.ebi.intact.config.impl.JpaCoreDataConfig;
-import uk.ac.ebi.intact.config.impl.TemporaryH2DataConfig;
+import uk.ac.ebi.intact.config.impl.*;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Institution;
 
@@ -157,8 +154,7 @@ public class IntactContext implements Serializable {
     public static DataConfig calculateDefaultDataConfig(IntactSession session) {
         if (log.isDebugEnabled()) log.debug("Calculating default DataConfig");
 
-        // TODO modify this to allow backwards compatibility with hibernate.cfg.xml files
-        DataConfig dataConfig = new JpaCoreDataConfig( session, null );
+        DataConfig dataConfig = new StandardCoreDataConfig( session );
 
         if (!dataConfig.isConfigurable()) {
             if (log.isDebugEnabled()) log.debug("\tDataConfig not configurable (hibernate.cfg.xml not found)");
@@ -168,7 +164,6 @@ public class IntactContext implements Serializable {
                  try {
                         Constructor constructor = Class.forName( dataConfigClass ).getConstructor(IntactSession.class);
                         dataConfig = ( DataConfig ) constructor.newInstance(session);
-                        //dataConfig.getSessionFactory();
                     }
                     catch ( Exception e ) {
                         throw new IntactInitializationError( "Error initializing data configs. A data config must have a constructor" +
