@@ -88,6 +88,7 @@ public abstract class DataConfig<T, C> {
         this.autoFlush = autoFlush;
     }
 
+    @Deprecated
     public abstract void flushSession();
 
     public abstract boolean isConfigurable();

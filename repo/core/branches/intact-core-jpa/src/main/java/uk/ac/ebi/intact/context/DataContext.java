@@ -154,8 +154,6 @@ public class DataContext implements Serializable {
 
     public void flushSession() {
         DataConfig dataConfig = RuntimeConfig.getCurrentInstance( session ).getDefaultDataConfig();
-        dataConfig.flushSession();
-
         DaoFactory daoFactory = DaoFactory.getCurrentInstance(session, dataConfig);
         daoFactory.getEntityManager().flush();
 
