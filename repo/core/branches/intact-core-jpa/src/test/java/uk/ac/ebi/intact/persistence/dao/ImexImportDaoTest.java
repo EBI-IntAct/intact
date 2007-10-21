@@ -30,7 +30,7 @@ import uk.ac.ebi.intact.model.meta.ImexImportStatus;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class ImexObjectDaoTest extends IntactBasicTestCase {
+public class ImexImportDaoTest extends IntactBasicTestCase {
 
     private ImexImportDao imexImportDao;
 
