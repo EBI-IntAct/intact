@@ -15,11 +15,10 @@
  */
 package uk.ac.ebi.intact.config.impl;
 
-import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.config.IntactPersistence;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManagerFactory;
-import java.io.*;
 
 /**
  * This configuration uses a memory database (H2)
@@ -31,12 +30,17 @@ public class InMemoryDataConfig extends AbstractJpaDataConfig {
 
     public static final String NAME = "uk.ac.ebi.intact.config.IN_MEMORY";
 
+    private EntityManagerFactory entityManagerFactory;
+
     public InMemoryDataConfig(IntactSession session) {
         super(session);
     }
 
-    public EntityManagerFactory getSessionFactory() {
-        return IntactPersistence.createEntityManagerFactory("intact-core-mem");
+    public EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
+            entityManagerFactory = IntactPersistence.createEntityManagerFactory("intact-core-mem");
+        }
+        return entityManagerFactory;
     }
 
     @Override

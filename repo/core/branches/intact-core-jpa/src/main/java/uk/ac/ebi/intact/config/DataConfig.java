@@ -9,6 +9,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.context.IntactSession;
 
+import javax.persistence.EntityManagerFactory;
+
 /**
  * TODO comment this!
  *
@@ -38,8 +40,12 @@ public abstract class DataConfig<T, C> {
 
     public abstract void initialize();
 
+    @Deprecated
     public abstract T getSessionFactory();
 
+    public abstract EntityManagerFactory getEntityManagerFactory();
+
+    @Deprecated
     public abstract void closeSessionFactory();
 
     public abstract C getConfiguration();

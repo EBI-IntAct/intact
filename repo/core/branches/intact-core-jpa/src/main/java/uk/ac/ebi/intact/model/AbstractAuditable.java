@@ -15,10 +15,7 @@
  */
 package uk.ac.ebi.intact.model;
 
-import javax.persistence.Column;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -57,6 +54,18 @@ public abstract class AbstractAuditable implements Auditable {
     public AbstractAuditable() {
     }
 
+    @PrePersist
+    public void beforePersisting() {
+        if (created == null) {
+            created = new Date();
+        }
+        updated = new Date();
+    }
+
+    @PreUpdate
+    public void beforeUpdating() {
+        updated = new Date();
+    }
 
     @Temporal( value = TemporalType.TIMESTAMP )
     public Date getCreated() {

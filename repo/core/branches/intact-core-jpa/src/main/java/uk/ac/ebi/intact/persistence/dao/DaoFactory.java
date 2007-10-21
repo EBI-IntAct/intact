@@ -39,6 +39,8 @@ public class DaoFactory implements Serializable {
 
     private DataConfig dataConfig;
 
+    private EntityManager currentEntityManager;
+
     private IntactSession intactSession;
 
     private IntactTransaction currentTransaction;
@@ -102,132 +104,132 @@ public class DaoFactory implements Serializable {
     }
 
     public AliasDao<Alias> getAliasDao() {
-        return new AliasDaoImpl( Alias.class, getCurrentSession(), intactSession );
+        return new AliasDaoImpl( Alias.class, getEntityManager(), intactSession );
     }
 
     public <T extends Alias> AliasDao<T> getAliasDao( Class<T> aliasType ) {
-        return new AliasDaoImpl<T>( aliasType, getCurrentSession(), intactSession );
+        return new AliasDaoImpl<T>( aliasType, getEntityManager(), intactSession );
     }
 
     public AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao() {
-        return new AnnotatedObjectDaoImpl<AnnotatedObject>( AnnotatedObject.class, getCurrentSession(), intactSession );
+        return new AnnotatedObjectDaoImpl<AnnotatedObject>( AnnotatedObject.class, getEntityManager(), intactSession );
     }
 
     public <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao( Class<T> entityType ) {
         HibernateBaseDaoImpl.validateEntity( entityType );
 
-        return new AnnotatedObjectDaoImpl<T>( entityType, getCurrentSession(), intactSession );
+        return new AnnotatedObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
     }
 
     public AnnotationDao getAnnotationDao() {
-        return new AnnotationDaoImpl( getCurrentSession(), intactSession );
+        return new AnnotationDaoImpl( getEntityManager(), intactSession );
     }
 
     public BaseDao getBaseDao() {
         // It is returning an ExperimentDaoImpl because HibernateBaseDaoImpl is an abstract class, and ExperimentDaoImpl
         // implement all HibernateBaseDaoImpl anyway.
-        return new ExperimentDaoImpl( getCurrentSession(), intactSession );
+        return new ExperimentDaoImpl( getEntityManager(), intactSession );
     }
 
     public BioSourceDao getBioSourceDao() {
-        return new BioSourceDaoImpl( getCurrentSession(), intactSession );
+        return new BioSourceDaoImpl( getEntityManager(), intactSession );
     }
 
     public ComponentDao getComponentDao() {
-        return new ComponentDaoImpl( getCurrentSession(), intactSession );
+        return new ComponentDaoImpl( getEntityManager(), intactSession );
     }
 
     public CvObjectDao<CvObject> getCvObjectDao() {
-        return new CvObjectDaoImpl<CvObject>( CvObject.class, getCurrentSession(), intactSession );
+        return new CvObjectDaoImpl<CvObject>( CvObject.class, getEntityManager(), intactSession );
     }
 
     public <T extends CvObject> CvObjectDao<T> getCvObjectDao( Class<T> entityType ) {
-        return new CvObjectDaoImpl<T>( entityType, getCurrentSession(), intactSession );
+        return new CvObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
     }
 
     public DbInfoDao getDbInfoDao() {
-        return new DbInfoDaoImpl( getCurrentSession(), intactSession );
+        return new DbInfoDaoImpl( getEntityManager(), intactSession );
     }
 
     public ExperimentDao getExperimentDao() {
-        return new ExperimentDaoImpl( getCurrentSession(), intactSession );
+        return new ExperimentDaoImpl( getEntityManager(), intactSession );
     }
 
     public FeatureDao getFeatureDao() {
-        return new FeatureDaoImpl( getCurrentSession(), intactSession );
+        return new FeatureDaoImpl( getEntityManager(), intactSession );
     }
 
     public InstitutionDao getInstitutionDao() {
-        return new InstitutionDaoImpl( getCurrentSession(), intactSession );
+        return new InstitutionDaoImpl( getEntityManager(), intactSession );
     }
 
     public IntactObjectDao<IntactObject> getIntactObjectDao() {
-        return new IntactObjectDaoImpl<IntactObject>( IntactObject.class, getCurrentSession(), intactSession );
+        return new IntactObjectDaoImpl<IntactObject>( IntactObject.class, getEntityManager(), intactSession );
     }
 
     public <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao( Class<T> entityType ) {
         HibernateBaseDaoImpl.validateEntity( entityType );
 
-        return new IntactObjectDaoImpl<T>( entityType, getCurrentSession(), intactSession );
+        return new IntactObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
     }
 
     public InteractionDao getInteractionDao() {
-        return new InteractionDaoImpl( getCurrentSession(), intactSession );
+        return new InteractionDaoImpl( getEntityManager(), intactSession );
     }
 
     public <T extends InteractorImpl> InteractorDao<T> getInteractorDao( Class<T> entityType ) {
-        return new InteractorDaoImpl<T>( entityType, getCurrentSession(), intactSession );
+        return new InteractorDaoImpl<T>( entityType, getEntityManager(), intactSession );
     }
 
     public InteractorDao<InteractorImpl> getInteractorDao() {
-        return new InteractorDaoImpl<InteractorImpl>( InteractorImpl.class, getCurrentSession(), intactSession );
+        return new InteractorDaoImpl<InteractorImpl>( InteractorImpl.class, getEntityManager(), intactSession );
     }
 
     /**
      * @since 1.5
      */
     public MineInteractionDao getMineInteractionDao() {
-        return new MineInteractionDaoImpl( getCurrentSession(), intactSession );
+        return new MineInteractionDaoImpl( getEntityManager(), intactSession );
     }
 
     public PolymerDao<PolymerImpl> getPolymerDao() {
-        return new PolymerDaoImpl<PolymerImpl>( PolymerImpl.class, getCurrentSession(), intactSession );
+        return new PolymerDaoImpl<PolymerImpl>( PolymerImpl.class, getEntityManager(), intactSession );
     }
 
     public <T extends PolymerImpl> PolymerDao<T> getPolymerDao( Class<T> clazz ) {
-        return new PolymerDaoImpl<T>( clazz, getCurrentSession(), intactSession );
+        return new PolymerDaoImpl<T>( clazz, getEntityManager(), intactSession );
     }
 
     public ProteinDao getProteinDao() {
-        return new ProteinDaoImpl( getCurrentSession(), intactSession );
+        return new ProteinDaoImpl( getEntityManager(), intactSession );
     }
 
     public PublicationDao getPublicationDao() {
-        return new PublicationDaoImpl( getCurrentSession(), intactSession );
+        return new PublicationDaoImpl( getEntityManager(), intactSession );
     }
 
     public RangeDao getRangeDao() {
-        return new RangeDaoImpl( getCurrentSession(), intactSession );
+        return new RangeDaoImpl( getEntityManager(), intactSession );
     }
 
     public SearchableDao getSearchableDao() {
-        return new SearchableDaoImpl( getCurrentSession(), intactSession );
+        return new SearchableDaoImpl( getEntityManager(), intactSession );
     }
 
     public SearchItemDao getSearchItemDao() {
-        return new SearchItemDaoImpl( getCurrentSession(), intactSession );
+        return new SearchItemDaoImpl( getEntityManager(), intactSession );
     }
 
     public XrefDao<Xref> getXrefDao() {
-        return new XrefDaoImpl<Xref>( Xref.class, getCurrentSession(), intactSession );
+        return new XrefDaoImpl<Xref>( Xref.class, getEntityManager(), intactSession );
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao( Class<T> xrefClass ) {
-        return new XrefDaoImpl<T>( xrefClass, getCurrentSession(), intactSession );
+        return new XrefDaoImpl<T>( xrefClass, getEntityManager(), intactSession );
     }
 
     public ImexImportDao getImexImportDao() {
-        return new ImexImportDaoImpl(getCurrentSession(), intactSession);
+        return new ImexImportDaoImpl(getEntityManager(), intactSession);
     }
 
     public Connection connection() {
@@ -237,8 +239,11 @@ public class DaoFactory implements Serializable {
     public IntactTransaction beginTransaction() {
         if (isJpa()) {
            log.debug( "Starting JPA transaction..." );
-            EntityTransaction transaction = ((AbstractJpaDataConfig) dataConfig).getSessionFactory().createEntityManager().getTransaction();
-            transaction.begin();
+            EntityTransaction transaction = getEntityManager().getTransaction();
+            if (!transaction.isActive()) {
+                transaction.begin();
+            }
+
             currentTransaction = new JpaIntactTransaction( intactSession, transaction);
         } else {
             log.debug( "Starting Hibernate transaction..." );
@@ -249,6 +254,35 @@ public class DaoFactory implements Serializable {
         return currentTransaction;
     }
 
+    public void commitTransaction() {
+        if (currentEntityManager.getTransaction().isActive()) {
+            if (log.isDebugEnabled()) log.debug("Committing transaction");
+
+            currentEntityManager.getTransaction().commit();
+            currentTransaction = null;
+            currentEntityManager.close();
+        } else {
+            if (log.isWarnEnabled()) log.warn("Attempted commit on a transaction that was not active");
+        }
+    }
+
+    public EntityManager getEntityManager() {
+        if (isJpa()) {
+            if (currentEntityManager == null || !currentEntityManager.isOpen()) {
+                if (log.isDebugEnabled()) log.debug("Creating new EntityManager");
+                currentEntityManager = dataConfig.getEntityManagerFactory().createEntityManager();
+            }
+            return currentEntityManager;
+        } else {
+            throw new IllegalStateException("Cannot get an EntityManager from a non-JPA data-config");
+        }
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        currentEntityManager = entityManager;
+    }
+
+    @Deprecated
     public synchronized Session getCurrentSession() {
 
         Session session = getSessionFromSessionFactory(dataConfig);

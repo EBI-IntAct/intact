@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.persistence.util.IntactAnnotator;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -252,6 +253,9 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         return sessionFactory;
     }
 
+    public EntityManagerFactory getEntityManagerFactory() {
+        throw new UnsupportedOperationException();
+    }
 
     public void closeSessionFactory() {
         if ( sessionFactory != null ) {

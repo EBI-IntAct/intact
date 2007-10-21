@@ -16,10 +16,8 @@
 package uk.ac.ebi.intact.config.impl;
 
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.config.IntactPersistence;
 
 import javax.persistence.EntityManagerFactory;
-import java.io.*;
 
 /**
  * This configuration uses a memory database (H2)
@@ -38,12 +36,22 @@ public class JpaCoreDataConfig extends AbstractJpaDataConfig {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    @Deprecated
     public EntityManagerFactory getSessionFactory() {
+        return entityManagerFactory;
+    }
+
+    public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
 
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public boolean isConfigurable() {
+        return false;
     }
 }

@@ -15,13 +15,15 @@
  */
 package uk.ac.ebi.intact.config.impl;
 
-import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import uk.ac.ebi.intact.config.ConfigurationException;
-import uk.ac.ebi.intact.context.IntactEnvironment;
+import uk.ac.ebi.intact.config.IntactPersistence;
 import uk.ac.ebi.intact.context.IntactSession;
 
-import java.io.*;
+import javax.persistence.EntityManagerFactory;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This configuration uses a memory database (H2)
@@ -29,12 +31,14 @@ import java.io.*;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class TemporaryH2DataConfig extends StandardCoreDataConfig {
+public class TemporaryH2DataConfig extends AbstractJpaDataConfig {
 
     public static final String NAME = "uk.ac.ebi.intact.config.TEMPORARY_H2";
 
     private static final String CONNECTION_PROTOCOL="jdbc:h2:";
     private static String CONNECTION_FILE_DEFAULT = null;
+
+    private EntityManagerFactory entityManagerFactory;
 
     static {
         try
@@ -49,54 +53,24 @@ public class TemporaryH2DataConfig extends StandardCoreDataConfig {
 
     private String connectionUrl = CONNECTION_PROTOCOL+CONNECTION_FILE_DEFAULT;
 
-    private File configurationFile;
-
     public TemporaryH2DataConfig(IntactSession session) {
         super(session);
     }
 
-    @Override
-    public Configuration getConfiguration()
-    {
-        connectionUrl = CONNECTION_PROTOCOL+CONNECTION_FILE_DEFAULT;
-
-        if (getSession().containsInitParam(IntactEnvironment.TEMP_H2.getFqn())) {
-            connectionUrl = CONNECTION_PROTOCOL + getSession().getInitParam(IntactEnvironment.TEMP_H2.getFqn());
-        }
-        
-        Configuration configuration = super.getConfiguration();
-        configuration.setProperty(Environment.URL, connectionUrl);
-
-        return configuration;
+    public TemporaryH2DataConfig(IntactSession session, String connectionUrl) {
+        super(session);
+        this.connectionUrl = connectionUrl;
     }
 
-    @Override
-    protected File getConfigFile() {
-        if (configurationFile != null) {
-            return configurationFile;
+    public EntityManagerFactory getEntityManagerFactory() {
+        if (entityManagerFactory == null) {
+            Map<String,String> map = new HashMap<String,String>();
+            map.put(Environment.URL, connectionUrl);
+            entityManagerFactory = IntactPersistence.createEntityManagerFactory("intact-core-temp");
         }
-
-        try {
-            configurationFile = File.createTempFile("temporary-hibernate-", ".cfg.xml");
-            configurationFile.deleteOnExit();
-
-            InputStream is = InMemoryDataConfig.class.getResourceAsStream("/META-INF/temporary-hibernate.cfg.xml");
-
-            FileWriter writer = new FileWriter(configurationFile);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                writer.write(line+System.getProperty("line.separator"));
-            }
-
-            writer.close();
-        } catch (IOException e) {
-            throw new ConfigurationException("Exception getting configuration file", e);
-        }
-
-        return configurationFile;
+        return entityManagerFactory;
     }
+
 
     @Override
     public String getName() {
