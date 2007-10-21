@@ -22,13 +22,18 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle9Dialect;
 import org.hibernate.dialect.PostgreSQLDialect;
+import org.hibernate.ejb.HibernateEntityManagerFactory;
+import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
+import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 
+import javax.persistence.EntityManagerFactory;
+import java.lang.reflect.Field;
 import java.util.Properties;
 
 /**
@@ -126,22 +131,29 @@ public class SchemaUtils {
             throw new IllegalStateException("To reset the schema, the transaction must NOT be active: "+dataContext.getDaoFactory().getCurrentTransaction());
         }
 
-        dataContext.beginTransaction();
-
-        Configuration cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
-
-        SchemaExport se = new SchemaExport(cfg);
+        SchemaExport se = newSchemaExport();
         se.create(false, true);
-
-        dataContext.commitTransaction();
-        dataContext.beginTransaction();
 
         if (initializeDatabase) {
             if (log.isDebugEnabled()) log.debug("Initializing database");
             IntactConfigurator.initializeDatabase(IntactContext.getCurrentInstance());
-        }
+        } 
+    }
 
-        dataContext.commitTransaction();
+    protected static SchemaExport newSchemaExport() {
+        EntityManagerFactory entityManagerFactory = IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getEntityManagerFactory();
+        SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) ((HibernateEntityManagerFactory)entityManagerFactory).getSessionFactory();
+
+        SchemaExport se = null;
+        try {
+            Field schemaExportField = sessionFactoryImpl.getClass().getDeclaredField("schemaExport");
+            schemaExportField.setAccessible(true);
+            se = (SchemaExport) schemaExportField.get(sessionFactoryImpl);
+        }
+        catch (Exception e) {
+            throw new IntactException("Problem creating SchemaExport", e);
+        }
+        return se;
     }
 
     /**
@@ -158,9 +170,7 @@ public class SchemaUtils {
 
         dataContext.beginTransaction();
 
-        Configuration cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
-
-        SchemaExport se = new SchemaExport(cfg);
+        SchemaExport se = newSchemaExport();
         se.drop(false, true);
 
         dataContext.commitTransaction();

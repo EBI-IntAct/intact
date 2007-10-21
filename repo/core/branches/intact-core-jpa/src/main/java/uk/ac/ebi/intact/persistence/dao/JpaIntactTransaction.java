@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.persistence.dao;
 
-import uk.ac.ebi.intact.context.IntactSession;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityTransaction;
 
@@ -12,6 +14,8 @@ import javax.persistence.EntityTransaction;
  * @version $Id$
  */
 public class JpaIntactTransaction extends IntactTransaction {
+
+    private Log log = LogFactory.getLog(JpaIntactTransaction.class);
 
     private EntityTransaction transaction;
     private boolean wasCommitted = false;
@@ -32,6 +36,7 @@ public class JpaIntactTransaction extends IntactTransaction {
     }
 
     public void commit() throws IntactTransactionException {
+        if (log.isDebugEnabled()) log.debug("Commit transaction");
         transaction.commit();
         wasCommitted = true;
     }

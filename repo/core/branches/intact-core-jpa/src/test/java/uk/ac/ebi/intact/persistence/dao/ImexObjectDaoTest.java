@@ -37,15 +37,12 @@ public class ImexObjectDaoTest extends IntactBasicTestCase {
     @Before
     public void prepareTest() throws Exception {
         new IntactUnit().createSchema();
-        beginTransaction();
 
         this.imexImportDao = getDaoFactory().getImexImportDao();
     }
 
     @After
     public void endTest() throws Exception {
-        commitTransaction();
-
         this.imexImportDao = null;
     }
 
@@ -54,10 +51,9 @@ public class ImexObjectDaoTest extends IntactBasicTestCase {
 
         ImexImport imex1 = new ImexImport(getIntactContext().getInstitution(), "1234567", ImexImportStatus.OK);
 
-        imexImportDao.persist(imex1);
-
-        commitTransaction();
         beginTransaction();
+        imexImportDao.persist(imex1);
+        commitTransaction();
 
         Assert.assertEquals(1, imexImportDao.countAll());
 
