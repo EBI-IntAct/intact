@@ -84,8 +84,7 @@ public class SchemaUtils {
      * @return an array containing the SQL statements
      */
     public static String[] generateDropSchemaDDL(String dialect) {
-        Ejb3Configuration ejb3Cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
-        Configuration cfg = ejb3Cfg.getHibernateConfiguration();
+        Configuration cfg = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
 
         Properties props = new Properties();
         props.put(Environment.DIALECT, dialect);
@@ -139,8 +138,7 @@ public class SchemaUtils {
     }
 
     protected static SchemaExport newSchemaExport() {
-        Ejb3Configuration ejb3Config = (Ejb3Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
-        Configuration config = ejb3Config.getHibernateConfiguration();
+        Configuration config = (Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
         
         SchemaExport se =  new SchemaExport(config);
         return se;

@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.ejb.Ejb3Configuration;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.event.PreInsertEventListener;
 import org.hibernate.event.PreUpdateEventListener;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -60,8 +60,8 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
     }
 
     @Override                             
-    public Ejb3Configuration getConfiguration() {
-        Ejb3Configuration configuration = super.getConfiguration();
+    public Configuration getConfiguration() {
+        Configuration configuration = super.getConfiguration();
 
         if ( !isListenersRegistered() ) {
             if ( log.isDebugEnabled() ) {

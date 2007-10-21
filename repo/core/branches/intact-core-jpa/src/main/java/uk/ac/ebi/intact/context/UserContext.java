@@ -2,10 +2,10 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
+import uk.ac.ebi.intact.config.DataConfig;
 
 import java.io.Serializable;
 import java.sql.Connection;
@@ -53,12 +53,11 @@ public class UserContext implements Serializable {
             log.debug( "Creating UserContext..." );
         }
 
-        AbstractHibernateDataConfig defaultDataConfig = ( AbstractHibernateDataConfig ) RuntimeConfig.getCurrentInstance( session ).getDefaultDataConfig();
+        DataConfig defaultDataConfig = RuntimeConfig.getCurrentInstance( session ).getDefaultDataConfig();
+        Configuration configuration = (Configuration) defaultDataConfig.getConfiguration();
 
-        Ejb3Configuration configuration = defaultDataConfig.getConfiguration();
-
-        String currentUser = configuration.getHibernateConfiguration().getProperty( Environment.USER );
-        String password = configuration.getHibernateConfiguration().getProperty( Environment.PASS );
+        String currentUser = configuration.getProperty( Environment.USER );
+        String password = configuration.getProperty( Environment.PASS );
 
         UserContext userContext = new UserContext( currentUser, password );
 
