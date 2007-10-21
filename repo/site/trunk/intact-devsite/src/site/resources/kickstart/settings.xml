@@ -34,7 +34,7 @@
                 <db.port>5432</db.port>
                 <db.alias>intact-db</db.alias>
                 <db.user>intact</db.user>
-                <db.password>binary</db.password>
+                <db.password>change-me</db.password>
 
                 <sessionFactoryName>PG_INTACT_LOCAL</sessionFactoryName>
             </properties>
