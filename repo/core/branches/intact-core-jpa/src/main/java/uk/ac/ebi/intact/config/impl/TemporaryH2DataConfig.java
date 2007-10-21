@@ -66,7 +66,7 @@ public class TemporaryH2DataConfig extends AbstractJpaDataConfig {
         if (entityManagerFactory == null) {
             Map<String,String> map = new HashMap<String,String>();
             map.put(Environment.URL, connectionUrl);
-            entityManagerFactory = IntactPersistence.createEntityManagerFactory("intact-core-temp");
+            entityManagerFactory = IntactPersistence.createEntityManagerFactory("intact-core-temp", map);
         }
         return entityManagerFactory;
     }

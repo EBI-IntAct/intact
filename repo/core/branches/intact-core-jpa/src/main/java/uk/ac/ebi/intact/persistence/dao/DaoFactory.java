@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.persistence.dao.impl.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.FlushModeType;
 import java.io.Serializable;
 import java.sql.Connection;
 
@@ -271,6 +272,11 @@ public class DaoFactory implements Serializable {
             if (currentEntityManager == null || !currentEntityManager.isOpen()) {
                 if (log.isDebugEnabled()) log.debug("Creating new EntityManager");
                 currentEntityManager = dataConfig.getEntityManagerFactory().createEntityManager();
+
+                if (!dataConfig.isAutoFlush()) {
+                    if (log.isDebugEnabled()) log.debug("Data-config is not autoflush. Using flush mode: "+ FlushModeType.COMMIT);
+                    currentEntityManager.setFlushMode(FlushModeType.COMMIT);
+                }
             }
             return currentEntityManager;
         } else {

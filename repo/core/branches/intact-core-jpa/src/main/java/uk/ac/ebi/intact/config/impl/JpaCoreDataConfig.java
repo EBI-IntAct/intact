@@ -54,4 +54,5 @@ public class JpaCoreDataConfig extends AbstractJpaDataConfig {
     public boolean isConfigurable() {
         return false;
     }
+    
 }
