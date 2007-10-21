@@ -11,6 +11,7 @@ import org.hibernate.EmptyInterceptor;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.ejb.Ejb3Configuration;
 import org.hibernate.ejb.HibernateEntityManagerFactory;
@@ -40,7 +41,7 @@ import java.util.Properties;
  * @version $Id$
  * @since <pre>07-Aug-2006</pre>
  */
-public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Ejb3Configuration> {
+public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFactory, Configuration> {
 
     private static final Log log = LogFactory.getLog( AbstractHibernateDataConfig.class );
 
@@ -57,7 +58,7 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         super( session );
         this.packagesWithEntities = getPackagesWithEntities();
 
-        configuration = getConfiguration();
+        configuration = new Ejb3Configuration();
     }
 
     public SchemaVersion getMinimumRequiredVersion()
@@ -269,12 +270,8 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         entityManagerFactory.close();
     }
 
-    public Ejb3Configuration getConfiguration() {
-        if ( configuration == null ) {
-            configuration = new Ejb3Configuration();
-        }
-
-        return configuration;
+    public Configuration getConfiguration() {
+        return configuration.getHibernateConfiguration();
     }
 
     public void addPackageWithEntities( String packageName ) {

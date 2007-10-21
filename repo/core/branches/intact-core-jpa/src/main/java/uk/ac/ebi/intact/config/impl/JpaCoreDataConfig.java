@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.config.impl;
 
+import org.hibernate.cfg.Configuration;
 import org.hibernate.ejb.Ejb3Configuration;
 import uk.ac.ebi.intact.context.IntactSession;
 
@@ -58,8 +59,8 @@ public class JpaCoreDataConfig extends AbstractJpaDataConfig {
         return configuration.buildEntityManagerFactory();
     }
 
-    public Ejb3Configuration getConfiguration() {
-        return configuration;
+    public Configuration getConfiguration() {
+        return configuration.getHibernateConfiguration();
     }
 
     public String getPersistenceUnitName() {
