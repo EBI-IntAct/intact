@@ -7,12 +7,8 @@ package uk.ac.ebi.intact.config.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.event.PreInsertEventListener;
-import org.hibernate.event.PreUpdateEventListener;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.event.IntactObjectEventListener;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 
 import java.io.File;
@@ -59,45 +55,10 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
         return Arrays.asList("uk.ac.ebi.intact.model.SearchItem");
     }
 
-    @Override                             
-    public Configuration getConfiguration() {
-        Configuration configuration = super.getConfiguration();
-
-        if ( !isListenersRegistered() ) {
-            if ( log.isDebugEnabled() ) {
-                log.info( "Registering core EventListeners:" );
-                log.debug( "\tRegistering: " + IntactObjectEventListener.class );
-            }
-
-            List<PreInsertEventListener> preInserts = new ArrayList<PreInsertEventListener>(Arrays.asList(configuration.getEventListeners().getPreInsertEventListeners()));
-            preInserts.add(new IntactObjectEventListener());
-
-            List<PreUpdateEventListener> preUpdates = new ArrayList<PreUpdateEventListener>(Arrays.asList(configuration.getEventListeners().getPreUpdateEventListeners()));
-            preUpdates.add(new IntactObjectEventListener());
-
-            configuration.getEventListeners().setPreInsertEventListeners(preInserts.toArray(new PreInsertEventListener[preInserts.size()]));
-            configuration.getEventListeners().setPreUpdateEventListeners(preUpdates.toArray(new PreUpdateEventListener[preUpdates.size()]));
-
-        }
-
-        return configuration;
-    }
-
     protected File getConfigFile() {
         URL resource = StandardCoreDataConfig.class.getResource("/hibernate.cfg.xml");
         File file = (resource == null)? null : new File(resource.getFile());
         return file;
     }
 
-    protected void setListenersRegistered( boolean listenersRegistered ) {
-        //getSession().setApplicationAttribute(LISTENERS_REGISTERED_FLAG, listenersRegistered);
-        this.listenersRegistered = listenersRegistered;
-    }
-
-    protected boolean isListenersRegistered() {
-        return listenersRegistered;
-
-        //Object listenersRegistered = getSession().getApplicationAttribute(LISTENERS_REGISTERED_FLAG);
-        //return (listenersRegistered == null)? Boolean.FALSE :(Boolean) listenersRegistered;
-    }
 }
