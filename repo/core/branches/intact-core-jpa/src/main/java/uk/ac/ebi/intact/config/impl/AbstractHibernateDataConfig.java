@@ -308,8 +308,9 @@ public abstract class AbstractHibernateDataConfig extends DataConfig<SessionFact
         }
     }
 
+    @Deprecated
     public void flushSession() {
-        getSessionFactory().getCurrentSession().flush();
+        //nothing
     }
 
     public boolean isConfigurable() {
