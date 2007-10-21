@@ -144,7 +144,7 @@ public class SchemaUtils {
         EntityManagerFactory entityManagerFactory = IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getEntityManagerFactory();
         SessionFactoryImpl sessionFactoryImpl = (SessionFactoryImpl) ((HibernateEntityManagerFactory)entityManagerFactory).getSessionFactory();
 
-        SchemaExport se = null;
+        SchemaExport se =  null;
         try {
             Field schemaExportField = sessionFactoryImpl.getClass().getDeclaredField("schemaExport");
             schemaExportField.setAccessible(true);
