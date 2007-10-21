@@ -192,13 +192,11 @@ public class IntactConfigurator {
      */
     private static boolean registerDataConfig(DataConfig dataConfig, RuntimeConfig config, boolean isDefault) {
         log.info("Registering data-config: " + dataConfig.getName());
-        try {
-            dataConfig.getEntityManagerFactory();
-        } catch (Throwable t) {
-            log.info("Data-config not found: " + dataConfig.getName()+" - "+t.getMessage());
-            t.printStackTrace();
-            return false;
+
+        if (!dataConfig.isInitialized()) {
+            dataConfig.initialize();
         }
+
         config.addDataConfig(dataConfig, isDefault);
 
         return true;
