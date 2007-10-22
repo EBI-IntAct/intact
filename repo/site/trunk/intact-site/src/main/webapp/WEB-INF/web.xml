@@ -210,7 +210,8 @@
                 Format: 10 - 10 bytes
                 10k - 10 KB
                 10m - 10 MB
-                1g - 1 GB</description>
+                1g - 1 GB
+            </description>
             <param-name>uploadMaxFileSize</param-name>
             <param-value>100m</param-value>
         </init-param>
@@ -222,7 +223,8 @@
                 Format: 10 - 10 bytes
                 10k - 10 KB
                 10m - 10 MB
-                1g - 1 GB</description>
+                1g - 1 GB
+            </description>
             <param-name>uploadThresholdSize</param-name>
             <param-value>100k</param-value>
         </init-param>
@@ -273,9 +275,9 @@
     </welcome-file-list>
 
     <!-- Handling of the HTTP error 404 -->
-    <error-page>
-        <error-code>404</error-code>
-        <location>/404_file_not_found.jsf</location>
-    </error-page>
+    <!--<error-page>-->
+        <!--<error-code>404</error-code>-->
+        <!--<location>/404_file_not_found.jsf</location>-->
+    <!--</error-page>-->
 
 </web-app>
