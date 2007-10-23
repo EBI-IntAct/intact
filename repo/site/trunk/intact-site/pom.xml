@@ -28,10 +28,11 @@
 
     <properties>
         <jetty.port>9190</jetty.port>
+        <jetty.context>site</jetty.context>
     </properties>
 
     <build>
-        <finalName>site</finalName>
+        <finalName>intact-site-${buildNumber}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
