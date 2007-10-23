@@ -19,6 +19,11 @@ import java.util.Collection;
  */
 public class RangeAndInteractorTest {
 
+    private RangeAndInteractor buildRule() {
+        RangeAndInteractor rule = new RangeAndInteractor();
+        return rule;
+    }
+
     @Test
     public void check_not_a_polymer() throws Exception {
         IntactMockBuilder mockBuilder = new IntactMockBuilder( );
@@ -33,7 +38,7 @@ public class RangeAndInteractorTest {
 
         componentBait.addBindingDomain( feature );
 
-        RangeAndInteractor rule = new RangeAndInteractor();
+        RangeAndInteractor rule = buildRule();
         final Collection<GeneralMessage> messages = rule.check( feature );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
@@ -60,8 +65,7 @@ public class RangeAndInteractorTest {
 
         componentBait.addBindingDomain( feature );
 
-        RangeAndInteractor rule = new RangeAndInteractor();
-        final Collection<GeneralMessage> messages = rule.check( feature );
+        final Collection<GeneralMessage> messages = buildRule().check( feature );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
 
@@ -87,8 +91,7 @@ public class RangeAndInteractorTest {
 
         componentBait.addBindingDomain( feature );
 
-        RangeAndInteractor rule = new RangeAndInteractor();
-        final Collection<GeneralMessage> messages = rule.check( feature );
+        final Collection<GeneralMessage> messages = buildRule().check( feature );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 0, messages.size() );
     }
@@ -108,8 +111,7 @@ public class RangeAndInteractorTest {
 
         componentBait.addBindingDomain( feature );
 
-        RangeAndInteractor rule = new RangeAndInteractor();
-        final Collection<GeneralMessage> messages = rule.check( feature );
+        final Collection<GeneralMessage> messages = buildRule().check( feature );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
 
@@ -137,8 +139,7 @@ public class RangeAndInteractorTest {
 
         componentBait.addBindingDomain( feature );
 
-        RangeAndInteractor rule = new RangeAndInteractor();
-        final Collection<GeneralMessage> messages = rule.check( feature );
+        final Collection<GeneralMessage> messages = buildRule().check( feature );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 0, messages.size() );
     }

@@ -5,7 +5,8 @@
  */
 package uk.ac.ebi.intact.sanity.rules.feature;
 
-import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Feature;
+import uk.ac.ebi.intact.model.Range;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
@@ -55,7 +56,7 @@ public class RangeBoundaries implements Rule<Feature> {
             final boolean hasFrom = ( range.getFromIntervalStart() != 0 && range.getFromIntervalEnd() != 0 );
             final boolean hasTo = ( range.getToIntervalStart() != 0 && range.getToIntervalEnd() != 0 );
 
-            // 1. Check on mismatch between range boundaries and range attribute: undetermined
+            // Check on mismatch between range boundaries and range attribute: undetermined
             if ( isUndertermined && ( hasFrom || hasTo ) ) {
 
                 messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
@@ -63,18 +64,20 @@ public class RangeBoundaries implements Rule<Feature> {
             } else if ( !isUndertermined && !( hasFrom || hasTo ) ) {
 
                 messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
-            }
 
-            // 2. Check on mismatch between range boundaries and respective CvFuzzyType
-            if ( ( hasFrom && !( isFromCertain || isFromRange || isFromLess || isFromGreater ) ) ||
-                 ( hasTo && !( isToCertain || isToRange || isToLess || isToGreater ) ) ) {
+            } else {
 
-                messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
+                // Check on mismatch between range boundaries and respective CvFuzzyType
+                if ( ( hasFrom && !( isFromCertain || isFromRange || isFromLess || isFromGreater ) ) ||
+                     ( hasTo && !( isToCertain || isToRange || isToLess || isToGreater ) ) ) {
 
-            } else if ( ( !hasFrom && ( isFromCTerminal || isFromNTerminal || isFromUndetermined ) ) ||
-                        ( !hasTo && ( isToCTerminal || isToNTerminal || isToUndetermined ) ) ) {
+                    messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
 
-                messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                } else if ( ( !hasFrom && ( isFromCTerminal || isFromNTerminal || isFromUndetermined ) ) ||
+                            ( !hasTo && ( isToCTerminal || isToNTerminal || isToUndetermined ) ) ) {
+
+                    messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
+                }
             }
         }
 
