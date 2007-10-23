@@ -328,7 +328,7 @@
 
         <pluginRepository>
             <id>Maven Snapshots</id>
-            <url>http://people.apache.org/maven-snapshot-repository/</url>
+            <url>http://people.apache.org/m2-snapshot-repository/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
