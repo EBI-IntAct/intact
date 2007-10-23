@@ -9,6 +9,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:t="http://myfaces.apache.org/tomahawk"
       xmlns:s="http://myfaces.apache.org/sandbox"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:ebisf="http://www.ebi.ac.uk/faces/site"
       xmlns:ebi="http://ebi.ac.uk/faces/components">
 <head>
     <title></title>
@@ -32,9 +34,9 @@
         </script>
 
         <ebi:panelBox id="searchbox" title="Search IntAct">
-            <h:inputText id="search" value="#{searchBean.searchQuery}" size="12"/>
+            <h:inputText id="search" styleClass="contentsarea" value="#{searchBean.searchQuery}" size="#{ebisf:isBrowserExplorer()? 14 : 12}"/>   
 
-            <ebi:help onlyIcon="true" width="800px" height="400px">
+            <ebi:help id="searchHelp" onlyIcon="true" title="Search IntAct" width="800px" height="400px">
                 <h:panelGrid columns="1" width="700px">
                 <ui:include src="search_help_content.xhtml"/>
                 </h:panelGrid>
