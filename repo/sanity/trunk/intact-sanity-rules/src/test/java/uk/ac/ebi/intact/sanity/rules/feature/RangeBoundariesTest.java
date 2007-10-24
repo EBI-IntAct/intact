@@ -53,7 +53,6 @@ public class RangeBoundariesTest {
         final Protein protein = mockBuilder.createProteinRandom();
         final Component componentBait = mockBuilder.createComponentBait( protein );
 
-        // add a undetermined range on a small molecule
         final Feature feature = mockBuilder.createFeatureRandom();
         final Range range = mockBuilder.createRangeUndetermined();
         range.setUndetermined( false );
@@ -80,7 +79,6 @@ public class RangeBoundariesTest {
         final Protein protein = mockBuilder.createProteinRandom();
         final Component componentBait = mockBuilder.createComponentBait( protein );
 
-        // add a undetermined range on a small molecule
         final Feature feature = mockBuilder.createFeatureRandom();
         final Range range = mockBuilder.createRangeCTerminal();
         range.setUndetermined( false );
@@ -109,7 +107,6 @@ public class RangeBoundariesTest {
         final Protein protein = mockBuilder.createProteinRandom();
         final Component componentBait = mockBuilder.createComponentBait( protein );
 
-        // add a undetermined range on a small molecule
         final Feature feature = mockBuilder.createFeatureRandom();
         final Range range = mockBuilder.createRange( 2, 2, 6, 6 );
         range.setUndetermined( false );
@@ -133,7 +130,37 @@ public class RangeBoundariesTest {
         Assert.assertNull( rangeMessage.getInteractor() );
     }
 
-    private RangeBoundaries buildRule() {RangeBoundaries rule = new RangeBoundaries();
+    @Test
+    public void hasNoBoudaries_and_certain() throws Exception {
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( );
+
+        final Protein protein = mockBuilder.createProteinRandom();
+        final Component componentBait = mockBuilder.createComponentBait( protein );
+
+        final Feature feature = mockBuilder.createFeatureRandom();
+        final Range range = mockBuilder.createRangeUndetermined();
+        CvFuzzyType fuzzyRange = mockBuilder.createCvObject(CvFuzzyType.class, CvFuzzyType.RANGE_MI_REF, CvFuzzyType.RANGE);
+        range.setFromCvFuzzyType( fuzzyRange );
+        range.setToCvFuzzyType( fuzzyRange );
+        range.setUndetermined( true );
+        feature.addRange( range );
+
+        componentBait.addBindingDomain( feature );
+
+        final Collection<GeneralMessage> messages = buildRule().check( feature );
+        Assert.assertNotNull( messages );
+        Assert.assertEquals( 1, messages.size() );
+
+        final GeneralMessage message = messages.iterator().next();
+        Assert.assertEquals( RangeMessage.class, message.getClass() );
+        RangeMessage rangeMessage = (RangeMessage) message;
+        Assert.assertEquals( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, message.getMessageDefinition() );
+        Assert.assertEquals( range, rangeMessage.getRange() );
+        Assert.assertNull( rangeMessage.getInteractor() );
+    }
+
+    private RangeBoundaries buildRule() {
+        RangeBoundaries rule = new RangeBoundaries();
         return rule;
     }
 }

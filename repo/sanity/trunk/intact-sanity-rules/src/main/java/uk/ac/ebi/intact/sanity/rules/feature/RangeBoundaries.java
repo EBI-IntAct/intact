@@ -73,8 +73,8 @@ public class RangeBoundaries implements Rule<Feature> {
 
                     messages.add( new RangeMessage( MessageDefinition.DETERMINED_RANGE_WITHOUT_BOUNDARIES, feature, range ) );
 
-                } else if ( ( !hasFrom && ( isFromCTerminal || isFromNTerminal || isFromUndetermined ) ) ||
-                            ( !hasTo && ( isToCTerminal || isToNTerminal || isToUndetermined ) ) ) {
+                } else if ( ( !hasFrom && !( isFromCTerminal || isFromNTerminal || isFromUndetermined ) ) ||
+                            ( !hasTo && !( isToCTerminal || isToNTerminal || isToUndetermined ) ) ) {
 
                     messages.add( new RangeMessage( MessageDefinition.UNDETERMINED_RANGE_WITH_BOUNDARIES, feature, range ) );
                 }
