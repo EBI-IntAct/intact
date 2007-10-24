@@ -21,9 +21,14 @@
 
     <ui:composition>
 
+        <f:loadBundle basename="uk.ac.ebi.intact.site.BuildInfo" var="buildInfo"/>
+
+
         <h:outputLink value="http://www.ebi.ac.uk/intact">
             <h:graphicImage alt="IntAct Logo" url="/images/logo_intact_small.gif" style="border:0"/>
         </h:outputLink>
+
+        <t:dojoInitializer/>
 
         <script type="text/javascript">
             function intact_clearAndFocusField(id) {
@@ -31,10 +36,19 @@
                 elem.value = '';
                 elem.focus();
             }
+
+            dojo.addOnLoad(function () {
+                intact_clearAndFocusField('search');
+            });
+
         </script>
 
         <ebi:panelBox id="searchbox" title="Search IntAct">
-            <h:inputText id="search" styleClass="contentsarea" value="#{searchBean.searchQuery}" size="#{ebisf:isBrowserExplorer()? 14 : 12}"/>   
+            <t:inputText id="search" forceId="true"
+                         styleClass="contentsarea"
+                         value="#{searchBean.searchQuery}"
+                         size="#{ebisf:isBrowserExplorer()? 14 : 12}"
+                         onkeypress="return submitEnter('searchBtn', event)"/>   
 
             <ebi:help id="searchHelp" onlyIcon="true" title="Search IntAct" width="800px" height="400px">
                 <h:panelGrid columns="1" width="700px">
@@ -43,8 +57,11 @@
             </ebi:help>
 
             <h:panelGrid columns="2">
-                <h:commandButton styleClass="submit_button" value="Search" action="#{searchBean.doSearch}"/>
-                <a href="#" onclick="intact_clearAndFocusField('sideForm:search')">Clear</a>
+                <t:commandButton id="searchBtn" forceId="true"
+                                 styleClass="submit_button"
+                                 value="Search"
+                                 action="#{searchBean.doSearch}"/>
+                <a href="#" onclick="intact_clearAndFocusField('search')">Clear</a>
             </h:panelGrid>
         </ebi:panelBox>
 
@@ -56,6 +73,11 @@
                   rendered="#{not empty newsBean.news}"
                   newsFeedUrl="feed"
                   archiveUrl="#{appConfigBean.absoluteContextPath}/contents/news_archive.jsf"/>
+
+        <h:panelGrid styleClass="contentsarea">
+            <h:outputText value="Build: #{buildInfo.buildNumber}"/>
+            <h:outputText value="By: #{buildInfo.builtBy}"/>
+        </h:panelGrid>
 
         <!-- end left menu here -->
 
