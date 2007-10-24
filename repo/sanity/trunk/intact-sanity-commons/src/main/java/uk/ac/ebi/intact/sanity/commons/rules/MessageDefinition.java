@@ -67,8 +67,10 @@ public enum MessageDefinition {
                                "Edit the experiment and add the primary-reference to PubMed or a DOI if a PubMed is not available"),
 
     EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF ( Experiment.class, EXPERIMENT, 9, "Experiment with more than one primary-reference to PubMed or DOI", ERROR,
-                                      "Remove any redundant or wrong primary reference, giving preference to PubMed"),
+                                           "Remove any redundant or wrong primary reference, giving preference to PubMed"),
 
+    EXPERIMENT_WITHOUT_FULLNAME(Experiment.class, EXPERIMENT, 9, "Experiment with no fullname", WARNING,
+                                "Add the corresponding publication title as fullname"),    
     ////////////////////////
     // Feature
 
