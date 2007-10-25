@@ -111,6 +111,8 @@ public enum MessageDefinition {
 
     INTERACTION_WITHOUT_EXPERIMENT( Interaction.class, INTERACTION, 4, "Interaction not associated to an Experiment", ERROR ),
 
+    INTERACTION_WITHOUT_TYPE(  Interaction.class, INTERACTION, 5, "Interaction without interaction type", ERROR ),    
+
     ////////////////////////
     // Protein
 
