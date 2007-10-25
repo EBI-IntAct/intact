@@ -114,6 +114,23 @@ public enum MessageDefinition {
     INTERACTION_WITHOUT_TYPE(  Interaction.class, INTERACTION, 5, "Interaction without interaction type", ERROR ),    
 
     ////////////////////////
+    // Interactor
+
+    INTERACTOR_WITH_TYPE_MISMATCH(  Interactor.class, INTERACTOR, 1,
+                                    "Interactor with mismatching Class and CvInteractorType", ERROR,
+                                    "Ask a developer to fix this"),    
+
+    INTERACTOR_WITH_MISSING_TYPE(  Interactor.class, INTERACTOR, 2, "Interactor with missing CvInteractorType", ERROR,
+                                   "Ask a developer to fix this" ),    
+
+    INTERACTOR_WITH_UNSUPPORTED_TYPE(  Interactor.class, INTERACTOR, 3,
+                                       "Interactor for which there is no known association between Class and CvinteractorType",
+                                       ERROR, "Ask a developer to fix this" ),
+
+    INTERACTOR_WITH_INVALID_TYPE(  Interactor.class, INTERACTOR, 4,
+                                   "Interactor having a CvInteractorType that doesn't have a MI identity", ERROR ),
+
+    ////////////////////////
     // Protein
 
     PROTEIN_INCORRECT_CRC64( Protein.class, PROTEIN, 1, "Incorrect CRC64 checksum for the protein sequence", ERROR , "A developer should fix it" ),

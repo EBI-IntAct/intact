@@ -11,6 +11,7 @@ public interface KeyPrefix {
     static final String ANNOTATED_OBJECT = "AO-";
     static final String EXPERIMENT = "EXP-";
     static final String INTERACTION = "INT-";
+    static final String INTERACTOR = "IOR-";
     static final String PROTEIN = "PROT-";
     static final String SMALL_MOLECULE = "SM-";
     static final String NUCLEIC_ACID = "NUC-";
