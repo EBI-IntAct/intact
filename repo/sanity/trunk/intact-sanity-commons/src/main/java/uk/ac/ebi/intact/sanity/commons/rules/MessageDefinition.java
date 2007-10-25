@@ -63,14 +63,17 @@ public enum MessageDefinition {
 
     EXPERIMENT_TO_BE_REVIEWED( Experiment.class, EXPERIMENT, 7, "Experiment marked as 'To be reviewed'", INFO ),
 
-    EXPERIMENT_WITHOUT_PUBMED( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR,
+    EXPERIMENT_WITHOUT_PRIMARY_REF( Experiment.class, EXPERIMENT, 8, "No Pubmed ID found for experiment", ERROR,
                                "Edit the experiment and add the primary-reference to PubMed or a DOI if a PubMed is not available"),
 
     EXPERIMENT_WITH_MULTIPLE_PRIMARY_REF ( Experiment.class, EXPERIMENT, 9, "Experiment with more than one primary-reference to PubMed or DOI", ERROR,
                                            "Remove any redundant or wrong primary reference, giving preference to PubMed"),
 
     EXPERIMENT_WITHOUT_FULLNAME(Experiment.class, EXPERIMENT, 9, "Experiment with no fullname", WARNING,
-                                "Add the corresponding publication title as fullname"),    
+                                "Add the corresponding publication title as fullname"),
+
+    EXPERIMENT_WITH_PUBMED_TO_BE_ASSIGNED( Experiment.class, EXPERIMENT, 9, "Experiment with no fullname", WARNING,
+                                           "Add the corresponding publication title as fullname" ),
     ////////////////////////
     // Feature
 
@@ -152,8 +155,9 @@ public enum MessageDefinition {
 
     NUC_ACID_IDENTITY_MISSING( NucleicAcid.class, NUCLEIC_ACID, 2, "Missing Nucleic Acid identity Xref", ERROR ),
 
-    NUC_ACID_IDENTITY_MULTIPLE( NucleicAcid.class, NUCLEIC_ACID, 2, "Multiple identity xrefs for Nucleic Acid", ERROR,
-                                "Correct to one of the following in the given order of preference -> EMBL genome sequence, Ensembl, FlyBase, GeneID");
+    NUC_ACID_IDENTITY_MULTIPLE( NucleicAcid.class, NUCLEIC_ACID, 3, "Multiple identity xrefs for Nucleic Acid", ERROR,
+                                "Correct to one of the following in the given order of preference -> EMBL genome sequence, Ensembl, FlyBase, GeneID")
+    ;
 
     ////////////////////////
     // Instance variable
