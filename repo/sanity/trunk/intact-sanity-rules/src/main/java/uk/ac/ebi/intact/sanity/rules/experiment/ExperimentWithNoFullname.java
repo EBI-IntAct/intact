@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Check on experiments without interaction detection method.
+ * Check on experiments without fullname.
  *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  * @since 2.0.0
  */
