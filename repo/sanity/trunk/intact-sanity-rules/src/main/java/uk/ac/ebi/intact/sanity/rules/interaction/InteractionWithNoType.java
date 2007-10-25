@@ -17,9 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Check on experiment without participant detection method.
+ * Check on interaction with no CvInteractionType.
  *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
  * @since 2.0.0
  */
