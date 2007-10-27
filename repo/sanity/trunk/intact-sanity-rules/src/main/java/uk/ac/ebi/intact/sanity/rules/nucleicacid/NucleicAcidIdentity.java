@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * 
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 
 @SanityRule( target = NucleicAcid.class, group = { RuleGroup.INTACT, RuleGroup.IMEX })
