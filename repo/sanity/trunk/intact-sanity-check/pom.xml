@@ -16,27 +16,28 @@
     <name>IntAct Sanity :: Sanity Check</name>
 
     <dependencies>
+        <!-- Sanity Checker deps-->
         <dependency>
             <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-rules</artifactId>
         </dependency>
 
+        <!-- IntAct deps -->
         <dependency>
             <groupId>uk.ac.ebi.intact.commons</groupId>
             <artifactId>intact-commons</artifactId>
         </dependency>
-
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-persister</artifactId>
         </dependency>
-
         <dependency>
             <groupId>uk.ac.ebi.intact.datasets</groupId>
             <artifactId>intact-dataset</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <!-- Third party deps-->
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -52,13 +53,11 @@
             <artifactId>commons-dbutils</artifactId>
             <version>1.1</version>
         </dependency>
-
         <dependency>
             <groupId>org.biojava</groupId>
             <artifactId>biojava</artifactId>
             <version>1.5</version>
         </dependency>
-
     </dependencies>
 
 </project>
