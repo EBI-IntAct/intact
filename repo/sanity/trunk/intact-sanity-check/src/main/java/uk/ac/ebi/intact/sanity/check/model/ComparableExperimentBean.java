@@ -222,4 +222,14 @@ public class ComparableExperimentBean implements Comparable{
     }
 
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append( "ComparableExperimentBean" );
+        sb.append( "{ac='" ).append( ac ).append( '\'' );
+        sb.append( ", shortlabel='" ).append( shortlabel ).append( '\'' );
+        sb.append( ", pubmedId='" ).append( pubmedId ).append( '\'' );
+        sb.append( '}' );
+        return sb.toString();
+    }
 }
