@@ -18,11 +18,11 @@ import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * AnnotationNotUsingAnAppropriateCvTopic Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class AnnotationNotUsingAnAppropriateCvTopicTest {
 
