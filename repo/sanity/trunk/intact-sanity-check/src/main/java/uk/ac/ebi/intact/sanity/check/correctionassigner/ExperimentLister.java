@@ -5,12 +5,12 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.sanity.check.correctionassigner;
 
+import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.OracleDialect;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
-import uk.ac.ebi.intact.context.DataContext;
+import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
@@ -55,17 +55,17 @@ public class ExperimentLister {
     /**
      * HashMap permiting to map pubmed String to the corresponding Collection of ExperimentBean
      */
-    private HashMap pmid2expColl = new HashMap();
+    private Map pmid2expColl = new HashMap();
 
     /**
      * HashMap permiting to map pubmed id of experiments(not assigned to any reviewer) to their creator.
      */
-    private HashMap notAssignedPmid2creator = new HashMap();
+    private Map<String, String> notAssignedPmid2creator = new HashMap<String, String>();
 
     /**
      * HashMap permiting to map pubmed id of experiments (assigned to a reviewer) to their creator.
      */
-    private HashMap assignedPmid2creator = new HashMap();
+    private Map assignedPmid2creator = new HashMap();
 
     private static boolean DEBUG = false;
 
@@ -98,6 +98,8 @@ public class ExperimentLister {
         removeCorrectionForSuperCuratorAway();
 
         fillNotAssignedExpCollection();
+
+        // TODO remove also experiments that are part of publication from which an experiment is on-hold
         removeExpOnHoldAndWithNoInteraction( notAssignedExperiments );
 
         fillAssignedExpCollection();
@@ -114,7 +116,7 @@ public class ExperimentLister {
      *
      * @return the HashMap pmid2expColl.
      */
-    public HashMap getPmid2expColl() {
+    public Map getPmid2expColl() {
         return pmid2expColl;
     }
 
@@ -141,7 +143,7 @@ public class ExperimentLister {
      *
      * @return the HashMap notAssignedPmid2creator
      */
-    public HashMap getNotAssignedPmid2creator() {
+    public Map getNotAssignedPmid2creator() {
         return notAssignedPmid2creator;
     }
 
@@ -290,6 +292,8 @@ public class ExperimentLister {
                     // TODO what about experiment that are already accepted.
                 }
                 SanityCheckerHelper sch = new SanityCheckerHelper();
+
+                // TODO exclude from this one the experiment that also have accepted.
                 sch.addMapping( ComparableExperimentBean.class, "select e.ac, e.shortlabel, e.created, e.created_user " +
                                                                 "from ia_experiment e, ia_exp2annot e2a , ia_annotation a " +
                                                                 "where e.ac = e2a.experiment_ac " +
@@ -386,7 +390,6 @@ public class ExperimentLister {
         for ( Iterator iterator = assignedExperiments.iterator(); iterator.hasNext(); ) {
             ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator.next();
             assignedPmid2creator.put( exp.getPubmedId(), exp.getCreated_user().toLowerCase() );
-
         }
 
         for ( Iterator iterator = notAssignedExperiments.iterator(); iterator.hasNext(); ) {
@@ -395,8 +398,6 @@ public class ExperimentLister {
                 notAssignedPmid2creator.put( exp.getPubmedId(), exp.getCreated_user().toLowerCase() );
             }
         }
-
-
     }
 
     private void fillOnHoldAndToBeReviewedExperiments() throws IntactException, SQLException {
@@ -410,7 +411,6 @@ public class ExperimentLister {
                                               "order by e.shortlabel" );
         onHoldExperiments = sch.getBeans( ExperimentBean.class, cvHolder.onHold.getAc() );
         toBeReviewedExperiments = sch.getBeans( ExperimentBean.class, cvHolder.toBeReviewed.getAc() );
-
     }
 
     private void fillNotAcceptedNotToBeReviewedExperiments() throws IntactException, SQLException {
@@ -424,7 +424,6 @@ public class ExperimentLister {
                                               "a.topic_ac in ('" + cvHolder.accepted.getAc() + "','" + cvHolder.toBeReviewed.getAc() + "')) " +
                                               "and created >  " + getToDateSqlFirstSep2005() + " and ac like ? " );
         notAcceptedNotToBeReviewed = sch.getBeans( ExperimentBean.class, "%" );
-
     }
 
     /**
@@ -550,7 +549,7 @@ public class ExperimentLister {
             if ( !cvBeans.isEmpty() ) {
                 cvBean = ( ControlledvocabBean ) cvBeans.get( 0 );
             } else {
-                throw new Exception( "Couldn't create ControlledvocabBean for " + shortlabel );
+                throw new Exception( "Couldn't create ControlledvocabBean for shortlabel '" + shortlabel + "'" );
             }
 
             return cvBean;
@@ -559,8 +558,8 @@ public class ExperimentLister {
     }
 
     private static String getToDateSqlFirstSep2005() {
-        AbstractHibernateDataConfig dataConfig = ( AbstractHibernateDataConfig ) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
-        Dialect dialect = Dialect.getDialect( dataConfig.getConfiguration().getProperties() );
+        DataConfig dataConfig = IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig();
+        Dialect dialect = Dialect.getDialect( ( ( Configuration ) dataConfig.getConfiguration() ).getProperties() );
 
         String dateSql = "TIMESTAMP '2005-09-01 00:00:00'"; //H2
 

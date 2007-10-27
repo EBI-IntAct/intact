@@ -1,36 +1,68 @@
 package uk.ac.ebi.intact.sanity.check.correctionassigner;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
+import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterException;
 import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.core.unit.IntactUnitDataset;
-import uk.ac.ebi.intact.model.Annotation;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Experiment;
-import uk.ac.ebi.intact.model.Interaction;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SanityConfigurationException;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
 import uk.ac.ebi.intact.sanity.check.model.ComparableExperimentBean;
-import uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Assigner Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@IntactUnitDataset( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
+//@IntactUnitDataset( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
 public class AssignerTest extends AbstractSanityLegacyTest {
+
+    public class CorrectionAssignerCvPrimer extends SmallCvPrimer {
+
+        public CorrectionAssignerCvPrimer( DaoFactory daoFactory ) {
+            super( daoFactory );
+        }
+
+        public void createCVs() {
+            super.createCVs();
+            getCvObject( CvTopic.class, CvTopic.REVIEWER );
+            getCvObject( CvTopic.class, CvTopic.TO_BE_REVIEWED );
+            getCvObject( CvTopic.class, CvTopic.ACCEPTED );
+            getCvObject( CvTopic.class, CvTopic.ON_HOLD );
+        }
+    }
+
+    @Before
+    public void initializeCvs() throws Exception {
+        new IntactUnit().createSchema(true);
+
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        final CorrectionAssignerCvPrimer correctionAssignerCvPrimer = new CorrectionAssignerCvPrimer(daoFactory);
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        correctionAssignerCvPrimer.createCVs();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+    }
+
+    @After
+    public void finishTransactionIfNecessary() throws Exception {
+        if( IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        }
+    }
 
     ///////////////////////
     // Local asserts
@@ -49,6 +81,15 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         for ( Annotation a : exp.getAnnotations() ) {
             if ( a.getCvTopic().getShortLabel().equals( CvTopic.REVIEWER ) && a.getAnnotationText().equals( reviewerName ) ) {
                 return;
+            }
+        }
+        Assert.fail( "Experiment " + exp.getAc() + " should have a reviewer("+ reviewerName +") annotation." );
+    }
+
+    private void assertHasNoReviewer( Experiment exp ) {
+        for ( Annotation a : exp.getAnnotations() ) {
+            if ( a.getCvTopic().getShortLabel().equals( CvTopic.REVIEWER ) ) {
+                Assert.fail( "Experiment " + exp.getAc() + " should not have a reviewer annotation." );
             }
         }
         Assert.fail( "Experiment " + exp.getAc() + " should have a to-be-reviewed annotation." );
@@ -83,7 +124,97 @@ public class AssignerTest extends AbstractSanityLegacyTest {
     }
 
     @Test
+    public void assign_multiple_super_curators() throws Exception {
+
+        // TODO check that if John has created all of these experiments, then he should not be assigned to check them
+
+        SanityCheckConfig config = super.getSanityCheckConfig();
+        final List<SuperCurator> superCurators = config.getSuperCurators();
+        Assert.assertNotNull( superCurators );
+        Assert.assertEquals( 1, superCurators.size() );
+
+        SuperCurator john = config.getSuperCurator( "John" );
+        Assert.assertNotNull( john );
+        Assert.assertEquals( 100, john.getPercentage() );
+
+        // add 2 more super curators so we have 3 thirds for the assignment
+        SuperCurator ellen = new SuperCurator( 33, "Ellen" );
+        SuperCurator donald = new SuperCurator( 33, "Donald" );
+        john.setPercentage( 34 );
+
+        config.getSuperCurators().add( ellen );
+        config.getSuperCurators().add( donald );
+
+        // Add some random data
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
+
+        for ( int i = 0; i < 9; i++ ) {
+            Experiment experiment = mockBuilder.createExperimentRandom( 2 );
+
+            beginTransaction();
+            persistExperiment( experiment );
+            commitTransaction();
+        }
+
+        beginTransaction();
+
+        Assigner assigner = new Assigner( config, false );
+        assigner.assign();
+
+        Assert.assertEquals( 3, config.getSuperCurator( "John" ).getExperiments().size() );
+        Assert.assertEquals( 3, config.getSuperCurator( "Ellen" ).getExperiments().size() );
+        Assert.assertEquals( 3, config.getSuperCurator( "Donald" ).getExperiments().size() );
+
+        commitTransaction();
+    }
+
+    @Test
+    public void assign_multiple_super_curators_2() throws Exception {
+
+        SanityCheckConfig config = super.getSanityCheckConfig();
+        final List<SuperCurator> superCurators = config.getSuperCurators();
+        Assert.assertNotNull( superCurators );
+        Assert.assertEquals( 1, superCurators.size() );
+
+        SuperCurator john = config.getSuperCurator( "John" );
+        Assert.assertNotNull( john );
+        Assert.assertEquals( 100, john.getPercentage() );
+
+        // add 2 more super curators so we have 3 thirds for the assignment
+        SuperCurator ellen = new SuperCurator( 33, "Ellen" );
+        SuperCurator donald = new SuperCurator( 33, "Donald" );
+        john.setPercentage( 34 );
+
+        config.getSuperCurators().add( ellen );
+        config.getSuperCurators().add( donald );
+
+        // Add some random data
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
+
+        for ( int i = 0; i < 10; i++ ) {
+            Experiment experiment = mockBuilder.createExperimentRandom( 2 );
+
+            beginTransaction();
+            persistExperiment( experiment );
+            commitTransaction();
+        }
+
+        beginTransaction();
+
+        Assigner assigner = new Assigner( config, false );
+        assigner.assign();
+
+        // john being the super curator that has the highest percentage and is not the original curator, he gets 1 more
+        Assert.assertEquals( 4, config.getSuperCurator( "John" ).getExperiments().size() );
+        Assert.assertEquals( 3, config.getSuperCurator( "Ellen" ).getExperiments().size() );
+        Assert.assertEquals( 3, config.getSuperCurator( "Donald" ).getExperiments().size() );
+
+        commitTransaction();
+    }
+
+    @Test
     public void assign_experiment_accepted() throws Exception {
+
         // Add some random data
         IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
 
@@ -203,7 +334,6 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
         SanityCheckConfig config = new SanityCheckConfig( curators );
 
-
         Assigner assigner = new Assigner( config, false );
         assigner.assign();
 
@@ -219,7 +349,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
         for ( int i = 0; i < 5; i++ ) {
             Experiment experiment = mockBuilder.createExperimentRandom( 5 );
-            if( i < 3 ) {
+            if ( i < 3 ) {
                 experiment.addAnnotation( mockBuilder.createAnnotation( "anne", "IA:9999", CvTopic.REVIEWER ) );
             }
             persistExperiment( experiment );
@@ -282,6 +412,65 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
         commitTransaction();
     }
+
+    @Test
+    @Ignore
+    public void assign_publication_partially_on_hold() throws Exception {
+        // Add some random data
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
+        final String pubmedId = "123456789";
+        Publication publication = mockBuilder.createPublication( pubmedId );
+
+        CvXrefQualifier primaryRef = mockBuilder.createCvObject( CvXrefQualifier.class, CvXrefQualifier.PRIMARY_REFERENCE_MI_REF, CvXrefQualifier.PRIMARY_REFERENCE );
+        CvDatabase pubmed = mockBuilder.createCvObject( CvDatabase.class, CvDatabase.PUBMED_MI_REF, CvDatabase.PUBMED );
+
+        beginTransaction();
+
+        // 3 experiments attached to a single publication, one experiment on-hold so no experiment should get assigned.
+        for ( int i = 0; i < 3; i++ ) {
+            Experiment experiment = mockBuilder.createExperimentRandom( 3 );
+            experiment.setPublication( publication );
+
+            // set the primary-reference of the experiment
+            Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( experiment, pubmed, primaryRef );
+            Assert.assertNotNull( xrefs );
+            Assert.assertEquals( 1, xrefs.size() );
+            xrefs.iterator().next().setPrimaryId( pubmedId );
+
+            if ( i == 0 ) {
+                experiment.addAnnotation( mockBuilder.createAnnotation( "Almost finished ;)", "IA:1234", CvTopic.ON_HOLD ) );
+            }
+
+            persistExperiment( experiment );
+        }
+        commitTransaction();
+
+        List<SuperCurator> curators = new ArrayList<SuperCurator>( 2 );
+        curators.add( new SuperCurator( 50, "Peter" ) );
+        curators.add( new SuperCurator( 50, "Anne" ) );
+
+        beginTransaction();
+
+        SanityCheckConfig config = new SanityCheckConfig( curators );
+
+        Assigner assigner = new Assigner( config, true );
+        assigner.assign();
+
+        Assert.assertEquals( 0, config.getSuperCurator( "Anne" ).getExperiments().size() );
+        Assert.assertEquals( 0, config.getSuperCurator( "Peter" ).getExperiments().size() );
+
+        commitTransaction();
+        beginTransaction();
+
+        for ( Experiment exp : getDaoFactory().getExperimentDao().getAll() ) {
+            assertHasNoReviewer( exp );
+        }
+
+        commitTransaction();
+    }
+
+    ////////////////////
+    // Utilities
 
     private void persistExperiment( Experiment experiment ) throws PersisterException {
         for ( Interaction interaction : experiment.getInteractions() ) {
