@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.InteractionImpl;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.sanity.check.model.*;
 
 import java.sql.Connection;
@@ -33,8 +34,6 @@ public class SanityCheckerHelper  {
 
     private QueryRunner queryRunner;
 
-    private Connection connection;
-
     public SanityCheckerHelper() throws IntactException {
         queryRunner = new QueryRunner();
     }
@@ -47,7 +46,7 @@ public class SanityCheckerHelper  {
         // We test that the sql is valid.
         Connection conn = getJdbcConnection( );
         PreparedStatement preparedStatement = conn.prepareStatement( sql );
-        preparedStatement.close();
+        // preparedStatement.close();
 
         // Store the association
         if (bean2sql.containsKey(beanClass)) {
@@ -160,8 +159,8 @@ public class SanityCheckerHelper  {
         InteractorBean interactorBean = null;
 
         addMapping(  InteractorBean.class, "select ac, objclass, updated, userstamp, crc64, biosource_ac, fullname, interactiontype_ac, shortlabel " +
-                                                  "from ia_interactor " +
-                                                  "where ac=?" );
+                                           "from ia_interactor " +
+                                           "where ac=?" );
         interactorBean = getFirstBean(  InteractorBean.class, ac );
 
         return interactorBean;
@@ -171,8 +170,8 @@ public class SanityCheckerHelper  {
         ControlledvocabBean cvBean;
 
         addMapping(  ControlledvocabBean.class, "select ac, objclass, updated, userstamp, fullname, shortlabel " +
-                                                       "from ia_controlledvocab " +
-                                                       "where ac=?" );
+                                                "from ia_controlledvocab " +
+                                                "where ac=?" );
         cvBean = (ControlledvocabBean) getFirstBean(  ControlledvocabBean.class, ac );
         return cvBean;
     }
@@ -181,8 +180,8 @@ public class SanityCheckerHelper  {
         BioSourceBean bsBean;
 
         addMapping(  BioSourceBean.class, "select ac, taxid, tissue_ac, celltype_ac, updated, userstamp, fullname, shortlabel " +
-                                                 "from ia_biosource " +
-                                                 "where ac=?" );
+                                          "from ia_biosource " +
+                                          "where ac=?" );
         bsBean = (BioSourceBean) getFirstBean(  BioSourceBean.class, ac );
         return bsBean;
     }
@@ -191,8 +190,8 @@ public class SanityCheckerHelper  {
         ExperimentBean expBean;
 
         addMapping(  ExperimentBean.class, "select ac, biosource_ac, detectmethod_ac, identmethod_ac, relatedexperiment_ac, updated, userstamp, fullname, shortlabel " +
-                                                  "from ia_experiment " +
-                                                  "where ac=?" );
+                                           "from ia_experiment " +
+                                           "where ac=?" );
         expBean = (ExperimentBean) getFirstBean(  ExperimentBean.class, ac );
         return expBean;
     }
@@ -200,8 +199,8 @@ public class SanityCheckerHelper  {
     public FeatureBean getFeatureBeanFromAc( String ac ) throws IntactException, SQLException {
         FeatureBean featureBean;
         addMapping(  FeatureBean.class, "select ac, component_ac, identification_ac, featuretype_ac, linkedfeature_ac, updated, userstamp, fullname, shortlabel " +
-                                               "from ia_feature " +
-                                               "where ac=?" );
+                                        "from ia_feature " +
+                                        "where ac=?" );
         featureBean = (FeatureBean) getFirstBean(  FeatureBean.class, ac );
         return featureBean;
     }
@@ -222,7 +221,7 @@ public class SanityCheckerHelper  {
 
         for (String sql : bean2sql.get(beanClass)) {
             for (String param : params) {
-                //System.out.println("SQL: "+sql+ " PARAMS: "+param);
+                System.out.println("SQL: "+sql+ " PARAMS: "+param);
                 List<T> list = (List) queryRunner.query(conn,
                         sql,
                         (String) param,
@@ -231,7 +230,7 @@ public class SanityCheckerHelper  {
             }
         }
 
-        getJdbcConnection().close();
+        //getJdbcConnection().close();
 
         return resultList;
     }
@@ -283,18 +282,21 @@ public class SanityCheckerHelper  {
     }
 
     protected Connection getJdbcConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            return connection;
-        }
+//        if (connection != null && !connection.isClosed()) {
+//            return connection;
+//        }
 
-        Configuration configuration = ((AbstractHibernateDataConfig) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig()).getConfiguration();
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        return daoFactory.connection();
 
-        String url = configuration.getProperty(Environment.URL);
-        String user = configuration.getProperty(Environment.USER);
-        String password = configuration.getProperty(Environment.PASS);
-
-        this.connection = DriverManager.getConnection(url, user, password);
-
-        return connection;
+//        Configuration configuration = (Configuration) IntactContext.getCurrentInstance().getConfig().getDefaultDataConfig().getConfiguration();
+//
+//        String url = configuration.getProperty(Environment.URL);
+//        String user = configuration.getProperty(Environment.USER);
+//        String password = configuration.getProperty(Environment.PASS);
+//
+//        this.connection = DriverManager.getConnection(url, user, password);
+//
+//        return connection;
     }
 }
