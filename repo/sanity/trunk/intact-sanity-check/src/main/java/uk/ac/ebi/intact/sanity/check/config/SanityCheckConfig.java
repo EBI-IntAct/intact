@@ -178,7 +178,7 @@ public class SanityCheckConfig {
 
     private static Curator getCuratorFromList(String name, Collection<? extends Curator> curators) {
         for (Curator curator : curators) {
-            if (curator.getName().equalsIgnoreCase(name)) {
+            if (curator.hasName(name)) {
                 return curator;
             }
         }
@@ -194,7 +194,7 @@ public class SanityCheckConfig {
         }
 
         if (percentageTotal != 100) {
-            throw new SanityConfigurationException("Total percentage is different to 100%: " + percentageTotal + " (" + superCurators + ")");
+            throw new SanityConfigurationException("Total percentage is different from 100%: " + percentageTotal + " (" + superCurators + ")");
         }
     }
 
@@ -210,7 +210,7 @@ public class SanityCheckConfig {
 
     public SuperCurator getSuperCurator(String name) {
         for (SuperCurator superCurator : superCurators) {
-            if (superCurator.getName().equalsIgnoreCase(name)) {
+            if (superCurator.hasName(name)) {
                 return superCurator;
             }
         }
