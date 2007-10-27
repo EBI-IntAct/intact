@@ -1,7 +1,9 @@
 package uk.ac.ebi.intact.sanity.check;
 
+import org.junit.After;
 import org.junit.Before;
-import uk.ac.ebi.intact.core.unit.IntactAbstractTestCase;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.core.persister.PersisterContext;
 import uk.ac.ebi.intact.sanity.check.config.Curator;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;
@@ -15,7 +17,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public abstract class AbstractSanityLegacyTest extends IntactAbstractTestCase {
+public abstract class AbstractSanityLegacyTest extends IntactBasicTestCase {
 
     private SanityCheckConfig sanityCheckConfig;
 
@@ -37,6 +39,11 @@ public abstract class AbstractSanityLegacyTest extends IntactAbstractTestCase {
 
         sanityCheckConfig.setEditorUrl("http://www.ebi.ac.uk/intact/editor");
         sanityCheckConfig.setEmailSubjectPrefix("[TEST] ");
+    }
+
+    @After
+    public void tearDown() {
+        PersisterContext.getInstance().clear();
     }
 
     public final SanityCheckConfig getSanityCheckConfig() {

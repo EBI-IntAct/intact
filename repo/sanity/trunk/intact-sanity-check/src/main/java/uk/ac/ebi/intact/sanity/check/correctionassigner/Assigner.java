@@ -26,8 +26,9 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * TODO comment it.
+ * Assigner allows to allocate experiments for checking by super curators.
  *
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id: Assigner.java,v 1.4 2006/04/13 12:38:57 skerrien Exp $
  */
@@ -104,12 +105,19 @@ public class Assigner {
      * @return the number of pubmedIds corresponding to the given ratio.
      */
     public int getNumberOfPubmed( int percentage, int total ) {
-        int i = 0;
-        float npmid = total;
-        float n = ( npmid / 100 ) * percentage;
-        Float f = new Float( n );
-        i = f.intValue();
-        return i;
+        float pmidCount = total;
+        float n = ( pmidCount / 100 ) * percentage;
+        int count;
+        String action;
+        if( n % 1 > 0.5 ) {
+            count = ( int ) Math.ceil( n );
+            action = "ceiled";
+        } else {
+            count = ( int ) Math.floor( n );
+            action = "floored";
+        }
+        System.out.println( percentage + "% of " + total + " is " + count + " ("+ n +" "+ action +")");
+        return count;
     }
 
     /**
@@ -156,98 +164,169 @@ public class Assigner {
      * @param notAssignedExperiments   Collection of not assigned experiments.
      * @throws IntactException
      */
-    public void assignExperiments( HashMap notAssignedPmid2creator, HashMap pubmedToExp, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = sanityConfig.getSuperCurators();
+    public void assignExperiments( Map<String, String> notAssignedPmid2creator,
+                                   Map<String, Collection> pubmedToExp,
+                                   Collection notAssignedExperiments ) throws Exception {
+
+        Collection<SuperCurator> superCurators = sanityConfig.getSuperCurators();
+
+        final int pmidCount = notAssignedPmid2creator.size();
+
+        if ( log.isDebugEnabled() ) log.debug( "Count of non assigned PMIDs: " + notAssignedPmid2creator.size() );
 
         // For each superCurator :
-        for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
-            SuperCurator superCurator = ( SuperCurator ) iterator.next();
+        for ( SuperCurator superCurator : superCurators ) {
+
+            if ( log.isDebugEnabled() ) log.debug( "Process assignement of SuperCurator: " + superCurator.getName() );
+
             if ( superCurator.getPercentage() != 0 ) {
 
                 // Get the number of pubmedIds this superCurator should be affected.
-                int numberOfPubmeds = getNumberOfPubmed( superCurator.getPercentage(), lister.getNotAssignedPmid2creator().size() );
+                final int numberOfPubmeds = getNumberOfPubmed( superCurator.getPercentage(), pmidCount );
 
-                int i = 0;
-                // For each not assigned pubmedId (pmid) and while the number of affected pubmedId is smaller then the number
-                // pubmedId this superCurator should be assigned :
-                Iterator it = notAssignedPmid2creator.entrySet().iterator();
-                while ( it.hasNext() && i < numberOfPubmeds ) {
+                if ( log.isDebugEnabled() ) log.debug( "PMID to assign: " + numberOfPubmeds );
 
-                    Map.Entry pairs = ( Map.Entry ) it.next();
-                    // Check that the superCurator name is not the creator of the pubmedId. As a curator can not correct
-                    // its own data.
-                    if ( !superCurator.getName().toLowerCase().equals( ( ( String ) pairs.getValue() ).toLowerCase() ) ) {
-                        Collection expToAdd = ( Collection ) pubmedToExp.get( pairs.getKey() );
+                int pmidAssigned = 0;
+                // For each pmid not assigned and while the number of affected pmid is smaller
+                // than the number pubmedId this superCurator should be assigned :
+                Iterator<Map.Entry<String, String>> it = notAssignedPmid2creator.entrySet().iterator();
+                while ( it.hasNext() && pmidAssigned < numberOfPubmeds ) {
+
+                    Map.Entry<String, String> pmid2creator = it.next();
+                    // Check that the superCurator name is not the creator of the pubmedId.
+                    // As a curator can not correct its own data.
+                    final String creator = pmid2creator.getValue();
+                    final String pmid = pmid2creator.getKey();
+
+                    if ( !superCurator.hasName( creator ) ) {
+                        Collection<ComparableExperimentBean> expToAdd = pubmedToExp.get( pmid );
+
+                        if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
+                                                               " ... assigning it to " + superCurator.getName() + " now");
+
                         //For each experiment corresponding to this pubmed we just assigned.
                         for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
                             ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
-                            //Add the experiment the Collection of experiments to correct of the superCurator.
                             superCurator.addExperiment( exp );
-                            //remove the experiment from the Collection of not assigned experiments.
                             notAssignedExperiments.remove( exp );
-                            //Add the annotation reviewer to the experiment.
                             addReviewerAnnotation( exp.getAc(), superCurator.getName() );
                         }
-                        //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
                         it.remove();
-                        //increment i to show that one more pubmedId has been assigned to this superCreator.
-                        i++;
+                        pmidAssigned++;
+                    } else {
+                        if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator + ", so it cannotbe assigned to him/her." );
                     }
-                }
+                } // while
+            } else {
+                if ( log.isDebugEnabled() ) log.debug( "SuperCurator: " + superCurator.getName() + " has 0% set. skip" );
             }
+        } // for
+
+
+        final int unassignedPmid = notAssignedPmid2creator.size();
+        if( unassignedPmid > 0 ) {
+
+            List<SuperCurator> orderedCurators = new ArrayList<SuperCurator>( sanityConfig.getSuperCurators() );
+            Collections.sort( orderedCurators, new Comparator<SuperCurator>() {
+                public int compare( SuperCurator o1, SuperCurator o2 ) {
+                    return o2.getPercentage() - o1.getPercentage();
+                }
+            } );
+
+            // assign these to the curator that has the highest percentage (if it is not the creator)
+            // some haven't been assigned
+            if ( log.isDebugEnabled() ) {
+                log.debug( unassignedPmid + " PMID not assigned to any curator due to rounding errors; Assigning " +
+                           "to the super curator having the highest percentage that is not the original curator");
+            }
+
+            Iterator<Map.Entry<String, String>> it = notAssignedPmid2creator.entrySet().iterator();
+            while ( it.hasNext() ) {
+
+                Map.Entry<String, String> pmid2creator = it.next();
+                final String creator = pmid2creator.getValue();
+                final String pmid = pmid2creator.getKey();
+
+                boolean stop = false;
+                for ( Iterator<SuperCurator> iterator = orderedCurators.iterator(); iterator.hasNext() && !stop; ) {
+                    SuperCurator superCurator = iterator.next();
+
+                    if ( !superCurator.hasName( creator ) ) {
+                        Collection<ComparableExperimentBean> expToAdd = pubmedToExp.get( pmid );
+
+                        if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
+                                                               " ... assigning it to " + superCurator.getName() + " now");
+
+                        for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
+                            ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
+                            superCurator.addExperiment( exp );
+                            notAssignedExperiments.remove( exp );
+                            addReviewerAnnotation( exp.getAc(), superCurator.getName() );
+                        }
+                        it.remove();
+
+                        stop = true;
+                    } else {
+                        if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
+                                                               ", so it cannotbe assigned to him/her." );
+                    }
+                } // for
+            } // while
         }
     }
 
-    /**
-     * ex : 2 SuperCurators John and Jane. John and Jane must correct 50% of the total number of pubmed to correct. 3
-     * pubmedw to correct getNumberOfPubmed(50, 3) will return 1. As it would make no sense to affect a pubmed and a
-     * half. As a consequence, 1 pubmed would be not affected to anybody.
-     * <p/>
-     * So for each pubmedId remaining we go through the Collection of SuperCurators and if the superCurator to come is
-     * not the one who created the experiment we affect it to him.
-     *
-     * @param notAssignedPmid2creator, map associating the not assigned pubmedIds to their creator.
-     * @param pmid2ExpColl,            map associating the pubmedId to the Collection of corresponding experiments
-     *                                 existing in the database and needing to be corrected.
-     * @param notAssignedExperiments,  Collection of not assigned experiments.
-     * @throws IntactException
-     */
-    public void assignRemainingExperiments( HashMap notAssignedPmid2creator, HashMap pmid2ExpColl, Collection notAssignedExperiments ) throws Exception {
-        Collection superCurators = sanityConfig.getSuperCurators();
-        //If there are still some pubmed not assigned...
-        if ( notAssignedPmid2creator.size() != 0 ) {
-            //then iterate on those pubmed
-            Iterator iter = notAssignedPmid2creator.entrySet().iterator();
-            while ( iter.hasNext() ) {
-                Map.Entry pairs = ( Map.Entry ) iter.next();
-                //Iterate on the collection of SuperCurators
-                for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
-                    SuperCurator superCurator = ( SuperCurator ) iterator.next();
-                    if ( superCurator.getPercentage() != 0 ) {
-                        //If the superCurator is not the curator who entered this pubmed into the database we affect it to him.
-                        if ( !superCurator.getName().toLowerCase().equals( pairs.getValue() ) ) {
-                            //Affect all the experiment corresponding to this pubmed Id to the superCurator.
-                            Collection expToAdd = ( Collection ) pmid2ExpColl.get( pairs.getKey() );
-                            for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
-                                ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
-                                //Add the experiment the Collection of experiments to correct of the superCurator.
-                                superCurator.addExperiment( exp );
-                                //remove the experiment from the Collection of not assigned experiments.
-                                notAssignedExperiments.remove( exp );
-                                //Add the annotation reviewer to the experiment.
-                                addReviewerAnnotation( exp.getAc(), superCurator.getName() );
-                            }
-                            //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
-                            iter.remove();
-                            // As the SuperCurator was not the creator, the pubmed has been assigned so we don't need to
-                            //try with an other SuperCurator. So break the iteration on the SuperCurators collection.
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-    }
+//    /**
+//     * ex : 2 SuperCurators John and Jane. John and Jane must correct 50% of the total number of pubmed to correct. 3
+//     * pubmedw to correct getNumberOfPubmed(50, 3) will return 1. As it would make no sense to affect a pubmed and a
+//     * half. As a consequence, 1 pubmed would be not affected to anybody.
+//     * <p/>
+//     * So for each pubmedId remaining we go through the Collection of SuperCurators and if the superCurator to come is
+//     * not the one who created the experiment we affect it to him.
+//     *
+//     * @param notAssignedPmid2creator, map associating the not assigned pubmedIds to their creator.
+//     * @param pmid2ExpColl,            map associating the pubmedId to the Collection of corresponding experiments
+//     *                                 existing in the database and needing to be corrected.
+//     * @param notAssignedExperiments,  Collection of not assigned experiments.
+//     * @throws IntactException
+//     */
+//    public void assignRemainingExperiments( Map notAssignedPmid2creator,
+//                                            Map pmid2ExpColl,
+//                                            Collection notAssignedExperiments ) throws Exception {
+//        Collection superCurators = sanityConfig.getSuperCurators();
+//        //If there are still some pubmed not assigned...
+//        if ( notAssignedPmid2creator.size() != 0 ) {
+//            //then iterate on those pubmed
+//            Iterator iter = notAssignedPmid2creator.entrySet().iterator();
+//            while ( iter.hasNext() ) {
+//                Map.Entry pairs = ( Map.Entry ) iter.next();
+//                //Iterate on the collection of SuperCurators
+//                for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
+//                    SuperCurator superCurator = ( SuperCurator ) iterator.next();
+//                    if ( superCurator.getPercentage() != 0 ) {
+//                        //If the superCurator is not the curator who entered this pubmed into the database we affect it to him.
+//                        if ( !superCurator.getName().toLowerCase().equals( pairs.getValue() ) ) {
+//                            //Affect all the experiment corresponding to this pubmed Id to the superCurator.
+//                            Collection expToAdd = ( Collection ) pmid2ExpColl.get( pairs.getKey() );
+//                            for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
+//                                ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
+//                                //Add the experiment the Collection of experiments to correct of the superCurator.
+//                                superCurator.addExperiment( exp );
+//                                //remove the experiment from the Collection of not assigned experiments.
+//                                notAssignedExperiments.remove( exp );
+//                                //Add the annotation reviewer to the experiment.
+//                                addReviewerAnnotation( exp.getAc(), superCurator.getName() );
+//                            }
+//                            //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
+//                            iter.remove();
+//                            // As the SuperCurator was not the creator, the pubmed has been assigned so we don't need to
+//                            //try with an other SuperCurator. So break the iteration on the SuperCurators collection.
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Once an experiment has been assigned to a SuperCurator we must add a reviewer annotation (with cvTopic = reviewer
@@ -260,17 +339,21 @@ public class Assigner {
      * @throws IntactException
      */
     public void addReviewerAnnotation( String expAc, String reviewerName ) throws Exception {
+
+        if( ! IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        }
+
         //Get the util.model.Experiment object corresponding to this experiment ac.
         Experiment experiment = getDaoFactory().getExperimentDao().getByAc( expAc );
         //Create the annotation reviewer using as description the reviewerName.
-        Annotation reviewerAnnotation = createAnnotation( reviewerName );
-        //Add the annotation to the experiment.
+        Annotation reviewerAnnotation = createReviewerAnnotation( reviewerName );
+        getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
+        
         experiment.addAnnotation( reviewerAnnotation );
-
-        // getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
         getDaoFactory().getExperimentDao().saveOrUpdate( experiment );
 
-        IntactContext.getCurrentInstance().getDataContext().flushSession();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
 
     /**
@@ -280,7 +363,7 @@ public class Assigner {
      * @return
      * @throws IntactException
      */
-    public Annotation createAnnotation( String reviewerName ) throws IntactException {
+    public Annotation createReviewerAnnotation( String reviewerName ) throws IntactException {
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
         CvTopic reviewer = getDaoFactory().getCvObjectDao( CvTopic.class ).getByShortLabel( CvTopic.REVIEWER );
         Annotation annotation = new Annotation( owner, reviewer, reviewerName );
@@ -305,14 +388,14 @@ public class Assigner {
         // see the javadoc corresponding to the method for explanation.
         filterOutAlreadyAssignedPubmed( notAssignedExperiments );
 
-        HashMap notAssignedPmid2creator = new HashMap( lister.getNotAssignedPmid2creator() );
-        HashMap pmid2ExpColl = lister.getPmid2expColl();
+        Map<String, String> notAssignedPmid2creator = new HashMap<String, String>( lister.getNotAssignedPmid2creator() );
+        Map pmid2ExpColl = lister.getPmid2expColl();
 
         //Assign the experiment. See javadoc for the corresponding method.
         assignExperiments( notAssignedPmid2creator, pmid2ExpColl, notAssignedExperiments );
 
         //Assign remaining experiments. See javadoc for the corresponding method.
-        assignRemainingExperiments( notAssignedPmid2creator, pmid2ExpColl, notAssignedExperiments );
+//        assignRemainingExperiments( notAssignedPmid2creator, pmid2ExpColl, notAssignedExperiments );
     }
 
     /**
