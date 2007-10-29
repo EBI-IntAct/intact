@@ -45,6 +45,5 @@ public class FeatureWithoutTypeTest {
         Assert.assertEquals( 1, messages.size() );
         Assert.assertEquals( MessageDefinition.FEATURE_WITHOUT_TYPE,
                              messages.iterator().next().getMessageDefinition() );
-
     }
 }

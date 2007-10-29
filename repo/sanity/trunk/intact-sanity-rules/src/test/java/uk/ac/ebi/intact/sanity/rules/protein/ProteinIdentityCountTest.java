@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * ProteinIdentityCount Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class ProteinIdentityCountTest {
 
@@ -33,25 +33,22 @@ public class ProteinIdentityCountTest {
 
         Protein protein = P08050Mock.getMock();
         ProteinIdentityCount rule = new ProteinIdentityCount();
-        Collection<GeneralMessage> messages = rule.check(protein);
-        assertEquals(0,messages.size());
+        Collection<GeneralMessage> messages = rule.check( protein );
+        assertEquals( 0, messages.size() );
 
-        InteractorXref xref = XrefMock.getMock(InteractorXref.class, UniprotMock.getMock(), IdentityMock.getMock(), "P12345");
-        protein.addXref(xref);
-        messages = rule.check(protein);
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF, message.getMessageDefinition());
+        InteractorXref xref = XrefMock.getMock( InteractorXref.class, UniprotMock.getMock(), IdentityMock.getMock(), "P12345" );
+        protein.addXref( xref );
+        messages = rule.check( protein );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.PROTEIN_UNIPROT_MULTIPLE_XREF, message.getMessageDefinition() );
         }
 
-        protein.setXrefs(new ArrayList<InteractorXref>());
-        messages = rule.check(protein);
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.PROTEIN_UNIPROT_NO_XREF, message.getMessageDefinition());
+        protein.setXrefs( new ArrayList<InteractorXref>() );
+        messages = rule.check( protein );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.PROTEIN_UNIPROT_NO_XREF, message.getMessageDefinition() );
         }
     }
-
-
-
 }

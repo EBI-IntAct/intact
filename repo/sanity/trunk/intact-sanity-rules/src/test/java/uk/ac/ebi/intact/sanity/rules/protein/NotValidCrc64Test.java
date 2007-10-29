@@ -15,27 +15,27 @@ import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * NotValidCrc64 Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class NotValidCrc64Test {
 
     @Test
     public void check() throws Exception {
-        
+
         Protein protein = P08050Mock.getMock();
         NotValidCrc64 rule = new NotValidCrc64();
-        Collection<GeneralMessage> messages = rule.check(protein);
-        assertEquals(0,messages.size());
+        Collection<GeneralMessage> messages = rule.check( protein );
+        assertEquals( 0, messages.size() );
 
-        protein.setSequence("POISSON");
-        messages = rule.check(protein);
-        assertEquals(1,messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.PROTEIN_INCORRECT_CRC64, message.getMessageDefinition());
+        protein.setSequence( "POISSON" );
+        messages = rule.check( protein );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.PROTEIN_INCORRECT_CRC64, message.getMessageDefinition() );
         }
 
 

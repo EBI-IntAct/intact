@@ -22,34 +22,32 @@ import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * FeatureWithoutRange Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class FeatureWithoutRangeTest {
 
-
     @Test
     public void check() throws Exception {
-        Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        Interaction interaction = Cja1Dbn1Mock.getMock( ButkevitchMock.getMock() );
         FeatureWithoutRange rule = new FeatureWithoutRange();
 
-        Component component = Q9QXS6ComponentMock.getMock(interaction);
-        Feature feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
-        Range range = new Range(InstitutionMock.getMock(),1,1,1,1,"");
-        feature.addRange(range);
-        Collection<GeneralMessage> messages = rule.check(feature);
-        assertEquals(0, messages.size());
+        Component component = Q9QXS6ComponentMock.getMock( interaction );
+        Feature feature = new Feature( InstitutionMock.getMock(), "feature", component, MutationDecreasingMock.getMock() );
+        Range range = new Range( InstitutionMock.getMock(), 1, 1, 1, 1, "" );
+        feature.addRange( range );
+        Collection<GeneralMessage> messages = rule.check( feature );
+        assertEquals( 0, messages.size() );
 
-        component = Q9QXS6ComponentMock.getMock(interaction);
-        feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
-        messages = rule.check(feature);
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.FEATURE_WITHOUT_RANGE, message.getMessageDefinition());
+        component = Q9QXS6ComponentMock.getMock( interaction );
+        feature = new Feature( InstitutionMock.getMock(), "feature", component, MutationDecreasingMock.getMock() );
+        messages = rule.check( feature );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.FEATURE_WITHOUT_RANGE, message.getMessageDefinition() );
         }
-
     }
 }
