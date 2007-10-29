@@ -21,33 +21,32 @@ import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * MutationAnalysisFeature Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class MutationAnalysisFeatureTest {
 
-
     @Test
     public void check() throws Exception {
-        Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        Interaction interaction = Cja1Dbn1Mock.getMock( ButkevitchMock.getMock() );
 
-        Component component = Q9QXS6ComponentMock.getMock(interaction);
-        Feature feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
-        Range range = new Range(InstitutionMock.getMock(),1,1,1,1,"");
-        feature.addRange(range);
+        Component component = Q9QXS6ComponentMock.getMock( interaction );
+        Feature feature = new Feature( InstitutionMock.getMock(), "feature", component, MutationDecreasingMock.getMock() );
+        Range range = new Range( InstitutionMock.getMock(), 1, 1, 1, 1, "" );
+        feature.addRange( range );
         MutationAnalysisFeature rule = new MutationAnalysisFeature();
-        Collection<GeneralMessage> messages = rule.check(feature);
-        assertEquals(0, messages.size());
+        Collection<GeneralMessage> messages = rule.check( feature );
+        assertEquals( 0, messages.size() );
 
-        component = Q9QXS6ComponentMock.getMock(interaction);
-        feature = new Feature(InstitutionMock.getMock(),"feature",component, MutationDecreasingMock.getMock());
-        range = new Range(InstitutionMock.getMock(),1,8,16,24,"");
-        feature.addRange(range);
+        component = Q9QXS6ComponentMock.getMock( interaction );
+        feature = new Feature( InstitutionMock.getMock(), "feature", component, MutationDecreasingMock.getMock() );
+        range = new Range( InstitutionMock.getMock(), 1, 8, 16, 24, "" );
+        feature.addRange( range );
 
-        messages = rule.check(feature);
-        assertEquals(1,messages.size());
+        messages = rule.check( feature );
+        assertEquals( 1, messages.size() );
     }
 }

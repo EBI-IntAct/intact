@@ -18,31 +18,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * InteractionWithNoComponent Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class InteractionWithNoComponentTest {
-
 
     @Test
     public void check() throws Exception {
 
-        Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        Interaction interaction = Cja1Dbn1Mock.getMock( ButkevitchMock.getMock() );
         InteractionWithNoComponent rule = new InteractionWithNoComponent();
-        Collection<GeneralMessage> messages =  rule.check(interaction);
-        assertEquals(0,messages.size());
+        Collection<GeneralMessage> messages = rule.check( interaction );
+        assertEquals( 0, messages.size() );
 
-        interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
-        Collection<Component> components = new ArrayList();
-        interaction.setComponents(components);
-        messages =  rule.check(interaction);
-        assertEquals(1,messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.INTERACTION_WITHOUT_COMPONENT, message.getMessageDefinition());
+        interaction = Cja1Dbn1Mock.getMock( ButkevitchMock.getMock() );
+        Collection<Component> components = new ArrayList<Component>();
+        interaction.setComponents( components );
+        messages = rule.check( interaction );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.INTERACTION_WITHOUT_COMPONENT, message.getMessageDefinition() );
         }
-
     }
 }

@@ -20,11 +20,11 @@ import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * NoNewtIdentity Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class NoNewtIdentityTest {
 
@@ -34,35 +34,33 @@ public class NoNewtIdentityTest {
         // Test that we get back a message if we give to the check method a bioSource without xref at all.
         BioSource biosource = BioSourceWithNoXrefMock.getMock();
         NoNewtIdentity rule = new NoNewtIdentity();
-        Collection<GeneralMessage> messages =  rule.check(biosource);
+        Collection<GeneralMessage> messages = rule.check( biosource );
 
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, message.getMessageDefinition());
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, message.getMessageDefinition() );
         }
 
         // Test that we get back 1 message if we give to the check method a bioSource with 1 identity xref to pubmed.
         biosource = BioSourceWithNoXrefMock.getMock();
-        BioSourceXref identityToPubmed = XrefMock.getMock(BioSourceXref.class, PubmedMock.getMock(), IdentityMock.getMock(), "1");
-        biosource.addXref(identityToPubmed);
-        messages =  rule.check(biosource);
+        BioSourceXref identityToPubmed = XrefMock.getMock( BioSourceXref.class, PubmedMock.getMock(), IdentityMock.getMock(), "1" );
+        biosource.addXref( identityToPubmed );
+        messages = rule.check( biosource );
 
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, message.getMessageDefinition());
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.BIOSOURCE_WITHOUT_NEWT_XREF, message.getMessageDefinition() );
         }
 
         // Test that we get no message back if we give to the check method a bioSource without 1 identity xref to pubmed
         // and one identity xref to newt.
         biosource = BioSourceWithNoXrefMock.getMock();
-        identityToPubmed = XrefMock.getMock(BioSourceXref.class, PubmedMock.getMock(), IdentityMock.getMock(), "1");
-        BioSourceXref identityToNewt = XrefMock.getMock(BioSourceXref.class, NewtMock.getMock(), IdentityMock.getMock(), "9606");
-        biosource.addXref(identityToPubmed);
-        biosource.addXref(identityToNewt);
-        messages =  rule.check(biosource);
+        identityToPubmed = XrefMock.getMock( BioSourceXref.class, PubmedMock.getMock(), IdentityMock.getMock(), "1" );
+        BioSourceXref identityToNewt = XrefMock.getMock( BioSourceXref.class, NewtMock.getMock(), IdentityMock.getMock(), "9606" );
+        biosource.addXref( identityToPubmed );
+        biosource.addXref( identityToNewt );
+        messages = rule.check( biosource );
 
-        assertEquals(0, messages.size());
-
-
+        assertEquals( 0, messages.size() );
     }
 }

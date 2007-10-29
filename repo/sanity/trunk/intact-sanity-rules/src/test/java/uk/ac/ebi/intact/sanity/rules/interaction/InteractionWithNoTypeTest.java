@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 
 import java.util.Collection;
 
@@ -14,7 +14,7 @@ import java.util.Collection;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.0
+ * @since 2.0
  */
 public class InteractionWithNoTypeTest {
 

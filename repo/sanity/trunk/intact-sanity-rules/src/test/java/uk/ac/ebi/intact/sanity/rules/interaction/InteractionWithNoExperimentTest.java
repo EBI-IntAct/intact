@@ -16,30 +16,27 @@ import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * InteractionWithNoExperiment Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
 public class InteractionWithNoExperimentTest {
 
-
     @Test
     public void check() throws Exception {
-        Interaction interaction = Cja1Dbn1Mock.getMock(ButkevitchMock.getMock());
+        Interaction interaction = Cja1Dbn1Mock.getMock( ButkevitchMock.getMock() );
         InteractionWithNoExperiment rule = new InteractionWithNoExperiment();
-        Collection<GeneralMessage> messages =  rule.check(interaction);
-        assertEquals(0,messages.size());
+        Collection<GeneralMessage> messages = rule.check( interaction );
+        assertEquals( 0, messages.size() );
 
-        interaction = Cja1Dbn1Mock.getMock(null);
+        interaction = Cja1Dbn1Mock.getMock( null );
         rule = new InteractionWithNoExperiment();
-        messages =  rule.check(interaction);
-        assertEquals(1,messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, message.getMessageDefinition());
+        messages = rule.check( interaction );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, message.getMessageDefinition() );
         }
-        
     }
-
 }

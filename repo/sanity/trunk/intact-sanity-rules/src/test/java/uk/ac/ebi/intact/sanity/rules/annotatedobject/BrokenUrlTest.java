@@ -19,37 +19,35 @@ import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * BrokenUrl Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0
  */
-public class BrokenUrlTest  {
-
+public class BrokenUrlTest {
 
     @Test
     public void check() throws SanityRuleException {
         Protein protein = ProteinMock.getMock();
 
-        Annotation annotation = AnnotationMock.getMock(UrlMock.getMock(),"http://www.google.co.uk");
-        protein.addAnnotation(annotation);
+        Annotation annotation = AnnotationMock.getMock( UrlMock.getMock(), "http://www.google.co.uk" );
+        protein.addAnnotation( annotation );
         BrokenUrl rule = new BrokenUrl();
 
-        Collection<GeneralMessage> messages = rule.check(protein);
+        Collection<GeneralMessage> messages = rule.check( protein );
 
-        assertEquals(0, messages.size());
+        assertEquals( 0, messages.size() );
 
         protein = ProteinMock.getMock();
 
-        annotation = AnnotationMock.getMock(UrlMock.getMock(),"http://www.sdfhsdfgklksdf.co.uk");
-        protein.addAnnotation(annotation);
+        annotation = AnnotationMock.getMock( UrlMock.getMock(), "http://www.sdfhsdfgklksdf.co.uk" );
+        protein.addAnnotation( annotation );
 
-        messages = rule.check(protein);
-        assertEquals(1, messages.size());
-        for(GeneralMessage message : messages){
-            assertEquals(MessageDefinition.BROKEN_URL, message.getMessageDefinition());
+        messages = rule.check( protein );
+        assertEquals( 1, messages.size() );
+        for ( GeneralMessage message : messages ) {
+            assertEquals( MessageDefinition.BROKEN_URL, message.getMessageDefinition() );
         }
-
     }
 }
