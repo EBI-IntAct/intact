@@ -5,7 +5,7 @@
                 <artifactId>ebeye-export-maven-plugin</artifactId>
 
                 <configuration>
-                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <hibernateConfig>target/test-classes/test-hibernate.cfg.xml</hibernateConfig>
 
                     <experimentFile>target/experiments.xml</experimentFile>
                     <interactionFile>target/interactions.xml</interactionFile>
