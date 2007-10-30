@@ -1,0 +1,8 @@
+VERSION 1.7.0
+
+REQUEST
+    * We need to keep track of IMEx imports.
+
+TECHNICAL CHANGES
+    * created table IA_IMEX_IMPORT (including dedicated sequence, audit table, trigger, rights and public synonyms)
+
