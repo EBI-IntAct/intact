@@ -59,7 +59,7 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
             lineCount++;
         }
 
-        assertEquals( 9 + 1, lineCount );
+        assertEquals( 10 + 1, lineCount );
     }
 
     public void testExecutewithIntActBinaryInteraction() throws Exception {
