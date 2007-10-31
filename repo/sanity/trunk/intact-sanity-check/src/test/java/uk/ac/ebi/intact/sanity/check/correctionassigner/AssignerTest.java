@@ -27,10 +27,12 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-//@IntactUnitDataset( dataset = PsiTestDatasetProvider.ALL_CVS, provider = PsiTestDatasetProvider.class )
 public class AssignerTest extends AbstractSanityLegacyTest {
 
-    public class CorrectionAssignerCvPrimer extends SmallCvPrimer {
+    /**
+     * Creates required CVs for this test.
+     */
+    private class CorrectionAssignerCvPrimer extends SmallCvPrimer {
 
         public CorrectionAssignerCvPrimer( DaoFactory daoFactory ) {
             super( daoFactory );
@@ -47,21 +49,19 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
     @Before
     public void initializeCvs() throws Exception {
-        new IntactUnit().createSchema(true);
+        new IntactUnit().createSchema( true );
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final CorrectionAssignerCvPrimer correctionAssignerCvPrimer = new CorrectionAssignerCvPrimer(daoFactory);
 
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        beginTransaction();
         correctionAssignerCvPrimer.createCVs();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        commitTransaction();
     }
 
     @After
     public void finishTransactionIfNecessary() throws Exception {
-        if( IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
-            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-        }
+        commitTransaction();
     }
 
     ///////////////////////
@@ -78,7 +78,9 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
     private void assertHasReviewer( Experiment exp, String reviewerName ) {
         Assert.assertNotNull( reviewerName );
+        System.out.println( exp );
         for ( Annotation a : exp.getAnnotations() ) {
+            System.out.println( a );
             if ( a.getCvTopic().getShortLabel().equals( CvTopic.REVIEWER ) && a.getAnnotationText().equals( reviewerName ) ) {
                 return;
             }
@@ -97,6 +99,8 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
     //////////////////////
     // Tests
+
+    // TODO check that if John has created all of these experiments, then he should not be assigned to check them
 
     @Test
     public void assign_default() throws Exception {
@@ -125,8 +129,6 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
     @Test
     public void assign_multiple_super_curators() throws Exception {
-
-        // TODO check that if John has created all of these experiments, then he should not be assigned to check them
 
         SanityCheckConfig config = super.getSanityCheckConfig();
         final List<SuperCurator> superCurators = config.getSuperCurators();
@@ -235,7 +237,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
         SanityCheckConfig config = super.getSanityCheckConfig();
 
-        Assigner assigner = new Assigner( config, false );
+        Assigner assigner = new Assigner( config, true );
         assigner.assign();
 
         Collection<ComparableExperimentBean> experiments = config.getSuperCurator( "John" ).getExperiments();
@@ -414,7 +416,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
     }
 
     @Test
-    @Ignore
+    @Ignore // TODO implement this feature !!!
     public void assign_publication_partially_on_hold() throws Exception {
         // Add some random data
         IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );

@@ -43,7 +43,7 @@ public abstract class AbstractSanityLegacyTest extends IntactBasicTestCase {
 
     @After
     public void tearDown() {
-        PersisterContext.getInstance().clear();
+        // PersisterContext.getInstance().clear();
     }
 
     public final SanityCheckConfig getSanityCheckConfig() {

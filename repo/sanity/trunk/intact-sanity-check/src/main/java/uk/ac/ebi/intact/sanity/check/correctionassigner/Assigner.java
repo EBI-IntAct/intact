@@ -10,6 +10,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.Experiment;
@@ -265,7 +266,7 @@ public class Assigner {
                         }
                         it.remove();
 
-                        stop = true;
+                        stop = true; // we have found a curator for that PMID, process next one.
                     } else {
                         if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
                                                                ", so it cannotbe assigned to him/her." );
@@ -340,18 +341,25 @@ public class Assigner {
      */
     public void addReviewerAnnotation( String expAc, String reviewerName ) throws Exception {
 
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Adding reviewer '"+ reviewerName +"' to experiment (AC: "+ expAc +")" );
+        }
+
         if( ! IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         }
 
-        //Get the util.model.Experiment object corresponding to this experiment ac.
         Experiment experiment = getDaoFactory().getExperimentDao().getByAc( expAc );
-        //Create the annotation reviewer using as description the reviewerName.
+
         Annotation reviewerAnnotation = createReviewerAnnotation( reviewerName );
-        getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
-        
+//        getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
+
         experiment.addAnnotation( reviewerAnnotation );
-        getDaoFactory().getExperimentDao().saveOrUpdate( experiment );
+//        getDaoFactory().getExperimentDao().update( experiment );
+
+        PersisterHelper.saveOrUpdate( experiment );
+
+        System.out.println( "Annotation AC: " + reviewerAnnotation.getAc() );
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
@@ -366,8 +374,7 @@ public class Assigner {
     public Annotation createReviewerAnnotation( String reviewerName ) throws IntactException {
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
         CvTopic reviewer = getDaoFactory().getCvObjectDao( CvTopic.class ).getByShortLabel( CvTopic.REVIEWER );
-        Annotation annotation = new Annotation( owner, reviewer, reviewerName );
-        return annotation;
+        return new Annotation( owner, reviewer, reviewerName );
     }
 
     /**
