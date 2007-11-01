@@ -352,7 +352,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         for ( int i = 0; i < 5; i++ ) {
             Experiment experiment = mockBuilder.createExperimentRandom( 5 );
             if ( i < 3 ) {
-                experiment.addAnnotation( mockBuilder.createAnnotation( "anne", "IA:9999", CvTopic.REVIEWER ) );
+                experiment.addAnnotation( mockBuilder.createAnnotation( "Anne", "IA:9999", CvTopic.REVIEWER ) );
             }
             persistExperiment( experiment );
         }
@@ -362,24 +362,26 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         curators.add( new SuperCurator( 100, "Peter" ) );
         curators.add( new SuperCurator( 0, "Anne" ) );
 
-        beginTransaction();
 
         SanityCheckConfig config = new SanityCheckConfig( curators );
 
         Assigner assigner = new Assigner( config, true );
         assigner.assign();
 
-        Assert.assertEquals( 0, config.getSuperCurator( "Anne" ).getExperiments().size() );
-        Assert.assertEquals( 5, config.getSuperCurator( "Peter" ).getExperiments().size() );
+        final Collection<ComparableExperimentBean> anneExps = config.getSuperCurator("Anne").getExperiments();
+        final Collection<ComparableExperimentBean> peterExps = config.getSuperCurator("Peter").getExperiments();
+        Assert.assertEquals( 3, anneExps.size() );
+        Assert.assertEquals( 2, peterExps.size() );
 
-        commitTransaction();
-        beginTransaction();
-
-        for ( Experiment exp : getDaoFactory().getExperimentDao().getAll() ) {
+        for ( ComparableExperimentBean ceb : anneExps ) {
+            Experiment exp = getDaoFactory().getExperimentDao().getByAc(ceb.getAc());
+            assertHasReviewer( exp, "Anne" );
+        }
+        
+        for ( ComparableExperimentBean ceb : peterExps ) {
+            Experiment exp = getDaoFactory().getExperimentDao().getByAc(ceb.getAc());
             assertHasReviewer( exp, "Peter" );
         }
-
-        commitTransaction();
     }
 
     @Test
