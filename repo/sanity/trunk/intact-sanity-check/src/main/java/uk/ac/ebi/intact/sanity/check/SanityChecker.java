@@ -146,15 +146,9 @@ public class SanityChecker {
 
         if (log.isDebugEnabled()) log.debug("Executing Sanity Check");
 
-        boolean inTransaction = IntactContext.getCurrentInstance().getDataContext().isTransactionActive();
-
-        if (!inTransaction) beginTransaction();
-
         long startTime = System.currentTimeMillis();
         checkAnnotatedObjects(annotatedObjects, groupNames);
         long elapsedTime = System.currentTimeMillis() - startTime;
-
-        if (!inTransaction) commitTransaction();
 
         SanityReport report = RuleRunnerReport.getInstance().toSanityReport();
         RuleRunnerReport.getInstance().clear();
@@ -166,9 +160,6 @@ public class SanityChecker {
 
     protected static void addReportAttributes(SanityReport report, long elapsedTime) {
         // instance name
-        boolean inTransaction = IntactContext.getCurrentInstance().getDataContext().isTransactionActive();
-
-        if (!inTransaction) beginTransaction();
         try {
             String database = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                     .getBaseDao().getDbName();
@@ -177,7 +168,6 @@ public class SanityChecker {
         catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        if (!inTransaction) commitTransaction();
 
         ReportAttribute executionDateAtt = new ReportAttribute();
         executionDateAtt.setName("Date");
