@@ -47,7 +47,7 @@ public class DeclaredRuleManager {
 
     private static final Log log = LogFactory.getLog( DeclaredRuleManager.class );
 
-    public static final String RULES_XML_PATH = "META-INF/sample-sanity-rules.xml";
+    public static final String RULES_XML_PATH = "META-INF/sanity-rules.xml";
 
     private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>();
 
