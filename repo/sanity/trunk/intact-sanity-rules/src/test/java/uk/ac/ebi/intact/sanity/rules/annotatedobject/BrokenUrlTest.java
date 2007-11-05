@@ -28,7 +28,7 @@ import java.util.Collection;
 public class BrokenUrlTest {
 
     @Test
-    public void check() throws SanityRuleException {
+    public void check_valid() throws SanityRuleException {
         Protein protein = ProteinMock.getMock();
 
         Annotation annotation = AnnotationMock.getMock( UrlMock.getMock(), "http://www.google.co.uk" );
@@ -38,13 +38,18 @@ public class BrokenUrlTest {
         Collection<GeneralMessage> messages = rule.check( protein );
 
         assertEquals( 0, messages.size() );
+    }
 
-        protein = ProteinMock.getMock();
+    @Test
+    public void check_not_valid() throws SanityRuleException {
+        Protein protein = ProteinMock.getMock();
 
-        annotation = AnnotationMock.getMock( UrlMock.getMock(), "http://www.sdfhsdfgklksdf.co.uk" );
+        BrokenUrl rule = new BrokenUrl();
+
+        Annotation annotation = AnnotationMock.getMock( UrlMock.getMock(), "http://www.sdfhsdfgklksdf.co.uk" );
         protein.addAnnotation( annotation );
 
-        messages = rule.check( protein );
+        Collection<GeneralMessage> messages = rule.check( protein );
         assertEquals( 1, messages.size() );
         for ( GeneralMessage message : messages ) {
             assertEquals( MessageDefinition.BROKEN_URL, message.getMessageDefinition() );
