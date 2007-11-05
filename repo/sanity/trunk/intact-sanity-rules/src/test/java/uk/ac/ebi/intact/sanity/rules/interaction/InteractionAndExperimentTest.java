@@ -14,14 +14,14 @@ import java.util.Collection;
  * InteractionAndExperiment Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @since 2.0.0
  * @version $Id$
+ * @since 2.0.0
  */
 public class InteractionAndExperimentTest {
 
     @Test
     public void check_experiment_empty() throws Exception {
-        IntactMockBuilder mockBuilder = new IntactMockBuilder( );
+        IntactMockBuilder mockBuilder = new IntactMockBuilder();
         final Interaction interation = mockBuilder.createInteractionRandomBinary();
         interation.getExperiments().clear();
 
@@ -29,13 +29,13 @@ public class InteractionAndExperimentTest {
         final Collection<GeneralMessage> messages = rule.check( interation );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
-        Assert.assertEquals( MessageDefinition.INTERACTION_EXPERIMENT_COUNT,
+        Assert.assertEquals( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT,
                              messages.iterator().next().getMessageDefinition() );
     }
 
     @Test
     public void check_experiment_count_is_1() throws Exception {
-        IntactMockBuilder mockBuilder = new IntactMockBuilder( );
+        IntactMockBuilder mockBuilder = new IntactMockBuilder();
         final Interaction interation = mockBuilder.createInteractionRandomBinary();
 
         Rule rule = new InteractionAndExperiment();
@@ -46,15 +46,15 @@ public class InteractionAndExperimentTest {
 
     @Test
     public void check_experiment_count_is_2() throws Exception {
-        IntactMockBuilder mockBuilder = new IntactMockBuilder( );
+        IntactMockBuilder mockBuilder = new IntactMockBuilder();
         final Interaction interaction = mockBuilder.createInteractionRandomBinary();
-        interaction.getExperiments().add( mockBuilder.createExperimentEmpty( ) );
+        interaction.getExperiments().add( mockBuilder.createExperimentEmpty() );
 
         Rule rule = new InteractionAndExperiment();
         final Collection<GeneralMessage> messages = rule.check( interaction );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
-        Assert.assertEquals( MessageDefinition.INTERACTION_EXPERIMENT_COUNT,
+        Assert.assertEquals( MessageDefinition.INTERACTION_WITH_MANY_EXPERIMENTS,
                              messages.iterator().next().getMessageDefinition() );
     }
 }
