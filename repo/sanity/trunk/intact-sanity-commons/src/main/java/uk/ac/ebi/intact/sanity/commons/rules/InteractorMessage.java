@@ -5,10 +5,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.Xref;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.Field;
 
 import java.util.ArrayList;
@@ -25,19 +22,19 @@ public class InteractorMessage extends GeneralMessage {
 
     private Interactor interactor;
 
-    public InteractorMessage(MessageDefinition messageDefinition, Interactor interactor) {
-        super(messageDefinition, interactor);
+    public InteractorMessage( MessageDefinition messageDefinition, Interactor interactor ) {
+        super( messageDefinition, interactor );
         this.interactor = interactor;
 
-        getInsaneObject().getField().addAll( fieldsForInteractor(interactor));
+        getInsaneObject().getField().addAll( fieldsForInteractor( interactor ) );
     }
 
-    public Collection<Field> fieldsForInteractor(Interactor interactor) {
+    public Collection<Field> fieldsForInteractor( Interactor interactor ) {
         Collection<Field> fields = new ArrayList<Field>();
 
         Field primaryIdField = new Field();
-        primaryIdField.setName("Interactor type");
-        final String type = (interactor.getCvInteractorType() == null ? "-" : interactor.getCvInteractorType().getShortLabel() );
+        primaryIdField.setName( "Interactor type" );
+        final String type = ( interactor.getCvInteractorType() == null ? "-" : interactor.getCvInteractorType().getShortLabel() );
         primaryIdField.setValue( type );
 
         return fields;
@@ -47,7 +44,7 @@ public class InteractorMessage extends GeneralMessage {
         return interactor;
     }
 
-    public void setInteractor(Interactor interactor) {
+    public void setInteractor( Interactor interactor ) {
         this.interactor = interactor;
     }
 }
