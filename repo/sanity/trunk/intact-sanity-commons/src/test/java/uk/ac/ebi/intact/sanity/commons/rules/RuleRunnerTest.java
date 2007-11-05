@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * RuleRunner Tester.
@@ -43,9 +44,10 @@ public class RuleRunnerTest extends IntactBasicTestCase {
 
         RuleRunner.runAvailableRules( Arrays.asList( exp ) );
 
-        Assert.assertEquals( 1, RuleRunnerReport.getInstance().getMessages().size() );
-        final GeneralMessage message = RuleRunnerReport.getInstance().getMessages().iterator().next();
-        Assert.assertEquals( MessageLevel.INFO, message.getMessageDefinition().getLevel() );
+        final Collection<GeneralMessage> collection = RuleRunnerReport.getInstance().getMessages();
+        Assert.assertEquals( 1, collection.size() );
+        final GeneralMessage message = collection.iterator().next();
+        Assert.assertEquals( MessageLevel.WARNING, message.getMessageDefinition().getLevel() );
 
         DeclaredRuleManager.close();
     }
