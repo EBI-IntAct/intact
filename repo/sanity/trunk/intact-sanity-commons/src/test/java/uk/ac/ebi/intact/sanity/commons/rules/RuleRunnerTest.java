@@ -25,7 +25,7 @@ import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
 import java.util.Arrays;
 
 /**
- * TODO comment this
+ * RuleRunner Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -39,13 +39,13 @@ public class RuleRunnerTest extends IntactBasicTestCase {
 
     @Test
     public void runAvailable_default() throws Exception {
-        Experiment exp = getMockBuilder().createExperimentRandom(1);
+        Experiment exp = getMockBuilder().createExperimentRandom( 1 );
 
-        RuleRunner.runAvailableRules(Arrays.asList(exp));
+        RuleRunner.runAvailableRules( Arrays.asList( exp ) );
 
-        Assert.assertEquals(1, RuleRunnerReport.getInstance().getMessages().size());
-        Assert.assertEquals(MessageLevel.WARNING, RuleRunnerReport.getInstance().getMessages().iterator().next().getMessageDefinition().getLevel());
-
+        Assert.assertEquals( 1, RuleRunnerReport.getInstance().getMessages().size() );
+        final GeneralMessage message = RuleRunnerReport.getInstance().getMessages().iterator().next();
+        Assert.assertEquals( MessageLevel.INFO, message.getMessageDefinition().getLevel() );
 
         DeclaredRuleManager.close();
     }
