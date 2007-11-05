@@ -34,12 +34,11 @@ public class InteractionAndExperiment implements Rule<Interaction> {
 
         final Collection<Experiment> experiments = interaction.getExperiments();
         if ( experiments == null ) {
-
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_EXPERIMENT_COUNT, interaction ) );
-
-        } else if ( experiments.size() != 1 ) {
-            
-            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_EXPERIMENT_COUNT, interaction ) );
+            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
+        } else if ( experiments.size() > 1 ) {
+            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITH_MANY_EXPERIMENTS, interaction ) );
+        } else if ( experiments.isEmpty() ) {
+            messages.add( new GeneralMessage( MessageDefinition.INTERACTION_WITHOUT_EXPERIMENT, interaction ) );
         }
 
         return messages;
