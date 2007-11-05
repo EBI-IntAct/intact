@@ -19,34 +19,33 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * Sanity checker annotation processor.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
 public class SanityAnnotationProcessor implements AnnotationProcessor {
 
     private final AnnotationProcessorEnvironment env;
     private final Set<AnnotationTypeDeclaration> atds;
 
-    public SanityAnnotationProcessor(Set<AnnotationTypeDeclaration> atds,
-                                     AnnotationProcessorEnvironment env) {
+    public SanityAnnotationProcessor( Set<AnnotationTypeDeclaration> atds, AnnotationProcessorEnvironment env ) {
         this.atds = atds;
         this.env = env;
-        this.env.getMessager().printNotice("Starting annotation process");
+        this.env.getMessager().printNotice( "Starting annotation process" );
 
     }
 
-    public void process()  {
+    public void process() {
 
         SanityRuleVisitor visitor = new SanityRuleVisitor();
 
-        for (AnnotationTypeDeclaration atd : atds) {
-            env.getMessager().printNotice("Collecting annotation "+atd);
-            Collection<Declaration> decls = env.getDeclarationsAnnotatedWith(atd);
-            for (Declaration decl : decls) {
-                decl.accept(DeclarationVisitors.getDeclarationScanner(visitor, DeclarationVisitors.NO_OP));
+        for ( AnnotationTypeDeclaration atd : atds ) {
+            env.getMessager().printNotice( "Collecting annotation " + atd );
+            Collection<Declaration> decls = env.getDeclarationsAnnotatedWith( atd );
+            for ( Declaration decl : decls ) {
+                decl.accept( DeclarationVisitors.getDeclarationScanner( visitor, DeclarationVisitors.NO_OP ) );
             }
         }
 
@@ -54,39 +53,35 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
 
         try {
             File targetDir = createTargetDir();
-            File targetFile = new File(targetDir, "META-INF/sanity-rules.xml");
+            File targetFile = new File( targetDir, DeclaredRuleManager.RULES_XML_PATH );
             targetFile.getParentFile().mkdirs();
 
-            env.getMessager().printNotice("Writing "+rules.size()+" sanity rules to: "+targetFile);
+            env.getMessager().printNotice( "Writing " + rules.size() + " sanity rules to: " + targetFile );
 
-            Writer writer = new FileWriter(targetFile);
+            Writer writer = new FileWriter( targetFile );
 
             DeclaredRules jaxbRules = new DeclaredRules();
-            jaxbRules.getDeclaredRule().addAll(rules);
+            jaxbRules.getDeclaredRule().addAll( rules );
 
-            DeclaredRuleManager.writeRulesXml(jaxbRules, writer);
+            DeclaredRuleManager.writeRulesXml( jaxbRules, writer );
 
             writer.close();
 
-        } catch (Exception e) {
+        } catch ( Exception e ) {
             e.printStackTrace();
-           throw new SanityRuleException(e);
+            throw new SanityRuleException( e );
         }
     }
 
-
     private File createTargetDir() {
-        String s = env.getOptions().get("-s");
+        String s = env.getOptions().get( "-s" );
 
-        File targetDir = new File(s);
+        File targetDir = new File( s );
 
-        if (!targetDir.exists()) {
+        if ( !targetDir.exists() ) {
             targetDir.mkdirs();
         }
 
         return targetDir;
     }
-
-
-
 }
