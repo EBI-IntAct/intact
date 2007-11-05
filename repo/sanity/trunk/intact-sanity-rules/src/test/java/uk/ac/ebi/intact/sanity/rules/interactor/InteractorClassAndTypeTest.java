@@ -14,8 +14,8 @@ import java.util.Collection;
  * InteractorClassAndType Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @since 2.0.0
  * @version $Id$
+ * @since 2.0.0
  */
 public class InteractorClassAndTypeTest {
 
@@ -63,6 +63,17 @@ public class InteractorClassAndTypeTest {
     }
 
     @Test
+    public void check_protein() throws Exception {
+        IntactMockBuilder mockBuilder = new IntactMockBuilder();
+        final Protein protein = mockBuilder.createProteinRandom();
+
+        Rule rule = new InteractorClassAndType();
+        final Collection<InteractorMessage> messages = rule.check( protein );
+        Assert.assertNotNull( messages );
+        Assert.assertEquals( 0, messages.size() );
+    }
+
+    @Test
     public void check_nucleicacid_mismatch() throws Exception {
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
         final NucleicAcid na = mockBuilder.createNucleicAcidRandom();
@@ -96,7 +107,7 @@ public class InteractorClassAndTypeTest {
     @Test
     public void check_interaction_mismatch() throws Exception {
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
-        final Interaction interaction= mockBuilder.createInteractionRandomBinary();
+        final Interaction interaction = mockBuilder.createInteractionRandomBinary();
         interaction.setCvInteractorType( mockBuilder.createCvObject( CvInteractorType.class,
                                                                      CvInteractorType.PROTEIN_MI_REF,
                                                                      CvInteractorType.PROTEIN ) );
@@ -108,11 +119,10 @@ public class InteractorClassAndTypeTest {
                              messages.iterator().next().getMessageDefinition() );
     }
 
-    public class AlienProtein extends ProteinImpl {
-         // this is not supported by the rule !!
-
-        public AlienProtein( Institution owner, BioSource source, String shortLabel, CvInteractorType type ) {
-            super( owner, source, shortLabel, type );
+    public class AlienProtein extends InteractorImpl {
+        // this is not supported by the rule !!
+        public AlienProtein( Institution owner, String shortLabel, CvInteractorType type ) {
+            super( shortLabel, owner, type );
         }
     }
 
@@ -122,14 +132,14 @@ public class InteractorClassAndTypeTest {
         final CvInteractorType proteinType = mockBuilder.createCvObject( CvInteractorType.class,
                                                                          CvInteractorType.PROTEIN_MI_REF,
                                                                          CvInteractorType.PROTEIN );
-        final AlienProtein ap = new AlienProtein(new Institution( "Mars" ), mockBuilder.createBioSourceRandom(),
-                                                 "popipo999", proteinType );
+
+        final AlienProtein ap = new AlienProtein( new Institution( "Mars" ), "popipo999", proteinType );
 
         Rule rule = new InteractorClassAndType();
         final Collection<InteractorMessage> messages = rule.check( ap );
         Assert.assertNotNull( messages );
         Assert.assertEquals( 1, messages.size() );
-        Assert.assertEquals( MessageDefinition.INTERACTOR_WITH_UNSUPPORTED_TYPE,
+        Assert.assertEquals( MessageDefinition.INTERACTOR_WITH_TYPE_MISMATCH,
                              messages.iterator().next().getMessageDefinition() );
     }
 }
