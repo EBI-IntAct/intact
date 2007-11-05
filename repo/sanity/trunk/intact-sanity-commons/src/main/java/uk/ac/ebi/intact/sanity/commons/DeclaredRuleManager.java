@@ -38,32 +38,32 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * TODO comment this
+ * Declared rules manager.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id:RuleManager.java 9493 2007-08-17 14:02:49Z baranda $
  */
 public class DeclaredRuleManager {
 
-    private static final Log log = LogFactory.getLog(DeclaredRuleManager.class);
+    private static final Log log = LogFactory.getLog( DeclaredRuleManager.class );
 
-    public static final String RULES_XML_PATH = "/META-INF/sanity-rules.xml";
+    public static final String RULES_XML_PATH = "META-INF/sample-sanity-rules.xml";
 
     private static ThreadLocal<DeclaredRuleManager> instance = new ThreadLocal<DeclaredRuleManager>();
 
     public static DeclaredRuleManager getInstance() {
         DeclaredRuleManager declaredRuleManager = instance.get();
 
-        if (declaredRuleManager == null) {
+        if ( declaredRuleManager == null ) {
             declaredRuleManager = new DeclaredRuleManager();
-            instance.set(declaredRuleManager);
+            instance.set( declaredRuleManager );
         }
 
         return declaredRuleManager;
     }
 
     public static void close() {
-        instance.set(null);
+        instance.set( null );
     }
 
     private List<DeclaredRule> availableDeclaredRules = new ArrayList<DeclaredRule>();
@@ -71,52 +71,52 @@ public class DeclaredRuleManager {
     private DeclaredRuleManager() {
         try {
             loadDeclaredRulesFromClassPath();
-        } catch (IOException e) {
-            throw new SanityRuleException("Problem getting declared rules from classpath", e);
+        } catch ( IOException e ) {
+            throw new SanityRuleException( "Problem getting declared rules from classpath", e );
         }
     }
 
     public Set<String> getAvailableGroups() {
         Set<String> groups = new HashSet<String>();
 
-        for (DeclaredRule rule : availableDeclaredRules) {
-            groups.addAll(rule.getGroups().getGroup());
+        for ( DeclaredRule rule : availableDeclaredRules ) {
+            groups.addAll( rule.getGroups().getGroup() );
         }
 
         return groups;
     }
 
-    public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass) {
+    public List<DeclaredRule> getDeclaredRulesForTarget( Class targetClass ) {
         final Set<String> availableGroups = getAvailableGroups();
-        return getDeclaredRulesForTarget(targetClass, availableGroups.toArray(new String[availableGroups.size()]));
+        return getDeclaredRulesForTarget( targetClass, availableGroups.toArray( new String[availableGroups.size()] ) );
     }
 
-    public List<DeclaredRule> getDeclaredRulesForTarget(Class targetClass, String ... groups) {
+    public List<DeclaredRule> getDeclaredRulesForTarget( Class targetClass, String... groups ) {
         List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
-        for (DeclaredRule rule : availableDeclaredRules) {
+        for ( DeclaredRule rule : availableDeclaredRules ) {
             Class ruleTargetClass;
             try {
-                ruleTargetClass = Class.forName(rule.getTargetClass());
-            } catch (ClassNotFoundException e) {
-                throw new SanityRuleException("Found declared rule with a target class not found in the classpath: " + rule.getTargetClass());
+                ruleTargetClass = Class.forName( rule.getTargetClass() );
+            } catch ( ClassNotFoundException e ) {
+                throw new SanityRuleException( "Found declared rule with a target class not found in the classpath: " + rule.getTargetClass() );
             }
 
-            if (ruleTargetClass.isAssignableFrom(targetClass) &&
-                    isDeclaredRuleInGroup(rule, groups)) {
-                rules.add(rule);
+            if ( ruleTargetClass.isAssignableFrom( targetClass ) &&
+                 isDeclaredRuleInGroup( rule, groups ) ) {
+                rules.add( rule );
             }
         }
 
         return rules;
     }
 
-    public List<DeclaredRule> getDeclaredRulesForGroup(String ... groups) {
+    public List<DeclaredRule> getDeclaredRulesForGroup( String... groups ) {
         List<DeclaredRule> rules = new ArrayList<DeclaredRule>();
 
-        for (DeclaredRule rule : availableDeclaredRules) {
-            if (isDeclaredRuleInGroup(rule, groups)) {
-                rules.add(rule);
+        for ( DeclaredRule rule : availableDeclaredRules ) {
+            if ( isDeclaredRuleInGroup( rule, groups ) ) {
+                rules.add( rule );
             }
         }
 
@@ -126,21 +126,21 @@ public class DeclaredRuleManager {
     public Set<String> getAvailableTargetClasses() {
         Set<String> targets = new HashSet<String>();
 
-        for (DeclaredRule rule : availableDeclaredRules) {
-            targets.add(rule.getTargetClass());
+        for ( DeclaredRule rule : availableDeclaredRules ) {
+            targets.add( rule.getTargetClass() );
         }
 
         return targets;
     }
 
 
-    public static DeclaredRules readRulesXml(InputStream is) throws JAXBException {
-        JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
+    public static DeclaredRules readRulesXml( InputStream is ) throws JAXBException {
+        JAXBContext jc = JAXBContext.newInstance( DeclaredRules.class.getPackage().getName() );
         Unmarshaller unmarshaller = jc.createUnmarshaller();
-        return (DeclaredRules) unmarshaller.unmarshal(is);
+        return ( DeclaredRules ) unmarshaller.unmarshal( is );
     }
 
-    public static void writeRulesXml(DeclaredRules rules, Writer writer) throws Exception {
+    public static void writeRulesXml( DeclaredRules rules, Writer writer ) throws Exception {
         //JAXBContext jc = JAXBContext.newInstance(DeclaredRules.class.getPackage().getName());
         //Marshaller marshaller = jc.createMarshaller();
         //marshaller.marshal(rules, writer);
@@ -152,33 +152,33 @@ public class DeclaredRuleManager {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.newDocument();
 
-        Element root = document.createElement("declared-rules");
-        document.appendChild(root);
+        Element root = document.createElement( "declared-rules" );
+        document.appendChild( root );
 
-        for (DeclaredRule declaredRule : rules.getDeclaredRule()) {
-            Element decRuleNode = document.createElement("declared-rule");
-            root.appendChild(decRuleNode);
+        for ( DeclaredRule declaredRule : rules.getDeclaredRule() ) {
+            Element decRuleNode = document.createElement( "declared-rule" );
+            root.appendChild( decRuleNode );
 
-            Element ruleNameNode = document.createElement("rule-name");
-            decRuleNode.appendChild(ruleNameNode);
-            ruleNameNode.appendChild(document.createTextNode(declaredRule.getRuleName()));
+            Element ruleNameNode = document.createElement( "rule-name" );
+            decRuleNode.appendChild( ruleNameNode );
+            ruleNameNode.appendChild( document.createTextNode( declaredRule.getRuleName() ) );
 
-            Element ruleClassNode = document.createElement("rule-class");
-            decRuleNode.appendChild(ruleClassNode);
-            ruleClassNode.appendChild(document.createTextNode(declaredRule.getRuleClass()));
+            Element ruleClassNode = document.createElement( "rule-class" );
+            decRuleNode.appendChild( ruleClassNode );
+            ruleClassNode.appendChild( document.createTextNode( declaredRule.getRuleClass() ) );
 
-            Element targetClassNode = document.createElement("target-class");
-            decRuleNode.appendChild(targetClassNode);
-            targetClassNode.appendChild(document.createTextNode(declaredRule.getTargetClass()));
+            Element targetClassNode = document.createElement( "target-class" );
+            decRuleNode.appendChild( targetClassNode );
+            targetClassNode.appendChild( document.createTextNode( declaredRule.getTargetClass() ) );
 
-            Element groupsNode = document.createElement("groups");
-            decRuleNode.appendChild(groupsNode);
+            Element groupsNode = document.createElement( "groups" );
+            decRuleNode.appendChild( groupsNode );
 
-            if (declaredRule.getGroups() != null) {
-                for (String groupName : declaredRule.getGroups().getGroup()) {
-                    Element groupNode = document.createElement("group");
-                    groupsNode.appendChild(groupNode);
-                    groupNode.appendChild(document.createTextNode(groupName));
+            if ( declaredRule.getGroups() != null ) {
+                for ( String groupName : declaredRule.getGroups().getGroup() ) {
+                    Element groupNode = document.createElement( "group" );
+                    groupsNode.appendChild( groupNode );
+                    groupNode.appendChild( document.createTextNode( groupName ) );
                 }
             }
         }
@@ -186,82 +186,82 @@ public class DeclaredRuleManager {
         //set up a transformer
         TransformerFactory transfac = TransformerFactory.newInstance();
         Transformer trans = transfac.newTransformer();
-        trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        trans.setOutputProperty(OutputKeys.INDENT, "yes");
+        trans.setOutputProperty( OutputKeys.OMIT_XML_DECLARATION, "yes" );
+        trans.setOutputProperty( OutputKeys.INDENT, "yes" );
 
         //create string from xml tree
-        StreamResult result = new StreamResult(writer);
-        DOMSource source = new DOMSource(document);
-        trans.transform(source, result);
+        StreamResult result = new StreamResult( writer );
+        DOMSource source = new DOMSource( document );
+        trans.transform( source, result );
     }
 
     public List<DeclaredRule> getAvailableDeclaredRules() {
         return availableDeclaredRules;
     }
 
-    public void addDeclaredRule(DeclaredRule declaredRule) {
+    public void addDeclaredRule( DeclaredRule declaredRule ) {
         boolean exists = false;
 
-        for (DeclaredRule availableRule : availableDeclaredRules) {
-            if (availableRule.getRuleName().equals(declaredRule.getRuleName())) {
+        for ( DeclaredRule availableRule : availableDeclaredRules ) {
+            if ( availableRule.getRuleName().equals( declaredRule.getRuleName() ) ) {
                 exists = true;
                 break;
             }
         }
 
-        if (!exists) {
-            availableDeclaredRules.add(declaredRule);
+        if ( !exists ) {
+            availableDeclaredRules.add( declaredRule );
         }
     }
 
-    public void addAllDeclaredRules(Collection<DeclaredRule> declaredRules) {
-        for (DeclaredRule declaredRule : declaredRules) {
-            addDeclaredRule(declaredRule);
+    public void addAllDeclaredRules( Collection<DeclaredRule> declaredRules ) {
+        for ( DeclaredRule declaredRule : declaredRules ) {
+            addDeclaredRule( declaredRule );
         }
     }
 
     protected void loadDeclaredRulesFromClassPath() throws IOException {
-        Collection<URL> resources = ClassUtils.searchResourcesInClasspath("META-INF/sanity-rules.xml");
 
-        if (log.isDebugEnabled()) log.debug("Found " + resources.size() + " sanity-rules.xml files in the classpath");
+        Collection<URL> resources = ClassUtils.searchResourcesInClasspath( RULES_XML_PATH );
 
-        for (URL resource : resources) {
+        if ( log.isDebugEnabled() )
+            log.debug( "Found " + resources.size() + " sanity-rules.xml files in the classpath" );
+
+        for ( URL resource : resources ) {
             try {
-                DeclaredRules dr = readDeclaredRules(resource.openStream());
-                addAllDeclaredRules(dr.getDeclaredRule());
+                DeclaredRules dr = readDeclaredRules( resource.openStream() );
+                addAllDeclaredRules( dr.getDeclaredRule() );
 
-                if (log.isDebugEnabled())
-                    log.debug("Loaded " + dr.getDeclaredRule().size() + " declared rules from: " + resource);
+                if ( log.isDebugEnabled() )
+                    log.debug( "Loaded " + dr.getDeclaredRule().size() + " declared rules from: " + resource );
 
-            } catch (Throwable t) {
-                throw new SanityRuleException("Problem reading declared rules from resource: " + resource, t);
+            } catch ( Throwable t ) {
+                throw new SanityRuleException( "Problem reading declared rules from resource: " + resource, t );
             }
         }
     }
 
-    protected static DeclaredRules readDeclaredRules(InputStream is) {
-        if (is == null) {
-            throw new IllegalStateException("No sanity rules file found: " + RULES_XML_PATH);
+    protected static DeclaredRules readDeclaredRules( InputStream is ) {
+        if ( is == null ) {
+            throw new IllegalStateException( "No sanity rules file found: " + RULES_XML_PATH );
         }
 
         DeclaredRules rules = null;
         try {
-            rules = readRulesXml(is);
-        } catch (JAXBException e) {
-            throw new SanityRuleException(e);
+            rules = readRulesXml( is );
+        } catch ( JAXBException e ) {
+            throw new SanityRuleException( e );
         }
         return rules;
     }
 
-    protected static boolean isDeclaredRuleInGroup(DeclaredRule rule, String ... groupNames) {
-        for (String groupName : rule.getGroups().getGroup()) {
-            if (Arrays.binarySearch(groupNames, groupName) > -1) {
+    protected static boolean isDeclaredRuleInGroup( DeclaredRule rule, String... groupNames ) {
+        for ( String groupName : rule.getGroups().getGroup() ) {
+            if ( Arrays.binarySearch( groupNames, groupName ) > -1 ) {
                 return true;
             }
         }
 
         return false;
     }
-
- 
 }
