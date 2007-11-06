@@ -21,7 +21,7 @@ public class AssignerMojo extends AbstractSanityMojo {
 
     protected void executeSanityMojo(SanityCheckConfig sanityConfig) throws MojoExecutionException, MojoFailureException, IOException {
         try {
-            Assigner assigner = new Assigner(sanityConfig, false);
+            Assigner assigner = new Assigner(sanityConfig, true);
             assigner.assign();
         }
         catch (Exception e) {

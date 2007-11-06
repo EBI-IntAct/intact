@@ -9,16 +9,17 @@ import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import java.io.IOException;
 
 /**
- * TODO comment this
+ * MOJO that runs the sanity check.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
+ * 
  * @goal sanity-check
  * @phase process-resources
  */
 public class SanityCheckMojo extends AbstractSanityMojo {
 
-    protected void executeSanityMojo(SanityCheckConfig sanityConfig) throws MojoExecutionException, MojoFailureException, IOException {
+    protected void executeSanityMojo(SanityCheckConfig sanityConfig) throws MojoExecutionException {
         try {
             if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
                 IntactContext.getCurrentInstance().getDataContext().commitTransaction();
