@@ -14,7 +14,7 @@ import java.util.Iterator;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AssignerMojoTest extends AbstractMojoTestCase {
+public class AssignerMojoTest extends AbstractSanityMojoTestCase {
 
     @Test
     public void testAssigner() throws Exception {
@@ -25,6 +25,8 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
         AssignerMojo mojo = (AssignerMojo) lookupMojo( "assigner", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
         mojo.hibernateConfig = new File( AssignerMojoTest.class.getResource( "/test-hibernate.cfg.xml" ).getFile() );
+
+        initializeDatabaseContent( mojo.hibernateConfig );
 
         mojo.execute();
     }
@@ -37,7 +39,7 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
 
         AssignerMojo mojo = ( AssignerMojo ) lookupMojo( "assigner", pluginXmlFile );
 
-        Assert.assertEquals( 6, mojo.getCurators().size() );
+        Assert.assertEquals( 7, mojo.getCurators().size() );
         for ( Iterator iterator = mojo.getCurators().iterator(); iterator.hasNext(); ) {
             Object curator =  iterator.next();
             System.out.println( curator );
@@ -55,6 +57,8 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
 
         mojo.setLog( new SystemStreamLog() );
         mojo.hibernateConfig = new File( AssignerMojoTest.class.getResource( "/test-hibernate.cfg.xml" ).getFile() );
+
+        initializeDatabaseContent( mojo.hibernateConfig );
 
         mojo.execute();
     }

@@ -17,29 +17,6 @@
 
     <name>IntAct Sanity :: Plugins :: Sanity Mojo</name>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.datasets</groupId>
-                <artifactId>dataset-import-maven-plugin</artifactId>
-                <version>1.7.0</version>
-                <configuration>
-                    <id>ALL_CVS</id>
-                    <provider>uk.ac.ebi.intact.unitdataset.PsiTestDatasetProvider</provider>
-                    <tempH2>${project.build.directory}/test-db</tempH2>
-                </configuration>
-                <executions>
-                        <execution>
-                            <phase>generate-test-resources</phase>
-                            <goals>
-                                <goal>import</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.sanity</groupId>

@@ -20,6 +20,11 @@
                             <admin>true</admin>
                             <percentage>33</percentage>
                         </superCurator>
+                        <superCurator>
+                            <name>john</name>
+                            <percentage>0</percentage>
+                            <admin>true</admin>
+                        </superCurator>
 
                         <curator>
                             <name>skerrien</name>
