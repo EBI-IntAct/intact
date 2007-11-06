@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Abstract test that sets up Sanity Checker configuration.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

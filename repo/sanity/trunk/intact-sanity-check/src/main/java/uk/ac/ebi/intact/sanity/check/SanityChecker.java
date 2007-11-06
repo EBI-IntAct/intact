@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
@@ -99,6 +100,8 @@ public class SanityChecker {
 
         SanityReport report = RuleRunnerReport.getInstance().toSanityReport(true);
 
+        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
+        System.out.println( "Before running transaction is " + (dataContext.isTransactionActive() ? "active" : "commited" ) );
         addReportAttributes(report, elapsedTime);
 
         if (sanityConfig != null) {

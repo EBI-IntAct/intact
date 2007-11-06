@@ -115,7 +115,7 @@ public enum MessageDefinition {
 
     INTERACTION_WITHOUT_TYPE( Interaction.class, INTERACTION, 5, "Interaction without interaction type", ERROR ),
 
-    INTERACTION_EXPERIMENT_COUNT( Interaction.class, INTERACTION, 6, "Interaction having none or more than one experiment", ERROR ),
+    INTERACTION_WITH_MANY_EXPERIMENTS( Interaction.class, INTERACTION, 6, "Interaction having more than one experiment", ERROR ),
 
     ////////////////////////
     // Interactor
