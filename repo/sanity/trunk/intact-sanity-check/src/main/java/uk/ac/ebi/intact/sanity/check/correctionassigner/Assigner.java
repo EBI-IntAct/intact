@@ -97,15 +97,25 @@ public class Assigner {
     }
 
     /**
-     * Given a percentage and a the total number of experiments to correct, it return the number of pubmed corresponding
-     * to the given ratio. As it would make no sence that a SuperCurator would have 1.5 pubmedId to correct, we
-     * approximate the result to the inferior integer and return the int (ex : 1.6 will become 1).
+     * Approximates the count of PMIDs to be assigned to a curator given the total amount and the percentage of assignement.
+     * </p>
+     * The count is calculated as a real value and floored if decimal part <= 0.5 otherwise ceiled.
+     * </p>
+     * Example:
+     * <pre>
+     * approx(1) = 1
+     * approx(1,1) = 1
+     * approx(1.5) = 1
+     * approx(1.51) = 2
+     * approx(1.9) = 2
+     * </pre>
      *
-     * @param percentage (normally, the percentage of pubmed a SuperCurator is expected to correct.
-     * @param total      (the total number of pubmed to be corrected).
-     * @return the number of pubmedIds corresponding to the given ratio.
+     * @param superCurator SuperCurator for which we are going to calculate the count of PMIDs.
+     * @param total        (the total number of pubmed to be corrected).
+     * @return the number of pubmedIds corresponding to the given percentage.
      */
-    public int getNumberOfPubmed( int percentage, int total ) {
+    public int getNumberOfPubmed( SuperCurator superCurator, int total ) {
+        final int percentage = superCurator.getPercentage();
         float pmidCount = total;
         float n = ( pmidCount / 100 ) * percentage;
         int count;
@@ -117,7 +127,10 @@ public class Assigner {
             count = ( int ) Math.floor( n );
             action = "floored";
         }
-        System.out.println( percentage + "% of " + total + " is " + count + " (" + n + " " + action + ")" );
+        if ( log.isDebugEnabled() ) {
+            log.debug( superCurator.getName() + ": " + percentage + "% of " + total +
+                       " is " + count + " (" + n + " " + action + ")" );
+        }
         return count;
     }
 
@@ -172,10 +185,8 @@ public class Assigner {
         Collection<SuperCurator> superCurators = sanityConfig.getSuperCurators();
 
         final int pmidCount = notAssignedPmid2creator.size();
+        if ( log.isDebugEnabled() ) log.debug( "Count of non assigned PMIDs: " + pmidCount );
 
-        if ( log.isDebugEnabled() ) log.debug( "Count of non assigned PMIDs: " + notAssignedPmid2creator.size() );
-
-        // For each superCurator :
         for ( SuperCurator superCurator : superCurators ) {
 
             if ( log.isDebugEnabled() ) log.debug( "Process assignement of SuperCurator: " + superCurator.getName() );
@@ -183,8 +194,7 @@ public class Assigner {
             if ( superCurator.getPercentage() != 0 ) {
 
                 // Get the number of pubmedIds this superCurator should be affected.
-                final int numberOfPubmeds = getNumberOfPubmed( superCurator.getPercentage(), pmidCount );
-
+                final int numberOfPubmeds = getNumberOfPubmed( superCurator, pmidCount );
                 if ( log.isDebugEnabled() ) log.debug( "PMID to assign: " + numberOfPubmeds );
 
                 int pmidAssigned = 0;
@@ -275,61 +285,8 @@ public class Assigner {
                     }
                 } // for
             } // while
-        }
+        } // if
     }
-
-//    /**
-//     * ex : 2 SuperCurators John and Jane. John and Jane must correct 50% of the total number of pubmed to correct. 3
-//     * pubmedw to correct getNumberOfPubmed(50, 3) will return 1. As it would make no sense to affect a pubmed and a
-//     * half. As a consequence, 1 pubmed would be not affected to anybody.
-//     * <p/>
-//     * So for each pubmedId remaining we go through the Collection of SuperCurators and if the superCurator to come is
-//     * not the one who created the experiment we affect it to him.
-//     *
-//     * @param notAssignedPmid2creator, map associating the not assigned pubmedIds to their creator.
-//     * @param pmid2ExpColl,            map associating the pubmedId to the Collection of corresponding experiments
-//     *                                 existing in the database and needing to be corrected.
-//     * @param notAssignedExperiments,  Collection of not assigned experiments.
-//     * @throws IntactException
-//     */
-//    public void assignRemainingExperiments( Map notAssignedPmid2creator,
-//                                            Map pmid2ExpColl,
-//                                            Collection notAssignedExperiments ) throws Exception {
-//        Collection superCurators = sanityConfig.getSuperCurators();
-//        //If there are still some pubmed not assigned...
-//        if ( notAssignedPmid2creator.size() != 0 ) {
-//            //then iterate on those pubmed
-//            Iterator iter = notAssignedPmid2creator.entrySet().iterator();
-//            while ( iter.hasNext() ) {
-//                Map.Entry pairs = ( Map.Entry ) iter.next();
-//                //Iterate on the collection of SuperCurators
-//                for ( Iterator iterator = superCurators.iterator(); iterator.hasNext(); ) {
-//                    SuperCurator superCurator = ( SuperCurator ) iterator.next();
-//                    if ( superCurator.getPercentage() != 0 ) {
-//                        //If the superCurator is not the curator who entered this pubmed into the database we affect it to him.
-//                        if ( !superCurator.getName().toLowerCase().equals( pairs.getValue() ) ) {
-//                            //Affect all the experiment corresponding to this pubmed Id to the superCurator.
-//                            Collection expToAdd = ( Collection ) pmid2ExpColl.get( pairs.getKey() );
-//                            for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
-//                                ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
-//                                //Add the experiment the Collection of experiments to correct of the superCurator.
-//                                superCurator.addExperiment( exp );
-//                                //remove the experiment from the Collection of not assigned experiments.
-//                                notAssignedExperiments.remove( exp );
-//                                //Add the annotation reviewer to the experiment.
-//                                addReviewerAnnotation( exp.getAc(), superCurator.getName() );
-//                            }
-//                            //remove the key/value pubmedId/creator from the map notAssignedPmid2creator.
-//                            iter.remove();
-//                            // As the SuperCurator was not the creator, the pubmed has been assigned so we don't need to
-//                            //try with an other SuperCurator. So break the iteration on the SuperCurators collection.
-//                            break;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     /**
      * Once an experiment has been assigned to a SuperCurator we must add a reviewer annotation (with cvTopic = reviewer
@@ -395,9 +352,6 @@ public class Assigner {
 
         //Assign the experiment. See javadoc for the corresponding method.
         assignExperiments( notAssignedPmid2creator, pmid2ExpColl, notAssignedExperiments );
-
-        //Assign remaining experiments. See javadoc for the corresponding method.
-//        assignRemainingExperiments( notAssignedPmid2creator, pmid2ExpColl, notAssignedExperiments );
     }
 
     /**
