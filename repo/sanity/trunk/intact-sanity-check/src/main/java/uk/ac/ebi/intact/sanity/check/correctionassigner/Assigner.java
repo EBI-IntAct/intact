@@ -110,14 +110,14 @@ public class Assigner {
         float n = ( pmidCount / 100 ) * percentage;
         int count;
         String action;
-        if( n % 1 > 0.5 ) {
+        if ( n % 1 > 0.5 ) {
             count = ( int ) Math.ceil( n );
             action = "ceiled";
         } else {
             count = ( int ) Math.floor( n );
             action = "floored";
         }
-        System.out.println( percentage + "% of " + total + " is " + count + " ("+ n +" "+ action +")");
+        System.out.println( percentage + "% of " + total + " is " + count + " (" + n + " " + action + ")" );
         return count;
     }
 
@@ -203,7 +203,7 @@ public class Assigner {
                         Collection<ComparableExperimentBean> expToAdd = pubmedToExp.get( pmid );
 
                         if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
-                                                               " ... assigning it to " + superCurator.getName() + " now");
+                                                               " ... assigning it to " + superCurator.getName() + " now" );
 
                         //For each experiment corresponding to this pubmed we just assigned.
                         for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
@@ -215,17 +215,19 @@ public class Assigner {
                         it.remove();
                         pmidAssigned++;
                     } else {
-                        if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator + ", so it cannotbe assigned to him/her." );
+                        if ( log.isDebugEnabled() )
+                            log.debug( "PMID " + pmid + " was curated by " + creator + ", so it cannotbe assigned to him/her." );
                     }
                 } // while
             } else {
-                if ( log.isDebugEnabled() ) log.debug( "SuperCurator: " + superCurator.getName() + " has 0% set. skip" );
+                if ( log.isDebugEnabled() )
+                    log.debug( "SuperCurator: " + superCurator.getName() + " has 0% set. skip" );
             }
         } // for
 
 
         final int unassignedPmid = notAssignedPmid2creator.size();
-        if( unassignedPmid > 0 ) {
+        if ( unassignedPmid > 0 ) {
 
             List<SuperCurator> orderedCurators = new ArrayList<SuperCurator>( sanityConfig.getSuperCurators() );
             Collections.sort( orderedCurators, new Comparator<SuperCurator>() {
@@ -238,7 +240,7 @@ public class Assigner {
             // some haven't been assigned
             if ( log.isDebugEnabled() ) {
                 log.debug( unassignedPmid + " PMID not assigned to any curator due to rounding errors; Assigning " +
-                           "to the super curator having the highest percentage that is not the original curator");
+                           "to the super curator having the highest percentage that is not the original curator" );
             }
 
             Iterator<Map.Entry<String, String>> it = notAssignedPmid2creator.entrySet().iterator();
@@ -256,7 +258,7 @@ public class Assigner {
                         Collection<ComparableExperimentBean> expToAdd = pubmedToExp.get( pmid );
 
                         if ( log.isDebugEnabled() ) log.debug( "PMID " + pmid + " was curated by " + creator +
-                                                               " ... assigning it to " + superCurator.getName() + " now");
+                                                               " ... assigning it to " + superCurator.getName() + " now" );
 
                         for ( Iterator iterator1 = expToAdd.iterator(); iterator1.hasNext(); ) {
                             ComparableExperimentBean exp = ( ComparableExperimentBean ) iterator1.next();
@@ -342,24 +344,17 @@ public class Assigner {
     public void addReviewerAnnotation( String expAc, String reviewerName ) throws Exception {
 
         if ( log.isDebugEnabled() ) {
-            log.debug( "Adding reviewer '"+ reviewerName +"' to experiment (AC: "+ expAc +")" );
+            log.debug( "Adding reviewer '" + reviewerName + "' to experiment (AC: " + expAc + ")" );
         }
 
-        if( ! IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
+        if ( !IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
         }
 
         Experiment experiment = getDaoFactory().getExperimentDao().getByAc( expAc );
-
         Annotation reviewerAnnotation = createReviewerAnnotation( reviewerName );
-//        getDaoFactory().getAnnotationDao().persist( reviewerAnnotation );
-
         experiment.addAnnotation( reviewerAnnotation );
-//        getDaoFactory().getExperimentDao().update( experiment );
-
         PersisterHelper.saveOrUpdate( experiment );
-
-        System.out.println( "Annotation AC: " + reviewerAnnotation.getAc() );
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
     }
