@@ -18,7 +18,9 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
 
     @Test
     public void testAssigner() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+        String filename = SanityCheckMojoTest.class.getResource( "/plugin-configs/simple-config.xml" ).getFile();
+        Assert.assertNotNull( filename );
+        File pluginXmlFile = new File( filename );
 
         AssignerMojo mojo = (AssignerMojo) lookupMojo( "assigner", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
@@ -29,7 +31,9 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
 
     @Test
     public void testAssigner_config1() throws Exception {
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/assigner-config-1.xml" );
+        String filename = SanityCheckMojoTest.class.getResource( "/plugin-configs/assigner-config-1.xml" ).getFile();
+        Assert.assertNotNull( filename );
+        File pluginXmlFile = new File( filename );
 
         AssignerMojo mojo = ( AssignerMojo ) lookupMojo( "assigner", pluginXmlFile );
 
@@ -45,8 +49,8 @@ public class AssignerMojoTest extends AbstractMojoTestCase {
         orchard.setAdmin( true );
 
         assertTrue( mojo.getCurators().contains( orchard ) );
-        Assert.assertTrue( mojo.isEnableAdminEmails() );
-        Assert.assertTrue( mojo.isEnableUserEmails() );
+        Assert.assertFalse( mojo.isEnableAdminEmails() );
+        Assert.assertFalse( mojo.isEnableUserEmails() );
         Assert.assertEquals( "http://www.ebi.ac.uk/intact/editor", mojo.getEditorUrl() );
 
         mojo.setLog( new SystemStreamLog() );

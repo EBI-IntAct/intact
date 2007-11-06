@@ -12,14 +12,13 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Abstract MOJO used for sanity check and related tasks (eg. correction assigner...).
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
- * 
  */
-public abstract class AbstractSanityMojo extends IntactHibernateMojo
-{
+public abstract class AbstractSanityMojo extends IntactHibernateMojo {
+    
     /**
      * Project instance
      *
@@ -60,8 +59,7 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
      */
     protected File hibernateConfig;
 
-    protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException
-    {
+    protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
         if (curators == null) {
             throw new MojoFailureException("No curators configured: curators are null");
         }
@@ -70,7 +68,7 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
             throw new MojoFailureException("No curators configured");
         }
 
-        getLog().info("Curators found: "+curators.size());
+        getLog().info("Curators found: " + curators.size());
 
         if (getLog().isDebugEnabled()) {
             for (uk.ac.ebi.intact.sanity.check.config.Curator curator : curators) {
@@ -85,13 +83,11 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo
         sanityConfig.setEmailSubjectPrefix(emailSubjectPrefix);
 
         executeSanityMojo(sanityConfig);
-
     }
 
     protected abstract void executeSanityMojo(SanityCheckConfig sanityConfig) throws MojoExecutionException, MojoFailureException, IOException;
 
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
