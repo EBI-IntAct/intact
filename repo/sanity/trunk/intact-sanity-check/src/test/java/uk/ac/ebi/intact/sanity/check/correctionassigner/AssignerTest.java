@@ -10,7 +10,6 @@ import uk.ac.ebi.intact.core.unit.IntactUnit;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.persistence.dao.ExperimentDao;
 import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SanityConfigurationException;
@@ -52,7 +51,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         new IntactUnit().createSchema( true );
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
-        final CorrectionAssignerCvPrimer correctionAssignerCvPrimer = new CorrectionAssignerCvPrimer(daoFactory);
+        final CorrectionAssignerCvPrimer correctionAssignerCvPrimer = new CorrectionAssignerCvPrimer( daoFactory );
 
         beginTransaction();
         correctionAssignerCvPrimer.createCVs();
@@ -85,7 +84,7 @@ public class AssignerTest extends AbstractSanityLegacyTest {
                 return;
             }
         }
-        Assert.fail( "Experiment " + exp.getAc() + " should have a reviewer("+ reviewerName +") annotation." );
+        Assert.fail( "Experiment " + exp.getAc() + " should have a reviewer(" + reviewerName + ") annotation." );
     }
 
     private void assertHasNoReviewer( Experiment exp ) {
@@ -99,8 +98,6 @@ public class AssignerTest extends AbstractSanityLegacyTest {
 
     //////////////////////
     // Tests
-
-    // TODO check that if John has created all of these experiments, then he should not be assigned to check them
 
     @Test
     public void assign_default() throws Exception {
@@ -210,6 +207,127 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         Assert.assertEquals( 4, config.getSuperCurator( "John" ).getExperiments().size() );
         Assert.assertEquals( 3, config.getSuperCurator( "Ellen" ).getExperiments().size() );
         Assert.assertEquals( 3, config.getSuperCurator( "Donald" ).getExperiments().size() );
+
+        commitTransaction();
+    }
+
+    @Test
+    @Ignore
+    public void assign_multiple_super_curators_3() throws Exception {
+        // here we are trying to make sure that the algorithm is taking into account who has created the experiments in
+        // the first place and assign them while trying to keep a balance between curators' percentage.
+
+        SanityCheckConfig config = super.getSanityCheckConfig();
+        final List<SuperCurator> superCurators = config.getSuperCurators();
+        Assert.assertNotNull( superCurators );
+        Assert.assertEquals( 1, superCurators.size() );
+
+        SuperCurator john = config.getSuperCurator( "John" );
+        Assert.assertNotNull( john );
+        john.setPercentage( 34 );
+
+        // add 2 more super curators so we have 3 thirds for the assignment
+        SuperCurator ellen = new SuperCurator( 33, "Ellen" );
+        SuperCurator donald = new SuperCurator( 33, "Donald" );
+
+        config.getSuperCurators().add( ellen );
+        config.getSuperCurators().add( donald );
+
+        // Add some random data
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
+
+
+        for ( int i = 0; i < 6; i++ ) {
+            Experiment experiment = mockBuilder.createExperimentRandom( 1 );
+
+            // define on a per experiment basis, who has created it (john:3, ellen:2, donald:1)
+            String creatorName = null;
+            switch ( i ) {
+                case 0:
+                case 1:
+                case 2:
+                    creatorName = john.getName();
+                    break;
+
+                case 3:
+                case 4:
+                    creatorName = ellen.getName();
+                    break;
+
+                case 5:
+                    creatorName = donald.getName();
+                    break;
+
+                default:
+                    Assert.fail();
+
+            }
+
+            Assert.assertNotNull( creatorName );
+            getIntactContext().getUserContext().setUserId( creatorName );
+
+            beginTransaction();
+            persistExperiment( experiment );
+            commitTransaction();
+
+            Assert.assertEquals( creatorName.toLowerCase(), experiment.getCreator().toLowerCase() );
+        }
+
+        beginTransaction();
+
+        Assigner assigner = new Assigner( config, false );
+        assigner.assign();
+
+        // john being the super curator that has the highest percentage and is not the original curator, he gets 1 more
+        Assert.assertEquals( 2, config.getSuperCurator( "John" ).getExperiments().size() );
+        Assert.assertEquals( 2, config.getSuperCurator( "Ellen" ).getExperiments().size() );
+        Assert.assertEquals( 2, config.getSuperCurator( "Donald" ).getExperiments().size() );
+
+        commitTransaction();
+    }
+
+    @Test
+    public void assign_multiple_super_curators_4() throws Exception {
+        // Aim: check that if John has created all of these experiments, then he should not be assigned to check them
+
+        SanityCheckConfig config = super.getSanityCheckConfig();
+        final List<SuperCurator> superCurators = config.getSuperCurators();
+        Assert.assertNotNull( superCurators );
+        Assert.assertEquals( 1, superCurators.size() );
+
+        SuperCurator john = config.getSuperCurator( "John" );
+        Assert.assertNotNull( john );
+        john.setPercentage( 50 );
+
+        // add 2 more super curators so we have 3 thirds for the assignment
+        SuperCurator ellen = new SuperCurator( 50, "Ellen" );
+
+        config.getSuperCurators().add( ellen );
+
+        // Add some random data
+        IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
+
+
+        String creatorName = john.getName();
+        getIntactContext().getUserContext().setUserId( creatorName );
+        for ( int i = 0; i < 5; i++ ) {
+            Experiment experiment = mockBuilder.createExperimentRandom( 1 );
+
+            beginTransaction();
+            persistExperiment( experiment );
+            commitTransaction();
+
+            Assert.assertEquals( creatorName.toLowerCase(), experiment.getCreator().toLowerCase() );
+        }
+
+        beginTransaction();
+
+        Assigner assigner = new Assigner( config, false );
+        assigner.assign();
+
+        // john being the super curator that has the highest percentage and is not the original curator, he gets 1 more
+        Assert.assertEquals( 0, config.getSuperCurator( "John" ).getExperiments().size() );
+        Assert.assertEquals( 5, config.getSuperCurator( "Ellen" ).getExperiments().size() );
 
         commitTransaction();
     }
@@ -368,18 +486,18 @@ public class AssignerTest extends AbstractSanityLegacyTest {
         Assigner assigner = new Assigner( config, true );
         assigner.assign();
 
-        final Collection<ComparableExperimentBean> anneExps = config.getSuperCurator("Anne").getExperiments();
-        final Collection<ComparableExperimentBean> peterExps = config.getSuperCurator("Peter").getExperiments();
+        final Collection<ComparableExperimentBean> anneExps = config.getSuperCurator( "Anne" ).getExperiments();
+        final Collection<ComparableExperimentBean> peterExps = config.getSuperCurator( "Peter" ).getExperiments();
         Assert.assertEquals( 3, anneExps.size() );
         Assert.assertEquals( 2, peterExps.size() );
 
         for ( ComparableExperimentBean ceb : anneExps ) {
-            Experiment exp = getDaoFactory().getExperimentDao().getByAc(ceb.getAc());
+            Experiment exp = getDaoFactory().getExperimentDao().getByAc( ceb.getAc() );
             assertHasReviewer( exp, "Anne" );
         }
-        
+
         for ( ComparableExperimentBean ceb : peterExps ) {
-            Experiment exp = getDaoFactory().getExperimentDao().getByAc(ceb.getAc());
+            Experiment exp = getDaoFactory().getExperimentDao().getByAc( ceb.getAc() );
             assertHasReviewer( exp, "Peter" );
         }
     }
@@ -418,7 +536,8 @@ public class AssignerTest extends AbstractSanityLegacyTest {
     }
 
     @Test
-    @Ignore // TODO implement this feature !!!
+    @Ignore
+    // TODO implement this feature !!!
     public void assign_publication_partially_on_hold() throws Exception {
         // Add some random data
         IntactMockBuilder mockBuilder = new IntactMockBuilder( IntactContext.getCurrentInstance().getInstitution() );
