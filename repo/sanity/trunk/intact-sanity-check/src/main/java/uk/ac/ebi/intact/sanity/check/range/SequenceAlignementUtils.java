@@ -89,40 +89,6 @@ public class SequenceAlignementUtils {
         }
     }
 
-
-    public static void sequenceAlignement( String seq1, String seq2 ) throws Exception {
-        Sequence query = ProteinTools.createProteinSequence( "SSWWAHVEMGPPADPILGVTEAYKRDTNSKKSSWWAHVEMGPPADPILGVTEAYKRDTNSKK", "query" );
-        Sequence target = ProteinTools.createProteinSequence( "PPDPILGVTE", "target" );
-
-        FiniteAlphabet alphabet = ProteinTools.getTAlphabet();
-        SubstitutionMatrix matrix = new SubstitutionMatrix( alphabet, new File( "C:\\BLOSUM62.txt" ) );
-        SequenceAlignment aligner = new NeedlemanWunsch(
-                0,      // match
-                3,      // replace
-                2,      // insert
-                2,      // delete
-                1,      // gapExtend
-                matrix  // SubstitutionMatrix
-        );
-
-        aligner.pairwiseAlignment( query, target );
-
-        // Print the alignment to the screen
-        System.out.println( "Global alignment with Needleman-Wunsch:\n" + aligner.getAlignmentString() );
-
-        aligner = new SmithWaterman(
-                -1,     // match
-                3,      // replace
-                2,      // insert
-                2,      // delete
-                1,      // gapExtend
-                matrix  // SubstitutionMatrix
-        );
-
-        aligner.pairwiseAlignment( query, target );
-        System.out.println( "\nlocal alignment with Smith-Waterman:\n" + aligner.getAlignmentString() );
-    }
-
     /////////////////////////////////////
     // Home made exact string matching
 
@@ -169,15 +135,5 @@ public class SequenceAlignementUtils {
         sb.append( '\n' );
 
         return sb.toString();
-    }
-
-    
-
-    public static void main( String[] args ) throws Exception {
-        String seq1 = "SSWWAHVEMGPPDPILGVTEAYKRDTNSKKSSWWAHVEMGPPDPILGVTEAYKRDTNSKK";
-        String seq2 = "PPDPILGVTE";
-        sequenceAlignement( seq1, seq2 );
-
-        findExactMatches( seq1, seq2 );
     }
 }
