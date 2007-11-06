@@ -8,7 +8,6 @@ package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpURL;
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.Annotation;
@@ -17,22 +16,25 @@ import uk.ac.ebi.intact.model.CvTopic;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
-import uk.ac.ebi.intact.sanity.commons.rules.*;
+import uk.ac.ebi.intact.sanity.commons.rules.AnnotationMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
+import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
+import uk.ac.ebi.intact.sanity.commons.rules.Rule;
 import uk.ac.ebi.intact.sanity.rules.RuleGroup;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Broken URL rule.
+ * Rule that checks on broken URL.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
  * @since 2.0.0
  */
 
-@SanityRule(target = AnnotatedObject.class, group = { RuleGroup.INTACT, RuleGroup.IMEX }) 
+@SanityRule( target = AnnotatedObject.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
+
 public class BrokenUrl implements Rule<AnnotatedObject> {
 
     public Collection<GeneralMessage> check( AnnotatedObject ao ) throws SanityRuleException {
@@ -54,7 +56,7 @@ public class BrokenUrl implements Rule<AnnotatedObject> {
                 //Creating the httpUrl object corresponding to the the url string contained in the annotation
                 try {
                     httpUrl = new HttpURL( urlString );
-                } catch ( URIException e ) {
+                } catch ( Exception e ) {
                     messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
                     return messages;
                 }
@@ -65,21 +67,15 @@ public class BrokenUrl implements Rule<AnnotatedObject> {
 
                     HttpClient client = new HttpClient();
                     HttpMethod method = null;
+                    int statusCode = -1;
                     try {
                         method = new GetMethod( urlString );
-                    } catch ( IllegalArgumentException e ) {
+                        if ( method != null ) {
+                            statusCode = client.executeMethod( method );
+                        }
+                    } catch ( Exception e ) {
                         messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
                         return messages;
-                    }
-
-                    int statusCode = -1;
-                    if ( method != null ) {
-                        try {
-                            statusCode = client.executeMethod( method );
-                        } catch ( IOException e ) {
-                            messages.add( new AnnotationMessage( MessageDefinition.BROKEN_URL, ao, annotation ) );
-                            return messages;
-                        }
                     }
 
                     if ( statusCode != -1 ) {
