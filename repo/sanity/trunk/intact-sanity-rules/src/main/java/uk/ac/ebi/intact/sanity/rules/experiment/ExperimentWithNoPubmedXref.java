@@ -19,11 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 
 /**
- * Checks on experiment having no pubmed primary-reference or pmid like 'to_be_assigned'.
+ * Checks on experiment having not exactly 1 primary-reference to pubmed or DOI or pmid like 'to_be_assigned'.
  *
- * @author Samuel Kerrien (skerrien@ebi.ac.uk), Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @author Catherine Leroy (cleroy@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.0
+ * @since 2.0
  */
 
 @SanityRule( target = Experiment.class, group = {RuleGroup.INTACT, RuleGroup.IMEX} )
