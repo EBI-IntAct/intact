@@ -134,6 +134,8 @@ public enum MessageDefinition {
     INTERACTOR_WITH_INVALID_TYPE( Interactor.class, INTERACTOR, 4,
                                   "Interactor having a CvInteractorType that doesn't have a MI identity", ERROR ),
 
+    POLYMER_WITHOUT_SEQUENCE( Polymer.class, INTERACTOR, 5, "Polymer without sequence", ERROR ),
+
     ////////////////////////
     // Protein
 
