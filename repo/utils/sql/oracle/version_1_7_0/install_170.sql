@@ -36,7 +36,7 @@ PROMPT
 PROMPT *********************************************************************************/
 PROMPT "updating priviledges on new tables..."
 PROMPT
-@130_update_privileges.sql q
+@130_update_privileges.sql 
 
 
 PROMPT *********************************************************************************/
