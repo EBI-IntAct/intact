@@ -47,13 +47,9 @@
           We advise to use the Maven Archetype we have developped to create the base structure of the module you are
           about to create. Running the command below should do the job: <br/>
           <pre>
-          mvn archetype:create -DarchetypeArtifactId=intact-archetype-jar \
-                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \
-                               -DarchetypeVersion=1.2.0 \
-                               -Dversion=1.0-SNAPSHOT \
+          mvn archetype:create -Dversion=1.0-SNAPSHOT \
                                -DgroupId=uk.ac.ebi.intact.mygroup \
-                               -DartifactId=myTest \
-                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo
+                               -DartifactId=myTest
           </pre>
         </p>
       </answer>
@@ -65,13 +61,10 @@
           We advise to use the Maven Archetype we have developped to create the base structure of the module you are
           about to create. Running the command below should do the job: <br/>
           <pre>
-          mvn archetype:create -DarchetypeArtifactId=intact-archetype-mojo \
-                               -DarchetypeGroupId=uk.ac.ebi.intact.archetype \
-                               -DarchetypeVersion=1.1.1 \
-                               -Dversion=1.0-SNAPSHOT \
+          mvn archetype:create -Dversion=1.0-SNAPSHOT \
                                -DgroupId=uk.ac.ebi.intact.mygroup \
                                -DartifactId=myTest \
-                               -DremoteRepositories=http://www.ebi.ac.uk/~maven/m2repo 
+                               -DarchetypeArtifactId=maven-archetype-mojo
           </pre>
         </p>
       </answer>
