@@ -1,12 +1,3 @@
-drop table ia_imex_import_pub;
-drop table ia_imex_import;
-drop table ia_imex_import_pub_audit;
-drop table ia_imex_import_audit;
-drop trigger trgAud_ia_imex_import_pub;
-drop trigger trgAud_ia_imex_import;
-drop sequence imex_sequence;
-
-
 commit;
 
 PROMPT Creating table "IA_IMEX_IMPORT"
