@@ -23,11 +23,12 @@ public class Sequence {
 		if (sequence == null) {
 			throw new IllegalArgumentException("Sequence must not be null!");
 		}
-		if (Pattern.matches(sequneceTermExpr, sequence)) {
+        sequence = sequence.replace( "\n","");
+        if (Pattern.matches(sequneceTermExpr, sequence)) {
 			this.seq = sequence.toLowerCase();
 		}
 		else{
-			throw new IllegalArgumentException("Sequence must not contain enything else than letters!");
+            throw new IllegalArgumentException("Sequence must not contain enything else than letters! >" + sequence +"<");
 			
 		}
 	}

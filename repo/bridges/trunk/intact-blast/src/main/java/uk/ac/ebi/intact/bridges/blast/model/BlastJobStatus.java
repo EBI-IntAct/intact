@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.bridges.blast.model;
  * TODO comment this ... someday
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
- * @version
+ * @version 1.0
  * @since
  * 
  * <pre>
@@ -21,5 +21,5 @@ public enum BlastJobStatus {
 	PENDING, 
 	NOT_FOUND, 
 	FAILED, 
-	DONE;
+	DONE
 }

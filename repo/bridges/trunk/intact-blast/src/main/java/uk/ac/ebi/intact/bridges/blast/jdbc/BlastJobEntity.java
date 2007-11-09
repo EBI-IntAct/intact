@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 public class BlastJobEntity {
 	private String			jobid;
 	private String			uniprotAc;
+	private String			sequence;
 	private BlastJobStatus	status;
 	private File			resultFile;
 	private Timestamp		timestamp;
@@ -40,6 +41,12 @@ public class BlastJobEntity {
 		this.timestamp = timestamp;
 	}
 
+	public BlastJobEntity(String jobid, String uniprotAc, String sequence, BlastJobStatus status, File result,
+			Timestamp timestamp) {
+		this(jobid, uniprotAc, status, result, timestamp);
+		this.sequence = sequence;
+	}
+
 	public String getJobid() {
 		return jobid;
 	}
@@ -54,6 +61,21 @@ public class BlastJobEntity {
 
 	public void setUniprotAc(String uniprotAc) {
 		this.uniprotAc = uniprotAc;
+	}
+
+	/**
+	 * @return the sequence
+	 */
+	public String getSequence() {
+		return sequence;
+	}
+
+	/**
+	 * @param sequence
+	 *            the sequence to set
+	 */
+	public void setSequence(String sequence) {
+		this.sequence = sequence;
 	}
 
 	/**
@@ -100,38 +122,45 @@ public class BlastJobEntity {
 
 	@Override
 	public String toString() {
-		String str = jobid + ":" + uniprotAc + ":" + status + ":" + (resultFile == null ? "null" : resultFile.getPath()) + ":" + timestamp;
-		return str;
+		return jobid + ":" + uniprotAc + ":" + status + ":"
+				+ (resultFile == null ? "null" : resultFile.getPath()) + ":" + timestamp;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		//TODO: test if it works
-		if (obj instanceof BlastJobEntity){
+		// TODO: test if it works
+		if (obj instanceof BlastJobEntity) {
 			BlastJobEntity job = (BlastJobEntity) obj;
-			if (!jobid.equals(job.getJobid())){
+			if (!jobid.equals(job.getJobid())) {
 				return false;
 			}
-			if (!uniprotAc.equals(job.getUniprotAc())){
+			if (!uniprotAc.equals(job.getUniprotAc())) {
 				return false;
 			}
-			if (! status.equals(job.getStatus())){
+			if (!sequence.equals(job.getSequence())) {
 				return false;
 			}
-			if (!resultFile.getPath().equals(job.getResultPath())){
+			if (!status.equals(job.getStatus())) {
 				return false;
 			}
-			if (timestamp.equals(job.getTimestamp())){
+			if (!resultFile.getPath().equals(job.getResultPath())) {
+				return false;
+			}
+			if (timestamp.equals(job.getTimestamp())) {
 				return false;
 			}
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

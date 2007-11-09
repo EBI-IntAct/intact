@@ -23,22 +23,8 @@ import org.junit.Test;
  * </pre>
  */
 public class UniprotAcTest {
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@Before
-	public void setUp() throws Exception {
-	}
-
-	/**
-	 * @throws java.lang.Exception
-	 */
-	@After
-	public void tearDown() throws Exception {
-	}
-
-	/**
+    
+    /**
 	 * Test method for
 	 * {@link uk.ac.ebi.intact.bridges.blast.model.UniprotAc#UniprotAc(java.lang.String)}.
 	 */
@@ -50,5 +36,34 @@ public class UniprotAcTest {
 		assertNotNull(uniAc2);
 		UniprotAc uniAc3 = new UniprotAc("P12345-10");
 		assertNotNull(uniAc3);
-	}
+    }
+
+    @Test
+    public final void testUniprotAcWhitespaces(){
+        UniprotAc uniAc =  new UniprotAc("Q1D6D0");
+        assertNotNull(uniAc);
+
+        UniprotAc uniAc2 = new UniprotAc("Q1D6D0  ");
+        assertNotNull(uniAc2);
+    }
+
+    @Test
+    public final void testBadUniprotAc(){
+        UniprotAc uniAc = null;
+        try{
+            uniAc = new UniprotAc("Q1D6DO");
+        }  catch (IllegalArgumentException e)    {
+        }
+        assertNull(uniAc);
+    }
+
+    @Test
+    public final void testBadUniprotAc2(){
+        UniprotAc uniAc = null;
+        try{
+            uniAc = new UniprotAc("O14920");
+        }  catch (IllegalArgumentException e)    {
+        }
+        assertNotNull(uniAc);
+    }
 }

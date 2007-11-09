@@ -5,87 +5,114 @@
  */
 package uk.ac.ebi.intact.bridges.blast;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
+import java.io.File;
+import java.util.List;
+import java.util.Set;
+
 /**
  * TODO comment this ... someday
- * 
+ *
  * @author Irina Armean (iarmean@ebi.ac.uk)
- * @version
- * @since
- * 
- * <pre>
- * 12 Sep 2007
- * </pre>
+ * @since <pre>
+ *        12 Sep 2007
+ *        </pre>
  */
 public interface BlastService {
-	
-	public void importCsv(File csvFile) throws BlastServiceException;
-	
-	public void exportCsv(File csvFile) throws BlastServiceException;
-	
-	public BlastJobEntity submitJob(UniprotAc uniprotAc) throws BlastServiceException;
-	
-	public BlastJobEntity submitJob(BlastInput blastInput) throws BlastServiceException;
 
-	public List<BlastJobEntity> submitJobs(Set<UniprotAc> uniprotAcs) throws BlastServiceException;
-	
-	public BlastResult fetchAvailableBlast(UniprotAc uniprotAc) throws BlastServiceException;
-	
-	public BlastResult fetchAvailableBlast(BlastJobEntity job) throws BlastServiceException;
+    public void importCsv( File csvFile ) throws BlastServiceException;
 
-	/**
-	 * Retrieves from DB
-	 * 
-	 * @param uniprotAcs
-	 * @return
-	 */
-	public List<BlastResult> fetchAvailableBlasts(Set<UniprotAc> uniprotAcs) throws BlastServiceException;
+    public void exportCsv( File csvFile ) throws BlastServiceException;
 
-	/**
-	 * Retrieves from DB
-	 * 
-	 * @param jobs
-	 * @return
-	 */
-	public List<BlastResult> fetchAvailableBlasts(List<BlastJobEntity> jobs)throws BlastServiceException;
+    public boolean okToSubmit( int nr ) throws BlastServiceException;
 
-	/**
-	 * Retrieves from DB the pending jobs.
-	 * 
-	 * @return
-	 */
-	public List<BlastJobEntity> fetchPendingJobs() throws BlastServiceException;
-	
-	public List<BlastJobEntity> fetchFailedJobs() throws BlastServiceException;
-	
-	public List<BlastJobEntity> fetchNotFoundJobs() throws BlastServiceException;
-	
-	public List<BlastJobEntity> fetchRunningJobs() throws BlastServiceException;
+    public BlastJobEntity submitJob( UniprotAc uniprotAc ) throws BlastServiceException;
 
-	/**
-	 * Retrieves from DB
-	 * 
-	 * @param job
-	 * @return
-	 */
-	public BlastResult fetchResult(BlastJobEntity job) throws BlastServiceException;
+    public BlastJobEntity submitJob( BlastInput blastInput ) throws BlastServiceException;
 
-	//TODO: is this method really needed? 
-	public List<BlastJobEntity> fetchJobEntities(Set<UniprotAc> uniprotAcs) throws BlastServiceException ;
-	
-	public void deleteJob(BlastJobEntity job) throws BlastServiceException;
-	
-	public void deleteJobs(List<BlastJobEntity> jobs) throws BlastServiceException;
-	
-	public void deleteJobsAll() throws BlastServiceException;
+    public List<BlastJobEntity> submitJobs( Set<UniprotAc> uniprotAcs ) throws BlastServiceException;
+
+    public BlastResult fetchAvailableBlast( UniprotAc uniprotAc ) throws BlastServiceException;
+
+    /**
+     * Retrieves the result from the DB. If the jobs are running it refreshes the job and tries once more.
+     *
+     * @param job : a BlastJobEntity object
+     * @return BlastResult
+     * @throws BlastServiceException  : wrapper for the BlastJdbcException
+     */
+    public BlastResult fetchAvailableBlast( BlastJobEntity job ) throws BlastServiceException;
+
+    /**
+     * Retrieves the results from DB. If the jobs are running it refreshes the job and tries again to get the result.
+     *
+     * @param uniprotAcs : a set of UniprotAc objects
+     * @return List<BlastResult> , not null
+     * @throws BlastServiceException : wrapper for the BlastJdbcException
+     */
+    public List<BlastResult> fetchAvailableBlasts( Set<UniprotAc> uniprotAcs ) throws BlastServiceException;
+
+    /**
+     * Retrieves the results from DB. If the jobs are running it refreshes the job and tries again to get the result.
+     *
+     * @param jobs : a list of BlastJobEntity objects
+     * @return List<BlastResult>
+     * @throws BlastServiceException : wrapper for the BlastJdbcException
+     */
+    public List<BlastResult> fetchAvailableBlasts( List<BlastJobEntity> jobs ) throws BlastServiceException;
+
+    /**
+     * Retrieves from DB the pending jobs.
+     *
+     * @return List<BlastJobEntity>
+     * @throws BlastServiceException : wrapps the BlastJdbcException
+     */
+    public List<BlastJobEntity> fetchPendingJobs() throws BlastServiceException;
+
+    /**
+     *
+     * @return   List<BlastJobEntity>
+     * @throws BlastServiceException  : wrapps the BlastJdbcException
+     */
+    public List<BlastJobEntity> fetchFailedJobs() throws BlastServiceException;
+
+    /**
+     *
+     * @return List<BlastJobEntity>
+     * @throws BlastServiceException    : wrapps the BlastJdbcException
+     */
+    public List<BlastJobEntity> fetchNotFoundJobs() throws BlastServiceException;
+
+    /**
+     *
+     * @return List<BlastJobEntity>
+     * @throws BlastServiceException : wrapps the BlastJdbcException
+     */
+    public List<BlastJobEntity> fetchRunningJobs() throws BlastServiceException;
+
+    public void refreshDb() throws BlastServiceException;
+
+    /**
+     * Retrieves from DB
+     *
+     * @param job : a BlstJobEntity object
+     * @return BlastResult
+     * @throws BlastServiceException : wrapps the BlastJdbcException
+     */
+    public BlastResult fetchResult( BlastJobEntity job ) throws BlastServiceException;
+
+    //TODO: is this method really needed?
+    public List<BlastJobEntity> fetchJobEntities( Set<UniprotAc> uniprotAcs ) throws BlastServiceException;
+
+    public void deleteJob( BlastJobEntity job ) throws BlastServiceException;
+
+    public void deleteJobs( List<BlastJobEntity> jobs ) throws BlastServiceException;
+
+    public void deleteJobsAll() throws BlastServiceException;
 
 	public void close() throws BlastServiceException;
 }

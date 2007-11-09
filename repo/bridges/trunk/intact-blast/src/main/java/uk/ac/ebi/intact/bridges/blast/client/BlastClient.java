@@ -26,11 +26,11 @@ import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
-import uk.ac.ebi.www.WSWUBlast.Data;
-import uk.ac.ebi.www.WSWUBlast.InputParams;
-import uk.ac.ebi.www.WSWUBlast.WSWUBlast;
-import uk.ac.ebi.www.WSWUBlast.WSWUBlastService;
-import uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
+import wsdl2java.uk.ac.ebi.www.WSWUBlast.Data;
+import wsdl2java.uk.ac.ebi.www.WSWUBlast.InputParams;
+import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlast;
+import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlastService;
+import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
 
 /**
  * Blast client
@@ -43,11 +43,13 @@ public class BlastClient {
 	private boolean		fileFormatXml	= true;
 	private String		email;
 	private WSWUBlast	blast;
+    private int nr; // number of blasts in the ouput
 
-	/**
+    /**
 	 * Constructor
 	 * 
-	 * @throws BlastClientException
+	 * @param email : email for the web service client
+     * @throws BlastClientException   : wrapper for the ServiceException
 	 * 
 	 */
 	public BlastClient(String email) throws BlastClientException {
@@ -61,7 +63,10 @@ public class BlastClient {
 		} catch (ServiceException e) {
 			throw new BlastClientException(e);
 		}
-	}
+        // default it is 100
+        nr = 100;
+       // nr = 10;
+    }
 
 	// ////////////////
 	// Getter/Setter
@@ -93,9 +98,9 @@ public class BlastClient {
 	 * Blasts the specified protein (uniprot accession number) against
 	 * uniprotkb.
 	 * 
-	 * @param uniprotAc
+	 * @param blastInput
 	 * @return the Job (job id and the blasted protein)
-	 * @throws BlastClientException
+	 * @throws BlastClientException   : wrapper for the WS-Exception
 	 */
 	public Job blast(BlastInput blastInput) throws BlastClientException {
 		if (blastInput == null) {
@@ -109,7 +114,7 @@ public class BlastClient {
 		params.setProgram("blastp");
 		params.setDatabase("uniprot");
 		params.setEmail(email);
-		params.setNumal(100);
+		params.setNumal(nr);
 
 		params.setAsync(Boolean.TRUE); // set the submissions asynchronous
 
@@ -129,7 +134,7 @@ public class BlastClient {
 			String message = e.getMessage();
 			if (message.startsWith("could not fetch entry")) {
 				job = new Job("failed " + blastInput.toString(), blastInput);
-				job.setStatus(BlastJobStatus.FAILED);
+				job.setStatus(BlastJobStatus.NOT_FOUND);
 			} else {
 				throw new BlastClientException(e);
 			}
@@ -137,17 +142,26 @@ public class BlastClient {
 		return job;
 	}
 
-	protected String getSpecificContent(BlastInput blastInput) {
-		String ac = blastInput.getUniprotAc().getAcNr();
-		String[] aux = ac.split("-");
-		String content = "";
-		if (aux.length == 2 && blastInput.getSequence() != null && blastInput.getSequence().getSeq() != null) {
-			content = blastInput.getSequence().getSeq();
-			return content;
-		} else {
-			content = "uniprot:" + blastInput.getUniprotAc().getAcNr();
-			return content;
-		}
+    protected String getSpecificContent(BlastInput blastInput) {
+        String content = "";
+        if(blastInput.getSequence() != null && blastInput.getSequence().getSeq() != null){
+            content = blastInput.getSequence().getSeq();
+            return content;
+        } else {
+            content = "uniprot:" + blastInput.getUniprotAc().getAcNr();
+            return content;
+        }
+            
+//        String ac = blastInput.getUniprotAc().getAcNr();
+//		String[] aux = ac.split("-");
+//
+//		if (aux.length == 2 && blastInput.getSequence() != null && blastInput.getSequence().getSeq() != null) {
+//			content = blastInput.getSequence().getSeq();
+//			return content;
+//		} else {
+//			content = "uniprot:" + blastInput.getUniprotAc().getAcNr();
+//			return content;
+//		}
 	}
 
 	// TODO: remove after play phase
@@ -181,8 +195,8 @@ public class BlastClient {
 			// FIXME: ask sam : axisfault
 			String message = e.getMessage();
 			if (message.startsWith("could not fetch entry")) {
-				job = new Job("failed " + blastInput.toString(), blastInput);
-				job.setStatus(BlastJobStatus.FAILED);
+				job = new Job("could not fetch entry " + blastInput.toString(), blastInput);
+				job.setStatus(BlastJobStatus.NOT_FOUND);
 			} else {
 				throw new BlastClientException(e);
 			}
@@ -193,8 +207,7 @@ public class BlastClient {
 	/**
 	 * Blasts a list of uniprotAc against uniprot.
 	 * 
-	 * @param set
-	 *            of uniprotAcs
+	 * @param blastInputSet : a set of BlastInput -objects
 	 * @return a list of Job objects
 	 * @throws BlastClientException
 	 */
@@ -241,27 +254,26 @@ public class BlastClient {
 			}
 		} catch (RemoteException e) {
 			throw new BlastClientException(e);
-		}
+		} 
 		return null;
 	}
 
-	/**
-	 * Tests if the job is finished or not.
-	 * 
-	 * @param job
-	 * @return true or false
-	 * @throws BlastClientException
-	 */
-	public boolean isFinished(Job job) throws BlastClientException {
-		if (BlastJobStatus.DONE.equals(job.getStatus())){
-			return true;
-		}
-		BlastJobStatus status = checkStatus(job);
-		if (BlastJobStatus.DONE.equals(status)) {
-			return true;
-		}
-		return false;
-	}
+// --Commented out by Inspection START (24/10/07 17:15):
+//	/**
+//	 * Tests if the job is finished or not.
+//	 *
+//	 * @param job
+//	 * @return true or false
+//	 * @throws BlastClientException
+//	 */
+//	public boolean isFinished(Job job) throws BlastClientException {
+//		if (BlastJobStatus.DONE.equals(job.getStatus())){
+//			return true;
+//		}
+//		BlastJobStatus status = checkStatus(job);
+//        return BlastJobStatus.DONE.equals( status );
+//		}
+// --Commented out by Inspection STOP (24/10/07 17:15)
 
 	/**
 	 * Retrieves the result if the job is finished.

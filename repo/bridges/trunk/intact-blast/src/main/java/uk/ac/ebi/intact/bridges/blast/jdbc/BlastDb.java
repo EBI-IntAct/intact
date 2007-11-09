@@ -6,95 +6,99 @@
 package uk.ac.ebi.intact.bridges.blast.jdbc;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * Class for connecting to the blastDb, for storing the blastJobs.
- * 
+ *
  * @author Irina Armean (iarmean@ebi.ac.uk)
- * @version
- * @since
- * 
- * <pre>
- * 13 Sep 2007
- * </pre>
+ * @since <pre>
+ *               13 Sep 2007
+ *               </pre>
  */
 public class BlastDb {
 
-	private Connection	conn;
-	private Statement	stat;
+    private Connection conn;
+    private int nrConns;
+    private static int maxConns = 5;
+    private File dbFolder;
 
-	public BlastDb(File dbFolder) throws BlastJdbcException {
-		try {
-			Class.forName("org.h2.Driver");
-			conn = DriverManager.getConnection("jdbc:h2:" + dbFolder.getPath() + "/blast", "sa", "");//blastDb/blast", "sa", "");
-			stat = conn.createStatement();
-		} catch (ClassNotFoundException e) {
-			throw new BlastJdbcException(e);
-		} catch (SQLException e) {
-			throw new BlastJdbcException(e);
-		}
-	}
+    public BlastDb( File dbFolder ) throws BlastJdbcException {
+        try {
+            Class.forName( "org.h2.Driver" );
+            //    DriverManager.registerDriver( Class.forName("org.h2.Driver"));
+            nrConns = 0;
+            this.dbFolder = dbFolder;
+            //    stat = conn.createStatement();
+        } catch ( ClassNotFoundException e ) {
+            throw new BlastJdbcException( e );
+        }
+//        catch (SQLException e) {
+//			throw new BlastJdbcException(e);
+//		}
+    }
 
-	public void createJobTable(String tableName) throws BlastJdbcException {
-		try {
-			String create = "CREATE TABLE IF NOT EXISTS "+tableName + " (" + " JobId VARCHAR(255) PRIMARY KEY, "
-					+ "uniprotAc VARCHAR(255)," + "status VARCHAR(15), " + "resultPath VARCHAR(255), " + "timestamp TIMESTAMP);";
+    public void createJobTable( Connection conn, String tableName ) throws BlastJdbcException {
+        try {
+            String create = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + " JobId VARCHAR(255) PRIMARY KEY, "
+                            + "uniprotAc VARCHAR(20), " + "sequence VARCHAR(10000), " + "status VARCHAR(15), " + "resultPath VARCHAR(255), " + "timestamp TIMESTAMP);";
+            Statement stat = conn.createStatement();
+            stat.execute( create );
+        } catch ( SQLException e ) {
+            throw new BlastJdbcException( e );
+        }
+    }
 
-			stat.execute(create);
-		} catch (SQLException e) {
-			throw new BlastJdbcException(e);
-		}
-	}
+    public boolean jobTableExists(Connection conn, String tableName ) throws BlastJdbcException {
+        try {
+            DatabaseMetaData dbMeta = conn.getMetaData();
 
-	public boolean jobTableExists(String tableName) throws BlastJdbcException {
-		try {
-			DatabaseMetaData dbMeta = conn.getMetaData();
+            // check if "job" table is there
+            tableName = tableName.toUpperCase();
+            ResultSet checkTable = dbMeta.getTables( null, null, tableName, null );
+            String tableFound = null;
+            while ( checkTable.next() ) {
+                tableFound = checkTable.getString( "TABLE_NAME" );
+            }
+            return tableFound != null;
+        } catch ( SQLException e ) {
+            throw new BlastJdbcException( e );
+        }
+    }
 
-			// check if "job" table is there
-			tableName= tableName.toUpperCase();
-			ResultSet checkTable = dbMeta.getTables(null, null, tableName, null);
-			String tableFound = null;
-			while (checkTable.next()) {
-				tableFound = checkTable.getString("TABLE_NAME");
-			}
-			if (tableFound != null) {
-				return true;
-			} else {
-				return false;
-			}
-		} catch (SQLException e) {
-			throw new BlastJdbcException(e);
-		}
-	}
+    public void dropJobTable( Connection conn, String tableName ) throws BlastJdbcException {
+        try {
+            String drop = "DROP TABLE IF EXISTS " + tableName + ";";
+            Statement stat = conn.createStatement();
+            stat.execute( drop );
+        } catch ( SQLException e ) {
+            throw new BlastJdbcException( e );
+        }
+    }
 
-	public void dropJobTable(String tableName) throws BlastJdbcException {
-		try {
-			String drop = "DROP TABLE IF EXISTS "+tableName + ";";
-			stat.execute(drop);
-		} catch (SQLException e) {
-			throw new BlastJdbcException(e);
-		}
-	}
+    //TODO: remove if not needed
+    public void closeDb() throws BlastJdbcException {
+//        try {
+//                                conn.close();
+//        } catch ( SQLException e ) {
+//            throw new BlastJdbcException( e );
+//        }
+    }
 
-	public void closeDb() throws BlastJdbcException {
-		try {
-			conn.close();
-		} catch (SQLException e) {
-			throw new BlastJdbcException(e);
-		}
-	}
+    public Connection getConnection() throws BlastJdbcException {
+        if ( nrConns >= maxConns ) {
+            return null;
+        }
+        Connection conn = null;
+        try {
+            nrConns++;
 
-	public Connection getConn() {
-		return conn;
-	}
-
-	public Statement getStat() {
-		return stat;
-	}
+            conn = DriverManager.getConnection( "jdbc:h2:" + dbFolder.getPath() + "/blast", "sa", "" );
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+//        } catch ( ClassNotFoundException e ) {
+//            e.printStackTrace();
+        }
+        return conn;
+    }
 }

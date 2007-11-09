@@ -11,14 +11,10 @@ package uk.ac.ebi.intact.bridges.blast.client;
  */
 public class BlastClientException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long	serialVersionUID	= 1L;
-
 	public BlastClientException(){
-	}
-	
+        super();
+    }
+
 	public BlastClientException(Throwable cause){
         super(cause);
     }
@@ -30,4 +26,5 @@ public class BlastClientException extends Exception {
     public BlastClientException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }
