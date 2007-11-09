@@ -82,6 +82,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
     public void executeIntactMojo() throws MojoExecutionException, MojoFailureException {
         getLog().info( "PsiXmlGeneratorMojo in action" );
 
+        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch (IntactTransactionException e) {
+                throw new MojoExecutionException("Problem committing transaction", e);
+            }
+        }
+
         initialize();
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
@@ -94,7 +102,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         catch (SQLException e)
         {
             throw new MojoExecutionException("Problem getting DB metadata", e);
+        } finally {
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+            } catch (IntactTransactionException e) {
+                throw new MojoExecutionException("Problems committing transaction",e);
+            }
         }
+
 
         boolean speciesEnabled = classificationEnabled( "species" );
         getLog().debug( "Species classification requested: " + speciesEnabled );
@@ -127,12 +142,15 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getSpeciesFile().exists() ) {
                 getLog().info( "Classifying and writing classification by species" );
                 writeClassificationBySpeciesToFile();
+
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
+                /*
                 try {
                     IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
                 } catch (IntactTransactionException e) {
                     e.printStackTrace();
                     getLog().error(e);
-                }
+                } */
             } else {
                 getLog().info( "Using existing classification by species: " + getSpeciesFile() );
             }
