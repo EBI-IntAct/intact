@@ -37,7 +37,7 @@
 
         <core.version>1.7.2-SNAPSHOT</core.version>
         <bridges.version>2.0.1-SNAPSHOT</bridges.version>
-		<plugin.version>2.1-SNAPSHOT</plugin.version>
+	<plugin.version>2.1-SNAPSHOT</plugin.version>
     </properties>
 
     <modules>
