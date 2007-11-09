@@ -36,7 +36,7 @@
 					</generatePackage>
 					<!-- <packageSpace>
 						uk.ac.ebi.intact.bridges.blast.generated
-					</packageSpace> -->
+						</packageSpace> -->
 					<testCases>false</testCases>
 					<serverSide>false</serverSide>
 					<subPackageByFileName>false</subPackageByFileName>
@@ -99,6 +99,12 @@
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
 			<version>1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.3.1</version>
 		</dependency>
 
 		<!-- for the blast h2 db -->

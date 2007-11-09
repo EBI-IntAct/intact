@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.net.URL;
 
 import junit.framework.Assert;
 
@@ -44,24 +45,27 @@ public class BlastEbiWsTest {
 
 	private AbstractBlastService	wsBlast;
 	private File					testDir;
-	private File					dbFolder;
 
-	/**
+    /**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
 		testDir = getTargetDirectory();
-		testDir = new File(testDir, "BlastStrategyTest");
+		testDir = new File(testDir, "BlastEbiWsTest");
 		testDir.mkdir();
 
 		String email = "iarmean@ebi.ac.uk";
 		String tableName = "jobTest";
 		int nr = 20;
-		dbFolder = new File(getTargetDirectory(), "BlastDbTest");
+        File dbFolder = new File( getTargetDirectory(), "BlastDbTest" );
 		dbFolder.mkdir();
-		wsBlast = new EbiWsWUBlast(dbFolder, tableName, testDir, email, nr);
-	}
+		File blastWorkDir = new File(BlastEbiWsTest.class.getResource("P12345.xml").getPath());
+		blastWorkDir = blastWorkDir.getParentFile();
+		wsBlast = new EbiWsWUBlast( dbFolder, tableName, blastWorkDir, email, nr);
+        wsBlast.deleteJobsAll();
+        wsBlast.importCsv(new File(BlastEbiWsTest.class.getResource("initDb.csv").getPath()));
+    }
 
 	/**
 	 * @throws java.lang.Exception
@@ -72,12 +76,11 @@ public class BlastEbiWsTest {
 	}
 
 	/**
-	 * Test method for {@link AbstractBlastService#submitJob(java.lang.String)}.
+	 * Test method for {@link AbstractBlastService#submitJob(uk.ac.ebi.intact.bridges.blast.model.UniprotAc)}.
 	 * 
 	 * @throws BlastServiceException
 	 */
 	@Test
-	@Ignore
 	public final void testSubmitJob() throws BlastServiceException {
 		BlastJobEntity jobEntity = wsBlast.submitJob(new UniprotAc("P40348"));
 
@@ -97,7 +100,6 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
-	@Ignore
 	public final void testSubmitJobsBadUniprotAc() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q9V586"));
@@ -117,7 +119,6 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
-	@Ignore
 	public final void testSubmitJobs() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
@@ -132,14 +133,37 @@ public class BlastEbiWsTest {
 		assertEquals(uniprotAcs.size(), jobs.size());
 	}
 
-	/**
+    @Test
+    @Ignore
+    public void testDelete() throws BlastServiceException {
+        BlastJobEntity jobEntity1 = wsBlast.submitJob(new UniprotAc("Q9D1K4"));
+        assertNotNull(jobEntity1);
+        wsBlast.deleteJob(jobEntity1);
+        BlastJobEntity jobEntity2 = wsBlast.submitJob( new UniprotAc("Q9D1K4"));
+        assertNotNull(jobEntity2);
+        assertNotSame(jobEntity1,  jobEntity2);
+    }
+
+    @Test
+    public void testRefreshDb() throws Exception {
+        wsBlast.refreshDb();
+        File csvFile = new File(testDir, "exportAfterRefresh.csv");
+        wsBlast.exportCsv( csvFile);
+        assertTrue(csvFile.exists());
+    }
+
+    @Test
+    public void testFetchAvailableBlast() throws BlastServiceException {
+        BlastResult result  =  wsBlast.fetchAvailableBlast(new BlastJobEntity("blast-20071102-10414431"));
+    }
+
+    /**
 	 * Test method for
 	 * {@link AbstractBlastService#fetchAvailableBlasts(java.util.Set)}.
 	 * 
 	 * @throws BlastServiceException
 	 */
 	@Test
-	@Ignore
 	public final void testFetchAvailableBlastsSetOfString() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));
@@ -162,7 +186,6 @@ public class BlastEbiWsTest {
 	 * @throws BlastServiceException
 	 */
 	@Test
-	@Ignore
 	public final void testFetchAvailableBlastsListOfBlastJobEntity() throws BlastServiceException {
 		Set<UniprotAc> uniprotAcs = new HashSet<UniprotAc>(2);
 		uniprotAcs.add(new UniprotAc("Q12345"));

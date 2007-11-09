@@ -20,13 +20,14 @@ import java.util.regex.Pattern;
  */
 public class UniprotAc {
 	private String	acNr;
-	private String uniprotTermExpr = "[A-Z][0-9][A-Z0-9]{3}[0-9]|[A-Z][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10}";
+	private String uniprotTermExpr ="[A-Z][0-9][A-Z0-9]{3}[0-9]|[A-Z][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10}";
 
 	public UniprotAc(String accessionNr) {
 		if (accessionNr == null) {
 			throw new IllegalArgumentException("Ac must not be null! " + accessionNr);
 		}
-		if (Pattern.matches(uniprotTermExpr, accessionNr)) {
+        accessionNr = accessionNr.trim();
+        if (Pattern.matches(uniprotTermExpr, accessionNr)) {
 			this.acNr = accessionNr;
 		}
 		else{
