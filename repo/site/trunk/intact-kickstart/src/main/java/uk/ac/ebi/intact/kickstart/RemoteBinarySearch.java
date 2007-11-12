@@ -16,7 +16,6 @@
 package uk.ac.ebi.intact.kickstart;
 
 import psidev.psi.mi.search.SearchResult;
-import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.binarysearch.wsclient.BinarySearchServiceClient;
 import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
 
