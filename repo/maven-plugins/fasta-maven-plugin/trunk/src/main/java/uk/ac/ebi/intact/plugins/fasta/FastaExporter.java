@@ -32,7 +32,7 @@ import java.util.List;
  */
 public class FastaExporter {
 
-    private static final Log log = LogFactory.getLog(FastaExporter.class);
+    private static final Log log = LogFactory.getLog( FastaExporter.class );
 
     /**
      * Cross plateform - New line
@@ -43,7 +43,6 @@ public class FastaExporter {
      * Retreive the identity of an Interactor.
      *
      * @param interactor the interactor
-     *
      * @return the identity or null if not found.
      */
     private static String getIdentity( Interactor interactor ) {
@@ -61,26 +60,27 @@ public class FastaExporter {
 
     /**
      * Creates a fasta file with the protein sequences in the database
+     *
      * @param exportedFasta The fasta file to be created
      * @return an <code>OutputStream</code> with the log of the process
      * @throws IOException bad thing
      */
-    public static void exportToFastaFile(PrintStream out, File exportedFasta) throws IOException, IntactTransactionException {
-        if (exportedFasta == null)
-        {
-            throw new NullPointerException("Provided exportedFasta file is null");
+    public static void exportToFastaFile( PrintStream out, File exportedFasta ) throws IOException, IntactTransactionException {
+
+        if ( exportedFasta == null ) {
+            throw new NullPointerException( "Provided exportedFasta file is null" );
         }
 
-        if (IntactContext.getCurrentInstance().getDataContext().isTransactionActive()) {
-            throw new IllegalStateException("Transaction must be closed when trying to export to fasta");
+        if ( IntactContext.getCurrentInstance().getDataContext().isTransactionActive() ) {
+            throw new IllegalStateException( "Transaction must be closed when trying to export to fasta" );
         }
 
         BufferedWriter fastaWriter = new BufferedWriter( new FileWriter( exportedFasta ) );
 
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getProteinDao();
 
-        out.println( "");
-        out.println( "--------------------------------------------------------");
+        out.println( "" );
+        out.println( "--------------------------------------------------------" );
         out.println( "Legend:" );
         out.println( "        . : protein's sequence exported" );
         out.println( "        X : protein doesn't take part in any interaction." );
@@ -99,83 +99,75 @@ public class FastaExporter {
         int count = 0;
         int countExported = 0;
         int countNoSeq = 0;
-        
+
         List<ProteinImpl> proteins = null;
         int firstResult = 0;
         int maxResults = 300;
 
-        do
-        {
+        do {
             IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
             proteins = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                    .getProteinDao().getAll(firstResult, maxResults);
+                    .getProteinDao().getAll( firstResult, maxResults );
 
             firstResult += maxResults;
 
 
-            for (ProteinImpl protein : proteins)
-            {
-                if (log.isDebugEnabled())
-                {
-                    log.debug(protein.getAc());
+            for ( ProteinImpl protein : proteins ) {
+                if ( log.isDebugEnabled() ) {
+                    log.debug( protein.getAc() );
                 }
 
                 int componentsSize = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                        .getProteinDao().countComponentsForInteractorWithAc(protein.getAc());
+                        .getProteinDao().countComponentsForInteractorWithAc( protein.getAc() );
 
                 // Process the chunk of data
-                if (componentsSize > 0)
-                {
+                if ( componentsSize > 0 ) {
 
-                    StringBuffer sb = new StringBuffer(512);
+                    StringBuilder sb = new StringBuilder( 512 );
 
                     // Header contains: AC, shortlabel and primaryId.
-                    sb.append('>').append(' ');
-                    sb.append(protein.getAc());
-                    sb.append('|');
-                    sb.append(protein.getShortLabel());
-                    String identity = getIdentity(protein);
-                    if (identity != null)
-                    {
-                        sb.append('|');
-                        sb.append(identity);
+                    sb.append( '>' ).append( ' ' );
+                    sb.append( protein.getAc() );
+                    sb.append( '|' );
+                    sb.append( protein.getShortLabel() );
+                    String identity = getIdentity( protein );
+                    if ( identity != null ) {
+                        sb.append( '|' );
+                        sb.append( identity.trim() ); // trim takes care of removing leading or trailing line return
                     }
 
-                    sb.append(NEW_LINE);
+                    sb.append( NEW_LINE );
 
                     String sequence = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
-                            .getPolymerDao().getSequenceByPolymerAc(protein.getAc());
-                    sb.append(sequence);
+                            .getPolymerDao().getSequenceByPolymerAc( protein.getAc() );
+                    sb.append( sequence );
 
-                    sb.append(NEW_LINE);
+                    sb.append( NEW_LINE );
 
                     // write to file
-                    fastaWriter.write(sb.toString());
+                    fastaWriter.write( sb.toString() );
                     fastaWriter.flush();
 
                     // stats
                     countExported++;
-                    out.print(".");
+                    out.print( "." );
 
-                }
-                else
-                {
+                } else {
                     // stats
                     countNoSeq++;
-                    out.print("X");
+                    out.print( "X" );
                 }
 
                 count++;
-                if ((count % 70) == 0)
-                {
-                    out.println("   " + count);
+                if ( ( count % 70 ) == 0 ) {
+                    out.println( "   " + count );
                 }
             }
 
             IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
-        } while (!proteins.isEmpty());
+        } while ( !proteins.isEmpty() );
 
         out.println( "" );
         out.println( "----------------------------------------------------------------------------------" );
@@ -187,8 +179,7 @@ public class FastaExporter {
     }
 
 
-
     public static void main( String[] args ) throws Exception {
-        exportToFastaFile( System.out, new File( "intact.fasta") );
+        exportToFastaFile( System.out, new File( "intact.fasta" ) );
     }
 }
