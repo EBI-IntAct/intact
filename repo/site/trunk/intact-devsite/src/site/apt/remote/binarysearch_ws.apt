@@ -1,0 +1,23 @@
+ -----
+ Kick Start
+ -----
+ Bruno Aranda
+ -----
+ 12 Nov 2007
+ -----
+
+
+I) Binary Search Web Service
+
+ The most convenient way to access IntAct data remotely and programmaticaly is using the Binary Search Web Service.
+ It allows you to query the IntAct database remotely.
+
+ The WSDL file for the web service can be found at:
+
+ {{http://www.ebi.ac.uk/intact/binary-search-ws/binarysearch?wsdl}}
+
+ You can use that file to query the web service with any programming language (e.g. Java, Perl, .NET, etc...).
+
+ Additionaly, we provide an <<out-of-the-box Java client>> for the web service. Read more about it in the {{{binarysearch_client.html}Binary Search Client}} section.
+
+  
