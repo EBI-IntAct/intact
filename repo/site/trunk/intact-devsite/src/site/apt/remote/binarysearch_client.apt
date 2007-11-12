@@ -6,6 +6,8 @@
  11 Oct 2007
  -----
 
+
+
 I) Binary Search Client
 
  The most convenient way to access IntAct data remotely and programmaticaly is using the Binary Search Client.
@@ -17,7 +19,7 @@ I) Binary Search Client
 <dependency>
     <groupId>uk.ac.ebi.intact.service.search.binary</groupId>
     <artifactId>wsclient</artifactId>
-    <version>1.6.0-beta-2</version>
+    <version>1.6.0-rc1</version>
 </dependency>
 ----------------
 
@@ -31,6 +33,17 @@ I) Binary Search Client
         <name>The EBI internal repository</name>
         <url>http://www.ebi.ac.uk/~maven/m2repo</url>
     </repository>
+    <repository>
+        <id>ebi-repo-snapshots</id>
+        <name>The EBI internal repository</name>
+        <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
 
     ...
 
@@ -41,5 +54,21 @@ I) Binary Search Client
   [[b]] If you are not using Maven, you can get the client from {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}SourceForge downloads}}.
 
 
- You can see an example on how to use the web service client {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java}here}}.
+ You can see an example on how to use the web service client {{{http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java}here}}.
+
+ By default, the web service uses the WS at http://www.ebi.ac.uk/intact/binary-search-ws/binarysearch. You can use a different
+ URL by passing its value to the BinarySearchClient constructor.
+
+II) Recent changes in the client
+
+  Between versions <<1.6.0-beta-2>> and <<1.6.0-rc1>> of the client, binary compatibility has been broken. The change only implies
+  changing the package name for the previously generated class <<<uk.ac.ebi.intact.binarysearch.wsclient.generated.SearchResult>>>, which has
+  become <<<psidev.psi.mi.search.SearchResult>>>. The latter is a major player in the IntAct modules, as it returns IntActBinaryInteraction
+  objects, which can be used in many IntAct tools (exporting to PSIMI-XML, graphical representation, indexing, clustering, etc...).
+
+  This also means that an <<additional dependency>> is needed by the plugin, the <<intact-psimitab>> module and its transitive psimi-related
+  dependencies. Maven will get automatically this dependencies from you, but you can still download the plugin from the
+  {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}SourceForge downloads}} section.
+
+  To see how this change has affected our example, click on the {{{http://intact.svn.sourceforge.net/viewvc/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java?r1=9943&r2=10370}diff for RemoteBinarySearch}}.
 
