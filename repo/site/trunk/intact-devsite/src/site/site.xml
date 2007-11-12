@@ -28,15 +28,16 @@
         </menu>
 
         <menu name="Remote Searches">
+            <item name="Binary Search Web Service" href="remote/binarysearch_ws.html"/>
             <item name="Binary Search Client" href="remote/binarysearch_client.html"/>
         </menu>
 
-        <menu name="Modules (outdated)">
-            <item name="Libraries" href="modules/libraries.html"/>
-            <item name="Web Applications" href="modules/webapps.html"/>
-            <item name="Web Services" href="modules/ws.html"/>
-            <item name="Maven Plugins" href="modules/maven_plugins.html"/>
-        </menu>
+        <!--<menu name="Modules (outdated)">-->
+            <!--<item name="Libraries" href="modules/libraries.html"/>-->
+            <!--<item name="Web Applications" href="modules/webapps.html"/>-->
+            <!--<item name="Web Services" href="modules/ws.html"/>-->
+            <!--<item name="Maven Plugins" href="modules/maven_plugins.html"/>-->
+        <!--</menu>-->
 
         <menu name="Developers">
             <item name="Where to start (outdated)" href="where_to_start.html"/>
