@@ -8,7 +8,7 @@
 
 
 
-I) Binary Search Client
+Java Binary Search Client
 
  The most convenient way to access IntAct data remotely and programmaticaly is using the Binary Search Client.
 
@@ -59,7 +59,7 @@ I) Binary Search Client
  By default, the web service uses the WS at {{http://www.ebi.ac.uk/intact/binary-search-ws/binarysearch}}. You can use a different
  URL by passing its value to the BinarySearchClient constructor.
 
-II) Recent changes in the client
+* Recent changes in the client
 
   Between versions <<1.6.0-beta-2>> and <<1.6.0-rc1>> of the client, binary compatibility has been broken. The change only implies
   changing the package name for the previously generated class <<<uk.ac.ebi.intact.binarysearch.wsclient.generated.SearchResult>>>, which has
