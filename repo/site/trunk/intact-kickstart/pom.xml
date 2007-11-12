@@ -32,14 +32,14 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab-search</artifactId>
-            <version>1.3.0</version>
+            <version>1.5.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Binary Search Client -->
         <dependency>
             <groupId>uk.ac.ebi.intact.service.search.binary</groupId>
             <artifactId>wsclient</artifactId>
-            <version>1.6.0-beta-2</version>
+            <version>1.6.0-rc1</version>
         </dependency>
 
         <!-- Database drivers - Comment/uncomment the one/s you need -->

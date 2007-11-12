@@ -15,9 +15,10 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import psidev.psi.mi.search.SearchResult;
+import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.binarysearch.wsclient.BinarySearchServiceClient;
-import uk.ac.ebi.intact.binarysearch.wsclient.generated.BinaryInteraction;
-import uk.ac.ebi.intact.binarysearch.wsclient.generated.SearchResult;
+import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
 
 /**
  * This example does not need the database to work and shows how to access the EBI IntAct database
@@ -32,12 +33,12 @@ public class RemoteBinarySearch {
 
         // Example search: brca1
         // You can use here any lucene query string as you would do for the web site at www.ebi.ac.uk/intact
-        SearchResult result = client.findBinaryInteractions("brca1");
+        SearchResult<IntActBinaryInteraction> result = client.findBinaryInteractions("brca1");
 
         // Print the results in the console
         System.out.println("Interactions found: "+result.getTotalCount());
 
-        for (BinaryInteraction binaryInteraction : result.getInteractions()) {
+        for (IntActBinaryInteraction binaryInteraction : result.getInteractions()) {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 
