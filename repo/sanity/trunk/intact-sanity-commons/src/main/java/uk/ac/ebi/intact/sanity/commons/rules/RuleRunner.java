@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this
+ * RuleRunner takes care of running the sanity check rules.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -38,7 +38,7 @@ public class RuleRunner {
     /**
      * Sets up a logger for that class.
      */
-    private static final Log log = LogFactory.getLog(RuleRunner.class);
+    private static final Log log = LogFactory.getLog( RuleRunner.class );
 
     private RuleRunner() {}
 
@@ -47,15 +47,17 @@ public class RuleRunner {
      * <code>RuleRunnerReport</code>. The <code>RuleRunnerReport</code> is a thread local class
      * and it is NOT cleared after executing the method, so this method can be run several times
      * adding the messages to the same instance.
+     *
      * @param intactObjects
      * @return
      */
-    public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects) {
+    public static SanityReport runAvailableRules( Collection<? extends IntactObject> intactObjects ) {
         final Set<String> availableGroups = DeclaredRuleManager.getInstance().getAvailableGroups();
 
-        if (log.isDebugEnabled()) log.debug("Running all rules for "+intactObjects.size()+" objects, in rule groups "+availableGroups);
+        if ( log.isDebugEnabled() )
+            log.debug( "Running all rules for " + intactObjects.size() + " objects, in rule groups " + availableGroups );
 
-        return runAvailableRules(intactObjects, availableGroups.toArray(new String[availableGroups.size()]));
+        return runAvailableRules( intactObjects, availableGroups.toArray( new String[availableGroups.size()] ) );
     }
 
     /**
@@ -63,42 +65,52 @@ public class RuleRunner {
      * <code>RuleRunnerReport</code>. The <code>RuleRunnerReport</code> is a thread local class
      * and it is NOT cleared after executing the method, so this method can be run several times
      * adding the messages to the same instance.
+     *
      * @param intactObjects
      * @return
      */
-    public static SanityReport runAvailableRules(Collection<? extends IntactObject> intactObjects, String... groupNames) {
-        if (DeclaredRuleManager.getInstance().getAvailableDeclaredRules().isEmpty()) {
-            throw new SanityRuleException("No declared rules found");
+    public static SanityReport runAvailableRules( Collection<? extends IntactObject> intactObjects, String... groupNames ) {
+        final List<DeclaredRule> rules = DeclaredRuleManager.getInstance().getAvailableDeclaredRules();
+        if ( rules.isEmpty() ) {
+            throw new SanityRuleException( "No declared rules found" );
+        } else {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Found " + rules.size() + " rules declared." );
+            }
         }
 
-        for (IntactObject intactObject : intactObjects) {
-            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget(intactObject.getClass(), groupNames);
+        for ( IntactObject intactObject : intactObjects ) {
+            List<DeclaredRule> declaredRules = DeclaredRuleManager.getInstance().getDeclaredRulesForTarget( intactObject.getClass(), groupNames );
 
-            for (DeclaredRule declaredRule : declaredRules) {
-                Rule rule = newRuleInstance(declaredRule);
+            if ( log.isDebugEnabled() ) {
+                log.debug( declaredRules.size() + " rules apply to objects of type: " + intactObject.getClass().getSimpleName() );
+            }
 
-                if (log.isDebugEnabled()) log.debug("Running rule: "+declaredRule.getRuleName()+" (target: "+declaredRule.getTargetClass()+")");
+            for ( DeclaredRule declaredRule : declaredRules ) {
+                Rule rule = newRuleInstance( declaredRule );
 
-                Collection<GeneralMessage> messages = rule.check(intactObject);
-                RuleRunnerReport.getInstance().addMessages(messages);
+                if ( log.isDebugEnabled() )
+                    log.debug( "Running rule: " + declaredRule.getRuleName() + " (target: " + declaredRule.getTargetClass() + ")" );
+
+                Collection<GeneralMessage> messages = rule.check( intactObject );
+                RuleRunnerReport.getInstance().addMessages( messages );
             }
         }
 
         return RuleRunnerReport.getInstance().toSanityReport();
     }
 
-    public static Rule newRuleInstance(DeclaredRule declaredRule) {
+    public static Rule newRuleInstance( DeclaredRule declaredRule ) {
         Rule rule = null;
 
         try {
-            Class<?> ruleClass = Thread.currentThread().getContextClassLoader().loadClass(declaredRule.getRuleClass());
-            rule = (Rule) ruleClass.newInstance();
+            Class<?> ruleClass = Thread.currentThread().getContextClassLoader().loadClass( declaredRule.getRuleClass() );
+            rule = ( Rule ) ruleClass.newInstance();
         }
-        catch (Exception e) {
-            throw new SanityRuleException("Problem instantiating declared rule: " + declaredRule.getRuleName());
+        catch ( Exception e ) {
+            throw new SanityRuleException( "Problem instantiating declared rule: " + declaredRule.getRuleName() );
         }
 
         return rule;
     }
-
 }
