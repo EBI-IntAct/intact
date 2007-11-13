@@ -72,9 +72,13 @@ Java Binary Search Client
 
   The renamed packages are:
 
-   psidev.psi.mi.search.SearchResult
-   uk.ac.ebi.intact.psimitab.IntActBinaryInteraction
-   psidev.psi.mi.tab.model.* - for the IntActBinaryInteraction model objects
+   * psidev.psi.mi.search.SearchResult
+
+   * uk.ac.ebi.intact.psimitab.IntActBinaryInteraction
+
+   * psidev.psi.mi.tab.model.* - for the IntActBinaryInteraction model objects
+
+   []
 
   For instance, to see how this change has affected our example, click on the {{{http://intact.svn.sourceforge.net/viewvc/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemoteBinarySearch.java?r1=9943&r2=10370}diff for RemoteBinarySearch}}.
 
