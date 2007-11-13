@@ -144,13 +144,13 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 writeClassificationBySpeciesToFile();
 
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
-                /*
-                try {
-                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-                } catch (IntactTransactionException e) {
-                    e.printStackTrace();
-                    getLog().error(e);
-                } */
+
+//                try {
+//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+//                } catch (IntactTransactionException e) {
+//                    e.printStackTrace();
+//                    getLog().error(e);
+//                }
             } else {
                 getLog().info( "Using existing classification by species: " + getSpeciesFile() );
             }
@@ -162,12 +162,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getPublicationsFile().exists() ) {
                 getLog().info( "Writing classifications by publications" );
                 writeClassificationByPublicationsToFile();
-                try {
-                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-                } catch (IntactTransactionException e) {
-                    e.printStackTrace();
-                    getLog().error(e);
-                }
+
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
+//                try {
+//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+//                } catch (IntactTransactionException e) {
+//                    e.printStackTrace();
+//                    getLog().error(e);
+//                }
             } else {
                 getLog().info( "Using existing classification by publications: " + getPublicationsFile() );
             }
@@ -179,12 +181,15 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getDatasetsFile().exists() ) {
                 getLog().info( "Writing classifications by datasets" );
                 writeClassificationByDatasetToFile();
-                try {
-                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-                } catch (IntactTransactionException e) {
-                    e.printStackTrace();
-                    getLog().error(e);
-                }
+
+                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
+
+//                try {
+//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+//                } catch (IntactTransactionException e) {
+//                    e.printStackTrace();
+//                    getLog().error(e);
+//                }
             } else {
                 getLog().info( "Using existing classification by datasets: " + getDatasetsFile() );
             }
@@ -206,12 +211,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             items.clear();
             items = null;
 
-            try {
-                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-            } catch (IntactTransactionException e) {
-                e.printStackTrace();
-                getLog().error(e);
-            }
+            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
+
+//            try {
+//                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+//            } catch (IntactTransactionException e) {
+//                e.printStackTrace();
+//                getLog().error(e);
+//            }
         }
 
         try {
@@ -298,12 +305,14 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
         }
 
-        try {
-            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-        } catch (IntactTransactionException e) {
-            e.printStackTrace();
-            getLog().error(e);
-        }
+        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
+
+//        try {
+//            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+//        } catch (IntactTransactionException e) {
+//            e.printStackTrace();
+//            getLog().error(e);
+//        }
     }
 
     private File getReverseMapping() {
