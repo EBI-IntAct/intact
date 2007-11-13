@@ -30,12 +30,14 @@
                         <xsl:value-of select="value"/>
                         <br/>
                     </xsl:for-each>
+                    <a id="top"></a>
                     <h2>Failed rules summary</h2>
                     <ul>
                         <xsl:for-each select="sanity-report/sanity-result">
                             <li>
                                 <a href="#{key}">
-                                    [<xsl:value-of select="key"/>] &#160;<xsl:value-of select="description"/>
+                                    [<xsl:value-of select="key"/>] &#160;
+                                    <xsl:value-of select="description"/>
                                 </a>
                                 &#160;
                                 <strong>(<xsl:value-of select="count(insane-object)"/>)
@@ -45,23 +47,32 @@
                     </ul>
                     <xsl:for-each select="sanity-report/sanity-result">
                         <div style="display:block">
-                            <a id="{key}">
-                                <xsl:if test="level = 'ERROR'">
-                                    <h2 style="color:red">
-                                        <xsl:value-of select="description"/>
-                                    </h2>
-                                </xsl:if>
-                                <xsl:if test="level = 'WARNING'">
-                                    <h2 style="color:tomato">
-                                        <xsl:value-of select="description"/>
-                                    </h2>
-                                </xsl:if>
-                                <xsl:if test="level = 'INFO'">
-                                    <h2 style="color:orange">
-                                        <xsl:value-of select="description"/>
-                                    </h2>
-                                </xsl:if>
-                            </a>
+                            <table border="0" width="70%">
+                                <tr>
+                                    <td align="left">
+                                        <a id="{key}">
+                                            <xsl:if test="level = 'ERROR'">
+                                                <h2 style="color:red">
+                                                    <xsl:value-of select="description"/>
+                                                </h2>
+                                            </xsl:if>
+                                            <xsl:if test="level = 'WARNING'">
+                                                <h2 style="color:tomato">
+                                                    <xsl:value-of select="description"/>
+                                                </h2>
+                                            </xsl:if>
+                                            <xsl:if test="level = 'INFO'">
+                                                <h2 style="color:orange">
+                                                    <xsl:value-of select="description"/>
+                                                </h2>
+                                            </xsl:if>
+                                        </a>
+                                    </td>
+                                    <td align="right">
+                                        <a href="#top">Back to top</a>
+                                    </td>
+                                </tr>
+                            </table>
                             <p>
                                 Suggestion:
                                 <xsl:value-of select="suggestion"/>
