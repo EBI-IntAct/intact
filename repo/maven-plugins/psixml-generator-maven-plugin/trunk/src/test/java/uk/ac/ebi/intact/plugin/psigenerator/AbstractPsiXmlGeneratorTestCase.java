@@ -34,7 +34,7 @@ import java.io.File;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AbstractPsiXmlGeneratorTestCase extends AbstractMojoTestCase {
+public abstract class AbstractPsiXmlGeneratorTestCase extends AbstractMojoTestCase {
 
     /**
      * Sets up a logger for that class.
