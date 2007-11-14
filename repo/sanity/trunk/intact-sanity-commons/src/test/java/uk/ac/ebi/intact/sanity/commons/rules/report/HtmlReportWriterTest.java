@@ -33,35 +33,35 @@ public class HtmlReportWriterTest extends AbstractReportTestCase {
     public void write_default() throws Exception {
         Writer writer = new StringWriter();
 
-        ReportWriter reportWriter = new HtmlReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport());
+        ReportWriter reportWriter = new HtmlReportWriter( writer );
+        reportWriter.write( getDefaultSanityReport() );
 
-        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+        int lineCount = writer.toString().split( System.getProperty( "line.separator" ) ).length;
 
-        Assert.assertEquals(91, lineCount);
+        Assert.assertEquals( 102, lineCount );
     }
 
     @Test
     public void write_filtered() throws Exception {
         Writer writer = new StringWriter();
 
-        ReportWriter reportWriter = new HtmlReportWriter(writer);
-        reportWriter.write(getDefaultSanityReport(), new CreatorReportFilter("anne"));
+        ReportWriter reportWriter = new HtmlReportWriter( writer );
+        reportWriter.write( getDefaultSanityReport(), new CreatorReportFilter( "anne" ) );
 
-        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+        int lineCount = writer.toString().split( System.getProperty( "line.separator" ) ).length;
 
-        Assert.assertEquals(52, lineCount);
+        Assert.assertEquals( 58, lineCount );
     }
 
     @Test
     public void write_alternative() throws Exception {
         Writer writer = new StringWriter();
 
-        ReportWriter reportWriter = new HtmlReportWriter(writer);
-        reportWriter.write(getAlternativeSanityReport());
+        ReportWriter reportWriter = new HtmlReportWriter( writer );
+        reportWriter.write( getAlternativeSanityReport() );
 
-        int lineCount = writer.toString().split(System.getProperty("line.separator")).length;
+        int lineCount = writer.toString().split( System.getProperty( "line.separator" ) ).length;
 
-        Assert.assertEquals(91, lineCount);
+        Assert.assertEquals( 102, lineCount );
     }
 }
