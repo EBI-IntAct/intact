@@ -24,23 +24,30 @@ import java.util.*;
  * @since 2.0.0
  */
 
-@SanityRule(target = Experiment.class, group = RuleGroup.INTACT )
-public class ExperimentNotSuperCurated  implements Rule<Experiment> {
+@SanityRule( target = Experiment.class, group = RuleGroup.INTACT )
+
+public class ExperimentNotSuperCurated implements Rule<Experiment> {
 
     private static final Date startingDateSuperCuration;
 
-    static{
+    static {
         Calendar calendar = new GregorianCalendar();
-        calendar.set(2005, Calendar.SEPTEMBER, 1);
+        calendar.set( 2005, Calendar.SEPTEMBER, 1 );
         startingDateSuperCuration = calendar.getTime();
     }
 
-    public Collection<GeneralMessage> check(Experiment experiment) throws SanityRuleException {
+    public Collection<GeneralMessage> check( Experiment experiment ) throws SanityRuleException {
         Collection<GeneralMessage> messages = new ArrayList<GeneralMessage>();
 
-        if(startingDateSuperCuration.before(experiment.getCreated())){
-            if(!ExperimentUtils.isAccepted(experiment) && !ExperimentUtils.isToBeReviewed(experiment)){
-                messages.add(new GeneralMessage( MessageDefinition.EXPERIMENT_NOT_SUPER_CURATED, experiment));
+        if ( startingDateSuperCuration.before( experiment.getCreated() ) ) {
+            if ( !ExperimentUtils.isAccepted( experiment ) ) {
+                if ( ExperimentUtils.isToBeReviewed( experiment ) ) {
+                    // no 'accepted' and no 'to-be-reviewed'
+                    messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_TO_BE_REVIEWED, experiment ) );
+                } else {
+                    // no 'accepted' and has 'to-be-reviewed'
+                    messages.add( new GeneralMessage( MessageDefinition.EXPERIMENT_NOT_SUPER_CURATED, experiment ) );
+                }
             }
         }
 
