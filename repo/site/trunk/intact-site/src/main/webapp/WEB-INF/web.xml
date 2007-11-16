@@ -245,6 +245,11 @@
         <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
     </listener>
 
+    <!-- Listener to force a garbage collection if too many files are open - Only works in UNIX -->
+    <listener>
+        <listener-class>uk.ac.ebi.faces.webapp.EvilOpenFilesListener</listener-class>
+    </listener>
+
     <!-- Faces Servlet -->
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
