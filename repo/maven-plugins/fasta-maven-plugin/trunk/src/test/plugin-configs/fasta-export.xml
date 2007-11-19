@@ -4,11 +4,11 @@
             <plugin>
                 <artifactId>fasta-maven-plugin</artifactId>
                 <configuration>
-                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <hibernateConfig>target/test-classes/test-hibernate.cfg.xml</hibernateConfig>
                     <outputFile>target/myOutput.log</outputFile>
 
                     <exportedFile>target/intact.fasta</exportedFile>
-                    <gzip>true</gzip>
+                    <gzip>false</gzip>
                 </configuration>
             </plugin>
         </plugins>
