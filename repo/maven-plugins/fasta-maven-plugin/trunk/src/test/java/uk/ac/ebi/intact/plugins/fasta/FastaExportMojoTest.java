@@ -15,48 +15,72 @@
  */
 package uk.ac.ebi.intact.plugins.fasta;
 
+import junit.framework.Assert;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Test;
-import uk.ac.ebi.intact.config.impl.CustomCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 
-public class FastaExportMojoTest extends AbstractMojoTestCase
-{
+public class FastaExportMojoTest extends AbstractMojoTestCase {
 
     @Test
     public void testSimpleGeneration() throws Exception {
-        File hibernateConfig = new File(FastaExportMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
+        File hibernateConfig = new File( FastaExportMojoTest.class.getResource( "/test-hibernate.cfg.xml" ).getFile() );
+        IntactContext.initStandaloneContext( hibernateConfig );
 
-        IntactSession session = new StandaloneSession();
-        CustomCoreDataConfig dataConfig = new CustomCoreDataConfig("custom", hibernateConfig, session);
-        IntactContext.initContext(dataConfig, session);
+        IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
-        IntactUnit iu = new IntactUnit();
-        iu.createSchema(true);
+        PersisterHelper.saveOrUpdate( mockBuilder.createInteractionRandomBinary() );
 
-        IntactMockBuilder mockBuilder = new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution());
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        Assert.assertEquals( 1, daoFactory.getInteractionDao().getAll().size() );
 
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate(mockBuilder.createInteractionRandomBinary());
-        InteractionPersister.getInstance().commit();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+        // protein without interactor
+        final Protein p1 = mockBuilder.createProteinRandom();
+        PersisterHelper.saveOrUpdate( p1 );
 
-        IntactContext.getCurrentInstance().getConfig().setReadOnlyApp(true);
+        // no sequence
+        final Protein p2 = mockBuilder.createProteinRandom();
+        p2.setSequence( null );
+        PersisterHelper.saveOrUpdate( p2 );
+
+        // empty sequence
+        final Protein p3 = mockBuilder.createProteinRandom();
+        p3.setSequence( " " );
+        PersisterHelper.saveOrUpdate( p3 );
+
+        Assert.assertEquals( 5, daoFactory.getProteinDao().getAll().size() );
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/fasta-export.xml" );
 
-        FastaExportMojo mojo = (FastaExportMojo) lookupMojo( "export", pluginXmlFile );
-        mojo.setHibernateConfig(hibernateConfig);
+        FastaExportMojo mojo = ( FastaExportMojo ) lookupMojo( "export", pluginXmlFile );
+        mojo.setHibernateConfig( hibernateConfig );
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
+
+        File file = new File( getBasedir(), "target/intact.fasta" );
+        Assert.assertNotNull( file );
+        Assert.assertTrue( file.exists() );
+        assertLineCount( 4, file );
+    }
+
+    private void assertLineCount( int expectedLineCount, File file ) throws Exception {
+        Assert.assertNotNull( file );
+        BufferedReader in = new BufferedReader( new FileReader( file ) );
+        int i = 0;
+        while ( in.readLine() != null ) {
+            i++;
+        }
+        in.close();
+        Assert.assertEquals( expectedLineCount, i );
     }
 }

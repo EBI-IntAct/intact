@@ -84,6 +84,7 @@ public class FastaExporter {
         out.println( "Legend:" );
         out.println( "        . : protein's sequence exported" );
         out.println( "        X : protein doesn't take part in any interaction." );
+        out.println( "        @ : protein doesn't take part in any interaction." );
         out.println( "--------------------------------------------------------" );
         out.println( "" );
 
@@ -124,34 +125,42 @@ public class FastaExporter {
                 // Process the chunk of data
                 if ( componentsSize > 0 ) {
 
-                    StringBuilder sb = new StringBuilder( 512 );
-
-                    // Header contains: AC, shortlabel and primaryId.
-                    sb.append( '>' ).append( ' ' );
-                    sb.append( protein.getAc() );
-                    sb.append( '|' );
-                    sb.append( protein.getShortLabel() );
-                    String identity = getIdentity( protein );
-                    if ( identity != null ) {
-                        sb.append( '|' );
-                        sb.append( identity.trim() ); // trim takes care of removing leading or trailing line return
-                    }
-
-                    sb.append( NEW_LINE );
-
                     String sequence = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                             .getPolymerDao().getSequenceByPolymerAc( protein.getAc() );
-                    sb.append( sequence );
+                    if( sequence != null ) {
+                        sequence = sequence.trim();
+                        if( sequence.length() > 0 ) {
 
-                    sb.append( NEW_LINE );
+                            // only output polymer with a sequence
+                            StringBuilder sb = new StringBuilder( 512 );
 
-                    // write to file
-                    fastaWriter.write( sb.toString() );
-                    fastaWriter.flush();
+                            // Header contains: AC, shortlabel and primaryId.
+                            sb.append( '>' ).append( ' ' );
+                            sb.append( protein.getAc() );
+                            sb.append( '|' );
+                            sb.append( protein.getShortLabel() );
+                            String identity = getIdentity( protein );
+                            if ( identity != null ) {
+                                sb.append( '|' );
+                                sb.append( identity.trim() ); // trim takes care of removing leading or trailing line return
+                            }
 
-                    // stats
-                    countExported++;
-                    out.print( "." );
+                            sb.append( NEW_LINE );
+
+                            sb.append( sequence );
+
+                            sb.append( NEW_LINE );
+
+                            // write to file
+                            fastaWriter.write( sb.toString() );
+                            
+                            // stats
+                            countExported++;
+                            out.print( "." );
+                        } else {
+                            out.print( "@" );
+                        }
+                    }
 
                 } else {
                     // stats
@@ -162,6 +171,7 @@ public class FastaExporter {
                 count++;
                 if ( ( count % 70 ) == 0 ) {
                     out.println( "   " + count );
+                    fastaWriter.flush();
                 }
             }
 
@@ -175,6 +185,7 @@ public class FastaExporter {
         out.println( "Exported " + countExported + " proteins" );
         out.println( countNoSeq + " protein(s) were not involved in any interactions. They were filtered out." );
 
+        fastaWriter.flush();
         fastaWriter.close();
     }
 
