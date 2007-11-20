@@ -97,6 +97,8 @@ public class EditorTopicMojo
             // we search for the artifact intact-core
             if (depArtifactId.equals("intact-core"))
             {
+                getLog().info("Finding EditorTopics in: "+dependency);
+
                 String depJar = dependency.getFile().toString();
 
                 Properties properties = new Properties();
