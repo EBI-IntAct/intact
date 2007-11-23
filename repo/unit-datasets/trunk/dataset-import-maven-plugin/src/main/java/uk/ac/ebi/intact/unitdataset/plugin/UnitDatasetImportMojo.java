@@ -23,18 +23,14 @@ import uk.ac.ebi.intact.commons.dataset.DbUnitTestDataset;
 import uk.ac.ebi.intact.commons.dataset.TestDataset;
 import uk.ac.ebi.intact.commons.dataset.TestDatasetProvider;
 import uk.ac.ebi.intact.commons.lang.CommonURLClassLoader;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.unit.IntactUnit;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
-
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.IntactEnvironment;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
-
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.TemporaryH2DataConfig;
-
-import java.util.Properties;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.IntactEnvironment;
+import uk.ac.ebi.intact.context.IntactSession;
+import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.core.unit.IntactUnit;
+import uk.ac.ebi.intact.plugin.IntactJpaMojo;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +38,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * TODO comment this
@@ -52,7 +49,7 @@ import java.util.List;
  * @phase generate-sources
  * @requiresDependencyResolution compile
  */
-public class UnitDatasetImportMojo extends IntactHibernateMojo {
+public class UnitDatasetImportMojo extends IntactJpaMojo {
 
     /**
      * Project instance

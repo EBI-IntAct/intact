@@ -43,9 +43,8 @@ import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.core.persister.PersisterException;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
-import uk.ac.ebi.intact.core.util.LogUtils;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
-import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.plugin.IntactJpaMojo;
 import uk.ac.ebi.intact.plugin.MojoUtils;
 import uk.ac.ebi.intact.plugin.cv.obo.OboImportMojo;
 
@@ -68,7 +67,7 @@ import java.util.Properties;
  * @requiresDependencyResolution compile
  */
 public class UnitDatasetGeneratorMojo
-        extends IntactHibernateMojo {
+        extends IntactJpaMojo {
 
     private static final String PROVIDER_TEMPLATE = "PsiUnitDatasetProvider.vm";
 
@@ -140,7 +139,6 @@ public class UnitDatasetGeneratorMojo
      * Main execution method, which is called after hibernate has been initialized
      */
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
-
         getLog().info("Executing DBUnit dataset generator");
 
         if (datasets.isEmpty()) {
