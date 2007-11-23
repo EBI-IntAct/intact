@@ -35,6 +35,11 @@ PROMPT "Updating MI identifier in table ia_controlledvocab..."
 PROMPT
 @130_update_mi_identifier.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Add index on MI identifier..."
+PROMPT
+@140_add_index.sql
+
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 1.8.0"
