@@ -5,6 +5,7 @@ REQUEST
 
 TECHNICAL CHANGES
     * added new field MI_IDENTIFIER in ia_controlledvocab and ia_controlledvocab_audit
+    * the new field is indexed
     * updated audit trigger
     * added PL*SQL procedure to update this field based on the data available
 
