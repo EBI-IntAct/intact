@@ -84,7 +84,7 @@ public class FastaExporter {
         out.println( "Legend:" );
         out.println( "        . : protein's sequence exported" );
         out.println( "        X : protein doesn't take part in any interaction." );
-        out.println( "        @ : protein doesn't take part in any interaction." );
+        out.println( "        @ : protein without sequence." );
         out.println( "--------------------------------------------------------" );
         out.println( "" );
 
