@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.util.Utilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -67,10 +68,14 @@ public class FastaExportMojoTest extends AbstractMojoTestCase {
 
         mojo.execute();
 
-        File file = new File( getBasedir(), "target/intact.fasta" );
+        File file = new File( getBasedir(), "target/intact.fasta.gz" );
         Assert.assertNotNull( file );
         Assert.assertTrue( file.exists() );
-        assertLineCount( 4, file );
+
+        File gunzippedFile = new File( file.getParentFile(), "intact.fasta" );
+        Utilities.gunzip( file, gunzippedFile );
+
+        assertLineCount( 4, gunzippedFile );
     }
 
     private void assertLineCount( int expectedLineCount, File file ) throws Exception {

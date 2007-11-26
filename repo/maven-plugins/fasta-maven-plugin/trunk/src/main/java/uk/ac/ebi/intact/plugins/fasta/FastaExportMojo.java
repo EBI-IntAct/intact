@@ -63,7 +63,7 @@ public class FastaExportMojo extends IntactHibernateMojo {
      *
      * @property default-value="true"
      */
-    private boolean gzip;
+    private boolean gzip = true;
 
     /**
      * Main execution method, which is called after hibernate has been initialized
