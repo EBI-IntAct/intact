@@ -197,7 +197,6 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
         Assert.assertEquals( 1, reports.size() );
 
         final RangeReport report = reports.iterator().next();
-        System.out.println( "report = " + report );
         Assert.assertEquals( RangeReportType.METHIONINE_ADDED, report.getReportType() );
         Assert.assertTrue( report.hasRemappingSucceeded() );
 

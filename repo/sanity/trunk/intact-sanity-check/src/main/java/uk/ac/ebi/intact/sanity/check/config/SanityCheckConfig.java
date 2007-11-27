@@ -37,6 +37,10 @@ public class SanityCheckConfig {
 
     private String emailSubjectPrefix;
 
+    private boolean isWritingAdminXmlEnabled = false;
+    private String adminXmlLocation;
+
+
     public SanityCheckConfig(Collection<? extends Curator> allCurators) {
         this.allCurators = allCurators;
 
@@ -268,5 +272,17 @@ public class SanityCheckConfig {
 
     public void setMailerProperties(Properties mailerProperties) {
         this.mailerProperties = mailerProperties;
+    }
+
+    public boolean isWritingAdminXmlEnabled() {
+        return adminXmlLocation != null;
+    }
+
+    public String getAdminXmlLocation() {
+        return adminXmlLocation;
+    }
+
+    public void setAdminXmlLocation( String adminXmlLocation ) {
+        this.adminXmlLocation = adminXmlLocation;
     }
 }
