@@ -58,6 +58,11 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo {
     /**
      * @parameter
      */
+    protected String adminXmlLocation;
+
+    /**
+     * @parameter
+     */
     protected File hibernateConfig;
 
     protected void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException {
@@ -82,6 +87,9 @@ public abstract class AbstractSanityMojo extends IntactHibernateMojo {
         sanityConfig.setEnableAdminMails(enableAdminEmails);
         sanityConfig.setEnableUserMails(enableUserEmails);
         sanityConfig.setEmailSubjectPrefix(emailSubjectPrefix);
+        if( adminXmlLocation != null && adminXmlLocation.trim().length() > 0 ) {
+            sanityConfig.setAdminXmlLocation( adminXmlLocation );
+        }
 
         executeSanityMojo(sanityConfig);
     }

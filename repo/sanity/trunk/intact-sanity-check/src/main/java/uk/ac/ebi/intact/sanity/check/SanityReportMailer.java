@@ -165,18 +165,21 @@ public class SanityReportMailer {
         return tempFile;
     }
 
-     protected File reportToTempFileXml(String name, SanityReport report, String suffix) throws IOException {
+    public static File writeReportToXml( SanityReport report, File output ) throws IOException {
+        Writer writer = new FileWriter(output);
+        ReportWriter reportWriter = new XmlReportWriter(writer);
+        reportWriter.write(report);
+        writer.flush();
+        return output;
+    }
+
+    protected File reportToTempFileXml(String name, SanityReport report, String suffix) throws IOException {
         File tmpDir = new File(TMP_DIR);
 
         File tempFile = new File(tmpDir, name+"-"+suffix+".xml");
         tempFile.deleteOnExit();
 
-        Writer writer = new FileWriter(tempFile);
-        ReportWriter reportWriter = new XmlReportWriter(writer);
-        reportWriter.write(report);
-        writer.flush();
-
-        return tempFile;
+        return writeReportToXml( report, tempFile );
     }
 
     protected Map<String,File> reportToTempFile(Map<String,SanityReport> insaneCuratorReports, String suffix) throws IOException {
@@ -198,6 +201,4 @@ public class SanityReportMailer {
 
         return insaneCuratorFilesXml;
     }
-
-    
 }

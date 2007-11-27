@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
@@ -20,10 +19,13 @@ import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
 import uk.ac.ebi.intact.util.ElapsedTime;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.List;
 
 /**
  * Checks potential annotation error on IntAct objects.
@@ -72,6 +74,9 @@ public class SanityChecker {
      */
     public static SanityReport executeSanityCheck( SanityCheckConfig sanityConfig ) throws SanityCheckerException {
         final Set<String> availableGroups = DeclaredRuleManager.getInstance().getAvailableGroups();
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Available groups: " + availableGroups );
+        }
         return executeSanityCheck( sanityConfig, availableGroups.toArray( new String[availableGroups.size()] ) );
     }
 
@@ -88,16 +93,41 @@ public class SanityChecker {
 
         if ( log.isDebugEnabled() ) log.debug( "Executing Sanity Check" );
 
+        if ( log.isDebugEnabled() ) {
+            final List<DeclaredRule> rules = DeclaredRuleManager.getInstance().getAvailableDeclaredRules();
+            log.debug( "Rules declared: " + rules.size() );
+            for ( DeclaredRule rule : rules ) {
+                log.debug( rule.getRuleName() + ", implemented by "+ rule.getRuleClass() +", applies to " + rule.getTargetClass() );
+            }
+
+            final List<DeclaredRule> rulesForGroup = DeclaredRuleManager.getInstance().getDeclaredRulesForGroup( groupNames );
+            log.debug( "Listing rules declared (count: "+ rulesForGroup.size() +") for specific group: " + groupNames );
+            for ( DeclaredRule rule : rulesForGroup ) {
+                log.debug( rule.getRuleName() + ", implemented by "+ rule.getRuleClass() +", applies to " + rule.getTargetClass() );
+            }
+        }
+
         long startTime = System.currentTimeMillis();
         checkAllAnnotatedObjects( groupNames );
         long elapsedTime = System.currentTimeMillis() - startTime;
 
         SanityReport report = RuleRunnerReport.getInstance().toSanityReport( true );
 
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         addReportAttributes( report, elapsedTime );
 
         if ( sanityConfig != null ) {
+
+            // Check in config if request for writing admin report on disk
+            if( sanityConfig.isWritingAdminXmlEnabled() ){
+                File output = null;
+                try {
+                    output = new File(sanityConfig.getAdminXmlLocation() );
+                    SanityReportMailer.writeReportToXml( report, output );
+                } catch ( IOException e ) {
+                    throw new SanityCheckerException( "Exception writing XML report to:" +
+                                                      ( output != null ? output.getAbsolutePath() : "null" ), e );
+                }
+            }
 
             if ( sanityConfig.getEditorUrl() != null ) {
                 EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder( sanityConfig );

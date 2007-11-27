@@ -37,4 +37,17 @@ public class ToBeReviewedExperiment implements Rule<Experiment> {
         }
         return messages;
     }
+
+    // exp
+//    DEBUG - Running rule: ExperimentWithNoCvIdentification
+//    DEBUG - Running rule: ExperimentOnHold
+//    DEBUG - Running rule: ExperimentWithNoInteraction
+//    DEBUG - Running rule: ExperimentWithNoPubmedXref
+//    DEBUG - Running rule: ExperimentWithNoFullname
+//    DEBUG - Running rule: ExperimentWithNoCvInteraction
+//    DEBUG - Running rule: ExperimentWithNoBioSource
+
+    // annotObj
+//    DEBUG - Running rule: XrefWithNonValidPrimaryId
+//    DEBUG - Running rule: BrokenUrl
 }
