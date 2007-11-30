@@ -18,7 +18,7 @@ package uk.ac.ebi.intact.bridges.blast.model;
  */
 public class BlastOutput {
 
-	private byte[]	result;
+	private String	result;
 	private boolean	isXmlFormat;
 
 	public BlastOutput(byte[] result, boolean isXmlFormat) {
@@ -26,14 +26,14 @@ public class BlastOutput {
 			throw new IllegalArgumentException("Result must not be null!");
 		}
 
-		this.result = result;
+		this.result = new String(result);
 		this.isXmlFormat = isXmlFormat;
 	}
 
 	/**
 	 * @return the result
 	 */
-	public byte[] getResult() {
+	public String getResult() {
 		return result;
 	}
 

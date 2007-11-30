@@ -46,11 +46,12 @@ public class BlastClientTest {
     public final void testBlastClient() throws BlastClientException {
         Assert.assertTrue( true );
 
-//        System.out.println( "mem: " + ( Runtime.getRuntime().maxMemory() ) / ( 1024 * 1024 ) );
+        System.out.println( "mem: " + ( Runtime.getRuntime().maxMemory() ) / ( 1024 * 1024 ) );
 //        BlastClient bc = new BlastClient( "iarmean@ebi.ac.uk" );
 //        // blast-20071108-14114549: Q9I7U4	null	RUNNING	2007-11-01 08:35:20.473
-//       //Job job = new Job( "blast-20071108-14114549", new BlastInput( new UniprotAc( "Q9I7U4" ) ) );
-//       Job job = bc.blast(new BlastInput(new UniprotAc( "Q9I7U4")));
+//        // blast-20071109-10401813	Q9D1K4
+//       Job job = new Job( "blast-20071109-10401813", new BlastInput( new UniprotAc( "Q9D1K4" ) ) );
+//      // Job job = bc.blast(new BlastInput(new UniprotAc( "Q9I7U4")));
 //        bc.checkStatus( job );
 //        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
 //            try {
@@ -83,7 +84,8 @@ public class BlastClientTest {
 //        System.out.println( "mem: " + ( Runtime.getRuntime().maxMemory() ) / ( 1024 * 1024 ) );
 //        BlastClient bc = new BlastClient( "iarmean@ebi.ac.uk" );
 //        UniprotAc ac = new UniprotAc( "Q9D1K4" );
-//        Job job = bc.blast( new BlastInput( ac ) );
+//        Sequence seq = new Sequence("mscqqnqqqcqpppkcppkcqtpkcppkcppkcppkcppvssccslgsggccgsssggccssggccssggccssggggcclshhrprrslrrhrhssgccssggssgccgssggsggccgssggssgccgssggssgccgssqqsggcc");
+//        Job job = bc.blast( new BlastInput( ac , seq) );
 //
 //        while ( !BlastJobStatus.DONE.equals( job.getStatus() ) ) {
 //            try {

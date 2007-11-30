@@ -15,6 +15,9 @@ import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJdbcException;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobDao;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.*;
+import uk.ac.ebi.intact.confidence.blastmapping.BlastMappingReader;
+import uk.ac.ebi.intact.confidence.blastmapping.BlastMappingException;
+import uk.ac.ebi.intact.confidence.blastmapping.jaxb.EBIApplicationResult;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -784,21 +787,37 @@ public abstract class AbstractBlastService implements BlastService {
     private void saveResult( BlastJobEntity blastJobEntity, BlastOutput blastOutput ) throws BlastServiceException {
         // if the status was done but when getting the blastOutput
         // the web service throws and OutOfMemoryError, the blastOutput == null
-        if ( blastOutput != null ) {
-            File resultFile = writeResultsToWorkDir( blastJobEntity, blastOutput );
-            if ( resultFile == null ) {
-                throw new NullPointerException( "ResultFile must not be null!" );
-            }
-            blastJobEntity.setResult( resultFile );
-            blastJobEntity.setStatus( BlastJobStatus.DONE );
-        } else {
-            blastJobEntity.setStatus( BlastJobStatus.FAILED );
-        }
-
         try {
+            if ( blastOutput != null ) {
+                File resultFile = writeResultsToWorkDir( blastJobEntity, blastOutput );
+                if ( resultFile == null ) {
+                    throw new NullPointerException( "ResultFile must not be null!" );
+                }
+
+                if (resultOK(resultFile)) {
+                    blastJobEntity.setStatus( BlastJobStatus.DONE );
+                } else {
+                    blastJobEntity.setStatus( BlastJobStatus.FAILED );
+                }
+
+                blastJobEntity.setResult( resultFile );
+
+            } else {
+                blastJobEntity.setStatus( BlastJobStatus.FAILED );
+            }
             blastJobDao.updateJob( blastJobEntity );
         } catch ( BlastJdbcException e ) {
             throw new BlastServiceException( e );
+        } 
+    }
+
+    private boolean resultOK( File resultFile ) throws BlastServiceException {
+         BlastMappingReader bmr = new BlastMappingReader();
+        try {
+            EBIApplicationResult result = bmr.read(resultFile);
+            return result == null;
+        } catch ( BlastMappingException e ) {
+            throw new BlastServiceException(e);
         }
     }
 
@@ -833,10 +852,9 @@ public abstract class AbstractBlastService implements BlastService {
     }
 
     //TODO: i could merge this method with writeResultsToWorkDir)
-    private void writeResults( byte[] result, Writer writer ) throws BlastServiceException {
+    private void writeResults( String result, Writer writer ) throws BlastServiceException {
         try {
-            String resultStr = new String( result );
-            writer.append( resultStr );
+            writer.append( result );
             writer.close();
         } catch ( IOException e ) {
             throw new BlastServiceException( e );
@@ -847,7 +865,7 @@ public abstract class AbstractBlastService implements BlastService {
     // abstract Methods
     protected abstract List<Job> runBlast( Set<UniprotAc> uniprotAcs ) throws BlastClientException;
 
-    protected abstract Job runBlast( UniprotAc uniprotAc ) throws BlastClientException;
+  //  protected abstract Job runBlast( UniprotAc uniprotAc ) throws BlastClientException;
 
     protected abstract Job runBlast( BlastInput blastInput ) throws BlastClientException;
 

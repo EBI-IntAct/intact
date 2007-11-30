@@ -9,7 +9,7 @@ package uk.ac.ebi.intact.bridges.blast.model;
  * TODO comment this ... someday
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
- * @version
+ * @version 1.0
  * @since
  * 
  * <pre>
@@ -19,9 +19,11 @@ package uk.ac.ebi.intact.bridges.blast.model;
 public class BlastInput {
 
 	private UniprotAc	uniprotAc;
-	private Sequence		sequence;
+	private Sequence	sequence;
 
-	public BlastInput(UniprotAc uniprotAc) {
+    private IntactId    intactId;
+
+    public BlastInput(UniprotAc uniprotAc) {
 		if (uniprotAc == null) {
 			throw new IllegalArgumentException("UniprotAc must not be null!");
 		}
@@ -38,7 +40,19 @@ public class BlastInput {
 		this.uniprotAc = uniprotAc;
 		this.sequence = seq;
 	}
-	/**
+    
+    public BlastInput(IntactId intactId, Sequence seq){
+          if (intactId == null) {
+			throw new IllegalArgumentException("IntactId must not be null!");
+		}
+		if(seq == null){
+			throw new IllegalArgumentException("Sequence must not be null!");
+		}
+		this.intactId = intactId;
+		this.sequence = seq;
+    }
+
+    /**
 	 * @return the uniprotAc
 	 */
 	public UniprotAc getUniprotAc() {
@@ -55,10 +69,16 @@ public class BlastInput {
 	/**
 	 * @param sequence the sequence to set
 	 */
-	public void setSequence(Sequence sequence) {
+    //TODO: is it wise to have a seq setter?
+    public void setSequence(Sequence sequence) {
 		this.sequence = sequence;
 	}
-	@Override
+
+    public IntactId getIntactId() {
+        return intactId;
+    }
+
+    @Override
 	public String toString() {
 		return uniprotAc.toString();
 	}
