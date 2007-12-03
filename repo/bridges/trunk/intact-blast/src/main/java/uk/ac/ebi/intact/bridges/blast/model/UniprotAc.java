@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * TODO comment this ... someday
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
- * @version
+ * @version  1.0
  * @since
  * 
  * <pre>
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class UniprotAc {
 	private String	acNr;
-	private String uniprotTermExpr ="[A-Z][0-9][A-Z0-9]{3}[0-9]|[A-Z][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10}";
+    private String uniprotTermExpr ="[A-Z][0-9][A-Z0-9]{3}[0-9]|[A-Z][0-9][A-Z0-9]{3}[0-9]-[0-9]+|[A-Z][0-9][A-Z0-9]{3}[0-9]-PRO_[0-9]{10}";
 
 	public UniprotAc(String accessionNr) {
 		if (accessionNr == null) {
@@ -43,7 +43,11 @@ public class UniprotAc {
 		return acNr;
 	}
 
-	@Override
+     public String getRegex() {
+        return uniprotTermExpr;
+    }
+
+    @Override
 	public String toString() {
 		return acNr;
 	}
