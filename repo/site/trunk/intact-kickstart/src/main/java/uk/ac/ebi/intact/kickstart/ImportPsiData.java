@@ -38,6 +38,6 @@ public class ImportPsiData {
         // we get a sample file from the resources folder of the project
         File fileToImport = new File(ImportPsiData.class.getResource("/intact_2006-07-19.xml").getFile());
 
-        PsiExchange.importIntoIntact(new FileInputStream(fileToImport), false);
+        PsiExchange.importIntoIntact(new FileInputStream(fileToImport));
     }
 }
