@@ -22,6 +22,8 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 
 import java.io.InputStream;
 
+import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
+
 /**
  * Example of how to index and search PSI-MITAB2.5 data.
  *
@@ -43,7 +45,7 @@ public class IndexingAndSearchingPsiMiTab {
 
         // After a directory has been created, you can use this directory (or any existing directory
         // in the filesystem) to execute your searches.
-        SearchResult result = Searcher.search("Itch", directory);
+        SearchResult<?> result = Searcher.search("Itch", directory);
 
         // We print some information about the interactions found
         System.out.println("Interactions found: "+result.getTotalCount());
