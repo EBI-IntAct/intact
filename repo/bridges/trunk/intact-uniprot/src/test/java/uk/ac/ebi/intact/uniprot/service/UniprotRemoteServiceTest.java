@@ -176,7 +176,7 @@ public class UniprotRemoteServiceTest extends TestCase {
 
         UniprotSpliceVariant sv2 = searchSpliceVariantByIsoId( "Q9VGX3-2", protein );
         assertNotNull( sv2 );
-        assertEquals( "MVYESGFTTRRTYSSRPVTTSYAVTRTKRTPIDWEKVPFVPRPSLISDPVTAFGVRRPDLERRQRSILDPINRASIKPDYKLAYEPIEPYVSTRDKNRTRILGMVRQHIDTVEAGGNTAGRTFRDSLDAQLPRLHRAVSESLPVRRETYRNERSGAMVTKYSY",
+        assertEquals( "MVYESGFTTRRTYSSRPVTTSYAVTYPSVEKVTRVYKSSYPIYSSYSVPRRVYGATRVVTSPIRVVTSPARVVSRVIHSPSPVRVVRTTTRVISSPERTTYSYTTPSTYYSPSYLPSTYTSTYIPTSYTTYTPSYAYSPTTVTRVYAPRSSLSPLRITPSPVRVITSPVRSVPSYLKRLPPGYGARALTNYLNTEPFTTFSEETSRIRNRAQSLIRDLHTPVVRRARSCTPFPVTGYTYEPASQLALDAYVARVTNPVRHIAKEVHNISHYPRPAVKYVDAELDPNRPSRKFSAPRPLEDPLDVEAKEKQRLRQERLLTVNEEALDEVDLEKKRAQKADEAKRREERALKEERDRLTAEAEKQAAAKAKKAAEEAAKIAAEEALLAEAAAQKAAEEAKALKAAEDAAQKAAEEARLAEEAAAQKVAEEAAQKAAEEARLAEEAAAQKAAEEAAQKAAEEAALKAAEEARLAEEAAQKAAEEAALKAVEEARAAEEAAQKAAEEARVAEEARLEEEQRVREQELERLAEIEKESEGELARQAAELAEIARQESELAAQELQAIQKNENETSEPVVEEPVTPVEEQEPIIELGSNVTPTGGNSYEEDLDAEEEEDEEEEEE",
                       sv2.getSequence() );
 
         assertEquals( 0, protein.getFeatureChains().size() );
@@ -264,7 +264,7 @@ public class UniprotRemoteServiceTest extends TestCase {
             calendar.set( Calendar.MINUTE, 0 );
             calendar.set( Calendar.SECOND, 0 );
 
-            assertEquals( formatter.parse( "29-MAY-2007" ), calendar.getTime() );
+            assertEquals( formatter.parse( "13-NOV-2007" ), calendar.getTime() );
 
             formatter = null;
         } catch ( ParseException e ) {
@@ -276,22 +276,16 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertEquals( "Involved in the regulation of actin cytoskeleton", protein.getFunctions().iterator().next() );
 
         // keywords
-        assertEquals( 5, protein.getKeywords().size() );
+        assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 25, protein.getCrossReferences().size() );
+        assertEquals( 28, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
 
         // feature chain
-        assertEquals( 1, protein.getFeatureChains().size() );
-        UniprotFeatureChain featureChain = protein.getFeatureChains().iterator().next();
-        assertEquals( "PRO_0000064839", featureChain.getId() );
-        assertEquals( sequence, featureChain.getSequence() );
-        assertEquals( 1, featureChain.getStart() );
-        assertEquals( 1157, featureChain.getEnd() );
-        assertEquals( protein.getOrganism(), featureChain.getOrganism() );
+        assertEquals( 0, protein.getFeatureChains().size() );
     }
 
     public void testSearchBySpliceVariant() throws UniprotServiceException {
@@ -471,7 +465,7 @@ public class UniprotRemoteServiceTest extends TestCase {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 7, protein.getCrossReferences().size() );
+        assertEquals( 10, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
