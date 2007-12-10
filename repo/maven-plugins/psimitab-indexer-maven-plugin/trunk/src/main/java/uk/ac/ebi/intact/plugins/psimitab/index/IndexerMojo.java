@@ -72,19 +72,31 @@ public class IndexerMojo extends IntactAbstractMojo {
      * @parameter expression="${intact.psimitab.index.containsHeader}" default-value="true"
      */
     private boolean containsHeader = true;
-    
+        
     /**
-     * A indexWriter extends AbstractIndexWriter by default IntActPsimiTabIndexWriter
+     * A class that extends psidev.psi.mi.search.index.AbstractIndexWriter and has an empty constructor
+     *
+     * @parameter expression="${intact.psimitab.index.builder}" default-value="uk.ac.ebi.intact.psimitab.search.IntActPsimiTabIndexWriter"
      */
-    private AbstractIndexWriter indexWriter = new IntActPsimiTabIndexWriter();
+    private String indexWriter = IntActPsimiTabIndexWriter.class.getName();
     
     /**
      * {@inheritDoc}
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         enableLogging();
+
+        // instantiate the writer
+        AbstractIndexWriter indexWriterInstance = null;
         try {
-            PsimitabTools.buildIndex(indexDirectory, psimitabFile, createIndex, containsHeader, indexWriter);
+            Class<?> indexWriterClass = Class.forName(indexWriter);
+            indexWriterInstance = (AbstractIndexWriter) indexWriterClass.newInstance();
+        } catch (Throwable e) {
+            throw new MojoExecutionException("Failed index creation", e);
+        }
+
+        try {
+            PsimitabTools.buildIndex(indexDirectory, psimitabFile, createIndex, containsHeader, indexWriterInstance);
         } catch (Exception e) {
             throw new MojoExecutionException("Failed index creation", e);
         }
@@ -130,7 +142,4 @@ public class IndexerMojo extends IntactAbstractMojo {
         return project;
     }
 
-	public void setIndexWriter(AbstractIndexWriter indexWriter) {
-		this.indexWriter = indexWriter;
-	}
 }
