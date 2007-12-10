@@ -16,6 +16,16 @@ DEFINE intactIndexTablespace        = INTACT_TAB
 
 
 PROMPT *********************************************************************************/
+PROMPT "Creating new table ia_confidence..."
+PROMPT
+@10_create_tables.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating audit tables for new tables..."
+PROMPT
+@50_create_audit_tables.sql
+
+PROMPT *********************************************************************************/
 PROMPT "Adding new field in ia_controlledvocab..."
 PROMPT
 @100_update_cv_table.sql
@@ -40,6 +50,15 @@ PROMPT "Add index on MI identifier..."
 PROMPT
 @140_add_index.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Creating public synonyms..."
+PROMPT
+@150_create_public_synonyms.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Updating privileges..."
+PROMPT
+@160_update_privileges.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 1.8.0"
