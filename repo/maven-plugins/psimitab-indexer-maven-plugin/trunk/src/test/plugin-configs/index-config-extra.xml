@@ -5,7 +5,7 @@
                 <artifactId>psimitab-indexer-maven-plugin</artifactId>
                 <configuration>
                     <indexDirectory>target/index-test</indexDirectory>
-                    <psimitabFile>src/test/resources/17721511.txt</psimitabFile>
+                    <psimitabFile>src/test/resources/intact.psimitab.txt</psimitabFile>
                     <createIndex>true</createIndex>
                     <containsHeader>true</containsHeader>
                 </configuration>
