@@ -25,6 +25,7 @@ import psidev.psi.mi.search.index.AbstractIndexWriter;
 import psidev.psi.mi.search.index.impl.PsimiTabIndexWriter;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
+import uk.ac.ebi.intact.psimitab.search.IntActPsimiTabIndexWriter;
 
 /**
  * Goal which creates a Lucene index from a PSIMITAB file.
@@ -73,9 +74,9 @@ public class IndexerMojo extends IntactAbstractMojo {
     private boolean containsHeader = true;
     
     /**
-     * A indexWriter extends AbstractIndexWriter by default PsimiTabIndexWriter
+     * A indexWriter extends AbstractIndexWriter by default IntActPsimiTabIndexWriter
      */
-    private AbstractIndexWriter indexWriter = new PsimiTabIndexWriter();
+    private AbstractIndexWriter indexWriter = new IntActPsimiTabIndexWriter();
     
     /**
      * {@inheritDoc}
