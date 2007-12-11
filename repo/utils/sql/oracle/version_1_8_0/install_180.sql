@@ -18,12 +18,12 @@ DEFINE intactIndexTablespace        = INTACT_TAB
 PROMPT *********************************************************************************/
 PROMPT "Creating new table ia_confidence..."
 PROMPT
-@10_create_tables.sql
+@010_create_tables.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Creating audit tables for new tables..."
 PROMPT
-@50_create_audit_tables.sql
+@050_create_audit_tables.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Adding new field in ia_controlledvocab..."
