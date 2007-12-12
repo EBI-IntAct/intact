@@ -7,15 +7,17 @@ CREATE TABLE ia_confidence
     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-    ,  confidencetype_ac            VARCHAR2(30)    CONSTRAINT fk_confidence$qualifier  REFERENCES IA_ControlledVocab(ac)
+    ,  interaction_ac          VARCHAR2(30)    CONSTRAINT fk_confidence$interaction REFERENCES IA_INTERACTOR(ac)
+    ,  confidencetype_ac       VARCHAR2(30)    CONSTRAINT fk_confidence$qualifier  REFERENCES IA_ControlledVocab(ac)
     ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_confidence$owner      REFERENCES IA_Institution(ac)
-	,  value				   VARCHAR2(30)	
+    ,  value		       VARCHAR2(30)	
     ,  created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
 TABLESPACE &&intactIndexTablespace;
 
 CREATE INDEX i_confidence$value  on IA_confidence(value)    TABLESPACE &&intactIndexTablespace;
 CREATE INDEX i_confidence$confidencetype   on IA_confidence(confidencetype_ac) TABLESPACE &&intactIndexTablespace;
+CREATE INDEX i_confidence$interaction   on IA_confidence(interaction_ac) TABLESPACE &&intactIndexTablespace;
 
 set term off
     COMMENT ON TABLE ia_confidence IS
