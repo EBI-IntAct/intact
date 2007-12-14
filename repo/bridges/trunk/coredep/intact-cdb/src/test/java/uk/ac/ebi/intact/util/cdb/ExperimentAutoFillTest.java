@@ -49,6 +49,34 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
         commitTransaction();
     }
 
+    @Test
+    public void liu2007_completeExample() throws Exception {
+
+        persistAndAutofillExperiment("unknown", "17560331");
+        persistAndAutofillExperiment("unknown", "17560331");
+        persistAndAutofillExperiment("unknown", "17560331");
+        persistAndAutofillExperiment("unknown", "17560331");
+        persistAndAutofillExperiment("unknown", "17690294");
+        persistAndAutofillExperiment("unknown", "17923091");
+
+        ExperimentAutoFill eaf = new ExperimentAutoFill("15084279");
+
+        System.out.println(eaf.getShortlabel());
+
+        //Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
+        //Assert.assertEquals("butkevich-2004-1", eaf.getShortlabel(true));
+    }
+
+    private void persistAndAutofillExperiment(String shortlabel, String pubId) throws Exception {
+        Experiment exp = getMockBuilder().createExperimentEmpty(shortlabel);
+        exp.getPublication().setShortLabel(pubId);
+
+        ExperimentAutoFill eaf = new ExperimentAutoFill(pubId);
+        exp.setShortLabel(eaf.getShortlabel(true));
+
+        PersisterHelper.saveOrUpdate(exp);
+    }
+
     @Test (expected = InvalidPubmedException.class)
     public void experimentAutoFill_wrongPubmedId() throws Exception {
          new ExperimentAutoFill("unassigned2");
