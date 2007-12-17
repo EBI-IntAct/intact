@@ -11,6 +11,8 @@ import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
 
+import java.util.Iterator;
+
 /**
  * TODO comment this
  *
@@ -28,10 +30,8 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
         Assert.assertEquals("Drebrin is a novel connexin-43 binding partner that links gap junctions to the submembrane cytoskeleton.",
                             eaf.getFullname());
 
-        beginTransaction();
         Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
         Assert.assertEquals("butkevich-2004-1", eaf.getShortlabel(true));
-        commitTransaction();
     }
 
     @Test
@@ -52,24 +52,28 @@ public class ExperimentAutoFillTest extends IntactBasicTestCase {
     @Test
     public void liu2007_completeExample() throws Exception {
 
-        persistAndAutofillExperiment("unknown", "17560331");
-        persistAndAutofillExperiment("unknown", "17560331");
-        persistAndAutofillExperiment("unknown", "17560331");
-        persistAndAutofillExperiment("unknown", "17560331");
-        persistAndAutofillExperiment("unknown", "17690294");
-        persistAndAutofillExperiment("unknown", "17923091");
+        persistAndAutofillExperiment("unknown", "17560331", 1);
+        persistAndAutofillExperiment("unknown", "17560331", 2);
+        persistAndAutofillExperiment("unknown", "17560331", 3);
+        persistAndAutofillExperiment("unknown", "17560331", 3);
+        persistAndAutofillExperiment("unknown", "17690294", 5);
+        persistAndAutofillExperiment("unknown", "17923091", 6);
 
-        ExperimentAutoFill eaf = new ExperimentAutoFill("15084279");
+        int i=0;
+        for (Experiment exp : getDaoFactory().getExperimentDao().getAll()) {
+            if (i==0) Assert.assertEquals("liu-2007-1", exp.getShortLabel());
+            if (i==1) Assert.assertEquals("liu-2007-2", exp.getShortLabel());
+            if (i==2) Assert.assertEquals("liu-2007-3", exp.getShortLabel());
+            if (i==3) Assert.assertEquals("liu-2007a-1", exp.getShortLabel());
+            if (i==4) Assert.assertEquals("liu-2007b-1", exp.getShortLabel());
 
-        System.out.println(eaf.getShortlabel());
-
-        //Assert.assertEquals("butkevich-2004", eaf.getShortlabel(false));
-        //Assert.assertEquals("butkevich-2004-1", eaf.getShortlabel(true));
+            i++;
+        }
     }
 
-    private void persistAndAutofillExperiment(String shortlabel, String pubId) throws Exception {
-        Experiment exp = getMockBuilder().createExperimentEmpty(shortlabel);
-        exp.getPublication().setShortLabel(pubId);
+    private void persistAndAutofillExperiment(String shortlabel, String pubId, int taxId) throws Exception {
+        Experiment exp = getMockBuilder().createExperimentEmpty(shortlabel, pubId);
+        exp.getBioSource().setTaxId(String.valueOf(taxId));
 
         ExperimentAutoFill eaf = new ExperimentAutoFill(pubId);
         exp.setShortLabel(eaf.getShortlabel(true));
