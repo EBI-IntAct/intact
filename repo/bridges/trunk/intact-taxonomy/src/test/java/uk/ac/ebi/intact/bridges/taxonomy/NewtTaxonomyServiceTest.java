@@ -1,8 +1,8 @@
 package uk.ac.ebi.intact.bridges.taxonomy;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import static org.junit.Assert.*;
 
 import java.util.Collection;
 
@@ -10,51 +10,34 @@ import java.util.Collection;
  * NewtBridge Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version 1.0
- * @since <pre>01/17/2007</pre>
+ * @version $Id$
+ * @since 1.0
  */
-public class NewtTaxonomyServiceTest extends TestCase {
-    public NewtTaxonomyServiceTest( String name ) {
-        super( name );
-    }
+public class NewtTaxonomyServiceTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( NewtTaxonomyServiceTest.class );
-    }
-
-    ////////////////////
-    // Tests
-
-    public void testGetNewtTerm() throws Exception {
+    @Test
+    public void GetNewtTerm() throws Exception {
         NewtTaxonomyService newt = new NewtTaxonomyService();
         TaxonomyTerm term = newt.getTaxonomyTerm( 9606 );
         assertNotNull( term );
         assertEquals( term.getTaxid(), 9606 );
     }
 
-    public void testGetNewtTermChildren() throws Exception {
+    @Test public void GetNewtTermChildren() throws Exception {
         NewtTaxonomyService newt = new NewtTaxonomyService();
         Collection<TaxonomyTerm> children = newt.getTermChildren( 9606 );
         assertEquals( 1, children.size() );
         assertEquals( 63221, children.iterator().next().getTaxid() );
     }
 
-    public void testGetNewtTermParent() throws Exception {
+    @Test public void GetNewtTermParent() throws Exception {
         NewtTaxonomyService newt = new NewtTaxonomyService();
         Collection<TaxonomyTerm> parents = newt.getTermParent( 9606 );
         assertEquals( 1, parents.size() );
         assertEquals( 9605, parents.iterator().next().getTaxid() );
     }
 
-    public void testRetrieveChildren() throws TaxonomyServiceException {
+    @Test public void RetrieveChildren() throws TaxonomyServiceException {
         NewtTaxonomyService newt = new NewtTaxonomyService();
         TaxonomyTerm term = newt.getTaxonomyTerm( 562 );
 
@@ -64,10 +47,10 @@ public class NewtTaxonomyServiceTest extends TestCase {
 
         // Term with all children
         newt.retrieveChildren( term, true );
-        assertEquals( 86, TaxonomyTermUtils.collectAllChildren( term ).size() );
+        assertEquals( 91, TaxonomyTermUtils.collectAllChildren( term ).size() );
     }
 
-    public void testRetrieveParents() throws TaxonomyServiceException {
+    @Test public void RetrieveParents() throws TaxonomyServiceException {
         NewtTaxonomyService newt = new NewtTaxonomyService();
 
         TaxonomyTerm term = newt.getTaxonomyTerm( 285006 );
@@ -123,7 +106,7 @@ public class NewtTaxonomyServiceTest extends TestCase {
         assertTrue( t.getParents().isEmpty() );
     }
 
-    public void testCache() throws TaxonomyServiceException {
+    @Test public void Cache() throws TaxonomyServiceException {
 
         // when the caching is enabled, we do not have duplication of terms, they are reused.
         NewtTaxonomyService newt = new NewtTaxonomyService( true );
@@ -140,7 +123,7 @@ public class NewtTaxonomyServiceTest extends TestCase {
         assertTrue( eukariotaParent == bacteriaParent );
     }
 
-    public void testNoCache() throws TaxonomyServiceException {
+    @Test public void NoCache() throws TaxonomyServiceException {
 
         // when the caching is disabled, we have duplication of terms
         NewtTaxonomyService newt = new NewtTaxonomyService( false );

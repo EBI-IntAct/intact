@@ -1,38 +1,20 @@
 package uk.ac.ebi.intact.bridges.taxonomy;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Assert;
+import static org.junit.Assert.*;
 
 /**
  * TaxonomyTerm Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @version TODO artifact version
- * @since <pre>02/16/2007</pre>
+ * @version $Id$
+ * @since 1.0
  */
-public class TaxonomyTermTest extends TestCase {
+public class TaxonomyTermTest {
 
-    public TaxonomyTermTest( String name ) {
-        super( name );
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( TaxonomyTermTest.class );
-    }
-
-    ////////////////////
-    // Tests
-
-    public void testTaxonomyTerm() {
+    @Test
+    public void TaxonomyTerm() {
         TaxonomyTerm t = new TaxonomyTerm( 123 );
         assertNotNull( t );
         assertEquals( 123, t.getTaxid() );
@@ -42,7 +24,7 @@ public class TaxonomyTermTest extends TestCase {
         assertTrue( t.getParents().isEmpty() );
     }
 
-    public void testSetGetCommonName() throws Exception {
+    @Test public void SetGetCommonName() throws Exception {
         TaxonomyTerm t = new TaxonomyTerm( 4 );
         t.setCommonName( "common" );
         assertEquals( "common", t.getCommonName() );
@@ -50,7 +32,7 @@ public class TaxonomyTermTest extends TestCase {
         assertEquals( null, t.getCommonName() );
     }
 
-    public void testSetGetScientificName() throws Exception {
+    @Test public void SetGetScientificName() throws Exception {
         TaxonomyTerm t = new TaxonomyTerm( 4 );
         t.setScientificName( "common" );
         assertEquals( "common", t.getScientificName() );
@@ -58,7 +40,7 @@ public class TaxonomyTermTest extends TestCase {
         assertEquals( null, t.getScientificName() );
     }
 
-    public void testSetGetTaxid() throws Exception {
+    @Test public void SetGetTaxid() throws Exception {
         TaxonomyTerm t = new TaxonomyTerm( 3 );
         assertEquals( 3, t.getTaxid() );
         t.setTaxid( 2 );
@@ -88,7 +70,7 @@ public class TaxonomyTermTest extends TestCase {
         }
     }
 
-    public void testGetChildren() throws Exception {
+    @Test public void GetChildren() throws Exception {
         TaxonomyTerm t = new TaxonomyTerm( 7 );
         t.addChild( new TaxonomyTerm( 2 ) );
         assertEquals( new TaxonomyTerm( 2 ), t.getChildren().iterator().next() );
@@ -100,7 +82,7 @@ public class TaxonomyTermTest extends TestCase {
         assertEquals( 2, t.getChildren().size() );
     }
 
-    public void testGetParents() throws Exception {
+    @Test public void GetParents() throws Exception {
         TaxonomyTerm t = new TaxonomyTerm( 7 );
         t.addParent( new TaxonomyTerm( 2 ) );
         assertEquals( new TaxonomyTerm( 2 ), t.getParents().iterator().next() );
