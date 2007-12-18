@@ -1,10 +1,10 @@
 package uk.ac.ebi.intact.uniprot.service;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
@@ -16,33 +16,18 @@ import java.util.*;
 /**
  * YaspAdapter Tester.
  *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>09/18/2006</pre>
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-@org.junit.Ignore
-public class YaspServiceTest extends TestCase {
+
+@Ignore
+public class YaspServiceTest {
 
     /**
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( YaspServiceTest.class );
-
-    public YaspServiceTest( String name ) {
-        super( name );
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( YaspServiceTest.class );
-    }
 
     //////////////////////////
     // Utility
@@ -60,7 +45,8 @@ public class YaspServiceTest extends TestCase {
     ///////////////////
     // Tests
 
-    public void testRetreiveUnknownProtein() throws UniprotServiceException {
+    @Test
+    public void RetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
         Collection<UniprotProtein> proteins = ya.retrieve( "foobar" );
         assertNotNull( proteins );
@@ -70,7 +56,8 @@ public class YaspServiceTest extends TestCase {
         assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
     }
 
-    public void testRetreiveSimpleProtein() throws UniprotServiceException {
+    @Test
+    public void RetreiveSimpleProtein() throws UniprotServiceException {
 
         // TODO not a good idea to run test on data available online ... data can change, internet can be down ... find an other way !!
 
@@ -80,10 +67,10 @@ public class YaspServiceTest extends TestCase {
         Map<String, UniprotServiceReport> uniprotErrors = uniprot.getErrors();
         Set set = uniprotErrors.entrySet();
         Iterator iterator = set.iterator();
-        System.out.println("uniprot report");
-        if(iterator.hasNext()){
-            Map.Entry entry = (Map.Entry) iterator.next();
-            System.out.println(entry.getKey() + " : " + entry.getValue().toString());
+        System.out.println( "uniprot report" );
+        if ( iterator.hasNext() ) {
+            Map.Entry entry = ( Map.Entry ) iterator.next();
+            System.out.println( entry.getKey() + " : " + entry.getValue().toString() );
         }
         assertNotNull( proteins );
         assertEquals( 1, proteins.size() );
@@ -169,7 +156,8 @@ public class YaspServiceTest extends TestCase {
         assertEquals( protein.getOrganism(), featureChain.getOrganism() );
     }
 
-    public void testRetreiveMultipleProteins() throws UniprotServiceException {
+    @Test
+    public void RetreiveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181" );
 
@@ -186,7 +174,8 @@ public class YaspServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
+    @Test
+    public void RetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retrieve( "Q24208" );
@@ -267,7 +256,8 @@ public class YaspServiceTest extends TestCase {
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
     }
 
-    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
+    @Test
+    public void RetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 

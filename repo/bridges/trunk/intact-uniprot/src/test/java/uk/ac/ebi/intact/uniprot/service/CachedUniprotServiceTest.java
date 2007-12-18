@@ -1,8 +1,6 @@
 package uk.ac.ebi.intact.uniprot.service;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import org.junit.Test;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import java.util.Collection;
@@ -11,32 +9,14 @@ import java.util.Collection;
  * CachedUniprotService Tester.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
- * @since <pre>02/22/2007</pre>
- * @version TODO artifact version
+ * @version $Id$
+ * @since 2.0.0
  */
-public class CachedUniprotServiceTest extends TestCase {
-    
-    public CachedUniprotServiceTest(String name) {
-        super(name);
-    }
+public class CachedUniprotServiceTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite(CachedUniprotServiceTest.class);
-    }
-
-    ////////////////////
-    // Tests
-
-    public void testConstructor() {
-        UniprotService service = new CachedUniprotService( new DummyUniprotService( ) );
+    @Test
+    public void constructor() {
+        UniprotService service = new CachedUniprotService( new DummyUniprotService() );
         Collection<UniprotProtein> proteins;
 
 //        proteins = service.retreive( "P12345" );

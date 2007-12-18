@@ -1,37 +1,19 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * UniprotSpliceVariant Tester.
  *
- * @author <Authors name>
- * @since <pre>10/23/2006</pre>
- * @version 1.0
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class UniprotSpliceVariantTest extends TestCase {
-    public UniprotSpliceVariantTest(String name) {
-        super(name);
-    }
+public class UniprotSpliceVariantTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite(UniprotSpliceVariantTest.class);
-    }
-
-    ////////////////////
-    // Tests
-
-    public void testPrimaryAc() throws Exception {
+    @Test
+    public void PrimaryAc() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertEquals( "P12345-1", sv.getPrimaryAc() );
 
@@ -50,14 +32,16 @@ public class UniprotSpliceVariantTest extends TestCase {
         }
     }
 
-    public void testSequence() throws Exception {
+    @Test
+    public void Sequence() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertEquals( "ABCD", sv.getSequence() );
         sv.setSequence( "ACBEDFG" );
         assertEquals( "ACBEDFG", sv.getSequence() );
     }
 
-    public void testOrganism() throws Exception {
+    @Test
+    public void Organism() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertEquals( new Organism( 1 ), sv.getOrganism() );
 
@@ -76,7 +60,8 @@ public class UniprotSpliceVariantTest extends TestCase {
         }
     }
 
-    public void testStart() throws Exception {
+    @Test
+    public void Start() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         sv.setStart( 2 );
         assertEquals( new Integer( 2 ), sv.getStart() );
@@ -95,7 +80,8 @@ public class UniprotSpliceVariantTest extends TestCase {
         }
     }
 
-    public void testEnd() throws Exception {
+    @Test
+    public void End() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         sv.setEnd( 5 );
         assertEquals( new Integer( 5 ), sv.getEnd() );
@@ -114,7 +100,8 @@ public class UniprotSpliceVariantTest extends TestCase {
         }
     }
 
-    public void testGetSecondaryAcs() throws Exception {
+    @Test
+    public void GetSecondaryAcs() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertNotNull( sv.getSecondaryAcs() );
         assertEquals( 0, sv.getSecondaryAcs().size() );
@@ -124,7 +111,8 @@ public class UniprotSpliceVariantTest extends TestCase {
     }
 
 
-    public void testGetSynomyms() throws Exception {
+    @Test
+    public void GetSynomyms() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertNotNull( sv.getSynomyms() );
         assertEquals( 0, sv.getSynomyms().size() );
@@ -133,7 +121,8 @@ public class UniprotSpliceVariantTest extends TestCase {
         assertTrue( sv.getSynomyms().contains( "bla" ) );
     }
 
-    public void testNote() throws Exception {
+    @Test
+    public void Note() throws Exception {
         UniprotSpliceVariant sv = new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" );
         assertNull( sv.getNote() );
         sv.setNote( "a note" );

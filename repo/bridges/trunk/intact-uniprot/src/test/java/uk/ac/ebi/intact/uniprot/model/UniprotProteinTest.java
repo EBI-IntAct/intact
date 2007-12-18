@@ -1,39 +1,21 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 
 /**
  * UniprotProtein Tester.
  *
- * @author <Authors name>
- * @since <pre>10/23/2006</pre>
- * @version 1.0
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class UniprotProteinTest extends TestCase {
-    public UniprotProteinTest(String name) {
-        super(name);
-    }
+public class UniprotProteinTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite(UniprotProteinTest.class);
-    }
-
-    ////////////////////
-    // Tests
-
-    public void testConstructor() {
+    @Test
+    public void Constructor() {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein );
 
@@ -59,7 +41,8 @@ public class UniprotProteinTest extends TestCase {
         }
     }
 
-    public void testId() throws Exception {
+    @Test
+    public void Id() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertEquals( "P12345_HUMAN", protein.getId() );
 
@@ -81,7 +64,8 @@ public class UniprotProteinTest extends TestCase {
         }
     }
 
-    public void testSequence() throws Exception {
+    @Test
+    public void Sequence() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getSequence() );
         protein.setSequence( "ABCD" );
@@ -90,7 +74,8 @@ public class UniprotProteinTest extends TestCase {
         assertEquals( "ACBEDFG", protein.getSequence() );
     }
 
-    public void testOrganism() throws Exception {
+    @Test
+    public void Organism() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertEquals( new Organism( 1 ), protein.getOrganism() );
 
@@ -102,7 +87,8 @@ public class UniprotProteinTest extends TestCase {
         }
     }
 
-    public void testSetGetPrimaryAc() throws Exception {
+    @Test
+    public void SetGetPrimaryAc() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertEquals( "P12345", protein.getPrimaryAc() );
 
@@ -121,7 +107,8 @@ public class UniprotProteinTest extends TestCase {
         }
     }
 
-    public void testGetSecondaryAcs() throws Exception {
+    @Test
+    public void GetSecondaryAcs() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getSecondaryAcs() );
         assertEquals( 0, protein.getSecondaryAcs().size() );
@@ -130,7 +117,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getSecondaryAcs().contains( "Q99999" ) );
     }
 
-    public void testSetGetDescription() throws Exception {
+    @Test
+    public void SetGetDescription() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getDescription() );
         assertEquals( "desc", protein.getDescription() );
@@ -138,7 +126,8 @@ public class UniprotProteinTest extends TestCase {
         assertEquals( "a note", protein.getDescription() );
     }
 
-    public void testGetGenes() throws Exception {
+    @Test
+    public void GetGenes() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getGenes() );
         assertEquals( 0, protein.getGenes().size() );
@@ -147,7 +136,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getGenes().contains( "gene" ) );
     }
 
-    public void testGetOrfs() throws Exception {
+    @Test
+    public void GetOrfs() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getOrfs() );
         assertEquals( 0, protein.getOrfs().size() );
@@ -156,7 +146,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getOrfs().contains( "orf" ) );
     }
 
-    public void testGetSynomyms() throws Exception {
+    @Test
+    public void GetSynomyms() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getSynomyms() );
         assertEquals( 0, protein.getSynomyms().size() );
@@ -165,7 +156,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getSynomyms().contains( "syn" ) );
     }
 
-    public void testGetLocuses() throws Exception {
+    @Test
+    public void GetLocuses() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getLocuses() );
         assertEquals( 0, protein.getLocuses().size() );
@@ -174,7 +166,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getLocuses().contains( "locus" ) );
     }
 
-    public void testGetKeywords() throws Exception {
+    @Test
+    public void GetKeywords() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getKeywords() );
         assertEquals( 0, protein.getKeywords().size() );
@@ -183,7 +176,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getKeywords().contains( "kw" ) );
     }
 
-    public void testGetFunctions() throws Exception {
+    @Test
+    public void GetFunctions() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getFunctions() );
         assertEquals( 0, protein.getFunctions().size() );
@@ -192,14 +186,16 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getFunctions().contains( "function" ) );
     }
 
-    public void testGetCrossReferences() throws Exception {
+    @Test
+    public void GetCrossReferences() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getCrossReferences() );
         protein.getCrossReferences().add( new UniprotXref( "SAM:1", "sam" ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "SAM:1", "sam" ) ) );
     }
 
-    public void testGetSpliceVariants() throws Exception {
+    @Test
+    public void GetSpliceVariants() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getSpliceVariants() );
         protein.getSpliceVariants().add( new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" ) );
@@ -207,7 +203,8 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getSpliceVariants().contains( new UniprotSpliceVariant( "P12345-1", new Organism( 1 ), "ABCD" ) ) );
     }
 
-    public void testGetFeatureChains() throws Exception {
+    @Test
+    public void GetFeatureChains() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNotNull( protein.getFeatureChains() );
         protein.getFeatureChains().add( new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" ) );
@@ -215,35 +212,40 @@ public class UniprotProteinTest extends TestCase {
         assertTrue( protein.getFeatureChains().contains( new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" ) ) );
     }
 
-    public void testSetGetCrc64() throws Exception {
+    @Test
+    public void SetGetCrc64() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getCrc64() );
         protein.setCrc64( "LFLASIFNLIAFN1298437" );
         assertEquals( "LFLASIFNLIAFN1298437", protein.getCrc64() );
     }
 
-    public void testSetGetSequence() throws Exception {
+    @Test
+    public void SetGetSequence() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getSequence() );
         protein.setSequence( "ABCDEFGHABCDEFGH" );
         assertEquals( "ABCDEFGHABCDEFGH", protein.getSequence() );
     }
 
-    public void testSetGetSequenceLength() throws Exception {
+    @Test
+    public void SetGetSequenceLength() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertEquals( 0, protein.getSequenceLength() );
         protein.setSequenceLength( 5 );
         assertEquals( 5, protein.getSequenceLength() );
     }
 
-    public void testSetGetReleaseVersion() throws Exception {
+    @Test
+    public void SetGetReleaseVersion() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getReleaseVersion() );
         protein.setReleaseVersion( "v1" );
         assertEquals( "v1", protein.getReleaseVersion() );
     }
 
-    public void testSetGetLastAnnotationUpdate() throws Exception {
+    @Test
+    public void SetGetLastAnnotationUpdate() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getLastAnnotationUpdate() );
         SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MMM-dd" );
@@ -251,7 +253,8 @@ public class UniprotProteinTest extends TestCase {
         assertEquals( sdf.parse( "2006-NOV-01" ), protein.getLastAnnotationUpdate() );
     }
 
-    public void testSetGetLastSequenceUpdate() throws Exception {
+    @Test
+    public void SetGetLastSequenceUpdate() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getLastSequenceUpdate() );
         SimpleDateFormat sdf = new SimpleDateFormat( "yyyy-MMM-dd" );
@@ -259,7 +262,8 @@ public class UniprotProteinTest extends TestCase {
         assertEquals( sdf.parse( "2006-NOV-01" ), protein.getLastSequenceUpdate() );
     }
 
-    public void testSetGetSource() throws Exception {
+    @Test
+    public void SetGetSource() throws Exception {
         UniprotProtein protein = new UniprotProtein( "P12345_HUMAN", "P12345", new Organism( 1 ), "desc" );
         assertNull( protein.getSource() );
         protein.setSource( UniprotProteinType.SWISSPROT );
