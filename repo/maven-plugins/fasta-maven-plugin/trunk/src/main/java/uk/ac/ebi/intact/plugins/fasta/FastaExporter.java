@@ -18,9 +18,13 @@ import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.model.ProteinImpl;
 import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.util.ProteinUtils;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -48,14 +52,32 @@ public class FastaExporter {
     private static String getIdentity( Interactor interactor ) {
 
         CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+        Collection identities = new ArrayList( 2 );
+
 
         for ( Xref xref : interactor.getXrefs() ) {
             if ( identity.equals( xref.getCvXrefQualifier() ) ) {
-                return xref.getPrimaryId();
+                identities.add( xref.getPrimaryId() );
             }
         }
 
-        return null;
+        StringBuilder sb = new StringBuilder( 32 );
+        for ( Iterator iterator = identities.iterator(); iterator.hasNext(); ) {
+            String id = ( String ) iterator.next();
+            sb.append( id );
+            if ( iterator.hasNext() ) {
+                sb.append( '+' );
+            }
+        }
+
+        return sb.toString();
+    }
+
+    private static String removeLineReturn( String s ) {
+        if ( s == null ) {
+            return null;
+        }
+        return s.replace( "\n", "" );
     }
 
     /**
@@ -127,22 +149,30 @@ public class FastaExporter {
 
                     String sequence = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                             .getPolymerDao().getSequenceByPolymerAc( protein.getAc() );
-                    if( sequence != null ) {
+                    if ( sequence != null ) {
                         sequence = sequence.trim();
-                        if( sequence.length() > 0 ) {
+                        if ( sequence.length() > 0 ) {
 
                             // only output polymer with a sequence
                             StringBuilder sb = new StringBuilder( 512 );
 
                             // Header contains: AC, shortlabel and primaryId.
-                            sb.append( '>' ).append( ' ' );
+                            sb.append( ">INTACT:" );
                             sb.append( protein.getAc() );
-                            sb.append( '|' );
-                            sb.append( protein.getShortLabel() );
+
                             String identity = getIdentity( protein );
                             if ( identity != null ) {
-                                sb.append( '|' );
-                                sb.append( identity.trim() ); // trim takes care of removing leading or trailing line return
+                                sb.append( ' ' );
+                                sb.append( removeLineReturn( identity.trim() ) );
+                            }
+                            
+                            sb.append( ' ' );
+                            sb.append( removeLineReturn( protein.getShortLabel() ) );
+
+                            final String gn = ProteinUtils.getGeneName( protein );
+                            if ( gn != null ) {
+                                sb.append( ' ' );
+                                sb.append( removeLineReturn( gn ) );
                             }
 
                             sb.append( NEW_LINE );
@@ -153,7 +183,7 @@ public class FastaExporter {
 
                             // write to file
                             fastaWriter.write( sb.toString() );
-                            
+
                             // stats
                             countExported++;
                             out.print( "." );
@@ -188,7 +218,6 @@ public class FastaExporter {
         fastaWriter.flush();
         fastaWriter.close();
     }
-
 
     public static void main( String[] args ) throws Exception {
         exportToFastaFile( System.out, new File( "intact.fasta" ) );
