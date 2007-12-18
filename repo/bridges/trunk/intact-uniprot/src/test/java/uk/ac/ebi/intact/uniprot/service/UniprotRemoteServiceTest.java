@@ -469,15 +469,4 @@ public class UniprotRemoteServiceTest {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "GO:0030036", "Go" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
-
-    @Test
-    public void RetreiveUnknownProtein() throws UniprotServiceException {
-        UniprotService ya = new YaspService();
-        Collection<UniprotProtein> proteins = ya.retrieve( "foobar" );
-        assertNotNull( proteins );
-        assertEquals( 0, proteins.size() );
-        assertNotNull( ya.getErrors() );
-        assertEquals( 1, ya.getErrors().size() );
-        assertTrue( ya.getErrors().keySet().contains( "foobar" ) );
-    }
 }
