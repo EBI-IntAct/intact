@@ -1,14 +1,15 @@
 package uk.ac.ebi.intact.uniprot.service;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static junit.framework.Assert.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Test;
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.data.MockUniProtEntries;
-import uk.ac.ebi.intact.uniprot.model.*;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.intact.uniprot.model.UniprotProteinType;
+import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
+import uk.ac.ebi.intact.uniprot.model.UniprotXref;
 import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
@@ -21,31 +22,15 @@ import java.util.Collection;
 /**
  * UniprotRemoteServiceAdapter Tester.
  *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>10/24/2006</pre>
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class UniprotRemoteServiceTest extends TestCase {
+public class UniprotRemoteServiceTest {
 
     public static final Log log = LogFactory.getLog( UniprotRemoteServiceTest.class );
 
-    public UniprotRemoteServiceTest( String name ) {
-        super( name );
-    }
-
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( UniprotRemoteServiceTest.class );
-    }
-
-    //////////////////////
+    /////////////////////
     // Utility
 
     private UniprotService getUniprotService() {
@@ -64,7 +49,8 @@ public class UniprotRemoteServiceTest extends TestCase {
     ////////////////////
     // Tests
 
-    public void testConvert_CDC42_CANFA() throws Exception {
+    @Test
+    public void Convert_CDC42_CANFA() throws Exception {
         UniProtEntry entry = MockUniProtEntries.build_P60952();
         UniprotRemoteService service = new UniprotRemoteService();
         UniprotProtein protein = service.buildUniprotProtein( entry );
@@ -85,28 +71,30 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertEquals( "", sv2.getNote() );
         assertEquals( 1, sv2.getSynomyms().size() );
         assertEquals( "Placental", sv2.getSynomyms().iterator().next() );
-//        assertEquals( "", sv2.getSequence() );
-
     }
 
-    public void testRetrieveByUniprotId() throws Exception {
-        Collection<UniprotProtein> prots = getUniprotService().retrieve("CDC2_HUMAN");
-        assertEquals("P06493", prots.iterator().next().getPrimaryAc());
+    @Test
+    public void RetrieveByUniprotId() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDC2_HUMAN" );
+        assertEquals( "P06493", prots.iterator().next().getPrimaryAc() );
     }
 
-    public void testRetrieveByUniprotId_noGeneNames() throws Exception {
-        Collection<UniprotProtein> prots = getUniprotService().retrieve("O58917");
+    @Test
+    public void RetrieveByUniprotId_noGeneNames() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "O58917" );
 
         UniprotProtein uniprotProtein = prots.iterator().next();
-        Assert.assertTrue(uniprotProtein.getGenes().isEmpty());
+        assertTrue( uniprotProtein.getGenes().isEmpty() );
     }
 
-    public void testRetrieveBySpliceVariantId() throws Exception {
-        Collection<UniprotProtein> prots = getUniprotService().retrieve("Q13535-1");
-        assertEquals("ATR_HUMAN", prots.iterator().next().getId());
+    @Test
+    public void RetrieveBySpliceVariantId() throws Exception {
+        Collection<UniprotProtein> prots = getUniprotService().retrieve( "Q13535-1" );
+        assertEquals( "ATR_HUMAN", prots.iterator().next().getId() );
     }
 
-    public void testConvert_FAU_DROME() throws Exception {
+    @Test
+    public void Convert_FAU_DROME() throws Exception {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();
         UniprotRemoteService service = new UniprotRemoteService();
@@ -192,7 +180,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         return null;
     }
 
-    public void testBuild() throws Exception {
+    @Test
+    public void Build() throws Exception {
         UniprotService uniprot = getUniprotService();
 
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
@@ -288,7 +277,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertEquals( 0, protein.getFeatureChains().size() );
     }
 
-    public void testSearchBySpliceVariant() throws UniprotServiceException {
+    @Test
+    public void SearchBySpliceVariant() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getUniprotService();
@@ -311,7 +301,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testSearchBySpliceVariantSecondaryId() throws UniprotServiceException {
+    @Test
+    public void SearchBySpliceVariantSecondaryId() throws UniprotServiceException {
 
         // Q8NG31-1 has parent Q8NG31
         UniprotService uniprot = getUniprotService();
@@ -338,7 +329,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveProteinWithSpliceVariant() throws UniprotServiceException {
+    @Test
+    public void RetreiveProteinWithSpliceVariant() throws UniprotServiceException {
 
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retrieve( "Q24208" );
@@ -436,7 +428,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertTrue( "Q24208-2 was missing from the splice variant list.", sv3 );
     }
 
-    public void testRetreiveMultipleProteins() throws UniprotServiceException {
+    @Test
+    public void RetreiveMultipleProteins() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService();
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P21181" );
 
@@ -453,7 +446,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         }
     }
 
-    public void testRetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
+    @Test
+    public void RetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
@@ -476,7 +470,8 @@ public class UniprotRemoteServiceTest extends TestCase {
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "IPR001452", "InterPro" ) ) );
     }
 
-    public void testRetreiveUnknownProtein() throws UniprotServiceException {
+    @Test
+    public void RetreiveUnknownProtein() throws UniprotServiceException {
         UniprotService ya = new YaspService();
         Collection<UniprotProtein> proteins = ya.retrieve( "foobar" );
         assertNotNull( proteins );

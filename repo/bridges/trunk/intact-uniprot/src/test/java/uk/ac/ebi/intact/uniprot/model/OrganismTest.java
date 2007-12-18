@@ -1,44 +1,27 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * Organism Tester.
  *
- * @author <Authors name>
- * @version 1.0
- * @since <pre>10/23/2006</pre>
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class OrganismTest extends TestCase {
-    public OrganismTest( String name ) {
-        super( name );
-    }
+public class OrganismTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite( OrganismTest.class );
-    }
-
-    //////////////////////
-    // Tests
-
-    public void testName() throws Exception {
+    @Test
+    public void Name() throws Exception {
         Organism o = new Organism( 999 );
         assertNull( o.getName() );
         o.setName( "name" );
         assertEquals( "name", o.getName() );
     }
 
-    public void testGetParents() throws Exception {
+    @Test
+    public void GetParents() throws Exception {
         Organism o = new Organism( 999 );
         assertNotNull( o.getParents() );
         assertTrue( o.getParents().isEmpty() );
@@ -46,7 +29,8 @@ public class OrganismTest extends TestCase {
         assertEquals( 1, o.getParents().size() );
     }
 
-    public void testTaxid() throws Exception {
+    @Test
+    public void Taxid() throws Exception {
         try {
             new Organism( -1 );
             fail();

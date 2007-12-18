@@ -33,11 +33,11 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Utility for building Mock Uniprot entries.
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since TODO artifact version here
+ * @since 2.0.0
  */
 public class MockUniProtEntries {
 

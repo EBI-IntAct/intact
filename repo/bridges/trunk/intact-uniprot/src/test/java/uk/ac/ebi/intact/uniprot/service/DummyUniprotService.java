@@ -5,8 +5,8 @@
  */
 package uk.ac.ebi.intact.uniprot.service;
 
-import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.Organism;
+import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,7 @@ import java.util.Map;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since <pre>08-Feb-2007</pre>
+ * @since 2.0.0
  */
 public class DummyUniprotService extends UniprotRemoteService {
 
@@ -32,7 +32,7 @@ public class DummyUniprotService extends UniprotRemoteService {
         }
         Collection<UniprotProtein> proteins = new ArrayList<UniprotProtein>( 2 );
 
-        Organism o = new Organism( 9606, "human");
+        Organism o = new Organism( 9606, "human" );
         UniprotProtein protein = new UniprotProtein( ac, ac, o, "ac" );
 
         proteins.add( protein );

@@ -1,37 +1,19 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * UniprotXref Tester.
  *
- * @author <Authors name>
- * @since <pre>10/23/2006</pre>
- * @version 1.0
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class UniprotXrefTest extends TestCase {
-    public UniprotXrefTest(String name) {
-        super(name);
-    }
+public class UniprotXrefTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite(UniprotXrefTest.class);
-    }
-
-    ////////////////////
-    // Tests
-    
-    public void testSetGetAccession() throws Exception {
+    @Test
+    public void SetGetAccession() throws Exception {
         UniprotXref x = new UniprotXref( "SAM:1", "sam" );
         assertNotNull( x );
         assertEquals( "SAM:1", x.getAccession() );
@@ -53,7 +35,8 @@ public class UniprotXrefTest extends TestCase {
         }
     }
 
-    public void testSetGetDatabase() throws Exception {
+    @Test
+    public void SetGetDatabase() throws Exception {
         UniprotXref x = new UniprotXref( "SAM:1", "sam" );
         assertNotNull( x );
         assertEquals( "SAM:1", x.getAccession() );
@@ -75,7 +58,8 @@ public class UniprotXrefTest extends TestCase {
         }
     }
 
-    public void testSetGetDescription() throws Exception {
+    @Test
+    public void SetGetDescription() throws Exception {
         UniprotXref x = new UniprotXref( "SAM:1", "sam", "blabla" );
         assertNotNull( x );
         assertEquals( "SAM:1", x.getAccession() );

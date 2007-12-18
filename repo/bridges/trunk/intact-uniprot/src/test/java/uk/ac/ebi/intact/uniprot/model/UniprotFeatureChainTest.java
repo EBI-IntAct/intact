@@ -1,37 +1,20 @@
 package uk.ac.ebi.intact.uniprot.model;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import org.junit.Test;
 
 /**
  * UniprotFeatureChain Tester.
  *
- * @author <Authors name>
- * @since <pre>10/23/2006</pre>
- * @version 1.0
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
+ * @version $Id$
+ * @since 2.0.0
  */
-public class UniprotFeatureChainTest extends TestCase {
-    public UniprotFeatureChainTest(String name) {
-        super(name);
-    }
+public class UniprotFeatureChainTest {
 
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public static Test suite() {
-        return new TestSuite(UniprotFeatureChainTest.class);
-    }
-
-    ////////////////////
-    // Tests
-    
-    public void testId() throws Exception {
+    @Test
+    public void Id() throws Exception {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         assertEquals( "PRO_123", ufc.getId() );
 
@@ -50,14 +33,16 @@ public class UniprotFeatureChainTest extends TestCase {
         }
     }
 
-    public void testSequence() throws Exception {
+    @Test
+    public void Sequence() throws Exception {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         assertEquals( "ABCD", ufc.getSequence() );
         ufc.setSequence( "ACBEDFG" );
         assertEquals( "ACBEDFG", ufc.getSequence() );
     }
 
-    public void testSetGetOrganism() throws Exception {
+    @Test
+    public void SetGetOrganism() throws Exception {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         assertEquals( new Organism( 1 ), ufc.getOrganism() );
 
@@ -76,7 +61,8 @@ public class UniprotFeatureChainTest extends TestCase {
         }
     }
 
-    public void testStart() throws Exception {
+    @Test
+    public void Start() throws Exception {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         ufc.setStart( 2 );
         assertEquals( 2, ufc.getStart() );
@@ -95,7 +81,8 @@ public class UniprotFeatureChainTest extends TestCase {
         }
     }
 
-    public void testEnd() throws Exception {
+    @Test
+    public void End() throws Exception {
         UniprotFeatureChain ufc = new UniprotFeatureChain( "PRO_123", new Organism( 1 ), "ABCD" );
         ufc.setEnd( 5 );
         assertEquals( 5, ufc.getEnd() );
