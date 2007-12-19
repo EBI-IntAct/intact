@@ -42,6 +42,14 @@
             <version>1.6.0-rc1</version>
         </dependency>
 
+        <!-- It this is not present, eclipse fails to synchronize the maven build
+        due to a bug on the original POM of the stax-ex dependency used by the client (version 1.0) -->
+        <dependency>
+            <groupId>org.jvnet.staxex</groupId>
+            <artifactId>stax-ex</artifactId>
+            <version>1.2</version>
+        </dependency> 
+
         <!-- Database drivers - Comment/uncomment the one/s you need -->
 
         <!-- PostgreSQL -->
