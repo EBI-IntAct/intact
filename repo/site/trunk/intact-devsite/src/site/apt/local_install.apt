@@ -99,7 +99,7 @@ IV) Create the IntAct database schema
  Check out the schema creation for the script from SVN
 
 ----------------------
-svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0
+svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_8_0
 ----------------------
 
  in this directory you will find a file called 'create_schema.ddl'
@@ -108,11 +108,12 @@ svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres
 
 	[[b]] open a Query Tool (Tools > Query Tool)
 
-	[[c]] Copy the content of '{{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_7_0/create_schema.ddl}create_schema.ddl}}'
+	[[c]] Copy the content of '{{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_8_0/create_schema.ddl}create_schema.ddl}}'
 	and paste it into the top left window of the Query Tool and execute it (press F5 or Query > Execute).
 
-	[[d]] You should now have 45 tables created in 'intact-db'.
+	[[d]] You should now have 48 tables created in 'intact-db'.
 
+    [[e]] Now the last step is to grant access to your user on these tables by executing this script: {{{kickstart/grants.ddl}grants.ddl}}.
 
 V) Preparing your Maven Configuration
 
