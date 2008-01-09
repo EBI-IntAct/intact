@@ -22,6 +22,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import psidev.psi.mi.tab.converter.xml2tab.ColumnHandler;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
+import uk.ac.ebi.intact.psimitab.IntActColumnHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,6 +61,20 @@ public class ConvertXmlToTabMojo extends AbstractPsimitabConverterMojo {
      */
     private List files;
 
+    /**
+     * Whether to complete the GO terms
+     *
+     * @parameter
+     */
+    private boolean goTermAutocompletion = false;
+
+    /**
+     * Whether to complete the interpro terms
+     *
+     * @parameter
+     */
+    private boolean interproTermAutocompletion = false;
+
     ///////////////////////////////
     // Implements abstract method
 
@@ -72,24 +87,32 @@ public class ConvertXmlToTabMojo extends AbstractPsimitabConverterMojo {
         // config
         converter.setOverwriteOutputFile( true );
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
-        converter.setInteractorPairClustering( true );
+        converter.setInteractorPairClustering(true);
 
-        if ( hasBinaryInteractionClass() ) {
+        if (hasBinaryInteractionClass()) {
 
-            if ( getLog().isWarnEnabled() ) {
-                getLog().warn( "Using BinaryInteraction class: " + getBinaryInteractionClass() );
-                getLog().warn( "Using ColumnHandler class: " + getColumnHandler() );
+            if (getLog().isWarnEnabled()) {
+                getLog().warn("Using BinaryInteraction class: " + getBinaryInteractionClass());
+                getLog().warn("Using ColumnHandler class: " + getColumnHandler());
             }
 
             try {
-                converter.setBinaryInteractionClass( Class.forName( getBinaryInteractionClass() ) );
+                converter.setBinaryInteractionClass(Class.forName(getBinaryInteractionClass()));
 
-                if ( getColumnHandler() != null ) {
-                    Constructor constructor = Class.forName( getColumnHandler() ).getConstructor( new Class[]{} );
-                    converter.setColumnHandler( ( ColumnHandler ) constructor.newInstance( new Object[]{} ) );
+                if (getColumnHandler() != null) {
+                    Constructor constructor = Class.forName(getColumnHandler()).getConstructor(new Class[]{});
+                    ColumnHandler columnHandler = (ColumnHandler) constructor.newInstance(new Object[]{});
+
+                    if (columnHandler instanceof IntActColumnHandler) {
+                        IntActColumnHandler iaColumnHandler = (IntActColumnHandler) columnHandler;
+                        iaColumnHandler.setGoTermNameAutoCompletion(goTermAutocompletion);
+                        iaColumnHandler.setInterproNameAutoCompletion(interproTermAutocompletion);
+                    }
+
+                    converter.setColumnHandler(columnHandler);
                 }
-            } catch ( Exception e ) {
-                throw new MojoExecutionException( "Could not instanciate provided classes, see nested exception", e );
+            } catch (Exception e) {
+                throw new MojoExecutionException("Could not instanciate provided classes, see nested exception", e);
             }
         }
 
@@ -117,5 +140,21 @@ public class ConvertXmlToTabMojo extends AbstractPsimitabConverterMojo {
         } catch ( Exception e ) {
             throw new MojoExecutionException( "Error while converting files to PSIMITAB... see nested exception.", e );
         }
+    }
+
+    public boolean isInterproTermAutocompletion() {
+        return interproTermAutocompletion;
+    }
+
+    public void setInterproTermAutocompletion(boolean interproTermAutocompletion) {
+        this.interproTermAutocompletion = interproTermAutocompletion;
+    }
+
+    public boolean isGoTermAutocompletion() {
+        return goTermAutocompletion;
+    }
+
+    public void setGoTermAutocompletion(boolean goTermAutocompletion) {
+        this.goTermAutocompletion = goTermAutocompletion;
     }
 }
