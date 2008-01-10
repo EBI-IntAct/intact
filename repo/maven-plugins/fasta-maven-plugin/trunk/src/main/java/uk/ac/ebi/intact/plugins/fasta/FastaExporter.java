@@ -160,10 +160,12 @@ public class FastaExporter {
                             sb.append( ">INTACT:" );
                             sb.append( protein.getAc() );
 
+                            sb.append( ' ' );
                             String identity = getIdentity( protein );
                             if ( identity != null ) {
-                                sb.append( ' ' );
                                 sb.append( removeLineReturn( identity.trim() ) );
+                            } else {
+                                sb.append( protein.getAc() );
                             }
                             
                             sb.append( ' ' );

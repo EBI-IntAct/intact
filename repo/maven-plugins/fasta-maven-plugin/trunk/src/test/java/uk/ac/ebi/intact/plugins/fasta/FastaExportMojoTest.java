@@ -37,11 +37,16 @@ public class FastaExportMojoTest extends AbstractMojoTestCase {
         File hibernateConfig = new File( FastaExportMojoTest.class.getResource( "/test-hibernate.cfg.xml" ).getFile() );
         IntactContext.initStandaloneContext( hibernateConfig );
 
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+
+
+        final int count = daoFactory.getInteractionDao().getAll().size();
+        Assert.assertEquals( "The database should be empty and currently contains some interactions", 0, count );
+
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
         PersisterHelper.saveOrUpdate( mockBuilder.createInteractionRandomBinary() );
 
-        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         Assert.assertEquals( 1, daoFactory.getInteractionDao().getAll().size() );
 
         // protein without interactor
