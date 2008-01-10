@@ -14,10 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.ProteinImpl;
-import uk.ac.ebi.intact.model.Xref;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 import uk.ac.ebi.intact.persistence.dao.ProteinDao;
 
@@ -54,23 +51,27 @@ public class FastaExporter {
         CvXrefQualifier identity = IntactContext.getCurrentInstance().getCvContext().getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
         Collection identities = new ArrayList( 2 );
 
-
         for ( Xref xref : interactor.getXrefs() ) {
             if ( identity.equals( xref.getCvXrefQualifier() ) ) {
                 identities.add( xref.getPrimaryId() );
             }
         }
 
-        StringBuilder sb = new StringBuilder( 32 );
-        for ( Iterator iterator = identities.iterator(); iterator.hasNext(); ) {
-            String id = ( String ) iterator.next();
-            sb.append( id );
-            if ( iterator.hasNext() ) {
-                sb.append( '+' );
+        String identityStr = null;
+
+        if( !identities.isEmpty() ) {
+            StringBuilder sb = new StringBuilder( 32 );
+            for ( Iterator iterator = identities.iterator(); iterator.hasNext(); ) {
+                String id = ( String ) iterator.next();
+                sb.append( id );
+                if ( iterator.hasNext() ) {
+                    sb.append( '+' );
+                }
             }
+            identityStr = sb.toString();
         }
 
-        return sb.toString();
+        return identityStr;
     }
 
     private static String removeLineReturn( String s ) {
@@ -193,7 +194,7 @@ public class FastaExporter {
                             out.print( "@" );
                         }
                     }
-
+                          
                 } else {
                     // stats
                     countNoSeq++;
