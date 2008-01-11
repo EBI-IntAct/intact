@@ -74,6 +74,8 @@ public class SessionExpiredFilter implements Filter
                 // redirect to the session timed out page
                 RequestDispatcher rd = request.getRequestDispatcher(PAGE);
                 rd.forward(request, response);
+            } else {
+                chain.doFilter(request, response);
             }
         }
         else
