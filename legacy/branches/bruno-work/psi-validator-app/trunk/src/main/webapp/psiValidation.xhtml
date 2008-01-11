@@ -1,8 +1,14 @@
-<%@ taglib uri="http://java.sun.com/jsf/html" prefix="h" %>
-<%@ taglib uri="http://java.sun.com/jsf/core" prefix="f"%>
-<%@ taglib uri="http://myfaces.apache.org/tomahawk" prefix="t"%>
-
-<html>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:jsp="http://java.sun.com/JSP/Page"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:t="http://myfaces.apache.org/tomahawk"
+      xmlns:c="http://java.sun.com/jstl/core">
 
 <f:view>
     <head>
@@ -18,7 +24,7 @@
 
         <h:panelGrid columns="1" style="width:100%">
 
-            <%-- Header --%>
+            <!-- Header -->
             <h:panelGrid id="header" columns="3"
                          style="width:100%"
                          columnClasses="align-left,align-center,align-right">
@@ -37,7 +43,7 @@
                 </h:outputLink>
             </h:panelGrid>
 
-            <%-- Description --%>
+            <!-- Description -->
             <t:div styleClass="section-header">
                 <h:outputText value="Overview" />
             </t:div>
@@ -50,7 +56,7 @@
                 <h:outputText value=" XML format."/>
             </h:panelGroup>
 
-            <%-- File upload --%>
+            <!-- File upload -->
             <t:div styleClass="section-header">
                 <h:outputText value="Upload file"/>
              </t:div>
@@ -88,7 +94,7 @@
 
             <h:commandButton value="Upload" actionListener="#{psiValidatorBean.uploadFile}"/>
 
-            <%-- Uploaded file report table --%>
+            <!-- Uploaded file report table -->
             <t:div styleClass="section-header" rendered="#{psiValidatorBean.currentPsiReport != null}">
                 <h:outputText value="Validation summary"/>
              </t:div>
@@ -134,9 +140,9 @@
 
         </h:panelGrid>
 
-        <%-- XML Syntax Validation Report --%>
+        <!-- XML Syntax Validation Report -->
         <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null}">
-            <h:outputText value="<a name=\"xml_report\"/>" escape="false"/>
+            <a name="xml_report"/>
             <t:div styleClass="section-header">
                 <h:outputText value="XML Syntax Validation Report" />
             </t:div>
@@ -146,9 +152,9 @@
 
         </h:panelGrid>
 
-        <%-- Semantic Validation Report --%>
+        <!-- Semantic Validation Report -->
         <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport.semanticsReport != null}">
-            <h:outputText value="<a name=\"semantics_report\"/>" escape="false"/>
+            <a name="semantics_report"/>
             <t:div styleClass="section-header">
                 <h:outputText value="PSI MI 2.5 semantic validation report" />
             </t:div>
@@ -206,9 +212,9 @@
 
         </h:panelGrid>
 
-        <%-- HTML View --%>
-        <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null && psiValidatorBean.currentPsiReport.xmlSyntaxStatus == 'valid'}">
-            <h:outputText value="<a name=\"html_view\"/>" escape="false"/>
+        <!-- HTML View -->
+        <h:panelGrid columns="1" rendered="#{psiValidatorBean.currentPsiReport != null and psiValidatorBean.currentPsiReport.xmlSyntaxStatus == 'valid'}">
+            <a name="html_view"/>
             <t:div styleClass="section-header">
                 <h:outputText value="HTML View"/>
             </t:div>

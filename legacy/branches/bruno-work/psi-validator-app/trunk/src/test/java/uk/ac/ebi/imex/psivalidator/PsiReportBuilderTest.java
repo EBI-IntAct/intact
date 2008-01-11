@@ -11,6 +11,9 @@ import java.io.*;
 import java.net.URL;
 import java.net.URISyntaxException;
 
+import org.junit.Test;
+import org.junit.Assert;
+
 
 /**
  *
@@ -18,23 +21,12 @@ import java.net.URISyntaxException;
  * @version $Id$
  * @since <pre>14-Jun-2006</pre>
  */
-public class PsiReportBuilderTest extends TestCase
+public class PsiReportBuilderTest
 {
 
     private PsiReportBuilder psiReportBuilder;
 
-
-    protected void setUp() throws Exception
-    {
-
-
-    }
-
-    protected void tearDown() throws Exception
-    {
-        psiReportBuilder = null;
-    }
-
+    @Test
     public void testPsiFileWithoutErrors() throws IOException, URISyntaxException
     {
         URL url = PsiReportBuilderTest.class.getResource("resource/psiFileOk.xml").toURI().toURL();
@@ -43,15 +35,16 @@ public class PsiReportBuilderTest extends TestCase
 
         PsiReport report = psiReportBuilder.createPsiReport();
 
-        assertEquals(0, report.getValidatorMessages().size());
+        Assert.assertEquals(0, report.getValidatorMessages().size());
 
-        assertEquals("builder1", report.getName());
-        assertEquals("valid", report.getXmlSyntaxStatus());
-        assertEquals("valid", report.getSemanticsStatus());
-        assertNotNull(report.getHtmlView());
+        Assert.assertEquals("builder1", report.getName());
+        Assert.assertEquals("valid", report.getXmlSyntaxStatus());
+        Assert.assertEquals("valid", report.getSemanticsStatus());
+        Assert.assertNotNull(report.getHtmlView());
 
     }
 
+    @Test
     public void testPsiFileWithErrors() throws IOException, URISyntaxException
     {
         URL url = PsiReportBuilderTest.class.getResource("resource/psiFileWithErrors.xml").toURI().toURL();
@@ -60,16 +53,17 @@ public class PsiReportBuilderTest extends TestCase
 
         PsiReport report = psiReportBuilder.createPsiReport();
 
-        assertEquals(5, report.getValidatorMessages().size());
+        Assert.assertEquals(5, report.getValidatorMessages().size());
 
-        assertEquals("builder2", report.getName());
-        assertEquals("valid", report.getXmlSyntaxStatus());
-        assertEquals("invalid", report.getSemanticsStatus());
-        assertNotNull(report.getHtmlView());
+        Assert.assertEquals("builder2", report.getName());
+        Assert.assertEquals("valid", report.getXmlSyntaxStatus());
+        Assert.assertEquals("invalid", report.getSemanticsStatus());
+        Assert.assertNotNull(report.getHtmlView());
 
         //not checked
     }
 
+    @Test
     public void testWrongTypeFile() throws IOException, URISyntaxException
     {
          URL url = PsiReportBuilderTest.class.getResource("resource/wrong.xml").toURI().toURL();
@@ -78,11 +72,11 @@ public class PsiReportBuilderTest extends TestCase
 
         PsiReport report = psiReportBuilder.createPsiReport();
 
-        assertNull(report.getValidatorMessages());
+        Assert.assertNull(report.getValidatorMessages());
 
-        assertEquals("builder3", report.getName());
-        assertEquals("invalid", report.getXmlSyntaxStatus());
-        assertTrue(report.getSemanticsStatus().startsWith("not checked"));
-        assertNull(report.getHtmlView());
+        Assert.assertEquals("builder3", report.getName());
+        Assert.assertEquals("invalid", report.getXmlSyntaxStatus());
+        Assert.assertTrue(report.getSemanticsStatus().startsWith("not checked"));
+        Assert.assertNull(report.getHtmlView());
     }
 }
