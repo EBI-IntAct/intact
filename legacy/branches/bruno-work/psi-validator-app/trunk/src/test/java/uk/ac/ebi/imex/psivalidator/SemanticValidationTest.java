@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
+import org.junit.Test;
+import org.junit.Assert;
+
 /**
  * TODO comment this!
  *
@@ -26,10 +29,10 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>13-Jun-2006</pre>
  */
-public class SemanticValidationTest extends TestCase
+public class SemanticValidationTest
 {
 
-
+    @Test
     public void testSemanticValidationGoodFile() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
@@ -49,9 +52,10 @@ public class SemanticValidationTest extends TestCase
 
         Collection<ValidatorMessage> messages = validator.validate( expandedFile );
 
-        assertEquals(0, messages.size());
+        Assert.assertEquals(0, messages.size());
     }
 
+    @Test
     public void testSemanticValidationWithErrors() throws ValidatorException, TransformerException, IOException
     {
         InputStream configFile = SemanticValidationTest.class.getResourceAsStream("resource/config-mi-validator-test.xml");
@@ -71,6 +75,6 @@ public class SemanticValidationTest extends TestCase
 
         Collection<ValidatorMessage> messages = validator.validate( expandedFile );
 
-        assertEquals(5, messages.size());
+        Assert.assertEquals(5, messages.size());
     }
 }
