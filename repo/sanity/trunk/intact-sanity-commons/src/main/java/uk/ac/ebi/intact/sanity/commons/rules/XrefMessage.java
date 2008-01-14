@@ -41,17 +41,17 @@ public class XrefMessage extends GeneralMessage {
         fields.add(primaryIdField);
 
         Field dbField = new Field();
-        dbField.setName("Xref Database ID");
-        dbField.setValue(CvObjectUtils.getPsiMiIdentityXref(xref.getCvDatabase()).getPrimaryId());
+        dbField.setName("Xref Database Name");
+        dbField.setValue(xref.getCvDatabase().getShortLabel());
 
         fields.add(dbField);
 
 
         Field qualField = new Field();
-        qualField.setName("Xref Qualifier ID");
+        qualField.setName("Xref Qualifier Name");
 
         if (xref.getCvXrefQualifier() != null) {
-            qualField.setValue(CvObjectUtils.getPsiMiIdentityXref(xref.getCvXrefQualifier()).getPrimaryId());
+            qualField.setValue(xref.getCvXrefQualifier().getShortLabel());
         } else {
             qualField.setValue("");
         }
