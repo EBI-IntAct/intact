@@ -72,8 +72,10 @@ public class BlastEbiWsTest {
 	 */
 	@After
 	public void tearDown() throws Exception {
-		wsBlast.close();
-	}
+        if (wsBlast != null) {
+            wsBlast.close();
+        }
+    }
 
 	/**
 	 * Test method for {@link AbstractBlastService#submitJob(uk.ac.ebi.intact.bridges.blast.model.UniprotAc)}.
