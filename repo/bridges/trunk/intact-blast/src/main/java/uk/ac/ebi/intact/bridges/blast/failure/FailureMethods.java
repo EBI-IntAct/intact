@@ -16,11 +16,11 @@
 package uk.ac.ebi.intact.bridges.blast.failure;
 
 /**
- * TODO comment that class header
+ * BlastService methods which can fail.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 1.0
  *        <pre>
  *               26-Oct-2007
  *               </pre>

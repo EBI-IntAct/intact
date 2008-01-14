@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment that class header
+ * Test class for the balst service using a mock.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since
  *        <pre>
  *                             25-Oct-2007
  *                             </pre>

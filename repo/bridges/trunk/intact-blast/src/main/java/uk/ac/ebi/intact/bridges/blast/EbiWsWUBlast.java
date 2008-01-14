@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this ... someday
+ * EBI web service WUBlast implementation.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @since <pre>

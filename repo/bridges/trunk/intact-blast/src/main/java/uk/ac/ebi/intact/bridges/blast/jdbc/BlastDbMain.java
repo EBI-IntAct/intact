@@ -12,7 +12,7 @@ import java.util.List;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 
 /**
- * TODO comment this ... someday
+ * Main for the db strategy.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version
