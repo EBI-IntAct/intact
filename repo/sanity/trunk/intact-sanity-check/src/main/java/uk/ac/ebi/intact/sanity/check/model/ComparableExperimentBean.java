@@ -212,11 +212,15 @@ public class ComparableExperimentBean implements Comparable{
             return 2;
         }
         else{
-            if(Integer.parseInt(this.pubmedId) < Integer.parseInt(experiment.getPubmedId())){
-                return -1;
-            }else if(Integer.parseInt(this.pubmedId) == Integer.parseInt(experiment.getPubmedId())){
-                return 0;
-            }else return 1;
+            try {
+                if(Integer.parseInt(this.pubmedId) < Integer.parseInt(experiment.getPubmedId())){
+                    return -1;
+                }else if(Integer.parseInt(this.pubmedId) == Integer.parseInt(experiment.getPubmedId())){
+                    return 0;
+                }else return 1;
+            } catch (NumberFormatException e) {
+                return pubmedId.compareTo(experiment.getPubmedId());
+            }
         }
 
     }
