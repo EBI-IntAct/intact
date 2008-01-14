@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PubmedMock;
 import uk.ac.ebi.intact.mocks.cvXrefQualifiers.IdentityMock;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.BioSourceXref;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.sanity.commons.rules.GeneralMessage;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageDefinition;
 

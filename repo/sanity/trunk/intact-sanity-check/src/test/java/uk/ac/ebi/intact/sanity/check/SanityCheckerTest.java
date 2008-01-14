@@ -53,20 +53,8 @@ public class SanityCheckerTest extends AbstractSanityCheckTest {
     }
 
     @Test
-    @Ignore
-    public void checkAnnotatedObjects_interactions() throws Exception {
-        Interaction interaction = getMockBuilder().createInteractionRandomBinary();
-        interaction.setExperiments( Collections.EMPTY_LIST );
-        populateAuditable( interaction );
-
-        SanityReport report = SanityChecker.executeSanityCheck( Arrays.asList( interaction ) );
-
-        Assert.assertEquals( 1, report.getSanityResult().size() );
-    }
-
-    @Test
     public void checkAnnotatedObjects_interactors_interaction() throws Exception {
-        Interaction interaction = getMockBuilder().createInteractionRandomBinary();
+        Interaction interaction = getMockBuilder().createDeterministicInteraction();
         interaction.setExperiments( Collections.EMPTY_LIST );
         populateAuditable( interaction );
 
@@ -77,7 +65,7 @@ public class SanityCheckerTest extends AbstractSanityCheckTest {
 
     @Test
     public void checkAnnotatedObjects_interactors_protein() throws Exception {
-        Protein protein = getMockBuilder().createProteinRandom();
+        Protein protein = getMockBuilder().createDeterministicProtein("P12345", "lala");
         populateAuditable( protein );
 
         SanityReport report = SanityChecker.executeSanityCheck( Arrays.asList( protein ) );

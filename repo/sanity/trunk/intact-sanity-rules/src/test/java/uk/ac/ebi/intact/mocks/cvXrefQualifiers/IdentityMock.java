@@ -7,6 +7,8 @@ package uk.ac.ebi.intact.mocks.cvXrefQualifiers;
 
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.CvObjectXref;
+import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.util.CvObjectBuilder;
 import uk.ac.ebi.intact.mocks.CvObjectMock;
 import uk.ac.ebi.intact.mocks.XrefMock;
 import uk.ac.ebi.intact.mocks.IntactObjectSetter;
@@ -21,12 +23,6 @@ import uk.ac.ebi.intact.mocks.cvDatabases.PsiMiMock;
  */
 public class IdentityMock {
     public static CvXrefQualifier getMock(){
-        CvXrefQualifier identity = CvObjectMock.getMock(CvXrefQualifier.class,CvXrefQualifier.IDENTITY, "identical object");
-
-        identity = (CvXrefQualifier) IntactObjectSetter.setBasicObject(identity);
-
-        CvObjectXref xref = XrefMock.getMock(CvObjectXref.class, PsiMiMock.getPsiMi(), identity, CvXrefQualifier.IDENTITY_MI_REF);
-        identity.addXref(xref);
-        return identity;
+        return new CvObjectBuilder().createIdentityCvXrefQualifier(new Institution("lala"));
     }
 }

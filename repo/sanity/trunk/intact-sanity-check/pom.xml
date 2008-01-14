@@ -28,10 +28,6 @@
             <artifactId>intact-commons</artifactId>
         </dependency>
         <dependency>
-            <groupId>uk.ac.ebi.intact.core</groupId>
-            <artifactId>intact-persister</artifactId>
-        </dependency>
-        <dependency>
             <groupId>uk.ac.ebi.intact.datasets</groupId>
             <artifactId>intact-dataset</artifactId>
             <scope>test</scope>

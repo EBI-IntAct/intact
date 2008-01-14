@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.AbstractSanityLegacyTest;
@@ -52,9 +52,7 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
             }
         }
 
-        beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate( interaction );
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(interaction);
 
         // the persister might have synchronized the bait with an already existing protein in the database, do reload it
         final List<ProteinImpl> list = getDaoFactory().getInteractorDao( ProteinImpl.class ).getByXrefLike( "P12345" );
@@ -112,9 +110,7 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
 
         bait.setSequence( seq2 );
 
-        beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate( interaction );
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(interaction);
         Assert.assertEquals( 1, bait.getActiveInstances().size() );
 
 
@@ -177,9 +173,7 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
 
         bait.setSequence( seq2 );
 
-        beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate( interaction );
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(interaction);
 
         // the persister might have synchronized the bait with an already existing protein in the database, do reload it
         final List<ProteinImpl> list = getDaoFactory().getInteractorDao( ProteinImpl.class ).getByXrefLike( "P12345" );
@@ -238,9 +232,7 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
             }
         }
 
-        beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate( interaction );
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(interaction);
 
         String ac = bait.getAc();
         Assert.assertNotNull( ac );
@@ -296,9 +288,7 @@ public class RangeCheckerTest extends AbstractSanityLegacyTest {
 
         bait.setSequence( seq2 );
 
-        beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate( interaction );
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(interaction);
 
         String ac = bait.getAc();
         Assert.assertNotNull( ac );

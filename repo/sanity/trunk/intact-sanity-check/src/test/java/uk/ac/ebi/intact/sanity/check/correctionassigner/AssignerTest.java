@@ -4,7 +4,7 @@ import org.junit.*;
 import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterException;
-import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
 import uk.ac.ebi.intact.model.*;
@@ -596,9 +596,6 @@ public class AssignerTest extends AbstractSanityLegacyTest {
     // Utilities
 
     private void persistExperiment( Experiment experiment ) throws PersisterException {
-        for ( Interaction interaction : experiment.getInteractions() ) {
-            InteractionPersister.getInstance().saveOrUpdate( interaction );
-        }
-        InteractionPersister.getInstance().commit();
+        PersisterHelper.saveOrUpdate(experiment);
     }
 }
