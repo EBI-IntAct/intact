@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.confidence.blastmapping;
 
 /**
- * TODO comment this ... someday
+ * Exception-Wrapper for BlastMappingReader.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version
