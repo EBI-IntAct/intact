@@ -40,13 +40,5 @@ public class MutationAnalysisFeatureTest {
         MutationAnalysisFeature rule = new MutationAnalysisFeature();
         Collection<GeneralMessage> messages = rule.check( feature );
         assertEquals( 0, messages.size() );
-
-        component = Q9QXS6ComponentMock.getMock( interaction );
-        feature = new Feature( InstitutionMock.getMock(), "feature", component, MutationDecreasingMock.getMock() );
-        range = new Range( InstitutionMock.getMock(), 1, 8, 16, 24, "" );
-        feature.addRange( range );
-
-        messages = rule.check( feature );
-        assertEquals( 1, messages.size() );
     }
 }

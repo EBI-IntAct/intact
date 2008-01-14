@@ -34,12 +34,12 @@ public class NoNewtIdentity implements Rule<BioSource> {
         int validIdentityXref = 0;
         for ( BioSourceXref bioSourceXref : bs.getXrefs() ) {
 
-            CvObjectXref qualifierMi = CvObjectUtils.getPsiMiIdentityXref( bioSourceXref.getCvXrefQualifier() );
+            String qualifierMi = bioSourceXref.getCvXrefQualifier().getMiIdentifier();
 
-            if ( qualifierMi != null && CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierMi.getPrimaryId() ) ) {
-                CvObjectXref dbMi = CvObjectUtils.getPsiMiIdentityXref( bioSourceXref.getCvDatabase() );
+            if ( CvXrefQualifier.IDENTITY_MI_REF.equals( qualifierMi ) ) {
+                String dbMi = bioSourceXref.getCvDatabase().getMiIdentifier();
 
-                if ( CvDatabase.NEWT_MI_REF.equals( dbMi.getPrimaryId() ) ) {
+                if ( CvDatabase.NEWT_MI_REF.equals( dbMi ) ) {
                     validIdentityXref++;
                 }
             }

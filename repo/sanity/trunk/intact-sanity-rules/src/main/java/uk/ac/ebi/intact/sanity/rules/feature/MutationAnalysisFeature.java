@@ -35,12 +35,12 @@ public class MutationAnalysisFeature implements Rule<Feature> {
             return messages;
         }
 
-        CvObjectXref cvFeatureTypeIdentity = CvObjectUtils.getPsiMiIdentityXref( feature.getCvFeatureType() );
+        String cvFeatureTypeIdentityMi = feature.getCvFeatureType().getMiIdentifier();
 
-        if ( CvFeatureType.MUTATION_DECREASING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
-             CvFeatureType.MUTATION_INCREASING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
-             CvFeatureType.MUTATION_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() ) ||
-             CvFeatureType.MUTATION_DISRUPTING_MI_REF.equals( cvFeatureTypeIdentity.getPrimaryId() )
+        if ( CvFeatureType.MUTATION_DECREASING_MI_REF.equals( cvFeatureTypeIdentityMi ) ||
+             CvFeatureType.MUTATION_INCREASING_MI_REF.equals( cvFeatureTypeIdentityMi ) ||
+             CvFeatureType.MUTATION_MI_REF.equals( cvFeatureTypeIdentityMi ) ||
+             CvFeatureType.MUTATION_DISRUPTING_MI_REF.equals( cvFeatureTypeIdentityMi )
                 ) {
             Collection<Range> ranges = feature.getRanges();
             for ( Range range : ranges ) {

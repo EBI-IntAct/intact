@@ -3,7 +3,6 @@ package uk.ac.ebi.intact.sanity.check;
 import org.junit.After;
 import org.junit.Before;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.persister.PersisterContext;
 import uk.ac.ebi.intact.sanity.check.config.Curator;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.config.SuperCurator;

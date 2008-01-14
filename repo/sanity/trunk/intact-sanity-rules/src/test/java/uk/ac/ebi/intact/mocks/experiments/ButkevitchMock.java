@@ -17,6 +17,7 @@ import uk.ac.ebi.intact.mocks.cvInteractions.CoSedimentationMock;
 import uk.ac.ebi.intact.mocks.cvIdentifications.PredeterminedMock;
 import uk.ac.ebi.intact.mocks.interactions.Cja1Dbn1Mock;
 import uk.ac.ebi.intact.mocks.*;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 
 /**
  * TODO comment this
@@ -31,13 +32,8 @@ public class ButkevitchMock {
     private static final String AUTHOR_LIST = "Butkevich E., Hulsmann S., Wenzel D., Shirao T., Duden R., Majoul I.";
 
     public static Experiment getMock(){
-        Experiment experiment = new Experiment(InstitutionMock.getMock(),SHORTLABEL, BioSourceMock.getMock());
-
-        experiment = (Experiment) IntactObjectSetter.setBasicObject(experiment);
-
-        
-        ExperimentXref xref = XrefMock.getMock(ExperimentXref.class, PubmedMock.getMock(), PrimaryRefMock.getMock(), "15084279");
-        experiment.addXref(xref);
+        Experiment experiment = new IntactMockBuilder().createExperimentEmpty(SHORTLABEL, "123456");
+        experiment.setFullName(FULLNAME);
 
         Annotation authorList = AnnotationMock.getMock(AuthorListMock.getMock(), AUTHOR_LIST);
         experiment.addAnnotation(authorList);
@@ -47,8 +43,6 @@ public class ButkevitchMock {
 
         experiment.setCvInteraction(CoSedimentationMock.getMock());
         experiment.setCvIdentification(PredeterminedMock.getMock());
-
-        experiment.setFullName(FULLNAME);
 
         Interaction interaction = Cja1Dbn1Mock.getMock(experiment);
         experiment.addInteraction(interaction);
