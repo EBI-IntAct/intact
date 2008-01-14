@@ -125,7 +125,7 @@
 	<xs:complexType name="tTimeInfo">
 		<xs:attribute name="start" type="xs:dateTime" use="required" />
 		<xs:attribute name="end" type="xs:dateTime" use="required" />
-		<xs:attribute name="search" type="xs:duration" use="required" />
+		<xs:attribute name="search" type="xs:string" use="required" />
 	</xs:complexType>
 
 	<xs:complexType name="tIterations">
