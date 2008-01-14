@@ -16,7 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**
- * TODO comment this ... someday
+ * Test class for BlastMappingReader.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version 0.1
