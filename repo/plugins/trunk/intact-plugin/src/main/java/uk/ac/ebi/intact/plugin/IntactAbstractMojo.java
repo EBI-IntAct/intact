@@ -10,11 +10,14 @@ import org.apache.maven.project.MavenProject;
 import org.apache.log4j.*;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * TODO: comment this!
+ * Abstract IntAct Mojo.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id:IntactAbstractMojo.java 5772 2006-08-11 16:08:37 +0100 (Fri, 11 Aug 2006) baranda $
  * @since 0.1
  */
@@ -48,7 +51,6 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     protected void enableLogging() {
         try {
-
             BasicConfigurator.configure(getLogAppender());
         } catch (IOException e) {
             e.printStackTrace();
@@ -65,20 +67,24 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
         Layout layout = getLogLayout();
         FileAppender appender = new FileAppender(layout, logFile.getAbsolutePath(), true);
+
+        // this is not a randon appender name, should one want to tweak the logging of a plugin then we can using:
+        // in log4j.properties
+        // log4j.rootCategory=WARN, PLUGIN
+        appender.setName( "PLUGIN" );
         appender.setThreshold(getLogPriority());
 
         return appender;
     }
 
     protected Priority getLogPriority() {
-        return Priority.INFO;
+        return Level.INFO;
     }
 
     protected void writeOutputln( String line ) throws IOException {
         if ( line == null ) {
             return;
         }
-
         getOutputWriter().write( line + NEW_LINE );
     }
 
@@ -86,9 +92,7 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         if ( line == null ) {
             return;
         }
-
         getErrorWriter().write( line + NEW_LINE );
-
     }
 
     public Writer getOutputWriter() throws IOException {
@@ -108,7 +112,6 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
             errorWriter = new FileWriter( errorFile );
         }
-
         return errorWriter;
     }
 
@@ -116,9 +119,8 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
 
     public File getOutputFile() {
         if ( outputFile == null ) {
-            outputFile = new File( getDirectory(), "output.log" );
+            outputFile = new File( getDirectory(), "output."+ getCurrentDate() +".log" );
         }
-
         return outputFile;
     }
 
@@ -168,5 +170,13 @@ public abstract class IntactAbstractMojo extends AbstractMojo {
         } else {
             return new File( "target/classes-test" );
         }
+    }
+
+    //////////////////
+    // Utilities
+
+    private String getCurrentDate() {
+        final SimpleDateFormat formatter = new SimpleDateFormat( "yyyy.MM.dd.HH.mm.ss" );
+        return formatter.format( new Date() );
     }
 }

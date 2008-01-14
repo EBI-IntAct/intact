@@ -29,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Base class for plugins that require hibernate access
+ * Base class for plugins that require hibernate access.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -81,6 +81,7 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
 
     protected abstract void executeIntactMojo() throws MojoExecutionException, MojoFailureException, IOException;
 
+    // TODO should be synchronized
     protected void initializeHibernate() throws MojoExecutionException {
         if ( initialized ) {
             return;
@@ -158,5 +159,4 @@ public abstract class IntactHibernateMojo extends IntactAbstractMojo {
     public boolean isCloseSessionFactory() {
         return closeSessionFactory;
     }
-
 }
