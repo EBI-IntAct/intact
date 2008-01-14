@@ -130,7 +130,7 @@ public class BlastClient {
 			job = new Job(blast.runWUBlast(params, inputs), blastInput);
 			checkStatus(job);
 		} catch (RemoteException e) {
-			// FIXME: ask sam : axisfault
+			// FIXME: axisfault
 			String message = e.getMessage();
 			if (message.startsWith("could not fetch entry")) {
 				job = new Job("failed " + blastInput.toString(), blastInput);
@@ -148,7 +148,7 @@ public class BlastClient {
             content = blastInput.getSequence().getSeq();
             return content;
         } else {
-            content = "uniprot:" + blastInput.getUniprotAc().getAcNr();
+            content = "intact:" + blastInput.getUniprotAc().getAcNr();
             return content;
         }
             
@@ -175,7 +175,7 @@ public class BlastClient {
 
 		InputParams params = new InputParams();
 		params.setProgram("blastp");
-		params.setDatabase("uniprot");
+		params.setDatabase("intact");
 		params.setEmail(email);
 		params.setNumal(100);
 

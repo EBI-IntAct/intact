@@ -19,11 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * TODO comment that class header
+ * WaitAndRetry implementation of the strategy.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 1.0
  *        <pre>
  *                      26-Oct-2007
  *                      </pre>

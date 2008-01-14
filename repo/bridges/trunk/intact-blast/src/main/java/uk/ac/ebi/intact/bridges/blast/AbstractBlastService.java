@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * TODO comment this ... someday
+ * Main implementation of the BlastService strategy.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @since <pre> 12 Sep 2007  </pre>
@@ -390,11 +390,15 @@ public abstract class AbstractBlastService implements BlastService {
                 if ( job != null ) {
                     if ( BlastJobStatus.DONE.equals( job.getStatus() ) ) {
                         BlastResult res = fetchResult( job );
-                        results.add( res );
+                        if (res != null){
+                            results.add( res );
+                        }
                     } else if ( BlastJobStatus.FAILED.equals( job.getStatus() )
                                 || BlastJobStatus.NOT_FOUND.equals( job.getStatus() ) ) {
                         BlastResult res = new BlastResult( job.getUniprotAc(), new ArrayList<Hit>( 0 ) );
-                        results.add( res );
+                        if (res != null){
+                            results.add( res );
+                        }
                     }
                 } else {
                     if ( log.isInfoEnabled() ) {
@@ -815,7 +819,7 @@ public abstract class AbstractBlastService implements BlastService {
          BlastMappingReader bmr = new BlastMappingReader();
         try {
             EBIApplicationResult result = bmr.read(resultFile);
-            return result == null;
+            return result != null;
         } catch ( BlastMappingException e ) {
             throw new BlastServiceException(e);
         }
@@ -850,8 +854,7 @@ public abstract class AbstractBlastService implements BlastService {
         }
         return tmpFile;
     }
-
-    //TODO: i could merge this method with writeResultsToWorkDir)
+    
     private void writeResults( String result, Writer writer ) throws BlastServiceException {
         try {
             writer.append( result );

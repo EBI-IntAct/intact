@@ -19,7 +19,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  */
 
 /**
- * TODO comment this ... someday
+ * Main for the BlastClient.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version

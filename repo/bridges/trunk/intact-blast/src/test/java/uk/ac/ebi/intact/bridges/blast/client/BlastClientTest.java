@@ -16,7 +16,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * TODO comment this ... someday
+ * Test class for the blast client.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @since <pre> 7 Sep 2007 </pre>
@@ -188,7 +188,7 @@ public class BlastClientTest {
         UniprotAc ac = new UniprotAc( "Q9VQS6-1" );
         BlastInput bI = new BlastInput( ac);
         String content = bc.getSpecificContent( bI );
-        Assert.assertTrue( content.equals( "uniprot:Q9VQS6-1" ) );
+        Assert.assertTrue( content.equals( "intact:Q9VQS6-1" ) );
     }
 
     @Test
@@ -196,7 +196,7 @@ public class BlastClientTest {
         UniprotAc ac = new UniprotAc( "Q9VQS6" );
         BlastInput bI = new BlastInput( ac);
         String content = bc.getSpecificContent( bI );
-        Assert.assertTrue( content.equals( "uniprot:Q9VQS6" ) );
+        Assert.assertTrue( content.equals( "intact:Q9VQS6" ) );
     }
 
      @Test
