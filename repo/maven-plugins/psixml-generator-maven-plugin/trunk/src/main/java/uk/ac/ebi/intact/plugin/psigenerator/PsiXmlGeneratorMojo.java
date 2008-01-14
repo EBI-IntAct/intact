@@ -145,12 +145,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
-//                try {
-//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-//                } catch (IntactTransactionException e) {
-//                    e.printStackTrace();
-//                    getLog().error(e);
-//                }
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by species: " + getSpeciesFile() );
             }
@@ -164,12 +164,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 writeClassificationByPublicationsToFile();
 
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
-//                try {
-//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-//                } catch (IntactTransactionException e) {
-//                    e.printStackTrace();
-//                    getLog().error(e);
-//                }
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by publications: " + getPublicationsFile() );
             }
@@ -184,12 +184,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
-//                try {
-//                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-//                } catch (IntactTransactionException e) {
-//                    e.printStackTrace();
-//                    getLog().error(e);
-//                }
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+                } catch (IntactTransactionException e) {
+                    e.printStackTrace();
+                    getLog().error(e);
+                }
             } else {
                 getLog().info( "Using existing classification by datasets: " + getDatasetsFile() );
             }
@@ -213,12 +213,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
-//            try {
-//                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-//            } catch (IntactTransactionException e) {
-//                e.printStackTrace();
-//                getLog().error(e);
-//            }
+            try {
+                IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+            } catch (IntactTransactionException e) {
+                e.printStackTrace();
+                getLog().error(e);
+            }
         }
 
         try {
@@ -307,12 +307,12 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
         IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
-//        try {
-//            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
-//        } catch (IntactTransactionException e) {
-//            e.printStackTrace();
-//            getLog().error(e);
-//        }
+        try {
+            IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
+        } catch (IntactTransactionException e) {
+            e.printStackTrace();
+            getLog().error(e);
+        }
     }
 
     private File getReverseMapping() {
