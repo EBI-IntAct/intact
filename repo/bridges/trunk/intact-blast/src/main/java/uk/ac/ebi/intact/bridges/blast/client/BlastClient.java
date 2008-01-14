@@ -26,11 +26,11 @@ import uk.ac.ebi.intact.bridges.blast.model.BlastInput;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.BlastOutput;
 import uk.ac.ebi.intact.bridges.blast.model.Job;
-import wsdl2java.uk.ac.ebi.www.WSWUBlast.Data;
-import wsdl2java.uk.ac.ebi.www.WSWUBlast.InputParams;
-import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlast;
-import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlastService;
-import wsdl2java.uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
+import uk.ac.ebi.www.WSWUBlast.Data;
+import uk.ac.ebi.www.WSWUBlast.InputParams;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlast;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlastService;
+import uk.ac.ebi.www.WSWUBlast.WSWUBlastServiceLocator;
 
 /**
  * Blast client
@@ -112,7 +112,7 @@ public class BlastClient {
 
 		InputParams params = new InputParams();
 		params.setProgram("blastp");
-		params.setDatabase("uniprot");
+		params.setDatabase("intact");
 		params.setEmail(email);
 		params.setNumal(nr);
 

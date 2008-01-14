@@ -143,7 +143,7 @@ public class BlastClientTest {
     }
 
     @Test
-    @Ignore
+   @Ignore
     public final void testSubmitSplicevariant() throws BlastClientException {
         BlastClient bc = new BlastClient( "iarmean@ebi.ac.uk" );
         String seq = "MFAVMRIDNDDCRSDFRRKMRPKCEFICKYCQRRFTKPYNLMIHERTHKSPEITYSCEVCGKYFKQRDNLRQHRCSQCVWR";
