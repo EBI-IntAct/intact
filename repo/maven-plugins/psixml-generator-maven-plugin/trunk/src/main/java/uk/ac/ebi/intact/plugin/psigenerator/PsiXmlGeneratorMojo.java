@@ -110,6 +110,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             }
         }
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
 
         boolean speciesEnabled = classificationEnabled( "species" );
         getLog().debug( "Species classification requested: " + speciesEnabled );
@@ -158,6 +160,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             getLog().info( "Skip species classification at user request." );
         }
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         if ( publicationsEnabled ) {
             if ( !getPublicationsFile().exists() ) {
                 getLog().info( "Writing classifications by publications" );
@@ -176,6 +180,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         } else {
             getLog().info( "Skip publication classification at user request." );
         }
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         if ( datasetsEnabled ) {
             if ( !getDatasetsFile().exists() ) {
@@ -196,6 +202,8 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
         } else {
             getLog().info( "Skip dataset classification at user request." );
         }
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         CvMapping mapping = null;
         if ( hasPsi1( psiVersions ) ) {
@@ -282,6 +290,9 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
 
     private void writePsiDataFile( ExperimentListItem item, CvMapping mapping ) throws IOException {
         getLog().debug( "\tLoading interactions" );
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
         Collection<Interaction> interactions = PsiFileGenerator.getInteractionsForExperimentListItem( item );
 
         for ( Version version : psiVersions ) {
