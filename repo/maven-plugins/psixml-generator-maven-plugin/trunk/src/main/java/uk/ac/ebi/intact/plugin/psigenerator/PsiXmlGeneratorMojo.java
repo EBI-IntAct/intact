@@ -220,7 +220,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             items = null;
 
             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
-
+                                
             try {
                 IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
             } catch (IntactTransactionException e) {
