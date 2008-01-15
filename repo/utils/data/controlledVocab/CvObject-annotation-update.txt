@@ -78,15 +78,22 @@ feature att name	feature attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0668	h
 interaction att name	interaction attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0664	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 organism att name	organism attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0669	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
 participant att name	participant attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0666	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-2			
-feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-attribute name	attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0590	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-experimental form de	experimental form description	uk.ac.ebi.intact.model.CvTopic	MI:0596	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-pathway	pathway	uk.ac.ebi.intact.model.CvTopic	MI:0619	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
-function	function	uk.ac.ebi.intact.model.CvTopic	MI:0613	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.
-xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1
-original identifier	originally assigned identifier	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0869	hidden	Xref type that is used only to store external databases records and not used during manual curation.	FALSE	
-ncbi taxonomy	ncbi taxonomy	uk.ac.ebi.intact.model.CvDatabase	MI:0849	hidden	IntAct point to NEWT database instead of NCBI taxonomy. NCBI taxonomy and NEWT use the same TaxID.	FALSE	
-imex-primary	imex-primary	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0662	hidden	Xref type that is used only to store automatically assigned IMEX ids and used not during manual curation.	FALSE	
+feature description	feature description	uk.ac.ebi.intact.model.CvTopic	MI:0597	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+feature constrain	feature constrain	uk.ac.ebi.intact.model.CvTopic	MI:0598	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+experiment descripti	experiment description	uk.ac.ebi.intact.model.CvTopic	MI:0591	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+attribute name	attribute name	uk.ac.ebi.intact.model.CvTopic	MI:0590	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+experimental form de	experimental form description	uk.ac.ebi.intact.model.CvTopic	MI:0596	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+pathway	pathway	uk.ac.ebi.intact.model.CvTopic	MI:0619	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+prerequisite-ptm	prerequisite-ptm	uk.ac.ebi.intact.model.CvTopic	MI:0638	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+function	function	uk.ac.ebi.intact.model.CvTopic	MI:0613	hidden	Term currently not used in IntAct.	FALSE	Term not used in IntAct.			
+xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hidden	Root term deprecated during manual curation as too unspecific. 	FALSE	root term-1			
+original identifier	originally assigned identifier	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0869	hidden	Xref type that is used only to store external databases records and not used during manual curation.	FALSE				
+ncbi taxonomy	ncbi taxonomy	uk.ac.ebi.intact.model.CvDatabase	MI:0849	hidden	IntAct point to NEWT database instead of NCBI taxonomy. NCBI taxonomy and NEWT use the same TaxID.	FALSE				
+imex-primary	imex-primary	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0662	hidden	Xref type that is used only to store automatically assigned IMEX ids and used not during manual curation.	FALSE				
+										
+Mint	Mint	uk.ac.ebi.intact.model.CvDatabase	MI:0471	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
+dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0574	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
+pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct
+peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct
+gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
