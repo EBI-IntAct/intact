@@ -145,8 +145,6 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 getLog().info( "Classifying and writing classification by species" );
                 writeClassificationBySpeciesToFile();
 
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
-
                 try {
                     IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
                 } catch (IntactTransactionException e) {
@@ -177,7 +175,7 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             } else {
                 getLog().info( "Using existing classification by publications: " + getPublicationsFile() );
             }
-        } else {
+        } else {                         
             getLog().info( "Skip publication classification at user request." );
         }
 
@@ -187,8 +185,6 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             if ( !getDatasetsFile().exists() ) {
                 getLog().info( "Writing classifications by datasets" );
                 writeClassificationByDatasetToFile();
-
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
                 try {
                     IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
@@ -219,8 +215,6 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             items.clear();
             items = null;
 
-            IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
-                                
             try {
                 IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
             } catch (IntactTransactionException e) {
@@ -315,8 +309,6 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
             getLog().debug( "\tTime to export to version " + version.getNumber() + ": " + new Chrono().printTime( elapsed ) );
 
         }
-
-        IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
 
         try {
             IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
