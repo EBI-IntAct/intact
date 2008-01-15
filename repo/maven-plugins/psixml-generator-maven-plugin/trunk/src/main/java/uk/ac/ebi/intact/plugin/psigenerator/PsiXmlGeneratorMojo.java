@@ -165,7 +165,6 @@ public class PsiXmlGeneratorMojo extends PsiXmlGeneratorAbstractMojo {
                 getLog().info( "Writing classifications by publications" );
                 writeClassificationByPublicationsToFile();
 
-                IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getEntityManager().clear();
                 try {
                     IntactContext.getCurrentInstance().getDataContext().commitAllActiveTransactions();
                 } catch (IntactTransactionException e) {
