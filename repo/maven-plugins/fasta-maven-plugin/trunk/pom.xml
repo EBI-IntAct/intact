@@ -28,9 +28,7 @@
     <dependencies>
         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
-            <artifactId>intact-persister</artifactId>
-            <version>1.7.2-SNAPSHOT</version>
-            <scope>test</scope>
+            <artifactId>intact-core</artifactId>
         </dependency>
     </dependencies>
 
