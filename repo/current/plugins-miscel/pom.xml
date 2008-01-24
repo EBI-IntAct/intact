@@ -11,7 +11,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>22222222222222222222222222222222222222222222</version>
+        <version>22</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
