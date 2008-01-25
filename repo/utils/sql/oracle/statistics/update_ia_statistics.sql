@@ -9,7 +9,7 @@
 
   Purpose:    Anonymous PL/SQL block allowing to update regularly the IntAct statistics table (ia_statistics).
 
-  Usage:      sqlplus username/password@instance @progname.sql
+  Usage:      sqlplus username/password@instance @programme.sql
 
   Input parameter:
        p_start : the date of the first row to be created (non mandatory, can be set to NULL)
@@ -44,6 +44,7 @@ DECLARE
     v_complex_interactions  IA_Statistics.complex_interactions%TYPE;
     v_experiment_number     IA_Statistics.experiment_number%TYPE;
     v_term_number           IA_Statistics.term_number%TYPE;
+    v_publications          IA_Statistics.publication_count%TYPE;
 
     v_date    DATE;                             /* Current date               */
     p_start   VARCHAR2( 10 ) := '2003-08-02';   /* Starting date              */
@@ -124,12 +125,24 @@ BEGIN
             FROM IA_ControlledVocab
             WHERE created <= v_date;
 
-            DBMS_OUTPUT.PUT_LINE( 'CREATE: ' || to_char( v_date )||': '||to_char(v_interaction_number)||' '||to_char(v_binary_interactions)||' '||to_char(v_complex_interactions)||' '||to_char(v_experiment_number)||' '||to_char(v_term_number) );
+            SELECT count( distinct x.primaryId ) INTO v_publications
+            FROM ia_experiment e, ia_experiment_xref x, ia_controlledvocab q, ia_controlledvocab db
+            WHERE e.shortlabel like '%' and
+                  e.ac = x.parent_ac and
+                  x.database_ac = db.ac and
+                  db.shortlabel = 'pubmed' and
+                  x.qualifier_ac = q.ac and
+                  q.shortlabel = 'primary-reference' and
+                  e.created <= v_date;
+
+            DBMS_OUTPUT.PUT_LINE( 'CREATE: ' || to_char( v_date )||': '||to_char(v_interaction_number)||' '||to_char(v_binary_interactions)||' '||to_char(v_complex_interactions)||' '||to_char(v_experiment_number)||' '||to_char(v_term_number) ||' '||to_char(v_publications));
 
             INSERT INTO ia_statistics
-            (timestamp, interaction_number, binary_interactions, protein_number, complex_interactions, experiment_number, term_number )
+            (timestamp, interaction_number, binary_interactions, protein_number, complex_interactions, experiment_number, 
+             term_number, publication_count )
             VALUES
-            (v_date, v_interaction_number, v_binary_interactions, v_protein_number, v_complex_interactions, v_experiment_number, v_term_number );
+            (v_date, v_interaction_number, v_binary_interactions, v_protein_number, v_complex_interactions, v_experiment_number, 
+             v_term_number, v_publications );
 
         END IF; -- case where the line as to be created
 
