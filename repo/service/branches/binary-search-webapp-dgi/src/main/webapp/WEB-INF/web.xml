@@ -22,7 +22,7 @@
             Configuration file
         </description>
         <param-name>psidev.DEFAULT_CONFIG_FILE</param-name>
-        <param-value>/ebi/sp/misc1/vusers/intact/production/webapp-conf/binary-search.test.cfg.xml</param-value>
+        <param-value>/binary-search-dgi.cfg.xml</param-value>
     </context-param>
     <context-param>
         <description>
