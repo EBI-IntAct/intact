@@ -29,7 +29,7 @@
             Default index location
         </description>
         <param-name>psidev.DEFAULT_INDEX</param-name>
-        <param-value>/ebi/sp/pro6/intact/public-tomcat/psimitab-index/current</param-value>
+        <param-value>/ebi/sp/pro6/intact/public-tomcat/psimitab-index/psimitab-index-20080129-dgi-test</param-value>
     </context-param>
     <context-param>
         <description>
