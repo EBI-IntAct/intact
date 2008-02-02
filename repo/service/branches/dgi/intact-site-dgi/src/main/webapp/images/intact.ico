@@ -1,0 +1,25 @@
+/*  GIMP icon image format -- S. Kimball, P. Mattis  */
+/*  Image name: intact  */
+
+
+#define intact_width 16
+#define intact_height 16
+static char *intact_bits [] = 
+{
+  "hhhhhffghhhhhhhh",
+  "hhhhhhgfdeghhhhh",
+  "hhhhhhhhgfdeghhh",
+  "hhhhhhhhhhgecghh",
+  "hhhhfghhgfhhfcgh",
+  "hhhheghhfeghhdcg",
+  "hhhhehhgeeghhgbe",
+  "hhhgehhfgffhhgbd",
+  "hhhgfhgehffhhgbc",
+  "hhhfghfghgehhdbd",
+  "hhhfghegeeehfbbf",
+  "hhhhhhhhhhhebbeh",
+  "hhhhhhhhhfcbcehh",
+  "hhhhhhgecbcdfhhh",
+  "hgffecccdefhhhhh",
+  "hgfffffghhhhhhhh"
+};
