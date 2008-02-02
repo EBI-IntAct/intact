@@ -22,14 +22,14 @@
             Configuration file
         </description>
         <param-name>psidev.DEFAULT_CONFIG_FILE</param-name>
-        <param-value>d:/temp/binary-search-dgi.cfg.xml</param-value>
+        <param-value>/tmp/binary-search-dgi.cfg.xml</param-value>
     </context-param>
     <context-param>
         <description>
             Default index location
         </description>
         <param-name>psidev.DEFAULT_INDEX</param-name>
-        <param-value>d:/temp/psimitab-index-20080129-dgi-test</param-value>
+        <param-value>/tmp/psimitab-index-20080129-dgi-test</param-value>
     </context-param>
     <context-param>
         <description>
