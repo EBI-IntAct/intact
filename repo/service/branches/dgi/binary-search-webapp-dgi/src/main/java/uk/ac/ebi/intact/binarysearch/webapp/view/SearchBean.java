@@ -114,7 +114,7 @@ public class SearchBean implements Serializable
         try {
             if (log.isDebugEnabled()) log.debug("Calculating related results...");
 
-            SearchServiceClient client = new SearchServiceClient();
+            SearchServiceClient client = new SearchServiceClient("http://www.ebi.ac.uk/tc-test/intact/search-ws/search");
 
             int numExperiments = client.getSearchPort().countExperimentsUsingIntactQuery(query);
             int numProteins = client.getSearchPort().countProteinsUsingIntactQuery(query);
