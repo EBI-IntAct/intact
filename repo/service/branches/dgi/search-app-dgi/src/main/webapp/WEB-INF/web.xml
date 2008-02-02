@@ -70,7 +70,7 @@
 
     <context-param>
         <param-name>uk.ac.ebi.intact.search.BINARY_SEARCH_LINK</param-name>
-        <param-value>http://www.ebi.ac.uk/intact/binary-search/faces/search.xhtml?query=</param-value>
+        <param-value>http://www.ebi.ac.uk/tc-test/intact/binary-search/faces/search.xhtml?query=</param-value>
         <description>
             The binary search link (absolute)
         </description>
