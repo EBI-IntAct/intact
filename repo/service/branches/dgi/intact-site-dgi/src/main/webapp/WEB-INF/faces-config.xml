@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd" >
+
+<faces-config>
+
+    <application>
+        <!-- tell JSF to use Facelets -->
+        <view-handler>com.sun.facelets.FaceletViewHandler</view-handler>
+    </application>
+
+    <managed-bean>
+        <managed-bean-name>appConfigBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.RequestConfigBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>searchBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.SearchBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>dataSetsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.DataSetsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>newsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.NewsBean</managed-bean-class>
+        <managed-bean-scope>request</managed-bean-scope>
+    </managed-bean>
+    <managed-bean>
+        <managed-bean-name>statisticsBean</managed-bean-name>
+        <managed-bean-class>uk.ac.ebi.intact.site.mb.StatisticsBean</managed-bean-class>
+        <managed-bean-scope>session</managed-bean-scope>
+    </managed-bean>
+
+
+    <navigation-rule>
+        <navigation-case>
+            <from-outcome>home</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>tools</from-outcome>
+            <to-view-id>/contents/tools.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>data_submission</from-outcome>
+            <to-view-id>/contents/data_submission.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>downloads</from-outcome>
+            <to-view-id>/contents/downloads.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>publications</from-outcome>
+            <to-view-id>/contents/publications.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>contact</from-outcome>
+            <to-view-id>/contents/contact.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>dotm_archive</from-outcome>
+            <to-view-id>/contents/dotm_archive.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>news_archive</from-outcome>
+            <to-view-id>/contents/news_archive.xhtml</to-view-id>
+        </navigation-case>
+        <navigation-case>
+            <from-outcome>printerFriendly</from-outcome>
+            <to-view-id>/contents/all_printerfriendly.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+</faces-config>
