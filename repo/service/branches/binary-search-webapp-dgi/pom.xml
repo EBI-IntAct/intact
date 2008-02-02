@@ -221,7 +221,7 @@
         <dependency>
             <groupId>uk.ac.ebi.faces</groupId>
             <artifactId>ebifaces-core</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.8</version>
         </dependency>
 
         <dependency>
@@ -312,6 +312,28 @@
     </dependencies>
 
     <repositories>
+	<repository>
+            <id>ebi-repo</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>ebi-repo-snapshots</id>
+            <name>The EBI internal repository</name>
+            <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
         <repository>
             <id>java.net.2</id>
             <url>http://download.java.net/maven/2</url>
