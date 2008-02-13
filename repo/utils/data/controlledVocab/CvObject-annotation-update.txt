@@ -96,3 +96,4 @@ ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not 
 pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct
 gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
+protein modification ontology	protein modification ontology	uk.ac.ebi.intact.model.CvDatabase	MI:0897	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
