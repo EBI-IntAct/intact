@@ -90,10 +90,9 @@ xref type	cross-reference type	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0353	hi
 original identifier	originally assigned identifier	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0869	hidden	Xref type that is used only to store external databases records and not used during manual curation.	FALSE				
 ncbi taxonomy	ncbi taxonomy	uk.ac.ebi.intact.model.CvDatabase	MI:0849	hidden	IntAct point to NEWT database instead of NCBI taxonomy. NCBI taxonomy and NEWT use the same TaxID.	FALSE				
 imex-primary	imex-primary	uk.ac.ebi.intact.model.CvXrefQualifier	MI:0662	hidden	Xref type that is used only to store automatically assigned IMEX ids and used not during manual curation.	FALSE				
-										
 Mint	Mint	uk.ac.ebi.intact.model.CvDatabase	MI:0471	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			children was TRUE
 dip	dip	uk.ac.ebi.intact.model.CvDatabase	MI:0574	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
 ipfam	ipfam	uk.ac.ebi.intact.model.CvDatabase	MI:0592	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.			
-pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct
+pubchem	pubchem	uk.ac.ebi.intact.model.CvDatabase	MI:0730	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct			
 peptide atlas	peptide atlas	uk.ac.ebi.intact.model.CvDatabase	MI:0741	hidden	Term currently not used in IntAct as this database is not cross referenced.	TRUE	db not used in IntAct
 gpm	gpm	uk.ac.ebi.intact.model.CvDatabase	MI:0742	hidden	Term currently not used in IntAct.	TRUE	Term not used in IntAct.
