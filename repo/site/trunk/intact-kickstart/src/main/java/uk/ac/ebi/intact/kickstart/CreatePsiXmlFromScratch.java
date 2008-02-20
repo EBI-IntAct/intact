@@ -39,8 +39,7 @@ public class CreatePsiXmlFromScratch {
 
         // write the EntrySet to the console (or it could to a file by changing the parameters in the write method)
         PsimiXmlWriter writer = new PsimiXmlWriter();
-
-        writer.write(entrySet, new FileWriter("f:/projectes/temp/psi.xml"));
+        writer.write(entrySet, System.out);
     }
 
     private static EntrySet createEntrySet() {
