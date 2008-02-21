@@ -231,6 +231,10 @@ public class DaoFactory implements Serializable {
     public ConfidenceDao getConfidenceDao(){
         return new ConfidenceDaoImpl(getEntityManager(), intactSession);
     }
+    
+    public InteractionParameterDao getInteractionParameterDao(){
+        return new InteractionParameterDaoImpl(getEntityManager(), intactSession);
+    }
 
     public SearchableDao getSearchableDao() {
         return new SearchableDaoImpl( getEntityManager(), intactSession );

@@ -67,6 +67,8 @@ public class DefaultTraverser implements IntactObjectTraverser {
             traverseRange((Range)intactObject, visitors);
         } else if (intactObject instanceof Confidence){
             traverseConfidence((Confidence) intactObject, visitors);
+        } else if (intactObject instanceof InteractionParameter){
+            traverseInteractionParameter((InteractionParameter) intactObject, visitors);
         } else {
             throw new IllegalArgumentException("Cannot traverse objects of type: "+intactObject.getClass().getName());
         }
@@ -215,6 +217,22 @@ public class DefaultTraverser implements IntactObjectTraverser {
 
         traverse(confidence.getCvConfidenceType(), visitors);
     }
+    
+    protected void traverseInteractionParameter(InteractionParameter interactionParameter, IntactVisitor... visitors) {
+        if (interactionParameter == null) return;
+
+        for (IntactVisitor visitor : visitors) {
+            visitor.visitInteractionParameter(interactionParameter);
+        }
+
+        // check if this element has been traversed already, to avoid cyclic recursion
+        if (recursionChecker.isAlreadyTraversed(interactionParameter)) {
+            return;
+        }
+
+        traverse(interactionParameter.getCvParameterType(), visitors);
+        traverse(interactionParameter.getCvParameterUnit(), visitors);
+    }
 
     ///////////////////////////////////////
     // AnnotatedObject traversers
@@ -293,6 +311,10 @@ public class DefaultTraverser implements IntactObjectTraverser {
 
         for (Confidence confidence : interaction.getConfidences()) {
             traverse(confidence, visitors);
+        }
+        
+        for (InteractionParameter interactionParameter : interaction.getInteractionParameters()) {
+            traverse(interactionParameter, visitors);
         }
     }
 

@@ -143,6 +143,8 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
         copyCollection( source.getExperiments(), target.getExperiments() );
 
         copyCollection( source.getConfidences(), target.getConfidences() );
+        
+        copyCollection( source.getInteractionParameters(), target.getInteractionParameters() );
 
         copyInteractorCommons( source, target );
 
