@@ -584,6 +584,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
         interaction.setBioSource( synchronize( interaction.getBioSource() ) );
         interaction.setExperiments( synchronizeCollection( interaction.getExperiments() ) );
         interaction.setConfidences( synchronizeConfidences( interaction.getConfidences(), interaction ));
+        interaction.setInteractionParameters( synchronizeInteractionParameters( interaction.getInteractionParameters(), interaction ));
 
         synchronizeAnnotatedObjectCommons( interaction );
     }
@@ -605,6 +606,27 @@ public class CorePersister implements Persister<AnnotatedObject> {
         }
 
         return confidences;
+
+    }
+    
+    private Collection<InteractionParameter> synchronizeInteractionParameters( Collection<InteractionParameter> interactionParametersToSynchronize, Interaction parentInteraction ) {
+        List<InteractionParameter> interactionParameters = new ArrayList<InteractionParameter>(interactionParametersToSynchronize.size());
+
+        for ( InteractionParameter interactionParameter : interactionParametersToSynchronize ) {
+             if (interactionParameter.getAc() != null && IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionParameterDao().isTransient(interactionParameter)) {
+                  interactionParameter = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionParameterDao().getByAc(interactionParameter.getAc());
+             }
+
+            interactionParameter.setCvParameterType( synchronize (interactionParameter.getCvParameterType()));
+            interactionParameter.setCvParameterUnit( synchronize (interactionParameter.getCvParameterUnit()));
+            interactionParameter.setInteraction((InteractionImpl)parentInteraction);
+
+            synchronizeBasicObjectCommons(interactionParameter);
+
+            interactionParameters.add(interactionParameter);
+        }
+
+        return interactionParameters;
 
     }
 

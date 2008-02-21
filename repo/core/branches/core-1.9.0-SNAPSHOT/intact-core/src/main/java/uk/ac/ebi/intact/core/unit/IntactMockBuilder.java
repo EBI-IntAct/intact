@@ -420,6 +420,8 @@ public class IntactMockBuilder {
         interaction.getComponents().iterator().next().addBindingDomain(feature);
 
         interaction.addConfidence( createDeterministicConfidence());
+        
+        interaction.addInteractionParameter( createDeterministicInteractionParameter());
 
         return interaction;
     }
@@ -634,6 +636,20 @@ public class IntactMockBuilder {
         Confidence conf = createConfidence(cvConfidenceType, Double.toString( new Random().nextDouble()));
         return conf;
     }
+     
+     //////////////////////
+     // Interaction Parameter
+      public InteractionParameter createDeterministicInteractionParameter() {
+         CvParameterType cvParameterType = createCvObject( CvParameterType.class, "MI:0836", "temperature of interaction");
+         CvParameterUnit cvParameterUnit = createCvObject( CvParameterUnit.class, "MI:0838", "kelvin");
+         InteractionParameter param = createInteractionParameter( cvParameterType, cvParameterUnit, "32");
+         return param;
+     }
+
+     public InteractionParameter createInteractionParameter(CvParameterType type, CvParameterUnit unit, String factor) {
+         InteractionParameter param = new InteractionParameter(getInstitution(), type, unit, factor);
+         return param;
+     }
 
     ///////////////////
     // Utilities

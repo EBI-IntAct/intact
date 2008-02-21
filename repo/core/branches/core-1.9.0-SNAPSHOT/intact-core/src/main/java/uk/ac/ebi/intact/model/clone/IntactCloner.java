@@ -99,6 +99,8 @@ public class IntactCloner {
             clone = (T) cloneRange( ( Range ) intactObject );
         } else if ( intactObject instanceof Confidence){
             clone = (T) cloneConfidence( (Confidence) intactObject);
+        } else if ( intactObject instanceof InteractionParameter){
+            clone = (T) cloneInteractionParameter( (InteractionParameter) intactObject);
         } else {
             throw new IllegalArgumentException( "Cannot clone objects of type: " + intactObject.getClass().getName() );
         }
@@ -245,6 +247,25 @@ public class IntactCloner {
 
         return clone;
     }
+     
+     protected InteractionParameter cloneInteractionParameter( InteractionParameter interactionParameter ) throws IntactClonerException {
+         if ( interactionParameter == null ) {
+             throw new IllegalArgumentException( "You must give a non null interaction parameter" );
+         }
+
+         InteractionParameter clone = new InteractionParameter();
+
+         clonerManager.addClone( interactionParameter, clone );
+              
+         clone.setBase( interactionParameter.getBase() );
+         clone.setExponent( interactionParameter.getExponent() );
+         clone.setFactor( interactionParameter.getFactor() );
+         clone.setUncertainty( interactionParameter.getUncertainty() );
+         clone.setCvParameterType( interactionParameter.getCvParameterType() );
+         clone.setCvParameterUnit( interactionParameter.getCvParameterUnit() );
+
+         return clone;
+     }
 
     ///////////////////////////////////////
     // AnnotatedObject cloners
@@ -330,6 +351,10 @@ public class IntactCloner {
 
         for ( Confidence confidence : interaction.getConfidences() ) {
             clone.addConfidence(clone( confidence ));
+        }
+        
+        for ( InteractionParameter interactionParameter : interaction.getInteractionParameters() ) {
+            clone.addInteractionParameter(clone( interactionParameter ));
         }
 
         return clone;

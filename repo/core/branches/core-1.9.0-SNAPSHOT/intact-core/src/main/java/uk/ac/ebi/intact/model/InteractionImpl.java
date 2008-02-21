@@ -84,6 +84,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
 
     private Collection<Confidence> confidences;  // initialized via constructor
 
+    private Collection<InteractionParameter> interactionParameters;
+    
     public InteractionImpl() {
         //super call sets creation time data
         super();
@@ -91,6 +93,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         components = new ArrayList<Component>( );
         experiments =  new ArrayList<Experiment>( );
         confidences = new ArrayList<Confidence>();
+        interactionParameters = new ArrayList<InteractionParameter>();
     }
 
     /**
@@ -160,6 +163,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         setComponents( components );
         setCvInteractionType( type );
         confidences = new ArrayList<Confidence>();
+        interactionParameters = new ArrayList<InteractionParameter>();
         // the bioSource has to be set using setBioSource( BioSource bs ).
     }
 
@@ -411,10 +415,30 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     public void removeConfidence( Confidence confidence ) {
         this.confidences.remove( confidence);
     }
+    
+    public void setInteractionParameters( Collection<InteractionParameter> someInteractionParameters ) {
+        this.interactionParameters = someInteractionParameters;
+     }
+
+     public void addInteractionParameter( InteractionParameter interactionParameter ) {
+         if ( !this.interactionParameters.contains( interactionParameter ) ) {
+             this.interactionParameters.add( interactionParameter );
+             interactionParameter.setInteraction( this );
+         }
+     }
+
+     public void removeInteractionParameter( InteractionParameter interactionParameter ) {
+         this.interactionParameters.remove( interactionParameter );
+     }
 
     @OneToMany( mappedBy = "interaction", cascade = {CascadeType.ALL} )
     public Collection<Confidence> getConfidences() {
         return confidences;
+    }
+    
+    @OneToMany( mappedBy = "interaction", cascade = {CascadeType.ALL} )
+    public Collection<InteractionParameter> getInteractionParameters() {
+        return interactionParameters;
     }
 
     ///////////////////////////////////////
@@ -530,6 +554,9 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             if (!CollectionUtils.isEqualCollection( getConfidences(), interaction.getConfidences())){
                 return false;
             }
+            if (!CollectionUtils.isEqualCollection( getInteractionParameters(), interaction.getInteractionParameters())){
+                return false;
+            }
         }
 
         return true;
@@ -588,7 +615,8 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         }
 
         copy.confidences = new ArrayList<Confidence>();
-
+        copy.interactionParameters = new ArrayList<InteractionParameter>();
+        
         return copy;
     }
 
