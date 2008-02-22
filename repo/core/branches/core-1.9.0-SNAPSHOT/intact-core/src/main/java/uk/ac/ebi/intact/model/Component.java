@@ -102,6 +102,11 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * Experimental preparations for this component. The allowed terms can be found in this URL http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0346&termName=experimental%20preparation
      */
     private Collection<CvExperimentalPreparation> experimentalPreparations;
+    
+    /**
+     * Parameters for this component. The allowed terms can be found in this URL http://www.ebi.ac.uk/ontology-lookup/browse.do?ontName=MI&termId=MI%3A0640&termName=parameter%20type
+     */
+    private Collection<ComponentParameter> componentParameters;
 
     ///////////////////////
     // Constructor
@@ -112,12 +117,14 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
     public Component() {
         //super call sets creation time data
         super();
+        this.componentParameters = new ArrayList<ComponentParameter>();
     }
 
     public Component( Institution owner, Interaction interaction, Interactor interactor,
                       CvExperimentalRole experimentRole, CvBiologicalRole biologicalRole ) {
 
         this( owner, NON_APPLICABLE, interaction, interactor, experimentRole, biologicalRole );
+        this.componentParameters = new ArrayList<ComponentParameter>();
     }
 
     /**
@@ -167,6 +174,8 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
 
         this.experimentalRole = experimentalRole;
         this.biologicalRole = biologicalRole;
+        
+        this.componentParameters = new ArrayList<ComponentParameter>();
     }
 
     ///////////////////////////////////////
@@ -283,6 +292,35 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      */
     public void setStoichiometry( float stoichiometry ) {
         this.stoichiometry = stoichiometry;
+    }
+    
+    /**
+     * Getter for property 'componentParameters'.
+     *
+     * @return list of items for property 'componentParameters'.
+     */
+    public Collection<ComponentParameter> getComponentParameters() {
+        return this.componentParameters;
+    }
+
+    /**
+     * Setter for property 'componentParameter'.
+     *
+     * @param componentParameters collection to set for property 'componentParameters'.
+     */
+    public void setComponentParameters( Collection<ComponentParameter> componentParameters) {
+        this.componentParameters = componentParameters;
+    }
+    
+    public void addComponentParameter( ComponentParameter componentParameter ) {
+        if ( !this.componentParameters.contains( componentParameter ) ) {
+            this.componentParameters.add( componentParameter );
+            componentParameter.setComponent(this);
+        }
+    }
+
+    public void removeComponentParameter( ComponentParameter componentParameter ) {
+        this.componentParameters.remove( componentParameter );
     }
 
     /**

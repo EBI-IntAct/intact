@@ -196,6 +196,7 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
 
         copyCollection( source.getExperimentalPreparations(), target.getExperimentalPreparations() );
         copyCollection( source.getParticipantDetectionMethods(), target.getParticipantDetectionMethods() );
+        copyCollection( source.getComponentParameters(), target.getComponentParameters() );
     }
 
     protected void copyFeature( Feature source, Feature target ) {

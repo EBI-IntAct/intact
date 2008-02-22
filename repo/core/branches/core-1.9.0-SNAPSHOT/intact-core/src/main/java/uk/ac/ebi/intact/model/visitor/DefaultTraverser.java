@@ -68,7 +68,7 @@ public class DefaultTraverser implements IntactObjectTraverser {
         } else if (intactObject instanceof Confidence){
             traverseConfidence((Confidence) intactObject, visitors);
         } else if (intactObject instanceof InteractionParameter){
-            traverseInteractionParameter((InteractionParameter) intactObject, visitors);
+            traverseParameter((Parameter) intactObject, visitors);
         } else {
             throw new IllegalArgumentException("Cannot traverse objects of type: "+intactObject.getClass().getName());
         }
@@ -218,20 +218,20 @@ public class DefaultTraverser implements IntactObjectTraverser {
         traverse(confidence.getCvConfidenceType(), visitors);
     }
     
-    protected void traverseInteractionParameter(InteractionParameter interactionParameter, IntactVisitor... visitors) {
-        if (interactionParameter == null) return;
+    protected void traverseParameter(Parameter parameter, IntactVisitor... visitors) {
+        if (parameter == null) return;
 
         for (IntactVisitor visitor : visitors) {
-            visitor.visitInteractionParameter(interactionParameter);
+            visitor.visitParameter(parameter);
         }
 
         // check if this element has been traversed already, to avoid cyclic recursion
-        if (recursionChecker.isAlreadyTraversed(interactionParameter)) {
+        if (recursionChecker.isAlreadyTraversed(parameter)) {
             return;
         }
 
-        traverse(interactionParameter.getCvParameterType(), visitors);
-        traverse(interactionParameter.getCvParameterUnit(), visitors);
+        traverse(parameter.getCvParameterType(), visitors);
+        traverse(parameter.getCvParameterUnit(), visitors);
     }
 
     ///////////////////////////////////////
@@ -375,6 +375,7 @@ public class DefaultTraverser implements IntactObjectTraverser {
         traverse(component.getCvExperimentalRole(), visitors);
         traverse(component.getCvBiologicalRole(), visitors);
         traverse(component.getExpressedIn(), visitors);
+        traverse((Parameter)component.getComponentParameters(), visitors);
 
         for (CvIdentification partDetMethod : component.getParticipantDetectionMethods()) {
             traverse(partDetMethod, visitors);

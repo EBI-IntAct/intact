@@ -25,31 +25,31 @@ import javax.persistence.*;
  * @since 1.8.0
  */
 @Entity
-@Table( name = "ia_interaction_parameter" )
-public class InteractionParameter extends Parameter {
+@Table( name = "ia_component_parameter" )
+public class ComponentParameter extends Parameter {
 	
-	protected InteractionImpl interaction;
+	protected Component component;
     
-	public InteractionParameter() {
+	public ComponentParameter() {
 		super();
 	}
 	
-	public InteractionParameter( Institution owner, CvParameterType cvParameterType, String factor ) {
+	public ComponentParameter( Institution owner, CvParameterType cvParameterType, String factor ) {
         super(owner, cvParameterType, factor);
     }
 	
-	public InteractionParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, String factor ) {
+	public ComponentParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, String factor ) {
         super(owner, cvParameterType, cvParameterUnit, factor);
     }
 	
-    @ManyToOne ( targetEntity = InteractionImpl.class )
-    @JoinColumn (name = "interaction_ac")
-     public InteractionImpl getInteraction() {
-        return this.interaction;
+    @ManyToOne ( targetEntity = Component.class )
+    @JoinColumn (name = "component_ac")
+     public Component getComponent() {
+        return this.component;
     }
     
-    public void setInteraction( InteractionImpl interaction ) {
-        this.interaction = interaction;
+    public void setComponent( Component component ) {
+        this.component = component;
     }
 
 	@Override
@@ -57,7 +57,7 @@ public class InteractionParameter extends Parameter {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ ((interaction == null) ? 0 : interaction.hashCode());
+				+ ((component == null) ? 0 : component.hashCode());
 		return result;
 	}
 
@@ -69,12 +69,14 @@ public class InteractionParameter extends Parameter {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		final InteractionParameter other = (InteractionParameter) obj;
-		if (interaction == null) {
-			if (other.interaction != null)
+		final ComponentParameter other = (ComponentParameter) obj;
+		if (component == null) {
+			if (other.component != null)
 				return false;
-		} else if (!interaction.equals(other.interaction))
+		} else if (!component.equals(other.component))
 			return false;
 		return true;
-	}    
+	}
+
+	
 }

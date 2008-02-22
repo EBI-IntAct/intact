@@ -438,6 +438,7 @@ public class IntactCloner {
 
         clone.setStoichiometry( component.getStoichiometry() );
         clone.setExpressedIn(clone( component.getExpressedIn() ));
+        clone.setComponentParameters(component.getComponentParameters());
 
         for ( Feature feature : component.getBindingDomains() ) {
             clone.addBindingDomain(clone( feature ));

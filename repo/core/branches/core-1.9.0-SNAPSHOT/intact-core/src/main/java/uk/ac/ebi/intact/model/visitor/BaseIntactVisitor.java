@@ -56,7 +56,7 @@ public abstract class BaseIntactVisitor implements IntactVisitor, HierarchyAware
         // nothing
     }
 
-     public void visitInteractionParameter(InteractionParameter interactionParameter) {
+     public void visitParameter(Parameter parameter) {
          // nothing
      }
 
