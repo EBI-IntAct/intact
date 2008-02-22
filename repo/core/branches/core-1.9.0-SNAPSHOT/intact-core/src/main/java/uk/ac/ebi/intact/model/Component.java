@@ -299,6 +299,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @return list of items for property 'componentParameters'.
      */
+    @OneToMany( mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
     public Collection<ComponentParameter> getComponentParameters() {
         return this.componentParameters;
     }

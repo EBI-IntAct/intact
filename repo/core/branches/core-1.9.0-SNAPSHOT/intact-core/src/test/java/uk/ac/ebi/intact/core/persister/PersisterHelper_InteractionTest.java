@@ -95,7 +95,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         final Institution intact2 = getDaoFactory().getAnnotatedObjectDao().getAll().iterator().next().getOwner();
         Assert.assertEquals( intact1, intact2 );
 
-        Assert.assertEquals( 18, getDaoFactory().getCvObjectDao().getAll().size() );
+        Assert.assertEquals( 20, getDaoFactory().getCvObjectDao().getAll().size() );
         Assert.assertEquals( 4, getDaoFactory().getInteractionDao().getAll().size() );
 
         intactEntry = builder.createIntactEntryRandom(2, 2, 2);
@@ -195,7 +195,6 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         IntactMockBuilder builder = super.getMockBuilder();
         Interaction interaction = builder.createDeterministicInteraction();
         InteractionParameter interactionParameterExpected = interaction.getInteractionParameters().iterator().next();
-
         PersisterHelper.saveOrUpdate(interaction);
 
         Assert.assertEquals(1, getDaoFactory().getInteractionDao().countAll());
@@ -210,6 +209,8 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Assert.assertEquals(1, interactionObserved.getInteractionParameters().size());
         InteractionParameter interactionParameterObserved2 = interactionObserved.getInteractionParameters().iterator().next();
         Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved2.getFactor());
+        Assert.assertEquals( interactionParameterExpected.getCvParameterType(), interactionParameterObserved2.getCvParameterType());
+        Assert.assertEquals( interactionParameterExpected.getCvParameterUnit(), interactionParameterObserved2.getCvParameterUnit());
     }
 
     @Test
@@ -248,7 +249,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
 
         Interaction reloadedInteraction2 = getDaoFactory().getInteractionDao().getByAc( interaction.getAc() );
         Assert.assertEquals( reloadedInteraction, reloadedInteraction2 );
-        Assert.assertEquals( 1, reloadedInteraction2.getConfidences().size() );
+        Assert.assertEquals( 1, reloadedInteraction2.getInteractionParameters().size() );
         Assert.assertEquals( interactionParameter, reloadedInteraction2.getInteractionParameters().iterator().next() );
     }
 

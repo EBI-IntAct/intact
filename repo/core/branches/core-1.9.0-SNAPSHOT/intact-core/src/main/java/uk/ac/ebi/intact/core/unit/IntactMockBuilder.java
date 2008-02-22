@@ -424,7 +424,7 @@ public class IntactMockBuilder {
 
         interaction.addConfidence( createDeterministicConfidence());
         
-        interaction.addInteractionParameter( createDeterministicInteractionParameter());
+        interaction.addInteractionParameter( createDeterministicInteractionParameter() );
 
         return interaction;
     }
@@ -645,7 +645,7 @@ public class IntactMockBuilder {
       public InteractionParameter createDeterministicInteractionParameter() {
          CvParameterType cvParameterType = createCvObject( CvParameterType.class, "MI:0836", "temperature");
          CvParameterUnit cvParameterUnit = createCvObject( CvParameterUnit.class, "MI:0838", "kelvin");
-         InteractionParameter param = createInteractionParameter( cvParameterType, cvParameterUnit, "32");
+         InteractionParameter param = createInteractionParameter( cvParameterType, cvParameterUnit, "302");
          return param;
      }
 
