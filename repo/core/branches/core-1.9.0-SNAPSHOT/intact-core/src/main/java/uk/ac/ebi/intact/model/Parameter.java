@@ -24,8 +24,8 @@ import javax.persistence.*;
  * @version $Id$
  * @since 1.8.0
  */
-@Entity
-@Table( name = "ia_interaction_parameter" )
+
+@MappedSuperclass
 public abstract class Parameter extends BasicObjectImpl {
     protected String base;
     protected String exponent;
