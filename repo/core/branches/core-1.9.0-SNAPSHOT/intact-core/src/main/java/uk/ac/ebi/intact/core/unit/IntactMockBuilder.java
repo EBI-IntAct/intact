@@ -255,7 +255,7 @@ public class IntactMockBuilder {
         component.getExperimentalPreparations().add(cvExperimentalPreparation);
         
         ComponentParameter componentParameter = createDeterministicComponentParameter();
-        component.getComponentParameters().add(componentParameter);
+        component.addComponentParameter(componentParameter);
         
         interactor.addActiveInstance( component );
         interaction.addComponent( component );
@@ -421,6 +421,7 @@ public class IntactMockBuilder {
         feature.addRange(range);
 
         interaction.getComponents().iterator().next().addBindingDomain(feature);
+ //       interaction.getComponents().iterator().next().addComponentParameter(createDeterministicComponentParameter());
 
         interaction.addConfidence( createDeterministicConfidence());
         
