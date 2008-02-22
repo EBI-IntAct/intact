@@ -235,8 +235,10 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         reloadedInteraction.addInteractionParameter( interactionParameter );
         Assert.assertEquals( 1, reloadedInteraction.getInteractionParameters().size() );
         Assert.assertEquals( interactionParameter, reloadedInteraction.getInteractionParameters().iterator().next() );
-
-        getDataContext().beginTransaction();
+        PersisterHelper.saveOrUpdate( reloadedInteraction );
+        
+        
+        //getDataContext().beginTransaction();
 
         CvParameterType cvParameterType = builder.createCvObject( CvParameterType.class, "JB:666", "testShortLabel" );
         interactionParameter.setCvParameterType( cvParameterType );
@@ -245,7 +247,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         getDaoFactory().getInteractionParameterDao().persist( interactionParameter);
 
 
-        getDataContext().commitTransaction();
+        //getDataContext().commitTransaction();
 
         Interaction reloadedInteraction2 = getDaoFactory().getInteractionDao().getByAc( interaction.getAc() );
         Assert.assertEquals( reloadedInteraction, reloadedInteraction2 );
