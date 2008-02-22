@@ -73,7 +73,7 @@ public class InteractionParameter extends Parameter {
 		if (interaction == null) {
 			if (other.interaction != null)
 				return false;
-		} else if (!interaction.equals(other.interaction))
+		} else if (!interaction.equals(other.interaction, false))
 			return false;
 		return true;
 	}    
