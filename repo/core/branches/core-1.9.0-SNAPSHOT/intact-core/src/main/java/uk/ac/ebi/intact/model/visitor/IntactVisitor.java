@@ -40,7 +40,7 @@ public interface IntactVisitor {
 
     void visitConfidence(Confidence confidence);
     
-    void visitInteractionParameter(InteractionParameter interactionParameter);
+    void visitParameter (Parameter parameter);
 
     /////////////////////////////////////////////////////
     // AnnotatedObjects

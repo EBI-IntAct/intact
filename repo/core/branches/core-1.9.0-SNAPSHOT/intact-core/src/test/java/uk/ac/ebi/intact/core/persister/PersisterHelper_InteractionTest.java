@@ -189,6 +189,69 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Assert.assertEquals( 1, reloadedInteraction2.getConfidences().size() );
         Assert.assertEquals( confidence, reloadedInteraction2.getConfidences().iterator().next() );
     }
+    
+    @Test
+    public void interactionParameterPersisted() throws Exception {
+        IntactMockBuilder builder = super.getMockBuilder();
+        Interaction interaction = builder.createDeterministicInteraction();
+        InteractionParameter interactionParameterExpected = interaction.getInteractionParameters().iterator().next();
+
+        PersisterHelper.saveOrUpdate(interaction);
+
+        Assert.assertEquals(1, getDaoFactory().getInteractionDao().countAll());
+        Assert.assertEquals(1, getDaoFactory().getInteractionParameterDao().countAll());
+
+        Iterator<InteractionParameter> interactionParameterIter = getDaoFactory().getInteractionParameterDao().getAllIterator();
+        InteractionParameter interactionParameterObserved = interactionParameterIter.next();
+        Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved.getFactor());
+
+        Iterator<InteractionImpl> interactionIter = getDaoFactory().getInteractionDao().getAllIterator();
+        Interaction interactionObserved = interactionIter.next();
+        Assert.assertEquals(1, interactionObserved.getInteractionParameters().size());
+        InteractionParameter interactionParameterObserved2 = interactionObserved.getInteractionParameters().iterator().next();
+        Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved2.getFactor());
+    }
+
+    @Test
+    public void interactionInteractionParameterPersisted() throws Exception {
+        /**
+         * Having an interaction without parameters in the database. Tests if it can add a parameter and
+         * persist it to database.
+         */
+        IntactMockBuilder builder = super.getMockBuilder();
+        Interaction interaction = builder.createInteractionRandomBinary();
+        Assert.assertEquals( 0, interaction.getInteractionParameters().size() );
+
+        PersisterHelper.saveOrUpdate(interaction);
+
+        Interaction reloadedInteraction = getDaoFactory().getInteractionDao().
+                getByAc( interaction.getAc() );
+        Assert.assertEquals( 0, reloadedInteraction.getInteractionParameters().size() );
+
+        Assert.assertEquals( interaction, reloadedInteraction );        
+        InteractionParameter interactionParameter = builder.createDeterministicInteractionParameter();
+
+        reloadedInteraction.addInteractionParameter( interactionParameter );
+        Assert.assertEquals( 1, reloadedInteraction.getInteractionParameters().size() );
+        Assert.assertEquals( interactionParameter, reloadedInteraction.getInteractionParameters().iterator().next() );
+
+        getDataContext().beginTransaction();
+
+        CvParameterType cvParameterType = builder.createCvObject( CvParameterType.class, "JB:666", "testShortLabel" );
+        interactionParameter.setCvParameterType( cvParameterType );
+        PersisterHelper.saveOrUpdate( cvParameterType );
+        getDaoFactory().getInteractionDao().update( (InteractionImpl)reloadedInteraction );
+        getDaoFactory().getInteractionParameterDao().persist( interactionParameter);
+
+
+        getDataContext().commitTransaction();
+
+        Interaction reloadedInteraction2 = getDaoFactory().getInteractionDao().getByAc( interaction.getAc() );
+        Assert.assertEquals( reloadedInteraction, reloadedInteraction2 );
+        Assert.assertEquals( 1, reloadedInteraction2.getConfidences().size() );
+        Assert.assertEquals( interactionParameter, reloadedInteraction2.getInteractionParameters().iterator().next() );
+    }
+
 
     @Test
     public void institutionPersisted() throws Exception {

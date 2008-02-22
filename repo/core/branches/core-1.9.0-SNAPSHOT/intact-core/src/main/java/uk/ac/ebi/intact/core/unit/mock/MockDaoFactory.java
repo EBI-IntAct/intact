@@ -48,6 +48,7 @@ public class MockDaoFactory extends DaoFactory {
     private InteractionDao interactionDao;
     private ConfidenceDao confidenceDao;
     private InteractionParameterDao interactionParameterDao;
+    private ComponentParameterDao componentParameterDao;
     private InteractorDao<? extends Interactor> interactorDao;
     private MineInteractionDao mineInteractionDao;
     private PolymerDao polymerDao;
@@ -243,6 +244,12 @@ public class MockDaoFactory extends DaoFactory {
     public InteractionParameterDao getInteractionParameterDao(){
         checkIfDaoIsSet(interactionParameterDao, InteractionParameterDao.class);
         return interactionParameterDao;
+    }
+    
+    @Override
+    public ComponentParameterDao getComponentParameterDao(){
+        checkIfDaoIsSet(componentParameterDao, ComponentParameterDao.class);
+        return componentParameterDao;
     }
 
     @Override

@@ -235,6 +235,10 @@ public class DaoFactory implements Serializable {
     public InteractionParameterDao getInteractionParameterDao(){
         return new InteractionParameterDaoImpl(getEntityManager(), intactSession);
     }
+    
+    public ComponentParameterDao getComponentParameterDao(){
+        return new ComponentParameterDaoImpl(getEntityManager(), intactSession);
+    }
 
     public SearchableDao getSearchableDao() {
         return new SearchableDaoImpl( getEntityManager(), intactSession );

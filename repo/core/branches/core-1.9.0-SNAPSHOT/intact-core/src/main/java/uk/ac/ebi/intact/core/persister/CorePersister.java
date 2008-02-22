@@ -655,7 +655,29 @@ public class CorePersister implements Persister<AnnotatedObject> {
         component.setInteractor( synchronize( component.getInteractor() ) );
         component.setParticipantDetectionMethods( synchronizeCollection( component.getParticipantDetectionMethods() ) );
         component.setExperimentalPreparations( synchronizeCollection( component.getExperimentalPreparations() ) );
+        component.setComponentParameters( synchronizeComponentParameters( component.getComponentParameters(), component ));
         synchronizeAnnotatedObjectCommons( component );
+    }
+    
+    private Collection<ComponentParameter> synchronizeComponentParameters( Collection<ComponentParameter> componentParametersToSynchronize, Component parentComponent ) {
+        List<ComponentParameter> componentParameters = new ArrayList<ComponentParameter>(componentParametersToSynchronize.size());
+
+        for ( ComponentParameter componentParameter : componentParametersToSynchronize ) {
+             if (componentParameter.getAc() != null && IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentParameterDao().isTransient(componentParameter)) {
+                  componentParameter = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getComponentParameterDao().getByAc(componentParameter.getAc());
+             }
+
+            componentParameter.setCvParameterType( synchronize (componentParameter.getCvParameterType()));
+            componentParameter.setCvParameterUnit( synchronize (componentParameter.getCvParameterUnit()));
+            componentParameter.setComponent((Component)parentComponent);
+
+            synchronizeBasicObjectCommons(componentParameter);
+
+            componentParameters.add(componentParameter);
+        }
+
+        return componentParameters;
+
     }
 
     private void synchronizeFeature( Feature feature ) {
