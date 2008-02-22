@@ -217,7 +217,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
     public void interactionInteractionParameterPersisted() throws Exception {
         /**
          * Having an interaction without parameters in the database. Tests if it can add a parameter and
-         * persist it to database.
+         * persist it to database. It isn't supposed yet by the persister but the test is anyway ready
          */
         IntactMockBuilder builder = super.getMockBuilder();
         Interaction interaction = builder.createInteractionRandomBinary();
