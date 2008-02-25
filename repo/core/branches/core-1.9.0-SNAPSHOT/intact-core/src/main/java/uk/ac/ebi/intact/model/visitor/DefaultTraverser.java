@@ -69,6 +69,8 @@ public class DefaultTraverser implements IntactObjectTraverser {
             traverseConfidence((Confidence) intactObject, visitors);
         } else if (intactObject instanceof InteractionParameter){
             traverseParameter((Parameter) intactObject, visitors);
+        }  else if (intactObject instanceof ComponentParameter){
+            traverseParameter((Parameter) intactObject, visitors);
         } else {
             throw new IllegalArgumentException("Cannot traverse objects of type: "+intactObject.getClass().getName());
         }
@@ -375,7 +377,9 @@ public class DefaultTraverser implements IntactObjectTraverser {
         traverse(component.getCvExperimentalRole(), visitors);
         traverse(component.getCvBiologicalRole(), visitors);
         traverse(component.getExpressedIn(), visitors);
-        traverse((Parameter)component.getComponentParameters(), visitors);
+
+        for (Parameter parameter : component.getComponentParameters())
+        traverse(parameter, visitors);
 
         for (CvIdentification partDetMethod : component.getParticipantDetectionMethods()) {
             traverse(partDetMethod, visitors);

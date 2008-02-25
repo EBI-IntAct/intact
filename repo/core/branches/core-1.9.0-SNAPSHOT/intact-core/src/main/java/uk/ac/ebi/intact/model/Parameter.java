@@ -33,7 +33,7 @@ public abstract class Parameter extends BasicObjectImpl {
     protected String uncertainty;
 	protected CvParameterType cvParameterType;
     protected CvParameterUnit cvParameterUnit;
-    protected ExperimentXref experimentXref;
+    protected Experiment experiment;
 
 	public Parameter() {
 		super();
@@ -69,10 +69,6 @@ public abstract class Parameter extends BasicObjectImpl {
 	public void setUncertainty( String uncertainty ) {
         this.uncertainty = uncertainty;
     }
-	
-	public void setExperimentXref( ExperimentXref experimentXref ) {
-        this.experimentXref = experimentXref;
-    }
     
     public String getBase() {
         return this.base;
@@ -89,12 +85,18 @@ public abstract class Parameter extends BasicObjectImpl {
 	public String getUncertainty() {
         return this.uncertainty;
     }
-	
-	public ExperimentXref getExperimentXref() {
-        return this.experimentXref;
+
+    @ManyToOne
+    @JoinColumn( name = "experiment_ac" )
+    public Experiment getExperiment() {
+        return this.experiment;
+    }
+
+    public void setExperiment( Experiment experiment ) {
+        this.experiment = experiment;
     }
 	
-	@ManyToOne
+    @ManyToOne
     @JoinColumn( name = "parametertype_ac" )
     public CvParameterType getCvParameterType() {
         return cvParameterType;

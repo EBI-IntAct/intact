@@ -101,6 +101,8 @@ public class IntactCloner {
             clone = (T) cloneConfidence( (Confidence) intactObject);
         } else if ( intactObject instanceof InteractionParameter){
             clone = (T) cloneInteractionParameter( (InteractionParameter) intactObject);
+        } else if ( intactObject instanceof ComponentParameter){
+            clone = (T) cloneComponentParameter( (ComponentParameter) intactObject);
         } else {
             throw new IllegalArgumentException( "Cannot clone objects of type: " + intactObject.getClass().getName() );
         }
@@ -263,6 +265,27 @@ public class IntactCloner {
          clone.setUncertainty( interactionParameter.getUncertainty() );
          clone.setCvParameterType( interactionParameter.getCvParameterType() );
          clone.setCvParameterUnit( interactionParameter.getCvParameterUnit() );
+         clone.setInteraction( interactionParameter.getInteraction());
+
+         return clone;
+     }
+
+    protected ComponentParameter cloneComponentParameter( ComponentParameter componentParameter ) throws IntactClonerException {
+         if ( componentParameter == null ) {
+             throw new IllegalArgumentException( "You must give a non null interaction parameter" );
+         }
+
+         ComponentParameter clone = new ComponentParameter();
+
+         clonerManager.addClone( componentParameter, clone );
+
+         clone.setBase( componentParameter.getBase() );
+         clone.setExponent( componentParameter.getExponent() );
+         clone.setFactor( componentParameter.getFactor() );
+         clone.setUncertainty( componentParameter.getUncertainty() );
+         clone.setCvParameterType( componentParameter.getCvParameterType() );
+         clone.setCvParameterUnit( componentParameter.getCvParameterUnit() );
+        clone.setComponent( componentParameter.getComponent());
 
          return clone;
      }
@@ -438,7 +461,10 @@ public class IntactCloner {
 
         clone.setStoichiometry( component.getStoichiometry() );
         clone.setExpressedIn(clone( component.getExpressedIn() ));
-        clone.setComponentParameters(component.getComponentParameters());
+
+        for (ComponentParameter componentParameter : component.getComponentParameters()) {
+            clone.addComponentParameter(clone (componentParameter));
+        }
 
         for ( Feature feature : component.getBindingDomains() ) {
             clone.addBindingDomain(clone( feature ));
