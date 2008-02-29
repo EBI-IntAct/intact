@@ -223,19 +223,20 @@ public class DefaultFinder implements Finder {
 
         // first check if the identities refer to the database itself
         for (InteractorXref idXref : interactor.getXrefs()) {
-            if (CvXrefQualifier.IDENTITY_MI_REF.equals(idXref.getCvXrefQualifier().getMiIdentifier()) &&
-                xrefPointsToOwnAc(idXref)) {
-                // check if exists in the db
-                Query acQuery = getEntityManager().createQuery("select i.ac from " + CgLibUtil.removeCglibEnhanced(interactor.getClass()).getName() + " i " +
-                                                               "where i.ac = :ac ");
-                acQuery.setParameter("ac", idXref.getPrimaryId());
+            if (idXref.getCvXrefQualifier() != null){
+                if (CvXrefQualifier.IDENTITY_MI_REF.equals(idXref.getCvXrefQualifier().getMiIdentifier()) &&
+                    xrefPointsToOwnAc(idXref)) {
+                    // check if exists in the db
+                    Query acQuery = getEntityManager().createQuery("select i.ac from " + CgLibUtil.removeCglibEnhanced(interactor.getClass()).getName() + " i " +
+                                                                   "where i.ac = :ac ");
+                    acQuery.setParameter("ac", idXref.getPrimaryId());
 
-                if (!acQuery.getResultList().isEmpty()) {
-                    return idXref.getPrimaryId();
+                    if (!acQuery.getResultList().isEmpty()) {
+                        return idXref.getPrimaryId();
+                    }
                 }
             }
         }
-
         List<InteractorXref> identities = ProteinUtils.getIdentityXrefs(interactor, true);
 
         if (!identities.isEmpty()) {

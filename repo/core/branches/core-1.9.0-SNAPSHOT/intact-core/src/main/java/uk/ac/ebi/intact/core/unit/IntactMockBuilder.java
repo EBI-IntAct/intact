@@ -422,9 +422,8 @@ public class IntactMockBuilder {
 
         interaction.getComponents().iterator().next().addBindingDomain(feature);
  //       interaction.getComponents().iterator().next().addComponentParameter(createDeterministicComponentParameter());
-
+ //       interaction.addXref(createPrimaryReferenceXref( interaction , "testreference"));
         interaction.addConfidence( createDeterministicConfidence());
-        
         interaction.addInteractionParameter( createDeterministicInteractionParameter() );
 
         return interaction;
@@ -646,11 +645,14 @@ public class IntactMockBuilder {
       public InteractionParameter createDeterministicInteractionParameter() {
          CvParameterType cvParameterType = createCvObject( CvParameterType.class, "MI:0836", "temperature");
          CvParameterUnit cvParameterUnit = createCvObject( CvParameterUnit.class, "MI:0838", "kelvin");
-         InteractionParameter param = createInteractionParameter( cvParameterType, cvParameterUnit, "302");
+         InteractionParameter param = createInteractionParameter( cvParameterType, cvParameterUnit, new Double(302));
+         param.setBase(10);
+         param.setExponent(0);
+         param.setUncertainty(0.8);
          return param;
      }
 
-     public InteractionParameter createInteractionParameter(CvParameterType type, CvParameterUnit unit, String factor) {
+     public InteractionParameter createInteractionParameter(CvParameterType type, CvParameterUnit unit, Double factor) {
          InteractionParameter param = new InteractionParameter(getInstitution(), type, unit, factor);
          return param;
      }
@@ -660,11 +662,11 @@ public class IntactMockBuilder {
       public ComponentParameter createDeterministicComponentParameter() {
          CvParameterType cvParameterType = createCvObject( CvParameterType.class, "MI:0836", "temperature");
          CvParameterUnit cvParameterUnit = createCvObject( CvParameterUnit.class, "MI:0838", "kelvin");
-         ComponentParameter param = createComponentParameter( cvParameterType, cvParameterUnit, "32");
+         ComponentParameter param = createComponentParameter( cvParameterType, cvParameterUnit, new Double(302));
          return param;
      }
 
-     public ComponentParameter createComponentParameter(CvParameterType type, CvParameterUnit unit, String factor) {
+     public ComponentParameter createComponentParameter(CvParameterType type, CvParameterUnit unit, Double factor) {
          ComponentParameter param = new ComponentParameter(getInstitution(), type, unit, factor);
          return param;
      }

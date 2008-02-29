@@ -34,11 +34,11 @@ public class ComponentParameter extends Parameter {
 		super();
 	}
 	
-	public ComponentParameter( Institution owner, CvParameterType cvParameterType, String factor ) {
+	public ComponentParameter( Institution owner, CvParameterType cvParameterType, Double factor ) {
         super(owner, cvParameterType, factor);
     }
 	
-	public ComponentParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, String factor ) {
+	public ComponentParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, Double factor ) {
         super(owner, cvParameterType, cvParameterUnit, factor);
     }
 	

@@ -616,7 +616,6 @@ public class CorePersister implements Persister<AnnotatedObject> {
              if (interactionParameter.getAc() != null && IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionParameterDao().isTransient(interactionParameter)) {
                   interactionParameter = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getInteractionParameterDao().getByAc(interactionParameter.getAc());
              }
-
             interactionParameter.setCvParameterType( synchronize (interactionParameter.getCvParameterType()));
             interactionParameter.setCvParameterUnit( synchronize (interactionParameter.getCvParameterUnit()));
             interactionParameter.setInteraction((InteractionImpl)parentInteraction);
