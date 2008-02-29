@@ -120,6 +120,13 @@ public class InteractionConverter extends AbstractAnnotatedObjectConverter<Inter
             interaction.addConfidence( confidence);
         }
 
+        InteractionParameterConverter paramConverter= new InteractionParameterConverter( getInstitution());
+        for (psidev.psi.mi.xml.model.Parameter psiParameter :  psiObject.getParameters()){
+            InteractionParameter parameter = paramConverter.psiToIntact( psiParameter );
+            parameter.setInteraction((InteractionImpl)interaction);
+            interaction.addInteractionParameter(parameter);
+        }
+
         // update experiment participant detection method if necessary
         updateExperimentParticipantDetectionMethod(interaction);
 
@@ -218,6 +225,12 @@ public class InteractionConverter extends AbstractAnnotatedObjectConverter<Inter
         for (Confidence conf : intactObject.getConfidences()){
             psidev.psi.mi.xml.model.Confidence confidence = confidenceConverter.intactToPsi( conf);
             interaction.getConfidences().add( confidence);
+        }
+
+        InteractionParameterConverter interactionParameterConverter = new InteractionParameterConverter( getInstitution());
+        for (uk.ac.ebi.intact.model.InteractionParameter param : intactObject.getInteractionParameters()){
+            psidev.psi.mi.xml.model.Parameter parameter = interactionParameterConverter.intactToPsi(param);
+            interaction.getParameters().add(parameter);
         }
 
         intactEndConversion(intactObject);

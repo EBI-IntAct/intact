@@ -24,6 +24,9 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.model.util.XrefUtils;
 
 import java.util.Collection;
+import java.util.LinkedList;
+
+import psidev.psi.mi.xml.model.DbReference;
 
 /**
  * TODO comment this
@@ -75,56 +78,75 @@ public abstract class AbstractAnnotatedObjectConverter<A extends AnnotatedObject
             return psiObject;
         }
 
-        // ac - create a xref to the institution db
-        String ac = intactObject.getAc();
-        if (ac != null)  {
-            boolean containsAcXref = false;
-            for (Xref xref : (Collection<Xref>) intactObject.getXrefs()) {
-                if (intactObject.getAc().equals(xref.getPrimaryId())) {
-                    containsAcXref = true;
-                    break;
+        psiObject = newInstance(psiClass);
+
+        PsiConverterUtils.populate(intactObject, psiObject);
+
+
+        if (((intactObject instanceof Interaction) || (intactObject instanceof Interactor) || (intactObject instanceof Experiment)) && (psiObject instanceof psidev.psi.mi.xml.model.XrefContainer)) {
+
+            // ac - create a xref to the institution db
+            String ac = intactObject.getAc();
+            String dbMi = null;
+            String db = null;
+            if (ac != null)  {
+                boolean containsAcXref = false;
+                for (Xref xref : (Collection<Xref>) intactObject.getXrefs()) {
+                    if (intactObject.getAc().equals(xref.getPrimaryId())) {
+                        containsAcXref = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!containsAcXref) {
-                String dbMi = null;
-                String db = null;
+                if (!containsAcXref) {
 
-                // calculate the owner of the interaction, based on the AC prefix first,
-                // then in the defaultInstitutionForACs if passed to the ConverterContext or,
-                // finally to the Institution in the source section of the PSI-XML
-                if (ac.startsWith("EBI")) {
-                    dbMi = Institution.INTACT_REF;
-                    db = Institution.INTACT.toLowerCase();
-                } else if (ac.startsWith("MINT")) {
-                    dbMi = Institution.MINT_REF;
-                    db = Institution.MINT.toLowerCase();
-                } else if (ConverterContext.getInstance().getDefaultInstitutionForAcs() != null){
-                    Institution defaultInstitution = ConverterContext.getInstance().getDefaultInstitutionForAcs();
-                    dbMi = calculateInstitutionPrimaryId(defaultInstitution);
-                    db = defaultInstitution.getShortLabel().toLowerCase();
-                } else {
-                    dbMi = getInstitutionPrimaryId();
-                    db = getInstitution().getShortLabel().toLowerCase();
+                    // calculate the owner of the interaction, based on the AC prefix first,
+                    // then in the defaultInstitutionForACs if passed to the ConverterContext or,
+                    // finally to the Institution in the source section of the PSI-XML          ;
+
+                    if (ac.startsWith("EBI")) {
+                        dbMi = Institution.INTACT_REF;
+                        db = Institution.INTACT.toLowerCase();
+                    } else if (ac.startsWith("MINT")) {
+                        dbMi = Institution.MINT_REF;
+                        db = Institution.MINT.toLowerCase();
+                    } else if (ConverterContext.getInstance().getDefaultInstitutionForAcs() != null){
+                        Institution defaultInstitution = ConverterContext.getInstance().getDefaultInstitutionForAcs();
+                        dbMi = calculateInstitutionPrimaryId(defaultInstitution);
+                        db = defaultInstitution.getShortLabel().toLowerCase();
+                    } else {
+                        dbMi = getInstitutionPrimaryId();
+                        db = getInstitution().getShortLabel().toLowerCase();
+                    }
                 }
 
                 CvXrefQualifier sourceRef = CvObjectUtils.createCvObject(getInstitution(), CvXrefQualifier.class,
-                        CvXrefQualifier.SOURCE_REFERENCE_MI_REF, CvXrefQualifier.SOURCE_REFERENCE);
-                CvDatabase cvDb = CvObjectUtils.createCvObject(getInstitution(), CvDatabase.class,
-                        dbMi, db);
-
+                CvXrefQualifier.SOURCE_REFERENCE_MI_REF, CvXrefQualifier.SOURCE_REFERENCE);
+                CvDatabase cvDb = CvObjectUtils.createCvObject(getInstitution(), CvDatabase.class, dbMi, db);
                 Xref xref = XrefUtils.newXrefInstanceFor(intactClass);
                 xref.setCvXrefQualifier(sourceRef);
                 xref.setCvDatabase(cvDb);
                 xref.setPrimaryId(intactObject.getAc());
                 xref.setSecondaryId(intactObject.getShortLabel());
-                intactObject.addXref(xref);
+                psidev.psi.mi.xml.model.DbReference ref = new XrefConverter(getInstitution(), CvXrefQualifier.class).intactToPsi(xref);
+                psidev.psi.mi.xml.model.Xref nXref= ((psidev.psi.mi.xml.model.XrefContainer)psiObject).getXref();
+                if (nXref == null) {
+                 nXref = new psidev.psi.mi.xml.model.Xref(ref);
+                }
+                else {
+                    if ( ! nXref.hasSecondaryRef() ){
+                        Collection<psidev.psi.mi.xml.model.DbReference> secondaryRef = new LinkedList<psidev.psi.mi.xml.model.DbReference>();
+                        secondaryRef.add(ref);
+                        psidev.psi.mi.xml.model.Xref nXref2 = new psidev.psi.mi.xml.model.Xref(nXref.getPrimaryRef(),secondaryRef ); 
+                        nXref = nXref2;
+                    }
+                    else {
+                        nXref.getSecondaryRef().add(ref);
+                    }
+                }
+                ((psidev.psi.mi.xml.model.XrefContainer)psiObject).setXref(nXref);
             }
         }
-
-        psiObject = newInstance(psiClass);
-        PsiConverterUtils.populate(intactObject, psiObject);
-
 
         ConversionCache.putElement(intactElementKey(intactObject), psiObject);
 

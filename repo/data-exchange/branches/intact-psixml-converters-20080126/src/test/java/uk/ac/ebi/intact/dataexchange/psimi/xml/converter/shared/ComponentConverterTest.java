@@ -54,6 +54,16 @@ public class ComponentConverterTest extends IntactBasicTestCase {
         CvObjectXref identity = CvObjectUtils.getPsiMiIdentityXref(component.getCvExperimentalRole());
         Assert.assertEquals(CvExperimentalRole.BAIT_PSI_REF, identity.getPrimaryId());
         Assert.assertEquals(1, component.getBindingDomains().size());
+
+        Assert.assertEquals(1, component.getComponentParameters().size());
+        uk.ac.ebi.intact.model.ComponentParameter param = component.getComponentParameters().iterator().next();
+        Assert.assertNotNull( param.getCvParameterType());
+        Assert.assertEquals("temperature of inter", param.getCvParameterType().getShortLabel());
+        Assert.assertEquals("kelvin", param.getCvParameterUnit().getShortLabel());
+        Assert.assertEquals(302.0, param.getFactor());
+        Assert.assertEquals (10, param.getBase());
+        Assert.assertEquals(0, param.getExponent());
+        Assert.assertEquals(component, param.getComponent());
     }
 
     @Test
@@ -67,5 +77,11 @@ public class ComponentConverterTest extends IntactBasicTestCase {
         Assert.assertNotNull(participant);
         Assert.assertEquals(1, participant.getExperimentalRoles().size());
         Assert.assertEquals(1, participant.getHostOrganisms().size());
+
+        Assert.assertEquals(1, participant.getParameters().size());
+        Assert.assertNotNull( participant.getParameters().iterator().next().getTerm());
+        Assert.assertEquals( component.getComponentParameters().iterator().next().getFactor(),  participant.getParameters().iterator().next().getFactor());
+        Assert.assertEquals( component.getComponentParameters().iterator().next().getCvParameterType().getMiIdentifier(), participant.getParameters().iterator().next().getTermAc());
+        Assert.assertEquals( component.getComponentParameters().iterator().next().getCvParameterUnit().getShortLabel(), participant.getParameters().iterator().next().getUnit());
     }
 }
