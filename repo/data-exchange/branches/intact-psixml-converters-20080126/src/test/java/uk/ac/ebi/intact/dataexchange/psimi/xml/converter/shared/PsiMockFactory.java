@@ -142,6 +142,10 @@ public class PsiMockFactory {
             interaction.getConfidences().add(createMockConfidence());
         }
 
+        for (int i=0; i< childRandom( 1, 2); i++){
+            interaction.getParameters().add(createMockParameter());
+        }
+
         return interaction;
     }
 
@@ -158,6 +162,10 @@ public class PsiMockFactory {
 
         for (int i=0; i< childRandom( 1, 2); i++){
             interaction.getConfidences().add(createMockConfidence());
+        }
+
+        for (int i=0; i< childRandom( 1, 2); i++){
+            interaction.getParameters().add(createMockParameter());
         }
 
         return interaction;
@@ -178,6 +186,8 @@ public class PsiMockFactory {
         for (int i=0; i<childRandom(); i++) {
             participant.getFeatures().add(createFeature());
         }
+
+        participant.getParameters().add(createMockParameter());
 
         return participant;
     }
@@ -209,7 +219,16 @@ public class PsiMockFactory {
     public static Confidence createMockConfidence(){
         Unit unit = createCvType( Unit.class, "IA:10001","intact conf score");
        return new Confidence(unit, "0.8");
-    }   
+    }
+
+    public static psidev.psi.mi.xml.model.Parameter createMockParameter() {
+        psidev.psi.mi.xml.model.Parameter param = new psidev.psi.mi.xml.model.Parameter("temperature of interaction", 302.0);
+        param.setUnit("kelvin");
+        param.setExponent(0);
+        param.setBase(10);
+        param.setUncertainty(0.8);
+        return param;
+    }
 
     public static Organism createMockOrganism() {
         Organism organism = new Organism();

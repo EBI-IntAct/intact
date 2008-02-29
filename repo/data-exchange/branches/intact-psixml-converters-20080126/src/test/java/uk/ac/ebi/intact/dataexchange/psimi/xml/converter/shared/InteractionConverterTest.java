@@ -41,13 +41,13 @@ public class InteractionConverterTest extends AbstractConverterTest {
     public void psiToIntact_default() throws Exception {
         Interaction psiInteraction = PsiMockFactory.createMockInteraction();
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Assert.assertNotNull(interaction.getCvInteractionType());
         Assert.assertNotNull(interaction.getCvInteractorType());
         Assert.assertNotNull(interaction.getComponents().iterator().next().getInteractor().getOwner());
-        Assert.assertEquals("testInstitution", interaction.getComponents().iterator().next().getInteractor().getOwner().getShortLabel());
+        Assert.assertEquals("testinstitution", interaction.getComponents().iterator().next().getInteractor().getOwner().getShortLabel());
         Assert.assertEquals( 1, interaction.getConfidences().size());
 
         Confidence conf = interaction.getConfidences().iterator().next();
@@ -55,6 +55,16 @@ public class InteractionConverterTest extends AbstractConverterTest {
         Assert.assertEquals("intact conf score", conf.getCvConfidenceType().getShortLabel());
         Assert.assertEquals( "0.8", conf.getValue());
         Assert.assertEquals( interaction, conf.getInteraction());
+
+        Assert.assertEquals(1, interaction.getInteractionParameters().size());
+        uk.ac.ebi.intact.model.InteractionParameter param = interaction.getInteractionParameters().iterator().next();
+        Assert.assertNotNull( param.getCvParameterType());
+        Assert.assertEquals("temperature of inter", param.getCvParameterType().getShortLabel());
+        Assert.assertEquals("kelvin", param.getCvParameterUnit().getShortLabel());
+        Assert.assertEquals(302.0, param.getFactor());
+        Assert.assertEquals (10, param.getBase());
+        Assert.assertEquals(0, param.getExponent());
+        Assert.assertEquals(interaction, param.getInteraction());
     }
 
     @Test
@@ -62,7 +72,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
         Interaction psiInteraction = PsiMockFactory.createMockInteraction();
         psiInteraction.setImexId("IM-0000");
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Xref imexXref = null;
@@ -87,7 +97,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
         psiInteraction.getXref().getSecondaryRef().add(PsiMockFactory.createDbReferenceDatabaseOnly("IM-0000", CvDatabase.IMEX_MI_REF, CvDatabase.IMEX));
         psiInteraction.setImexId("IM-0000");
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Xref imexXref = null;
@@ -110,7 +120,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
         Interaction psiInteraction = PsiMockFactory.createMockInteraction();
         psiInteraction.getInteractionTypes().clear();
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
     }
 
@@ -127,7 +137,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
             part.getParticipantIdentificationMethods().add(PsiMockFactory.createCvType(ParticipantIdentificationMethod.class, CvIdentification.PREDETERMINED_MI_REF, CvIdentification.PREDETERMINED));
         }
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Assert.assertNotNull(interaction.getCvInteractionType());
@@ -146,7 +156,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
             expDesc.setParticipantIdentificationMethod(PsiMockFactory.createCvType(ParticipantIdentificationMethod.class, "MI:0000", "hello"));
         }
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Assert.assertNotNull(interaction.getCvInteractionType());
@@ -174,7 +184,7 @@ public class InteractionConverterTest extends AbstractConverterTest {
             i++;
         }
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         uk.ac.ebi.intact.model.Interaction interaction = converter.psiToIntact(psiInteraction);
 
         Assert.assertEquals("MI:0661", interaction.getExperiments().iterator().next().getCvIdentification().getMiIdentifier());
@@ -239,13 +249,19 @@ public class InteractionConverterTest extends AbstractConverterTest {
     public void intactTopsi_default() throws Exception {
         uk.ac.ebi.intact.model.Interaction intactInteraction = new IntactMockBuilder().createDeterministicInteraction();
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         Interaction psiInteraction = converter.intactToPsi( intactInteraction);
 
         Assert.assertEquals( 1, psiInteraction.getConfidences().size());
         Assert.assertNotNull( psiInteraction.getConfidences().iterator().next().getUnit());
         Assert.assertEquals( intactInteraction.getConfidences().iterator().next().getValue(),  psiInteraction.getConfidences().iterator().next().getValue());
         Assert.assertEquals( intactInteraction.getConfidences().iterator().next().getCvConfidenceType().getShortLabel(), psiInteraction.getConfidences().iterator().next().getUnit().getNames().getShortLabel());
+    
+        Assert.assertEquals(1, psiInteraction.getParameters().size());
+        Assert.assertNotNull( psiInteraction.getParameters().iterator().next().getTerm());
+        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getFactor(),  psiInteraction.getParameters().iterator().next().getFactor());
+        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getCvParameterType().getMiIdentifier(),  psiInteraction.getParameters().iterator().next().getTermAc());
+        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getCvParameterUnit().getShortLabel(),  psiInteraction.getParameters().iterator().next().getUnit());
     }
 
     @Test
@@ -253,8 +269,8 @@ public class InteractionConverterTest extends AbstractConverterTest {
         uk.ac.ebi.intact.model.Interaction intactInteraction = new IntactMockBuilder().createDeterministicInteraction();
         intactInteraction.setAc("EBI-12345");
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
-        Interaction psiInteraction = converter.intactToPsi( intactInteraction);
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
+        Interaction psiInteraction = converter.intactToPsi(intactInteraction);
 
         Assert.assertNotNull(psiInteraction.getXref());
         Assert.assertEquals(Institution.INTACT_REF, psiInteraction.getXref().getPrimaryRef().getDbAc());
@@ -265,10 +281,10 @@ public class InteractionConverterTest extends AbstractConverterTest {
         uk.ac.ebi.intact.model.Interaction intactInteraction = new IntactMockBuilder().createDeterministicInteraction();
         intactInteraction.setAc("OTHER-12345");
 
-        InteractionConverter converter = new InteractionConverter(new Institution("testInstitution"));
+        InteractionConverter converter = new InteractionConverter(new Institution("testinstitution"));
         Interaction psiInteraction = converter.intactToPsi( intactInteraction);
 
         Assert.assertNotNull(psiInteraction.getXref());
-        Assert.assertEquals("testInstitution", psiInteraction.getXref().getPrimaryRef().getDb());
+        Assert.assertEquals("testinstitution", psiInteraction.getXref().getPrimaryRef().getDb());
     }
 }

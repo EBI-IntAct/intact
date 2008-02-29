@@ -48,6 +48,7 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         Interaction interaction = new InteractionConverter(getInstitution()).psiToIntact(psiObject.getInteraction());
 
         Component component = newComponent(getInstitution(), psiObject, interaction);
+
         return component;
     }
 
@@ -103,6 +104,12 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
 
                 participant.getHostOrganisms().add(hostOrganism);
             }
+        }
+
+        ParticipantParameterConverter participantParameterConverter = new ParticipantParameterConverter( getInstitution());
+        for (uk.ac.ebi.intact.model.ComponentParameter param : intactObject.getComponentParameters()){
+            psidev.psi.mi.xml.model.Parameter parameter = participantParameterConverter.intactToPsi(param);
+            participant.getParameters().add(parameter);
         }
 
         return participant;
@@ -171,6 +178,13 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
 
             BioSource bioSource = new OrganismConverter(institution).psiToIntact(organism);
             component.setExpressedIn(bioSource);
+        }
+
+        ParticipantParameterConverter paramConverter= new ParticipantParameterConverter(institution);
+        for (psidev.psi.mi.xml.model.Parameter psiParameter : participant.getParameters()){
+            ComponentParameter parameter = paramConverter.psiToIntact( psiParameter );
+            parameter.setComponent(component);
+            component.addComponentParameter(parameter);
         }
 
         return component;

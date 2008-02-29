@@ -35,7 +35,7 @@ public class InteractorConverterTest {
     public void psiToIntact_default() throws Exception {
         Interactor psiInteractor = PsiMockFactory.createMockInteractor();
 
-        InteractorConverter interactorConverter = new InteractorConverter(new Institution("testInstitution"));
+        InteractorConverter interactorConverter = new InteractorConverter(new Institution("testinstitution"));
 
         uk.ac.ebi.intact.model.Interactor interactor = interactorConverter.psiToIntact(psiInteractor);
 
