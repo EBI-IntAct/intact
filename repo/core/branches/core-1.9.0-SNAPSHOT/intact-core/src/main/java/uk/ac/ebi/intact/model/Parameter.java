@@ -27,62 +27,62 @@ import javax.persistence.*;
 
 @MappedSuperclass
 public abstract class Parameter extends BasicObjectImpl {
-    protected String base;
-    protected String exponent;
-    protected String factor;
-    protected String uncertainty;
+    protected Integer base;
+    protected Integer exponent;
+    protected Double factor;
+    protected Double uncertainty;
 	protected CvParameterType cvParameterType;
     protected CvParameterUnit cvParameterUnit;
     protected Experiment experiment;
 
 	public Parameter() {
 		super();
-		this.base = "10";
-		this.exponent = "0";
+		this.base = 10;
+		this.exponent = 0;
 	}
 	
-	public Parameter( Institution owner, CvParameterType cvParameterType, String factor ) {
+	public Parameter( Institution owner, CvParameterType cvParameterType, Double factor ) {
         super(owner);
         setFactor(factor);
         setCvParameterType(cvParameterType);
     }
 	
-	public Parameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, String factor ) {
+	public Parameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, Double factor ) {
         super(owner);
         setFactor(factor);
         setCvParameterType(cvParameterType);
         setCvParameterUnit(cvParameterUnit);
     }
 	
-	public void setBase( String base ) {
+	public void setBase( Integer base ) {
         this.base = base;
     }
 	
-	public void setExponent( String exponent ) {
+	public void setExponent( Integer exponent ) {
         this.exponent = exponent;
     }
 	
-	public void setFactor( String factor ) {
+	public void setFactor( Double factor ) {
         this.factor = factor;
     }
 	
-	public void setUncertainty( String uncertainty ) {
+	public void setUncertainty( Double uncertainty ) {
         this.uncertainty = uncertainty;
     }
     
-    public String getBase() {
+    public Integer getBase() {
         return this.base;
     }
 	
-	public String getExponent() {
+	public Integer getExponent() {
         return this.exponent;
     }
 	
-	public String getFactor() {
+	public Double getFactor() {
         return this.factor;
     }
 	
-	public String getUncertainty() {
+	public Double getUncertainty() {
         return this.uncertainty;
     }
 

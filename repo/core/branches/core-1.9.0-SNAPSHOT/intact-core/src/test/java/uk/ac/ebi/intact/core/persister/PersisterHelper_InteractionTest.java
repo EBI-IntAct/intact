@@ -203,6 +203,11 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Iterator<InteractionParameter> interactionParameterIter = getDaoFactory().getInteractionParameterDao().getAllIterator();
         InteractionParameter interactionParameterObserved = interactionParameterIter.next();
         Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved.getFactor());
+        Assert.assertEquals( interactionParameterExpected.getCvParameterType(), interactionParameterObserved.getCvParameterType());
+        Assert.assertEquals( interactionParameterExpected.getCvParameterUnit(), interactionParameterObserved.getCvParameterUnit());
+        Assert.assertEquals( interactionParameterExpected.getBase(), interactionParameterObserved.getBase());
+        Assert.assertEquals( interactionParameterExpected.getUncertainty(), interactionParameterObserved.getUncertainty());
+        Assert.assertEquals( interactionParameterExpected.getExponent(), interactionParameterObserved.getExponent());
 
         Iterator<InteractionImpl> interactionIter = getDaoFactory().getInteractionDao().getAllIterator();
         Interaction interactionObserved = interactionIter.next();
@@ -211,6 +216,9 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved2.getFactor());
         Assert.assertEquals( interactionParameterExpected.getCvParameterType(), interactionParameterObserved2.getCvParameterType());
         Assert.assertEquals( interactionParameterExpected.getCvParameterUnit(), interactionParameterObserved2.getCvParameterUnit());
+        Assert.assertEquals( interactionParameterExpected.getBase(), interactionParameterObserved2.getBase());
+        Assert.assertEquals( interactionParameterExpected.getUncertainty(), interactionParameterObserved2.getUncertainty());
+        Assert.assertEquals( interactionParameterExpected.getExponent(), interactionParameterObserved2.getExponent());
     }
 
  //   @Test

@@ -34,11 +34,11 @@ public class InteractionParameter extends Parameter {
 		super();
 	}
 	
-	public InteractionParameter( Institution owner, CvParameterType cvParameterType, String factor ) {
+	public InteractionParameter( Institution owner, CvParameterType cvParameterType, Double factor ) {
         super(owner, cvParameterType, factor);
     }
 	
-	public InteractionParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, String factor ) {
+	public InteractionParameter( Institution owner, CvParameterType cvParameterType, CvParameterUnit cvParameterUnit, Double factor ) {
         super(owner, cvParameterType, cvParameterUnit, factor);
     }
 	
