@@ -15,54 +15,26 @@
     <name>IntAct Sites :: Kickstart</name>
     <version>1.0-SNAPSHOT</version>
 
-    <profiles>
-    <profile>
-      <id>default-tools.jar</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>Sun Microsystems Inc.</value>
-       </property>
-     </activation>
-      <dependencies>
-        <dependency>
-          <groupId>com.sun</groupId>
-          <artifactId>tools</artifactId>
-          <version>1.4.2</version>
-          <scope>system</scope>
-          <systemPath>${java.home}/../lib/tools.jar</systemPath>
-       </dependency>
-     </dependencies>
-   </profile>
- </profiles>
-
-
     <dependencies>
         <!-- IntAct dependencies -->
         <dependency>
             <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
             <artifactId>intact-psixml-exchange</artifactId>
             <version>2.0.0-SNAPSHOT</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>cglib</groupId>
-                    <artifactId>cglib-full</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- PSI-MI TAB - conversion and search -->
         <dependency>
-            <groupId>psidev.psi.mi</groupId>
-            <artifactId>psimitab-search</artifactId>
-            <version>1.5.0-SNAPSHOT</version>
+            <groupId>uk.ac.ebi.intact.dataexchange.psimi</groupId>
+            <artifactId>intact-psimitab</artifactId>
+            <version>2.0.0-SNAPSHOT</version>
         </dependency>
 
         <!-- Binary Search Client -->
         <dependency>
             <groupId>uk.ac.ebi.intact.service.search.binary</groupId>
             <artifactId>wsclient</artifactId>
-            <version>1.6.0-rc1</version>
+            <version>1.6.0-rc2-SNAPSHOT</version>
         </dependency>
 
         <!-- It this is not present, eclipse fails to synchronize the maven build
