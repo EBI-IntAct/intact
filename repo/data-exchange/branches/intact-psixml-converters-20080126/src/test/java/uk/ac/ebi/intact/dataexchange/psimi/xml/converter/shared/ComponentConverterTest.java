@@ -55,8 +55,8 @@ public class ComponentConverterTest extends IntactBasicTestCase {
         Assert.assertEquals(CvExperimentalRole.BAIT_PSI_REF, identity.getPrimaryId());
         Assert.assertEquals(1, component.getBindingDomains().size());
 
-        Assert.assertEquals(1, component.getComponentParameters().size());
-        uk.ac.ebi.intact.model.ComponentParameter param = component.getComponentParameters().iterator().next();
+        Assert.assertEquals(1, component.getParameters().size());
+        uk.ac.ebi.intact.model.ComponentParameter param = component.getParameters().iterator().next();
         Assert.assertNotNull( param.getCvParameterType());
         Assert.assertEquals("temperature of inter", param.getCvParameterType().getShortLabel());
         Assert.assertEquals("kelvin", param.getCvParameterUnit().getShortLabel());
@@ -80,8 +80,8 @@ public class ComponentConverterTest extends IntactBasicTestCase {
 
         Assert.assertEquals(1, participant.getParameters().size());
         Assert.assertNotNull( participant.getParameters().iterator().next().getTerm());
-        Assert.assertEquals( component.getComponentParameters().iterator().next().getFactor(),  participant.getParameters().iterator().next().getFactor());
-        Assert.assertEquals( component.getComponentParameters().iterator().next().getCvParameterType().getMiIdentifier(), participant.getParameters().iterator().next().getTermAc());
-        Assert.assertEquals( component.getComponentParameters().iterator().next().getCvParameterUnit().getShortLabel(), participant.getParameters().iterator().next().getUnit());
+        Assert.assertEquals( component.getParameters().iterator().next().getFactor(),  participant.getParameters().iterator().next().getFactor());
+        Assert.assertEquals( component.getParameters().iterator().next().getCvParameterType().getMiIdentifier(), participant.getParameters().iterator().next().getTermAc());
+        Assert.assertEquals( component.getParameters().iterator().next().getCvParameterUnit().getShortLabel(), participant.getParameters().iterator().next().getUnit());
     }
 }

@@ -56,8 +56,8 @@ public class InteractionConverterTest extends AbstractConverterTest {
         Assert.assertEquals( "0.8", conf.getValue());
         Assert.assertEquals( interaction, conf.getInteraction());
 
-        Assert.assertEquals(1, interaction.getInteractionParameters().size());
-        uk.ac.ebi.intact.model.InteractionParameter param = interaction.getInteractionParameters().iterator().next();
+        Assert.assertEquals(1, interaction.getParameters().size());
+        uk.ac.ebi.intact.model.InteractionParameter param = interaction.getParameters().iterator().next();
         Assert.assertNotNull( param.getCvParameterType());
         Assert.assertEquals("temperature of inter", param.getCvParameterType().getShortLabel());
         Assert.assertEquals("kelvin", param.getCvParameterUnit().getShortLabel());
@@ -259,9 +259,9 @@ public class InteractionConverterTest extends AbstractConverterTest {
     
         Assert.assertEquals(1, psiInteraction.getParameters().size());
         Assert.assertNotNull( psiInteraction.getParameters().iterator().next().getTerm());
-        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getFactor(),  psiInteraction.getParameters().iterator().next().getFactor());
-        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getCvParameterType().getMiIdentifier(),  psiInteraction.getParameters().iterator().next().getTermAc());
-        Assert.assertEquals( intactInteraction.getInteractionParameters().iterator().next().getCvParameterUnit().getShortLabel(),  psiInteraction.getParameters().iterator().next().getUnit());
+        Assert.assertEquals( intactInteraction.getParameters().iterator().next().getFactor(),  psiInteraction.getParameters().iterator().next().getFactor());
+        Assert.assertEquals( intactInteraction.getParameters().iterator().next().getCvParameterType().getMiIdentifier(),  psiInteraction.getParameters().iterator().next().getTermAc());
+        Assert.assertEquals( intactInteraction.getParameters().iterator().next().getCvParameterUnit().getShortLabel(),  psiInteraction.getParameters().iterator().next().getUnit());
     }
 
     @Test
