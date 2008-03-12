@@ -107,7 +107,7 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         }
 
         ParticipantParameterConverter participantParameterConverter = new ParticipantParameterConverter( getInstitution());
-        for (uk.ac.ebi.intact.model.ComponentParameter param : intactObject.getComponentParameters()){
+        for (uk.ac.ebi.intact.model.ComponentParameter param : intactObject.getParameters()){
             psidev.psi.mi.xml.model.Parameter parameter = participantParameterConverter.intactToPsi(param);
             participant.getParameters().add(parameter);
         }
@@ -184,7 +184,7 @@ public class ParticipantConverter extends AbstractIntactPsiConverter<Component, 
         for (psidev.psi.mi.xml.model.Parameter psiParameter : participant.getParameters()){
             ComponentParameter parameter = paramConverter.psiToIntact( psiParameter );
             parameter.setComponent(component);
-            component.addComponentParameter(parameter);
+            component.addParameter(parameter);
         }
 
         return component;
