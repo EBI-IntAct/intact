@@ -300,7 +300,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      * @return list of items for property 'componentParameters'.
      */
     @OneToMany( mappedBy = "component", cascade = {CascadeType.PERSIST, CascadeType.REMOVE} )
-    public Collection<ComponentParameter> getComponentParameters() {
+    public Collection<ComponentParameter> getParameters() {
         return this.componentParameters;
     }
 
@@ -309,18 +309,18 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
      *
      * @param componentParameters collection to set for property 'componentParameters'.
      */
-    public void setComponentParameters( Collection<ComponentParameter> componentParameters) {
+    public void setParameters( Collection<ComponentParameter> componentParameters) {
         this.componentParameters = componentParameters;
     }
     
-    public void addComponentParameter( ComponentParameter componentParameter ) {
+    public void addParameter( ComponentParameter componentParameter ) {
         if ( !this.componentParameters.contains( componentParameter ) ) {
             this.componentParameters.add( componentParameter );
             componentParameter.setComponent(this);
         }
     }
 
-    public void removeComponentParameter( ComponentParameter componentParameter ) {
+    public void removeParameter( ComponentParameter componentParameter ) {
         this.componentParameters.remove( componentParameter );
     }
 
