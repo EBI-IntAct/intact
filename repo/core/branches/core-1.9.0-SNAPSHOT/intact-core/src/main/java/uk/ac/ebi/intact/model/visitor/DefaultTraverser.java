@@ -315,7 +315,7 @@ public class DefaultTraverser implements IntactObjectTraverser {
             traverse(confidence, visitors);
         }
         
-        for (InteractionParameter interactionParameter : interaction.getInteractionParameters()) {
+        for (InteractionParameter interactionParameter : interaction.getParameters()) {
             traverse(interactionParameter, visitors);
         }
     }
@@ -378,7 +378,7 @@ public class DefaultTraverser implements IntactObjectTraverser {
         traverse(component.getCvBiologicalRole(), visitors);
         traverse(component.getExpressedIn(), visitors);
 
-        for (Parameter parameter : component.getComponentParameters())
+        for (Parameter parameter : component.getParameters())
         traverse(parameter, visitors);
 
         for (CvIdentification partDetMethod : component.getParticipantDetectionMethods()) {

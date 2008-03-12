@@ -416,18 +416,18 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         this.confidences.remove( confidence);
     }
     
-    public void setInteractionParameters( Collection<InteractionParameter> someInteractionParameters ) {
+    public void setParameters( Collection<InteractionParameter> someInteractionParameters ) {
         this.interactionParameters = someInteractionParameters;
      }
 
-     public void addInteractionParameter( InteractionParameter interactionParameter ) {
+     public void addParameter( InteractionParameter interactionParameter ) {
          if ( !this.interactionParameters.contains( interactionParameter ) ) {
              this.interactionParameters.add( interactionParameter );
              interactionParameter.setInteraction( this );
          }
      }
 
-     public void removeInteractionParameter( InteractionParameter interactionParameter ) {
+     public void removeParameter( InteractionParameter interactionParameter ) {
          this.interactionParameters.remove( interactionParameter );
      }
 
@@ -437,7 +437,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     }
     
     @OneToMany( mappedBy = "interaction", cascade = {CascadeType.ALL} )
-    public Collection<InteractionParameter> getInteractionParameters() {
+    public Collection<InteractionParameter> getParameters() {
         return interactionParameters;
     }
 
@@ -554,7 +554,7 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
             if (!CollectionUtils.isEqualCollection( getConfidences(), interaction.getConfidences())){
                 return false;
             }
-            if (!CollectionUtils.isEqualCollection( getInteractionParameters(), interaction.getInteractionParameters())){
+            if (!CollectionUtils.isEqualCollection( getParameters(), interaction.getParameters())){
                 return false;
             }
         }

@@ -255,7 +255,7 @@ public class IntactMockBuilder {
         component.getExperimentalPreparations().add(cvExperimentalPreparation);
         
         ComponentParameter componentParameter = createDeterministicComponentParameter();
-        component.addComponentParameter(componentParameter);
+        component.addParameter(componentParameter);
         
         interactor.addActiveInstance( component );
         interaction.addComponent( component );
@@ -424,7 +424,7 @@ public class IntactMockBuilder {
  //       interaction.getComponents().iterator().next().addComponentParameter(createDeterministicComponentParameter());
  //       interaction.addXref(createPrimaryReferenceXref( interaction , "testreference"));
         interaction.addConfidence( createDeterministicConfidence());
-        interaction.addInteractionParameter( createDeterministicInteractionParameter() );
+        interaction.addParameter( createDeterministicInteractionParameter() );
 
         return interaction;
     }

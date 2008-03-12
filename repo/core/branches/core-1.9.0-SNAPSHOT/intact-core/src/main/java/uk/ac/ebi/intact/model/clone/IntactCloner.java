@@ -376,8 +376,8 @@ public class IntactCloner {
             clone.addConfidence(clone( confidence ));
         }
         
-        for ( InteractionParameter interactionParameter : interaction.getInteractionParameters() ) {
-            clone.addInteractionParameter(clone( interactionParameter ));
+        for ( InteractionParameter interactionParameter : interaction.getParameters() ) {
+            clone.addParameter(clone( interactionParameter ));
         }
 
         return clone;
@@ -462,8 +462,8 @@ public class IntactCloner {
         clone.setStoichiometry( component.getStoichiometry() );
         clone.setExpressedIn(clone( component.getExpressedIn() ));
 
-        for (ComponentParameter componentParameter : component.getComponentParameters()) {
-            clone.addComponentParameter(clone (componentParameter));
+        for (ComponentParameter componentParameter : component.getParameters()) {
+            clone.addParameter(clone (componentParameter));
         }
 
         for ( Feature feature : component.getBindingDomains() ) {

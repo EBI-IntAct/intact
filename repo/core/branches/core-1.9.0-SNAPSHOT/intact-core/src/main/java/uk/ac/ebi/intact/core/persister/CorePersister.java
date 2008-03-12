@@ -584,7 +584,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
         interaction.setBioSource( synchronize( interaction.getBioSource() ) );
         interaction.setExperiments( synchronizeCollection( interaction.getExperiments() ) );
         interaction.setConfidences( synchronizeConfidences( interaction.getConfidences(), interaction ));
-        interaction.setInteractionParameters( synchronizeInteractionParameters( interaction.getInteractionParameters(), interaction ));
+        interaction.setParameters( synchronizeInteractionParameters( interaction.getParameters(), interaction ));
 
         synchronizeAnnotatedObjectCommons( interaction );
     }
@@ -654,7 +654,7 @@ public class CorePersister implements Persister<AnnotatedObject> {
         component.setInteractor( synchronize( component.getInteractor() ) );
         component.setParticipantDetectionMethods( synchronizeCollection( component.getParticipantDetectionMethods() ) );
         component.setExperimentalPreparations( synchronizeCollection( component.getExperimentalPreparations() ) );
-        component.setComponentParameters( synchronizeComponentParameters( component.getComponentParameters(), component ));
+        component.setParameters( synchronizeComponentParameters( component.getParameters(), component ));
         synchronizeAnnotatedObjectCommons( component );
     }
     

@@ -194,7 +194,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
     public void interactionParameterPersisted() throws Exception {
         IntactMockBuilder builder = super.getMockBuilder();
         Interaction interaction = builder.createDeterministicInteraction();
-        InteractionParameter interactionParameterExpected = interaction.getInteractionParameters().iterator().next();
+        InteractionParameter interactionParameterExpected = interaction.getParameters().iterator().next();
         PersisterHelper.saveOrUpdate(interaction);
 
         Assert.assertEquals(1, getDaoFactory().getInteractionDao().countAll());
@@ -211,8 +211,8 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
 
         Iterator<InteractionImpl> interactionIter = getDaoFactory().getInteractionDao().getAllIterator();
         Interaction interactionObserved = interactionIter.next();
-        Assert.assertEquals(1, interactionObserved.getInteractionParameters().size());
-        InteractionParameter interactionParameterObserved2 = interactionObserved.getInteractionParameters().iterator().next();
+        Assert.assertEquals(1, interactionObserved.getParameters().size());
+        InteractionParameter interactionParameterObserved2 = interactionObserved.getParameters().iterator().next();
         Assert.assertEquals( interactionParameterExpected.getFactor(), interactionParameterObserved2.getFactor());
         Assert.assertEquals( interactionParameterExpected.getCvParameterType(), interactionParameterObserved2.getCvParameterType());
         Assert.assertEquals( interactionParameterExpected.getCvParameterUnit(), interactionParameterObserved2.getCvParameterUnit());
