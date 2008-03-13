@@ -10,10 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
 import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -213,7 +210,7 @@ public class BlastJobDao {
         try {
             insertStat.setString( 1, job.getJobid() );
             insertStat.setString( 2, job.getUniprotAc() );
-            insertStat.setString( 3, job.getSequence() );
+            insertStat.setObject( 3, job.getSequence().getBytes());
             insertStat.setString( 4, job.getStatus().toString() );
             insertStat.setString( 5, job.getResultPath() );
             insertStat.setTimestamp( 6, job.getTimestamp() );
@@ -251,7 +248,7 @@ public class BlastJobDao {
         }
         if ( existsInDb( job.getJobid(), job.getUniprotAc() ) ) {
             try {
-                updateJobStat.setString( 1, job.getSequence() );
+                updateJobStat.setObject( 1, job.getSequence().getBytes() );
                 updateJobStat.setString( 2, job.getStatus().toString() );
                 updateJobStat.setTimestamp( 3, job.getTimestamp() );
                 updateJobStat.setString( 4, job.getResultPath() );
@@ -283,9 +280,11 @@ public class BlastJobDao {
                     path = "tmpAux";
                 }
                 BlastJobStatus status = getStatus( rs.getString( "status" ) );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String sequence = new String(seqBlob.getBytes( 1, (int) seqBlob.length() ));
 
-                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), rs
-                        .getString( "sequence" ), status, new File( path ), rs.getTimestamp( "timestamp" ) );
+                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ),
+                        sequence, status, new File( path ), rs.getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
             }
 
@@ -344,7 +343,8 @@ public class BlastJobDao {
             while ( rs.next() ) {
                 String jobId = rs.getString( "jobid" );
                 String uniAc = rs.getString( "uniprotAc" );
-                String seq = rs.getString( "sequence" );
+                Blob seqBlob =  rs.getBlob( "sequence" );
+                String seq = new String(seqBlob.getBytes( 1, (int)seqBlob.length() ));
                 String path = rs.getString( "resultPath" );
                 if ( path == null ) {
                     path = "tmpAux";
@@ -426,7 +426,8 @@ public class BlastJobDao {
             while ( rs.next() ) {
                 String jobId = rs.getString( "jobid" );
                 String uniAc = rs.getString( "uniprotAc" );
-                String seq = rs.getString( "sequence" );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String seq = new String(seqBlob.getBytes(1, (int)seqBlob.length() ));
                 String path = rs.getString( "resultPath" );
                 if ( path == null ) {
                     path = "tmpAux";
@@ -474,8 +475,10 @@ public class BlastJobDao {
                 }
 
                 BlastJobStatus statusFromDb = getStatus( rs.getString( "status" ) );
-                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), rs
-                        .getString( "sequence" ), statusFromDb, new File( path ), rs.getTimestamp( "timestamp" ) );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String sequence = new String(seqBlob.getBytes( 1, (int)seqBlob.length() ));
+                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), 
+                        sequence, statusFromDb, new File( path ), rs.getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
             }
 
@@ -510,8 +513,10 @@ public class BlastJobDao {
                 }
 
                 BlastJobStatus statusFromDb = getStatus( rs.getString( "status" ) );
-                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), rs
-                        .getString( "sequence" ), statusFromDb, new File( path ), rs.getTimestamp( "timestamp" ) );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String sequence = new String(seqBlob.getBytes( 1, (int) seqBlob.length() ));
+                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ),
+                        sequence, statusFromDb, new File( path ), rs.getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
                 i++;
             }
@@ -548,8 +553,10 @@ public class BlastJobDao {
                 }
 
                 BlastJobStatus status = getStatus( rs.getString( "status" ) );
-                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), rs
-                        .getString( "sequence" ), status, new File( path ), rs.getTimestamp( "timestamp" ) );
+                Blob seqBlob = rs.getBlob("sequence");
+                String sequence = new String(seqBlob.getBytes( 1, (int) seqBlob.length() ));
+                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ),
+                        sequence, status, new File( path ), rs.getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
             }
 
@@ -586,8 +593,10 @@ public class BlastJobDao {
                 }
 
                 BlastJobStatus status = getStatus( rs.getString( "status" ) );
-                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ), rs
-                        .getString( "sequence" ), status, new File( path ), rs.getTimestamp( "timestamp" ) );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String sequence = new String (seqBlob.getBytes( 1, (int)seqBlob.length() ));
+                BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ),
+                        sequence, status, new File( path ), rs.getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
             }
 
@@ -611,12 +620,7 @@ public class BlastJobDao {
             ResultSet rs = stat.executeQuery( "CALL CSVWRITE('" + csvFile.getPath() + "', 'SELECT * FROM " + tableName
                                               + "');" );
             rs.close();
-
-            try {
-                w.close();
-            } catch ( IOException e ) {
-                throw new BlastJdbcException( e );
-            }
+            w.close();             
         } catch ( SQLException e ) {
             throw new BlastJdbcException( e );
         } catch ( IOException e ) {
@@ -638,8 +642,10 @@ public class BlastJobDao {
                 Timestamp time = rs.getTimestamp( "timestamp" );
 
                 BlastJobStatus status = getStatus( rs.getString( "status" ) );
+                Blob seqBlob = rs.getBlob( "sequence" );
+                String sequence = new String(seqBlob.getBytes( 1, (int) seqBlob.length() ));
                 BlastJobEntity newJob = new BlastJobEntity( rs.getString( "jobid" ), rs.getString( "uniprotAc" ),
-                                                            rs.getString( "sequence" ), status, new File( path ), time );
+                                                            sequence, status, new File( path ), time );
                 try {
                     saveJob( newJob );
                 } catch ( IllegalArgumentException e ) {

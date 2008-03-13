@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.bridges.blast.model;
 import java.util.regex.Pattern;
 
 /**
- * TODO comment this ... someday
+ * UniprotAc identifier.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version  1.0

@@ -23,6 +23,7 @@ public class Sequence {
 		if (sequence == null) {
 			throw new IllegalArgumentException("Sequence must not be null!");
 		}
+        sequence = sequence.replace( " ", "" );
         sequence = sequence.replace( "\n","");
         if (Pattern.matches(sequneceTermExpr, sequence)) {
 			this.seq = sequence.toLowerCase();

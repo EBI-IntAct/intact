@@ -26,22 +26,17 @@ public class BlastDb {
     public BlastDb( File dbFolder ) throws BlastJdbcException {
         try {
             Class.forName( "org.h2.Driver" );
-            //    DriverManager.registerDriver( Class.forName("org.h2.Driver"));
             nrConns = 0;
             this.dbFolder = dbFolder;
-            //    stat = conn.createStatement();
         } catch ( ClassNotFoundException e ) {
             throw new BlastJdbcException( e );
         }
-//        catch (SQLException e) {
-//			throw new BlastJdbcException(e);
-//		}
     }
 
     public void createJobTable( Connection conn, String tableName ) throws BlastJdbcException {
         try {
             String create = "CREATE TABLE IF NOT EXISTS " + tableName + " (" + " JobId VARCHAR(255) PRIMARY KEY, "
-                            + "uniprotAc VARCHAR(20), " + "sequence VARCHAR(10000), " + "status VARCHAR(15), " + "resultPath VARCHAR(255), " + "timestamp TIMESTAMP);";
+                            + "uniprotAc VARCHAR(20), " + "sequence BLOB, " + "status VARCHAR(15), " + "resultPath VARCHAR(255), " + "timestamp TIMESTAMP);";
             Statement stat = conn.createStatement();
             stat.execute( create );
         } catch ( SQLException e ) {
@@ -95,9 +90,7 @@ public class BlastDb {
 
             conn = DriverManager.getConnection( "jdbc:h2:" + dbFolder.getPath() + "/blast", "sa", "" );
         } catch ( SQLException e ) {
-            e.printStackTrace();
-//        } catch ( ClassNotFoundException e ) {
-//            e.printStackTrace();
+            throw new BlastJdbcException( e);
         }
         return conn;
     }

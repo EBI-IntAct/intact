@@ -614,7 +614,7 @@ public abstract class AbstractBlastService implements BlastService {
         return jobEntities;
     }
 
-    private void refreshJob( BlastJobEntity jobEntity ) throws BlastServiceException {
+    public void refreshJob( BlastJobEntity jobEntity ) throws BlastServiceException {
         if ( jobEntity == null ) {
             throw new NullPointerException( "JobEntity most be not null!" );
         }
@@ -761,10 +761,30 @@ public abstract class AbstractBlastService implements BlastService {
         }
         BlastJobEntity blastJobEntity = new BlastJobEntity( job.getId(), job.getBlastInput().getUniprotAc().getAcNr(), seq,
                                                             job.getStatus(), null, timestamp );
+         try {
+             if ( job.getStatus().equals( BlastJobStatus.DONE ) ) {
+                 BlastOutput blastOutput = getResult( job );
+                 File resultFile = writeResultsToWorkDir( blastJobEntity, blastOutput );
+                 if ( resultFile == null ) {
+                     throw new NullPointerException( "ResultFile must not be null!" );
+                 }
+
+                 if ( resultOK( resultFile ) ) {
+                     blastJobEntity.setStatus( BlastJobStatus.DONE );
+                 } else {
+                     blastJobEntity.setStatus( BlastJobStatus.FAILED );
+                 }
+
+                 blastJobEntity.setResult( resultFile );
+             }
+         } catch ( BlastClientException e ) {
+            throw new BlastServiceException( e);
+         }
+
         try {
             blastJobDao.saveJob( blastJobEntity );
             if ( log.isDebugEnabled() ) {
-                log.debug( "job: " + job.toString() + "saved to DB" );
+                log.debug( "job: " + job.toString() + " saved to DB" );
             }
 
             return blastJobEntity;
