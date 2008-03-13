@@ -95,6 +95,7 @@ public interface BlastService {
     public List<BlastJobEntity> fetchRunningJobs() throws BlastServiceException;
 
     public void refreshDb() throws BlastServiceException;
+    public void refreshJob( BlastJobEntity jobEntity ) throws BlastServiceException; 
 
     /**
      * Retrieves from DB

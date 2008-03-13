@@ -82,4 +82,23 @@ public class BlastInput {
 	public String toString() {
 		return uniprotAc.toString();
 	}
+
+    public boolean equals( Object o ) {
+        if ( this == o ) return true;
+        if ( !( o instanceof BlastInput ) ) return false;
+
+        BlastInput that = ( BlastInput ) o;
+
+        if ( sequence != null ? !sequence.equals( that.sequence ) : that.sequence != null ) return false;
+        if ( !uniprotAc.equals( that.uniprotAc ) ) return false;
+
+        return true;
+    }
+
+    public int hashCode() {
+        int result;
+        result = uniprotAc.hashCode();
+        result = 31 * result + ( sequence != null ? sequence.hashCode() : 0 );
+        return result;
+    }
 }

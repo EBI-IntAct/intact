@@ -149,7 +149,7 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testGetJobByAc() throws BlastJdbcException {
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P12345", "sequence", BlastJobStatus.DONE, new File(
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTest2", "P12345", "sequence0", BlastJobStatus.DONE, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:20:25" ) );
         BlastJobEntity blastJob1 = new BlastJobEntity( "blastJobDaoTest2a", "P23456", "sequence1", BlastJobStatus.DONE, new File(
                 "test2a" ), Timestamp.valueOf( "2007-09-20 10:20:25" ) );
@@ -194,7 +194,10 @@ public class BlastJobDaoTest {
     @Test
     public final void testExportCsvJob() throws BlastJdbcException {
         File csvFile = new File( testDir, "testExportJob.csv" );
-        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTestExport1", "P23456", "sequence", BlastJobStatus.DONE, new File(
+         if (csvFile.exists()){
+            csvFile.delete();
+        }
+        BlastJobEntity blastJob = new BlastJobEntity( "blastJobDaoTestExport1", "P23456", "sequence1", BlastJobStatus.DONE, new File(
                 "test2" ), Timestamp.valueOf( "2007-09-13 10:40:25" ) );
         BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoExport2", "P12345", "sequence2", BlastJobStatus.DONE, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:40:25" ) );
@@ -205,9 +208,12 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testImportCsvJob() throws BlastJdbcException {
-        File csvFile = new File( testDir, "testExportJob.csv" );
+        File csvFile = new File( testDir, "testExportJob.csv" );        
         blastJobDao.importCSV( csvFile );
         File exportFile = new File( testDir, "testExportInportJob.csv" );
+        if (exportFile.exists()){
+            exportFile.delete();
+        }
         blastJobDao.exportCSV( exportFile);
         assertTrue( exportFile.exists());
     }

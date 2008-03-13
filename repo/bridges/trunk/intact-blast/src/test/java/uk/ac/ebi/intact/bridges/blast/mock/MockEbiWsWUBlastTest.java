@@ -90,8 +90,8 @@ public class MockEbiWsWUBlastTest {
         Assert.assertNull( result );
     }
 
-    @Test
-    public final void testSubmitJobsOneByOne() throws BlastServiceException {
+    @Test (expected=IllegalArgumentException.class)
+    public final void testSubmitJobsOneByOne() throws BlastServiceException  {
         Set<UniprotAc> acs = new HashSet<UniprotAc>( 4 );
         acs.add( new UniprotAc( "P12345" ) );
         acs.add( new UniprotAc( "Q12345" ) );

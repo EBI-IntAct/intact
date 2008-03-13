@@ -164,6 +164,9 @@ public class BlastEbiWsTest {
     public void testRefreshDb() throws Exception {
         wsBlast.refreshDb();
         File csvFile = new File(testDir, "exportAfterRefresh.csv");
+        if (csvFile.exists()){
+            csvFile.delete();
+        }
         wsBlast.exportCsv( csvFile);
         assertTrue(csvFile.exists());
     }
@@ -218,7 +221,14 @@ public class BlastEbiWsTest {
 		}
 	}
 
-	// TODO: test resubmission of failed examples
+
+    @Test
+    public void processResult() throws Exception {
+        
+    }
+
+
+    // TODO: test resubmission of failed examples
 
 	private void printResult(BlastResult result, Writer writer) throws BlastServiceException {
 		try {
