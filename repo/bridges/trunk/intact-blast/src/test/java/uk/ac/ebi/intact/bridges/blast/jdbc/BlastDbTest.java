@@ -66,7 +66,6 @@ public class BlastDbTest {
 
     @Test
     public final void testMultipleConnections() throws BlastJdbcException {
-        // BlastDb db2 = new BlastDb(dbFolder);
         Connection conn1 = null;
         Connection conn2 = null;
 

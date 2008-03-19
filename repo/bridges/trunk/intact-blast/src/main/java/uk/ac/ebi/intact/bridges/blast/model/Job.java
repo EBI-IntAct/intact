@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.bridges.blast.model;
 
 /**
- * TODO comment this ... someday
+ * Class representing a submitted blast job.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version

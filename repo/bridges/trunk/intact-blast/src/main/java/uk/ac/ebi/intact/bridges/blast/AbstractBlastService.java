@@ -152,15 +152,15 @@ public abstract class AbstractBlastService implements BlastService {
             throw new IllegalArgumentException( "UniprotAc.getAcNr() must not be null!" );
         }
         if ( blastInput.getSequence() == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "BlastInput(" + blastInput.getUniprotAc() + ") has no Sequence!" );
+            if ( log.isWarnEnabled() ) {
+                log.warn( "BlastInput(" + blastInput.getUniprotAc() + ") has no sequence!" );
             }
         }
         try {
             BlastJobEntity jobEntity = blastJobDao.getJobByAc( blastInput.getUniprotAc() );
             if ( jobEntity != null ) {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "submitJob(" + blastInput.getUniprotAc() + ") took: " + ( ( System.currentTimeMillis() / 1000 ) - startTime ) + " sec" );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "found Job(" + blastInput.getUniprotAc() + ") took: " + ( ( System.currentTimeMillis() / 1000 ) - startTime ) + " sec" );
                 }
                 return jobEntity;
             } else {
@@ -172,21 +172,21 @@ public abstract class AbstractBlastService implements BlastService {
                         nr = availableNrToSubmit();
                     }
                     Job job = runBlast( blastInput );
-                    if ( log.isInfoEnabled() ) {
+                    if ( log.isTraceEnabled() ) {
                         int runnningJobs = blastJobDao.countJobs( BlastJobStatus.RUNNING );
-                        log.info( "after submit: #runningJobs: " + runnningJobs );
+                        log.trace( "after submit: #runningJobs: " + runnningJobs );
                     }
                     BlastJobEntity tmp = saveSubmittedJob( job );
-                    if ( log.isInfoEnabled() ) {
-                        log.info( "submitJob(" + blastInput.getUniprotAc() + ") took: " + ( ( System.currentTimeMillis() / 1000 ) - startTime ) + " sec" );
+                    if ( log.isTraceEnabled() ) {
+                        log.trace( "submitted new job (" + blastInput.getUniprotAc() + ") took: " + ( ( System.currentTimeMillis() / 1000 ) - startTime ) + " sec" );
                     }
                     return tmp;
                 } catch ( BlastClientException e ) {
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "BlastClientException" + e.toString() );
+                    if ( log.isWarnEnabled() ) {
+                        log.warn( "BlastClientException" + e.toString() );
                     }
-                    if ( log.isInfoEnabled() ) {
-                        log.info( "submit -> blastclientException: " + e.toString() );
+                    if ( log.isTraceEnabled() ) {
+                        log.trace( "submit -> blastclientException: " + e.toString() );
                     }
                     if ( failS.getTries( FailureMethods.SUBMITJOB ) < nrMaxTries ) {
                         BlastJobEntity job = null;
@@ -195,7 +195,7 @@ public abstract class AbstractBlastService implements BlastService {
                             Thread.sleep( 5000 ); //5 sec
                             job = submitJob( blastInput );
                         } catch ( InterruptedException e1 ) {
-                            e1.printStackTrace();
+                            throw new BlastServiceException( e);
                         }
                         failS.resetTries( FailureMethods.SUBMITJOB );
                         return job;
@@ -287,16 +287,16 @@ public abstract class AbstractBlastService implements BlastService {
         try {
             blastJobEntity = blastJobDao.getJobByAc( uniprotAc );
             if ( blastJobEntity != null ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "found: " + blastJobEntity );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "found: " + blastJobEntity );
                     long endTime = System.currentTimeMillis() / 1000;
-                    log.info( "fetchAvailableBlast(" + uniprotAc + ")  took: " + ( endTime - startTime ) + " sec" );
+                    log.trace( "fetchAvailableBlast(" + uniprotAc + ")  took: " + ( endTime - startTime ) + " sec" );
                 }
                 return fetchAvailableBlast( blastJobEntity );
             } else {
-                if ( log.isInfoEnabled() ) {
+                if ( log.isTraceEnabled() ) {
                     long endTime = System.currentTimeMillis() / 1000;
-                    log.info( "fetchAvailableBlast(" + uniprotAc + ")  took: " + ( endTime - startTime ) + " sec" );
+                    log.trace( "fetchAvailableBlast(" + uniprotAc + ")  took: " + ( endTime - startTime ) + " sec" );
                 }
                 return null;
             }
@@ -327,8 +327,8 @@ public abstract class AbstractBlastService implements BlastService {
                     return fetchResult( blastJobEntity );
                 }
             } else {
-                if ( log.isInfoEnabled() ) {
-                    log.info( "JobEntity not in DB: " + jobEntity );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "JobEntity not in DB: " + jobEntity );
                 }
             }
         } catch ( BlastJdbcException e ) {
@@ -401,8 +401,8 @@ public abstract class AbstractBlastService implements BlastService {
                         }
                     }
                 } else {
-                    if ( log.isInfoEnabled() ) {
-                        log.info( "JobEntity not in DB: " + jobEntity );
+                    if ( log.isTraceEnabled() ) {
+                        log.trace( "JobEntity not in DB: " + jobEntity );
                     }
                 }
             }
@@ -435,8 +435,8 @@ public abstract class AbstractBlastService implements BlastService {
         // TODO: is this the final solution?
         File blastFile = new File( this.workDir, blastJobEntity.getUniprotAc() + ".xml" );
         if ( !blastFile.exists() ) {
-            if ( log.isInfoEnabled() ) {
-                log.info( "file not found in the archiveDir : " + blastFile.getPath() );
+            if ( log.isWarnEnabled() ) {
+                log.warn( "file not found in the archiveDir : " + blastFile.getPath() );
             }
             return null;
         }
@@ -570,8 +570,8 @@ public abstract class AbstractBlastService implements BlastService {
     private int availableNrToSubmit() throws BlastServiceException {
         try {
             int runningJobs = blastJobDao.countJobs( BlastJobStatus.RUNNING );
-            if ( log.isInfoEnabled() ) {
-                log.info( "#running jobs: " + runningJobs );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "#running jobs: " + runningJobs );
             }
             return nrSubmission - runningJobs;
         } catch ( BlastJdbcException e ) {
@@ -618,12 +618,12 @@ public abstract class AbstractBlastService implements BlastService {
         if ( jobEntity == null ) {
             throw new NullPointerException( "JobEntity most be not null!" );
         }
-        if ( log.isInfoEnabled() ) {
-            log.info( "refreshing job " + jobEntity );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "refreshing job " + jobEntity );
         }
         if ( BlastJobStatus.FAILED.equals( jobEntity.getStatus() ) || BlastJobStatus.NOT_FOUND.equals( jobEntity.getStatus() ) ) {
             if ( log.isDebugEnabled() ) {
-                log.debug( "Job not found or failed! " + jobEntity.getJobid() + ":" + jobEntity.getUniprotAc() );
+                log.debug( "Job NOT_FOUND or FAILED! " + jobEntity.getJobid() + ":" + jobEntity.getUniprotAc() );
             }
         } else {
 
@@ -636,8 +636,8 @@ public abstract class AbstractBlastService implements BlastService {
                         saveResult( jobEntity, result );
                     }
                     if ( BlastJobStatus.NOT_FOUND.equals( status ) || BlastJobStatus.FAILED.equals( status ) ) {
-                        if ( log.isInfoEnabled() ) {
-                            log.info( "JobWS not found or failed! " + jobEntity.getJobid() + ":" + jobEntity.getUniprotAc() );
+                        if ( log.isTraceEnabled() ) {
+                            log.trace( "JobWS not found or failed! " + jobEntity.getJobid() + ":" + jobEntity.getUniprotAc() );
                         }
                     }
                 } catch ( BlastClientException e ) {
@@ -677,9 +677,9 @@ public abstract class AbstractBlastService implements BlastService {
 
     private void rerun( BlastJobStatus status ) throws BlastServiceException {
         try {
-            if ( log.isInfoEnabled() ) {
+            if ( log.isTraceEnabled() ) {
                 int nr = blastJobDao.countJobs( status );
-                log.info( "rerunning: " + nr + " " + status + " jobs" );
+                log.trace( "rerunning: " + nr + " " + status + " jobs" );
             }
 
             Set<BlastJobEntity> jobs = new HashSet<BlastJobEntity>();
@@ -687,8 +687,8 @@ public abstract class AbstractBlastService implements BlastService {
             int i = 0;
             for ( BlastJobEntity jobEntity : jobs ) {
                 i++;
-                if ( log.isInfoEnabled() ) {
-                    log.info( "Deleting job(" + i + "): " + jobEntity );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Deleting job(" + i + "): " + jobEntity );
                 }
                 blastJobDao.deleteJob( jobEntity );
                 BlastJobEntity newJob;
@@ -697,8 +697,8 @@ public abstract class AbstractBlastService implements BlastService {
                 } else {
                     newJob = submitJob( new UniprotAc( jobEntity.getUniprotAc() ) );
                 }
-                if ( log.isInfoEnabled() ) {
-                    log.info( "New job submitted: " + newJob );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "New job submitted: " + newJob );
                 }
             }
         } catch ( BlastJdbcException e ) {
@@ -720,11 +720,11 @@ public abstract class AbstractBlastService implements BlastService {
             for ( BlastJobEntity jobEntity : jobs ) {
                 refreshJob( jobEntity );
             }
-            if ( log.isDebugEnabled() ) {
+            if ( log.isTraceEnabled() ) {
                 int jobsR = blastJobDao.countJobs( BlastJobStatus.RUNNING );
-                log.debug( "running jobs: " + jobsR );
+                log.trace( "running jobs: " + jobsR );
                 jobsR = blastJobDao.countJobs( BlastJobStatus.PENDING );
-                log.debug( "pending jobs: " + jobsR );
+                log.trace( "pending jobs: " + jobsR );
             }
             // jobs = blastJobDao.getNrJobsByStatus(atATime, status);
             // }
@@ -738,8 +738,15 @@ public abstract class AbstractBlastService implements BlastService {
             throw new NullPointerException( "JobEntity most be not null!" );
         }
         UniprotAc uniAc = new UniprotAc( job.getUniprotAc() );
-        BlastInput blastInput = new BlastInput( uniAc );
-        return new Job( job.getJobid(), blastInput );
+        String seqStr = job.getSequence();
+        if (seqStr != null || seqStr != ""){
+           Sequence seq = new Sequence(job.getSequence());
+            BlastInput blastInput = new BlastInput(uniAc, seq);
+            return new Job(job.getJobid(), blastInput);
+        } else {
+            BlastInput blastInput = new BlastInput( uniAc );
+            return new Job( job.getJobid(), blastInput );
+        }
 
     }
 
@@ -783,8 +790,8 @@ public abstract class AbstractBlastService implements BlastService {
 
         try {
             blastJobDao.saveJob( blastJobEntity );
-            if ( log.isDebugEnabled() ) {
-                log.debug( "job: " + job.toString() + " saved to DB" );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "job: " + job.toString() + " saved to DB" );
             }
 
             return blastJobEntity;
