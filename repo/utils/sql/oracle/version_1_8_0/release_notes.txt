@@ -2,10 +2,12 @@ VERSION 1.8.0
 
 REQUEST
     * Add a new field to store MI identifier in ia_controlledvocab
+    * create a new table to store the interaction confidence.
 
 TECHNICAL CHANGES
     * added new field MI_IDENTIFIER in ia_controlledvocab and ia_controlledvocab_audit
     * the new field is indexed
     * updated audit trigger
     * added PL*SQL procedure to update this field based on the data available
+    * added table, audit table, trigger to store the confidence data
 

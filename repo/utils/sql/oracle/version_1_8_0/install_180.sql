@@ -21,9 +21,14 @@ PROMPT
 @010_create_tables.sql
 
 PROMPT *********************************************************************************/
-PROMPT "Creating audit tables for new tables..."
+PROMPT "Creating new table ia_confidence_audit..."
 PROMPT
-@050_create_audit_tables.sql
+@030_create_confidence_audit_table.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating new trigger for confidence audit..."
+PROMPT
+@060_create_confidence_audit_trigger.sql
 
 PROMPT *********************************************************************************/
 PROMPT "Adding new field in ia_controlledvocab..."
