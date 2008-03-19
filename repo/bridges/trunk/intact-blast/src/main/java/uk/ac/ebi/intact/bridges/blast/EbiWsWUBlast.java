@@ -103,8 +103,8 @@ public class EbiWsWUBlast extends AbstractBlastService {
         BlastMappingReader bmr = new BlastMappingReader();
 
         try {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "reading xml : " + xmlFile.getPath() );
+            if ( log.isTraceEnabled() ) {
+                log.trace( "reading xml : " + xmlFile.getPath() );
             }
             EBIApplicationResult appResult = bmr.read( xmlFile );
             if ( appResult != null ) {
@@ -122,8 +122,8 @@ public class EbiWsWUBlast extends AbstractBlastService {
                     evalue = alignments.get( 0 ).getExpectation();
                     blastHits.add( new Hit( accession, evalue ) );
                 }
-                if ( uniprotAc.equals( "" ) && blastHits.size() == 0 ) {
-                    log.debug( "NO BlastResult was found, see file " + xmlFile.getPath() );
+                if ( uniprotAc.equals( "" ) && blastHits.size() == 0 && log.isWarnEnabled()) {
+                    log.warn( "NO BlastResult was found, see file " + xmlFile.getPath() );
                 }
                 return new BlastResult( uniprotAc, blastHits );
             } else {

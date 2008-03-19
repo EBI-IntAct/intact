@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.bridges.blast.model;
 
 /**
- * TODO comment this ... someday
+ * Class representing the input information needed for a blast job.
  * 
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version 1.0

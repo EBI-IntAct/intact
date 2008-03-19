@@ -21,9 +21,7 @@ import uk.ac.ebi.intact.bridges.blast.AbstractBlastService;
 import uk.ac.ebi.intact.bridges.blast.BlastEbiWsTest;
 import uk.ac.ebi.intact.bridges.blast.BlastServiceException;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
-import uk.ac.ebi.intact.bridges.blast.model.BlastJobStatus;
-import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
-import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
+import uk.ac.ebi.intact.bridges.blast.model.*;
 
 import java.io.File;
 import java.util.ArrayList;

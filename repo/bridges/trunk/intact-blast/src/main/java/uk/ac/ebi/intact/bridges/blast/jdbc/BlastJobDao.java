@@ -122,8 +122,8 @@ public class BlastJobDao {
             deleteByIdStat.setString( 1, jobid );
 
             int result = deleteByIdStat.executeUpdate();
-            if ( result != 1 ) {
-                log.debug( "Delete statement failed! " + deleteByIdStat );
+            if ( result != 1 && log.isWarnEnabled()) {
+                log.warn( "Delete statement failed! " + deleteByIdStat );
             }
         } catch ( SQLException e ) {
             throw new BlastJdbcException( e );
@@ -165,8 +165,8 @@ public class BlastJobDao {
             deleteByAcStat.setString( 1, uniprotAc.getAcNr() );
 
             int result = deleteByAcStat.executeUpdate();
-            if ( result != 1 ) {
-                log.debug( "Delete statement failed! " + deleteByAcStat );
+            if ( result != 1 && log.isWarnEnabled() ) {
+                log.warn( "Delete statement failed! " + deleteByAcStat );
             }
         } catch ( SQLException e ) {
             throw new BlastJdbcException( e );
@@ -364,8 +364,8 @@ public class BlastJobDao {
         if ( jobs.size() == 0 ) {
             return null;
         }
-        if ( jobs.size() > 1 ) {
-            log.debug( "Make sure the jobId is unique key for the db !!!" );
+        if ( jobs.size() > 1 && log.isWarnEnabled()) {
+            log.warn( "Make sure the jobId is unique key for the db !!!" );
         }
         return jobs.get( 0 );
     }
@@ -437,6 +437,9 @@ public class BlastJobDao {
                 BlastJobEntity newJob = new BlastJobEntity( jobId, uniAc, seq, status, new File( path ), rs
                         .getTimestamp( "timestamp" ) );
                 jobs.add( newJob );
+                if (log.isTraceEnabled()){
+                    log.trace( "Found uniprotAc in Blast Db: " + newJob );
+                }
             }
 
             rs.close();
@@ -447,8 +450,8 @@ public class BlastJobDao {
         if ( jobs.size() == 0 ) {
             return null;
         }
-        if ( jobs.size() > 1 ) {
-            log.debug( "Make sure the uniprotAc is unique for the DB !!!" );
+        if ( jobs.size() > 1 && log.isWarnEnabled()) {
+            log.warn( "Make sure the uniprotAc("+uniprotAc+") is unique for the DB, more than only one job found!!!" );
         }
 
         return jobs.get( 0 );
@@ -495,8 +498,8 @@ public class BlastJobDao {
             throw new IllegalArgumentException( "Status must not be null!" );
         }
         int totalJobs = countJobs( status );
-        if ( log.isDebugEnabled() ) {
-            log.debug( "totalNrJobs (" + status + "): " + totalJobs );
+        if ( log.isTraceEnabled() ) {
+            log.trace( "totalNrJobs (" + status + "): " + totalJobs );
         }
         if ( totalJobs < nr ) {
             nr = totalJobs;
@@ -608,8 +611,8 @@ public class BlastJobDao {
         if ( jobs.size() == 0 ) {
             return null;
         }
-        if ( jobs.size() > 1 ) {
-            log.debug( "There are more than one jobs submitted on the same day with the same uniprotAc!!!" );
+        if ( jobs.size() > 1 && log.isWarnEnabled()) {
+            log.warn( "There are more than one jobs submitted on the same day with the same uniprotAc("+uniprotAc+")!!!" );
         }
         return jobs.get( 0 );
     }

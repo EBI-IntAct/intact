@@ -208,7 +208,7 @@ public class BlastJobDaoTest {
 
     @Test
     public final void testImportCsvJob() throws BlastJdbcException {
-        File csvFile = new File( testDir, "testExportJob.csv" );        
+        File csvFile = new File( testDir, "testExportJob.csv" );
         blastJobDao.importCSV( csvFile );
         File exportFile = new File( testDir, "testExportInportJob.csv" );
         if (exportFile.exists()){
