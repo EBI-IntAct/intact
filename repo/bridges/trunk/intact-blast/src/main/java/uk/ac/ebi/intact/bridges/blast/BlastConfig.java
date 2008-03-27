@@ -18,11 +18,11 @@ package uk.ac.ebi.intact.bridges.blast;
 import java.io.File;
 
 /**
- * TODO comment that class header
+ * Wrapper for the configuration data of the blast service.
  *
  * @author Irina Armean (iarmean@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.2-SNAPSHOT
  *        <pre>
  *               30-Nov-2007
  *               </pre>
@@ -36,12 +36,11 @@ public class BlastConfig {
 
     public BlastConfig( String email ) {
         this.email = email;
+        databaseDir = new File(System.getProperty("java.io.tmpdir"));
+        blastArchiveDir = new File(System.getProperty("java.io.tmpdir"));
     }
 
     public File getDatabaseDir() {
-        if (databaseDir == null){
-            return new File(System.getProperty("java.io.tmpdir"));
-        }
         return databaseDir;
     }
 
@@ -59,10 +58,7 @@ public class BlastConfig {
         this.tableName = tableName;
     }
 
-    public File getBlastArchiveDir() {
-        if(blastArchiveDir == null){
-            return new File(System.getProperty("java.io.tmpdir"));
-        }
+    public File getBlastArchiveDir() {      
         return blastArchiveDir;
     }
 
