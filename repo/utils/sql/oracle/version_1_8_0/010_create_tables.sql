@@ -7,9 +7,9 @@ CREATE TABLE ia_confidence
     ,  created                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  updated                 DATE            DEFAULT  SYSDATE NOT NULL
     ,  userstamp               VARCHAR2(30)    DEFAULT  USER    NOT NULL
-    ,  interaction_ac          VARCHAR2(30)    CONSTRAINT fk_confidence$interaction REFERENCES IA_INTERACTOR(ac)
-    ,  confidencetype_ac       VARCHAR2(30)    CONSTRAINT fk_confidence$qualifier  REFERENCES IA_ControlledVocab(ac)
-    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_confidence$owner      REFERENCES IA_Institution(ac)
+    ,  interaction_ac          VARCHAR2(30)    CONSTRAINT fk_confidence$interaction REFERENCES IA_INTERACTOR(ac) ON DELETE CASCADE
+    ,  confidencetype_ac       VARCHAR2(30)    CONSTRAINT fk_confidence$qualifier   REFERENCES IA_ControlledVocab(ac)
+    ,  owner_ac                VARCHAR2(30)    CONSTRAINT fk_confidence$owner       REFERENCES IA_Institution(ac)
     ,  value		       VARCHAR2(30)	
     ,  created_user            VARCHAR2(30)    DEFAULT  USER    NOT NULL
 )
