@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.site.mb;
 import uk.ac.ebi.intact.search.wsclient.SearchServiceClient;
 
 import javax.faces.context.FacesContext;
+import javax.faces.context.ExternalContext;
 import javax.faces.event.ActionEvent;
 import java.io.Serializable;
 
@@ -29,6 +30,7 @@ import java.io.Serializable;
  */
 public class StatisticsBean implements Serializable
 {
+    private static final String INTACT_ROOT = "intact.APPLICATION_ROOT";
     private static final String SEARCH_WS_URL = "uk.ac.ebi.intact.SEARCH_WS_URL";
 
     private boolean loaded;
@@ -45,7 +47,11 @@ public class StatisticsBean implements Serializable
 
     public synchronized void prepare(ActionEvent evt)
     {
-        String wsdl = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(SEARCH_WS_URL);
+        ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        String appRoot = externalContext.getInitParameter(INTACT_ROOT);
+        String wsdlRel = externalContext.getInitParameter(SEARCH_WS_URL);
+
+        String wsdl = appRoot+wsdlRel;
 
         if (!loaded && !failed)
         {
