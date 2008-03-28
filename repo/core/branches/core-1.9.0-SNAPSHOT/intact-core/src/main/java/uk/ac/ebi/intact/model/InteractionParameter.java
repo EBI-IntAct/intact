@@ -22,7 +22,7 @@ import javax.persistence.*;
  *
  * @author Julie Bourbeillon (julie.bourbeillon@labri.fr)
  * @version $Id$
- * @since 1.8.0
+ * @since 1.9.0
  */
 @Entity
 @Table( name = "ia_interaction_parameter" )
