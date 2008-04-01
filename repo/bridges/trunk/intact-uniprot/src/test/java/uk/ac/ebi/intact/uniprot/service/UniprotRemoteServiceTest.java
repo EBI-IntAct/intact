@@ -15,9 +15,8 @@ import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
+import java.util.*;
+import java.io.*;
 
 /**
  * UniprotRemoteServiceAdapter Tester.
@@ -253,7 +252,7 @@ public class UniprotRemoteServiceTest {
             calendar.set( Calendar.MINUTE, 0 );
             calendar.set( Calendar.SECOND, 0 );
 
-            assertEquals( formatter.parse( "13-NOV-2007" ), calendar.getTime() );
+            assertEquals( formatter.parse( "18-MAR-2008" ), calendar.getTime() );
 
             formatter = null;
         } catch ( ParseException e ) {
@@ -268,7 +267,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 28, protein.getCrossReferences().size() );
+        assertEquals( 32, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
