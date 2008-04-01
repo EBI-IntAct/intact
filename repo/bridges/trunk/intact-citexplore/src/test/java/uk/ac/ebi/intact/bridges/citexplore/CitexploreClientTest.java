@@ -5,29 +5,30 @@
  */
 package uk.ac.ebi.intact.bridges.citexplore;
 
-import junit.framework.TestCase;
+import junit.framework.Assert;
+import org.junit.Test;
 import uk.ac.ebi.cdb.webservice.Citation;
 import uk.ac.ebi.cdb.webservice.JournalIssue;
 
 /**
- * TODO comment this
+ * CitexploreClient Tester.
  *
  * @author Catherine Leroy (cleroy@ebi.ac.uk)
+ * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @since TODO
+ * @since 2.0.0
  */
-public class CitexploreClientTest extends TestCase {
+public class CitexploreClientTest {
+
+    @Test
     public void testGetDateOfPublication() {
         CitexploreClient citexploreClient = new CitexploreClient();
-        Citation c =  citexploreClient.getCitationById("1234567");
-//        Citation c =  citexploreClient.getCitationById("17634282");
-        assertNotNull(c);
-        JournalIssue journalIssue =  c.getJournalIssue();
-        assertNotNull(journalIssue);
-        String date = journalIssue.getDateOfPublication();
-        assertNotNull(date);
-        date = date.trim();
-        System.out.println("date = [" + date + "]");
-        assertEquals("1975",date);
+        Citation c = citexploreClient.getCitationById( "1234567" );
+        Assert.assertNotNull( c );
+        Assert.assertNotNull( c.getTitle() );
+        JournalIssue journalIssue = c.getJournalIssue();
+        Assert.assertNotNull( c.getJournalIssue() );
+        short date = journalIssue.getYearOfPublication();
+        Assert.assertEquals( 1975, date );
     }
 }
