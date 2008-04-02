@@ -15,15 +15,14 @@
  */
 package uk.ac.ebi.intact.core.persister.stats;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.ArrayListMultimap;
-
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -47,6 +46,13 @@ public class PersisterStatistics implements Serializable {
         this.mergedMap = new ArrayListMultimap<Class, StatsUnit>();
         this.duplicatesMap = new ArrayListMultimap<Class, StatsUnit>();
         this.transientMap = new ArrayListMultimap<Class, StatsUnit>();
+    }
+
+    public void reset() {
+        this.persistedMap.clear();
+        this.mergedMap.clear();
+        this.duplicatesMap.clear();
+        this.transientMap.clear();
     }
 
     // persisted
