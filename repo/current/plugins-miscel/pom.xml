@@ -35,9 +35,9 @@
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
 
-        <core.version>1.8.0-SNAPSHOT</core.version>
+        <core.version>1.8.1</core.version>
         <bridges.version>2.0.1-SNAPSHOT</bridges.version>
-	<plugin.version>2.1-SNAPSHOT</plugin.version>
+	    <plugin.version>2.1-SNAPSHOT</plugin.version>
     </properties>
 
     <modules>
