@@ -226,6 +226,14 @@ public class DeclaredRuleManager {
 
         if ( log.isDebugEnabled() )
             log.debug( "Found " + resources.size() + " sanity-rules.xml files in the classpath" );
+        if ( log.isDebugEnabled() && resources.size() > 1 ) {
+            int i = 1;
+            for ( URL resource : resources ) {
+                log.debug( i + ") " + resource.getFile() );
+                i++;
+            }
+        }
+
 
         for ( URL resource : resources ) {
             try {
