@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.plugins</groupId>
@@ -7,15 +9,14 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>uniprotexport-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.6.0-SNAPSHOT</version>
 
     <name>Plugin - Export lines for uniprot</name>
-    <description>
-        Generates the Export lines for uniprot
-    </description>
+    <description>Generates the Export lines for uniprot</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
@@ -56,7 +57,6 @@
             <artifactId>commons-collections</artifactId>
             <version>3.2</version>
         </dependency>
-
     </dependencies>
 
 </project>
