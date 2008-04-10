@@ -6,7 +6,7 @@ import org.junit.Test;
 import java.net.URL;
 
 /**
- * TODO comment this
+ * TestDatasetFactory Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

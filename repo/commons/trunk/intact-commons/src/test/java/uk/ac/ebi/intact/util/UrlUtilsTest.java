@@ -15,14 +15,14 @@
  */
 package uk.ac.ebi.intact.util;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 import uk.ac.ebi.intact.util.filter.UrlFilter;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  * Test for <code>UrlUtilsTest</code>
@@ -31,27 +31,22 @@ import java.util.List;
  * @version $Id$
  * @since 08/21/2006
  */
-public class UrlUtilsTest extends TestCase
-{
-    public void setUp() throws Exception {
-        super.setUp();
-    }
+public class UrlUtilsTest {
 
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
-    public void testListFromUrlFolder_nonRecursive() throws Exception {
+    @Test
+    public void listFromUrlFolder_nonRecursive() throws Exception {
         List<URL> urls = UrlUtils.listFilesFromFolderUrl(UrlUtils.class.getResource(".."));
         assertTrue(urls.isEmpty());
     }
 
-    public void testListFromUrlFolder_recursive() throws Exception {
+    @Test
+    public void listFromUrlFolder_recursive() throws Exception {
         List<URL> urls = UrlUtils.listFilesFromFolderUrl(UrlUtils.class.getResource(".."), null, true);
         assertFalse(urls.isEmpty());
     }
 
-    public void testListFromUrlFolder_recursive_customFilter() throws Exception {
+    @Test
+    public void listFromUrlFolder_recursive_customFilter() throws Exception {
 
         UrlFilter customFilter = new UrlFilter()
         {
@@ -61,12 +56,8 @@ public class UrlUtilsTest extends TestCase
             }
         };
 
-        List<URL> urls = UrlUtils.listFilesFromFolderUrl(UrlUtils.class.getResource(".."), customFilter, true);
+        final URL resource = UrlUtilsTest.class.getResource( ".." );
+        List<URL> urls = UrlUtils.listFilesFromFolderUrl(resource, customFilter, true);
         assertEquals(2, urls.size());
-    }
-
-
-    public static Test suite() {
-        return new TestSuite(UrlUtilsTest.class);
     }
 }
