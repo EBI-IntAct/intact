@@ -10,7 +10,7 @@ import uk.ac.ebi.intact.commons.dataset.TestDatasetFactory;
 import java.net.URL;
 
 /**
- * TODO comment this
+ * TestDatasetImpl Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
