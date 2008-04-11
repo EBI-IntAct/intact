@@ -57,23 +57,9 @@ public class UrlUtilsTest {
             }
         };
 
-
-
-        final URL resource = UrlUtilsTest.class.getResource( ".." );
-        File parentDirectory = new File( resource.getFile() );
-        // create 2 files
-        createNewFile( parentDirectory, "foo.test" );
-        createNewFile( parentDirectory, "bar.test" );
+        final URL resource = new File( "target/test-classes" ).toURL();
 
         List<URL> urls = UrlUtils.listFilesFromFolderUrl(resource, customFilter, true);
         assertEquals(2, urls.size());
-    }
-
-    private void createNewFile( File parent, String name ) throws Exception {
-        assertTrue( parent.canWrite() );
-        final File file = new File( parent, name );
-        final boolean created = file.createNewFile();
-        assertTrue( file.canRead() );
-        assertEquals( 0, file.length() );
     }
 }
