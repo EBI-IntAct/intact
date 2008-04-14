@@ -6,20 +6,12 @@ in the root directory of this distribution.
 
 package uk.ac.ebi.intact.util.go;
 
-import org.apache.xerces.parsers.SAXParser;
-import org.xml.sax.*;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.util.SearchReplace;
 import uk.ac.ebi.ook.web.services.Query;
 import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 
 import javax.xml.rpc.ServiceException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Map;
 import java.rmi.RemoteException;
+import java.util.Map;
 
 /**
  * The proxy to the Go server. An example for the use of this class:
