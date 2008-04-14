@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-       <groupId>uk.ac.ebi.intact.bridges.coredep</groupId>
-       <artifactId>coredep</artifactId>
+       <groupId>uk.ac.ebi.intact.bridges</groupId>
+       <artifactId>bridges-master</artifactId>
        <version>2.0.2-SNAPSHOT</version>
     </parent>
 
@@ -12,7 +12,7 @@
     <packaging>jar</packaging>
     <version>2.0.2-SNAPSHOT</version>
 
-    <name>IntAct Bridges :: Core Dependent :: GO</name>
+    <name>IntAct Bridges :: GO (OLS Based)</name>
     <description>IntAct access to GO</description>
 
     <dependencies>
