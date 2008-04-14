@@ -35,6 +35,7 @@
        <module>intact-uniprot</module>
        <module>blast-mapping-parser</module>
        <module>intact-blast</module>
+       <module>intact-go</module>
        <module>coredep</module>
     </modules>
 
