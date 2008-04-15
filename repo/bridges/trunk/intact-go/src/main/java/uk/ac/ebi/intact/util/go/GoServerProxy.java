@@ -11,8 +11,8 @@ import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 
 import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The proxy to the Go server. An example for the use of this class:
@@ -32,16 +32,21 @@ public class GoServerProxy {
     // Class Data
     ///////////////
 
-    private Query olsQuery;
-
-
     ///////////////////
-    // Instance Data
-    ///////////////////
-
     private static final String GO = "GO";
 
+    // Instance Data
+
+    private Query olsQuery;
+
+    private boolean categoryEnabled = true;
+
+    ///////////////////
+
     public GoServerProxy() {
+    }
+
+    public GoServerProxy(boolean categoryEnabled) {
     }
 
 
@@ -71,13 +76,15 @@ public class GoServerProxy {
         Map<String,String> metadata = olsQuery.getTermMetadata(goId, GO);
         String definition = metadata.get("definition");
 
-        String categoryGoId = getCategoryForGoId(goId);
-
         GoTerm category = null;
 
-        // do not create a go term if the go id is already a category
-        if (!categoryGoId.equals(goId)) {
-            category = query(categoryGoId);
+        if (categoryEnabled) {
+            String categoryGoId = getCategoryForGoId(goId);
+
+            // do not create a go term if the go id is already a category
+            if (!categoryGoId.equals(goId)) {
+                category = query(categoryGoId);
+            }
         }
 
         GoTerm term = new GoTerm(goId, name, definition);
