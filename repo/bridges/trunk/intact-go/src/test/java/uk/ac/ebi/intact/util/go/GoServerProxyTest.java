@@ -21,6 +21,12 @@ import uk.ac.ebi.ook.web.services.QueryService;
 import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 import uk.ac.ebi.ook.web.services.Query;
 
+import javax.xml.rpc.ServiceException;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashMap;
+import java.rmi.RemoteException;
+
 /**
  * TODO comment that class header
  *
@@ -36,6 +42,8 @@ public class GoServerProxyTest {
 
         Assert.assertEquals("nucleus", term.getName());
         Assert.assertEquals("A membrane-bounded organelle of eukaryotic cells in which chromosomes are housed and replicated. In most cells, the nucleus contains all of the cell&apos;s chromosomes except the organellar chromosomes, and is the site of RNA synthesis and processing. In some species, or in specialized cell types, RNA metabolism or DNA replication may be absent.", term.getDefinition());
+
+        Assert.assertEquals("GO:0005575", term.getCategory().getId());
     }
 
     @Test (expected = GoServerProxy.GoIdNotFoundException.class)
@@ -49,4 +57,23 @@ public class GoServerProxyTest {
         GoServerProxy goServerProxy = new GoServerProxy();
         GoTerm term = goServerProxy.query(null);
     }
+
+    @Test
+    public void lala() throws Exception {
+
+
+        System.out.println(getCategoryForGoId("GO:0000122"));
+    }
+
+    private static String getCategoryForGoId(String goId) throws RemoteException, ServiceException{
+        Query olsQuery = new QueryServiceLocator().getOntologyQuery();
+        HashMap goIdMap = olsQuery.getTermParents(goId, "GO");
+
+        if (goIdMap.isEmpty()) {
+            return goId;
+        }
+
+        String parentId = (String) goIdMap.keySet().iterator().next();
+        return getCategoryForGoId(parentId);
+     }
 }

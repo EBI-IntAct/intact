@@ -23,12 +23,19 @@ package uk.ac.ebi.intact.util.go;
  */
 public class GoTerm {
 
+    private String id;
     private String name;
     private String definition;
+    private GoTerm category;
 
-    public GoTerm(String name, String definition) {
+    public GoTerm(String id, String name, String definition) {
+        this.id = id;
         this.name = name;
         this.definition = definition;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getName() {
@@ -39,8 +46,16 @@ public class GoTerm {
         return definition;
     }
 
+    public GoTerm getCategory() {
+        return category;
+    }
+
+    public void setCategory(GoTerm category) {
+        this.category = category;
+    }
+
     @Override
     public String toString() {
-        return getClass().getName()+"{name="+name+",definition="+definition+"}";
+        return getClass().getName()+"{id="+id+"; name="+name+"; definition="+definition+" ; category="+category+"}";
     }
 }

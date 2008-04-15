@@ -12,6 +12,7 @@ import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import java.util.Map;
+import java.util.HashMap;
 
 /**
  * The proxy to the Go server. An example for the use of this class:
@@ -30,6 +31,8 @@ public class GoServerProxy {
     ////////////////
     // Class Data
     ///////////////
+
+    private Query olsQuery;
 
 
     ///////////////////
@@ -55,9 +58,9 @@ public class GoServerProxy {
      */
     public GoTerm query( String goId )
             throws RemoteException, ServiceException, GoIdNotFoundException {
-               Query olsQuery = new QueryServiceLocator().getOntologyQuery();
-
         if (goId == null) throw new NullPointerException("goId cannot be null");
+
+        olsQuery = new QueryServiceLocator().getOntologyQuery();
 
         String name = olsQuery.getTermById(goId, GO);
 
@@ -68,8 +71,32 @@ public class GoServerProxy {
         Map<String,String> metadata = olsQuery.getTermMetadata(goId, GO);
         String definition = metadata.get("definition");
 
-       return new GoTerm(name, definition);
+        String categoryGoId = getCategoryForGoId(goId);
+
+        GoTerm category = null;
+
+        // do not create a go term if the go id is already a category
+        if (!categoryGoId.equals(goId)) {
+            category = query(categoryGoId);
+        }
+
+        GoTerm term = new GoTerm(goId, name, definition);
+        term.setCategory(category);
+        
+        return term;
     }
+
+    private static String getCategoryForGoId(String goId) throws RemoteException, ServiceException{
+        Query olsQuery = new QueryServiceLocator().getOntologyQuery();
+        HashMap goIdMap = olsQuery.getTermParents(goId, "GO");
+
+        if (goIdMap.isEmpty()) {
+            return goId;
+        }
+
+        String parentId = (String) goIdMap.keySet().iterator().next();
+        return getCategoryForGoId(parentId);
+     }
 
 
     /*
