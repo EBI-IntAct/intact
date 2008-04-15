@@ -54,7 +54,7 @@ public class ReactomeExport
 
             CvTopic curatedComplex = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvTopic.class).getByShortLabel(CvTopic.CURATED_COMPLEX);
             if ( curatedComplex == null ) {
-                throw new IllegalStateException( "Could not find CvTopic by shortlabel: " );
+                throw new IllegalStateException( "Could not find CvTopic by shortlabel: "+ CvTopic.CURATED_COMPLEX );
             }
 
             Collection<CvDatabase> databases = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao(CvDatabase.class).getByXrefLike(CvDatabase.REACTOME_COMPLEX_PSI_REF);

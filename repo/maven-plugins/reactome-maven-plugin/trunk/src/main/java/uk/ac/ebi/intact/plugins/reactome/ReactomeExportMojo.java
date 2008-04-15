@@ -180,4 +180,8 @@ public class ReactomeExportMojo
     {
         return invalidReactomeIdsInIntactFile;
     }
+
+    public void setHibernateConfig(File hibernateConfig) {
+        this.hibernateConfig = hibernateConfig;
+    }
 }
