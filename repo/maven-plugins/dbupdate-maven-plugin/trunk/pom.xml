@@ -30,19 +30,6 @@
             <artifactId>intact-cdb</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>uk.ac.ebi.intact.core</groupId>
-            <artifactId>intact-persister</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.intact.datasets</groupId>
-            <artifactId>intact-dataset</artifactId>
-            <version>1.7.0</version>
-            <scope>test</scope>
-        </dependency>
-
-
     </dependencies>
 
     <reporting>

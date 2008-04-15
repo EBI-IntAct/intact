@@ -6,9 +6,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
-import uk.ac.ebi.intact.core.persister.standard.InteractionPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 /**
  * UpdateMiNeTablesMojo Tester.
@@ -21,11 +19,7 @@ public class UpdateMiNeTablesMojoTest extends UpdateAbstractMojoTestCase {
 
     @Test
     public void testExecution() throws Exception {
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-        InteractionPersister.getInstance().saveOrUpdate(getMockBuilder().createInteractionRandomBinary());
-        InteractionPersister.getInstance().commit();
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
+        PersisterHelper.saveOrUpdate(getMockBuilder().createInteractionRandomBinary());
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-mine-config.xml" );
 
