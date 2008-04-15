@@ -15,17 +15,8 @@
  */
 package uk.ac.ebi.intact.util.go;
 
-import org.junit.Test;
 import org.junit.Assert;
-import uk.ac.ebi.ook.web.services.QueryService;
-import uk.ac.ebi.ook.web.services.QueryServiceLocator;
-import uk.ac.ebi.ook.web.services.Query;
-
-import javax.xml.rpc.ServiceException;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashMap;
-import java.rmi.RemoteException;
+import org.junit.Test;
 
 /**
  * TODO comment that class header
@@ -57,23 +48,4 @@ public class GoServerProxyTest {
         GoServerProxy goServerProxy = new GoServerProxy();
         GoTerm term = goServerProxy.query(null);
     }
-
-    @Test
-    public void lala() throws Exception {
-
-
-        System.out.println(getCategoryForGoId("GO:0000122"));
-    }
-
-    private static String getCategoryForGoId(String goId) throws RemoteException, ServiceException{
-        Query olsQuery = new QueryServiceLocator().getOntologyQuery();
-        HashMap goIdMap = olsQuery.getTermParents(goId, "GO");
-
-        if (goIdMap.isEmpty()) {
-            return goId;
-        }
-
-        String parentId = (String) goIdMap.keySet().iterator().next();
-        return getCategoryForGoId(parentId);
-     }
 }
