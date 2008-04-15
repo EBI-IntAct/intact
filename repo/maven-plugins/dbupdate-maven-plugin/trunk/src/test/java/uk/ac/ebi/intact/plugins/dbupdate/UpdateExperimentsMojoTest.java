@@ -17,8 +17,6 @@ package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 import java.io.File;

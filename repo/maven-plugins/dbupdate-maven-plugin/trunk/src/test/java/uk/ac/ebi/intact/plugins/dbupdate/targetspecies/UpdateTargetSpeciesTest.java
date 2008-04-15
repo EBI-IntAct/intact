@@ -19,8 +19,7 @@ import junitx.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.intact.core.persister.standard.CvObjectPersister;
-import uk.ac.ebi.intact.core.persister.standard.ExperimentPersister;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.IntactUnit;
@@ -45,11 +44,7 @@ public class UpdateTargetSpeciesTest extends IntactBasicTestCase {
         newt = mockBuilder.createCvObject(CvDatabase.class, CvDatabase.NEWT_MI_REF, CvDatabase.NEWT);
         targetSpeciesQual = mockBuilder.createCvObject(CvXrefQualifier.class, "IA:0001", CvXrefQualifier.TARGET_SPECIES);
 
-        beginTransaction();
-        CvObjectPersister.getInstance().saveOrUpdate(newt);
-        CvObjectPersister.getInstance().saveOrUpdate(targetSpeciesQual);
-        CvObjectPersister.getInstance().commit();
-        commitTransaction();
+        PersisterHelper.saveOrUpdate(newt, targetSpeciesQual);
     }
 
     @After
@@ -300,10 +295,7 @@ public class UpdateTargetSpeciesTest extends IntactBasicTestCase {
     }
 
     protected void persistExperiment(Experiment experiment) throws Exception {
-         beginTransaction();
-        ExperimentPersister.getInstance().saveOrUpdate(experiment);
-        ExperimentPersister.getInstance().commit();
-        commitTransaction();
+        PersisterHelper.saveOrUpdate(experiment);
     }
 
     private class ExperimentXrefComparator implements Comparator<ExperimentXref> {
