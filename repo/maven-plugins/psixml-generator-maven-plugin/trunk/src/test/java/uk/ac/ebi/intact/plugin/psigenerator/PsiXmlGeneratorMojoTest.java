@@ -30,7 +30,6 @@ import uk.ac.ebi.intact.context.IntactContext;
  */
 public class PsiXmlGeneratorMojoTest extends AbstractPsiXmlGeneratorTestCase {
 
-    @Test
     public void testCheck() throws Exception {
         String filename = PsiXmlGeneratorMojoTest.class.getResource( "/configs/simple-config.xml" ).getFile();
         Assert.assertNotNull( filename );
@@ -47,18 +46,18 @@ public class PsiXmlGeneratorMojoTest extends AbstractPsiXmlGeneratorTestCase {
     }
 
 
-    @Test
-    @Ignore
-    public void runLargeExport() throws Exception {
-        String filename = PsiXmlGeneratorMojoTest.class.getResource( "/configs/large-config.xml" ).getFile();
+    public void testRunLargeExport() throws Exception {
+        File hibernateConfigFile = new File("/scratch/projects/intact-sandbox/projects/intact-trenches/src/main/resources/iweb2-hibernate.cfg.xml");
+        IntactContext.initStandaloneContext( hibernateConfigFile );
+
+        String filename = PsiXmlGeneratorMojoTest.class.getResource( "/configs/simple-config.xml" ).getFile();
         Assert.assertNotNull( filename );
         File pluginXmlFile = new File( filename );
 
         PsiXmlGeneratorMojo mojo = (PsiXmlGeneratorMojo) lookupMojo( "psi", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
-        mojo.hibernateConfig = new File(PsiXmlGeneratorMojoTest.class.getResource("/iweb2-hibernate.cfg.xml").getFile());
+        mojo.hibernateConfig = hibernateConfigFile;
 
-        IntactContext.initStandaloneContext( mojo.hibernateConfig );
 //        initializeDatabaseContent( mojo.hibernateConfig );
 
         // execute Mojo
