@@ -18,8 +18,11 @@ package uk.ac.ebi.intact.plugin.psigenerator;
 import junit.framework.Assert;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.io.File;
+
+import uk.ac.ebi.intact.context.IntactContext;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -27,7 +30,7 @@ import java.io.File;
  */
 public class PsiXmlGeneratorMojoTest extends AbstractPsiXmlGeneratorTestCase {
 
-     @Test
+    @Test
     public void testCheck() throws Exception {
         String filename = PsiXmlGeneratorMojoTest.class.getResource( "/configs/simple-config.xml" ).getFile();
         Assert.assertNotNull( filename );
@@ -43,4 +46,22 @@ public class PsiXmlGeneratorMojoTest extends AbstractPsiXmlGeneratorTestCase {
         mojo.execute();
     }
 
+
+    @Test
+    @Ignore
+    public void runLargeExport() throws Exception {
+        String filename = PsiXmlGeneratorMojoTest.class.getResource( "/configs/large-config.xml" ).getFile();
+        Assert.assertNotNull( filename );
+        File pluginXmlFile = new File( filename );
+
+        PsiXmlGeneratorMojo mojo = (PsiXmlGeneratorMojo) lookupMojo( "psi", pluginXmlFile );
+        mojo.setLog( new SystemStreamLog() );
+        mojo.hibernateConfig = new File(PsiXmlGeneratorMojoTest.class.getResource("/iweb2-hibernate.cfg.xml").getFile());
+
+        IntactContext.initStandaloneContext( mojo.hibernateConfig );
+//        initializeDatabaseContent( mojo.hibernateConfig );
+
+        // execute Mojo
+        mojo.execute();
+    }
 }
