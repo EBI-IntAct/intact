@@ -36,6 +36,6 @@ public class PsiXmlCvPrimer extends SmallCvPrimer {
         super.createCVs();
 
         getCvObject(CvXrefQualifier.class, CvXrefQualifier.TARGET_SPECIES);
-        getCvObject(CvDatabase.class, CvDatabase.NEWT_MI_REF, CvDatabase.NEWT);
+        getCvObject(CvDatabase.class, CvDatabase.NEWT, CvDatabase.NEWT_MI_REF);
     }
 }
