@@ -22,7 +22,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <core.version>1.8.0</core.version>
+        <core.version>1.8.2</core.version>
     </properties>
 
     <scm>
