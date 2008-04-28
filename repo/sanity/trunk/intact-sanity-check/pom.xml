@@ -27,7 +27,6 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.commons</groupId>
             <artifactId>intact-commons</artifactId>
-            <version>${pom.version}</version>
         </dependency>
   
         <!-- Third party deps-->
