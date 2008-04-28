@@ -20,12 +20,14 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-rules</artifactId>
+            <version>${pom.version}</version>
         </dependency>
 
         <!-- IntAct deps -->
         <dependency>
             <groupId>uk.ac.ebi.intact.commons</groupId>
             <artifactId>intact-commons</artifactId>
+            <version>${pom.version}</version>
         </dependency>
   
         <!-- Third party deps-->

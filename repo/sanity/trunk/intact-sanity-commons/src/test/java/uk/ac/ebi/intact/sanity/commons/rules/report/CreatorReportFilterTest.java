@@ -41,7 +41,7 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("Peter");
 
-        Assert.assertTrue(creatorReportFilter.accept(message.getInsaneObjects()));
+        Assert.assertTrue(creatorReportFilter.accept(message.getInsaneObject()));
     }
     
     @Test
@@ -54,6 +54,6 @@ public class CreatorReportFilterTest extends IntactBasicTestCase {
 
         CreatorReportFilter creatorReportFilter = new CreatorReportFilter("anne");
 
-        Assert.assertFalse(creatorReportFilter.accept(message.getInsaneObjects()));
+        Assert.assertFalse(creatorReportFilter.accept(message.getInsaneObject()));
     }
 }
