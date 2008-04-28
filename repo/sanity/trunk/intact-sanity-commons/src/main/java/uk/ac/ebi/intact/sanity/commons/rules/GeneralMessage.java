@@ -9,7 +9,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.BasicObject;
 import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.report.InsaneObject;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import javax.xml.datatype.DatatypeConfigurationException;

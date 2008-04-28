@@ -14,9 +14,11 @@ import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
-import uk.ac.ebi.intact.sanity.commons.*;
+import uk.ac.ebi.intact.sanity.commons.report.*;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunner;
 import uk.ac.ebi.intact.sanity.commons.rules.RuleRunnerReport;
+import uk.ac.ebi.intact.sanity.commons.DeclaredRule;
+import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
 import uk.ac.ebi.intact.util.ElapsedTime;
 
 import java.io.File;
@@ -132,8 +134,8 @@ public class SanityChecker {
             if ( sanityConfig.getEditorUrl() != null ) {
                 EditorUrlBuilder editorUrlBuilder = new EditorUrlBuilder( sanityConfig );
 
-                for ( SanityResult sanityResult : report.getSanityResult() ) {
-                    for ( InsaneObject insaneObject : sanityResult.getInsaneObject() ) {
+                for ( SanityResult sanityResult : report.getSanityResults() ) {
+                    for ( InsaneObject insaneObject : sanityResult.getInsaneObjects() ) {
                         editorUrlBuilder.addEditorUrl( insaneObject );
                     }
                 }
@@ -198,12 +200,12 @@ public class SanityChecker {
         ReportAttribute executionDateAtt = new ReportAttribute();
         executionDateAtt.setName( "Date" );
         executionDateAtt.setValue( new Date().toString() );
-        report.getReportAttribute().add( executionDateAtt );
+        report.getReportAttributes().add( executionDateAtt );
 
         ReportAttribute elapsedTimeAtt = new ReportAttribute();
         elapsedTimeAtt.setName( "Elapsed time" );
         elapsedTimeAtt.setValue( new ElapsedTime( ( int ) elapsedTime / 1000 ).toString() );
-        report.getReportAttribute().add( elapsedTimeAtt );
+        report.getReportAttributes().add( elapsedTimeAtt );
     }
 
     protected static void checkAllCvObjects( String... groupNames ) {

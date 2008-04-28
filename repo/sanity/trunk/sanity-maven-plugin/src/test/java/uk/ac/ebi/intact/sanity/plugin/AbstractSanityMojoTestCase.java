@@ -35,7 +35,7 @@ import java.io.File;
  * @version $Id$
  * @since 2.0
  */
-public class AbstractSanityMojoTestCase extends AbstractMojoTestCase {
+public abstract class AbstractSanityMojoTestCase extends AbstractMojoTestCase {
 
     @Before
     public void removeDatabaseFromTargetDir() {

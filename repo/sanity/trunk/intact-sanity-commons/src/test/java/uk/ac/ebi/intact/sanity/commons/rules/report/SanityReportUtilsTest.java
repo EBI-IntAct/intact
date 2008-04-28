@@ -17,7 +17,7 @@ package uk.ac.ebi.intact.sanity.commons.rules.report;
 
 import org.junit.Assert;
 import org.junit.Test;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 
 import java.util.Map;
 
@@ -34,8 +34,8 @@ public class SanityReportUtilsTest extends AbstractReportTestCase {
         Map<String, SanityReport> personalizedReports = SanityReportUtils.createPersonalizedReportsByUpdator(getDefaultSanityReport());
 
         Assert.assertEquals(2, personalizedReports.size());
-        Assert.assertEquals(1, personalizedReports.get("anne").getSanityResult().size());
-        Assert.assertEquals(1, personalizedReports.get("peter").getSanityResult().size());
+        Assert.assertEquals(1, personalizedReports.get("anne").getSanityResults().size());
+        Assert.assertEquals(1, personalizedReports.get("peter").getSanityResults().size());
 
     }
 

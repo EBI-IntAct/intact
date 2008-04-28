@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.*;
+import uk.ac.ebi.intact.sanity.commons.report.*;
 import uk.ac.ebi.intact.sanity.commons.rules.MessageLevel;
 
 import java.io.IOException;
@@ -44,17 +44,17 @@ public class SimpleReportWriter extends ReportWriter {
             writer.write(NEW_LINE);
         }
 
-        for (ReportAttribute attribute : report.getReportAttribute()) {
+        for (ReportAttribute attribute : report.getReportAttributes()) {
             writer.write("# "+attribute.getName()+": "+attribute.getValue());
             writer.write(NEW_LINE);
         }
 
-        for (SanityResult sanityResult : report.getSanityResult()) {
+        for (SanityResult sanityResult : report.getSanityResults()) {
             writer.write(prepareSanityResult(sanityResult).toString());
             writer.write(NEW_LINE);
         }
 
-        if (report.getSanityResult().isEmpty()) {
+        if (report.getSanityResults().isEmpty()) {
             writer.write(NEW_LINE);
             writer.write("No rules failed.");
             writer.write(NEW_LINE);
@@ -92,13 +92,13 @@ public class SimpleReportWriter extends ReportWriter {
 
         sb.append("AC").append("\t").append("Label").append("\t").append("Created").append("\t").append("Created by").append("Updated").append("\t").append("Updated by").append("\t").append("Owner");
 
-        for (Field field : sanityResult.getInsaneObject().iterator().next().getField()) {
+        for (Field field : sanityResult.getInsaneObjects().iterator().next().getFields()) {
             sb.append("\t").append(field.getName());
         }
         sb.append(NEW_LINE);
 
         sb.append("--").append("\t").append("-----").append("\t").append("----").append("\t").append("----");
-        for (Field field : sanityResult.getInsaneObject().iterator().next().getField()) {
+        for (Field field : sanityResult.getInsaneObjects().iterator().next().getFields()) {
             StringBuilder underline = new StringBuilder();
             for (int i=0; i<field.getName().length(); i++) {
                 underline.append('-');
@@ -107,7 +107,7 @@ public class SimpleReportWriter extends ReportWriter {
         }
         sb.append(NEW_LINE);
 
-        for (InsaneObject insaneObject : sanityResult.getInsaneObject()) {
+        for (InsaneObject insaneObject : sanityResult.getInsaneObjects()) {
             sb.append(insaneObject.getAc());
 
             sb.append("\t");
@@ -131,7 +131,7 @@ public class SimpleReportWriter extends ReportWriter {
             sb.append("\t");
             sb.append(insaneObject.getOwner());
 
-            for (Field field : insaneObject.getField()) {
+            for (Field field : insaneObject.getFields()) {
                 sb.append("\t");
                 if (field.getValue() != null) {
                     sb.append(field.getValue());

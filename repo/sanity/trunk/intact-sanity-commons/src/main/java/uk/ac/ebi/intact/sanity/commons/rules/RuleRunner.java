@@ -20,7 +20,7 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRule;
 import uk.ac.ebi.intact.sanity.commons.DeclaredRuleManager;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import java.util.Collection;

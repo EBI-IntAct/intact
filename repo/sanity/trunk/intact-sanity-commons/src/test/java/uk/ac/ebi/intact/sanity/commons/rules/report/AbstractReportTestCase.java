@@ -20,7 +20,7 @@ import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class AbstractReportTestCase extends IntactBasicTestCase {
+public abstract class AbstractReportTestCase extends IntactBasicTestCase {
 
     protected SanityReport getDefaultSanityReport() {
         List<GeneralMessage> messages = new ArrayList<GeneralMessage>();

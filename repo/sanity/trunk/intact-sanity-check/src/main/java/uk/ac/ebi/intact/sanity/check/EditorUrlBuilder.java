@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.sanity.check;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
 import uk.ac.ebi.intact.sanity.check.model.*;
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.report.InsaneObject;
 
 
 /**

@@ -24,6 +24,7 @@ import uk.ac.ebi.intact.commons.util.ClassUtils;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.Marshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
@@ -80,7 +81,7 @@ public class DeclaredRuleManager {
         Set<String> groups = new HashSet<String>();
 
         for ( DeclaredRule rule : availableDeclaredRules ) {
-            groups.addAll( rule.getGroups().getGroup() );
+            groups.addAll( rule.getGroups().getGroups() );
         }
 
         return groups;
@@ -147,15 +148,15 @@ public class DeclaredRuleManager {
 
         // NOTE: We are using DOM here because it seems to classpath be a problem
         // with APT when invoking JAXB (with the above code)
-
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.newDocument();
 
         Element root = document.createElement( "declared-rules" );
+        root.setAttribute("xmlns", "http://uk.ac.ebi.intact/sanity/rules");
         document.appendChild( root );
 
-        for ( DeclaredRule declaredRule : rules.getDeclaredRule() ) {
+        for ( DeclaredRule declaredRule : rules.getDeclaredRules() ) {
             Element decRuleNode = document.createElement( "declared-rule" );
             root.appendChild( decRuleNode );
 
@@ -175,7 +176,7 @@ public class DeclaredRuleManager {
             decRuleNode.appendChild( groupsNode );
 
             if ( declaredRule.getGroups() != null ) {
-                for ( String groupName : declaredRule.getGroups().getGroup() ) {
+                for ( String groupName : declaredRule.getGroups().getGroups() ) {
                     Element groupNode = document.createElement( "group" );
                     groupsNode.appendChild( groupNode );
                     groupNode.appendChild( document.createTextNode( groupName ) );
@@ -238,10 +239,10 @@ public class DeclaredRuleManager {
         for ( URL resource : resources ) {
             try {
                 DeclaredRules dr = readDeclaredRules( resource.openStream() );
-                addAllDeclaredRules( dr.getDeclaredRule() );
+                addAllDeclaredRules( dr.getDeclaredRules() );
 
                 if ( log.isDebugEnabled() )
-                    log.debug( "Loaded " + dr.getDeclaredRule().size() + " declared rules from: " + resource );
+                    log.debug( "Loaded " + dr.getDeclaredRules().size() + " declared rules from: " + resource );
 
             } catch ( Throwable t ) {
                 throw new SanityRuleException( "Problem reading declared rules from resource: " + resource, t );
@@ -264,7 +265,7 @@ public class DeclaredRuleManager {
     }
 
     protected static boolean isDeclaredRuleInGroup( DeclaredRule rule, String... groupNames ) {
-        for ( String groupName : rule.getGroups().getGroup() ) {
+        for ( String groupName : rule.getGroups().getGroups() ) {
             if ( Arrays.binarySearch( groupNames, groupName ) > -1 ) {
                 return true;
             }

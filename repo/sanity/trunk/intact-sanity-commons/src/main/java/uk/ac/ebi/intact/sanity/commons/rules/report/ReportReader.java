@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 
 import java.io.File;
 import java.io.FileInputStream;

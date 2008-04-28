@@ -61,7 +61,7 @@ public class SanityAnnotationProcessor implements AnnotationProcessor {
             Writer writer = new FileWriter( targetFile );
 
             DeclaredRules jaxbRules = new DeclaredRules();
-            jaxbRules.getDeclaredRule().addAll( rules );
+            jaxbRules.getDeclaredRules().addAll( rules );
 
             DeclaredRuleManager.writeRulesXml( jaxbRules, writer );
 

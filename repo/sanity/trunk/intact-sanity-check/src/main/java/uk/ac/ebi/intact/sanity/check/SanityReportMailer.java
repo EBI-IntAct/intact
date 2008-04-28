@@ -19,7 +19,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.sanity.check.config.Curator;
 import uk.ac.ebi.intact.sanity.check.config.SanityCheckConfig;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.SanityReportUtils;

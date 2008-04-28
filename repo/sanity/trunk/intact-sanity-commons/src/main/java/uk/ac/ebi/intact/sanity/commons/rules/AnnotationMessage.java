@@ -7,7 +7,7 @@ package uk.ac.ebi.intact.sanity.commons.rules;
 
 import uk.ac.ebi.intact.model.Annotation;
 import uk.ac.ebi.intact.model.IntactObject;
-import uk.ac.ebi.intact.sanity.commons.Field;
+import uk.ac.ebi.intact.sanity.commons.report.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class AnnotationMessage extends GeneralMessage {
         super(messageDefinition, outLaw);
         this.setAnnotation(annotation);
 
-        getInsaneObject().getField().addAll(fieldsForAnnotation(annotation));
+        getInsaneObject().getFields().addAll(fieldsForAnnotation(annotation));
     }
 
     public Collection<Field> fieldsForAnnotation(Annotation annotation) {

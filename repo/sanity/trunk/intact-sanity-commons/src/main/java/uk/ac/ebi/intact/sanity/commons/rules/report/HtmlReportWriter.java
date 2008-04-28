@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -48,14 +48,8 @@ public class HtmlReportWriter extends ReportWriter {
     }
 
     protected void writeReport(SanityReport report) throws IOException {
-        TransformerFactory xformFactory = TransformerFactory.newInstance();
-
-        InputStream xslInputStream = HtmlReportWriter.class.getResourceAsStream(DEFAULT_XSL);
-        Source xslSource = new StreamSource(xslInputStream);
-
         try {
-            Transformer transformer = xformFactory.newTransformer(xslSource);
-
+            // marshall
             JAXBContext jc = JAXBContext.newInstance(SanityReport.class.getPackage().getName());
             Marshaller marshaller = jc.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
@@ -63,6 +57,13 @@ public class HtmlReportWriter extends ReportWriter {
             Source source = new JAXBSource(marshaller, report);
             Result result = new StreamResult(writer);
 
+            // transform
+            TransformerFactory xformFactory = TransformerFactory.newInstance();
+
+            InputStream xslInputStream = HtmlReportWriter.class.getResourceAsStream(DEFAULT_XSL);
+            Source xslSource = new StreamSource(xslInputStream);
+
+            Transformer transformer = xformFactory.newTransformer(xslSource);
             transformer.transform(source, result);
 
         } catch (Exception e) {

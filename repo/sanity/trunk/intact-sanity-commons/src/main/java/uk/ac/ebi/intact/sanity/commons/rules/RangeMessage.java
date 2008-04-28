@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.sanity.commons.rules;
 
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.sanity.commons.Field;
+import uk.ac.ebi.intact.sanity.commons.report.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,14 +26,14 @@ public class RangeMessage extends GeneralMessage {
         super( messageDefinition, outLaw );
         this.setRange( range );
 
-        getInsaneObject().getField().addAll( fieldsForAnnotation( range ) );
+        getInsaneObject().getFields().addAll( fieldsForAnnotation( range ) );
     }
 
     public RangeMessage( MessageDefinition messageDefinition, IntactObject outLaw, Range range, Interactor interactor ) {
         this( messageDefinition, outLaw, range );
         this.interactor = interactor;
 
-        getInsaneObject().getField().addAll( fieldsForAnnotation( interactor ) );
+        getInsaneObject().getFields().addAll( fieldsForAnnotation( interactor ) );
     }
 
     private Collection<Field> fieldsForAnnotation( Interactor interactor ) {
