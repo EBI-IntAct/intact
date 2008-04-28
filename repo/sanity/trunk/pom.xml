@@ -21,7 +21,7 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/sanity</url>
 
     <properties>
-        <currentVersion>${version}</currentVersion>
+        <currentVersion>${pom.version}</currentVersion>
         <core.version>1.8.2</core.version>
     </properties>
 
@@ -41,24 +41,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- this group -->
-            <dependency>
-                <groupId>uk.ac.ebi.intact.sanity</groupId>
-                <artifactId>intact-sanity-commons</artifactId>
-                <version>${currentVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>uk.ac.ebi.intact.sanity</groupId>
-                <artifactId>intact-sanity-rules</artifactId>
-                <version>${currentVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>uk.ac.ebi.intact.sanity</groupId>
-                <artifactId>intact-sanity-check</artifactId>
-                <version>${currentVersion}</version>
-            </dependency>
-
-            <!-- other intact -->
+            <!-- intact -->
             <dependency>
                 <groupId>uk.ac.ebi.intact.commons</groupId>
                 <artifactId>intact-commons</artifactId>
