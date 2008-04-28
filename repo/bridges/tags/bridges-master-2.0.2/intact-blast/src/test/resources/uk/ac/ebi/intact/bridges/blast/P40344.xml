@@ -1,0 +1,2846 @@
+<?xml version="1.0"?>
+<EBIApplicationResult xmlns="http://www.ebi.ac.uk/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ebi.ac.uk/schema/ApplicationResult.xsd">
+<Header>
+	<program name="WU-blastp" version="2.0MP-WashU [04-May-2006]" citation="PMID:12824421"/>
+	<commandLine command="/ebi/extserv/bin/wu-blast/blastp &quot;uniprot&quot; /ebi/extserv/blast-work/interactive/blast-20071017-13372049.input E=10 B=100 V=100 -mformat=7,/ebi/extserv/blast-work/interactive/blast-20071017-13372049_app.xml -mformat=1 -matrix BLOSUM62 -sump  -echofilter -filter seg -cpus 8 -sort_by_pvalue -putenv=&apos;WUBLASTMAT=/ebi/extserv/bin/wu-blast/matrix&apos; -putenv=&quot;WUBLASTDB=$IDATA_CURRENT/blastdb&quot; -putenv=&apos;WUBLASTFILTER=/ebi/extserv/bin/wu-blast/filter&apos; "/>
+	<parameters>
+		<sequences total="1">
+			<sequence number="1" name="Sequence" type="p" length="310"/>
+		</sequences>
+		<databases total="1" sequences="5239547" letters="1719441104">
+			<database number="1" name="uniprot" type="p" created="2007-10-01T23:44:23+01:00"/>
+		</databases>
+		<scores>100</scores>
+		<alignments>100</alignments>
+		<matrix>BLOSUM62</matrix>
+		<expectationUpper>10</expectationUpper>
+		<statistics>sump</statistics>
+		<filter>seg</filter>
+	</parameters>
+	<timeInfo start="2007-10-17T13:37:23+01:00" end="2007-10-17T13:38:39+01:00" search="PT01M16S"/>
+</Header>
+<SequenceSimilaritySearchResult>
+	<hits total="100">
+		<hit number="1" database="uniprot" id="ATG3_YEAST" ac="P40344" length="310" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>1425</score>
+					<bits>506.7</bits>
+					<expectation>1.0e-144</expectation>
+					<probability>1.0e-144</probability>
+					<identity>88</identity>
+					<positives>88</positives>
+					<querySeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDM             FNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI                       GVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</pattern>
+					<matchSeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMEIKEEDENDDTEEFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKILLDKVRVVRQRRRKELQEEQELDGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="2" database="uniprot" id="A6ZS81_YEAST" ac="A6ZS81" length="310" description="Autophagy-related protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>1425</score>
+					<bits>506.7</bits>
+					<expectation>1.0e-144</expectation>
+					<probability>1.0e-144</probability>
+					<identity>88</identity>
+					<positives>88</positives>
+					<querySeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDM             FNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI                       GVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</pattern>
+					<matchSeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMEIKEEDENDDTEEFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKILLDKVRVVRQRRRKELQEEQELDGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="3" database="uniprot" id="ATG3_CANGA" ac="Q6FQJ2" length="309" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>900</score>
+					<bits>321.9</bits>
+					<expectation>4.5e-89</expectation>
+					<probability>4.5e-89</probability>
+					<identity>57</identity>
+					<positives>68</positives>
+					<querySeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCV---EVE-GPDVIMKGFAEDGD-EDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGV--------GD---WEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>MIRS LS+WREYLTP++HKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWN+ + D  YRDFLPK+KQFL+IRKVPC +RA+  V   E+E G        A+D D +DD +E I      V  + +G   D+ ++DIDEL+++M              +       +M   RYYDL+I YSTSYRVPKMYIVGFN NG+PL+P++MFEDI+ DYR KTATIEKLPFYK +V SVSIHPCKHANVMK+                       G         GD   WEDLQ DIDDSLRVD YL+VFLKFITSVTP+IQHDYTMEGW</pattern>
+					<matchSeq start="1" end="309">MIRSALSNWREYLTPVSHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNDMADDNKYRDFLPKDKQFLVIRKVPCSERAQAVVTMDEIENGTSTDAFSAADDEDNDDDSIEIIP-----VSKSSSGA--DNDVNDIDELMEEMELEEDD--------DIVANKTNEML--RYYDLFITYSTSYRVPKMYIVGFNGNGTPLTPKEMFEDITPDYRKKTATIEKLPFYKRNVPSVSIHPCKHANVMKVLLDKISVVKERQREEEMQKNAEVGAPKSAGSDDGDNENWEDLQQDIDDSLRVDLYLVVFLKFITSVTPTIQHDYTMEGW</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="4" database="uniprot" id="A7TK16_9SACH" ac="A7TK16" length="318" description="Putative uncharacterized protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>886</score>
+					<bits>316.9</bits>
+					<expectation>1.4e-87</expectation>
+					<probability>1.4e-87</probability>
+					<identity>53</identity>
+					<positives>68</positives>
+					<querySeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAED-GDEDDVLE--YI--GSETEHVQS--------TPAGG---TKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVG----DWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>M+RSTLSSWREYLTP++HKSTFL++GQITP+EFVQAGDYLCHMFPTW+WN+  +D+ +R+FLP++KQFL++RKVPC+ RA+Q V ++  D   + F +   DED  +E  ++  G ET+H+          TP+G    T D +  DID+L++ M                           RYYDLYI YSTSY+VPKMYIVGFN +GSPL+PE+MFEDI+ DYR+KTATIEKLPFYKN++ SVSIHPCKHANVM+I                              +WEDLQ+D+DD++R DQYLI+FLKFITSVTP I+HDYTMEGW</pattern>
+					<matchSeq start="1" end="318">MLRSTLSSWREYLTPVSHKSTFLSSGQITPDEFVQAGDYLCHMFPTWEWNKAGNDVLFRNFLPEDKQFLVMRKVPCNVRAKQFVNID--DSASEAFVQGINDEDGSIENGWMIGGGETDHLSKHSLSSGDVTPSGNNTKTMDETTPDIDDLMESMGIEDTDDIIDT----------PQNTDRRYYDLYITYSTSYKVPKMYIVGFNGSGSPLTPEEMFEDIAPDYRSKTATIEKLPFYKNTISSVSIHPCKHANVMRILLDKVLVVKRRRREEMSENHNEHKPNPESDEWEDLQNDVDDTIRADQYLIIFLKFITSVTPGIEHDYTMEGW</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="5" database="uniprot" id="ATG3_ASHGO" ac="Q755K1" length="282" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>501</score>
+					<bits>181.4</bits>
+					<expectation>5.7e-82</expectation>
+					<probability>5.7e-82</probability>
+					<identity>54</identity>
+					<positives>68</positives>
+					<querySeq start="131" end="310">DIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>DIDE++Q+M                        +  R+YDLYI YSTSYRVPKMY+VGFN++G+PL+P+QMF+DI+ DYRTKTATIEKLPF+K++V++VSIHPC+HANVM++                          DWEDLQD++D SLRV QYL+VFLKFITSVTP I+HDYTMEGW</pattern>
+					<matchSeq start="114" end="282">DIDEMLQEMDIEDQSGEQDIIQLRP--------SHTRFYDLYITYSTSYRVPKMYLVGFNNDGTPLTPQQMFQDIAPDYRTKTATIEKLPFFKSAVVAVSIHPCRHANVMRVLMEKVRAAKQKPVEEEQPDGPRE---DWEDLQDEVDSSLRVVQYLVVFLKFITSVTPGIEHDYTMEGW</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>351</score>
+					<bits>128.6</bits>
+					<expectation>5.7e-82</expectation>
+					<probability>5.7e-82</probability>
+					<identity>63</identity>
+					<positives>80</positives>
+					<querySeq start="1" end="95">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKG</querySeq>
+					<pattern>M+RSTLS+WREYLTP+TH+STF  TGQITPEEF++AGDYLCHMFPTW+WN++   + YRDFLP+++QFL+ RKVP + RA   V V G +    G</pattern>
+					<matchSeq start="1" end="95">MLRSTLSNWREYLTPVTHQSTFENTGQITPEEFIKAGDYLCHMFPTWRWNQQQGGMVYRDFLPQDRQFLVTRKVPSNMRAADSVNVGGEEETSAG</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="6" database="uniprot" id="ATG3_KLULA" ac="Q6CL19" length="302" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>793</score>
+					<bits>284.2</bits>
+					<expectation>9.7e-78</expectation>
+					<probability>9.7e-78</probability>
+					<identity>51</identity>
+					<positives>66</positives>
+					<querySeq start="1" end="310">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWN-EESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSI-DDIDEL--IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>M+RSTLS+WREYLTPI+H STF T+GQ+TPEEFV+AGDYL HMFPTWKWN  +  ++ ++DFLP +KQFL+ +KVPC  RA   +E++  D   K   + GD   + E    ++E  +ST      DS + ++++EL  + D              F     +    +  R+YDLYI YSTSYRVPKMY+ G++++G+PLSP+QMFEDI+ADYR+KTATIE LPF K + +SVSIHPCKHANVMK+                          DWEDLQ D+DD LRVDQYL+VFLKFITSVTP I+HDYTMEGW</pattern>
+					<matchSeq start="1" end="302">MLRSTLSNWREYLTPISHTSTFETSGQLTPEEFVKAGDYLVHMFPTWKWNGNDFQNVHHKDFLPNDKQFLVTKKVPCKLRANNYLELD--DTETK---DVGDGWALQEEHSQDSER-KST--NNADDSELPEELEELHIVDDGDDEEYDDQLYDNEFADDDIVDIRPSTLRFYDLYITYSTSYRVPKMYLCGYDNDGTPLSPDQMFEDIAADYRSKTATIEPLPFLKGNNISVSIHPCKHANVMKVLMEKVRSSRSRARKVDPQTTDE----DWEDLQSDVDDGLRVDQYLVVFLKFITSVTPGIEHDYTMEGW</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="7" database="uniprot" id="A5DVH6_LODEL" ac="A5DVH6" length="362" description="Autophagy-related protein 3.">
+			<alignments total="4">
+				<alignment number="1">
+					<score>286</score>
+					<bits>105.7</bits>
+					<expectation>6.7e-64</expectation>
+					<probability>6.7e-64</probability>
+					<identity>68</identity>
+					<positives>86</positives>
+					<querySeq start="167" end="242">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>R YDLYI YSTSYRVPK+Y+VGF++NG PL P+QMFEDI++DY+ KTATIE+LP   N+  SVSIHPCKH++VM++</pattern>
+					<matchSeq start="202" end="276">RRYDLYITYSTSYRVPKLYLVGFDANGIPLLPQQMFEDINSDYKDKTATIEQLPVAHNTT-SVSIHPCKHSSVMRV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>254</score>
+					<bits>94.5</bits>
+					<expectation>6.7e-64</expectation>
+					<probability>6.7e-64</probability>
+					<identity>57</identity>
+					<positives>71</positives>
+					<querySeq start="1" end="87">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVE</querySeq>
+					<pattern>M+RS LSS REYLTPI H S FLTTG+I+PEEFV+AGDYL + FPTW+W     D+  + FLP +KQ L+ R VP  +RA +  E E</pattern>
+					<matchSeq start="1" end="86">MLRSKLSSLREYLTPINHNSNFLTTGEISPEEFVKAGDYLVYKFPTWQWASCPKDLQ-KLFLPTDKQVLVTRHVPSHQRANEYFEGE</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>115</score>
+					<bits>45.5</bits>
+					<expectation>6.7e-64</expectation>
+					<probability>6.7e-64</probability>
+					<identity>58</identity>
+					<positives>86</positives>
+					<querySeq start="274" end="308">QDDIDDS-LRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>Q++ +DS ++VD YL++FLKFI SVTP I++DYTM+</pattern>
+					<matchSeq start="325" end="360">QEEPNDSEIKVDLYLVIFLKFIASVTPGIEYDYTMD</matchSeq>
+				</alignment>
+				<alignment number="4">
+					<score>46</score>
+					<bits>21.3</bits>
+					<expectation>6.7e-64</expectation>
+					<probability>6.7e-64</probability>
+					<identity>30</identity>
+					<positives>45</positives>
+					<querySeq start="98" end="138">EDGDEDDVLEYIGSETEHVQSTPAGGT-----KDSSIDDIDELIQD</querySeq>
+					<pattern>E+G+ DD  EY    +    S    G      +   ++DIDELI +</pattern>
+					<matchSeq start="110" end="155">ENGENDDEAEYGWIRSGRSSSEKGTGEVLDPQRVEEVNDIDELIDE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="8" database="uniprot" id="A7KAI2_PICAN" ac="A7KAI2" length="339" description="Atg3p.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>656</score>
+					<bits>236.0</bits>
+					<expectation>3.2e-63</expectation>
+					<probability>3.2e-63</probability>
+					<identity>45</identity>
+					<positives>58</positives>
+					<querySeq start="2" end="310">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPC----------DKRAEQCVEVEG-PDVIMKGFAED--GDEDD---VLEYIGSETEHVQSTPA-G-----GTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXX---XXXXXXGVGD---------WEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTMEGW</querySeq>
+					<pattern>+RST SS REYLTPI+HKSTF  TG+ITPEEFV AGDYL + FPTW+W+  + +   RDFLP +KQFL+ R VP           +K AE   E +G     +   A      ED+    ++YI   TE   S+P  G     G+    I+DIDELI +                 +GG+  D  ++R YDLYI YSTSYRVPKMY+VGFNSNG PLSP +MFEDI++DYR KT TIEK PF  N+  SVSIHPC+HANVM++                          G+ D         WE+++   +  +RVDQYL++FLKFI SVTP I++DYTM+ +</pattern>
+					<matchSeq start="6" end="339">LRSTFSSLREYLTPISHKSTFTDTGEITPEEFVAAGDYLVYKFPTWQWSP-APESKKRDFLPNDKQFLVTRHVPSYVRAADYEHTEKEAEMMEEEDGWTSTNVDSVAPQRCNTEDERRHSIKYI-EMTESGASSPEEGLAQHEGSGKHEINDIDELIDETAEESDLANDA-----GQGGIIND-PKKRNYDLYITYSTSYRVPKMYLVGFNSNGVPLSPNEMFEDIASDYRQKTVTIEKAPFLSNTT-SVSIHPCRHANVMRVLMKRAAHAAQAKKIRDKDLVTGVAKLGLADGKNADEEDDWENVEQGEEGIIRVDQYLVIFLKFIASVTPGIEYDYTMDAF</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="9" database="uniprot" id="A3LX85_PICST" ac="A3LX85" length="318" description="Autophagy-related protein 3.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>641</score>
+					<bits>230.7</bits>
+					<expectation>1.2e-61</expectation>
+					<probability>1.2e-61</probability>
+					<identity>45</identity>
+					<positives>58</positives>
+					<querySeq start="1" end="308">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDS--SIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXX-XGVGD--WEDLQDDID--------DSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>M+RS LSS REYLTPI H S F TTG+I+PEEFVQAGDYL + FPTW+W+    ++  + FLP +KQFLI R VP  +RA   +     D       ED +E D   ++ S      + P  G ++    I+DID+LI                F+    +  D    R YD+YI YSTSYRVPKMY+VGFN+NG PL+P+QMFEDI+ADY+ KTATIE LP   N+  SVSIHPCKH++VMK+                         + D   ED   D +        DS+RVDQYL++FLKFI SVTP I++DYTM+</pattern>
+					<matchSeq start="1" end="316">MLRSKLSSLREYLTPINHNSNFSTTGEISPEEFVQAGDYLVYKFPTWQWSTCPKNLQ-KSFLPADKQFLITRHVPSYQRASNYLTGGNVDFDDDEEYEDDEEGD--GWVKSRKVVSVTKPQDGQEEEPQEINDIDDLIDVTAEGAEDDGDNLEDFDDLD-IRNDGGSVRKYDMYITYSTSYRVPKMYLVGFNANGIPLTPDQMFEDINADYKDKTATIENLPVAHNTT-SVSIHPCKHSSVMKVLMKHSKSKKTREEVNHLSEELGKTNISDKSQEDTGKDAEAAAGPEAEDSIRVDQYLVIFLKFIASVTPGIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="10" database="uniprot" id="ATG3_DEBHA" ac="Q6BSC4" length="324" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>609</score>
+					<bits>219.4</bits>
+					<expectation>3.1e-58</expectation>
+					<probability>3.1e-58</probability>
+					<identity>44</identity>
+					<positives>57</positives>
+					<querySeq start="1" end="308">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDG-DEDDVLEYIGS--ETEHVQSTPAGGTKDSS----IDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXX----XXXXXXXXXXXXXGVGD---WEDLQDDID-----DSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>M+RS LSS REYLTPI H S F TTG+I+PEEFV+AGDYL + FPTW+W+     +  +DFLP +KQ+LI + V   +RA   + ++      +   EDG  +   +    S  +T+ +     G T D+     I+DIDELI +                 +     ++   R YDLYI YSTSYRVPKMY+VGFNSNG PL P+QMFEDIS DYR KTATIE LP   N+ +SVSIHPCKH++VMK+                            + D     D  +D+D       +RVDQYLI+FLKFI SVTP I++DYTM+</pattern>
+					<matchSeq start="1" end="322">MLRSKLSSLREYLTPIRHTSDFTTTGEISPEEFVEAGDYLVYKFPTWQWSSAPDKLK-KDFLPPDKQYLITKHVSSYQRAVTYLGIKSDLDEDEEELEDGWVKSHKINNDPSRLKTDALGENSGGNTNDNDDTNEINDIDELIDENAEEQSSEDENDFEELVETNANSNL---RKYDLYITYSTSYRVPKMYLVGFNSNGIPLLPKQMFEDISGDYRDKTATIETLPVSYNT-MSVSIHPCKHSSVMKVLMAHAAASKKRENPADLTDLAEQTGSLNLKDKVPGRDFGEDVDIEENVPGIRVDQYLIIFLKFIASVTPGIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="11" database="uniprot" id="A5DN42_PICGU" ac="A5DN42" length="313" description="Autophagy-related protein 3.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>601</score>
+					<bits>216.6</bits>
+					<expectation>2.2e-57</expectation>
+					<probability>2.2e-57</probability>
+					<identity>45</identity>
+					<positives>56</positives>
+					<querySeq start="1" end="308">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDE-DDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>M+RS LSS REYLTPI H S + T+G+I+PEEFVQAGDYL + FPTW+W      +  +DFLP +KQFLI + VP  +RA+  +   G     +  AED +E DD   ++ S     +        D  + DI++L  D              F   G      +  R YDLYI YSTSYRVPKMY+VGFN NG PL P QMFEDIS DYR KTATIE LP   N+  SVSIHPCKH +VMK+                       G       +   D  +RVDQYL+VFLKFI SVTP I +DYTM+</pattern>
+					<matchSeq start="21" end="311">MLRSKLSSLREYLTPINHNSNYETSGEISPEEFVQAGDYLVYKFPTWQWGSAPKKLQ-KDFLPPDKQFLITKHVPSYQRAQSYL---GNT---EDLAEDEEELDD--GWVKSHRLTHEDPKRDIATDKKVPDIEDL--DDFIDEDAEDADGEEFQDLGN-----SNLRRYDLYITYSTSYRVPKMYLVGFNDNGIPLLPHQMFEDISGDYRDKTATIENLPVSFNTT-SVSIHPCKHLSVMKVLMKHAKTSREKAREFEPEAFVT-GENLEPATETTQDTGIRVDQYLVVFLKFIASVTPGIGYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="12" database="uniprot" id="A7KAL4_PENCH" ac="A7KAL4" length="363" description="Atg3p.">
+			<alignments total="4">
+				<alignment number="1">
+					<score>254</score>
+					<bits>94.5</bits>
+					<expectation>3.8e-55</expectation>
+					<probability>3.8e-55</probability>
+					<identity>40</identity>
+					<positives>55</positives>
+					<querySeq start="1" end="139">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEG--PDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSID-DIDEL-IQDM</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF  TGQITPEEFV AGDYL + FPTW W + SS      +LP  KQFL+ R VPC +R       +    D I++ F   GD  +       E   +++   GG +D+  D D  E  I+D+</pattern>
+					<matchSeq start="3" end="142">ILHSTLSTWRDRLAPVSRTSTFRNTGQITPEEFVLAGDYLVYKFPTWSWADASSPAKRVSYLPDGKQFLVTRGVPCHRRLNDNFAGDAGLEDEIVRDFLSGGDGGEGTVADDGEDGWLRT---GGGRDAGADHDKQEARIRDV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>216</score>
+					<bits>81.1</bits>
+					<expectation>3.8e-55</expectation>
+					<probability>3.8e-55</probability>
+					<identity>50</identity>
+					<positives>66</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R Y LYI YS  YR P++Y+ G+ S   PL P  M EDI  DY+ KT T+E  P+++ SV   S+HPC+HA+VMK</pattern>
+					<matchSeq start="187" end="261">RTYTLYITYSNFYRTPRLYLSGYLSPSEPLPPHLMMEDIVGDYKDKTVTLEDFPWFEGSVKMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>139</score>
+					<bits>54.0</bits>
+					<expectation>3.8e-55</expectation>
+					<probability>3.8e-55</probability>
+					<identity>61</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D ++  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="318" end="361">GGDEWEMLQRDEEEQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+				<alignment number="4">
+					<score>41</score>
+					<bits>19.5</bits>
+					<expectation>5.4e-32</expectation>
+					<probability>5.4e-32</probability>
+					<identity>47</identity>
+					<positives>57</positives>
+					<querySeq start="101" end="121">DEDDVLEYIGSETEHVQSTPA</querySeq>
+					<pattern>DEDD  E I  ET+    TP+</pattern>
+					<matchSeq start="165" end="185">DEDDDEEAIIRETDDQSGTPS</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="13" database="uniprot" id="A1CAN8_ASPCL" ac="A1CAN8" length="358" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>439</score>
+					<bits>159.6</bits>
+					<expectation>1.2e-53</expectation>
+					<probability>1.2e-53</probability>
+					<identity>38</identity>
+					<positives>53</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGF--AEDGDE-------DDVLEYIGSETEHVQSTP-AG--GTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF TTGQITPEEFV AGDYL + FP+W W + SS      +LP  KQFL+ R VPC +R  +    +    D I++     +DGD         D+ E     T  V++   AG  G ++   D+ +E I DM                  G +      R Y+LYI YS  YR P++Y+ G+ S   PL P  M EDI  DY+ KT T+E  P++   V   ++HPC+HA+VMK</pattern>
+					<matchSeq start="3" end="254">ILHSTLSTWRDRLAPVSRTSTFRTTGQITPEEFVLAGDYLVYKFPSWSWADASSPAKRVSYLPPGKQFLVTRGVPCHRRLNENFAGDAGHEDEIVRDMLAGDDGDGWLRTGGGRDLAEGHADRTGDVRTVDEAGNIGEREEGDDEEEEEIPDMEDEDDDEEAI---IREPAGTSSTTQPIRTYNLYITYSNFYRTPRLYLSGYLSPSEPLPPHLMMEDIVGDYKDKTVTLEDFPWFDGGVKMATVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>144</score>
+					<bits>55.7</bits>
+					<expectation>1.2e-53</expectation>
+					<probability>1.2e-53</probability>
+					<identity>63</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D +D  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="313" end="356">GGDEWEVLQHDEEDQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="14" database="uniprot" id="Q4WUE5_ASPFU" ac="Q4WUE5" length="353" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>437</score>
+					<bits>158.9</bits>
+					<expectation>2.0e-53</expectation>
+					<probability>2.0e-53</probability>
+					<identity>39</identity>
+					<positives>51</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGFAE--DGDEDD----------VLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQE-RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF TTGQITPEEFV AGDYL + FPTW W + SS      +LP  KQFL+ R VPC +R  +    +    D I++      D D+DD          + E      + V++    G      DD +E I DM                  G  K   Q  R Y+LYI YS  YR P++Y+ G+ S   PL P  M EDI  DY+ KT T+E  P++   V   S+HPC+HA+VMK</pattern>
+					<matchSeq start="3" end="252">ILHSTLSTWRDRLAPVSRTSTFRTTGQITPEEFVLAGDYLVYKFPTWSWADASSPAKRVSYLPPGKQFLVTRGVPCHRRLNENFAGDAGHEDEIVRDMLSGADADDDDGWLRTGGGRDLAEKQAERIKDVRTVDESGNMGEQEDD-EEDIPDMEDDDDDEEAI---IREPAG--KSTTQPTRTYNLYITYSNFYRTPRLYLSGYLSPSEPLPPHLMMEDIVGDYKDKTVTLEDFPWFDGGVKMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>144</score>
+					<bits>55.7</bits>
+					<expectation>2.0e-53</expectation>
+					<probability>2.0e-53</probability>
+					<identity>63</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D +D  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="308" end="351">GGDEWEVLQHDEEDQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="15" database="uniprot" id="A1DF15_NEOFI" ac="A1DF15" length="353" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>433</score>
+					<bits>157.5</bits>
+					<expectation>5.3e-53</expectation>
+					<probability>5.3e-53</probability>
+					<identity>39</identity>
+					<positives>52</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGF-----AEDGDE-------DDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQE-RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF TTGQITPEEFV AGDYL + FPTW W + SS      +LP  KQFL+ R VPC +R  +    +    D I++       A+DGD         D+ E      + V++    G      DD +E I DM                  G  K   Q  R Y+LYI YS  YR P++Y+ G+ S   PL P  M EDI  DY+ KT T+E  P++   +   S+HPC+HA+VMK</pattern>
+					<matchSeq start="3" end="252">ILHSTLSTWRDRLAPVSRTSTFRTTGQITPEEFVLAGDYLVYKFPTWAWADASSPAKRVSYLPPGKQFLVTRGVPCHRRLNENFAGDAGHEDEIVRDMLSGADADDGDGWLRTGGGRDLAEKQAERIKDVRTVDESGNMGEREDD-EEDIPDMEDDDDDEEAI---IREPAG--KSTTQPIRTYNLYITYSNFYRTPRLYLSGYLSPSEPLPPHLMMEDIVGDYKDKTVTLEDFPWFDGGLKMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>144</score>
+					<bits>55.7</bits>
+					<expectation>5.3e-53</expectation>
+					<probability>5.3e-53</probability>
+					<identity>63</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D +D  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="308" end="351">GGDEWEVLQHDEEDQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="16" database="uniprot" id="ATG3_MAGGR" ac="Q51LD2" length="350" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>430</score>
+					<bits>156.4</bits>
+					<expectation>5.3e-53</expectation>
+					<probability>5.3e-53</probability>
+					<identity>37</identity>
+					<positives>51</positives>
+					<querySeq start="4" end="241">STLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDE-------DDVLEYIGS-------ETEHVQSTP-AGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>S +++ R+   P++H STF  TG+ITPEEFV AGDYL   FPTW W +  S+      LP  KQFL+ R VPC++R  +     G   + +   +DGDE       DD     G        +   V++   AG   + +  D D+ I DM              +A G      +  R Y LYI YS  YR P++Y+ G+ +NG PL P  M EDI  DY+ KT T+E  PF+ N++   S+HPCKHA VMK</pattern>
+					<matchSeq start="6" end="251">SVVNTLRDRYAPVSHTSTFRQTGEITPEEFVAAGDYLVFKFPTWSWGDADSESRRASHLPPGKQFLVTRNVPCNRRLNE--NFAGDAGLEEAVVDDGDEFKGSKGDDDGWLRTGGLSSSQPLKAREVRTVDDAGNAGERAQPDDDDDIPDMEDEEDDEAIIRDT-DASG----QTSSRRTYTLYIMYSPYYRTPRLYLSGYGANGQPLPPHNMMEDIMGDYKDKTVTLEDFPFFANNIKMASVHPCKHAPVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>147</score>
+					<bits>56.8</bits>
+					<expectation>5.3e-53</expectation>
+					<probability>5.3e-53</probability>
+					<identity>65</identity>
+					<positives>83</positives>
+					<querySeq start="269" end="307">DWEDLQ-DDIDD---SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>+WED+Q DD+ D   ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="306" end="348">EWEDIQHDDVADQEVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="17" database="uniprot" id="Q0U388_PHANO" ac="Q0U388" length="350" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>438</score>
+					<bits>159.2</bits>
+					<expectation>8.6e-53</expectation>
+					<probability>8.6e-53</probability>
+					<identity>38</identity>
+					<positives>57</positives>
+					<querySeq start="2" end="242">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVE-GPD--VIMKGFA--EDGDEDDVLEYIG------SETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+RS + ++RE    I+H STF  TGQITPEEFV AGD+L   FP+W+W + SS      +LP+ KQ+L+ R VPC +R +     E G D  ++  GFA  E  D+D  L   G      ++   V++    G   ++ ++ DE I DM              + +GG +   A  R Y LYI YS  YR P++Y+ G+ +   PL P++M EDI  DY+ KT TIE  PF+++++ + S+HPCKHA+VMK+</pattern>
+					<matchSeq start="6" end="252">VRSYIDTFRERTAAISHTSTFRETGQITPEEFVLAGDFLVFKFPSWQWGDASSAGKRVPYLPEGKQYLMTRGVPCHRRLDDNFAGEAGQDETIVGDGFAGSEGADDDGWLRTGGMAASQEAKVRDVRTVDESGNLGAAEEE-DE-IPDMEDMDDDEEAIIR--DPQGG-SSSTAPLRTYTLYICYSAHYRTPRLYLSGYGATSVPLKPQEMMEDIVGDYKDKTVTIEDFPFFEHALKTASVHPCKHASVMKV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>137</score>
+					<bits>53.3</bits>
+					<expectation>8.6e-53</expectation>
+					<probability>8.6e-53</probability>
+					<identity>63</identity>
+					<positives>80</positives>
+					<querySeq start="269" end="307">DWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>DWE L +  DD  ++RVDQYL+VFLKF+ SVTP I+HD+TM</pattern>
+					<matchSeq start="308" end="348">DWEVLSEGGDDEVAIRVDQYLVVFLKFMASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="18" database="uniprot" id="ATG3_NEUCR" ac="Q7SDY2" length="352" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme atg-3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>437</score>
+					<bits>158.9</bits>
+					<expectation>8.6e-53</expectation>
+					<probability>8.6e-53</probability>
+					<identity>38</identity>
+					<positives>52</positives>
+					<querySeq start="2" end="241">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGFAEDGDEDDVLEYIGSETE-------HVQSTP-AGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+RST ++  +  TP++H STF  TGQITPEEFV AGDYL   FP+W W +  S      FLP  KQFL+ R VPC +R       +    + +++G     D+D  L   GS T         V++   AG   D  + D D+ I DM              +           +R Y LYI Y+ +Y+ P+MY+ G+ SNG PL P  M EDI  DY+ KT T+E  PF+ +SV   S+HPC+HA+VMK</pattern>
+					<matchSeq start="4" end="251">LRSTAATLLDKYTPVSHTSTFRNTGQITPEEFVAAGDYLTFKFPSWSWADADSPSKRLPFLPPGKQFLVTRHVPCHRRLNDDFAGDAGHEEALVEGNKGGADDDGWLR-TGSMTSSQPLRVREVRTVDDAGNVGDREVVDEDD-IPDMEDDDDDEAIIRAEGDNSNRQDNISTGKRTYTLYITYANAYKCPRMYMSGYLSNGQPLPPHLMMEDIVGDYKDKTVTLEDFPFFSHSVKMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>138</score>
+					<bits>53.6</bits>
+					<expectation>8.6e-53</expectation>
+					<probability>8.6e-53</probability>
+					<identity>59</identity>
+					<positives>80</positives>
+					<querySeq start="269" end="307">DWEDLQDDIDD---SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>+WE++  D+ D   ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="309" end="350">EWEEVPHDVADQEVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="19" database="uniprot" id="ATG3_EMENI" ac="Q5AVG2" length="787" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme atg3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>444</score>
+					<bits>161.4</bits>
+					<expectation>2.9e-52</expectation>
+					<probability>2.9e-52</probability>
+					<identity>37</identity>
+					<positives>54</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGF-------AEDGDEDDV-LEYIGSETEH------VQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF TTGQITPEEFV AGDYL + FP+W W + SS      +LP  KQFL+ R VPC +R  +    +    D I++ F       ++ GD++D  L   G    H      V++    G +++ +++ +E I DM                  G        R Y+LYI YS  YR P++Y+ G+ S   PL P+ M EDI  DY+ KT T+E  P++  S+   S+HPC+HA+VMK</pattern>
+					<matchSeq start="62" end="313">ILHSTLSTWRDRLAPVSRTSTFRTTGQITPEEFVLAGDYLVYKFPSWSWGDASSPSKRVSYLPPGKQFLVTRGVPCHRRLNENFAGDAHLDDEIVRDFLSGGAGDSDGGDDNDGWLRTGGGGKRHESTIRDVRTVDESGKEEAEVEE-EEDIPDMEDDDDEEAI----IREPAGTTSTTQPTRTYNLYITYSNFYRTPRLYLSGYLSPSEPLPPKLMMEDIVGDYKDKTVTLEDFPWFDGSLQMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>140</score>
+					<bits>54.3</bits>
+					<expectation>2.9e-52</expectation>
+					<probability>2.9e-52</probability>
+					<identity>61</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D ++  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="379" end="422">GGDEWEVLQHDEEEEVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="20" database="uniprot" id="Q1DUP9_COCIM" ac="Q1DUP9" length="665" description="Putative uncharacterized protein.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>235</score>
+					<bits>87.8</bits>
+					<expectation>1.8e-50</expectation>
+					<probability>1.8e-50</probability>
+					<identity>44</identity>
+					<positives>62</positives>
+					<querySeq start="2" end="108">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMK-GFAE-DGDEDDVLEY</querySeq>
+					<pattern>I + + +WR+ L PI+H STF +TGQITPEEFV AGDYL + FPTW W  ++       +LP+ KQFL+ R VPC +R ++    +    DV++K G    DG E +  +Y</pattern>
+					<matchSeq start="293" end="402">IMNYIRTWRDKLAPISHTSTFRSTGQITPEEFVLAGDYLVYKFPTWSW-ADAPPAKRVPYLPEGKQFLVTRGVPCHRRLDENFAGDAGKEDVMIKDGLGSGDGKEGEDEDY</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>226</score>
+					<bits>84.6</bits>
+					<expectation>1.8e-50</expectation>
+					<probability>1.8e-50</probability>
+					<identity>52</identity>
+					<positives>67</positives>
+					<querySeq start="167" end="242">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>R Y LYI Y+  YR P++Y+ G+ S   PL+P+ M EDI  DY+ KT T+E  PFY   V   S+HPCKHA+VMKI</pattern>
+					<matchSeq start="479" end="554">RTYSLYITYTPWYRTPRLYLSGYLSPSEPLTPQLMMEDIVGDYKDKTVTLEDFPFYDGGVKMASVHPCKHASVMKI</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>132</score>
+					<bits>51.5</bits>
+					<expectation>1.8e-50</expectation>
+					<probability>1.8e-50</probability>
+					<identity>65</identity>
+					<positives>80</positives>
+					<querySeq start="268" end="307">GDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  ED +DD   ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="625" end="663">GSEED-EDDQQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="21" database="uniprot" id="Q2U7R4_ASPOR" ac="Q2U7R4" length="356" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>411</score>
+					<bits>149.7</bits>
+					<expectation>2.9e-50</expectation>
+					<probability>2.9e-50</probability>
+					<identity>36</identity>
+					<positives>51</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGFAEDG----DEDDVLEYIGSET---------EHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF  TGQITPEEFV AGDYL + FP+W W + S+      +LP  KQFL+ R VPC +R       +    D +++     G    D+D  L   G +          + V++    G      ++ DE I DM              +   G  +     R Y+LYI YS  YR P++Y+ G+ S   PL P  M ED+  DY+ KT T+E  P+Y  +V   S+HPC+HA+VMK</pattern>
+					<matchSeq start="3" end="252">ILHSTLSTWRDRLAPVSRTSTFRNTGQITPEEFVLAGDYLVYKFPSWSWADASNPAKRVSYLPPGKQFLVTRGVPCHRRLNDNFAGDAGHDDELVRDMLSGGTGGVDDDGWLRTGGGQDSADRQENRIKDVRTVDESGNMGEREEEEDE-IPDMEDEDDDEEAIIR--DPASGTTQPT---RTYNLYITYSNFYRTPRLYMSGYLSPSEPLPPHLMMEDVVGDYKDKTVTLEDFPWYDGNVKMASVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>140</score>
+					<bits>54.3</bits>
+					<expectation>2.9e-50</expectation>
+					<probability>2.9e-50</probability>
+					<identity>61</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D ++  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="311" end="354">GGDEWEVLQHDEEEQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="22" database="uniprot" id="A7F172_SCLSC" ac="A7F172" length="362" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>424</score>
+					<bits>154.3</bits>
+					<expectation>3.7e-50</expectation>
+					<probability>3.7e-50</probability>
+					<identity>39</identity>
+					<positives>51</positives>
+					<querySeq start="2" end="241">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVE-GPDVIMKGFAED--------GDEDDVLEYIG-------SETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ STL   RE+ TP+++ STF T GQITPEEFV AGDYL   FPTW W + S       +LP  KQFL+ R VPC +R +     E G D  + G  ED        GD++D     G       +    V++    G      DD D+ I DM              + K   A   +  R Y +YIAY+  YR P++Y+ G+ S+  PL P  M EDI  DY+ KT T+E  P++ N++   SIHPCKHA+VMK</pattern>
+					<matchSeq start="4" end="253">LHSTLDRLREF-TPVSNTSTFRTNGQITPEEFVAAGDYLVFKFPTWSWADASPTSKRASYLPAGKQFLVTRGVPCHRRLDDDFAGEAGHDETVVGDGEDFRGTGHSPGDDEDGWLRTGGLAASQEARARDVRTVDESGEMGEREDDEDD-IPDMEDEDDDDEAIIR--DPKADNAN--SSRRTYTIYIAYTPYYRTPRLYLSGYLSSSQPLPPHLMMEDIVGDYKDKTVTLEDFPYFSNNIKMASIHPCKHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>126</score>
+					<bits>49.4</bits>
+					<expectation>3.7e-50</expectation>
+					<probability>3.7e-50</probability>
+					<identity>55</identity>
+					<positives>69</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDDS-------LRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D D +       +RVDQYL+VFLKF+ SVTP I+HD+TM</pattern>
+					<matchSeq start="312" end="360">GNDEWEVLQHDQDFASEEEEVAIRVDQYLVVFLKFMASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="23" database="uniprot" id="ATG3_CANAL" ac="Q5ABQ7" length="333" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>512</score>
+					<bits>185.3</bits>
+					<expectation>5.8e-48</expectation>
+					<probability>5.8e-48</probability>
+					<identity>45</identity>
+					<positives>60</positives>
+					<querySeq start="2" end="242">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGF-AEDGDEDDVLE----YIGSETEH--VQSTPAGG-TKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQE------RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+RS LSS REYLTPI H S F+TTG+I+PEEFV+AGDYL + FPTW+W  +      + FLP +KQ+L+ R VP  +RA   +   G D   KG   E+ DE++  E    ++ S+  H  +  T      K   I+DID+ I +               +       D+  +      R +DLYI YSTSYRVPK+Y+VGF+SNG PL P+QMFEDI++DY+ KTATIE LP   N+  SVSIHPCKH++VMK+</pattern>
+					<matchSeq start="3" end="252">LRSKLSSLREYLTPINHNSNFVTTGEISPEEFVKAGDYLVYKFPTWQWGNDCPKNLQKSFLPPDKQYLVTRHVPSYQRASNYLT--GED--KKGANPEEDDEEEEEEDEEGWVKSKKIHKVIDDTHDSQINKGEEINDIDDFIDENAEEQEHDQIGDHELDDDEFDDLDIINDSKNNKLRRFDLYITYSTSYRVPKLYLVGFDSNGIPLLPQQMFEDINSDYKDKTATIENLPVAHNTT-SVSIHPCKHSSVMKV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>353</score>
+					<bits>129.3</bits>
+					<expectation>4.1e-31</expectation>
+					<probability>4.1e-31</probability>
+					<identity>48</identity>
+					<positives>63</positives>
+					<querySeq start="167" end="308">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXX---XXXGVGDWE----------DLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>R +DLYI YSTSYRVPK+Y+VGF+SNG PL P+QMFEDI++DY+ KTATIE LP   N+  SVSIHPCKH++VMK+                           V + +          D +++ ++ +RVD YLI+FLKFI SVTP I++DYTM+</pattern>
+					<matchSeq start="178" end="331">RRFDLYITYSTSYRVPKLYLVGFDSNGIPLLPQQMFEDINSDYKDKTATIENLPVAHNTT-SVSIHPCKHSSVMKVLMKHSKLNKKNLQQKDESLSDDLSKLSVNEKKTQDEHSQINNDDKEEEEEGIRVDHYLIIFLKFIASVTPGIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="24" database="uniprot" id="Q2H427_CHAGB" ac="Q2H427" length="338" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>416</score>
+					<bits>151.5</bits>
+					<expectation>1.1e-46</expectation>
+					<probability>1.1e-46</probability>
+					<identity>39</identity>
+					<positives>52</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEH------VQSTP-AGGTKD-SSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+I ST++S R+  TP +H STF  TG+ITPEEFV AGDYL   FP+W W++  +       LP  KQ+L+ R VPC +R       +    + +++G    GD D  L   G  +        V++   AG   D  +IDD D+ I DM              + K       +  R Y LYI YS  Y+ P+MY++G+  NG  L P  M EDI  DY+ KT T+E  PF+  SV + SIHPCKHA VMK</pattern>
+					<matchSeq start="3" end="245">IIYSTVNSLRDRYTPASHTSTFRNTGEITPEEFVAAGDYLVFKFPSWTWSDAETPAKRVAHLPPEKQYLVTRNVPCHRRLNDDFAGDAGHEEAVVEGGKNSGD-DGWLRTGGLASSQPLKARDVRTVDDAGNVADRGAIDDEDD-IPDMEEEEDDEAIIQDGSHGKH------SGSRTYSLYITYSPWYKTPRMYMLGYQPNGQALIPHLMMEDIVGDYKDKTVTLEDFPFFATSVKTASIHPCKHAPVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>101</score>
+					<bits>40.6</bits>
+					<expectation>1.1e-46</expectation>
+					<probability>1.1e-46</probability>
+					<identity>52</identity>
+					<positives>69</positives>
+					<querySeq start="269" end="307">DWEDLQDDIDD---SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>+WE++Q D  D   ++RVDQYL     FI SVTP I+HD+TM</pattern>
+					<matchSeq start="300" end="336">EWEEVQHDAADQDVAIRVDQYL-----FIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="25" database="uniprot" id="A7RTE4_9CNID" ac="A7RTE4" length="328" description="Predicted protein.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>215</score>
+					<bits>80.7</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>42</identity>
+					<positives>56</positives>
+					<querySeq start="2" end="116">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE-ESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHV</querySeq>
+					<pattern>++ T     EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W+  E S +  + +LPK+KQ+L  R VPC KR +Q    E  + I++   EDG   D    +    E V</pattern>
+					<matchSeq start="8" end="120">VKGTALGVAEYLTPVLKESKFQETGVITPEEFVAAGDHLVHHCPTWQWSMGEESRV--KPYLPKDKQYLYTRNVPCYKRCKQMEHQEENEAIVEP-DEDGGWVDTHHKVDPSGEKV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>200</score>
+					<bits>75.5</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>48</identity>
+					<positives>67</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YD+YI Y   Y+ P++++ G+N N  PLS E+M+ED+S D+  KT TIE  P    ++ SV  HPC+HA+VMK</pattern>
+					<matchSeq start="211" end="285">QTRTYDMYITYDKYYQTPRLWLYGYNENRKPLSVEEMYEDMSQDHAKKTVTIEAHPHLPMTMASV--HPCRHADVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>50</identity>
+					<positives>78</positives>
+					<querySeq start="281" end="308">LRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT +</pattern>
+					<matchSeq start="298" end="325">LSVYMYLLIFLKFVQAVIPTIEYDYTRQ</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="26" database="uniprot" id="Q17MR1_AEDAE" ac="Q17MR1" length="329" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>220</score>
+					<bits>82.5</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>39</identity>
+					<positives>56</positives>
+					<querySeq start="2" end="124">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGT</querySeq>
+					<pattern>++ T     EYLTP+  +S F  TG +TPEEFV AGD+L H  PTW W     +   + +LPK+KQFLI R VPC +R +Q +E  G + ++    E+ D+D    ++  ET H     A G+</pattern>
+					<matchSeq start="8" end="120">VKGTALGVAEYLTPVLKESKFRETGVLTPEEFVAAGDHLTHHCPTWSW-AVGDETRIKPYLPKDKQFLITRNVPCYRRCKQ-MEYVGEETLV----EESDQDG--GWV--ETHHFNPDGASGS</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>196</score>
+					<bits>74.1</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>45</identity>
+					<positives>69</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R YDL+I Y   Y+ P++++VG++ N  PL+ EQM+ED+S D+  KT T+E  P      ++ S+HPCKHA++MK</pattern>
+					<matchSeq start="210" end="283">RTYDLHITYDKYYQTPRLWVVGYDENRKPLTVEQMYEDVSQDHAKKTVTMETHPHLPGPNMA-SVHPCKHADIMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>80</score>
+					<bits>33.2</bits>
+					<expectation>2.4e-43</expectation>
+					<probability>2.4e-43</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YLI+FLKF+ +V P+I++D+T</pattern>
+					<matchSeq start="296" end="321">LGVHMYLIIFLKFVQTVIPTIEYDFT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="27" database="uniprot" id="A6S8P6_BOTCI" ac="A6S8P6" length="347" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>355</score>
+					<bits>130.0</bits>
+					<expectation>6.6e-43</expectation>
+					<probability>6.6e-43</probability>
+					<identity>35</identity>
+					<positives>51</positives>
+					<querySeq start="2" end="241">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVE-GPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ STL   RE+ TP+++ STF T GQITPEEFV AGDYL   FPTW W + S      ++LP  KQFL+ R VPC +R +     + G D  +    ED   D        E   +++     ++++ + D+   + +               + +     D A  R      A ST    P++Y+ G+ S+  PL P  M EDI  DY+ KT T+E  P++ N++   SIHPCKHA+VMK</pattern>
+					<matchSeq start="4" end="238">LHSTLDRLREF-TPVSNTSTFRTNGQITPEEFVAAGDYLVFKFPTWSWADASPTSKRANYLPAGKQFLVTRGVPCHRRLDDDFAGDAGHDETVVRDGEDFRGDGPHSPGDDEDGWLRTGGLAASQEARVRDV-RTVDESGEMGEREDDEDDIPDMEDDDDDDEAIIRDPKADNASST----PRLYLSGYLSSSQPLPPHLMMEDIVGDYKDKTVTLEDFPYFSNNIKMASIHPCKHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>126</score>
+					<bits>49.4</bits>
+					<expectation>6.6e-43</expectation>
+					<probability>6.6e-43</probability>
+					<identity>55</identity>
+					<positives>69</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDDS-------LRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D D +       +RVDQYL+VFLKF+ SVTP I+HD+TM</pattern>
+					<matchSeq start="297" end="345">GNDEWEVLQHDQDFANEEEEVAIRVDQYLVVFLKFMASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="28" database="uniprot" id="Q2M0D4_DROPS" ac="Q2M0D4" length="328" description="Autophagy-related protein 3 (Fragment).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>224</score>
+					<bits>83.9</bits>
+					<expectation>1.0e-42</expectation>
+					<probability>1.0e-42</probability>
+					<identity>44</identity>
+					<positives>63</positives>
+					<querySeq start="2" end="100">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDG</querySeq>
+					<pattern>++ T  +  EYLTP+  +S F  TG +TPEEFV AGD+L H  PTW+W     D   + +LPK+KQFLI R VPC +R +Q +E  G + +++  + DG</pattern>
+					<matchSeq start="8" end="104">VKGTALNVAEYLTPVLKESKFRETGVLTPEEFVAAGDHLVHHCPTWQW-AAGDDTKTKPYLPKDKQFLITRNVPCYRRCKQ-MEYVGEETLVEEESGDG</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>188</score>
+					<bits>71.2</bits>
+					<expectation>1.0e-42</expectation>
+					<probability>1.0e-42</probability>
+					<identity>42</identity>
+					<positives>68</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R YDL+I Y   Y+ P++++VG++    PL+ EQM+ED+S D+  KT T+E  P      ++ S+HPC+HA++MK</pattern>
+					<matchSeq start="211" end="284">RTYDLHITYDKYYQTPRLWVVGYDEQRKPLTVEQMYEDVSQDHAKKTVTMESHPHLPGPNMA-SVHPCRHADIMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>78</score>
+					<bits>32.5</bits>
+					<expectation>1.0e-42</expectation>
+					<probability>1.0e-42</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YLI+FLKF+ +V P+I++D+T</pattern>
+					<matchSeq start="297" end="322">LGVHLYLIIFLKFVQTVIPTIEYDFT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="29" database="uniprot" id="Q9VVS6_DROME" ac="Q9VVS6" length="330" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>220</score>
+					<bits>82.5</bits>
+					<expectation>2.1e-42</expectation>
+					<probability>2.1e-42</probability>
+					<identity>43</identity>
+					<positives>63</positives>
+					<querySeq start="2" end="100">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDG</querySeq>
+					<pattern>++ T  +  EYLTP+  +S F  TG +TPEEFV AGD+L H  PTW+W     +   + +LPK+KQFLI R VPC +R +Q +E  G + +++  + DG</pattern>
+					<matchSeq start="8" end="104">VKGTALNVAEYLTPVLKESKFRETGVLTPEEFVAAGDHLVHHCPTWQW-AAGDETKTKPYLPKDKQFLITRNVPCYRRCKQ-MEYVGEETLVEEESGDG</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>189</score>
+					<bits>71.6</bits>
+					<expectation>2.1e-42</expectation>
+					<probability>2.1e-42</probability>
+					<identity>42</identity>
+					<positives>69</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R YDL+I+Y   Y+ P++++VG++    PL+ EQM+ED+S D+  KT T+E  P      ++ S+HPC+HA++MK</pattern>
+					<matchSeq start="213" end="286">RTYDLHISYDKYYQTPRLWVVGYDEQRKPLTVEQMYEDVSQDHAKKTVTMESHPHLPGPNMA-SVHPCRHADIMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>78</score>
+					<bits>32.5</bits>
+					<expectation>2.1e-42</expectation>
+					<probability>2.1e-42</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YLI+FLKF+ +V P+I++D+T</pattern>
+					<matchSeq start="299" end="324">LGVHLYLIIFLKFVQTVIPTIEYDFT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="30" database="uniprot" id="Q4PI94_USTMA" ac="Q4PI94" length="439" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>213</score>
+					<bits>80.0</bits>
+					<expectation>3.0e-42</expectation>
+					<probability>3.0e-42</probability>
+					<identity>40</identity>
+					<positives>56</positives>
+					<querySeq start="10" end="134">REYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQC-----VEVEGPDVIMKGFAEDGD----EDDVLEYIGSETEHVQSTPAGGTKDS-SIDDIDE</querySeq>
+					<pattern>REYL+P+  +S F   G+ITP+EFV AGD+L + FPTW+W   SS  + RD+LPK+KQFLI   VP  +R  Q      V V+  D  +  F E+G     EDD  +++ +  +  Q+  +    D   I DI E</pattern>
+					<matchSeq start="12" end="143">REYLSPVLRESKFKEHGRITPDEFVAAGDFLSYKFPTWQWCAGSSSKA-RDYLPKDKQFLISCGVPSLRRVSQIEKGVGVGVKDDDEKLMSFGEEGGADAPEDD--QWVATHFDDQQTGSSSQVADMLDIPDIGE</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>187</score>
+					<bits>70.9</bits>
+					<expectation>3.0e-42</expectation>
+					<probability>3.0e-42</probability>
+					<identity>46</identity>
+					<positives>60</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYK----NSVLS---------VSIHPCKHANVMK</querySeq>
+					<pattern>R YD  I Y   Y+ P+M++VG++ +G PL P Q+FED+S+DY  KT TIE  P       +SV S          SIHPCKHA+VMK</pattern>
+					<matchSeq start="242" end="329">RKYDCIITYDKYYQTPRMWLVGYDEHGVPLKPAQIFEDVSSDYAQKTVTIEPFPHGHAGPDSSVTSSASAVGVATASIHPCKHASVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>104</score>
+					<bits>41.7</bits>
+					<expectation>3.0e-42</expectation>
+					<probability>3.0e-42</probability>
+					<identity>54</identity>
+					<positives>80</positives>
+					<querySeq start="272" end="306">DLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>+ +DD+D  LRVDQY+I+FLKF+ S+ P+I+ D T</pattern>
+					<matchSeq start="403" end="436">EAEDDVD-GLRVDQYMIIFLKFMASIVPAIEIDAT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="31" database="uniprot" id="ATG3_SCHPO" ac="O43035" length="275" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme atg3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>381</score>
+					<bits>139.2</bits>
+					<expectation>4.6e-42</expectation>
+					<probability>4.6e-42</probability>
+					<identity>35</identity>
+					<positives>53</positives>
+					<querySeq start="2" end="240">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRA------EQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>+ S   +WRE++TP +  S F  TG I+PEEFV AGDYL   FPTW W  E  D   R FLPK+KQ+L+ R V C +R       E+ V++E  D   K   +D  +DD +  I S+T  + S      +   + D   L ++D                    + +D  + RYYDLYI Y   YR P++++ G+N+ G  L+ + ++ED+S ++  KT T+E  P Y +     S+HPCKHA+V+</pattern>
+					<matchSeq start="5" end="233">LTSAFLNWREHITPASKTSDFENTGMISPEEFVLAGDYLVSKFPTWSW--ECGD-RIRGFLPKDKQYLVTRHVFCVQRNINIGVNEEWVDIETDDTRNK---DDDQDDDAISSIHSDTSDIASAERLKGQSKELSDSGPLPLKDEEDDDQMVSPV---------IKED--EGRYYDLYIVYDKYYRTPRLFLRGWNAGGQLLTMKDIYEDVSGEHAGKTVTMEPFPHYHSHNTMASVHPCKHASVL</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>92</score>
+					<bits>37.4</bits>
+					<expectation>4.6e-42</expectation>
+					<probability>4.6e-42</probability>
+					<identity>45</identity>
+					<positives>83</positives>
+					<querySeq start="278" end="308">DDSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>+D +RVDQY+++FLKF++++ P  + DYT++</pattern>
+					<matchSeq start="244" end="274">NDPIRVDQYMVLFLKFVSTMLPYFEIDYTIQ</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="32" database="uniprot" id="Q7QGK7_ANOGA" ac="Q7QGK7" length="331" description="Autophagy-related protein 3 (Fragment).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>217</score>
+					<bits>81.4</bits>
+					<expectation>6.9e-42</expectation>
+					<probability>6.9e-42</probability>
+					<identity>39</identity>
+					<positives>56</positives>
+					<querySeq start="2" end="124">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGT</querySeq>
+					<pattern>++ T     EYLTP+  +S F  TG +TPEEF+ AGD+L H  PTW W     +   + +LPK+KQFLI R VPC +R +Q +E  G + ++    E+ D D    ++  ET H     AG +</pattern>
+					<matchSeq start="8" end="120">VKGTALGVAEYLTPVLKESKFRETGVLTPEEFIAAGDHLTHHCPTWSW-AVGDESKIKPYLPKDKQFLITRNVPCRRRCKQ-IEFVGEENLV----EENDPDG--GWV--ETHHYNPDEAGSS</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>186</score>
+					<bits>70.5</bits>
+					<expectation>6.9e-42</expectation>
+					<probability>6.9e-42</probability>
+					<identity>40</identity>
+					<positives>67</positives>
+					<querySeq start="163" end="241">MAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ + R YDL+I Y   Y+ P+++++G++ N   LS EQM++D+S D+  KT T+E  P      ++ S+HPCKHA++MK</pattern>
+					<matchSeq start="210" end="287">VVRTRTYDLHITYDKYYQTPRLWVIGYDENRKLLSVEQMYDDVSQDHAKKTVTMETHPHLPGPNMA-SVHPCKHADIMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>80</score>
+					<bits>33.2</bits>
+					<expectation>6.9e-42</expectation>
+					<probability>6.9e-42</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YLI+FLKF+ +V P+I++D+T</pattern>
+					<matchSeq start="300" end="325">LGVHMYLIIFLKFVQTVIPTIEYDFT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="33" database="uniprot" id="ATG3_BOVIN" ac="Q0VCL3" length="314" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>214</score>
+					<bits>80.4</bits>
+					<expectation>8.8e-42</expectation>
+					<probability>8.8e-42</probability>
+					<identity>35</identity>
+					<positives>49</positives>
+					<querySeq start="11" end="164">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEY----IGSETEHVQSTPAGGTKDS-SIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMA</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W     ++  + +LP  KQFL+ + VPC KR +Q    +  + I++   +DGD   V  Y    I   TE V+      +KDS  + D   L ++              +   G L  D A</pattern>
+					<matchSeq start="17" end="171">EYLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWQW-ATGEELKVKAYLPSGKQFLVTKNVPCYKRCKQMEYSDELEAIIE--EDDGDGGWVDTYHNTGIAGITEAVKEITLE-SKDSIKLQDCSALCEEEEEEDEGEAADMEEYEESGLLETDEA</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>185</score>
+					<bits>70.2</bits>
+					<expectation>8.8e-42</expectation>
+					<probability>8.8e-42</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="196" end="271">QTRTYDLYITYDKYYQTPRLWLFGYDEQRQPLTVEHMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>8.8e-42</expectation>
+					<probability>8.8e-42</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="284" end="309">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="34" database="uniprot" id="ATG3_MOUSE" ac="Q9CPX6" length="314" description="Autophagy-related protein 3 (APG3-like).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>210</score>
+					<bits>79.0</bits>
+					<expectation>1.8e-41</expectation>
+					<probability>1.8e-41</probability>
+					<identity>35</identity>
+					<positives>49</positives>
+					<querySeq start="11" end="164">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEY----IGSETEHVQSTPAGGTKDS-SIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMA</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W     ++  + +LP +KQFL+ + VPC KR +Q    +  + I++   +DGD   V  Y    I   TE V+      +KDS  + D   L  +              +   G L  D A</pattern>
+					<matchSeq start="17" end="171">EYLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWQW-ATGEELKVKAYLPTDKQFLVTKNVPCYKRCKQMEYSDELEAIIE--EDDGDGGWVDTYHNTGITGITEAVKEITLE-SKDSIKLQDCSALCDEEDEEDEGEAADMEEYEESGLLETDEA</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>186</score>
+					<bits>70.5</bits>
+					<expectation>1.8e-41</expectation>
+					<probability>1.8e-41</probability>
+					<identity>42</identity>
+					<positives>58</positives>
+					<querySeq start="155" end="241">AKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A  G    + Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="186" end="271">ADAGGEDAILQTRTYDLYITYDKYYQTPRLWLFGYDEQRQPLTVEHMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>1.8e-41</expectation>
+					<probability>1.8e-41</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="284" end="309">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="35" database="uniprot" id="ATG3_XENLA" ac="Q6GQE7" length="313" description="Autophagy-related protein 3 (APG3-like).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>210</score>
+					<bits>79.0</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>39</identity>
+					<positives>56</positives>
+					<querySeq start="11" end="134">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE-ESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSE--TEHV-----QSTPAGGTKDS-SIDDIDE</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEF+ AGD+L H  PTW+W+  E S I  + +LP +KQFL+ + VPC KR +Q    +  + I++    DG   D   + G    TE V     ++   G T D+ ++ D D+</pattern>
+					<matchSeq start="17" end="147">EYLTPVLKESKFKETGVITPEEFLAAGDHLVHHCPTWQWSAGEESKI--KPYLPNDKQFLMTKNVPCYKRCKQMEYSDEQEAIIEEDDGDGGWVDTFHHTGLSGVTEAVKEITLETQDCGKTTDNIAVCDDDD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>184</score>
+					<bits>69.8</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="195" end="270">QTRTYDLYITYDKYYQTPRLWLFGYDEQRRPLAVENMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="283" end="308">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="36" database="uniprot" id="ATG3_XENTR" ac="Q5I0S6" length="312" description="Autophagy-related protein 3 (APG3-like).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>210</score>
+					<bits>79.0</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>39</identity>
+					<positives>56</positives>
+					<querySeq start="11" end="134">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE-ESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEY-IGSETEHVQS----TPAGG--TKDSSIDDIDE</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEF+ AGD+L H  PTW+W+  E S I  + +LP +KQFL+ + VPC KR +Q    +  + I++    DG   D   + +   TE V+     T   G  T + ++DD D+</pattern>
+					<matchSeq start="17" end="146">EYLTPVLKESKFKETGVITPEEFLAAGDHLVHHCPTWQWSAGEESKI--KPYLPNDKQFLMTKNVPCYKRCKQMEYSDEQEAIIEEDDGDGGWVDTFHHSLTGVTEAVKEITLETQDCGKTTSNIAVDDDDD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>184</score>
+					<bits>69.8</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="194" end="269">QTRTYDLYITYDKYYQTPRLWLFGYDEQRRPLTVENMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="282" end="307">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="37" database="uniprot" id="ATG3_HUMAN" ac="Q9NT62" length="314" description="Autophagy-related protein 3 (APG3-like) (hApg3) (Protein PC3-96).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>209</score>
+					<bits>78.6</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>33</identity>
+					<positives>47</positives>
+					<querySeq start="11" end="164">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEY----IGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMA</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W     ++  + +LP  KQFL+ + VPC KR +Q    +  + I++   +DGD   V  Y    I   TE V+        +  + D   L ++              +   G L  D A</pattern>
+					<matchSeq start="17" end="171">EYLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWQW-ATGEELKVKAYLPTGKQFLVTKNVPCYKRCKQMEYSDELEAIIE--EDDGDGGWVDTYHNTGITGITEAVKEITLENKDNIRLQDCSALCEEEEDEDEGEAADMEEYEESGLLETDEA</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>185</score>
+					<bits>70.2</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="196" end="271">QTRTYDLYITYDKYYQTPRLWLFGYDEQRQPLTVEHMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="284" end="309">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="38" database="uniprot" id="ATG3_RAT" ac="Q6AZ50" length="314" description="Autophagy-related protein 3 (APG3-like) (Preconditioning-inducible gene 1 protein).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>208</score>
+					<bits>78.3</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="11" end="101">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGD</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W     ++  + +LP  KQFL+ + VPC KR +Q    +  + I++   +DGD</pattern>
+					<matchSeq start="17" end="104">EYLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWQW-ATGEELKVKAYLPTGKQFLVTKNVPCYKRCKQMEYSDELEAIIE--EDDGD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>186</score>
+					<bits>70.5</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>42</identity>
+					<positives>58</positives>
+					<querySeq start="155" end="241">AKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A  G    + Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="186" end="271">ADAGGEDAILQTRTYDLYITYDKYYQTPRLWLFGYDEQRQPLTVEHMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>2.9e-41</expectation>
+					<probability>2.9e-41</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="284" end="309">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="39" database="uniprot" id="ATG3_CRYNE" ac="Q5K9X6" length="385" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>208</score>
+					<bits>78.3</bits>
+					<expectation>5.8e-41</expectation>
+					<probability>5.8e-41</probability>
+					<identity>36</identity>
+					<positives>54</positives>
+					<querySeq start="2" end="134">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMK--GFAEDGDE----DDVLEYIGSETEHVQSTPAGGTKD-SSIDDIDE</querySeq>
+					<pattern>I+S   + R+YL+P+  +S F   G+ITPEEFV AGD+L   FP W+W +  S  + RDFLP +KQ+L+ R VPC +RA         +   K   F +D +E    DD  +++ +   H+  +P     D   I DI +</pattern>
+					<matchSeq start="8" end="141">IQSQYWAVRDYLSPVLRESKFKEHGRITPEEFVAAGDFLTFKFPVWQWEKGESSRA-RDFLPPDKQYLVTRNVPCLRRATAVDYTNADEDAEKLLSFLDDAEEAPGPDD--DWVAT---HINRSPPHRPTDMDEIPDIPD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>196</score>
+					<bits>74.1</bits>
+					<expectation>5.8e-41</expectation>
+					<probability>5.8e-41</probability>
+					<identity>34</identity>
+					<positives>57</positives>
+					<querySeq start="129" end="241">IDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>I D+DE  ++D+                     K++ Q R YD  I+Y   Y+ P+ ++ G++ + +PL+P Q+F+D+ AD+  KT T+E  P +  + L+ S+HPCKHA+VMK</pattern>
+					<matchSeq start="173" end="284">IPDMDEEGLEDLEDDAAVRIVHPSEAEVNSTAGKNLLQVRTYDCIISYDKHYQTPRFWLFGYDEHKNPLTPAQVFQDVPADHAFKTMTMESFP-HSGAQLA-SVHPCKHASVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>83</score>
+					<bits>34.3</bits>
+					<expectation>5.8e-41</expectation>
+					<probability>5.8e-41</probability>
+					<identity>45</identity>
+					<positives>72</positives>
+					<querySeq start="274" end="306">QDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>+D++   + VD YL++FLKFI S+ P+I+ D T</pattern>
+					<matchSeq start="348" end="380">KDEVVTGVPVDFYLVIFLKFIASIVPTIEVDST</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="40" database="uniprot" id="Q61A24_CAEBR" ac="Q61A24" length="316" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>212</score>
+					<bits>79.7</bits>
+					<expectation>1.2e-40</expectation>
+					<probability>1.2e-40</probability>
+					<identity>41</identity>
+					<positives>55</positives>
+					<querySeq start="3" end="117">RSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIG-SETEHVQ</querySeq>
+					<pattern>+S   S  E  TP+  +S F  TG +TPEE+V AGD+L H  PTWKW+  S     R FLP +KQFLI + VPC KR   C ++E  + + K   +D  E    E  G  +T H +</pattern>
+					<matchSeq start="9" end="121">KSAALSIGETFTPVLKESKFRETGVLTPEEYVAAGDHLVHHCPTWKWSTASDPSKIRPFLPADKQFLITKNVPCHKR---CKQMEYDEKLEKIINDDEGEYATGEESGWVDTHHYE</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>182</score>
+					<bits>69.1</bits>
+					<expectation>1.2e-40</expectation>
+					<probability>1.2e-40</probability>
+					<identity>31</identity>
+					<positives>47</positives>
+					<querySeq start="111" end="241">SETEHVQSTPAGGTKDSSID----DIDELIQDMXXXXXXXXXXXXXF--------NAKGGLAKDMAQE--RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ET    + P     D   D    D+D+LI+               F        N   G A     E  R YDL+I Y   Y+VP+++++G++ N  PL+ +Q +ED SAD+  KT T+E  P     +   ++HPCKHA +MK</pattern>
+					<matchSeq start="131" end="273">TETSPAPAPPTSPESDDDSDGEALDLDDLIESGALDSDENDDDPNRFVNEKAAKLNTSSGDAAGAEVEKIRTYDLHICYDKYYQVPRLFLMGYDENRRPLTVDQTYEDFSADHSNKTITVETHP--SMDLQMPTVHPCKHAEMMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>76</score>
+					<bits>31.8</bits>
+					<expectation>1.2e-40</expectation>
+					<probability>1.2e-40</probability>
+					<identity>50</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V +YL +FLKF+ +V P+I++D+T</pattern>
+					<matchSeq start="286" end="311">LGVHEYLFLFLKFVQAVIPTIEYDFT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="41" database="uniprot" id="A2QGT0_ASPNG" ac="A2QGT0" length="328" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>430</score>
+					<bits>156.4</bits>
+					<expectation>2.8e-39</expectation>
+					<probability>2.8e-39</probability>
+					<identity>37</identity>
+					<positives>55</positives>
+					<querySeq start="1" end="241">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ--CVEVEGPDVIMKGF-AEDGDEDDV--LEYIGSETEHVQSTPA--GG--TKDSS--IDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ STLS+WR+ L P++  STF TTGQITPEEFV AGDYL + FP+W W + ++      +LP  KQFL+ R VPC +R       +    D I++G  A +GD DD   L   G +     S+ A  G   T D +  + +++E  +D                 +  +       R Y+LYI Y+  YR P++Y+ G+ S   PL P+ M EDI  DY+ KT T+E  P+++ SV   ++HPC+HA+VMK</pattern>
+					<matchSeq start="3" end="253">ILHSTLSTWRDRLAPVSRTSTFRTTGQITPEEFVLAGDYLVYKFPSWSWADAATPAKRVSYLPPGKQFLVTRGVPCHRRLNDNFAGDAGHEDEIVRGMLAGEGDNDDDGWLRTGGGDNAASSSSSARIGDVRTVDEAGNMGEVEEPEEDEIPDMEDEDDDEEAI-IREPVTGTTQPTRTYNLYITYANFYRTPRLYLSGYLSASEPLPPQLMMEDIVGDYKDKTVTLEDFPWFEGSVKMATVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>314</score>
+					<bits>115.6</bits>
+					<expectation>5.6e-27</expectation>
+					<probability>5.6e-27</probability>
+					<identity>42</identity>
+					<positives>56</positives>
+					<querySeq start="167" end="307">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXX---------XXXXXXXXXXXXXXXGVGDWEDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>R Y+LYI Y+  YR P++Y+ G+ S   PL P+ M EDI  DY+ KT T+E  P+++ SV   ++HPC+HA+VMK                                 G G  E L DD+  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="179" end="326">RTYNLYITYANFYRTPRLYLSGYLSASEPLPPQLMMEDIVGDYKDKTVTLEDFPWFEGSVKMATVHPCRHASVMKTLLDRADAALKIRRDKLKAAATAHAEPDAKVAAGAGGLEGLVDDV--AIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="42" database="uniprot" id="Q5DHB5_SCHJA" ac="Q5DHB5" length="333" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>200</score>
+					<bits>75.5</bits>
+					<expectation>3.9e-38</expectation>
+					<probability>3.9e-38</probability>
+					<identity>45</identity>
+					<positives>63</positives>
+					<querySeq start="11" end="101">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEV-EGPDVIMKGFAEDGD</querySeq>
+					<pattern>EY+TP+   + F  TG ITPEEFV AGD+L +  PTW+W+    D   R +LPK KQ+L+ R VPC KR +Q  +  E  + +++   EDGD</pattern>
+					<matchSeq start="17" end="104">EYVTPVLKATKFRETGVITPEEFVAAGDFLVYHCPTWQWS--IGDKPARPYLPKEKQYLVTRSVPCYKRVKQMADHHEEFEKVLE--EEDGD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>174</score>
+					<bits>66.3</bits>
+					<expectation>3.9e-38</expectation>
+					<probability>3.9e-38</probability>
+					<identity>41</identity>
+					<positives>61</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+  QM+ED S D+  KT T E  P     ++  SIHPC+ A+VM+</pattern>
+					<matchSeq start="211" end="286">QTRTYDLYITYDKYYQTPRLWLFGYDEQHQPLTETQMYEDFSQDHAKKTVTTEAHPHLSGHMMP-SIHPCRQADVMR</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>88</score>
+					<bits>36.0</bits>
+					<expectation>3.9e-38</expectation>
+					<probability>3.9e-38</probability>
+					<identity>61</identity>
+					<positives>84</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V QYL+VFLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="299" end="324">LAVHQYLMVFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="43" database="uniprot" id="A2WLR2_ORYSI" ac="A2WLR2" length="305" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>322</score>
+					<bits>118.4</bits>
+					<expectation>3.5e-36</expectation>
+					<probability>3.5e-36</probability>
+					<identity>34</identity>
+					<positives>54</positives>
+					<querySeq start="20" end="241">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDG----DEDDV--LEYIG-SETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  ED     +E+D+  ++ +   +TE ++S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS D+  KT TIE  P + ++    S+HPCKHA VMK</pattern>
+					<matchSeq start="25" end="257">SAFLDKGVLSVPEFILAGDNLVSKCPTWSW--EAGDPSKRKPYLPPDKQFLVTRNVPCLRRAVSLEEEYDAAGAEVVL-GDDEDASKQEEEEDIPSMDTLDIGKTEGIKSIPSYFSAGKKAEEEEDIPDMDTYEDSGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPELVFEDISQDHARKTVTIEDHP-HLSAGKHASVHPCKHAAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>95</score>
+					<bits>38.5</bits>
+					<expectation>3.5e-36</expectation>
+					<probability>3.5e-36</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="272" end="297">VDKYLFIFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="44" database="uniprot" id="A2ZQB7_ORYSJ" ac="A2ZQB7" length="305" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>322</score>
+					<bits>118.4</bits>
+					<expectation>3.5e-36</expectation>
+					<probability>3.5e-36</probability>
+					<identity>34</identity>
+					<positives>54</positives>
+					<querySeq start="20" end="241">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDG----DEDDV--LEYIG-SETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  ED     +E+D+  ++ +   +TE ++S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS D+  KT TIE  P + ++    S+HPCKHA VMK</pattern>
+					<matchSeq start="25" end="257">SAFLDKGVLSVPEFILAGDNLVSKCPTWSW--EAGDPSKRKPYLPPDKQFLVTRNVPCLRRAVSLEEEYDAAGAEVVL-GDDEDASKQEEEEDIPSMDTLDIGKTEGIKSIPSYFSAGKKAEEEEDIPDMDTYEDSGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPELVFEDISQDHARKTVTIEDHP-HLSAGKHASVHPCKHAAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>95</score>
+					<bits>38.5</bits>
+					<expectation>3.5e-36</expectation>
+					<probability>3.5e-36</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="272" end="297">VDKYLFIFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="45" database="uniprot" id="A4RZB0_9CHLO" ac="A4RZB0" length="290" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>319</score>
+					<bits>117.4</bits>
+					<expectation>1.5e-35</expectation>
+					<probability>1.5e-35</probability>
+					<identity>33</identity>
+					<positives>48</positives>
+					<querySeq start="11" end="241">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEH--VQSTPAGGT-------KDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLA-KDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>E +TPI   S F + G +TPEEFV AGD L    PTW W         R +LP+ KQ+L  R+VPC +RA       G +  + G     DE  +    G  ++   +++ P  G        +D + D+ ++   D                A G    +++ + R YD+ I Y   Y+ P++++ G++ N   L P +  EDISAD+  KT TI+  P     V S SIHPCKHA+VMK</pattern>
+					<matchSeq start="17" end="250">EAVTPIRSSSAFASEGVLTPEEFVAAGDALTRACPTWTWTT-GQGARARTYLPREKQYLTTRRVPCARRARDVEAYAGAEEALTG----EDEGWIATGAGGRSDGATMEAIPDLGAMTLEADAEDDAEDEYEDEDDDAVVLPTATAIAKEAAGANGERDDENIVKTRTYDVSITYDKYYQTPRVWLNGYDENRLVLKPSKTLEDISADHAQKTVTIDPHPH--TGVPSASIHPCKHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>92</score>
+					<bits>37.4</bits>
+					<expectation>1.5e-35</expectation>
+					<probability>1.5e-35</probability>
+					<identity>64</identity>
+					<positives>84</positives>
+					<querySeq start="283" end="307">VDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>VD Y+ VFLKFI SV P+I++DYT+</pattern>
+					<matchSeq start="266" end="290">VDSYMFVFLKFIASVVPTIEYDYTL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="46" database="uniprot" id="Q5CJM5_CRYHO" ac="Q5CJM5" length="242" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>200</score>
+					<bits>75.5</bits>
+					<expectation>6.5e-35</expectation>
+					<probability>6.5e-35</probability>
+					<identity>45</identity>
+					<positives>69</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>RYYD+ + Y   ++ P++++ G+N  G PLS E+M EDI +DY TKT T++  PF    +L VSIHPC H++++K</pattern>
+					<matchSeq start="130" end="202">RYYDISVTYDKFFQTPRIWLFGYNKEGYPLSTEEMVEDIISDYATKTITLDPHPF--TGILCVSIHPCNHSSLLK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>153</score>
+					<bits>58.9</bits>
+					<expectation>6.5e-35</expectation>
+					<probability>6.5e-35</probability>
+					<identity>41</identity>
+					<positives>57</positives>
+					<querySeq start="20" end="91">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQ---CVEVEGPDV</querySeq>
+					<pattern>S F + G +TP+EFV +GDYL   FP W W   S +   R +LP+NKQ+L +  VPC KR +    C+     D+</pattern>
+					<matchSeq start="27" end="100">SKFESDGFLTPKEFVDSGDYLILQFPNWFWRSASEEYIVR-WLPQNKQYLHVDNVPCRKRLDSSKLCISKNSFDI</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>62</score>
+					<bits>26.9</bits>
+					<expectation>6.5e-35</expectation>
+					<probability>6.5e-35</probability>
+					<identity>50</identity>
+					<positives>81</positives>
+					<querySeq start="287" end="308">LIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>+++ LKFIT+V PSI+ D T++</pattern>
+					<matchSeq start="214" end="235">IVILLKFITTVIPSIELDNTID</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="47" database="uniprot" id="Q5CVV6_CRYPV" ac="Q5CVV6" length="242" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>200</score>
+					<bits>75.5</bits>
+					<expectation>8.3e-35</expectation>
+					<probability>8.3e-35</probability>
+					<identity>45</identity>
+					<positives>69</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>RYYD+ + Y   ++ P++++ G+N  G PLS E+M EDI +DY TKT T++  PF    +L VSIHPC H++++K</pattern>
+					<matchSeq start="130" end="202">RYYDISVTYDKFFQTPRIWLFGYNKEGYPLSTEEMVEDIISDYATKTITLDPHPF--TGILCVSIHPCNHSSLLK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>152</score>
+					<bits>58.6</bits>
+					<expectation>8.3e-35</expectation>
+					<probability>8.3e-35</probability>
+					<identity>48</identity>
+					<positives>62</positives>
+					<querySeq start="20" end="81">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAE</querySeq>
+					<pattern>S F + G +TP+EFV +GDYL   FP W W   S +   R +LP+NKQ+L I  VPC KR +</pattern>
+					<matchSeq start="27" end="87">SKFESDGFLTPKEFVDSGDYLILQFPNWFWRSASEEYIVR-WLPQNKQYLHIDNVPCRKRLD</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>62</score>
+					<bits>26.9</bits>
+					<expectation>8.3e-35</expectation>
+					<probability>8.3e-35</probability>
+					<identity>50</identity>
+					<positives>81</positives>
+					<querySeq start="287" end="308">LIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>+++ LKFIT+V PSI+ D T++</pattern>
+					<matchSeq start="214" end="235">IVILLKFITTVIPSIELDNTID</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="48" database="uniprot" id="Q9NT62-2" ac="Q9NT62" length="311" description="ATG3_HUMAN Isoform 2 of Q9NT62 - Homo sapiens (Human)">
+			<alignments total="2">
+				<alignment number="1">
+					<score>209</score>
+					<bits>78.6</bits>
+					<expectation>9.0e-34</expectation>
+					<probability>9.0e-34</probability>
+					<identity>33</identity>
+					<positives>47</positives>
+					<querySeq start="11" end="164">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEY----IGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMA</querySeq>
+					<pattern>EYLTP+  +S F  TG ITPEEFV AGD+L H  PTW+W     ++  + +LP  KQFL+ + VPC KR +Q    +  + I++   +DGD   V  Y    I   TE V+        +  + D   L ++              +   G L  D A</pattern>
+					<matchSeq start="17" end="171">EYLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWQW-ATGEELKVKAYLPTGKQFLVTKNVPCYKRCKQMEYSDELEAIIE--EDDGDGGWVDTYHNTGITGITEAVKEITLENKDNIRLQDCSALCEEEEDEDEGEAADMEEYEESGLLETDEA</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>185</score>
+					<bits>70.2</bits>
+					<expectation>9.0e-34</expectation>
+					<probability>9.0e-34</probability>
+					<identity>45</identity>
+					<positives>62</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>Q R YDLYI Y   Y+ P++++ G++    PL+ E M+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="196" end="271">QTRTYDLYITYDKYYQTPRLWLFGYDEQRQPLTVEHMYEDISQDHVKKTVTIENHPHLPPPPMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="49" database="uniprot" id="ATG3_YARLI" ac="Q6C4Q9" length="366" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>377</score>
+					<bits>137.8</bits>
+					<expectation>1.2e-33</expectation>
+					<probability>1.2e-33</probability>
+					<identity>40</identity>
+					<positives>56</positives>
+					<querySeq start="109" end="307">IGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKIXXXXXXXXXXXXXXXXXXXXXXXGV--GDWEDLQDDIDDS-LRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>+G E +   S     TKD+  DD +E+ +                      A D    R Y+LYIAYSTSYRVPKM++ G++  GSPL+PE MFEDI  +YR KT TIE+ P +++++  V+IHPCKHANVM++                           G+ E+  +++++S +RVDQYL+ FLKFI SVTP I+HDYTM</pattern>
+					<matchSeq start="166" end="363">LGEEEDGWTSFGVANTKDADGDDTEEIAEIADSDFEELDDDDDDAAEAPATATD---HRTYNLYIAYSTSYRVPKMFLSGYSPEGSPLTPEDMFEDIIPEYRDKTVTIER-PTFQDNITMVAIHPCKHANVMRVLMERVEAKGDKDITRGVAKLGVADADDGEGEEEWEEVENSAMRVDQYLVTFLKFIASVTPGIEHDYTM</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>248</score>
+					<bits>92.4</bits>
+					<expectation>5.5e-20</expectation>
+					<probability>5.5e-20</probability>
+					<identity>42</identity>
+					<positives>55</positives>
+					<querySeq start="2" end="133">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDED----DVLEYIGSETEHVQSTPAGGTKDSSIDDID</querySeq>
+					<pattern>+R+  SS REYLTP+++ STF TTG+ITP+EFV+AGDYL   FPTW W   S     RDFLP +KQ L+ R VP   RA     V GP  +  G  EDG       +  +  G +TE +        ++   DD D</pattern>
+					<matchSeq start="80" end="209">VRAAASSLREYLTPVSNTSTFRTTGEITPDEFVKAGDYLVEKFPTWSWASASKS-KVRDFLPPDKQVLVTRHVPSHVRAST---VSGP--VTLGEEEDGWTSFGVANTKDADGDDTEEIAEIADSDFEELDDDDDD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="50" database="uniprot" id="A7BJL3_ENTIV" ac="A7BJL3" length="266" description="Autophagy-related gene 3 product (Fragment).">
+			<alignments total="4">
+				<alignment number="1">
+					<score>176</score>
+					<bits>67.0</bits>
+					<expectation>1.1e-31</expectation>
+					<probability>1.1e-31</probability>
+					<identity>41</identity>
+					<positives>65</positives>
+					<querySeq start="161" end="241">KDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+++   R YD+ I YS   R PK++++G++ +  PLS  QMFED+SA +  +TAT +  PF +  +  + IHPC+HA VMK</pattern>
+					<matchSeq start="147" end="225">EEIKTTRTYDISIIYSHFDRTPKVWLLGYDEDHKPLSETQMFEDLSATHAGQTATTDTHPFLE--IKEIYIHPCRHAQVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>163</score>
+					<bits>62.4</bits>
+					<expectation>1.1e-31</expectation>
+					<probability>1.1e-31</probability>
+					<identity>36</identity>
+					<positives>51</positives>
+					<querySeq start="11" end="135">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDV-LEYIGSETEHVQSTPAGGTKDSS-IDDIDEL</querySeq>
+					<pattern>+ L P   +S F+  G +TPEEFV+AGD+L   + TW+W   +      D+LP NKQFLI R + C  RA+      GP    +    DG+E +V LE    + E V    +    D+  I D DE+</pattern>
+					<matchSeq start="18" end="136">DLLKPTLTESQFIEKGVLTPEEFVRAGDFLVDKYRTWQWVGSADCKKTVDYLPANKQFLITRDIRCAIRAQG-----GPVAKTEVCTIDGEEFEVPLE---EKPEEVCEEDSDEIVDADDIVDADEI</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>86</score>
+					<bits>35.3</bits>
+					<expectation>1.1e-31</expectation>
+					<probability>1.1e-31</probability>
+					<identity>58</identity>
+					<positives>91</positives>
+					<querySeq start="282" end="305">RVDQYLIVFLKFITSVTPSIQHDY</querySeq>
+					<pattern>RVD YL++FLKF+T+V P++++DY</pattern>
+					<matchSeq start="239" end="262">RVDLYLMIFLKFLTTVIPTMEYDY</matchSeq>
+				</alignment>
+				<alignment number="4">
+					<score>41</score>
+					<bits>19.5</bits>
+					<expectation>4.5e-19</expectation>
+					<probability>4.5e-19</probability>
+					<identity>21</identity>
+					<positives>48</positives>
+					<querySeq start="73" end="119">KVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQST</querySeq>
+					<pattern>+VP +++ E+  E +  +++      D DE    +     TE +++T</pattern>
+					<matchSeq start="106" end="152">EVPLEEKPEEVCEEDSDEIVDADDIVDADEISDEKDTTIATEEIKTT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="51" database="uniprot" id="Q86K79_DICDI" ac="Q86K79" length="338" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>178</score>
+					<bits>67.7</bits>
+					<expectation>1.3e-31</expectation>
+					<probability>1.3e-31</probability>
+					<identity>41</identity>
+					<positives>62</positives>
+					<querySeq start="162" end="241">DMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ + R YD+ I Y   Y+ P++++ G++ N  PL PE++FEDIS D+  KT TI+  P     +    IHPC+HA VMK</pattern>
+					<matchSeq start="218" end="295">NILRTRTYDISITYDKYYQTPRVWLFGYDENRKPLKPEEIFEDISEDHAHKTVTIDSHPHL--GISFAYIHPCRHAAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>162</score>
+					<bits>62.1</bits>
+					<expectation>1.3e-31</expectation>
+					<probability>1.3e-31</probability>
+					<identity>37</identity>
+					<positives>45</positives>
+					<querySeq start="11" end="133">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYR-DFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDID</querySeq>
+					<pattern>E +TP    S FL  G +TPEEF QAGD L     TW W  ES D S    +LPK KQFL+ R VPC  R  + +E E         A   DE  + +    E   V   P G   D   + +D</pattern>
+					<matchSeq start="18" end="129">EKVTPTLSTSKFLEEGVLTPEEFGQAGDLLTDKCQTWTW--ESGDPSRNVSYLPKEKQFLLTRNVPCYNRV-RTLENESK-------ASKADEIQIED--DGEDSWVAPQPVGNQDDIEDEKVD</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>99</score>
+					<bits>39.9</bits>
+					<expectation>1.3e-31</expectation>
+					<probability>1.3e-31</probability>
+					<identity>51</identity>
+					<positives>72</positives>
+					<querySeq start="272" end="308">DLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>D Q +     RVDQYL +FLKFI+ V P+I++D+T+E</pattern>
+					<matchSeq start="299" end="335">DRQSENGKEPRVDQYLFLFLKFISVVIPTIEYDFTLE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="52" database="uniprot" id="A2DRY6_TRIVA" ac="A2DRY6" length="258" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>186</score>
+					<bits>70.5</bits>
+					<expectation>1.4e-31</expectation>
+					<probability>1.4e-31</probability>
+					<identity>45</identity>
+					<positives>63</positives>
+					<querySeq start="162" end="240">DMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>D+   R YD+ I Y   Y V  +++ G N+ G PL+ EQM++DISADY  KT T E  PF   +  ++SIHPC+H +VM</pattern>
+					<matchSeq start="138" end="214">DVIDYRTYDISICYDKFYNVAHIFLYGVNNEGVPLTLEQMYQDISADYADKTVTYENHPF--TATKNLSIHPCQHGHVM</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>163</score>
+					<bits>62.4</bits>
+					<expectation>1.4e-31</expectation>
+					<probability>1.4e-31</probability>
+					<identity>34</identity>
+					<positives>52</positives>
+					<querySeq start="16" end="139">ITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE--ESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDV-IMKGFAEDGDE--DDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDM</querySeq>
+					<pattern>+ H ST +  G++TPEEFV AGD L    P W W    E  ++   D+LPK+KQ+LI R+V C KRA    ++   +V I  G+ + G+      LE I  + E V         +  ID+I+  +Q++</pattern>
+					<matchSeq start="19" end="137">VPHTSTLIKDGKLTPEEFVAAGDCLIANCPVWSWCSAPEGHEV---DYLPKDKQYLINRRVVCQKRATDLSKMMQEEVDIGDGWCQAGEAAAQAALE-INDDEEAVD------LDEIDIDEIEPEVQEV</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>48</score>
+					<bits>22.0</bits>
+					<expectation>1.4e-31</expectation>
+					<probability>1.4e-31</probability>
+					<identity>56</identity>
+					<positives>75</positives>
+					<querySeq start="286" end="301">YLIVFLKFITSVTPSI</querySeq>
+					<pattern>Y  +FLKFI +V P+I</pattern>
+					<matchSeq start="232" end="247">YYFIFLKFIHTVIPTI</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="53" database="uniprot" id="A5K6C7_PLAVI" ac="A5K6C7" length="317" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>182</score>
+					<bits>69.1</bits>
+					<expectation>1.1e-30</expectation>
+					<probability>1.1e-30</probability>
+					<identity>32</identity>
+					<positives>51</positives>
+					<querySeq start="12" end="136">YLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYR-DFLPKNKQFLIIRKVPCDKRAEQC------VEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPA-----GGTKDSSIDDIDELI</querySeq>
+					<pattern>Y  PIT+ S+F+  G +TP EFV AGD+L H F TW+W +   D + R   LP+ KQFL+ + V C +R +        V+    D ++  + E+ +  D+ EY+       +S P         +D+S ++ DE I</pattern>
+					<matchSeq start="21" end="155">YFKPITNSSSFVKNGTLTPAEFVDAGDFLVHKFRTWEWQDV--DTNRRVPHLPEGKQFLLTKNVACKQRIKDLSYIMRDVKTVENDWLLPSYEEENNATDIDEYMRHLEPPPRSVPREEKAHNHNEDASEEEDDEAI</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>171</score>
+					<bits>65.3</bits>
+					<expectation>1.1e-30</expectation>
+					<probability>1.1e-30</probability>
+					<identity>39</identity>
+					<positives>60</positives>
+					<querySeq start="157" end="240">GGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>GG  +++ + R YD+ I Y   Y  P++++ G++ NG PL  E++FEDISA+Y  +T      P     V++ SIHPC+HA  M</pattern>
+					<matchSeq start="188" end="267">GGQNENVMKIRTYDVSITYDKYYETPRIWLFGYDENGHPLKSEEIFEDISAEYSYETYD----PHPCTGVMTASIHPCRHAEAM</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>71</score>
+					<bits>30.1</bits>
+					<expectation>1.1e-30</expectation>
+					<probability>1.1e-30</probability>
+					<identity>44</identity>
+					<positives>74</positives>
+					<querySeq start="282" end="308">RVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>R D YL+  LKF++ V P+I++D+T +</pattern>
+					<matchSeq start="282" end="308">RHDLYLLFLLKFVSGVIPTIEYDFTTD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="54" database="uniprot" id="Q550A8_DICDI" ac="Q550A8" length="343" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>178</score>
+					<bits>67.7</bits>
+					<expectation>1.6e-30</expectation>
+					<probability>1.6e-30</probability>
+					<identity>41</identity>
+					<positives>62</positives>
+					<querySeq start="162" end="241">DMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ + R YD+ I Y   Y+ P++++ G++ N  PL PE++FEDIS D+  KT TI+  P     +    IHPC+HA VMK</pattern>
+					<matchSeq start="223" end="300">NILRTRTYDISITYDKYYQTPRVWLFGYDENRKPLKPEEIFEDISEDHAHKTVTIDSHPHL--GISFAYIHPCRHAAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>152</score>
+					<bits>58.6</bits>
+					<expectation>1.6e-30</expectation>
+					<probability>1.6e-30</probability>
+					<identity>37</identity>
+					<positives>44</positives>
+					<querySeq start="11" end="133">EYLTPITHKSTFLTTGQITPEE-----FVQAGDYLCHMFPTWKWNEESSDISYR-DFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDID</querySeq>
+					<pattern>E +TP    S FL  G +TPEE     FVQAGD L     TW W  ES D S    +LPK KQFL+ R VPC  R  + +E E         A   DE  + +    E   V   P G   D   + +D</pattern>
+					<matchSeq start="18" end="134">EKVTPTLSTSKFLEEGVLTPEEVVFFNFVQAGDLLTDKCQTWTW--ESGDPSRNVSYLPKEKQFLLTRNVPCYNRV-RTLENESK-------ASKADEIQIED--DGEDSWVAPQPVGNQDDIEDEKVD</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>99</score>
+					<bits>39.9</bits>
+					<expectation>1.6e-30</expectation>
+					<probability>1.6e-30</probability>
+					<identity>51</identity>
+					<positives>72</positives>
+					<querySeq start="272" end="308">DLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>D Q +     RVDQYL +FLKFI+ V P+I++D+T+E</pattern>
+					<matchSeq start="304" end="340">DRQSENGKEPRVDQYLFLFLKFISVVIPTIEYDFTLE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="55" database="uniprot" id="ATG3_ARATH" ac="Q0WWQ1" length="313" description="Autophagy-related protein 3 (Autophagy-related E2-like conjugation enzyme ATG3) (Protein autophagy 3) (AtAPG3).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>180</score>
+					<bits>68.4</bits>
+					<expectation>2.9e-30</expectation>
+					<probability>2.9e-30</probability>
+					<identity>31</identity>
+					<positives>46</positives>
+					<querySeq start="94" end="241">KGFAEDG-DEDDVLEYIGSETEHVQSTPA--GGTKDSSIDDIDELIQ-DMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>KG  ED     D L+   +E   +QS P   GG +D  I D++E  + D                A      ++ + R YDL I Y   Y+ P++++ G++ +   L PE + ED+S D+  KT TIE  P         S+HPC+H  VMK</pattern>
+					<matchSeq start="118" end="265">KGKEEDNLPSMDALDI--NEKNTIQSIPTYFGGEEDDDIPDMEEFDEADNVVENDPATLQSTYLVAHEPDDDNILRTRTYDLSITYDKYYQTPRVWLTGYDESRMLLQPELVMEDVSQDHARKTVTIEDHPHLPGK--HASVHPCRHGAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>148</score>
+					<bits>57.2</bits>
+					<expectation>2.9e-30</expectation>
+					<probability>2.9e-30</probability>
+					<identity>43</identity>
+					<positives>52</positives>
+					<querySeq start="20" end="100">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRAEQCVE---VEGPDVIMKGFAEDG</querySeq>
+					<pattern>S F   G ++  EFV AGD L    PTW W  ES D S R  +LP +KQFLI R VPC +RA    E     G +V++     DG</pattern>
+					<matchSeq start="25" end="107">SAFKEKGVLSVSEFVLAGDNLVSKCPTWSW--ESGDASKRKPYLPSDKQFLITRNVPCLRRAASVAEDYEAAGGEVLVDDEDNDG</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>93</score>
+					<bits>37.8</bits>
+					<expectation>2.9e-30</expectation>
+					<probability>2.9e-30</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="280" end="305">VDKYLFLFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="56" database="uniprot" id="Q22XJ4_TETTH" ac="Q22XJ4" length="280" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>291</score>
+					<bits>107.5</bits>
+					<expectation>5.3e-30</expectation>
+					<probability>5.3e-30</probability>
+					<identity>31</identity>
+					<positives>49</positives>
+					<querySeq start="19" end="241">KSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+S F   G++TP+EFV +GD L +M P WKW   S++     +LP  KQ+L++ KVPCD+R ++         +M   A +  ED+  EYI ++ +         TK   +  I E   +               N    + +   + RYYDL I Y      P +++ G + +  PL   Q+FEDI + Y  KT T E +P  +  ++  S+HPCKH+ V+K</pattern>
+					<matchSeq start="28" end="235">ESRFFEEGKLTPQEFVTSGDALINMCPQWKWMPASAEKYKNKYLPAEKQYLLMEKVPCDQRVQE---------LMDSIAVNEKEDEE-EYIINDQKKNNDQNIIETKIGQLS-IKEHFTEEKQGGEEKKEDNDDDNVV--VVEAPIERRYYDLSICYDLVTYTPHLFLQGVDEDNVPLKQNQVFEDIVSHYSNKTITFEVMP--QTGIVQASLHPCKHSQVIK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>67</score>
+					<bits>28.6</bits>
+					<expectation>5.3e-30</expectation>
+					<probability>5.3e-30</probability>
+					<identity>52</identity>
+					<positives>76</positives>
+					<querySeq start="280" end="304">SLRVDQYLIVFLKFITSVTPSIQHD</querySeq>
+					<pattern>S++  Q L VFLKF+ SV P+I++D</pattern>
+					<matchSeq start="247" end="271">SIKSHQCLFVFLKFLQSVIPTIEYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="57" database="uniprot" id="Q4YR12_PLABE" ac="Q4YR12" length="305" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>188</score>
+					<bits>71.2</bits>
+					<expectation>2.7e-29</expectation>
+					<probability>2.7e-29</probability>
+					<identity>51</identity>
+					<positives>64</positives>
+					<querySeq start="12" end="79">YLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKR</querySeq>
+					<pattern>Y  PIT+ S+F+  G +TP EFV AGD+L H F TW+W E   + + R  LP+ KQFLI R VPC  R</pattern>
+					<matchSeq start="14" end="80">YFKPITNSSSFIKNGTLTPSEFVDAGDFLTHKFKTWEWMEADDNRTVRH-LPEKKQFLISRNVPCKHR</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>142</score>
+					<bits>55.0</bits>
+					<expectation>2.7e-29</expectation>
+					<probability>2.7e-29</probability>
+					<identity>37</identity>
+					<positives>58</positives>
+					<querySeq start="162" end="240">DMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>D+   R YD+ I Y   Y  P++++ G+N N  PL  E++FEDI +DY  KT T+    FY   +L++ I   +HA +M</pattern>
+					<matchSeq start="151" end="224">DIISIRSYDISITYDAYYETPRIWLFGYNENRHPLKSEEIFEDILSDYSYKTVTV----FYFE-LLNLFIFFYRHAEIM</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>72</score>
+					<bits>30.4</bits>
+					<expectation>2.7e-29</expectation>
+					<probability>2.7e-29</probability>
+					<identity>48</identity>
+					<positives>74</positives>
+					<querySeq start="282" end="308">RVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>R D YL+  LKFI+ V P+I++D+T +</pattern>
+					<matchSeq start="258" end="284">RHDLYLLFLLKFISGVIPTIEYDFTTD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="58" database="uniprot" id="Q0CDC5_ASPTN" ac="Q0CDC5" length="257" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>209</score>
+					<bits>78.6</bits>
+					<expectation>6.0e-29</expectation>
+					<probability>6.0e-29</probability>
+					<identity>46</identity>
+					<positives>68</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R Y+LYI Y+  YR P++Y+ G+ S   PL P  M EDI  DY+ KT T+E  P+++ +V   ++HPC+HA+VMK</pattern>
+					<matchSeq start="78" end="152">RTYNLYITYANFYRTPRLYLSGYLSASEPLPPHLMMEDIVGDYKDKTVTLEDFPWFEGNVKMATVHPCRHASVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>139</score>
+					<bits>54.0</bits>
+					<expectation>6.0e-29</expectation>
+					<probability>6.0e-29</probability>
+					<identity>61</identity>
+					<positives>79</positives>
+					<querySeq start="266" end="307">GVGDWEDLQDDIDD--SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>G  +WE LQ D ++  ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="212" end="255">GGEEWEVLQHDEEEQVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="59" database="uniprot" id="A6RFI1_AJECA" ac="A6RFI1" length="253" description="Predicted protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>220</score>
+					<bits>82.5</bits>
+					<expectation>7.6e-29</expectation>
+					<probability>7.6e-29</probability>
+					<identity>39</identity>
+					<positives>53</positives>
+					<querySeq start="130" end="242">DDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>++ DE I DM                K G    +   R Y LYI YS  YR P++Y+ G+ S   PL+P  M EDI  DY+ KT T+E  PF+   V   S+HPC+HA+VMK+</pattern>
+					<matchSeq start="25" end="134">EEEDEEIPDMEDDDDDEEAIIRDPVGKAGTESPL---RTYTLYITYSPYYRTPRLYLSGYISPSEPLAPHLMMEDIVGDYKDKTVTLEDFPFFDGGVKMASVHPCRHASVMKV</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>127</score>
+					<bits>49.8</bits>
+					<expectation>7.6e-29</expectation>
+					<probability>7.6e-29</probability>
+					<identity>58</identity>
+					<positives>75</positives>
+					<querySeq start="268" end="307">GD-WEDLQ----DDIDD---SLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>GD WE LQ    ++ D+   ++RVDQYL+VFLKFI SVTP I+HD+TM</pattern>
+					<matchSeq start="204" end="251">GDEWEVLQHEGGEEADEQRVAIRVDQYLVVFLKFIASVTPGIEHDFTM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="60" database="uniprot" id="Q586I8_9TRYP" ac="Q586I8" length="292" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>283</score>
+					<bits>104.7</bits>
+					<expectation>2.0e-28</expectation>
+					<probability>2.0e-28</probability>
+					<identity>28</identity>
+					<positives>49</positives>
+					<querySeq start="20" end="241">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQER---YYDLYIAYSTSYRVPKMYIVGF-NSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>S+F  TG +TP EF+QAGD L H  P W W E   +I  + FLP NK++L+ R  PC +RA      +  +++     ED D++ +  +     +      A  T +   DD D+   +               +      +D  + R    YD+Y+ Y   Y+ P+++++G+   + +PL+  +M ED+    R +T +I+  PF + +   +SIHPC+HA  M+</pattern>
+					<matchSeq start="24" end="240">SSFHETGTLTPMEFIQAGDELLHKMPVWSWAEGPENI--QPFLPPNKKYLVYRGAPCYERAAVAGNDDADEIV-----EDDDDEWITTHANRVLKATTEIAAEKTINWDDDDDDDDANNNNNVVVVDSSRKDEGDDDEDADRDQTERRRCRLYDVYMVYDQYYQTPRIFLIGYAEDHVTPLTTSEMMEDVYPVNRERTVSIDPHPFLQAAC--ISIHPCRHAETMR</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>60</score>
+					<bits>26.2</bits>
+					<expectation>2.0e-28</expectation>
+					<probability>2.0e-28</probability>
+					<identity>61</identity>
+					<positives>83</positives>
+					<querySeq start="287" end="304">LIVFLKFITSVTPSIQHD</querySeq>
+					<pattern>L +FLKFI+S  PSI++D</pattern>
+					<matchSeq start="268" end="285">LFLFLKFISSAVPSIEYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="61" database="uniprot" id="Q8I392_PLAF7" ac="Q8I392" length="298" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>189</score>
+					<bits>71.6</bits>
+					<expectation>3.1e-28</expectation>
+					<probability>3.1e-28</probability>
+					<identity>38</identity>
+					<positives>56</positives>
+					<querySeq start="2" end="98">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAE</querySeq>
+					<pattern>I  T      Y   + + STF+  G +TP EFV +GD+L + F TW+W E   D     +LP+NKQFLI + VPC +R +    +   D+IM G+++</pattern>
+					<matchSeq start="11" end="105">IGDTCRKLYSYFKTVNNTSTFIQNGTLTPSEFVDSGDFLVYKFKTWEWQEADKD-RVVPYLPENKQFLITKNVPCKQRIKDLNNIVH-DLIMIGYSQ</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>127</score>
+					<bits>49.8</bits>
+					<expectation>3.1e-28</expectation>
+					<probability>3.1e-28</probability>
+					<identity>36</identity>
+					<positives>58</positives>
+					<querySeq start="173" end="240">IAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>I Y   Y+ P++++ G+N NG PL  E++FEDI +DY  KT T+ K+      ++ V +H     NV+</pattern>
+					<matchSeq start="169" end="235">ITYDKYYQTPRIWLFGYNENGDPLKSEEIFEDILSDYSYKTVTV-KIKIIFMILIRVLVHAEAILNVV</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>72</score>
+					<bits>30.4</bits>
+					<expectation>3.1e-28</expectation>
+					<probability>3.1e-28</probability>
+					<identity>48</identity>
+					<positives>74</positives>
+					<querySeq start="282" end="308">RVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>R D YL+  LKFI+ V P+I++D+T +</pattern>
+					<matchSeq start="261" end="287">RHDLYLLFLLKFISGVIPTIEYDFTTD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="62" database="uniprot" id="A4HL66_LEIBR" ac="A4HL66" length="275" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>177</score>
+					<bits>67.4</bits>
+					<expectation>3.6e-28</expectation>
+					<probability>3.6e-28</probability>
+					<identity>43</identity>
+					<positives>62</positives>
+					<querySeq start="160" end="241">AKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNG-SPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>AKD +  R YD+YI Y   Y+ P+MY+VG+ S+  +PL+ +QM ED+      KT TI+  P    S+  +SIHPC+HA  M+</pattern>
+					<matchSeq start="139" end="219">AKDNSSLRIYDVYIVYDRYYQTPRMYLVGYTSDHVTPLTLDQMKEDVYRSNYGKTVTIDPHPIL--SIPCISIHPCRHAETMR</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>157</score>
+					<bits>60.3</bits>
+					<expectation>3.6e-28</expectation>
+					<probability>3.6e-28</probability>
+					<identity>41</identity>
+					<positives>60</positives>
+					<querySeq start="20" end="96">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMK-GF</querySeq>
+					<pattern>S F TTG++TP+EFV+AGD L H  P W+W       S +D+LPK K+ ++ R  PC++RA        P+ + + GF</pattern>
+					<matchSeq start="25" end="100">SDFQTTGRLTPKEFVEAGDELVHKNPVWQWI--GGPESVQDYLPKEKKCIVYRGAPCNERAPVDHSSASPETVDEDGF</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>60</score>
+					<bits>26.2</bits>
+					<expectation>3.6e-28</expectation>
+					<probability>3.6e-28</probability>
+					<identity>55</identity>
+					<positives>94</positives>
+					<querySeq start="287" end="304">LIVFLKFITSVTPSIQHD</querySeq>
+					<pattern>+++FLKFI++V P+IQ+D</pattern>
+					<matchSeq start="250" end="267">MLLFLKFISTVLPTIQYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="63" database="uniprot" id="A2ZA76_ORYSI" ac="A2ZA76" length="362" description="Autophagy-related protein 3.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>322</score>
+					<bits>118.4</bits>
+					<expectation>7.9e-28</expectation>
+					<probability>7.9e-28</probability>
+					<identity>34</identity>
+					<positives>53</positives>
+					<querySeq start="20" end="241">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDG----DEDDV--LEYIG-SETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  ED     +E+D+  ++ +   +TE + S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS D+  KT TIE  P + ++    S+HPCKHA VMK</pattern>
+					<matchSeq start="25" end="257">SAFLEKGVLSVPEFILAGDNLVSKCPTWSW--EADDPSKRKPYLPPDKQFLVTRNVPCVRRAVSLEEEYDAAGAEVVL-GDDEDASKPEEEEDIPSMDTLDIGKTEGINSIPSYFSAGKKAEEEEDIPDMDTYEDTGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPEVVFEDISQDHARKTVTIEDHP-HLSAGKHASVHPCKHAAVMK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="64" database="uniprot" id="Q6XJ21_DROYA" ac="Q6XJ21" length="254" description="Autophagy-related protein 3 (Fragment).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>220</score>
+					<bits>82.5</bits>
+					<expectation>2.2e-27</expectation>
+					<probability>2.2e-27</probability>
+					<identity>43</identity>
+					<positives>63</positives>
+					<querySeq start="2" end="100">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDG</querySeq>
+					<pattern>++ T  +  EYLTP+  +S F  TG +TPEEFV AGD+L H  PTW+W     +   + +LPK+KQFLI R VPC +R +Q +E  G + +++  + DG</pattern>
+					<matchSeq start="8" end="104">VKGTALNVAEYLTPVLKESKFRETGVLTPEEFVAAGDHLVHHCPTWQW-AAGDETKTKPYLPKDKQFLITRNVPCYRRCKQ-MEYVGEETLVEEESGDG</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>113</score>
+					<bits>44.8</bits>
+					<expectation>2.2e-27</expectation>
+					<probability>2.2e-27</probability>
+					<identity>45</identity>
+					<positives>71</positives>
+					<querySeq start="167" end="208">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISAD</querySeq>
+					<pattern>R YDL+I+Y   Y+ P++++VG++    PL+ EQM ED+S D</pattern>
+					<matchSeq start="213" end="254">RTYDLHISYDKYYQTPRLWVVGYDEQRKPLTVEQMSEDVSQD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="65" database="uniprot" id="A7PKE9_VITVI" ac="A7PKE9" length="314" description="Chromosome chr15 scaffold_19, whole genome shotgun sequence.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>164</score>
+					<bits>62.8</bits>
+					<expectation>9.4e-27</expectation>
+					<probability>9.4e-27</probability>
+					<identity>28</identity>
+					<positives>47</positives>
+					<querySeq start="94" end="241">KGFAEDG-DEDDVLEYIGSETEHVQSTPA--GGTKDSSIDDIDELIQ-DMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>KG AE+     + L+   S+ + ++S P   GG ++  I D+ +  + D                A      ++ + R YD+ I Y   Y+ P++++ G++    PL PE + ED+S D+  KT TIE  P         S+HPC+H  VMK</pattern>
+					<matchSeq start="119" end="266">KGDAEENLPSMETLDI--SKDKTIKSIPTYFGGEEEEDIPDMADYEETDNVVEADAATLQMPYLVAHEPDDDNILRTRTYDVSITYDKYYQTPRVWLTGYDEARMPLQPELVLEDVSQDHAHKTVTIEDHPHLPGK--HASVHPCRHGAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>138</score>
+					<bits>53.6</bits>
+					<expectation>9.4e-27</expectation>
+					<probability>9.4e-27</probability>
+					<identity>39</identity>
+					<positives>51</positives>
+					<querySeq start="20" end="100">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDG</querySeq>
+					<pattern>S F   G ++  EFV AGD L    PTW W E       + +LP  KQ+LI R VPC +RA   E+  E  G +V++     DG</pattern>
+					<matchSeq start="25" end="107">SAFKEKGVLSVTEFVIAGDNLVSKCPTWSW-ESGEPGKRKSYLPPEKQYLITRNVPCLRRAASVEEEYEAAGGEVLLDNEDNDG</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>95</score>
+					<bits>38.5</bits>
+					<expectation>9.4e-27</expectation>
+					<probability>9.4e-27</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="281" end="306">VDKYLFLFLKFVASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="66" database="uniprot" id="A4I8P6_LEIIN" ac="A4I8P6" length="275" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>168</score>
+					<bits>64.2</bits>
+					<expectation>3.6e-26</expectation>
+					<probability>3.6e-26</probability>
+					<identity>43</identity>
+					<positives>60</positives>
+					<querySeq start="160" end="241">AKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNG-SPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A D +  R YD+YI Y   Y+ P+MY+VG+ S+  +PLS  QM ED+      KT TI+  P    S+  +SIHPC+HA  M+</pattern>
+					<matchSeq start="139" end="219">ATDNSNLRVYDVYIVYDKYYQTPRMYLVGYASDHVTPLSMGQMKEDVYRSNYGKTVTIDPHPVL--SIPCISIHPCRHAETMR</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>152</score>
+					<bits>58.6</bits>
+					<expectation>3.6e-26</expectation>
+					<probability>3.6e-26</probability>
+					<identity>33</identity>
+					<positives>51</positives>
+					<querySeq start="20" end="134">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDE</querySeq>
+					<pattern>S F TTG++TP+EFV+AGD L    P W+W       S +D+LPK K+ ++ R  PC +RA        P+ +        DEDD   ++ +E   V + PA   ++  +   DE</pattern>
+					<matchSeq start="25" end="125">SDFQTTGRLTPKEFVEAGDELVQKNPVWQW--VGGPESVQDYLPKEKKCIVYRGAPCTERAPVDSTNASPEAV--------DEDD---FVLTEATQV-ALPATALEEEKVLTWDE</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>62</score>
+					<bits>26.9</bits>
+					<expectation>3.6e-26</expectation>
+					<probability>3.6e-26</probability>
+					<identity>61</identity>
+					<positives>94</positives>
+					<querySeq start="287" end="304">LIVFLKFITSVTPSIQHD</querySeq>
+					<pattern>L++FLKFI++V P+IQ+D</pattern>
+					<matchSeq start="250" end="267">LLLFLKFISTVLPTIQYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="67" database="uniprot" id="Q4Q4J0_LEIMA" ac="Q4Q4J0" length="275" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>173</score>
+					<bits>66.0</bits>
+					<expectation>1.2e-25</expectation>
+					<probability>1.2e-25</probability>
+					<identity>43</identity>
+					<positives>61</positives>
+					<querySeq start="160" end="241">AKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNG-SPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A D +  R YD+YI Y   Y+ P+MY+VG+ S+  +PLS +QM ED+      KT TI+  P    S+  +SIHPC+HA  M+</pattern>
+					<matchSeq start="139" end="219">ATDNSNMRVYDVYIVYDKYYQTPRMYLVGYASDHVTPLSMDQMKEDVYRSNYGKTVTIDPHPVL--SIPCISIHPCRHAETMR</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>138</score>
+					<bits>53.6</bits>
+					<expectation>1.2e-25</expectation>
+					<probability>1.2e-25</probability>
+					<identity>33</identity>
+					<positives>50</positives>
+					<querySeq start="20" end="134">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDE</querySeq>
+					<pattern>S F TTG++TP+EFV+AGD L    P W+W       S +D+LPK K+ ++ R  P  +RA        P+ +        DEDD   ++ +E   V + PA   ++  +   DE</pattern>
+					<matchSeq start="25" end="125">SDFQTTGRLTPKEFVEAGDELVQKNPVWQW--VGGPESVQDYLPKEKKCIVYRGAPSTERAPVDPTNASPEAV--------DEDD---FVLTEAPKV-ALPATVIEEEKVLTWDE</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>62</score>
+					<bits>26.9</bits>
+					<expectation>1.2e-25</expectation>
+					<probability>1.2e-25</probability>
+					<identity>61</identity>
+					<positives>94</positives>
+					<querySeq start="287" end="304">LIVFLKFITSVTPSIQHD</querySeq>
+					<pattern>L++FLKFI++V P+IQ+D</pattern>
+					<matchSeq start="250" end="267">LLLFLKFISTVLPAIQYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="68" database="uniprot" id="A0DMZ1_PARTE" ac="A0DMZ1" length="241" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>150</score>
+					<bits>57.9</bits>
+					<expectation>1.1e-23</expectation>
+					<probability>1.1e-23</probability>
+					<identity>38</identity>
+					<positives>61</positives>
+					<querySeq start="164" end="241">AQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+Q+RYY LYI Y   Y  P++Y+ G   +   L+ +++ ED+S +Y  KT T E   F + ++   +IHPCKHA+ +K</pattern>
+					<matchSeq start="121" end="195">SQDRYYTLYITYDLYYFTPRLYLSG-KVDDRQLTYQEVKEDVSGEYADKTVTEEN--FLELNIKLPTIHPCKHADTLK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>142</score>
+					<bits>55.0</bits>
+					<expectation>1.1e-23</expectation>
+					<probability>1.1e-23</probability>
+					<identity>38</identity>
+					<positives>50</positives>
+					<querySeq start="13" end="117">LTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKG-FAEDGDEDDVLEYIGSETEHVQ</querySeq>
+					<pattern>+ P T KS FLT G +TPEEF+ AGD L      WKW +  SD     +LP +KQFLI   +   KR +        D+   G F E  + +DV   I SE + +Q</pattern>
+					<matchSeq start="21" end="116">IAPPT-KSVFLTKGMLTPEEFINAGDRLISNGGNWKWCKAISDQYKNKYLPNDKQFLIQENIISYKRIK--------DLNRGGTFTEQQEGEDVT-IIRSEEQPIQ</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>68</score>
+					<bits>29.0</bits>
+					<expectation>1.1e-23</expectation>
+					<probability>1.1e-23</probability>
+					<identity>42</identity>
+					<positives>67</positives>
+					<querySeq start="278" end="305">DDSLRVDQYLIVFLKFITSVTPSIQHDY</querySeq>
+					<pattern>++ +  D  L +FLKF+ SV P+IQ D+</pattern>
+					<matchSeq start="208" end="235">EEKIHPDNSLTIFLKFMNSVIPTIQFDF</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="69" database="uniprot" id="Q9N369_CAEEL" ac="Q9N369" length="305" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>217</score>
+					<bits>81.4</bits>
+					<expectation>1.3e-23</expectation>
+					<probability>1.3e-23</probability>
+					<identity>41</identity>
+					<positives>51</positives>
+					<querySeq start="11" end="138">EYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMK---GFAEDGDEDDVLEYIGSETEHV------QST--PAGGTKDSSIDDIDELIQD</querySeq>
+					<pattern>E  TP+  +S F  TG +TPEE+V AGD+L H  PTWKW   S     R FLP +KQFLI R VPC KR +Q    E  + I+    G  +  DE   ++    E EH       QST  P    +DS  DD + L  D</pattern>
+					<matchSeq start="17" end="155">ETFTPVLRESKFRETGVLTPEEYVAAGDHLVHHCPTWKWAGASDPSKIRTFLPIDKQFLITRNVPCHKRCKQMEYDEKLEKIINEEDGEYQTSDETGWVDTHHYEKEHEKNEEKEQSTAPPPAAPEDSDDDDEEPLDLD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>192</score>
+					<bits>72.6</bits>
+					<expectation>1.4e-18</expectation>
+					<probability>1.4e-18</probability>
+					<identity>33</identity>
+					<positives>51</positives>
+					<querySeq start="112" end="241">ETEHVQSTPAGGTKDSSIDD-----IDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>E E   + P    +DS  DD     +DEL + D                A    + ++ + R YDL+I Y   Y+VP+++++G++ N  PL+ EQ +ED SAD+  KT T+E  P     +   ++HPCKHA +MK</pattern>
+					<matchSeq start="129" end="262">EKEQSTAPPPAAPEDSDDDDEEPLDLDELGLDDDEEDPNRFVVEKKPLAAGNDNSGEVEKVRTYDLHICYDKYYQVPRLFLMGYDENRRPLTVEQTYEDFSADHSNKTITVEAHPSV--DLTMPTVHPCKHAEMMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>80</score>
+					<bits>33.2</bits>
+					<expectation>1.3e-23</expectation>
+					<probability>1.3e-23</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V +YL +FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="275" end="300">LGVHEYLFLFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="70" database="uniprot" id="ATG3_DANRE" ac="Q6PFS7" length="317" description="Autophagy-related protein 3 (APG3-like).">
+			<alignments total="3">
+				<alignment number="1">
+					<score>215</score>
+					<bits>80.7</bits>
+					<expectation>1.3e-23</expectation>
+					<probability>1.3e-23</probability>
+					<identity>38</identity>
+					<positives>55</positives>
+					<querySeq start="2" end="135">IRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDEL</querySeq>
+					<pattern>++ T     E+LTP+  +S F  TG ITPEEFV AGD+L H  PTWKW     +   + +LP +KQFL+ R VPC KR +Q    +  + I++   +DGD   V  +  S    V  T A   ++ S+D+ D +</pattern>
+					<matchSeq start="8" end="134">VKGTALGVAEFLTPVLKESKFKETGVITPEEFVAAGDHLVHHCPTWKW-ASGEEAKVKPYLPNDKQFLLTRNVPCYKRCKQMEYSDELEAIIE--EDDGDGGWVDTFHNSGVTGV--TEA--VREISLDNKDNM</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>194</score>
+					<bits>73.4</bits>
+					<expectation>5.9e-19</expectation>
+					<probability>5.9e-19</probability>
+					<identity>33</identity>
+					<positives>52</positives>
+					<querySeq start="100" end="241">GDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>GD+DD  E   ++ E  + +    T D+++D     + D+               A+ G    + Q R YDLYI Y   Y+ P++++ G++ +  PL+ +QM+EDIS D+  KT TIE  P      +  S+HPC+HA VMK</pattern>
+					<matchSeq start="147" end="274">GDDDDDEEGEAADMEEYEESGLLETDDATLDT--SKMADLSKT-----------KAEAGGEDAILQTRTYDLYITYDKYYQTPRLWLFGYDEDRQPLTVDQMYEDISQDHVKKTVTIENHPNLPPPAMC-SVHPCRHAEVMK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>82</score>
+					<bits>33.9</bits>
+					<expectation>1.3e-23</expectation>
+					<probability>1.3e-23</probability>
+					<identity>53</identity>
+					<positives>80</positives>
+					<querySeq start="281" end="306">LRVDQYLIVFLKFITSVTPSIQHDYT</querySeq>
+					<pattern>L V  YL++FLKF+ +V P+I++DYT</pattern>
+					<matchSeq start="287" end="312">LGVHMYLLIFLKFVQAVIPTIEYDYT</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="71" database="uniprot" id="Q4DGX5_TRYCR" ac="Q4DGX5" length="270" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>160</score>
+					<bits>61.4</bits>
+					<expectation>3.6e-23</expectation>
+					<probability>3.6e-23</probability>
+					<identity>35</identity>
+					<positives>63</positives>
+					<querySeq start="160" end="241">AKDMAQE--RYYDLYIAYSTSYRVPKMYIVGFNSNGSPL-SPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A+D+ +   R YD+Y+ Y   Y+ P+++++G+  + + L + ++M +D+ A  R KT +I+  PF K +   +SIHPC+HA  MK</pattern>
+					<matchSeq start="133" end="215">AEDIGERKCRLYDVYMVYDQYYQTPRIFLIGYAEDHTTLLTKDEMMQDVYASNREKTVSIDPHPFLKAAC--ISIHPCRHAETMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>140</score>
+					<bits>54.3</bits>
+					<expectation>3.6e-23</expectation>
+					<probability>3.6e-23</probability>
+					<identity>34</identity>
+					<positives>48</positives>
+					<querySeq start="20" end="138">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAE-DGDEDDVLEYIGSE-TEHVQSTPAGGTKDSSIDDIDELIQD</querySeq>
+					<pattern>S F  TG +TP EFV+AGD L    P W W E    I  + FLP  K++L+    PC +RA        PD    G  E +G++  V  +   + +++V   PA   K  + DD D+  QD</pattern>
+					<matchSeq start="24" end="131">SNFQVTGTLTPLEFVEAGDELVQKMPVWAWAEGEEGI--QPFLPPRKKYLVYHGAPCYQRA--------PDADSLGENEMEGEDGWVTTHAERQPSKNVVMAPA---KTINWDDEDDEDQD</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>57</score>
+					<bits>25.1</bits>
+					<expectation>3.6e-23</expectation>
+					<probability>3.6e-23</probability>
+					<identity>62</identity>
+					<positives>93</positives>
+					<querySeq start="289" end="304">VFLKFITSVTPSIQHD</querySeq>
+					<pattern>+FLKFI+SV P+I++D</pattern>
+					<matchSeq start="248" end="263">LFLKFISSVVPTIEYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="72" database="uniprot" id="Q4DBK4_TRYCR" ac="Q4DBK4" length="270" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>160</score>
+					<bits>61.4</bits>
+					<expectation>5.8e-23</expectation>
+					<probability>5.8e-23</probability>
+					<identity>35</identity>
+					<positives>63</positives>
+					<querySeq start="160" end="241">AKDMAQE--RYYDLYIAYSTSYRVPKMYIVGFNSNGSPL-SPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>A+D+ +   R YD+Y+ Y   Y+ P+++++G+  + + L + ++M +D+ A  R KT +I+  PF K +   +SIHPC+HA  MK</pattern>
+					<matchSeq start="133" end="215">AEDIGERKCRLYDVYMVYDQYYQTPRIFLIGYAEDHTTLLTKDEMMQDVYASNREKTVSIDPHPFLKAAC--ISIHPCRHAETMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>138</score>
+					<bits>53.6</bits>
+					<expectation>5.8e-23</expectation>
+					<probability>5.8e-23</probability>
+					<identity>33</identity>
+					<positives>47</positives>
+					<querySeq start="20" end="134">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAE-DGDEDDVLEYIGSE-TEHVQSTPAGGTKDSSIDDIDE</querySeq>
+					<pattern>S F  TG +TP EFV+AGD L    P W W E    I  + FLP  K++L+    PC +R        GPD    G  E +G++  V  +   + +++V   PA        DD D+</pattern>
+					<matchSeq start="24" end="130">SNFQVTGTLTPLEFVEAGDELVQKMPVWAWAEGEEGI--QPFLPPRKKYLVYHGAPCYQR--------GPDADSLGENEMEGEDGWVTTHAERQPSKNVVMAPAKTINWDEEDDEDQ</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>57</score>
+					<bits>25.1</bits>
+					<expectation>5.8e-23</expectation>
+					<probability>5.8e-23</probability>
+					<identity>62</identity>
+					<positives>93</positives>
+					<querySeq start="289" end="304">VFLKFITSVTPSIQHD</querySeq>
+					<pattern>+FLKFI+SV P+I++D</pattern>
+					<matchSeq start="248" end="263">LFLKFISSVVPTIEYD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="73" database="uniprot" id="Q8LRF5_ORYSJ" ac="Q8LRF5" length="316" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>198</score>
+					<bits>74.8</bits>
+					<expectation>1.6e-21</expectation>
+					<probability>1.6e-21</probability>
+					<identity>31</identity>
+					<positives>49</positives>
+					<querySeq start="77" end="241">DKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>D+  E  +   G     +   ED    D L+ IG +TE ++S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS D+  KT TIE  P + ++    S+HPCKHA VMK</pattern>
+					<matchSeq start="103" end="268">DEDGEGWLATHGVQASKQEEEEDIPSMDTLD-IG-KTEGIKSIPSYFSAGKKAEEEEDIPDMDTYEDSGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPELVFEDISQDHARKTVTIEDHP-HLSAGKHASVHPCKHAAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>156</score>
+					<bits>60.0</bits>
+					<expectation>2.5e-14</expectation>
+					<probability>2.5e-14</probability>
+					<identity>37</identity>
+					<positives>53</positives>
+					<querySeq start="20" end="126">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDGDEDDVLEYI-GSETEHVQSTPAGGTKD</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  EDG+       +  S+ E  +  P+  T D</pattern>
+					<matchSeq start="25" end="133">SAFLDKGVLSVPEFILAGDNLVSKCPTWSW--EAGDPSKRKPYLPPDKQFLVTRNVPCLRRAVSLEEEYDAAGAEVVL-GDDEDGEGWLATHGVQASKQEEEEDIPSMDTLD</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>95</score>
+					<bits>38.5</bits>
+					<expectation>1.6e-21</expectation>
+					<probability>1.6e-21</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="283" end="308">VDKYLFIFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="74" database="uniprot" id="Q336S7_ORYSJ" ac="Q336S7" length="312" description="Autophagy-related protein 3.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>253</score>
+					<bits>94.1</bits>
+					<expectation>1.6e-20</expectation>
+					<probability>1.6e-20</probability>
+					<identity>30</identity>
+					<positives>49</positives>
+					<querySeq start="20" end="231">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDG----DEDDV--LEYIG-SETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSI</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  ED     +E+D+  ++ +   +TE + S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS   R +    +  P    + L  SI</pattern>
+					<matchSeq start="25" end="248">SAFLEKGVLSVPEFILAGDNLVSKCPTWSW--EAGDPSKRKPYLPPDKQFLVTRNVPCVRRAVSLEEEYDAAGAEVVL-GDDEDASKPEEEEDIPSMDTLDIGKTEGINSIPSYFSAGKKAEEEEDIPDMDTYEDTGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPELVFEDISKTMRGRRLWPQSYPLLNMTTLWTSI</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="75" database="uniprot" id="Q22RT9_TETTH" ac="Q22RT9" length="225" description="Autophagocytosis associated protein, C-terminal domain containing protein.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>178</score>
+					<bits>67.7</bits>
+					<expectation>1.1e-17</expectation>
+					<probability>1.1e-17</probability>
+					<identity>28</identity>
+					<positives>47</positives>
+					<querySeq start="94" end="241">KGFAEDGDEDDVL----EYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>K F E GD+  ++    E +    +  +       K +  DD++E +                 NA+    ++  + R Y+  I Y T Y VP+++  G + N  PL  EQMFED+  +YR +T T+EK P        ++IHPCKH+ ++K</pattern>
+					<matchSeq start="38" end="182">KQFLESGDQLTLMGWKWEKVDDNKKLNKRKKFNRIKKNVFDDLEEKVNSEGFVETSQRQS----NAQDNQEEE-EEMRIYNFSITYDTYYHVPRIWFSGVDENQKPLKKEQMFEDVMPEYRDETVTLEKHPHLGYD--QMTIHPCKHSQILK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>74</score>
+					<bits>31.1</bits>
+					<expectation>0.18</expectation>
+					<probability>0.16</probability>
+					<identity>38</identity>
+					<positives>55</positives>
+					<querySeq start="26" end="88">GQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEG</querySeq>
+					<pattern>G +TP++F+++GD L  M   WKW  E  D + +  L K K+F  I+K   D   E+ V  EG</pattern>
+					<matchSeq start="33" end="88">GFLTPKQFLESGDQLTLM--GWKW--EKVDDNKK--LNKRKKFNRIKKNVFDDLEEK-VNSEG</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>62</score>
+					<bits>26.9</bits>
+					<expectation>1.1e-17</expectation>
+					<probability>1.1e-17</probability>
+					<identity>37</identity>
+					<positives>75</positives>
+					<querySeq start="280" end="308">SLRVDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>+++ +Q LI+FLKF+ SV P+++ + T +</pattern>
+					<matchSeq start="194" end="222">TIKPNQALIIFLKFVGSVLPTLEIETTTD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="76" database="uniprot" id="Q4QXL9_NICBE" ac="Q4QXL9" length="160" description="Autophagy protein ATG3 (Fragment).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>155</score>
+					<bits>59.6</bits>
+					<expectation>1.5e-17</expectation>
+					<probability>1.5e-17</probability>
+					<identity>36</identity>
+					<positives>57</positives>
+					<querySeq start="162" end="241">DMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>++ + R YD+ I Y   Y+ P++++ G++ +   L PE + ED+S D+  KT TIE  P         S+HPC+H  VMK</pattern>
+					<matchSeq start="39" end="116">NILRTRTYDISITYDKYYQTPRVWLTGYDESRMLLQPELVLEDVSQDHARKTVTIEDHPHLPGK--HASVHPCRHGAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>89</score>
+					<bits>36.4</bits>
+					<expectation>1.5e-17</expectation>
+					<probability>1.5e-17</probability>
+					<identity>57</identity>
+					<positives>84</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+Y  +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="131" end="156">VDKYFFLFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="77" database="uniprot" id="Q6V5H9_SISIR" ac="Q6V5H9" length="312" description="Autophagy-related protein 3.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>163</score>
+					<bits>62.4</bits>
+					<expectation>4.3e-15</expectation>
+					<probability>4.3e-15</probability>
+					<identity>29</identity>
+					<positives>48</positives>
+					<querySeq start="104" end="241">DVLEYIGSETEHVQSTP--AGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>D LE   +E + +Q  P  AGG ++  I D+ E   ++              + +     ++ + R YD+ I Y   Y+ P++++ G++ +   L PE + ED+S D+  KT TIE  P         S+HPC+H  VMK</pattern>
+					<matchSeq start="129" end="261">DALEI--NERDTIQPKPKYAGGEEEDDIPDMAEF-DEIDNDPATLQSNLLVAHQQDD--DNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMLLQPELVMEDVSQDHARKTVTIEDHPHLPGK--HASVHPCRHGAVMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>147</score>
+					<bits>56.8</bits>
+					<expectation>5.8e-13</expectation>
+					<probability>5.8e-13</probability>
+					<identity>36</identity>
+					<positives>48</positives>
+					<querySeq start="20" end="135">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRAEQCVE---VEGPDVIMKGFAEDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDEL</querySeq>
+					<pattern>S F   G ++  EFV AGD L    PTW W  ES D S R  +LP +KQFLI R VPC +RA    E     G +V++    +D D D  L   G   +        G +D ++  +D L</pattern>
+					<matchSeq start="25" end="131">SAFKEKGVLSVSEFVLAGDNLVSKCPTWSW--ESGDPSKRKPYLPSDKQFLITRNVPCLRRAASVAEDYEAAGGEVLV----DDEDNDGWLATHGRPKDR-------GNEDENLPSMDAL</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>93</score>
+					<bits>37.8</bits>
+					<expectation>4.3e-15</expectation>
+					<probability>4.3e-15</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="276" end="301">VDKYLFLFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="78" database="uniprot" id="A0BUD2_PARTE" ac="A0BUD2" length="229" description="Chromosome undetermined scaffold_129, whole genome shotgun sequence.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>143</score>
+					<bits>55.4</bits>
+					<expectation>9.8e-15</expectation>
+					<probability>9.8e-15</probability>
+					<identity>34</identity>
+					<positives>57</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSN-GSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ R Y + I Y   Y  P++++ G   N G PL  ++++EDI + Y+ +T T+E+ P+       V+IHPC H+  MK</pattern>
+					<matchSeq start="108" end="183">ETRVYTITITYDRKYHCPRLWLQGVALNSGLPLKHQEIYEDIMSVYQNETVTVEEHPYLHYQ--QVTIHPCNHSTTMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>70</score>
+					<bits>29.7</bits>
+					<expectation>9.8e-15</expectation>
+					<probability>9.8e-15</probability>
+					<identity>35</identity>
+					<positives>57</positives>
+					<querySeq start="12" end="51">YLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE</querySeq>
+					<pattern>++TP      F + G +TPE+F++AGD L      W+W +</pattern>
+					<matchSeq start="12" end="47">FVTP--KPQDFYSKGWMTPEQFIEAGDQLT--MTGWQWKK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>61</score>
+					<bits>26.5</bits>
+					<expectation>9.8e-15</expectation>
+					<probability>9.8e-15</probability>
+					<identity>45</identity>
+					<positives>75</positives>
+					<querySeq start="285" end="308">QYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>Q L +FLKF+ SV P++ +D T++</pattern>
+					<matchSeq start="200" end="223">QALFIFLKFMQSVMPTVVYDTTID</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="79" database="uniprot" id="A0CJH5_PARTE" ac="A0CJH5" length="240" description="Chromosome undetermined scaffold_2, whole genome shotgun sequence.">
+			<alignments total="3">
+				<alignment number="1">
+					<score>143</score>
+					<bits>55.4</bits>
+					<expectation>2.1e-14</expectation>
+					<probability>2.1e-14</probability>
+					<identity>34</identity>
+					<positives>57</positives>
+					<querySeq start="165" end="241">QERYYDLYIAYSTSYRVPKMYIVGFNSN-GSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ R Y + I Y   Y  P++++ G   N G PL  ++++EDI + Y+ +T T+E+ P+       V+IHPC H+  MK</pattern>
+					<matchSeq start="119" end="194">ETRVYTISITYDRKYHCPRLWLQGVALNSGLPLKHQEIYEDIMSVYQNETVTVEEHPYLHYQ--QVTIHPCNHSTTMK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>70</score>
+					<bits>29.7</bits>
+					<expectation>2.1e-14</expectation>
+					<probability>2.1e-14</probability>
+					<identity>43</identity>
+					<positives>63</positives>
+					<querySeq start="22" end="51">FLTTGQITPEEFVQAGDYLCHMFPTWKWNE</querySeq>
+					<pattern>F + G +TPE+FV+AGD L      W+W +</pattern>
+					<matchSeq start="31" end="58">FYSKGWLTPEQFVEAGDQLT--MTGWQWKK</matchSeq>
+				</alignment>
+				<alignment number="3">
+					<score>61</score>
+					<bits>26.5</bits>
+					<expectation>2.1e-14</expectation>
+					<probability>2.1e-14</probability>
+					<identity>45</identity>
+					<positives>75</positives>
+					<querySeq start="285" end="308">QYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>Q L +FLKF+ SV P++ +D T++</pattern>
+					<matchSeq start="211" end="234">QALFIFLKFMQSVMPTVVYDTTID</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="80" database="uniprot" id="Q4XZ16_PLACH" ac="Q4XZ16" length="100" description="Putative uncharacterized protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>187</score>
+					<bits>70.9</bits>
+					<expectation>1.6e-13</expectation>
+					<probability>1.6e-13</probability>
+					<identity>54</identity>
+					<positives>62</positives>
+					<querySeq start="12" end="79">YLTPITHKSTFLTTGQITPEEFVQAGDYLCHMFPTWKWNE--ESSDISYRDFLPKNKQFLIIRKVPCDKR</querySeq>
+					<pattern>Y  PIT+ STF   G +TP EFV AGD+L H F TW+W E  ES  + Y   LP+ KQFLI R VPC  R</pattern>
+					<matchSeq start="21" end="87">YFKPITNSSTFTKHGTLTPAEFVDAGDFLTHKFKTWEWREADESRAVPY---LPEKKQFLISRNVPCKHR</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="81" database="uniprot" id="Q4N090_THEPA" ac="Q4N090" length="197" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>141</score>
+					<bits>54.7</bits>
+					<expectation>2.4e-13</expectation>
+					<probability>2.4e-13</probability>
+					<identity>36</identity>
+					<positives>56</positives>
+					<querySeq start="167" end="241">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>R Y L I Y       + ++ G+N  G PLS ++MFED+   Y  KT T+E+ PF     L++++HPC    ++K</pattern>
+					<matchSeq start="117" end="189">RTYSLTITYDRYNETARFWLRGYNQFGLPLSKDEMFEDVPEVYVGKTVTVERHPF--TGFLNLTVHPCNQKEIVK</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>78</score>
+					<bits>32.5</bits>
+					<expectation>2.4e-13</expectation>
+					<probability>2.4e-13</probability>
+					<identity>32</identity>
+					<positives>50</positives>
+					<querySeq start="26" end="78">GQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDK</querySeq>
+					<pattern>G +    FV+ GD L  +   W+W  ++  + Y   LP++KQ+L    V C K</pattern>
+					<matchSeq start="27" end="78">GSLNTSNFVEYGDGLVSINKRWRWAGKTQSM-YDTNLPEDKQYLYCDNVACLK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="82" database="uniprot" id="Q7RFY4_PLAYO" ac="Q7RFY4" length="159" description="Unnamed protein product-related.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>183</score>
+					<bits>69.5</bits>
+					<expectation>4.2e-13</expectation>
+					<probability>4.2e-13</probability>
+					<identity>44</identity>
+					<positives>62</positives>
+					<querySeq start="167" end="240">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>R YD+ I Y   Y  P++++ G+N N  PL  E++FEDI +DY  KT T E  P     +++ SIHPCKHA +M</pattern>
+					<matchSeq start="66" end="137">RSYDISITYDKYYETPRIWLFGYNENRHPLKSEEIFEDILSDYSYKTVTYESHPC--TGIMTASIHPCKHAEIM</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="83" database="uniprot" id="Q4UCH7_THEAN" ac="Q4UCH7" length="203" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>143</score>
+					<bits>55.4</bits>
+					<expectation>7.3e-13</expectation>
+					<probability>7.3e-13</probability>
+					<identity>35</identity>
+					<positives>56</positives>
+					<querySeq start="167" end="242">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>R Y L I Y       + ++ G+N  G PLS ++MFED+   Y  KT T+E+ PF     L++++HPC    ++K+</pattern>
+					<matchSeq start="117" end="190">RTYSLTITYDRYNETARFWLRGYNQFGLPLSKDEMFEDVPEVYVGKTVTVERHPF--TGFLNLTVHPCNQKEIVKL</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>76</score>
+					<bits>31.8</bits>
+					<expectation>7.3e-13</expectation>
+					<probability>7.3e-13</probability>
+					<identity>31</identity>
+					<positives>50</positives>
+					<querySeq start="26" end="76">GQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPC</querySeq>
+					<pattern>G +    FV+ GD L  +   WKW  ++  + +   LP++KQ+L    V C</pattern>
+					<matchSeq start="27" end="76">GSLNTSNFVEYGDDLVSINKQWKWAGKTPSM-FDSNLPEDKQYLCCDNVAC</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="84" database="uniprot" id="Q4RYA7_TETNG" ac="Q4RYA7" length="133" description="Chromosome 3 SCAF14978, whole genome shotgun sequence.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>167</score>
+					<bits>63.8</bits>
+					<expectation>3.0e-11</expectation>
+					<probability>3.0e-11</probability>
+					<identity>30</identity>
+					<positives>51</positives>
+					<querySeq start="98" end="235">EDGDEDDVLEYIGSETEHVQSTPAGGTKDSSIDDIDELIQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFYKNSVLSVSIHPCK</querySeq>
+					<pattern>EDGDEDD  +   ++ E  + +    T ++++D   ++I++                 + G    + Q R YDL I Y   Y+ P++++ G++ +  PL+ EQM+EDIS D+  KT TIE  P      +  S+HPC+</pattern>
+					<matchSeq start="11" end="133">EDGDEDDDDDGEAADMEEYEESGLLETDEATLDT-SKMIENKA-------------KVECGSEDAILQTRTYDLCITYDKYYQTPRLWLFGYDEDRQPLTVEQMYEDISQDHVKKTVTIENHPHLPPPAMC-SVHPCR</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="85" database="uniprot" id="A4H006_TRYBG" ac="A4H006" length="143" description="Truncated Aut1 protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>164</score>
+					<bits>62.8</bits>
+					<expectation>6.7e-11</expectation>
+					<probability>6.7e-11</probability>
+					<identity>37</identity>
+					<positives>51</positives>
+					<querySeq start="21" end="134">TFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGDEDDVLEYIGSETEHV--QSTPAGGTKDSSIDDIDE</querySeq>
+					<pattern>+F  TG +TP EF+QAGD L H  P W W E   +I  + FLP NK++L+ R  PC +RA     V G D      A++  EDD  E+I +    V   +T     K  + DD D+</pattern>
+					<matchSeq start="19" end="123">SFHETGTLTPMEFIQAGDELLHKMPVWSWAEGPENI--QPFLPPNKKYLVYRGAPCYERAA----VAGNDD-----ADEIVEDDDDEWITTHANRVLKATTEIAAEKTINWDDDDD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="86" database="uniprot" id="Q016J4_OSTTA" ac="Q016J4" length="81" description="Protein involved in autophagocytosis during starvation (ISS).">
+			<alignments total="2">
+				<alignment number="1">
+					<score>91</score>
+					<bits>37.1</bits>
+					<expectation>2.9e-10</expectation>
+					<probability>2.9e-10</probability>
+					<identity>43</identity>
+					<positives>72</positives>
+					<querySeq start="271" end="307">EDLQDDIDDSLRVDQYLIVFLKFITSVTPSIQHDYTM</querySeq>
+					<pattern>E ++ +  +S  V+ Y+ VFLKFI SV P++++DYT+</pattern>
+					<matchSeq start="45" end="81">ESMRAERGESPSVETYMFVFLKFIASVIPTVEYDYTL</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>90</score>
+					<bits>36.7</bits>
+					<expectation>2.9e-10</expectation>
+					<probability>2.9e-10</probability>
+					<identity>51</identity>
+					<positives>67</positives>
+					<querySeq start="205" end="241">ISADYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+SA++  KT TI+  P     V S SIHPCKH++VMK</pattern>
+					<matchSeq start="7" end="41">LSAEHAQKTVTIDPHPH--TGVPSASIHPCKHSSVMK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="87" database="uniprot" id="Q8SBA4_ORYSA" ac="Q8SBA4" length="241" description="Autophagy-related protein 3.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>157</score>
+					<bits>60.3</bits>
+					<expectation>1.2e-08</expectation>
+					<probability>1.2e-08</probability>
+					<identity>37</identity>
+					<positives>53</positives>
+					<querySeq start="20" end="126">STFLTTGQITPEEFVQAGDYLCHMFPTWKWNEESSDISYRD-FLPKNKQFLIIRKVPCDKRA---EQCVEVEGPDVIMKGFAEDGDEDDVLEYI-GSETEHVQSTPAGGTKD</querySeq>
+					<pattern>S FL  G ++  EF+ AGD L    PTW W  E+ D S R  +LP +KQFL+ R VPC +RA   E+  +  G +V++ G  EDG+       +  S+ E  +  P+  T D</pattern>
+					<matchSeq start="25" end="133">SAFLEKGVLSVPEFILAGDNLVSKCPTWSW--EAGDPSKRKPYLPPDKQFLVTRNVPCVRRAVSLEEEYDAAGAEVVL-GDDEDGEGWLATHGVQASKPEEEEDIPSMDTLD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>118</score>
+					<bits>46.6</bits>
+					<expectation>0.00091</expectation>
+					<probability>0.00091</probability>
+					<identity>29</identity>
+					<positives>47</positives>
+					<querySeq start="98" end="210">EDGDEDDVLEYIGSETEHVQSTPA---GGTKDSSIDDIDEL-IQDMXXXXXXXXXXXXXFNAKGGLAKDMAQERYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYR</querySeq>
+					<pattern>ED    D L+ IG +TE + S P+    G K    +DI ++   +              F A+     ++ + R YD+ I Y   Y+ P++++ G++ +  PL PE +FEDIS   R</pattern>
+					<matchSeq start="124" end="238">EDIPSMDTLD-IG-KTEGINSIPSYFSAGKKAEEEEDIPDMDTYEDTGNDSVATAQPSYFVAEEPEDDNILRTRTYDVSITYDKYYQTPRVWLTGYDESRMPLKPELVFEDISKTMR</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="88" database="uniprot" id="Q4RYA8_TETNG" ac="Q4RYA8" length="135" description="Chromosome 3 SCAF14978, whole genome shotgun sequence.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>86</score>
+					<bits>35.3</bits>
+					<expectation>6.3e-06</expectation>
+					<probability>6.3e-06</probability>
+					<identity>36</identity>
+					<positives>63</positives>
+					<querySeq start="55" end="101">DISYRDFLPKNKQFLIIRKVPCDKRAEQCVEVEGPDVIMKGFAEDGD</querySeq>
+					<pattern>++  + +LP++KQFL+ R VPC KR +Q    +  + I++   +DGD</pattern>
+					<matchSeq start="44" end="88">EVKIKPYLPEDKQFLLTRNVPCYKRCKQMEYSDELEAIIE--EDDGD</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>77</score>
+					<bits>32.2</bits>
+					<expectation>6.3e-06</expectation>
+					<probability>6.3e-06</probability>
+					<identity>44</identity>
+					<positives>63</positives>
+					<querySeq start="1" end="38">MIRSTLSSWREYLTPITHKSTFLTTGQITPEEFVQAGD</querySeq>
+					<pattern>+++ T     E+LTP+  +S F  TG ITPEE V AG+</pattern>
+					<matchSeq start="7" end="43">IVKGTALGVAEFLTPVLKESKFKETGVITPEE-VAAGE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="89" database="uniprot" id="Q627W2_CAEBR" ac="Q627W2" length="170" description="Putative uncharacterized protein CBG00514 (Fragment).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>110</score>
+					<bits>43.8</bits>
+					<expectation>0.0017</expectation>
+					<probability>0.0017</probability>
+					<identity>28</identity>
+					<positives>58</positives>
+					<querySeq start="170" end="241">DLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDI---SADYRTKTATIEKLPFYKNSVLSV---SIHPCKHANVMK</querySeq>
+					<pattern>D++I Y+++Y+VP ++   F +NG+P+  E++  DI        + ++  +++  Y++ +L V   +IHPC    +MK</pattern>
+					<matchSeq start="66" end="143">DIHILYNSTYQVPTLWFNFFENNGAPIPFEEVVRDILKIPESEESDSSLRQRISHYEHPILGVLYYNIHPCNTEKIMK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="90" database="uniprot" id="Q18991_CAEEL" ac="Q18991" length="157" description="Putative uncharacterized protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>106</score>
+					<bits>42.4</bits>
+					<expectation>0.0031</expectation>
+					<probability>0.0031</probability>
+					<identity>30</identity>
+					<positives>56</positives>
+					<querySeq start="170" end="241">DLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFED---ISADYRTKTATIEKLPFYKN---SVLSVSIHPCKHANVMK</querySeq>
+					<pattern>+ +I Y+++Y+VP ++   F +NGSPL    +  D   IS    ++ +   ++  Y++    VL  +IHPC  +N+MK</pattern>
+					<matchSeq start="51" end="128">ETHILYNSTYQVPTIWFNFFENNGSPLPFRTVIRDVLNISETEESEASIRSRISHYEHPFMGVLYYNIHPCNTSNIMK</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="91" database="uniprot" id="Q56WG4_ARATH" ac="Q56WG4" length="42" description="Autophagocytosis protein-like.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>93</score>
+					<bits>37.8</bits>
+					<expectation>0.0065</expectation>
+					<probability>0.0064</probability>
+					<identity>61</identity>
+					<positives>88</positives>
+					<querySeq start="283" end="308">VDQYLIVFLKFITSVTPSIQHDYTME</querySeq>
+					<pattern>VD+YL +FLKF+ SV P+I++DYTM+</pattern>
+					<matchSeq start="9" end="34">VDKYLFLFLKFMASVIPTIEYDYTMD</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="92" database="uniprot" id="Q16TL2_AEDAE" ac="Q16TL2" length="205" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>98</score>
+					<bits>39.6</bits>
+					<expectation>0.033</expectation>
+					<probability>0.033</probability>
+					<identity>31</identity>
+					<positives>55</positives>
+					<querySeq start="165" end="240">QERY-YDLYIAYSTSYRVPKMYIVGFNSNGSPLSPE---QMFEDISADYRT---KTATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>+E Y ++ ++ YS SY+VP +Y   + S+G+ L  E   Q F D++++ R    +T T  + P      L+  +HPC+ A V+</pattern>
+					<matchSeq start="78" end="158">EEVYQFEYHVVYSVSYQVPVLYFNAYKSDGTMLQLEEAWQGFRDLASESREQLRRTLTQMEHPILFRPFLA--LHPCQTAQVL</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>39</score>
+					<bits>18.8</bits>
+					<expectation>0.033</expectation>
+					<probability>0.033</probability>
+					<identity>43</identity>
+					<positives>68</positives>
+					<querySeq start="23" end="38">LTTGQITPEEFVQAGD</querySeq>
+					<pattern>+TTG +T E+F  A +</pattern>
+					<matchSeq start="1" end="16">MTTGTLTEEQFRDAAE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="93" database="uniprot" id="Q16I24_AEDAE" ac="Q16I24" length="193" description="Putative uncharacterized protein.">
+			<alignments total="2">
+				<alignment number="1">
+					<score>95</score>
+					<bits>38.5</bits>
+					<expectation>0.057</expectation>
+					<probability>0.055</probability>
+					<identity>30</identity>
+					<positives>55</positives>
+					<querySeq start="169" end="240">YDLYIAYSTSYRVPKMYIVGFNSNGSPLSPE---QMFEDISADYRTK---TATIEKLPFYKNSVLSVSIHPCKHANVM</querySeq>
+					<pattern>++ ++ YS SY+VP +Y   + S+G+ L  E   Q F D++++ R +   T T  + P      L+  +HPC+ A V+</pattern>
+					<matchSeq start="83" end="158">FEYHVVYSVSYQVPVLYFNAYKSDGTMLRLEEAWQGFRDLASESREQLRQTLTQMEHPILFRPFLA--LHPCRTAQVL</matchSeq>
+				</alignment>
+				<alignment number="2">
+					<score>39</score>
+					<bits>18.8</bits>
+					<expectation>0.057</expectation>
+					<probability>0.055</probability>
+					<identity>43</identity>
+					<positives>68</positives>
+					<querySeq start="23" end="38">LTTGQITPEEFVQAGD</querySeq>
+					<pattern>+TTG +T E+F  A +</pattern>
+					<matchSeq start="1" end="16">MTTGTLTEEQFRDAAE</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="94" database="uniprot" id="A2XV49_ORYSI" ac="A2XV49" length="200" description="Putative uncharacterized protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>100</score>
+					<bits>40.3</bits>
+					<expectation>0.070</expectation>
+					<probability>0.068</probability>
+					<identity>29</identity>
+					<positives>52</positives>
+					<querySeq start="168" end="242">YYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+YD ++ YS SY+VP +Y  G  S G  L+ +++ ED+ +       + R    T E+ P +     +  +HPC  ++ MK+</pattern>
+					<matchSeq start="83" end="162">FYDYHVVYSFSYKVPVLYFQGHQSGGQLLTLDEIKEDLPSLSLKLLGESRWTFITREEHPHFSRPWFT--LHPCGTSDCMKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="95" database="uniprot" id="Q8VZ52_ARATH" ac="Q8VZ52" length="225" description="Putative uncharacterized protein At3g07525.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>101</score>
+					<bits>40.6</bits>
+					<expectation>0.075</expectation>
+					<probability>0.072</probability>
+					<identity>29</identity>
+					<positives>48</positives>
+					<querySeq start="159" end="242">LAKDMAQE-RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>L   M  E  YYD +I YS SY+VP +Y  G+ S G PL+ + + +D+ +       + +    T E+ P+         +HPC   + +K+</pattern>
+					<matchSeq start="97" end="186">LVPTMENEAHYYDFHIVYSASYKVPVLYFRGYCSGGEPLALDVIKKDVPSCSVSLLLESKWTFITQEEHPYLNRPWFK--LHPCGTEDWIKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="96" database="uniprot" id="Q3EBA7_ARATH" ac="Q3EBA7" length="226" description="Uncharacterized protein At3g07525.2.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>101</score>
+					<bits>40.6</bits>
+					<expectation>0.076</expectation>
+					<probability>0.073</probability>
+					<identity>29</identity>
+					<positives>48</positives>
+					<querySeq start="159" end="242">LAKDMAQE-RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>L   M  E  YYD +I YS SY+VP +Y  G+ S G PL+ + + +D+ +       + +    T E+ P+         +HPC   + +K+</pattern>
+					<matchSeq start="98" end="187">LVPTMENEAHYYDFHIVYSASYKVPVLYFRGYCSGGEPLALDVIKKDVPSCSVSLLLESKWTFITQEEHPYLNRPWFK--LHPCGTEDWIKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="97" database="uniprot" id="A3AV95_ORYSJ" ac="A3AV95" length="206" description="Putative uncharacterized protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>100</score>
+					<bits>40.3</bits>
+					<expectation>0.077</expectation>
+					<probability>0.074</probability>
+					<identity>29</identity>
+					<positives>52</positives>
+					<querySeq start="168" end="242">YYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+YD ++ YS SY+VP +Y  G  S G  L+ +++ ED+ +       + R    T E+ P +     +  +HPC  ++ MK+</pattern>
+					<matchSeq start="89" end="168">FYDYHVVYSFSYKVPVLYFQGHQSGGQLLTLDEIKEDLPSLSLKLLGESRWTFITREEHPHFSRPWFT--LHPCGTSDCMKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="98" database="uniprot" id="A7R161_VITVI" ac="A7R161" length="230" description="Chromosome undetermined scaffold_339, whole genome shotgun sequence.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>101</score>
+					<bits>40.6</bits>
+					<expectation>0.079</expectation>
+					<probability>0.076</probability>
+					<identity>31</identity>
+					<positives>52</positives>
+					<querySeq start="167" end="242">RYYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISADYRTKTATIEKLPFY---KNSVLS---VSIHPCKHANVMKI</querySeq>
+					<pattern>RY+D +I +S SYRVP +Y   F+S+G PL  E + +++  +  T      K  F    ++  L+     +HPC  +  MK+</pattern>
+					<matchSeq start="105" end="185">RYFDFHIVHSASYRVPVLYFRTFSSDGQPLLLEDVEKELPGN-STNVLMESKWTFITQEEHPYLNRPWYKLHPCGTSEWMKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="99" database="uniprot" id="Q01IC7_ORYSA" ac="Q01IC7" length="218" description="OSIGBa0092E01.8 protein (H0306B06.12 protein).">
+			<alignments total="1">
+				<alignment number="1">
+					<score>100</score>
+					<bits>40.3</bits>
+					<expectation>0.090</expectation>
+					<probability>0.086</probability>
+					<identity>29</identity>
+					<positives>52</positives>
+					<querySeq start="168" end="242">YYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+YD ++ YS SY+VP +Y  G  S G  L+ +++ ED+ +       + R    T E+ P +     +  +HPC  ++ MK+</pattern>
+					<matchSeq start="101" end="180">FYDYHVVYSFSYKVPVLYFQGHQSGGQLLTLDEIKEDLPSLSLKLLGESRWTFITREEHPHFSRPWFT--LHPCGTSDCMKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+		<hit number="100" database="uniprot" id="Q7XUK5_ORYSJ" ac="Q7XUK5" length="218" description="OSJNBa0067K08.16 protein.">
+			<alignments total="1">
+				<alignment number="1">
+					<score>100</score>
+					<bits>40.3</bits>
+					<expectation>0.090</expectation>
+					<probability>0.086</probability>
+					<identity>29</identity>
+					<positives>52</positives>
+					<querySeq start="168" end="242">YYDLYIAYSTSYRVPKMYIVGFNSNGSPLSPEQMFEDISA-------DYRTKTATIEKLPFYKNSVLSVSIHPCKHANVMKI</querySeq>
+					<pattern>+YD ++ YS SY+VP +Y  G  S G  L+ +++ ED+ +       + R    T E+ P +     +  +HPC  ++ MK+</pattern>
+					<matchSeq start="101" end="180">FYDYHVVYSFSYKVPVLYFQGHQSGGQLLTLDEIKEDLPSLSLKLLGESRWTFITREEHPHFSRPWFT--LHPCGTSDCMKL</matchSeq>
+				</alignment>
+			</alignments>
+		</hit>
+	</hits>
+</SequenceSimilaritySearchResult>
+</EBIApplicationResult>
