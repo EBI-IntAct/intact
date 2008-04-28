@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <artifactId>sanity-master</artifactId>
+        <groupId>uk.ac.ebi.intact.sanity</groupId>
+        <version>2.0</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-sanity-check</artifactId>
+    <version>2.0</version>
+
+    <name>IntAct Sanity :: Sanity Check</name>
+
+    <dependencies>
+        <!-- Sanity Checker deps-->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.sanity</groupId>
+            <artifactId>intact-sanity-rules</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <!-- IntAct deps -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.commons</groupId>
+            <artifactId>intact-commons</artifactId>
+        </dependency>
+  
+        <!-- Third party deps-->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1-rc1</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbutils</groupId>
+            <artifactId>commons-dbutils</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.biojava</groupId>
+            <artifactId>biojava</artifactId>
+            <version>1.5</version>
+        </dependency>
+    </dependencies>
+
+</project>
