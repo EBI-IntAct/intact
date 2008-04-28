@@ -75,7 +75,7 @@ public class SanityRuleVisitor extends SimpleDeclarationVisitor {
         rule.setRuleName(name);
 
         DeclaredRule.Groups ruleGroups = new DeclaredRule.Groups();
-        ruleGroups.getGroup().addAll(Arrays.asList(groups));
+        ruleGroups.getGroups().addAll(Arrays.asList(groups));
         rule.setGroups(ruleGroups);
 
         rules.add(rule);

@@ -21,6 +21,8 @@ import org.junit.Test;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
+
 /**
  * HtmlReportWriter tester.
  *

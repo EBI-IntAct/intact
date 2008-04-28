@@ -8,7 +8,7 @@ package uk.ac.ebi.intact.sanity.commons.rules;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.Xref;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.commons.Field;
+import uk.ac.ebi.intact.sanity.commons.report.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,7 @@ public class XrefMessage extends GeneralMessage {
         super(messageDefinition, outLaw);
         this.xref = xref;
 
-        getInsaneObject().getField().addAll(fieldsForXref(xref));
+        getInsaneObject().getFields().addAll(fieldsForXref(xref));
     }
 
     public Collection<Field> fieldsForXref(Xref xref) {

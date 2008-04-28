@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.report.InsaneObject;
 
 /**
  * TODO comment this

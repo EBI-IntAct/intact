@@ -6,7 +6,7 @@
 package uk.ac.ebi.intact.sanity.commons.rules;
 
 import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.sanity.commons.Field;
+import uk.ac.ebi.intact.sanity.commons.report.Field;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +26,7 @@ public class InteractorMessage extends GeneralMessage {
         super( messageDefinition, interactor );
         this.interactor = interactor;
 
-        getInsaneObject().getField().addAll( fieldsForInteractor( interactor ) );
+        getInsaneObject().getFields().addAll( fieldsForInteractor( interactor ) );
     }
 
     public Collection<Field> fieldsForInteractor( Interactor interactor ) {

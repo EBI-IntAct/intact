@@ -1,6 +1,6 @@
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -2,7 +2,7 @@ package uk.ac.ebi.intact.sanity.rules.annotatedobject;
 
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.sanity.commons.Field;
+import uk.ac.ebi.intact.sanity.commons.report.Field;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 import uk.ac.ebi.intact.sanity.commons.annotation.SanityRule;
 import uk.ac.ebi.intact.sanity.commons.rules.*;
@@ -35,7 +35,7 @@ public class XrefWithNonValidPrimaryId implements Rule<AnnotatedObject<?,?>> {
                 Field regexField = new Field();
                 regexField.setName("Regexp");
                 regexField.setValue(idValidationRegexp);
-                xrefMessage.getInsaneObject().getField().add(regexField);
+                xrefMessage.getInsaneObject().getFields().add(regexField);
 
                 messages.add(xrefMessage);
             }

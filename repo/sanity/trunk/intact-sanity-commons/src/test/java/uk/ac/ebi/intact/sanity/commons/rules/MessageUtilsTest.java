@@ -20,7 +20,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Protein;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
 
 import java.util.*;
 
@@ -119,9 +119,9 @@ public class MessageUtilsTest extends IntactBasicTestCase {
 
         SanityReport sanityReport = MessageUtils.toSanityReport(messages);
 
-        Assert.assertEquals(2, sanityReport.getSanityResult().size());
-        Assert.assertEquals(3, sanityReport.getSanityResult().get(0).getInsaneObject().size());
-        Assert.assertEquals(5, sanityReport.getSanityResult().get(1).getInsaneObject().size());
+        Assert.assertEquals(2, sanityReport.getSanityResults().size());
+        Assert.assertEquals(3, sanityReport.getSanityResults().get(0).getInsaneObjects().size());
+        Assert.assertEquals(5, sanityReport.getSanityResults().get(1).getInsaneObjects().size());
     }
 
 

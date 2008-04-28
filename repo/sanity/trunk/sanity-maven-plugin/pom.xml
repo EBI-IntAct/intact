@@ -22,13 +22,6 @@
             <groupId>uk.ac.ebi.intact.sanity</groupId>
             <artifactId>intact-sanity-check</artifactId>
         </dependency>
-        
-        <dependency>
-            <groupId>uk.ac.ebi.intact.datasets</groupId>
-            <artifactId>intact-dataset</artifactId>
-            <scope>compile</scope>
-            <optional>true</optional>
-        </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.plugins</groupId>

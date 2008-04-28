@@ -15,8 +15,8 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules;
 
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.SanityResult;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityResult;
 
 import java.util.*;
 
@@ -82,10 +82,10 @@ public class MessageUtils {
             sanityResult.setDescription(description);
             sanityResult.setLevel(level.toString());
             sanityResult.setSuggestion(suggestion);
-            report.getSanityResult().add(sanityResult);
+            report.getSanityResults().add(sanityResult);
 
             for (GeneralMessage message : messagesforKey) {
-                sanityResult.getInsaneObject().add(message.getInsaneObject());
+                sanityResult.getInsaneObjects().add(message.getInsaneObject());
             }
         }
 

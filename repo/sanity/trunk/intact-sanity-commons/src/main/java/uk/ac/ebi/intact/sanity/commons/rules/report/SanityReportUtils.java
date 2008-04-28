@@ -15,9 +15,9 @@
  */
 package uk.ac.ebi.intact.sanity.commons.rules.report;
 
-import uk.ac.ebi.intact.sanity.commons.InsaneObject;
-import uk.ac.ebi.intact.sanity.commons.SanityReport;
-import uk.ac.ebi.intact.sanity.commons.SanityResult;
+import uk.ac.ebi.intact.sanity.commons.report.InsaneObject;
+import uk.ac.ebi.intact.sanity.commons.report.SanityReport;
+import uk.ac.ebi.intact.sanity.commons.report.SanityResult;
 import uk.ac.ebi.intact.sanity.commons.SanityRuleException;
 
 import java.io.IOException;
@@ -46,10 +46,10 @@ public class SanityReportUtils {
     public static SanityReport cloneSanityReport(SanityReport originalReport) {
         SanityReport report = new SanityReport();
         report.setDatabase(originalReport.getDatabase());
-        report.getReportAttribute().addAll(originalReport.getReportAttribute());
+        report.getReportAttributes().addAll(originalReport.getReportAttributes());
 
-        for (SanityResult originalResult : originalReport.getSanityResult()) {
-            report.getSanityResult().add(cloneSanityResult(originalResult));
+        for (SanityResult originalResult : originalReport.getSanityResults()) {
+            report.getSanityResults().add(cloneSanityResult(originalResult));
         }
 
         return report;
@@ -62,7 +62,7 @@ public class SanityReportUtils {
         result.setDescription(originalResult.getDescription());
         result.setLevel(originalResult.getLevel());
         result.setSuggestion(originalResult.getSuggestion());
-        result.getInsaneObject().addAll(originalResult.getInsaneObject());
+        result.getInsaneObjects().addAll(originalResult.getInsaneObjects());
 
         return result;
     }
@@ -73,18 +73,18 @@ public class SanityReportUtils {
      * @param filters the varags filters to be used
      */
     public static void filterSanityReport(SanityReport report, ReportFilter ... filters) {
-        for (Iterator<SanityResult> iterator = report.getSanityResult().iterator(); iterator.hasNext();) {
+        for (Iterator<SanityResult> iterator = report.getSanityResults().iterator(); iterator.hasNext();) {
             SanityResult sanityResult = iterator.next();
             filterSanityResult(sanityResult, filters);
 
-            if (sanityResult.getInsaneObject().isEmpty()) {
+            if (sanityResult.getInsaneObjects().isEmpty()) {
                 iterator.remove();
             }
         }
     }
 
     protected static void filterSanityResult(SanityResult sanityResult, ReportFilter ... filters) {
-        for (Iterator<InsaneObject> iterator = sanityResult.getInsaneObject().iterator(); iterator.hasNext();) {
+        for (Iterator<InsaneObject> iterator = sanityResult.getInsaneObjects().iterator(); iterator.hasNext();) {
             InsaneObject insaneObject = iterator.next();
 
             for (ReportFilter filter : filters) {
@@ -104,8 +104,8 @@ public class SanityReportUtils {
     public static Set<String> getInsaneUpdatorNames(SanityReport report) {
         Set<String> insaneCurators = new HashSet<String>();
 
-        for (SanityResult result : report.getSanityResult()) {
-            for (InsaneObject insaneObject : result.getInsaneObject()) {
+        for (SanityResult result : report.getSanityResults()) {
+            for (InsaneObject insaneObject : result.getInsaneObjects()) {
                 insaneCurators.add(insaneObject.getUpdator().trim());
             }
         }
@@ -121,8 +121,8 @@ public class SanityReportUtils {
     public static Set<String> getInsaneCreatorNames(SanityReport report) {
         Set<String> insaneCurators = new HashSet<String>();
 
-        for (SanityResult result : report.getSanityResult()) {
-            for (InsaneObject insaneObject : result.getInsaneObject()) {
+        for (SanityResult result : report.getSanityResults()) {
+            for (InsaneObject insaneObject : result.getInsaneObjects()) {
                 insaneCurators.add(insaneObject.getUpdator().trim());
             }
         }
@@ -176,8 +176,8 @@ public class SanityReportUtils {
     public static Collection<InsaneObject> getAllInsaneObject(SanityReport report) {
         Collection<InsaneObject> insaneObjects = new ArrayList<InsaneObject>();
 
-        for (SanityResult result : report.getSanityResult()) {
-            insaneObjects.addAll(result.getInsaneObject());
+        for (SanityResult result : report.getSanityResults()) {
+            insaneObjects.addAll(result.getInsaneObjects());
         }
 
         return insaneObjects;
