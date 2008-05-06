@@ -13,6 +13,17 @@ import org.apache.maven.plugin.Mojo;
 
 import java.io.File;
 
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
+import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
+import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
+import uk.ac.ebi.intact.dataexchange.cvutils.CvUtils;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
+
 /**
  * TODO comment this!
  *
@@ -27,10 +38,40 @@ public class CcAndGoaExportMojoTest extends AbstractMojoTestCase
 
     public void testCCAndGoaMojoExport() throws Exception
     {
+
+
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/cc-goa-config.xml" );
+        File hibernateConfig = new File (CcAndGoaExportMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
+
+        IntactContext.initStandaloneContext(hibernateConfig);
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        // CVs
+        IntactOntology ontology = OboUtils.createOntologyFromOboDefault(11332);
+        CvUpdater cvUpdater = new CvUpdater();
+        cvUpdater.createOrUpdateCVs(ontology);
+
+        CvTopic noUniprotUpdate = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
+                                                               CvTopic.class, null, CvTopic.NON_UNIPROT);
+        CvTopic negative = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
+                                                               CvTopic.class, null, CvTopic.NEGATIVE);
+        CvTopic ccNote = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
+                                                               CvTopic.class, null, CvTopic.CC_NOTE);
+        CvTopic uniprotDrExport = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
+                                                               CvTopic.class, null, CvTopic.UNIPROT_DR_EXPORT);
+        PersisterHelper.saveOrUpdate(noUniprotUpdate, negative, ccNote, uniprotDrExport);
+
+        // some data
+        PsiExchange.importIntoIntact(CcAndGoaExportMojoTest.class.getResourceAsStream("/10348744.xml"));
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().close();
 
         CcAndGoaExportMojo mojo = (CcAndGoaExportMojo) lookupMojo( "cc-goa", pluginXmlFile );
-        mojo.setUniprotLinksFile(new File("/ebi/sp/pro4/intact/local/data/released/2007-04-25_maven/uniprotlinks.dat"));
+        mojo.hibernateConfig = hibernateConfig;
+        mojo.setUniprotLinksFile(new File(CcAndGoaExportMojoTest.class.getResource("/uniprotlinks.dat").getFile()));
 
         mojo.execute();
     }

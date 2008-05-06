@@ -27,9 +27,11 @@ public class FillPredictTablesMojoTest extends AbstractMojoTestCase
 
     public void testSimpleGeneration() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+        File hibernateConfig = new File (FillPredictTablesMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 
         FillPredictTablesMojo mojo = (FillPredictTablesMojo) lookupMojo( "fill-predict", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
+        mojo.hibernateConfig = hibernateConfig;
 
         mojo.execute();
     }

@@ -2,15 +2,11 @@ package uk.ac.ebi.intact.plugins;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.jboss.util.file.FilenameSuffixFilter;
 import psidev.psi.mi.tab.PsimiTabReader;
 import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntActColumnHandler;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -151,7 +147,7 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
 
         for ( int f = 0; f < targetDir.list().length; f++ ) {
             File subDir = new File( targetDir, targetDir.list()[f] );
-            File[] fileList = subDir.listFiles( new FilenameSuffixFilter( ".txt" ) );
+            File[] fileList = subDir.listFiles( new ExtensionFilter( "txt" ) );
 
 
             for ( int i = 0; i < fileList.length; i++ ) {
@@ -234,7 +230,7 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         for ( int f = 0; f < targetDir.list().length; f++ ) {
             File subDir = new File( targetDir, targetDir.list()[f] );
 
-            File[] fileList = subDir.listFiles( new FilenameSuffixFilter( ".txt" ) );
+            File[] fileList = subDir.listFiles( new ExtensionFilter( "txt" ) );
 
 
             for ( int i = 0; i < fileList.length; i++ ) {
@@ -251,6 +247,19 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
                     //System.out.println("Checking: " +file.getParentFile().getName()+File.separator + file.getName() + " contains 15 columns + extra 7");
                 }
             }
+        }
+    }
+
+    private static class ExtensionFilter implements FilenameFilter {
+
+        private String extension;
+
+        public ExtensionFilter(String extension) {
+            this.extension = extension;
+        }
+
+        public boolean accept(File dir, String name) {
+            return name.endsWith("."+extension);
         }
     }
 
