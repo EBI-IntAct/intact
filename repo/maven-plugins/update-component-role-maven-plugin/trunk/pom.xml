@@ -20,6 +20,10 @@
     </description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
+    <properties>
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
     <scm>
         <connection>
             scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk
@@ -31,22 +35,4 @@
         </url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>dbtest-maven-plugin</artifactId>
-                <version>1.6.0-SNAPSHOT</version>
-            </plugin>
-        </plugins>
-    </build>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.templates</groupId>
-            <artifactId>h2db-with-cv</artifactId>
-            <type>zip</type>
-        </dependency>
-    </dependencies>
 </project>
