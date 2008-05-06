@@ -30,9 +30,11 @@ public class SplitComponentRoleMojoTest extends AbstractMojoTestCase {
 
     public void testSimpleGeneration() throws Exception {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-config.xml" );
+        File hibernateConfig = new File (SplitComponentRoleMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 
         SplitComponentRoleMojo mojo = ( SplitComponentRoleMojo ) lookupMojo( "update", pluginXmlFile );
         mojo.setLog( new SystemStreamLog() );
+        mojo.hibernateConfig = hibernateConfig;
 
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
