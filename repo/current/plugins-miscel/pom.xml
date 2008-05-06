@@ -41,7 +41,6 @@
     </properties>
 
     <modules>
-        <module>dbupdate-maven-plugin</module>
         <module>ebeye-export-maven-plugin</module>
         <module>fasta-maven-plugin</module>
         <module>lucene-maven-plugin</module>
