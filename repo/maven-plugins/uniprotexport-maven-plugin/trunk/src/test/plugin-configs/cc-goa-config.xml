@@ -15,7 +15,7 @@
                     </nonBinaryInteractionsFile>
                     <overwrite>true</overwrite>
                     <ignoreNoUniprotDrExport>true</ignoreNoUniprotDrExport>
-                    <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <hibernateConfig>src/test/resources/test-hibernate.cfg.xml</hibernateConfig>
                 </configuration>
             </plugin>
         </plugins>

@@ -1,0 +1,1239 @@
+<entrySet level="2" minorVersion="3" version="5" xmlns="net:sf:psidev:mi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="net:sf:psidev:mi http://psidev.sourceforge.net/mi/rel25/src/MIF253.xsd">
+  <entry>
+    <source releaseDate="2008-04-18">
+      <names>
+        <shortLabel>European Bioinformatics Institute</shortLabel>
+      </names>
+      <bibref>
+        <xref>
+
+          <primaryRef db="pubmed" dbAc="MI:0446" id="14681455" refType="primary-reference" refTypeAc="MI:0358"/>
+        </xref>
+      </bibref>
+      <xref>
+        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0469" refType="primary-reference" refTypeAc="MI:0358"/>
+      </xref>
+      <attributeList>
+        <attribute name="postalAddress">Wellcome Trust Genome Campus, Hinxton, Cambridge, CB10 1SD, United Kingdom</attribute>
+
+        <attribute name="url">http://www.ebi.ac.uk</attribute>
+      </attributeList>
+    </source>
+    <experimentList>
+      <experimentDescription id="2">
+        <names>
+          <shortLabel>fankhauser-1999-1</shortLabel>
+          <fullName>PKS1, a substrate phosphorylated by phytochrome that modulates light signaling in Arabidopsis.</fullName>
+
+        </names>
+        <bibref>
+          <xref>
+            <primaryRef db="pubmed" dbAc="MI:0446" id="10348744" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </bibref>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626155" refType="identity" refTypeAc="MI:0356" secondary="fankhauser-1999-1"/>
+          <secondaryRef db="newt" dbAc="MI:0247" id="3702" refType="target-species" secondary="arath"/>
+
+        </xref>
+        <hostOrganismList>
+          <hostOrganism ncbiTaxId="4932">
+            <names>
+              <shortLabel>yeast</shortLabel>
+              <fullName>Saccharomyces cerevisiae</fullName>
+            </names>
+          </hostOrganism>
+
+        </hostOrganismList>
+        <interactionDetectionMethod>
+          <names>
+            <shortLabel>2 hybrid</shortLabel>
+            <fullName>two hybrid</fullName>
+            <alias>2H</alias>
+            <alias>two-hybrid</alias>
+
+            <alias>2h</alias>
+            <alias>2H</alias>
+            <alias>two-hybrid</alias>
+            <alias>2h</alias>
+            <alias>classical two hybrid</alias>
+            <alias>yeast two hybrid</alias>
+
+            <alias>2-hybrid</alias>
+            <alias>classical two hybrid</alias>
+            <alias>yeast two hybrid</alias>
+            <alias>2-hybrid</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0018" refType="identity" refTypeAc="MI:0356"/>
+
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="12634794" refType="method reference" refTypeAc="MI:0357"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="10967325" refType="primary-reference" refTypeAc="MI:0358"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="1946372" refType="method reference" refTypeAc="MI:0357"/>
+          </xref>
+        </interactionDetectionMethod>
+        <participantIdentificationMethod>
+          <names>
+            <shortLabel>nucleotide sequence</shortLabel>
+
+            <fullName>nucleotide sequence identification</fullName>
+            <alias>sequence cloning</alias>
+            <alias>sequence cloning</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0078" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+          </xref>
+        </participantIdentificationMethod>
+        <attributeList>
+          <attribute name="contact-email">chory@salk.edu</attribute>
+          <attribute name="author-list">Fankhauser C., Yeh KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+          <attribute name="publication year">1999</attribute>
+          <attribute name="journal">Science (0036-8075)</attribute>
+
+        </attributeList>
+      </experimentDescription>
+      <experimentDescription id="13">
+        <names>
+          <shortLabel>fankhauser-1999-2</shortLabel>
+          <fullName>PKS1, a substrate phosphorylated by phytochrome that modulates light signaling in Arabidopsis.</fullName>
+        </names>
+        <bibref>
+
+          <xref>
+            <primaryRef db="pubmed" dbAc="MI:0446" id="10348744" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </bibref>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626218" refType="identity" refTypeAc="MI:0356" secondary="fankhauser-1999-2"/>
+          <secondaryRef db="newt" dbAc="MI:0247" id="3702" refType="target-species" secondary="arath"/>
+        </xref>
+        <hostOrganismList>
+
+          <hostOrganism ncbiTaxId="4932">
+            <names>
+              <shortLabel>yeast</shortLabel>
+              <fullName>Saccharomyces cerevisiae</fullName>
+            </names>
+          </hostOrganism>
+        </hostOrganismList>
+        <interactionDetectionMethod>
+
+          <names>
+            <shortLabel>2 hybrid</shortLabel>
+            <fullName>two hybrid</fullName>
+            <alias>2H</alias>
+            <alias>two-hybrid</alias>
+            <alias>2h</alias>
+
+            <alias>2H</alias>
+            <alias>two-hybrid</alias>
+            <alias>2h</alias>
+            <alias>classical two hybrid</alias>
+            <alias>yeast two hybrid</alias>
+            <alias>2-hybrid</alias>
+
+            <alias>classical two hybrid</alias>
+            <alias>yeast two hybrid</alias>
+            <alias>2-hybrid</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0018" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="12634794" refType="method reference" refTypeAc="MI:0357"/>
+
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="10967325" refType="primary-reference" refTypeAc="MI:0358"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="1946372" refType="method reference" refTypeAc="MI:0357"/>
+          </xref>
+        </interactionDetectionMethod>
+        <participantIdentificationMethod>
+          <names>
+            <shortLabel>predetermined</shortLabel>
+            <fullName>predetermined participant</fullName>
+
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0396" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="7940758" refType="go-definition-ref" refTypeAc="MI:0242"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </participantIdentificationMethod>
+        <attributeList>
+          <attribute name="contact-email">chory@salk.edu</attribute>
+
+          <attribute name="figure legend">Figure 1 (a).</attribute>
+          <attribute name="exp-modification">Direced yeast two hybrid assay.</attribute>
+          <attribute name="author-list">Fankhauser C., Yeh KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+          <attribute name="publication year">1999</attribute>
+          <attribute name="journal">Science (0036-8075)</attribute>
+        </attributeList>
+
+      </experimentDescription>
+      <experimentDescription id="23">
+        <names>
+          <shortLabel>fankhauser-1999-3</shortLabel>
+          <fullName>PKS1, a substrate phosphorylated by phytochrome that modulates light signaling in Arabidopsis.</fullName>
+        </names>
+        <bibref>
+          <xref>
+
+            <primaryRef db="pubmed" dbAc="MI:0446" id="10348744" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </bibref>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626233" refType="identity" refTypeAc="MI:0356" secondary="fankhauser-1999-3"/>
+          <secondaryRef db="newt" dbAc="MI:0247" id="3702" refType="target-species" secondary="arath"/>
+        </xref>
+        <hostOrganismList>
+          <hostOrganism ncbiTaxId="-1">
+
+            <names>
+              <shortLabel>in vitro</shortLabel>
+            </names>
+          </hostOrganism>
+        </hostOrganismList>
+        <interactionDetectionMethod>
+          <names>
+            <shortLabel>pull down</shortLabel>
+
+            <fullName>pull down</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0096" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </interactionDetectionMethod>
+        <participantIdentificationMethod>
+
+          <names>
+            <shortLabel>predetermined</shortLabel>
+            <fullName>predetermined participant</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0396" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="7940758" refType="go-definition-ref" refTypeAc="MI:0242"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+          </xref>
+        </participantIdentificationMethod>
+        <attributeList>
+          <attribute name="contact-email">chory@salk.edu</attribute>
+          <attribute name="figure legend">Figure 1 (b).</attribute>
+          <attribute name="author-list">Fankhauser C., Yeh KC., Lagarias JC., Zhang H., Elich TD., Chory J.</attribute>
+          <attribute name="publication year">1999</attribute>
+
+          <attribute name="journal">Science (0036-8075)</attribute>
+        </attributeList>
+      </experimentDescription>
+    </experimentList>
+    <interactorList>
+      <interactor id="4">
+        <names>
+          <shortLabel>phya_arath</shortLabel>
+
+          <fullName>Phytochrome A</fullName>
+          <alias type="gene name" typeAc="MI:0301">PHYA</alias>
+          <alias type="gene name synonym" typeAc="MI:0302">HY8</alias>
+          <alias type="locus name" typeAc="MI:0305">At1g09570</alias>
+          <alias type="orf name" typeAc="MI:0306">F14J9.23</alias>
+        </names>
+
+        <xref>
+          <primaryRef db="uniprotkb" dbAc="MI:0486" id="P14712" refType="identity" refTypeAc="MI:0356" version="SP_85"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003594" secondary="ATPbind_ATPase"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003018" secondary="GAF"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003661" secondary="His_kinA_N"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005467" secondary="His_kinase"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001610" secondary="PAC"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000014" secondary="PAS"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001294" secondary="Phytochrome"/>
+
+          <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013654"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR012129"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013767"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013516"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013515"/>
+          <secondaryRef db="intact" dbAc="MI:0469" id="EBI-624446" refType="identity" refTypeAc="MI:0356" secondary="phya_arath"/>
+        </xref>
+        <interactorType>
+
+          <names>
+            <shortLabel>protein</shortLabel>
+            <fullName>protein</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+            <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+
+          </xref>
+        </interactorType>
+        <organism ncbiTaxId="3702">
+          <names>
+            <shortLabel>arath</shortLabel>
+            <fullName>Arabidopsis thaliana</fullName>
+          </names>
+        </organism>
+
+        <sequence>MSGSRPTQSSEGSRRSRHSARIIAQTTVDAKLHADFEESGSSFDYSTSVRVTGPVVENQPPRSDKVTTTYLHHIQKGKLIQPFGCLLALDEKTFKVIAYSENASELLTMASHAVPSVGEHPVLGIGTDIRSLFTAPSASALQKALGFGDVSLLNPILVHCRTSAKPFYAIIHRVTGSIIIDFEPVKPYEVPMTAAGALQSYKLAAKAITRLQSLPSGSMERLCDTMVQEVFELTGYDRVMAYKFHEDDHGEVVSEVTKPGLEPYLGLHYPATDIPQAARFLFMKNKVRMIVDCNAKHARVLQDEKLSFDLTLCGSTLRAPHSCHLQYMANMDSIASLVMAVVVNEEDGEGDAPDATTQPQKRKRLWGLVVCHNTTPRFVPFPLRYACEFLAQVFAIHVNKEVELDNQMVEKNILRTQTLLCDMLMRDAPLGIVSQSPNIMDLVKCDGAALLYKDKIWKLGTTPSEFHLQEIASWLCEYHMDSTGLSTDSLHDAGFPRALSLGDSVCGMAAVRISSKDMIFWFRSHTAGEVRWGGAKHDPDDRDDARRMHPRSSFKAFLEVVKTRSLPWKDYEMDAIHSLQLILRNAFKDSETTDVNTKVIYSKLNDLKIDGIQELEAVTSEMVRLIETATVPILAVDSDGLVNGWNTKIAELTGLSVDEAIGKHFLTLVEDSSVEIVKRMLENALEGTEEQNVQFEIKTHLSRADAGPISLVVNACASRDLHENVVGVCFVAHDLTGQKTVMDKFTRIEGDYKAIIQNPNPLIPPIFGTDEFGWCTEWNPAMSKLTGLKREEVIDKMLLGEVFGTQKSCCRLKNQEAFVNLGIVLNNAVTSQDPEKVSFAFFTRGGKYVECLLCVSKKLDREGVVTGVFCFLQLASHELQQALHVQRLAERTAVKRLKALAYIKRQIRNPLSGIMFTRKMIEGTELGPEQRRILQTSALCQKQLSKILDDSDLESIIEGCLDLEMKEFTLNEVLTASTSQVMMKSNGKSVRITNETGEEVMSDTLYGDSIRLQQVLADFMLMAVNFTPSGGQLTVSASLRKDQLGRSVHLANLEIRLTHTGAGIPEFLLNQMFGTEEDVSEEGLSLMVSRKLVKLMNGDVQYLRQAGKSSFIITAELAAANK</sequence>
+      </interactor>
+      <interactor id="9">
+        <names>
+          <shortLabel>pks1_arath</shortLabel>
+          <fullName>Phytochrome kinase substrate 1</fullName>
+          <alias type="gene name" typeAc="MI:0301">PKS1</alias>
+
+          <alias type="locus name" typeAc="MI:0305">At2g02950</alias>
+          <alias type="orf name" typeAc="MI:0306">T17M13.12</alias>
+        </names>
+        <xref>
+          <primaryRef db="uniprotkb" dbAc="MI:0486" id="Q9SWI1" refType="identity" refTypeAc="MI:0356" version="SP_41"/>
+          <secondaryRef db="uniprotkb" dbAc="MI:0486" id="O80610" refType="secondary-ac" refTypeAc="MI:0360" version="SP_41"/>
+          <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515" secondary="F:protein binding"/>
+          <secondaryRef db="intact" dbAc="MI:0469" id="EBI-626200" refType="identity" refTypeAc="MI:0356" secondary="pks1_arath"/>
+
+        </xref>
+        <interactorType>
+          <names>
+            <shortLabel>protein</shortLabel>
+            <fullName>protein</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+            <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+          </xref>
+        </interactorType>
+        <organism ncbiTaxId="3702">
+          <names>
+            <shortLabel>arath</shortLabel>
+            <fullName>Arabidopsis thaliana</fullName>
+
+          </names>
+        </organism>
+        <sequence>MVTLTPSSASTPKTSFDFMKNNNSHSSLYVSSSSYLSSKEDALVTTKKLMEPSKTLNMSINPKQEEFGDEKKMVKKAPEDPEIGVFGAEKYFNGDMDSDQGSSVLSLTNPEVERTVVDSKQSAKKSTGTPSVRSESSWNSQSVLLQNKLVNSCNSSFKEKKNSNGQIQKVTNNKKSFLANLGCKCACSDGDSVDVEEKTSVKRSADPNISVITMRSSADMNTELIKIQKQEELSQRKSLEVFGSPVAIEKKSSVVQKKLPLPPWKSRTEEDDTKSEGSDSSSDLFEIEGLTGNPKPFLTRQGSDPASPTCYAPSEVSVEWSIVTASAADFSVMSECATSPVRRNRPTQIPRIPITAKSAPQRRKSSSSSGGNGFLMSCKSHKSVMVSGDLDRRSSMNKTQPSYVPRFPMETTKPKSFETRRRISNSSISHTQSSLLYSQ</sequence>
+      </interactor>
+      <interactor id="19">
+        <names>
+          <shortLabel>phyb_arath</shortLabel>
+          <fullName>Phytochrome B</fullName>
+
+          <alias type="gene name" typeAc="MI:0301">PHYB</alias>
+          <alias type="gene name synonym" typeAc="MI:0302">HY3</alias>
+          <alias type="locus name" typeAc="MI:0305">At2g18790</alias>
+          <alias type="orf name" typeAc="MI:0306">MSF3.17</alias>
+        </names>
+        <xref>
+          <primaryRef db="uniprotkb" dbAc="MI:0486" id="P14713" refType="identity" refTypeAc="MI:0356" version="SP_85"/>
+
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003594" secondary="ATPbind_ATPase"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003018" secondary="GAF"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR005467" secondary="His_kinase"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR003661" secondary="His_kinA_N"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR000014" secondary="PAS_domain"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR001294" secondary="Phytochrome"/>
+          <secondaryRef db="go" dbAc="MI:0448" id="GO:0005515"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013654"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013767"/>
+
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013516"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR012129"/>
+          <secondaryRef db="interpro" dbAc="MI:0449" id="IPR013515"/>
+          <secondaryRef db="uniprotkb" dbAc="MI:0486" id="Q6S4P0" refType="secondary-ac" refTypeAc="MI:0360" version="SP_85"/>
+          <secondaryRef db="intact" dbAc="MI:0469" id="EBI-300727" refType="identity" refTypeAc="MI:0356" secondary="phyb_arath"/>
+        </xref>
+        <interactorType>
+          <names>
+            <shortLabel>protein</shortLabel>
+
+            <fullName>protein</fullName>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0326" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+            <secondaryRef db="so" dbAc="MI:0601" id="SO:0000358" refType="identity" refTypeAc="MI:0356"/>
+          </xref>
+        </interactorType>
+
+        <organism ncbiTaxId="3702">
+          <names>
+            <shortLabel>arath</shortLabel>
+            <fullName>Arabidopsis thaliana</fullName>
+          </names>
+        </organism>
+        <sequence>MVSGVGGSGGGRGGGRGGEEEPSSSHTPNNRRGGEQAQSSGTKSLRPRSNTESMSKAIQQYTVDARLHAVFEQSGESGKSFDYSQSLKTTTYGSSVPEQQITAYLSRIQRGGYIQPFGCMIAVDESSFRIIGYSENAREMLGIMPQSVPTLEKPEILAMGTDVRSLFTSSSSILLERAFVAREITLLNPVWIHSKNTGKPFYAILHRIDVGVVIDLEPARTEDPALSIAGAVQSQKLAVRAISQLQALPGGDIKLLCDTVVESVRDLTGYDRVMVYKFHEDEHGEVVAESKRDDLEPYIGLHYPATDIPQASRFLFKQNRVRMIVDCNATPVLVVQDDRLTQSMCLVGSTLRAPHGCHSQYMANMGSIASLAMAVIINGNEDDGSNVASGRSSMRLWGLVVCHHTSSRCIPFPLRYACEFLMQAFGLQLNMELQLALQMSEKRVLRTQTLLCDMLLRDSPAGIVTQSPSIMDLVKCDGAAFLYHGKYYPLGVAPSEVQIKDVVEWLLANHADSTGLSTDSLGDAGYPGAAALGDAVCGMAVAYITKRDFLFWFRSHTAKEIKWGGAKHHPEDKDDGQRMHPRSSFQAFLEVVKSRSQPWETAEMDAIHSLQLILRDSFKESEAAMNSKVVDGVVQPCRDMAGEQGIDELGAVAREMVRLIETATVPIFAVDAGGCINGWNAKIAELTGLSVEEAMGKSLVSDLIYKENEATVNKLLSRALRGDEEKNVEVKLKTFSPELQGKAVFVVVNACSSKDYLNNIVGVCFVGQDVTSQKIVMDKFINIQGDYKAIVHSPNPLIPPIFAADENTCCLEWNMAMEKLTGWSRSEVIGKMIVGEVFGSCCMLKGPDALTKFMIVLHNAIGGQDTDKFPFPFFDRNGKFVQALLTANKRVSLEGKVIGAFCFLQIPSPELQQALAVQRRQDTECFTKAKELAYICQVIKNPLSGMRFANSLLEATDLNEDQKQLLETSVSCEKQISRIVGDMDLESIEDGSFVLKREEFFLGSVINAIVSQAMFLLRDRGLQLIRDIPEEIKSIEVFGDQIRIQQLLAEFLLSIIRYAPSQEWVEIHLSQLSKQMADGFAAIRTEFRMACPGEGLPPELVRDMFHSSRWTSPEGLGLSVCRKILKLMNGEVQYIRESERSYFLIILELPVPRKRPLSTASGSGDMMLMMPY</sequence>
+
+      </interactor>
+    </interactorList>
+    <interactionList>
+      <interaction id="1">
+        <names>
+          <shortLabel>phya-phya-1</shortLabel>
+          <fullName>Yeast two hybrid reveals homotypic interaction of the  PHYA protein.</fullName>
+        </names>
+
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626160" refType="identity" refTypeAc="MI:0356" secondary="phya-phya-1"/>
+        </xref>
+        <experimentList>
+          <experimentRef>2</experimentRef>
+        </experimentList>
+        <participantList>
+          <participant id="3">
+
+            <interactorRef>4</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>bait</shortLabel>
+
+                  <fullName>bait</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+
+            <featureList>
+              <feature id="5">
+                <names>
+                  <shortLabel>region</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+                    <shortLabel>binding site</shortLabel>
+
+                    <fullName>binding site</fullName>
+                  </names>
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+                <featureRangeList>
+
+                  <featureRange>
+                    <startStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                      </xref>
+
+                    </startStatus>
+                    <begin position="978"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+
+                      </xref>
+                    </endStatus>
+                    <end position="1122"/>
+                  </featureRange>
+                </featureRangeList>
+              </feature>
+            </featureList>
+          </participant>
+          <participant id="6">
+
+            <interactorRef>4</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+
+                  <fullName>prey</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+
+          </participant>
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+
+            <alias>aggregation</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </interactionType>
+        <attributeList>
+
+          <attribute name="kd">0.0</attribute>
+        </attributeList>
+      </interaction>
+      <interaction id="7">
+        <names>
+          <shortLabel>phya-pks1</shortLabel>
+          <fullName>Yeast two hybrid reveals interaction between the  PHYA protein and PKS1 protein</fullName>
+
+        </names>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626207" refType="identity" refTypeAc="MI:0356" secondary="phya-pks1"/>
+        </xref>
+        <experimentList>
+          <experimentRef>2</experimentRef>
+        </experimentList>
+        <participantList>
+
+          <participant id="8">
+            <interactorRef>9</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+
+                  <fullName>prey</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+
+          </participant>
+          <participant id="10">
+            <interactorRef>4</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+
+                  <shortLabel>bait</shortLabel>
+                  <fullName>bait</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+
+            </experimentalRoleList>
+            <featureList>
+              <feature id="11">
+                <names>
+                  <shortLabel>region</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+
+                    <shortLabel>binding site</shortLabel>
+                    <fullName>binding site</fullName>
+                  </names>
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+
+                <featureRangeList>
+                  <featureRange>
+                    <startStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+
+                      </xref>
+                    </startStatus>
+                    <begin position="978"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                      </xref>
+                    </endStatus>
+                    <end position="1122"/>
+                  </featureRange>
+                </featureRangeList>
+              </feature>
+            </featureList>
+          </participant>
+
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+            <alias>aggregation</alias>
+
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="kd">0.0</attribute>
+
+        </attributeList>
+      </interaction>
+      <interaction id="12">
+        <names>
+          <shortLabel>phya-pks1-1</shortLabel>
+          <fullName>Yeast two hybrid reveals interaction between the  PHYA protein and PKS1 protein</fullName>
+        </names>
+        <xref>
+
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626220" refType="identity" refTypeAc="MI:0356" secondary="phya-pks1-1"/>
+        </xref>
+        <experimentList>
+          <experimentRef>13</experimentRef>
+        </experimentList>
+        <participantList>
+          <participant id="14">
+            <interactorRef>9</interactorRef>
+
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+                  <fullName>prey</fullName>
+                </names>
+
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+          </participant>
+          <participant id="15">
+            <interactorRef>4</interactorRef>
+
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>bait</shortLabel>
+                  <fullName>bait</fullName>
+                </names>
+
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+            <featureList>
+              <feature id="16">
+                <names>
+
+                  <shortLabel>region</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+                    <shortLabel>binding site</shortLabel>
+                    <fullName>binding site</fullName>
+                  </names>
+
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+                <featureRangeList>
+                  <featureRange>
+                    <startStatus>
+                      <names>
+
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                      </xref>
+                    </startStatus>
+                    <begin position="978"/>
+                    <endStatus>
+
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                      </xref>
+                    </endStatus>
+                    <end position="1122"/>
+
+                  </featureRange>
+                </featureRangeList>
+              </feature>
+            </featureList>
+          </participant>
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+            <alias>aggregation</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="kd">0.0</attribute>
+        </attributeList>
+      </interaction>
+      <interaction id="17">
+        <names>
+
+          <shortLabel>phyb-pks1</shortLabel>
+          <fullName>Yeast two hybrid reveals interaction between the  PHYB protein and PKS1 protein</fullName>
+        </names>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626225" refType="identity" refTypeAc="MI:0356" secondary="phyb-pks1"/>
+        </xref>
+        <experimentList>
+          <experimentRef>13</experimentRef>
+
+        </experimentList>
+        <participantList>
+          <participant id="18">
+            <interactorRef>19</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+
+                  <shortLabel>bait</shortLabel>
+                  <fullName>bait</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+
+            </experimentalRoleList>
+            <featureList>
+              <feature id="20">
+                <names>
+                  <shortLabel>c terminal</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+
+                    <shortLabel>binding site</shortLabel>
+                    <fullName>binding site</fullName>
+                  </names>
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0117" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+
+                <featureRangeList>
+                  <featureRange>
+                    <startStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+
+                      </xref>
+                    </startStatus>
+                    <begin position="997"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>certain</shortLabel>
+                      </names>
+                      <xref>
+
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0335" refType="identity" refTypeAc="MI:0356"/>
+                      </xref>
+                    </endStatus>
+                    <end position="1172"/>
+                  </featureRange>
+                </featureRangeList>
+              </feature>
+            </featureList>
+          </participant>
+
+          <participant id="21">
+            <interactorRef>9</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+
+                  <fullName>prey</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+
+          </participant>
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+
+            <alias>aggregation</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </interactionType>
+        <attributeList>
+
+          <attribute name="kd">0.0</attribute>
+        </attributeList>
+      </interaction>
+      <interaction id="22">
+        <names>
+          <shortLabel>phyb-pks1-1</shortLabel>
+          <fullName>GST pulldown analysis reveals interaction between the  PHYB protein and PKS1 protein</fullName>
+
+        </names>
+        <xref>
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626235" refType="identity" refTypeAc="MI:0356" secondary="phyb-pks1-1"/>
+        </xref>
+        <experimentList>
+          <experimentRef>23</experimentRef>
+        </experimentList>
+        <participantList>
+
+          <participant id="24">
+            <interactorRef>9</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+
+                  <fullName>prey</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+
+            <featureList>
+              <feature id="25">
+                <names>
+                  <shortLabel>s35 radiolabelled</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+                    <shortLabel>35s radiolabel</shortLabel>
+
+                    <fullName>35s radiolabel</fullName>
+                    <alias>35S</alias>
+                    <alias>S35</alias>
+                    <alias>s35 radiolabelled</alias>
+                    <alias>s35 radiolabelled</alias>
+                    <alias>35S</alias>
+
+                    <alias>S35</alias>
+                  </names>
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0371" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+                <featureRangeList>
+
+                  <featureRange>
+                    <startStatus>
+                      <names>
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </startStatus>
+                    <begin position="0"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </endStatus>
+                    <end position="0"/>
+                  </featureRange>
+                </featureRangeList>
+
+              </feature>
+            </featureList>
+          </participant>
+          <participant id="26">
+            <interactorRef>19</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+
+              <experimentalRole>
+                <names>
+                  <shortLabel>bait</shortLabel>
+                  <fullName>bait</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+            <featureList>
+              <feature id="27">
+                <names>
+                  <shortLabel>gst tag</shortLabel>
+                </names>
+
+                <featureType>
+                  <names>
+                    <shortLabel>gst tag</shortLabel>
+                    <fullName>glutathione s tranferase tag</fullName>
+                    <alias>glutathione S-tranferase tag</alias>
+                    <alias>glutathione S-tranferase tag</alias>
+                  </names>
+
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0519" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+                <featureRangeList>
+                  <featureRange>
+                    <startStatus>
+                      <names>
+
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </startStatus>
+
+                    <begin position="0"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </endStatus>
+                    <end position="0"/>
+                  </featureRange>
+                </featureRangeList>
+              </feature>
+            </featureList>
+          </participant>
+
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+            <alias>aggregation</alias>
+
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="kd">0.0</attribute>
+
+        </attributeList>
+      </interaction>
+      <interaction id="28">
+        <names>
+          <shortLabel>phya-pks1-2</shortLabel>
+          <fullName>GST pulldown analysis reveals interaction between the  PHYA protein and PKS1 protein</fullName>
+        </names>
+        <xref>
+
+          <primaryRef db="intact" dbAc="MI:0469" id="EBI-626243" refType="identity" refTypeAc="MI:0356" secondary="phya-pks1-2"/>
+        </xref>
+        <experimentList>
+          <experimentRef>23</experimentRef>
+        </experimentList>
+        <participantList>
+          <participant id="29">
+            <interactorRef>4</interactorRef>
+
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+              <experimentalRole>
+                <names>
+                  <shortLabel>bait</shortLabel>
+                  <fullName>bait</fullName>
+                </names>
+
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0496" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+            <featureList>
+              <feature id="30">
+                <names>
+
+                  <shortLabel>gst tag</shortLabel>
+                </names>
+                <featureType>
+                  <names>
+                    <shortLabel>gst tag</shortLabel>
+                    <fullName>glutathione s tranferase tag</fullName>
+                    <alias>glutathione S-tranferase tag</alias>
+
+                    <alias>glutathione S-tranferase tag</alias>
+                  </names>
+                  <xref>
+                    <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0519" refType="identity" refTypeAc="MI:0356"/>
+                    <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                  </xref>
+                </featureType>
+                <featureRangeList>
+
+                  <featureRange>
+                    <startStatus>
+                      <names>
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </startStatus>
+                    <begin position="0"/>
+                    <endStatus>
+                      <names>
+                        <shortLabel>undetermined</shortLabel>
+                        <fullName>undetermined sequence position</fullName>
+
+                      </names>
+                      <xref>
+                        <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0339" refType="identity" refTypeAc="MI:0356"/>
+                        <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+                      </xref>
+                    </endStatus>
+                    <end position="0"/>
+                  </featureRange>
+                </featureRangeList>
+
+              </feature>
+            </featureList>
+          </participant>
+          <participant id="31">
+            <interactorRef>9</interactorRef>
+            <biologicalRole>
+              <names>
+                <shortLabel>unspecified role</shortLabel>
+
+                <fullName>unspecified role</fullName>
+              </names>
+              <xref>
+                <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0499" refType="identity" refTypeAc="MI:0356"/>
+                <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+              </xref>
+            </biologicalRole>
+            <experimentalRoleList>
+
+              <experimentalRole>
+                <names>
+                  <shortLabel>prey</shortLabel>
+                  <fullName>prey</fullName>
+                </names>
+                <xref>
+                  <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0498" refType="identity" refTypeAc="MI:0356"/>
+                  <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+                </xref>
+              </experimentalRole>
+            </experimentalRoleList>
+          </participant>
+        </participantList>
+        <interactionType>
+          <names>
+            <shortLabel>physical interaction</shortLabel>
+
+            <fullName>physical interaction</fullName>
+            <alias>aggregation</alias>
+            <alias>aggregation</alias>
+          </names>
+          <xref>
+            <primaryRef db="psi-mi" dbAc="MI:0488" id="MI:0218" refType="identity" refTypeAc="MI:0356"/>
+            <secondaryRef db="pubmed" dbAc="MI:0446" id="14755292" refType="primary-reference" refTypeAc="MI:0358"/>
+
+          </xref>
+        </interactionType>
+        <attributeList>
+          <attribute name="kd">0.0</attribute>
+        </attributeList>
+      </interaction>
+    </interactionList>
+  </entry>
+
+</entrySet>
