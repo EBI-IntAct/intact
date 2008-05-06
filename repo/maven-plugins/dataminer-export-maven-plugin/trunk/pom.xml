@@ -25,23 +25,4 @@
         <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/dataminer-export-maven-plugin/trunk/</url>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>uk.ac.ebi.intact.plugins</groupId>
-                <artifactId>dbtest-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-    <dependencies>
-
-        <dependency>
-            <groupId>uk.ac.ebi.intact.templates</groupId>
-            <artifactId>h2db-with-cv</artifactId>
-            <type>zip</type>
-            <scope>test</scope>
-        </dependency>
-
-    </dependencies>
 </project>
