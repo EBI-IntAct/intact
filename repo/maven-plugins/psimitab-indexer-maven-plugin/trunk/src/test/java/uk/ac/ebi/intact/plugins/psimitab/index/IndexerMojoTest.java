@@ -66,10 +66,10 @@ public class IndexerMojoTest extends AbstractMojoTestCase {
             throw new SearchEngineException(e);
         }
         
-        SearchResult<?> id_result = Searcher.search("P29317", engine);
-        assertEquals(2, id_result.getInteractions().size());
+        SearchResult<?> id_result = Searcher.search("P62993", engine);
+        assertEquals(3, id_result.getInteractions().size());
         
-        SearchResult<?> go_result = Searcher.search("properties:ENSG00000101266", engine);
-        assertEquals(1, go_result.getInteractions().size());
+        SearchResult<?> go_result = Searcher.search("properties:ENSG00000137332", engine);
+        assertEquals(3, go_result.getInteractions().size());
     }
 }
