@@ -246,14 +246,6 @@ public class UniprotRemoteServiceTest {
 
             assertEquals( formatter.parse( "17-JAN-2003" ), calendar.getTime() );
 
-            calendar = Calendar.getInstance();
-            calendar.setTime( protein.getLastAnnotationUpdate() );
-            calendar.set( Calendar.HOUR, 0 );
-            calendar.set( Calendar.MINUTE, 0 );
-            calendar.set( Calendar.SECOND, 0 );
-
-            assertEquals( formatter.parse( "18-MAR-2008" ), calendar.getTime() );
-
             formatter = null;
         } catch ( ParseException e ) {
             fail( "Date parsing should not fail here." );
@@ -267,7 +259,7 @@ public class UniprotRemoteServiceTest {
         assertEquals( 7, protein.getKeywords().size() );
 
         // cross references
-        assertEquals( 32, protein.getCrossReferences().size() );
+        assertEquals( 33, protein.getCrossReferences().size() );
 
         // splice variants
         assertEquals( 0, protein.getSpliceVariants().size() );
