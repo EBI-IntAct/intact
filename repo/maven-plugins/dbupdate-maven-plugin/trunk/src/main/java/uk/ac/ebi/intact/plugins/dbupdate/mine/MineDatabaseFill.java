@@ -261,9 +261,6 @@ public class MineDatabaseFill {
             publicmedId = interactionSet.getString( "pubmed_id" ).toUpperCase();
             if ( j > 0 && j % 100 == 0 ) {
                 ps.print( "." );
-
-                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-                IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             }
             if ( j > 0 && j % 7000 == 0)
                 {
