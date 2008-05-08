@@ -23,4 +23,10 @@
     <modules>
        <module>intact-ols</module>
     </modules>
+
+  <scm>
+    <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/tags/bridges-legacy-master-2.0-beta-9</connection>
+    <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/bridges/tags/bridges-legacy-master-2.0-beta-9</developerConnection>
+    <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/bridges/tags/bridges-legacy-master-2.0-beta-9</url>
+  </scm>
 </project>
