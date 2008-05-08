@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.sql.SQLException;
 
 /**
  * Example mojo. This mojo is executed when the goal "mine" is called.
@@ -42,12 +41,7 @@ public class UpdateMiNeTablesMojo extends UpdateAbstractMojo {
 
         try {
             report = MineDatabaseFill.buildDatabase(ps);
-        } catch ( SQLException e ) {
-            Throwable t = (Throwable) e;
-            do {
-                t.printStackTrace( );
-                t = t.getCause();
-            }while( t != null );
+        } catch ( Exception e ) {
             throw new MojoExecutionException( "SQL error while building the MiNe table. cf. nested Exception !", e );
         }
 

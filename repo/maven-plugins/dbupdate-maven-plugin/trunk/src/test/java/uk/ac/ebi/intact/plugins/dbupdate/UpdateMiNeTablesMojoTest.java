@@ -1,12 +1,10 @@
 package uk.ac.ebi.intact.plugins.dbupdate;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.junit.Test;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 import java.io.File;
-
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 /**
  * UpdateMiNeTablesMojo Tester.
@@ -19,7 +17,7 @@ public class UpdateMiNeTablesMojoTest extends UpdateAbstractMojoTestCase {
 
     @Test
     public void testExecution() throws Exception {
-        PersisterHelper.saveOrUpdate(getMockBuilder().createInteractionRandomBinary());
+        PersisterHelper.saveOrUpdate(getMockBuilder().createExperimentRandom(5));
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/simple-mine-config.xml" );
 
