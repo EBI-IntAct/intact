@@ -5,7 +5,9 @@
 package uk.ac.ebi.intact.plugins.dbupdate.mine;
 
 import uk.ac.ebi.intact.business.IntactException;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.CvExperimentalRole;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.Interactor;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -155,12 +157,6 @@ public class MineDatabaseFill {
                                                     + COLUMN_INTERACTION_AC + "=?";
 
     /**
-     * SQL statement to get the accession number for a bait
-     */
-    private static final String SELECT_BAIT_ID = "SELECT ac FROM ia_controlledvocab "
-                                                 + "WHERE shortlabel='bait'";
-
-    /**
      * SQL statement to select all proteins for a given interactor to get the connecting network
      */
     private static final String SELECT_PROT = "SELECT "
@@ -204,7 +200,7 @@ public class MineDatabaseFill {
      * @throws SQLException    when something failed with the database connection
      * @throws IntactException if the initiation of the intact helper failed
      */
-    public static MineDatabaseFillReport buildDatabase(PrintStream ps) throws SQLException, IntactException {
+    public static MineDatabaseFillReport buildDatabase(PrintStream ps) throws SQLException, IntactException, IntactTransactionException {
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         BaseDao dao = daoFactory.getBaseDao();
@@ -213,40 +209,34 @@ public class MineDatabaseFill {
         ps.println( "Database: " + dao.getDbName() );
         ps.println( "User: " + dao.getDbUserName() );
 
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+        bait_id = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                .getCvObjectDao().getByPsiMiRef(CvExperimentalRole.BAIT_PSI_REF).getAc();
+
         MineDatabaseFillReport report = new MineDatabaseFillReport();
 
-        Connection con = daoFactory.connection();
-        Statement stm = con.createStatement();
-
-        // get the EBI - ID for a bait
-        ResultSet set = stm.executeQuery( SELECT_BAIT_ID );
-        if ( set.next() ) {
-            bait_id = set.getString( 1 );
-        } else {
-            set.close();
-            stm.close();
-            con.close();
-            throw new IntactException("no identifier for a bait could be found in the database !");
-        }
-        set.close();
-        
         // the existing data is truncated
-        stm.executeUpdate( "DELETE FROM " + INTERACTION_TABLE );
+        getCurrentConnection().createStatement().executeUpdate( "DELETE FROM " + INTERACTION_TABLE );
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         // the inserSTM is a statement to insert the MINE relevant data
-        PreparedStatement insertDataStatement = con
+        PreparedStatement insertDataStatement = getCurrentConnection()
                 .prepareStatement( INSERT_QUERY );
         ps.println( "insert interaction data" );
 
         // all interactions are fetched from the interactor table
-        ResultSet interactionSet = stm.executeQuery( SELECT_INTERACTIONS );
+        ResultSet interactionSet = getCurrentConnection().createStatement().executeQuery( SELECT_INTERACTIONS );
         // statement to get all interactors with its role of a particular
         // interaction
-        PreparedStatement interactorSelect = con
+        PreparedStatement interactorSelect = getCurrentConnection()
                 .prepareStatement( SELECT_INTERACTOR );
 
         // statement to get the taxid for a particular interactor
-        PreparedStatement taxidSelect = con.prepareStatement( SELECT_TAXID );
+        PreparedStatement taxidSelect = getCurrentConnection().prepareStatement( SELECT_TAXID );
 
         // because it can happen that we want to have access to an element
         // via an index an arraylist is taken. The number of baits should be
@@ -271,6 +261,9 @@ public class MineDatabaseFill {
             publicmedId = interactionSet.getString( "pubmed_id" ).toUpperCase();
             if ( j > 0 && j % 100 == 0 ) {
                 ps.print( "." );
+
+                IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                IntactContext.getCurrentInstance().getDataContext().beginTransaction();
             }
             if ( j > 0 && j % 7000 == 0)
                 {
@@ -365,22 +358,26 @@ public class MineDatabaseFill {
         interactionSet.close();
         insertDataStatement.close();
         interactorSelect.close();
-        stm.close();
         ps.println();
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         // delete all interactions which are in any part part of a negative
         // annotation/experiment
-        deleteInteractions( ps, con );
+        deleteInteractions( ps );
+
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
 
         ps.println( "Compute connecting graphs" );
         // compute the different connecting networks for each taxid
         for (String taxID1 : taxIDs)
         {
-            setGraphIDBio(ps, con, taxID1);
+            IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+            setGraphIDBio(ps, taxID1);
+            IntactContext.getCurrentInstance().getDataContext().commitTransaction();
         }
-
-        // close database access
-        con.close();
 
         ps.println();
 
@@ -391,13 +388,11 @@ public class MineDatabaseFill {
      * Deletes all interaction in the table which are either annotated as negativ interaction or occuring in a negativ
      * experiment.
      *
-     * @param con the database connection
-     *
      * @throws SQLException if something failed on database level
      */
-    private static void deleteInteractions( PrintStream ps, Connection con ) throws SQLException {
-        PreparedStatement deleteStm = con.prepareStatement( DELETE_FROM_TABLE );
-        Statement stm = con.createStatement();
+    private static void deleteInteractions( PrintStream ps ) throws SQLException {
+        PreparedStatement deleteStm = getCurrentConnection().prepareStatement( DELETE_FROM_TABLE );
+        Statement stm = getCurrentConnection().createStatement();
         // delete all interactions which are annotated negativ
         ps
                 .println( "Delete all interactions which have negative information" );
@@ -525,7 +520,7 @@ public class MineDatabaseFill {
      *
      * @throws SQLException whether something failed with the db connection
      */
-    private static void setGraphIDBio( PrintStream ps, Connection con, String taxid )
+    private static void setGraphIDBio( PrintStream ps, String taxid )
             throws SQLException {
         ps.print( "." );
 
@@ -537,7 +532,7 @@ public class MineDatabaseFill {
         graphid++;
         proccessedAcs.clear();
         // query fetches all entries where the graphid is not set yet
-        Statement stm = con.createStatement();
+        Statement stm = getCurrentConnection().createStatement();
         ResultSet set = stm.executeQuery( "SELECT protein1_ac FROM "
                                           + INTERACTION_TABLE
                                           + " WHERE graphid IS NULL AND taxid='" + taxid + "'" );
@@ -552,11 +547,11 @@ public class MineDatabaseFill {
 
         // the statement to select all interactors of one protein
         // to get all interactors for a connecting network
-        PreparedStatement selectProt = con.prepareStatement( SELECT_PROT );
+        PreparedStatement selectProt = getCurrentConnection().prepareStatement( SELECT_PROT );
         selectProt.setString( 3, taxid );
 
         // the statement to update the ia_interactions table
-        PreparedStatement updatePST = con.prepareStatement( UPDATE_GRAPHID );
+        PreparedStatement updatePST = getCurrentConnection().prepareStatement( UPDATE_GRAPHID );
         updatePST.setString( 4, taxid );
 
         // the stack stores each element which is
@@ -600,8 +595,12 @@ public class MineDatabaseFill {
         selectProt.close();
         updatePST.close();
         stm.close();
-        setGraphIDBio( ps, con, taxid );
+        setGraphIDBio( ps, taxid );
     }
+
+    private static Connection getCurrentConnection() throws SQLException {
+        return IntactContext.getCurrentInstance().getDataContext().getDaoFactory().connection();
+   }
 
     /**
      * Run the table update.
@@ -610,7 +609,7 @@ public class MineDatabaseFill {
      *
      * @throws SQLException
      */
-    public static void main( String[] args ) throws SQLException {
+    public static void main( String[] args ) throws Exception {
         buildDatabase(System.out);
     }
 }
