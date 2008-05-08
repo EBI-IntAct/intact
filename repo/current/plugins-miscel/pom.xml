@@ -53,30 +53,9 @@
         <module>predict-maven-plugin</module>
         <module>update-component-role-maven-plugin</module>
     </modules>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>uk.ac.ebi.intact.plugins</groupId>
-                    <artifactId>dbtest-maven-plugin</artifactId>
-                    <version>1.6.0-SNAPSHOT</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>uk.ac.ebi.intact.templates</groupId>
-                <artifactId>h2db-with-cv</artifactId>
-                <version>1.6-SNAPSHOT</version>
-                <type>zip</type>
-                <scope>test</scope>
-            </dependency>
-       
-        <dependency>
+         <dependency>
             <groupId>uk.ac.ebi.intact.core</groupId>
             <artifactId>intact-core</artifactId>
             <version>${core.version}</version>
@@ -86,7 +65,6 @@
             <artifactId>intact-cdb</artifactId>
             <version>${bridges.version}</version>
         </dependency>
-
        </dependencies>
 
             
