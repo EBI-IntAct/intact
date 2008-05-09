@@ -18,16 +18,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>plugins-miscel</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.0</version>
+    <version>1.6.1-SNAPSHOT</version>
 
     <name>IntAct Maven Plugins</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Intact maven plugins</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/current/plugins</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
     </scm>
 
     <properties>
