@@ -18,9 +18,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/psimitab-indexer-maven-plugin</url>
 
     <scm> 
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/psimitab-indexer-maven-plugin/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/psimitab-indexer-maven-plugin/</url>
     </scm>
 
     <dependencies>

@@ -26,12 +26,10 @@
 
     <scm>
         <connection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk
-        </connection>
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/update-component-role-maven-plugin </connection>
         <developerConnection>
-            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk
-        </developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/update-component-role-maven-plugin/trunk/
+            scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/update-component-role-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/update-component-role-maven-plugin/
         </url>
     </scm>
 
