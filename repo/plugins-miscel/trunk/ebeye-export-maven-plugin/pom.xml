@@ -17,9 +17,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/ebeye-export-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/ebeye-export-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/intact/repo/maven-plugins/ebeye-export-maven-plugin/trunk</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/ebeye-export-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/ebeye-export-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/intact/repo/plugins-miscel/trunk/ebeye-export-maven-plugin</url>
     </scm>
 
     <dependencies>

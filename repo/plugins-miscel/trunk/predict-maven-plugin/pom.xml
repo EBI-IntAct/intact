@@ -18,9 +18,9 @@
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/predict-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven-plugins/predict-maven-plugin/trunk</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/maven-plugins/predict-maven-plugin/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/predict-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/predict-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/predict-maven-plugin/</url>
     </scm>
 
     <dependencies>
