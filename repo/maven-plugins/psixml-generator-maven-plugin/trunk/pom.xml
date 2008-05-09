@@ -31,6 +31,12 @@
             <version>2.0.0</version>
         </dependency>
 
+        <dependency>
+             <groupId>uk.ac.ebi.intact.plugins</groupId>
+             <artifactId>dbupdate-maven-plugin</artifactId>
+             <version>${pom.version}</version>
+        </dependency>
+ 
     </dependencies>
 
 </project>
