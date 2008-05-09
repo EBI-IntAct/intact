@@ -3,23 +3,23 @@
     <parent>
         <groupId>uk.ac.ebi.intact.plugins</groupId>
         <artifactId>plugins-miscel</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>reactome-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.6.0</version>
+    <version>1.6.1-SNAPSHOT</version>
     
     <name>reactome-maven-plugin Maven Mojo</name>
     <description>Plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/${artifactId}</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/reactome-maven-plugin</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/reactome-maven-plugin</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/reactome-maven-plugin</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/reactome-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/reactome-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/reactome-maven-plugin</url>
     </scm>
 
     <dependencies>

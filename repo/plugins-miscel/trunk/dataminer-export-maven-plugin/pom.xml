@@ -3,7 +3,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.plugins</groupId>
         <artifactId>plugins-miscel</artifactId>
-        <version>1.6.0</version>
+        <version>1.6.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -11,16 +11,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>dataminer-export-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <version>1.6.0</version>
+    <version>1.6.1-SNAPSHOT</version>
 
     <name>dataminer-export-maven-plugin</name>
     <description>Dataminer export plugin for IntAct</description>
     <url>http://www.ebi.ac.uk/~intact/devsite/maven-plugins/dataminer-export-maven-plugin</url>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/dataminer-export-maven-plugin</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/dataminer-export-maven-plugin</developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/tags/plugins-miscel-1.6.0/dataminer-export-maven-plugin</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/plugins-miscel/trunk/dataminer-export-maven-plugin</url>
     </scm>
 
 </project>
