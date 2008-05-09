@@ -1,0 +1,14 @@
+<project>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-psixml-generator-plugin</artifactId>
+          <configuration>
+              <targetPath>target/psixml-test/clean</targetPath>
+              <speciesFilename>classification_by_species.txt</speciesFilename>
+              <publicationsFilename>classification_by_publications.txt</publicationsFilename>
+          </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
