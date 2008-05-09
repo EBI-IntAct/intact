@@ -5,8 +5,7 @@
  * All rights reserved.
  */
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -19,17 +18,16 @@
     <groupId>uk.ac.ebi.intact.plugins</groupId>
     <artifactId>plugins-miscel</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0</version>
 
     <name>IntAct Maven Plugins</name>
     <url>http://www.ebi.ac.uk/~baranda/intact/maven-plugins</url>
     <description>Intact maven plugins</description>
 
     <scm>
-        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins</connection>
-        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins
-        </developerConnection>
-        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins</url>
+        <connection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</connection>
+        <developerConnection>scm:svn:https://svn.sourceforge.net/svnroot/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</developerConnection>
+        <url>http://svn.sourceforge.net/viewcvs.cgi/intact/repo/current/plugins/tags/plugins-miscel-1.6.0</url>
     </scm>
 
     <properties>
@@ -120,7 +118,7 @@
 
     <repositories>
         <repository>
-            <releases/>
+            <releases />
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -132,7 +130,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-            <snapshots/>
+            <snapshots />
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
