@@ -18,12 +18,16 @@ package uk.ac.ebi.intact.bridges.picr;
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperInterface;
 import uk.ac.ebi.picr.accessionmappingservice.AccessionMapperService;
 import uk.ac.ebi.picr.model.UPEntry;
+import uk.ac.ebi.kraken.uuw.services.remoting.*;
+import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
+import uk.ac.ebi.kraken.interfaces.uniparc.UniParcEntry;
 
 import javax.xml.namespace.QName;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * TODO comment this
@@ -56,8 +60,8 @@ public class PicrClient {
      * @param accession the accession to look for
      * @return the uniprot ID if found, null otherwise
      */
-    public String getUPI(String accession, PicrSearchDatabase ... databases) {
-        List<UPEntry> upEntries = getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), null, true);
+    public String getUPIForAccession(String accession, PicrSearchDatabase ... databases) {
+        List<UPEntry> upEntries = getUPEntriesForAccession(accession, databases);
 
         if (upEntries.isEmpty()) {
             return null;
@@ -65,7 +69,52 @@ public class PicrClient {
 
         return upEntries.iterator().next().getUPI();
     }
-    
+
+    /**
+     * Finds the uniprot ID for a provided ID from the provided list of datbases
+     * @param accession the accession to look for
+     * @return the uniprot ID if found, null otherwise
+     */
+    public List<UPEntry> getUPEntriesForAccession(String accession, PicrSearchDatabase ... databases) {
+        return getAccessionMapperPort().getUPIForAccession(accession, null, databaseEnumToList(databases), null, true);
+    }
+
+    public List<UniParcEntry> getUniprotEntriesForAccession(String accession, PicrSearchDatabase ... databases) {
+        String upAc = getUPIForAccession(accession, databases);
+
+        UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
+        Query query = UniParcQueryBuilder.buildFullTextSearch( upAc );
+        UniParcQueryService uniParcQueryService = factory.getUniParcQueryService();
+
+        List<UniParcEntry> uniParcEntries = new ArrayList<UniParcEntry>();
+
+        EntryIterator<UniParcEntry> protEntryIterator = uniParcQueryService.getEntryIterator(query);
+
+        for (UniParcEntry uniParcEntry : protEntryIterator) {
+            uniParcEntries.add(uniParcEntry);
+        }
+
+        return uniParcEntries;
+    }
+
+    public String getUPIForSequence(String sequence, Integer taxonId, PicrSearchDatabase ... databases) {
+        UPEntry upEntry = getUPEntriesForSequence(sequence, taxonId, databases);
+        return (upEntry != null)? upEntry.getUPI() : null; 
+    }
+
+    public UPEntry getUPEntriesForSequence(String sequence, Integer taxonId, PicrSearchDatabase ... databases) {
+        if (databases == null) databases = PicrSearchDatabase.values();
+        
+        // sequence has to be in fasta format. If not, create a definition
+        if (!sequence.startsWith(">")) {
+            sequence = ">mySequence"+System.getProperty("line.separator")+sequence;
+        }
+
+        return getAccessionMapperPort().getUPIForSequence(sequence, databaseEnumToList(databases),
+                                                          (taxonId != null)? String.valueOf(taxonId) : null, 
+                                                          true);
+    }
+
     private List<String> databaseEnumToList(PicrSearchDatabase ... databases) {
         List<String> databaseNames = new ArrayList<String>(databases.length);
 
@@ -74,12 +123,6 @@ public class PicrClient {
         }
 
         return databaseNames;
-    }
-
-    public static void main(String[] args) {
-        PicrClient client = new PicrClient();
-
-        System.out.println(client.getUPI("NP_417804", PicrSearchDatabase.REFSEQ));
     }
 
 }
