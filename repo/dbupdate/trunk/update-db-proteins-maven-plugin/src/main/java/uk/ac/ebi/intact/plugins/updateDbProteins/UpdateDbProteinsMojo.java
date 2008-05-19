@@ -316,7 +316,7 @@ public class UpdateDbProteinsMojo
             //If commiting the transaction failed (ex : a shortlabel was longer then 20 characters), try to rollback.
             try {
                 IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCurrentTransaction().rollback();
-            } catch (IntactTransactionException e1) {
+            } catch (IntactException e1) {
                 // If rollback was not successfull do what you want : printStackTrace, throw Exception...
                 throw new IntactException("Problem at commit time, couldn't rollback : " + e1);
             }
