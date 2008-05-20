@@ -1,24 +1,16 @@
 package uk.ac.ebi.intact.dataexchange.cvutils;
 
-import org.junit.*;
-import org.obo.datamodel.OBOSession;
 import org.apache.commons.logging.Log;
-import org.apache.axis.components.logger.LogFactory;
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
+import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.util.SchemaUtils;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntology;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
-import uk.ac.ebi.intact.model.CvInteractionType;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.context.IntactContext;
 
 import java.net.URL;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.InputStreamReader;
 
 /**
  * TODO comment this
@@ -29,7 +21,8 @@ import java.io.InputStreamReader;
 
 public class CvUpdaterTest extends IntactBasicTestCase {
 
-    public static final Log log= LogFactory.getLog("CvUpdaterTest.class");
+    private static final Log log = LogFactory.getLog(CvUpdaterTest.class);
+
     @Before
     public void clear() throws Exception {
         SchemaUtils.createSchema();
@@ -42,7 +35,7 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         //URL url = CvUpdaterTest.class.getResource("/psi-mi25-next12-alias.obo");
 
         //URL url = new URL(PSI_MI_OBO_LOCATION+"?revision="+"10841");
-        log.info("url "+url);
+        log.info("url " + url);
 
         /*
         BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
@@ -71,14 +64,13 @@ public class CvUpdaterTest extends IntactBasicTestCase {
 
         int total = getDaoFactory().getCvObjectDao().countAll();
 
-        log.info("CreatedCvs->"+stats.getCreatedCvs().size());
-        log.info("UpdatedCvs->"+stats.getUpdatedCvs().size());
-        log.info("ObsoleteCvs->"+stats.getObsoleteCvs().size());
-        log.info("InvalidTerms->"+stats.getInvalidTerms().size());
+        log.info("CreatedCvs->" + stats.getCreatedCvs().size());
+        log.info("UpdatedCvs->" + stats.getUpdatedCvs().size());
+        log.info("ObsoleteCvs->" + stats.getObsoleteCvs().size());
+        log.info("InvalidTerms->" + stats.getInvalidTerms().size());
 
 
-        log.info("Total->"+total);
-
+        log.info("Total->" + total);
 
         //  Assert.assertEquals(851, stats.getCreatedCvs().size());
         //  Assert.assertEquals(0, stats.getUpdatedCvs().size());

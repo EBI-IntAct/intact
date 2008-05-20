@@ -15,27 +15,23 @@
  */
 package uk.ac.ebi.intact.dataexchange.cvutils.model;
 
-import org.junit.Assert;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
-
-import org.obo.datamodel.*;
+import org.obo.datamodel.IdentifiedObject;
+import org.obo.datamodel.OBOObject;
+import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvObjectAlias;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvObjectXref;
-import org.obo.util.AnnotationUtil;
-import org.obo.annotation.datamodel.Annotation;
-import org.obo.annotation.datamodel.impl.AnnotationImpl;
+import uk.ac.ebi.intact.model.Institution;
 
 import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-
-import org.apache.commons.logging.Log;
-import org.apache.axis.components.logger.LogFactory;
-import com.sun.xml.internal.rngom.ast.builder.Annotations;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -48,7 +44,7 @@ public class CvObjectOntologyBuilderTest {
 
     private static int counter=1;
 
-    public static final Log log=LogFactory.getLog("CvObjectOntologyBuilderTest.class");
+    public static final Log log = LogFactory.getLog(CvObjectOntologyBuilderTest.class);
 
     @Test
     public void build_default() throws Exception {

@@ -17,12 +17,13 @@ package uk.ac.ebi.intact.dataexchange.cvutils.model;
 
 import org.obo.datamodel.*;
 import org.apache.commons.logging.Log;
-import org.apache.axis.components.logger.LogFactory;
+import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.model.util.AliasUtils;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.business.IntactException;
 
 
 import java.util.*;
@@ -42,7 +43,8 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
                 CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
     }//end constructor
 
-    private static final Log log= LogFactory.getLog("CvObjectOntologyBuilder.class");
+    private static final Log log = LogFactory.getLog( CvObjectOntologyBuilder.class );
+
     private static Map<String,Class> mi2Class = new HashMap<String,Class>();
     //private static Map<Class,String> class2mi = new HashMap<Class,String>();
     private static final String MI_ROOT_IDENTIFIER="MI:0000";
@@ -160,7 +162,7 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
                 CvObjectXref xref;
 
                 Dbxref defDbxref =(Dbxref) dbxrefArray[0];
-                termXref=addQualifiersForFirstDbXreferences(defDbxref);
+                termXref = addQualifiersForFirstDbXreferences(defDbxref);
                 xref = toXref(cvObject, termXref[0],termXref[1],termXref[2]);
                 if (xref != null) {
                     cvObject.addXref(xref);
@@ -265,21 +267,20 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
 
             Set<Dbxref> dbxrefSet=oboObj.getDbxrefs();
 
-            for (Iterator<Dbxref> dbxrefIterator = dbxrefSet.iterator(); dbxrefIterator.hasNext();) {
-                Dbxref dbxref = dbxrefIterator.next();
-                log.info("dbxref "+dbxref.toString());
+            for (Dbxref dbxref : dbxrefSet) {
+                log.info("dbxref " + dbxref.toString());
 
-                String xref= dbxref.toString();
-                if(xref.contains(CvTopic.XREF_VALIDATION_REGEXP)){
+                String xref = dbxref.toString();
+                if (xref.contains(CvTopic.XREF_VALIDATION_REGEXP)) {
 
-                    Annotation annot = toAnnotation(CvTopic.XREF_VALIDATION_REGEXP,xref.split(":")[1]);
+                    Annotation annot = toAnnotation(CvTopic.XREF_VALIDATION_REGEXP, xref.split(":")[1]);
                     if (annot != null) {
                         cvObject.addAnnotation(annot);
                     }
                 }//end if
-                if(xref.contains(CvTopic.SEARCH_URL)){
+                if (xref.contains(CvTopic.SEARCH_URL)) {
 
-                    Annotation annot = toAnnotation(CvTopic.SEARCH_URL,dbxref.getDesc());
+                    Annotation annot = toAnnotation(CvTopic.SEARCH_URL, dbxref.getDesc());
                     if (annot != null) {
                         cvObject.addAnnotation(annot);
                     }
@@ -312,10 +313,11 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
 
                 SynonymCategory synCat=synonym.getSynonymCategory();
                 log.info("synCat ID : "+synCat.getID());
+
                 if(synCat.getID()!=null && synCat.getID().equalsIgnoreCase(CvObjectOntologyBuilder.ALIAS_IDENTIFIER)){
                     aliasName=synonym.getText();
                     log.info("aliasName : "+aliasName);
-                    alias_=(CvObjectAlias)toAlias(cvObject,aliasName,shortLabel);
+                    alias_=(CvObjectAlias)toAlias(cvObject,aliasName);
                     cvObject.addAlias(alias_);
                 } //end if
             } //end for
@@ -330,7 +332,8 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
             if (cvObject instanceof CvDagObject) {
                 Collection<Link> childLinks =  oboObj.getChildren();
                 log.info("Childlinks size   "+childLinks.size());
-                for (Iterator<Link> linkIterator = childLinks.iterator(); linkIterator.hasNext();) {
+                Iterator<Link> linkIterator = childLinks.iterator();
+                while (linkIterator.hasNext()) {
                     Link childLink = linkIterator.next();
                     log.info("Child ID  "+childLink.getID());
 
@@ -349,7 +352,7 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
 
                             addCvObjectToStatsIfObsolete(oboObj,cvObject);
 
-                            dagObject.getChildren().add((CvDagObject)toCvObject(childObj));
+                            dagObject.addChild((CvDagObject)toCvObject(childObj));
                         }//end if
                     }//end matches
                 } //end for
@@ -360,8 +363,7 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
 
 
         }catch(Exception ex){
-            log.debug("Exception thrown from toCvObject()!!!");
-            ex.printStackTrace();
+            throw new IntactException("Exception converting to CvObject from OBOObject: "+oboObj.getID(), ex);
         }
 
         return cvObject;
@@ -467,42 +469,45 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
     *
     * */
     protected String[] addQualifiersForFirstDbXreferences(Dbxref defDbxref){
+
+        if (defDbxref == null) {
+            throw new NullPointerException("defDbxref is null");
+        }
+
         //termXref[0] holds identifier_;termXref[1] holds qualifier_;termXref[2] holds database_;
         String[] termXref=new String[3];
         String database_=null,qualifier_=null,identifier_=null;
         log.info("defDbxref: "+defDbxref.getDatabase());
         log.info("defDbxref ID: "+defDbxref.getDatabaseID());
 
-
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("PMID")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.PUBMED;
-            qualifier_= CvXrefQualifier.PRIMARY_REFERENCE;
-        } //end if
-
-
-
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("PMID for application instance")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.PUBMED;
-            qualifier_=CvXrefQualifier.SEE_ALSO;
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.GO)){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.GO;
-            qualifier_=CvXrefQualifier.IDENTITY;
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.RESID)){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.RESID;
-            qualifier_=CvXrefQualifier.SEE_ALSO;
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.SO)){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.SO;
-            qualifier_=CvXrefQualifier.IDENTITY;
-        } //end if
-
+        if (defDbxref.getDatabase().equalsIgnoreCase("PMID")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.PUBMED;
+            qualifier_ = CvXrefQualifier.PRIMARY_REFERENCE;
+        } else
+        if (defDbxref.getDatabase().equalsIgnoreCase("PMID for application instance")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.PUBMED;
+            qualifier_ = CvXrefQualifier.SEE_ALSO;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.GO)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.GO;
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.RESID)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.RESID;
+            qualifier_ = CvXrefQualifier.SEE_ALSO;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.SO)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.SO;
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase("MOD")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = "MOD";
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else {
+            throw new IllegalArgumentException("Unknown database: "+defDbxref.getDatabaseID()+" ("+defDbxref.getDatabase()+")");
+        }
 
         termXref[0]=identifier_;
         termXref[1]=qualifier_;
@@ -525,43 +530,44 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
         log.debug("defDbxref ID: "+defDbxref.getDatabaseID());
 
 
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("PMID") ){
-            identifier_=defDbxref.getDatabaseID();
-            database_="pubmed";
+        if (defDbxref.getDatabase().equalsIgnoreCase("PMID")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.PUBMED;
+
             if(firstDbxref.equalsIgnoreCase("PMID")){
                 qualifier_=CvXrefQualifier.METHOD_REFERENCE;
             }else{
                 qualifier_=CvXrefQualifier.PRIMARY_REFERENCE;
             }
-        } //end if
+        } else
+        if (defDbxref.getDatabase().equalsIgnoreCase("PMID for application instance")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.PUBMED;
+            qualifier_ = CvXrefQualifier.SEE_ALSO;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.GO)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.GO;
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.RESID)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.RESID;
 
-
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("PMID for application instance")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.PUBMED;
-            qualifier_=CvXrefQualifier.SEE_ALSO;
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("GO")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.GO;
-            qualifier_=CvXrefQualifier.IDENTITY;
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("RESID")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.RESID;
             if(uniqResid){
                 qualifier_=CvXrefQualifier.IDENTITY;
             }else{
                 qualifier_=CvXrefQualifier.SEE_ALSO;
             }
-
-        } //end if
-        if(defDbxref.getDatabase()!=null && defDbxref.getDatabase().equalsIgnoreCase("SO")){
-            identifier_=defDbxref.getDatabaseID();
-            database_=CvDatabase.SO;
-            qualifier_=CvXrefQualifier.IDENTITY;
-        } //end if
-
+        } else if (defDbxref.getDatabase().equalsIgnoreCase(CvDatabase.SO)) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = CvDatabase.SO;
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else if (defDbxref.getDatabase().equalsIgnoreCase("MOD")) {
+            identifier_ = defDbxref.getDatabaseID();
+            database_ = "MOD";
+            qualifier_ = CvXrefQualifier.IDENTITY;
+        } else {
+            throw new IllegalArgumentException("Unknown database: "+defDbxref.getDatabaseID()+" ("+defDbxref.getDatabase()+")");
+        }
 
         termXref[0]=identifier_;
         termXref[1]=qualifier_;
@@ -710,7 +716,18 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
     private CvObjectXref toXref(CvObject cvObj, String identifier_,String qualifier_,String database_) {
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
 
-        CvXrefQualifier qualifierCv = getCvObjectByLabel(CvXrefQualifier.class, qualifier_);
+        if (identifier_ == null) {
+            throw new IllegalArgumentException("To create a xref, the identifier cannot be null");
+        }
+
+        CvXrefQualifier qualifierCv = null;
+
+        if (qualifier_ != null) {
+            qualifierCv = getCvObjectByLabel(CvXrefQualifier.class, qualifier_);
+        } else {
+            if (log.isWarnEnabled()) log.warn("No qualifier label found for: "+identifier_);
+        }
+        
         CvDatabase databaseCv = getCvObjectByLabel(CvDatabase.class, database_);
 
         log.info("qualifierCv  "+qualifierCv+ "   databaseCv  "+databaseCv);
@@ -730,7 +747,11 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
             } else if (CvDatabase.SO.equalsIgnoreCase(database_)) {
                 qualifierCv = CvObjectUtils.createCvObject(owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier_);
                 databaseCv = CvObjectUtils.createCvObject(owner, CvDatabase.class, CvDatabase.SO_MI_REF, CvDatabase.SO);
-            } else {
+            } else if ("MOD".equalsIgnoreCase(database_)) {
+                qualifierCv = CvObjectUtils.createCvObject(owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier_);
+                databaseCv = CvObjectUtils.createCvObject(owner, CvDatabase.class, "MI:0897", "MOD");
+            }
+             else {
                 log.error("Unexpected combination qualifier-database found on xref: " + qualifier_ + " - " + database_);
                 return null;
             }
@@ -742,10 +763,10 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
     } //end method
 
 
-    protected Alias toAlias(CvObject cvobj,String aliasName,String shortLabel){
+    protected Alias toAlias(CvObject cvobj,String aliasName){
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
 
-        CvAliasType alias = getCvObjectByLabel(CvAliasType.class, shortLabel);
+        CvAliasType alias = getCvObjectByLabel(CvAliasType.class, CvAliasType.GO_SYNONYM);
         if(alias==null){
             log.info("alias ==null creating new");
             alias = CvObjectUtils.createCvObject(owner, CvAliasType.class, CvAliasType.GO_SYNONYM_MI_REF, CvAliasType.GO_SYNONYM);
@@ -754,8 +775,7 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
         String processedKey = cvKey(CvAliasType.class, alias.getMiIdentifier());
         processed.put(processedKey, alias);
 
-        log.info("***Returning from toAlias: owner: "+owner+"  shortLabel: "+shortLabel);
-        return   AliasUtils.createAlias(alias,aliasName,new CvAliasType(owner,shortLabel));
+        return AliasUtils.createAlias(cvobj,aliasName,alias);
 
     } //end alias
 
@@ -789,6 +809,10 @@ public class CvObjectOntologyBuilder extends CvObjectOntology{
 
 
     protected <T extends CvObject> T getCvObjectByLabel(Class<T> cvObjectClass, String label) {
+
+        if (label == null) {
+            throw new NullPointerException("label is null");
+        }
 
         log.info("Processed values size "+processed.size());
         for (CvObject cvObject : processed.values()) {
