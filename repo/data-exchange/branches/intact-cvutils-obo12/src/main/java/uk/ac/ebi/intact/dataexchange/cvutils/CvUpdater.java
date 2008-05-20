@@ -2,6 +2,10 @@ package uk.ac.ebi.intact.dataexchange.cvutils;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.obo.datamodel.OBOSession;
+import org.obo.datamodel.IdentifiedObject;
+import org.obo.datamodel.OBOObject;
+import org.obo.dataadapter.OBOParseException;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
@@ -14,6 +18,8 @@ import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
 import java.util.*;
+import java.net.URL;
+import java.io.IOException;
 
 /**
  * TODO comment this
@@ -33,52 +39,78 @@ public class CvUpdater {
 
     private CvTopic obsoleteTopic;
 
-    public CvUpdater() {
+
+    private URL url;
+    private OBOSession oboSession;
+    private CvObjectOntologyBuilder ontologyBuilder=null;
+
+    public CvUpdater() throws IOException, OBOParseException {
         this.nonMiCvDatabase = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
                 CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+
+        this.url = CvUpdater.class.getResource("/psi-mi25-next12.obo");
+        log.info("url "+url);
+
+        oboSession = OboUtils.createOBOSession(url);
+        ontologyBuilder = new CvObjectOntologyBuilder(oboSession);
+
     }
 
     /**
      * Starts the creation and update of CVs by using the ontology provided
      * @return An object containing some statistics about the update
      */
-    public CvUpdaterStatistics createOrUpdateCVs(IntactOntology ontology) {
-        return createOrUpdateCVs(ontology, new AnnotationInfoDataset());
+    public CvUpdaterStatistics createOrUpdateCVs(CvObjectOntologyBuilder ontologyBuilder) {
+        return createOrUpdateCVs(ontologyBuilder, new AnnotationInfoDataset());
     }
+
+    // public CvUpdaterStatistics createOrUpdateCVs(CvObjectOntologyBuilder ontologyBuilder, AnnotationInfoDataset annotationInfoDataset) {
+    //     return null;
+    // }
 
     /**
      * Starts the creation and update of CVs by using the ontology provided
      * @return An object containing some statistics about the update
      */
-    public CvUpdaterStatistics createOrUpdateCVs(IntactOntology ontology, AnnotationInfoDataset annotationInfoDataset) {
-        if (ontology == null) {
-            throw new NullPointerException("ontology");
+
+
+    public CvUpdaterStatistics createOrUpdateCVs(CvObjectOntologyBuilder ontologyBuilder, AnnotationInfoDataset annotationInfoDataset) {
+        if (ontologyBuilder == null) {
+            throw new NullPointerException("ontologyBuilder");
         }
         if (annotationInfoDataset == null) {
-            throw new NullPointerException("annotationDataset");
+           throw new NullPointerException("annotationDataset");
         }
 
         this.processed = new HashMap<String,CvObject>();
 
         stats = new CvUpdaterStatistics();
 
+
+
+
+
+        //until here
+
+
+
         List<CvObject> rootsAndOrphans = new ArrayList<CvObject>();
 
-        final Collection<Class> ontologyTypes = ontology.getTypes();
-        if (log.isDebugEnabled()) log.debug("Ontology types ("+ ontologyTypes.size()+"): "+ ontologyTypes);
+        Collection<IdentifiedObject> rootOboObjects=ontologyBuilder.getRootOBOObjects();
 
-        for (Class<? extends CvObject> type : ontologyTypes) {
-            final Collection<CvTerm> rootsForType = ontology.getRoots(type);
-            if (log.isDebugEnabled()) log.debug("Roots for type "+type.getSimpleName()+" ("+rootsForType.size()+")");
+        for (Iterator<IdentifiedObject> identifiedObjectIterator = rootOboObjects.iterator(); identifiedObjectIterator.hasNext();) {
+            OBOObject rootObject = (OBOObject)identifiedObjectIterator.next();
 
-            for (CvTerm root : rootsForType) {
-                if (log.isDebugEnabled()) log.debug("\tProcessing root: "+root.getShortName()+" ("+root.getId()+")");
 
-                CvObject cvObjectRoot = toCvObject(type, root);
-                rootsAndOrphans.add(cvObjectRoot);
-            }
-        }
+            CvObject cvObjectRoot = ontologyBuilder.toCvObject(rootObject);
+            rootsAndOrphans.add(cvObjectRoot);
+            
+        }//end for
 
+        log.info("rootsAndOrphans size :"+rootsAndOrphans.size());
+
+
+      /*
         // handle orphans - create a CvTopic for each
         if (log.isDebugEnabled()) log.debug("Processing orphan terms...");
 
@@ -104,6 +136,7 @@ public class CvUpdater {
             }
 
             addCvObjectToStatsIfObsolete(orphan);
+
 
             // check if it is valid and persist
             if (cvObjectsWithSameId == 0) {
@@ -131,34 +164,46 @@ public class CvUpdater {
         }
         stats.addObsoleteCv(obsoleteTopic);
         stats.addOrphanCv(obsoleteTopic);
+     */
+
 
         List<CvDagObject> allCvs = new ArrayList<CvDagObject>();
         for (CvObject rootOrOrphan : rootsAndOrphans) {
             allCvs.addAll(itselfAndChildrenAsList((CvDagObject) rootOrOrphan));
         }
 
+        log.info("all Cvs size() "+allCvs.size());
+
+
+        //until here
+
+
+        
         // process any term from the cv annotations dataset resource
         updateCVsUsingAnnotationDataset(allCvs, annotationInfoDataset);
+       
 
-        PersisterStatistics persisterStats = PersisterHelper.saveOrUpdate(allCvs.toArray(new CvObject[rootsAndOrphans.size()]));
+
+        //PersisterStatistics persisterStats = PersisterHelper.saveOrUpdate(allCvs.toArray(new CvObject[rootsAndOrphans.size()]));
+        PersisterStatistics persisterStats = PersisterHelper.saveOrUpdate(allCvs.toArray(new CvObject[allCvs.size()]));
         addCvObjectsToUpdaterStats(persisterStats, stats);
 
         if (log.isDebugEnabled()) {
             log.debug("Persisted: " + persisterStats);
 
             log.debug("Processed: "+processed.size());
-            log.debug("Terms in ontology: "+ontology.getCvTerms().size());
+           // log.debug("Terms in ontology: "+ontology.getCvTerms().size());
             log.debug(stats);
         }
 
         return stats;
-    }
+    } //end method
 
     private void updateCVsUsingAnnotationDataset(List<CvDagObject> allCvs, AnnotationInfoDataset annotationInfoDataset) {
         CvTopic hidden = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
-                                                      CvTopic.class, null, CvTopic.HIDDEN);
+                CvTopic.class, null, CvTopic.HIDDEN);
 
-         for (CvDagObject cvObject : allCvs) {
+        for (CvDagObject cvObject : allCvs) {
             if (cvObject.getMiIdentifier() != null && annotationInfoDataset.containsCvAnnotation(cvObject.getMiIdentifier())) {
                 AnnotationInfo annotInfo = annotationInfoDataset.getCvAnnotation(cvObject.getMiIdentifier());
 
@@ -171,6 +216,7 @@ public class CvUpdater {
             }
         }
     }
+
 
     private void addAnnotation(Annotation annotation, CvDagObject cvObject, boolean includeChildren) {
         boolean containsAnnotation = false;
@@ -252,6 +298,10 @@ public class CvUpdater {
         List<CvDagObject> itselfAndChildren = new ArrayList<CvDagObject>();
         itselfAndChildren.add(cv);
 
+        if(cv.getChildren()!=null){
+            log.info("cv.getMiIdentifier :  "+cv.getMiIdentifier());
+            log.info("cv.getChildren() size from itselfAndChildrenAsList:  "+cv.getChildren().size());
+        } 
         for (CvDagObject child : cv.getChildren()) {
             itselfAndChildren.addAll(itselfAndChildrenAsList(child));
         }
@@ -279,6 +329,7 @@ public class CvUpdater {
         return term.getId().contains(":");
     }
 
+    /*
     protected <T extends CvObject> T toCvObject(Class<T> cvClass, CvTerm cvTerm) {
         String primaryId = cvTerm.getId();
 
@@ -337,6 +388,7 @@ public class CvUpdater {
         return cvObject;
     }
 
+    */
     private <T extends CvObject> String cvKey(Class<T> cvClass, String primaryId) {
         return cvClass.getSimpleName() + ":" + primaryId;
     }
@@ -347,7 +399,7 @@ public class CvUpdater {
         if (shortLabel.length() > 20) {
             shortLabel = shortLabel.substring(0, 20);
         }
-        
+
         return shortLabel;
     }
 
@@ -416,7 +468,7 @@ public class CvUpdater {
                 log.error("Unexpected topic found on annotation: "+termAnnot.getTopic());
                 return null;
             }
-        } 
+        }
 
         return new Annotation(owner, topic, termAnnot.getAnnotation());
     }
