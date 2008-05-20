@@ -101,10 +101,9 @@ public class CvUpdater {
         for (Iterator<IdentifiedObject> identifiedObjectIterator = rootOboObjects.iterator(); identifiedObjectIterator.hasNext();) {
             OBOObject rootObject = (OBOObject)identifiedObjectIterator.next();
 
+             CvObject cvObjectRoot = ontologyBuilder.toCvObject(rootObject);
+             rootsAndOrphans.add(cvObjectRoot);
 
-            CvObject cvObjectRoot = ontologyBuilder.toCvObject(rootObject);
-            rootsAndOrphans.add(cvObjectRoot);
-            
         }//end for
 
         log.info("rootsAndOrphans size :"+rootsAndOrphans.size());
