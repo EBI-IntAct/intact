@@ -10,13 +10,12 @@ import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.model.UniprotProteinType;
 import uk.ac.ebi.intact.uniprot.model.UniprotSpliceVariant;
 import uk.ac.ebi.intact.uniprot.model.UniprotXref;
-import uk.ac.ebi.intact.uniprot.service.referenceFilter.IntactCrossReferenceFilter;
+import uk.ac.ebi.intact.uniprot.service.referenceFilter.CrossReferenceFilter;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.io.*;
 
 /**
  * UniprotRemoteServiceAdapter Tester.
@@ -36,13 +35,13 @@ public class UniprotRemoteServiceTest {
         return new UniprotRemoteService();
     }
 
-    private UniprotService getUniprotService( IntactCrossReferenceFilter filter ) {
+    private UniprotService getUniprotService( CrossReferenceFilter filter ) {
         if ( filter == null ) {
             fail( "you must give a non null filter !!" );
         }
         AbstractUniprotService service = ( AbstractUniprotService ) getUniprotService();
         service.setCrossReferenceSelector( filter );
-        return ( UniprotService ) service;
+        return service;
     }
 
     ////////////////////
@@ -439,7 +438,22 @@ public class UniprotRemoteServiceTest {
 
     @Test
     public void RetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
-        UniprotService uniprot = getUniprotService( new IntactCrossReferenceFilter() );
+        CrossReferenceFilter filter = new CrossReferenceFilter() {
+
+            public boolean isSelected(String database) {
+                return getFilteredDatabases().contains(database);
+            }
+
+            public List<String> getFilteredDatabases() {
+                return Arrays.asList("PDB", "SGD", "Go", "InterPro");
+            }
+
+            public String getMi(String databaseName) {
+                return null;
+            }
+        };
+
+        UniprotService uniprot = getUniprotService( filter );
         Collection<UniprotProtein> proteins = uniprot.retrieve( "P47068" );
 
         assertNotNull( proteins );
@@ -450,7 +464,7 @@ public class UniprotRemoteServiceTest {
 
         // check that we have not so many cross references
         // cross references
-        assertEquals( 10, protein.getCrossReferences().size() );
+        assertEquals( 8, protein.getCrossReferences().size() );
 
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1TG0", "PDB" ) ) );
         assertTrue( protein.getCrossReferences().contains( new UniprotXref( "1WDX", "PDB" ) ) );
