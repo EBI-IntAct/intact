@@ -6,7 +6,6 @@
 package uk.ac.ebi.intact.uniprot.service.referenceFilter;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Interface for defining a UniProt cross reference filter.
@@ -41,9 +40,4 @@ public interface CrossReferenceFilter {
      */
     public String getMi(String databaseName);
 
-    /**
-     * Return the Map maping the database name to there psi-mi identifier.
-     * @return
-     */
-    public Map<String,String> getDb2Mi();
 }
