@@ -20,7 +20,7 @@ import java.util.*;
  * @version $Id$
  * @since <pre>30-Sep-2005</pre>
  */
-@Deprecated
+
 public class IntactOntology {
 
     ///////////////////////////////

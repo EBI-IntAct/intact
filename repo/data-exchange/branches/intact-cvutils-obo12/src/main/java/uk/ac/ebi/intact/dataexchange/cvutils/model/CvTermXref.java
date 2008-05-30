@@ -10,10 +10,10 @@ package uk.ac.ebi.intact.dataexchange.cvutils.model;
  *
  * @author Samuel Kerrien (skerrien@ebi.ac.uk)
  * @version $Id$
- * @see CvTerm
+ * 
  * @since <pre>28-Sep-2005</pre>
  */
-@Deprecated
+
 public class CvTermXref {
 
     //////////////////////////
