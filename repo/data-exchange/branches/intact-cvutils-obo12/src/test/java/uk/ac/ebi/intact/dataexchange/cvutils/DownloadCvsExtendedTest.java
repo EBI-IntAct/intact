@@ -22,32 +22,22 @@ import org.bbop.dataadapter.DataAdapterException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.obo.dataadapter.OBOAdapter;
-import org.obo.dataadapter.OBOFileAdapter;
 import org.obo.dataadapter.OBOParseException;
 import org.obo.datamodel.*;
 import org.obo.datamodel.impl.*;
-import org.obo.history.HistoryGenerator;
-import org.obo.history.HistoryList;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.unit.IntactUnit;
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
-import uk.ac.ebi.intact.core.persister.PersisterException;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.DownloadCvsExtended;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.config.CvPrimer;
-import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
-import uk.ac.ebi.intact.business.IntactTransactionException;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvInteraction;
+import uk.ac.ebi.intact.model.CvObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+
 /**
  * Test the DownloadCvsExtended class that contains methods to recreate the OBOSession object from a list of CVObjects
  * The CVObject is stripped and a OBOObject is created which is then added
@@ -92,13 +82,45 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
         */
 
 
-
         this.allCvs = allCvs_;
         log.info( "allCvs size " + allCvs.size() );
 
 
     }//end method
 
+
+    @Test
+    public void testCv2OBORoundTrip() throws OBOParseException, IOException {
+        URL url = DownloadCvsExtendedTest.class.getResource( "/psi-mi25.obo" );
+        log.info( "url " + url );
+
+        /**
+         * id: MI:0244
+         name: reactome complex
+         def: "Collection of functional complexes within Reactome - a knowledgebase of biological processes.\nhttp://www.reactome.org/" [PMID:14755292]
+         subset: PSI-MI slim
+         xref: id-validation-regexp:\"REACT_[0-9\]\{1\,4}\\.[0-9\]\{1\,3}|[0-9\]+\"
+         xref: search-url: "http://www.reactome.org/cgi-bin/eventbrowser?ID=${ac}"
+         is_a: MI:0467 ! reactome
+
+         */
+
+        OBOSession oboSession = OboUtils.createOBOSession( url );
+        CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder( oboSession );
+        OBOObject readOBOObj = ( OBOObject ) oboSession.getObject( "MI:0244" );
+        CvObject cvObject = ontologyBuilder.toCvObject( readOBOObj );
+
+        DownloadCvsExtended downloadCv = new DownloadCvsExtended();
+        OBOObject createdOBOObj = downloadCv.convertCv2OBO( cvObject );
+
+        Assert.assertEquals( readOBOObj.getID(), createdOBOObj.getID() );
+        Assert.assertEquals( readOBOObj.getDefinition(), createdOBOObj.getDefinition() );
+        Assert.assertEquals( readOBOObj.getName(), createdOBOObj.getName() );
+        Assert.assertEquals( readOBOObj.getDefDbxrefs().size(), createdOBOObj.getDefDbxrefs().size() );
+        Assert.assertEquals( readOBOObj.getDbxrefs().size(), createdOBOObj.getDbxrefs().size() );
+
+
+    }//end method
 
 
     @Test
@@ -107,10 +129,10 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
 
         log.info( "From Test all : " + allCvs.size() );
         OBOSession oboSession = downloadCv.convertCvList2OBOSession( allCvs );
-         // Create temp directory
-        File tempDir = new File("temp");
+        // Create temp directory
+        File tempDir = new File( "temp" );
         tempDir.mkdir();
-        File outFile = File.createTempFile( "test", ".obo", tempDir);
+        File outFile = File.createTempFile( "test", ".obo", tempDir );
         downloadCv.writeOBOFile( oboSession, outFile );
 
     }//end method
@@ -146,15 +168,13 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
         DownloadCvsExtended.getOboSession().addObject( obj1 );
         DownloadCvsExtended.getOboSession().addObject( obj2 );
 
-        File tempDir = new File("temp");
+        File tempDir = new File( "temp" );
         tempDir.mkdir();
-        File outFile = File.createTempFile( "test", ".obo");
+        File outFile = File.createTempFile( "test", ".obo" );
         downloadCv.writeOBOFile( DownloadCvsExtended.getOboSession(), outFile );
 
 
     }//end method
 
-
-    
 
 }//end class
