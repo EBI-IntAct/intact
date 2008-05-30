@@ -57,19 +57,31 @@ public class CvUpdaterTest extends IntactBasicTestCase {
     public void reportDirectlyFromOBOFile( ) {
 
         URL url = CvUpdaterTest.class.getResource( "/psi-mi25.obo" );
-        log.info( "url " + url );
+       if(log.isDebugEnabled()) log.debug( "url " + url );
         try {
             BufferedReader in = new BufferedReader( new InputStreamReader( url.openStream() ) );
             String inputLine;
+
+            int termCounter = 0;
+            int idCounter = 0;
             int miCounter = 0;
             int obsoleteCounter = 0;
             int obsoleteCounterDef = 0;
+            int typedefCounter = 0;
 
             while ( ( inputLine = in.readLine() ) != null ) {
-                if ( inputLine.startsWith( "id: MI:" ) ) {
+              
+
+                if ( inputLine.startsWith( "[Term]" ) ) {
+                    termCounter++;
+                 }
+
+                if ( inputLine.startsWith( "id:" ) ) {
+                    idCounter++;
+                 }
+                if ( inputLine.matches( "id:\\s+MI:.*" ) ) {
                     miCounter++;
-                    //log.debug( miCounter + "  " + inputLine );
-                }
+                 }
 
                 if ( inputLine.contains( "is_obsolete: true" ) ) {
                     obsoleteCounter++;
@@ -77,15 +89,21 @@ public class CvUpdaterTest extends IntactBasicTestCase {
                 if ( inputLine.matches( "def:.*?OBSOLETE.*" ) ) {
                     obsoleteCounterDef++;
                 }
+                if ( inputLine.startsWith("[Typedef]") ) {
+                    typedefCounter++;
+                }
+
             }
 
-            log.debug( "Total MI: " + miCounter );
-            log.debug( "Obsolete: " + obsoleteCounter );
-            log.debug( "obsoleteCounterDef: " + obsoleteCounterDef );
+            
 
+            //948+1 with Typedef
+            Assert.assertEquals(949, idCounter);
+            Assert.assertEquals(948, termCounter);
             Assert.assertEquals(948, miCounter);
             Assert.assertEquals(53, obsoleteCounter);
             Assert.assertEquals(53, obsoleteCounterDef);
+            Assert.assertEquals(1, typedefCounter);
 
             in.close();
         } catch ( IOException ioex ) {
@@ -99,7 +117,7 @@ public class CvUpdaterTest extends IntactBasicTestCase {
     public void createOrUpdateCVs() throws Exception {
 
         URL url = CvUpdaterTest.class.getResource( "/psi-mi25.obo" );
-        log.info( "url " + url );
+        log.debug( "url " + url );
 
 
 
@@ -112,14 +130,17 @@ public class CvUpdaterTest extends IntactBasicTestCase {
         CvUpdaterStatistics stats = updater.createOrUpdateCVs( allCvs, annotationDataset );
 
 
-        log.info( "CreatedCvs->" + stats.getCreatedCvs().size() );
-        log.info( "UpdatedCvs->" + stats.getUpdatedCvs().size() );
-        log.info( "ObsoleteCvs->" + stats.getObsoleteCvs().size() );
-        log.info( "InvalidTerms->" + stats.getInvalidTerms().size() );
+        log.debug( "CreatedCvs->" + stats.getCreatedCvs().size() );
+        log.debug( "UpdatedCvs->" + stats.getUpdatedCvs().size() );
+        log.debug( "ObsoleteCvs->" + stats.getObsoleteCvs().size() );
+        log.debug( "InvalidTerms->" + stats.getInvalidTerms().size() );
 
         int total = getDaoFactory().getCvObjectDao().countAll();
-        log.info( "Total->" + total );
+        log.debug( "Total->" + total );
 
+        //it should be 947 as we don't create the root Cv MI:0000
+        //Have to check the additional two cvs, probably cause of more than one parent
+        
         Assert.assertEquals( 949, stats.getCreatedCvs().size() );
         Assert.assertEquals( 0, stats.getUpdatedCvs().size() );
         //52+1 obsolete term
