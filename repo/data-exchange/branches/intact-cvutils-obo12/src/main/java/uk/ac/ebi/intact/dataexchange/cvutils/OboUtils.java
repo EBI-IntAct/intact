@@ -4,6 +4,7 @@ import org.obo.dataadapter.DefaultOBOParser;
 import org.obo.dataadapter.OBOParseEngine;
 import org.obo.dataadapter.OBOParseException;
 import org.obo.datamodel.OBOSession;
+
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDatasetFactory;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;

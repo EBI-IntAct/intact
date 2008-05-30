@@ -16,9 +16,8 @@
 package uk.ac.ebi.intact.dataexchange.cvutils.model;
 
 import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
-import org.obo.datamodel.IdentifiedObject;
 import org.obo.datamodel.OBOObject;
 import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
@@ -26,54 +25,82 @@ import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvObjectAlias;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 
 /**
  * TODO comment that class header
  *
- * @author Bruno Aranda (baranda@ebi.ac.uk)
+ * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
+ * @since 2.0.1-SNAPSHOT
  */
 public class CvObjectOntologyBuilderTest {
 
-    private static int counter=1;
+    private static int counter = 1;
 
-    public static final Log log = LogFactory.getLog(CvObjectOntologyBuilderTest.class);
+    private static final Log log = org.apache.commons.logging.LogFactory.getLog( CvObjectOntologyBuilderTest.class );
 
     @Test
     public void build_default() throws Exception {
-        //URL url = CvObjectOntologyBuilderTest.class.getResource("/psi-mi25-next12-alias.obo");
-        URL url = CvObjectOntologyBuilderTest.class.getResource("/psi-mi25-next12.obo");
 
-        log.info("url "+url);
+        URL url = CvObjectOntologyBuilderTest.class.getResource( "/psi-mi25.obo" );
 
-        OBOSession oboSession = OboUtils.createOBOSession(url);
-        CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder(oboSession);
+        log.info( "url " + url );
 
-        Collection<IdentifiedObject> rootOboObjects=ontologyBuilder.getRootOBOObjects();
-
-        List<CvObject> rootsAndOrphans = new ArrayList<CvObject>();
-        for (Iterator<IdentifiedObject> identifiedObjectIterator = rootOboObjects.iterator(); identifiedObjectIterator.hasNext();) {
-            OBOObject rootObject = (OBOObject)identifiedObjectIterator.next();
+        OBOSession oboSession = OboUtils.createOBOSession( url );
+        CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder( oboSession );
 
 
-            CvObject cvObjectRoot = ontologyBuilder.toCvObject(rootObject);
-            rootsAndOrphans.add(cvObjectRoot);
+        Assert.assertEquals( 16, ontologyBuilder.getRootOBOObjects().size() );
 
-        }//end for
+        Assert.assertEquals( uk.ac.ebi.intact.model.CvInteraction.class, ontologyBuilder.findCvClassforMI( "MI:0439" ) );
+        Assert.assertEquals( uk.ac.ebi.intact.model.CvDatabase.class, ontologyBuilder.findCvClassforMI( "MI:0244" ) );//non-root object
+        Assert.assertEquals( uk.ac.ebi.intact.model.CvFeatureIdentification.class, ontologyBuilder.findCvClassforMI( "MI:0003" ) );//root object
 
-        log.info("rootsAndOrphans size :"+rootsAndOrphans.size());
+        //an example term with  3 Aliases and 2 xrefs, a database xref and identity xref
+        /**
+         * [Term]
+         id: MI:0439
+         name: random spore analysis
+         def: "A technique used to detect genetic interactions between 2 (or more) genes in a sporulating organism by scoring a large population of haploid spores for a phenotype and correlating the phenotype with the presence of single vs double (multiple) mutations. A diploid heterozygous organism harbouring mutations in two (or more) genes is induced to sporulate. Resulting spores are meiotic segregants that are haploid and are either wild type or mutant at each locus. Spores are scored for a phenotype, such as loss of viability." [PMID:14755292]
+         subset: PSI-MI slim
+         synonym: "random-spore analysis" EXACT PSI-MI-alternate []
+         synonym: "RSA" EXACT PSI-MI-alternate []
+         synonym: "rsa" EXACT PSI-MI-short []
+         synonym: "spore germination" EXACT PSI-MI-alternate []
+         is_a: MI:0254 ! genetic interference
+
+         */
+        OBOObject testObj = ( OBOObject ) oboSession.getObject( "MI:0439" );
+        CvObject cvObject = ontologyBuilder.toCvObject( testObj );
+        Assert.assertEquals( "random spore analysis", cvObject.getFullName() );
+        Assert.assertEquals( "MI:0439", CvObjectUtils.getIdentity( cvObject ) );
+        Assert.assertEquals( "rsa", cvObject.getShortLabel() );
+        Assert.assertEquals( 3, cvObject.getAliases().size() );
+        Assert.assertEquals( 2, cvObject.getXrefs().size() );
+
+        //Obsolote Term test MI:0443
+        OBOObject testObsoleteObj = ( OBOObject ) oboSession.getObject( "MI:0443" );
+        Assert.assertEquals( true, testObsoleteObj.isObsolete() );
+
+        //947+1=948 root object MI:0000
+        Assert.assertEquals( 947, ontologyBuilder.getAllMIOBOObjects().size() );
+        Assert.assertEquals( 53, ontologyBuilder.getObsoleteOBOObjects().size() );
+        Assert.assertEquals( 53, ontologyBuilder.getOrphanOBOObjects().size() );
+        Assert.assertEquals( 11, ontologyBuilder.getInvalidOBOObjects().size() );
+        //947+11+1=959
+        Assert.assertEquals( 959, ontologyBuilder.getAllOBOObjects().size() );
 
 
 
 
-        //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0436");
+
+
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0001");//root Cv interaction detection method
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0012");
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0192");//with GO
@@ -84,151 +111,77 @@ public class CvObjectOntologyBuilderTest {
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0108"); //example with comment subset PSI-MI slim
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:2120"); //example with comment subset Drugable
         //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0031"); //example with alias
+        // OBOObject testObj = (OBOObject)oboSession.getObject("MI:0244"); //example with 4 annotations + search-url
 
-        //OBOObject testObj = (OBOObject)oboSession.getObject("MI:0244"); //example with 4 annotations + search-url
-
-        //alias test
-        /*  OBOObject testObj = (OBOObject)oboSession.getObject("MI:0303");
-        CvObject cvObject=builder.toCvObject(testObj);
-        testCvObject(cvObject);
-        testObj = (OBOObject)oboSession.getObject("MI:0305");
-        cvObject=builder.toCvObject(testObj);
-        testCvObject(cvObject);
-
-        */
-
-
-
-        //log.info(" All OBO objects size  "+builder.getAllOBOObjects().size());
-        /*
-                Collection<CvObject> allCvObjects=new ArrayList<CvObject>();
-                Collection<IdentifiedObject>  allOboObjects= builder.getAllOBOObjects();
-                for (Iterator<IdentifiedObject> identifiedObjectIterator = allOboObjects.iterator(); identifiedObjectIterator.hasNext();) {
-                    IdentifiedObject identifiedObject = identifiedObjectIterator.next();
-                    OBOObject oboObject = (OBOObject)identifiedObject;
-                    log.info("Converting oboObject "+oboObject);
-                    CvObject cvObject=builder.toCvObject(oboObject);
-                    allCvObjects.add(cvObject);
-                    //testCvObject(cvObject);
-                }
-
-
-
-
-               log.info("allCvObjects size : "+allCvObjects.size());
-                for (Iterator<CvObject> cvIterator = allCvObjects.iterator(); cvIterator.hasNext();) {
-                    CvObject cvObject = cvIterator.next();
-                    log.info(cvObject.getObjClass()+"  "+cvObject.getMiIdentifier());
-                }
-
-        */
-        //Map<String,CvObject> processed=ontologyBuilder.getProcessed();
-        // log.info("processed size : "+processed.size());
-
-
-
-
-        /*
-        Set<String> keys=processed.keySet();
-        for (Iterator<String> stringIterator = keys.iterator(); stringIterator.hasNext();) {
-            String s = stringIterator.next();
-            if(s.contains("CvTopic"))
-                log.info(s+"  "+processed.get(s).toString());
-        }
-
-        Set<String> keys_=processed.keySet();
-        for (Iterator<String> stringIterator = keys_.iterator(); stringIterator.hasNext();) {
-            String s = stringIterator.next();
-            if(s.contains("CvDatabase"))
-                log.info(s+"  "+processed.get(s).toString());
-        }
-
-
-        Set<String> keysAlias=processed.keySet();
-        for (Iterator<String> stringIterator = keysAlias.iterator(); stringIterator.hasNext();) {
-            String s = stringIterator.next();
-            if(s.contains("CvAliasType"))
-                log.info(s+"  "+processed.get(s).toString());
-        }
-       */
-        //Assert.assertEquals(builder.findCvClassforMI("MI:0244"), uk.ac.ebi.intact.model.CvDatabase.class);//non-root object
-        // Assert.assertEquals(builder.findCvClassforMI("MI:0003"), uk.ac.ebi.intact.model.CvFeatureIdentification.class);//root object
-        // builder.getRootCvObjects();
-        //Assert.assertEquals(16, builder.getRootCvObjects().size());
-        //Assert.assertEquals(1000, builder.getAllCvObjects().size());
 
     } //end method
 
 
-    public static void testCvObject(CvObject cvObject){
+    public static void testCvObject( CvObject cvObject ) {
 
 
-        log.info("******************"+counter+" CvObject Begin*****************************");
+        log.info( "******************" + counter + " CvObject Begin*****************************" );
         counter++;
-        String ac=cvObject.getAc();
-        log.info("Ac->"+ac);
+        String ac = cvObject.getAc();
+        log.info( "Ac->" + ac );
 
-        String fullName=cvObject.getFullName();
-        log.info("fullName->"+fullName);
-        String miIdentifier=cvObject.getMiIdentifier();
-        log.info("miIdentifier->"+miIdentifier);
-        String objClass=cvObject.getObjClass();
-        log.info("objClass->"+objClass);
+        String fullName = cvObject.getFullName();
+        log.info( "fullName->" + fullName );
+        String miIdentifier = CvObjectUtils.getIdentity( cvObject );
+        log.info( "miIdentifier->" + miIdentifier );
+        String objClass = cvObject.getObjClass();
+        log.info( "objClass->" + objClass );
 
-        Institution owner=cvObject.getOwner();
-        log.info("owner->"+owner);
+        Institution owner = cvObject.getOwner();
+        log.info( "owner->" + owner );
 
-        String shortLabel=cvObject.getShortLabel();
-        log.info("shortLabel->"+shortLabel);
+        String shortLabel = cvObject.getShortLabel();
+        log.info( "shortLabel->" + shortLabel );
 
-        if(cvObject.getShortLabel()==null || cvObject.getShortLabel().length()<1){
-            System.exit(5);
+        if ( cvObject.getShortLabel() == null || cvObject.getShortLabel().length() < 1 ) {
+            System.exit( 5 );
         }
 
 
-
-        Collection<uk.ac.ebi.intact.model.Annotation> annotations=cvObject.getAnnotations();
-        int annoCount=1;
-        for (Iterator<uk.ac.ebi.intact.model.Annotation> annotationIterator = annotations.iterator(); annotationIterator.hasNext();) {
+        Collection<uk.ac.ebi.intact.model.Annotation> annotations = cvObject.getAnnotations();
+        int annoCount = 1;
+        for ( Iterator<uk.ac.ebi.intact.model.Annotation> annotationIterator = annotations.iterator(); annotationIterator.hasNext(); ) {
             uk.ac.ebi.intact.model.Annotation annotation = annotationIterator.next();
-            if(annotation!=null){
-                log.info(annoCount+" AnnotationText->"+annotation.getAnnotationText());
-                if(annotation.getCvTopic()!=null)
-                    log.info(annoCount+" CvTopic->"+annotation.getCvTopic());
+            if ( annotation != null ) {
+                log.info( annoCount + " AnnotationText->" + annotation.getAnnotationText() );
+                if ( annotation.getCvTopic() != null )
+                    log.info( annoCount + " CvTopic->" + annotation.getCvTopic() );
 
             } //end if
             annoCount++;
         } //end for
 
 
-        Collection<CvObjectXref> xrefs=cvObject.getXrefs();
-        int xrefCount=1;
-        for (Iterator<CvObjectXref> cvObjectXrefIterator = xrefs.iterator(); cvObjectXrefIterator.hasNext();) {
+        Collection<CvObjectXref> xrefs = cvObject.getXrefs();
+        int xrefCount = 1;
+        for ( Iterator<CvObjectXref> cvObjectXrefIterator = xrefs.iterator(); cvObjectXrefIterator.hasNext(); ) {
             CvObjectXref cvObjectXref = cvObjectXrefIterator.next();
-            log.info(xrefCount+" cvObjectXref CvDatabase-> "+cvObjectXref.getCvDatabase());
-            log.info(xrefCount+" cvObjectXref CvXref Qualifier-> "+cvObjectXref.getCvXrefQualifier());
-            log.info(xrefCount+" cvObjectXref CvXref PrimaryId-> "+cvObjectXref.getPrimaryId());
+            log.info( xrefCount + " cvObjectXref CvDatabase-> " + cvObjectXref.getCvDatabase() );
+            log.info( xrefCount + " cvObjectXref CvXref Qualifier-> " + cvObjectXref.getCvXrefQualifier() );
+            log.info( xrefCount + " cvObjectXref CvXref PrimaryId-> " + cvObjectXref.getPrimaryId() );
 
 
             xrefCount++;
         }//end for
 
 
-        Collection<CvObjectAlias> aliases=cvObject.getAliases();
-        int aliasCount=1;
-        for (Iterator<CvObjectAlias> cvObjectAliasIterator = aliases.iterator(); cvObjectAliasIterator.hasNext();) {
+        Collection<CvObjectAlias> aliases = cvObject.getAliases();
+        int aliasCount = 1;
+        for ( Iterator<CvObjectAlias> cvObjectAliasIterator = aliases.iterator(); cvObjectAliasIterator.hasNext(); ) {
             CvObjectAlias cvObjectAlias = cvObjectAliasIterator.next();
 
-            log.info(aliasCount+" cvObjectAlias-> "+cvObjectAlias.getName()+"   "+cvObjectAlias.getParent().getShortLabel());
+            log.info( aliasCount + " cvObjectAlias-> " + cvObjectAlias.getName() + "   " + cvObjectAlias.getParent().getShortLabel() );
 
         } //end for
 
 
-        log.info("******************CvObject End*****************************");
+        log.info( "******************CvObject End*****************************" );
     } //end method
-
-
-
 
 
 }//end class
