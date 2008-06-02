@@ -27,7 +27,7 @@ import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import static java.util.Collections.*;
+import static java.util.Collections.sort;
 
 
 /**
@@ -37,7 +37,7 @@ import static java.util.Collections.*;
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 public class DownloadCvsExtended {
 
@@ -66,9 +66,11 @@ public class DownloadCvsExtended {
         oboSession = new OBOSessionImpl( objFactory );
     }
 
-    /** Converts a list of Cvs to list of OBOObjects and add it to the OBOSession
-     * @param allCvs  List of all Cvs
-     * @return  OBOSession objects with all Cvs converted to OBOObject and added to the OBOsession
+    /**
+     * Converts a list of Cvs to list of OBOObjects and add it to the OBOSession
+     *
+     * @param allCvs List of all Cvs
+     * @return OBOSession objects with all Cvs converted to OBOObject and added to the OBOsession
      */
 
     public OBOSession convertCvList2OBOSession( List<CvDagObject> allCvs ) {
@@ -116,10 +118,11 @@ public class DownloadCvsExtended {
 
     /**
      * The OBOFileAdapter writes the OBOSession object in to the given file specified
-     * @param oboSession     The OBOsession object with all OBOClass instances added to it
-     * @param outFile        The OBO file  
-     * @throws DataAdapterException   refer org.bbop.dataadapter.DataAdapterException
-     * @throws IOException  refer java.io.IOException
+     *
+     * @param oboSession The OBOsession object with all OBOClass instances added to it
+     * @param outFile    The OBO file
+     * @throws DataAdapterException refer org.bbop.dataadapter.DataAdapterException
+     * @throws IOException          refer java.io.IOException
      */
     public void writeOBOFile( OBOSession oboSession, File outFile ) throws DataAdapterException, IOException {
 
@@ -148,8 +151,9 @@ public class DownloadCvsExtended {
      * The List contains duplicates as the method itselfAndChildrenAsList adds
      * itself and the children and again the child gets added.
      * This method removes the dubplicates from the list
+     *
      * @param allCvs List of all Cvs with duplicates
-     * @return    Lists of Uniq Cvs
+     * @return Lists of Uniq Cvs
      */
 
     public List<CvDagObject> removeCvsDuplicated( List<CvDagObject> allCvs ) {
@@ -171,8 +175,9 @@ public class DownloadCvsExtended {
 
     /**
      * Converts cvobject to OBOobject
-     * @param cvObj  CvObject that needs to be converted to OBOOBject
-     * @return  a OBOClass instance
+     *
+     * @param cvObj CvObject that needs to be converted to OBOOBject
+     * @return a OBOClass instance
      */
 
     public OBOClass convertCv2OBO( CvObject cvObj ) {
@@ -218,14 +223,14 @@ public class DownloadCvsExtended {
 
                     //check for pubmed
 
-                    if(database!=null && database.getShortLabel() != null){
-                    if (database.getShortLabel().equals( CvDatabase.PUBMED ) ) {
+                    if ( database != null && database.getShortLabel() != null ) {
+                        if ( database.getShortLabel().equals( CvDatabase.PUBMED ) ) {
 
-                        dbx = "PMID";
-                    } else {
+                            dbx = "PMID";
+                        } else {
 
-                        dbx = database.getShortLabel().toUpperCase();
-                    }
+                            dbx = database.getShortLabel().toUpperCase();
+                        }
                     }
 
                     Dbxref dbxref = new DbxrefImpl( dbx, xref.getPrimaryId() );

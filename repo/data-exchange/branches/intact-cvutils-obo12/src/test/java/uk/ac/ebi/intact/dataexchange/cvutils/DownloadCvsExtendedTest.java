@@ -45,7 +45,7 @@ import java.util.List;
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 public class DownloadCvsExtendedTest extends IntactBasicTestCase {
 

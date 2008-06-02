@@ -36,11 +36,13 @@ import java.net.URL;
 import java.io.IOException;
 
 /**
- * TODO comment that class header
+ * Contains method to Update Cv tables using the PersisterHelper.
+ * Basically passes a list of CvDagObjects with all the children
+ * and parents set to the saveorUpdate method in the PersisterHelper
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 public class CvUpdater {
 
