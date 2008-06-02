@@ -39,10 +39,10 @@ import static java.util.Collections.sort;
  * @version $Id$
  * @since 2.0.1
  */
-public class DownloadCvsExtended {
+public class CvExporter {
 
     //initialize logger
-    protected final static Logger log = Logger.getLogger( DownloadCvsExtended.class );
+    protected final static Logger log = Logger.getLogger( CvExporter.class );
 
     private static final String ALIAS_IDENTIFIER = "PSI-MI-alternate";
     private static final String SHORTLABEL_IDENTIFIER = "PSI-MI-short";
@@ -56,7 +56,7 @@ public class DownloadCvsExtended {
 
     private static OBOSession oboSession;
 
-    public DownloadCvsExtended() {
+    public CvExporter() {
 
     } //end constructor
 
