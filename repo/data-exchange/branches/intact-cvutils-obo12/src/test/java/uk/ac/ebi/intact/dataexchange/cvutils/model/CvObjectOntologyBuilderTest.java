@@ -21,23 +21,20 @@ import org.junit.Test;
 import org.obo.datamodel.OBOObject;
 import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
-import uk.ac.ebi.intact.model.CvObject;
-import uk.ac.ebi.intact.model.CvObjectAlias;
-import uk.ac.ebi.intact.model.CvObjectXref;
-import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import java.net.URL;
 import java.util.Collection;
-import java.util.Iterator;
+
 
 
 /**
- * TODO comment that class header
+ * Test class for CvObjectOntologyBuilder
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 public class CvObjectOntologyBuilderTest {
 
@@ -80,16 +77,18 @@ public class CvObjectOntologyBuilderTest {
         CvObject cvObject = ontologyBuilder.toCvObject( testObj );
         Assert.assertEquals( "random spore analysis", cvObject.getFullName() );
         Assert.assertEquals( "MI:0439", CvObjectUtils.getIdentity( cvObject ) );
+        Assert.assertEquals( "MI:0439", cvObject.getMiIdentifier());
         Assert.assertEquals( "rsa", cvObject.getShortLabel() );
         Assert.assertEquals( 3, cvObject.getAliases().size() );
         Assert.assertEquals( 2, cvObject.getXrefs().size() );
+        Assert.assertTrue( CvObjectUtils.hasIdentity( cvObject, "MI:0439" ) );
 
         //Obsolote Term test MI:0443
         OBOObject testObsoleteObj = ( OBOObject ) oboSession.getObject( "MI:0443" );
         Assert.assertEquals( true, testObsoleteObj.isObsolete() );
 
         //947+1=948 root object MI:0000
-        Assert.assertEquals( 947, ontologyBuilder.getAllMIOBOObjects().size() );
+        Assert.assertEquals( 947,ontologyBuilder.getAllMIOBOObjects().size() );
         Assert.assertEquals( 53, ontologyBuilder.getObsoleteOBOObjects().size() );
         Assert.assertEquals( 53, ontologyBuilder.getOrphanOBOObjects().size() );
         Assert.assertEquals( 11, ontologyBuilder.getInvalidOBOObjects().size() );
@@ -123,20 +122,20 @@ public class CvObjectOntologyBuilderTest {
         log.info( "******************" + counter + " CvObject Begin*****************************" );
         counter++;
         String ac = cvObject.getAc();
-        log.info( "Ac->" + ac );
+        log.debug( "Ac->" + ac );
 
         String fullName = cvObject.getFullName();
-        log.info( "fullName->" + fullName );
+        log.debug( "fullName->" + fullName );
         String miIdentifier = CvObjectUtils.getIdentity( cvObject );
-        log.info( "miIdentifier->" + miIdentifier );
+        log.debug( "miIdentifier->" + miIdentifier );
         String objClass = cvObject.getObjClass();
-        log.info( "objClass->" + objClass );
+        log.debug( "objClass->" + objClass );
 
         Institution owner = cvObject.getOwner();
-        log.info( "owner->" + owner );
+        log.debug( "owner->" + owner );
 
         String shortLabel = cvObject.getShortLabel();
-        log.info( "shortLabel->" + shortLabel );
+        log.debug( "shortLabel->" + shortLabel );
 
         if ( cvObject.getShortLabel() == null || cvObject.getShortLabel().length() < 1 ) {
             System.exit( 5 );
@@ -145,12 +144,11 @@ public class CvObjectOntologyBuilderTest {
 
         Collection<uk.ac.ebi.intact.model.Annotation> annotations = cvObject.getAnnotations();
         int annoCount = 1;
-        for ( Iterator<uk.ac.ebi.intact.model.Annotation> annotationIterator = annotations.iterator(); annotationIterator.hasNext(); ) {
-            uk.ac.ebi.intact.model.Annotation annotation = annotationIterator.next();
+        for ( Annotation annotation : annotations ) {
             if ( annotation != null ) {
-                log.info( annoCount + " AnnotationText->" + annotation.getAnnotationText() );
+                log.debug( annoCount + " AnnotationText->" + annotation.getAnnotationText() );
                 if ( annotation.getCvTopic() != null )
-                    log.info( annoCount + " CvTopic->" + annotation.getCvTopic() );
+                    log.debug( annoCount + " CvTopic->" + annotation.getCvTopic() );
 
             } //end if
             annoCount++;
@@ -159,11 +157,10 @@ public class CvObjectOntologyBuilderTest {
 
         Collection<CvObjectXref> xrefs = cvObject.getXrefs();
         int xrefCount = 1;
-        for ( Iterator<CvObjectXref> cvObjectXrefIterator = xrefs.iterator(); cvObjectXrefIterator.hasNext(); ) {
-            CvObjectXref cvObjectXref = cvObjectXrefIterator.next();
-            log.info( xrefCount + " cvObjectXref CvDatabase-> " + cvObjectXref.getCvDatabase() );
-            log.info( xrefCount + " cvObjectXref CvXref Qualifier-> " + cvObjectXref.getCvXrefQualifier() );
-            log.info( xrefCount + " cvObjectXref CvXref PrimaryId-> " + cvObjectXref.getPrimaryId() );
+        for ( CvObjectXref cvObjectXref : xrefs ) {
+            log.debug( xrefCount + " cvObjectXref CvDatabase-> " + cvObjectXref.getCvDatabase() );
+            log.debug( xrefCount + " cvObjectXref CvXref Qualifier-> " + cvObjectXref.getCvXrefQualifier() );
+            log.debug( xrefCount + " cvObjectXref CvXref PrimaryId-> " + cvObjectXref.getPrimaryId() );
 
 
             xrefCount++;
@@ -172,10 +169,8 @@ public class CvObjectOntologyBuilderTest {
 
         Collection<CvObjectAlias> aliases = cvObject.getAliases();
         int aliasCount = 1;
-        for ( Iterator<CvObjectAlias> cvObjectAliasIterator = aliases.iterator(); cvObjectAliasIterator.hasNext(); ) {
-            CvObjectAlias cvObjectAlias = cvObjectAliasIterator.next();
-
-            log.info( aliasCount + " cvObjectAlias-> " + cvObjectAlias.getName() + "   " + cvObjectAlias.getParent().getShortLabel() );
+        for ( CvObjectAlias cvObjectAlias : aliases ) {
+            log.debug( aliasCount + " cvObjectAlias-> " + cvObjectAlias.getName() + "   " + cvObjectAlias.getParent().getShortLabel() );
 
         } //end for
 

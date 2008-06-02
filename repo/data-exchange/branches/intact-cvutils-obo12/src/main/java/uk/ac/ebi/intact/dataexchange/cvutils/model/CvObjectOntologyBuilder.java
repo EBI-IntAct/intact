@@ -32,11 +32,14 @@ import java.util.regex.Matcher;
 
 
 /**
- * TODO comment that class header
+ * Contains methods to build the CvObject from OBOSession object. Basically
+ * iterates through all the terms in the OBO file and converts all the valid
+ * terms into CvObject
+ *
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 public class CvObjectOntologyBuilder{
 

@@ -36,11 +36,11 @@ import java.util.List;
 
 
 /**
- * TODO comment that class header
+ * Test class for CvUpdater
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since 2.0.1-SNAPSHOT
+ * @since 2.0.1
  */
 
 public class CvUpdaterTest extends IntactBasicTestCase {
