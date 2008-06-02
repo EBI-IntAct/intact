@@ -28,7 +28,7 @@ import org.obo.datamodel.impl.*;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.DownloadCvsExtended;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.CvExporter;
 import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.model.CvInteraction;
 import uk.ac.ebi.intact.model.CvObject;
@@ -47,10 +47,10 @@ import java.util.List;
  * @version $Id$
  * @since 2.0.1
  */
-public class DownloadCvsExtendedTest extends IntactBasicTestCase {
+public class CvExporterTest extends IntactBasicTestCase {
 
     //initialize logger
-    protected final static Logger log = Logger.getLogger( DownloadCvsExtendedTest.class );
+    protected final static Logger log = Logger.getLogger( CvExporterTest.class );
 
     private List<CvDagObject> allCvs;
 
@@ -58,7 +58,7 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
     public void prepareCvs() throws OBOParseException, IOException, PsiLoaderException, IntactTransactionException {
 
 
-        URL url = DownloadCvsExtendedTest.class.getResource( "/psi-mi25.obo" );
+        URL url = CvExporterTest.class.getResource( "/psi-mi25.obo" );
         log.info( "url " + url );
 
         OBOSession oboSession = OboUtils.createOBOSession( url );
@@ -91,7 +91,7 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
 
     @Test
     public void testCv2OBORoundTrip() throws OBOParseException, IOException {
-        URL url = DownloadCvsExtendedTest.class.getResource( "/psi-mi25.obo" );
+        URL url = CvExporterTest.class.getResource( "/psi-mi25.obo" );
         log.info( "url " + url );
 
         /**
@@ -110,7 +110,7 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
         OBOObject readOBOObj = ( OBOObject ) oboSession.getObject( "MI:0244" );
         CvObject cvObject = ontologyBuilder.toCvObject( readOBOObj );
 
-        DownloadCvsExtended downloadCv = new DownloadCvsExtended();
+        CvExporter downloadCv = new CvExporter();
         OBOObject createdOBOObj = downloadCv.convertCv2OBO( cvObject );
 
         Assert.assertEquals( readOBOObj.getID(), createdOBOObj.getID() );
@@ -125,7 +125,7 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
 
     @Test
     public void testAllCvs() throws DataAdapterException, IOException {
-        DownloadCvsExtended downloadCv = new DownloadCvsExtended();
+        CvExporter downloadCv = new CvExporter();
 
         log.info( "From Test all : " + allCvs.size() );
         OBOSession oboSession = downloadCv.convertCvList2OBOSession( allCvs );
@@ -141,7 +141,7 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
     // @Test
     public void testSimpleCv() throws DataAdapterException, IOException {
 
-        DownloadCvsExtended downloadCv = new DownloadCvsExtended();
+        CvExporter downloadCv = new CvExporter();
         OBOClass obj1 = new OBOClassImpl( "molecular interaction", "MI:000" );
         obj1.setDefinition( "Controlled vocabularies originally created for protein protein interactions, extended to other molecules interactions [PMID:14755292]" );
 
@@ -165,13 +165,13 @@ public class DownloadCvsExtendedTest extends IntactBasicTestCase {
 
         obj1.addChild( linkToObj2 );
 
-        DownloadCvsExtended.getOboSession().addObject( obj1 );
-        DownloadCvsExtended.getOboSession().addObject( obj2 );
+        CvExporter.getOboSession().addObject( obj1 );
+        CvExporter.getOboSession().addObject( obj2 );
 
         File tempDir = new File( "temp" );
         tempDir.mkdir();
         File outFile = File.createTempFile( "test", ".obo" );
-        downloadCv.writeOBOFile( DownloadCvsExtended.getOboSession(), outFile );
+        downloadCv.writeOBOFile( CvExporter.getOboSession(), outFile );
 
 
     }//end method
