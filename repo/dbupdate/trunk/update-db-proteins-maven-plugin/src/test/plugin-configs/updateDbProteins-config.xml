@@ -10,6 +10,7 @@
                 <artifactId>update-db-proteins-maven-plugin</artifactId>
                 <configuration>
                     <hibernateConfig>target/hibernate/config/hibernate.cfg.xml</hibernateConfig>
+                    <reportsDir>target</reportsDir>
                 </configuration>
 
                 <!--<executions>-->
