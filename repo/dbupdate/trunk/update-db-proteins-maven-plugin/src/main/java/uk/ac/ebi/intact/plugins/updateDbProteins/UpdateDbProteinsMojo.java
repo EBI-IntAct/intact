@@ -23,9 +23,11 @@ import uk.ac.ebi.intact.dbupdate.prot.ProteinUpdateProcessorConfig;
 import uk.ac.ebi.intact.dbupdate.prot.report.FileReportHandler;
 import uk.ac.ebi.intact.dbupdate.prot.report.UpdateReportHandler;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
+import uk.ac.ebi.intact.util.DebugUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * Example mojo. This mojo is executed when the goal "mygoal" is called.
@@ -89,8 +91,20 @@ public class UpdateDbProteinsMojo
         configUpdate.setDeleteSpliceVariantsWithoutInteractions(deleteSpliceVarsWithoutInteractions);
         configUpdate.setProcessBatchSize(batchSize);
 
+        PrintStream ps = new PrintStream(new File(reportsDir, "counts.txt"));
+        ps.println("Counts before update");
+        ps.println("--------------------");
+        DebugUtil.printDatabaseCounts(ps);
+        ps.flush();
+
+
         ProteinUpdateProcessor protUpdateProcessor = new ProteinUpdateProcessor(configUpdate);
         protUpdateProcessor.updateAll();
+
+        ps.println("\nCounts after update");
+        ps.println("---------------------");
+        DebugUtil.printDatabaseCounts(ps);
+        ps.flush();
     }
 
     public MavenProject getProject() {
