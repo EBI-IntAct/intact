@@ -40,6 +40,11 @@ public class UniprotRemoteService extends AbstractUniprotService {
      * Sets up a logger for that class.
      */
     public static final Log log = LogFactory.getLog( UniprotRemoteService.class );
+    private UniProtRemoteServiceFactory uniprotRemoteServiceFactory;
+
+    public UniprotRemoteService() {
+        uniprotRemoteServiceFactory = new UniProtRemoteServiceFactory();
+    }
 
     public Collection<UniprotProtein> retrieve( String ac ) {
 
@@ -103,9 +108,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
         if ( IdentifierChecker.isSpliceVariantId( ac ) || IdentifierChecker.isFeatureChainId( ac ) ) {
 
             // we only use this search for splice variants and feature chains
-            UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
             Query query = UniProtQueryBuilder.buildFullTextSearch( ac );
-            UniProtQueryService uniProtQueryService = factory.getUniProtQueryService();
+            UniProtQueryService uniProtQueryService = uniprotRemoteServiceFactory.getUniProtQueryService();
             iterator = uniProtQueryService.getEntryIterator( query );
 
         } else {
