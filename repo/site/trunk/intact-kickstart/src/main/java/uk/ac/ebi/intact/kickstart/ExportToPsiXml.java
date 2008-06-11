@@ -53,9 +53,6 @@ public class ExportToPsiXml {
         // The DaoFactory is the central access point to all the DAOs (Data Access Objects)
         DaoFactory daoFactory = dataContext.getDaoFactory();
 
-        // We need to begin a transaction
-        dataContext.beginTransaction();
-
         // We want to export the interactions from a publication (e.g. 16469704)
         Publication publication = daoFactory.getPublicationDao().getByShortLabel("16469704");
 
@@ -88,7 +85,5 @@ public class ExportToPsiXml {
         System.out.println("\n\nPSI-XML Formatted output:\n\n");
         System.out.println(writer);
 
-        // And don't forget to commit the transaction
-        dataContext.commitTransaction();
     }
 }
