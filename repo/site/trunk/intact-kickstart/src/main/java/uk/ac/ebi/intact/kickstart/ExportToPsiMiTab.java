@@ -49,7 +49,7 @@ public class ExportToPsiMiTab {
         DataContext dataContext = intactContext.getDataContext();
 
         // We need to begin a transaction
-        dataContext.beginTransaction();
+        //dataContext.beginTransaction();
 
         // When exporting, we need to create an IntactEntry object, which contains the interactions
         // and all the related information (e.g. interactors, experiments, features...) that we want
@@ -60,8 +60,8 @@ public class ExportToPsiMiTab {
         // but is a member of the PSI-MI model (IntactEntry is for the Intact model)
         EntrySet entrySet = PsiExchange.exportToEntrySet(intactEntry);
 
-        // And don't forget to commit the transaction
-        dataContext.commitTransaction();
+       // And don't forget to commit the transaction
+       // dataContext.commitTransaction();
 
         // Setup a interaction expansion strategy that is going to transform n-ary interactions into binaries using
         // the spoke expansion algorithm

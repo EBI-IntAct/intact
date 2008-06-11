@@ -21,6 +21,7 @@ import psidev.psi.mi.search.Searcher;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 
 import java.io.InputStream;
+import java.net.URL;
 
 import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
 
@@ -36,6 +37,8 @@ public class IndexingAndSearchingPsiMiTab {
 
         // Load a PSI-MITAB2.5 file stored locally
         InputStream psimitabFileStream = IndexingAndSearchingPsiMiTab.class.getResourceAsStream("/16469705.txt");
+
+
 
         // The next statement creates a Lucene index in memory.
         // Use the alternative Searcher.buildIndex(File...) to create indexes in filesystem directories,
