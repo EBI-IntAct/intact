@@ -120,8 +120,7 @@ public class UniprotRemoteService extends AbstractUniprotService {
     }
 
     private Iterator<UniProtEntry> getUniProtEntryForProteinEntry( String ac ) {
-        UniProtRemoteServiceFactory factory = new UniProtRemoteServiceFactory();
-        UniProtQueryService uniProtQueryService = factory.getUniProtQueryService();
+        UniProtQueryService uniProtQueryService = uniprotRemoteServiceFactory.getUniProtQueryService();
         // the Lucene field identifier copes with primary and secondary ACs.
 //        String query = "identifier:" + ac;
 
