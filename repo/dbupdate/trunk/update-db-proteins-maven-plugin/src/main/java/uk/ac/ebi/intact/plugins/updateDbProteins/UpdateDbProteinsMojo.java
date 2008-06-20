@@ -78,6 +78,11 @@ public class UpdateDbProteinsMojo
      */
     public int batchSize = 100;
 
+    /**
+     * @parameter
+     */
+    public int stepSize = 50;
+
 
     /**
      * Main execution method, which is called after hibernate has been initialized
@@ -90,6 +95,7 @@ public class UpdateDbProteinsMojo
         configUpdate.setFixDuplicates(fixDuplicates);
         configUpdate.setDeleteSpliceVariantsWithoutInteractions(deleteSpliceVarsWithoutInteractions);
         configUpdate.setProcessBatchSize(batchSize);
+        configUpdate.setProcessStepSize(stepSize);
 
         PrintStream ps = new PrintStream(new File(reportsDir, "counts.txt"));
         ps.println("Counts before update");
