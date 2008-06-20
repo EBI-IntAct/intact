@@ -14,57 +14,50 @@ DEFINE intactIndexTablespace        = INTACT_TAB
 -- ZPRO
 -- DEFINE intactIndexTablespace        = INTACT_IDX
 
+
 PROMPT *********************************************************************************/
 PROMPT "Creating new table ia_confidence..."
 @010_create_tables.sql
 
+
 PROMPT *********************************************************************************/
 PROMPT "Creating audit tables for new tables..."
-@050_create_audit_tables.sql
+@020_create_audit_table.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Adding new field in ia_controlledvocab..."
+PROMPT "Create audit triggers for the parameter tables..."
 PROMPT
-@100_update_cv_table.sql
+@030_create_audit_trigger.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Updating ia_controlledvocab audit table..."
+PROMPT "Add indexes for the parameters..."
 PROMPT
-@110_update_cv_audit_table.sql
+@040_add_index.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Updating ia_controlledvocab audit trigger..."
+PROMPT "Update the mi_identifier column in ia_controlledvocab table"
 PROMPT
-@120_create_triggers.sql
+
+-- TODO 050_rename_identifier_column.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Updating MI identifier in table ia_controlledvocab..."
+PROMPT "Update the data stored in ia_controlledvocab.identifier"
 PROMPT
-@130_update_mi_identifier.sql
+
+-- TODO 060_update_identifier_column.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Add index on MI identifier..."
+PROMPT "Update the length of the dbi_key and dbi_value in the table ia_db_info"
 PROMPT
-@140_add_index.sql
 
+-- TODO 
 
-PROMPT *********************************************************************************/
-PROMPT "Creating public synonyms..."
-PROMPT
-@150_create_public_synonyms.sql
-
-
-PROMPT *********************************************************************************/
-PROMPT "Updating privileges..."
-PROMPT
-@160_update_privileges.sql
-
-
+-- TODO 070_update_db_info_columns.sql
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 1.9.0"
 PROMPT
