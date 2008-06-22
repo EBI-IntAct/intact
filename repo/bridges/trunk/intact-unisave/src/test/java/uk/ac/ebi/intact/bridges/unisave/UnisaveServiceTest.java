@@ -20,7 +20,7 @@ public class UnisaveServiceTest {
         UnisaveService service = new UnisaveService();
         final List<EntryVersionInfo> versions = service.getVersions( "P12345", false );
         Assert.assertNotNull( versions );
-        Assert.assertEquals( 22, versions.size() );
+        Assert.assertEquals( 52, versions.size() );
     }    
 
     @Test
