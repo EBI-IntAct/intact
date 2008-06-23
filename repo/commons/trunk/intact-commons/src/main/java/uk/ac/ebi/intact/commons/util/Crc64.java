@@ -3,7 +3,7 @@ Copyright (c) 2002 The European Bioinformatics Institute, and others.
 All rights reserved. Please see the file LICENSE
 in the root directory of this distribution.
 */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 /**
  * Crc64 checksum computation.
@@ -15,7 +15,6 @@ package uk.ac.ebi.intact.util;
 /**
  * Crc64 checksum computation.
  */
-@Deprecated
 public abstract class Crc64 {
 
     private static long _crc64Array [] = new long [256];
@@ -64,4 +63,3 @@ public abstract class Crc64 {
         return crc64.toString();
     }
 }
-

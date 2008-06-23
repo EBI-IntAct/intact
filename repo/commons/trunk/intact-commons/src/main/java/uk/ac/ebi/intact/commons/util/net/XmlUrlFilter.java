@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util.filter;
+package uk.ac.ebi.intact.commons.util.net;
 
 import java.io.IOException;
 import java.net.URL;

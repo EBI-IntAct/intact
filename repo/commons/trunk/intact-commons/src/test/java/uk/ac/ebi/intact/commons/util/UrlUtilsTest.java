@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
-import uk.ac.ebi.intact.util.filter.UrlFilter;
+import uk.ac.ebi.intact.commons.util.net.UrlFilter;
 
 import java.io.IOException;
 import java.io.File;

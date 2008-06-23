@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.commons.dataset;
 
 import static org.junit.Assert.*;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import java.net.URL;
 
@@ -11,6 +12,8 @@ import java.net.URL;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Ignore
+@Deprecated
 public class TestDatasetFactoryTest
 {
     

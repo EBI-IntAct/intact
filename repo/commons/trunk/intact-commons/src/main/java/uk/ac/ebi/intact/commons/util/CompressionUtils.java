@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,6 +21,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+
 /**
  * Various IntAct related utilities. If a pice of code is used more
  * than once, but does not really belong to a specific class, it
@@ -28,47 +29,11 @@ import java.util.zip.ZipOutputStream;
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk) et at.
  * @version $Id$
- *
- * @deprecated - when possible use CompressionUtils instead. The properties methods and equals methods
- * will be removed eventually
  */
-@Deprecated
-public class Utilities {
+public class CompressionUtils {
 
-    private Utilities() {
+    private CompressionUtils() {
         // no instantiable
-    }
-
-    /** Initialise parameters from the properties file.
-     @param aParameterName The file name of the properties file
-     from which to read.
-
-     This parameter must be given on the command line as
-     for example -Dconfig=pathname
-     */
-    public static Properties getProperties(String aParameterName) throws IOException
-    {
-
-        // get properties
-        Properties properties = new Properties();
-        FileInputStream in = new FileInputStream(System.getProperty(aParameterName));
-        properties.load(in);
-        in.close();
-
-        return properties;
-    }
-
-    /** compares two objects.
-     * This is a workaround for the case where o is null
-     * and o.equals(p) returns exceptions.
-     *
-     * @param o
-     * @param p
-     */
-    public static boolean equals(Object o, Object p){
-        if (o == p) return true;
-        if (null == o && null != p) return false;
-        return (o.equals(p));
     }
 
     /**
@@ -76,7 +41,7 @@ public class Utilities {
      * @param sourceFile the file to compress
      * @param destFile the zipped file
      * @param deleteOriginalFile if true, the original file is deleted and only the gzipped file remains
-     * @throws IOException thrown if there is a problem finding or writing the files
+     * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
     public static void gzip(File sourceFile, File destFile, boolean deleteOriginalFile) throws IOException
     {
@@ -110,7 +75,7 @@ public class Utilities {
      * @param sourceFiles         the files to include in the zip
      * @param destFile the zipped file
      * @param deleteOriginalFiles if true, the original file is deleted and only the gzipped file remains
-     * @throws IOException thrown if there is a problem finding or writing the files
+     * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
     public static void zip(File[] sourceFiles, File destFile, boolean deleteOriginalFiles) throws IOException
     {
@@ -242,5 +207,3 @@ public class Utilities {
 
 
 }
-
-

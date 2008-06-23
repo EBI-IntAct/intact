@@ -12,6 +12,7 @@ import java.net.URL;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Deprecated
 public class TestDatasetFactory
 {
     private TestDatasetFactory() {}
