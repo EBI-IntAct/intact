@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import uk.ac.ebi.intact.commons.util.net.UrlFilter;
 
@@ -32,7 +32,6 @@ import java.util.List;
  * @author Bruno Aranda (latest modification by $Author$)
  * @version $Revision$ $Date$
  */
-@Deprecated
 public class UrlUtils
 {
 
@@ -40,7 +39,7 @@ public class UrlUtils
      * Non-recursive listing of the files in a URL
      * @param folderUrl The folder to read
      * @return the lists of URLs
-     * @throws IOException
+     * @throws java.io.IOException
      */
     public static List<URL> listFilesFromFolderUrl(URL folderUrl) throws IOException
     {
@@ -53,7 +52,7 @@ public class UrlUtils
      * @param filter if you want to filter certain files
      * @param recursive whether the list is recursive or not (goes into directories)
      * @return the lists of URLs
-     * @throws IOException
+     * @throws java.io.IOException
      */
    public static List<URL> listFilesFromFolderUrl(URL folderUrl, UrlFilter filter, boolean recursive) throws IOException
    {

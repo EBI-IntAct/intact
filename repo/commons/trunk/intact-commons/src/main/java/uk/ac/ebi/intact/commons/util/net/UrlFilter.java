@@ -1,4 +1,4 @@
-package uk.ac.ebi.intact.util.filter;
+package uk.ac.ebi.intact.commons.util.net;
 
 import java.io.IOException;
 import java.net.URL;

@@ -10,6 +10,7 @@ import java.io.InputStream;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Deprecated
 public class DbUnitTestDatasetImpl extends TestDatasetImpl implements DbUnitTestDataset
 {
     private String formatType;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -27,7 +27,6 @@ import javax.crypto.SecretKey;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Deprecated
 public class DesEncrypter
 {
     private Cipher cypher;
@@ -55,7 +54,7 @@ public class DesEncrypter
      * @param str
      * @return
      */
-    public String encrypt(String str) 
+    public String encrypt(String str)
     {
         try
         {

@@ -11,6 +11,7 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Deprecated
 public class TestDatasetImpl implements TestDataset
 {
     private String id;

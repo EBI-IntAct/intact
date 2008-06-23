@@ -3,7 +3,7 @@
  * All rights reserved. Please see the file LICENSE
  * in the root directory of this distribution.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -16,7 +16,6 @@ import java.util.GregorianCalendar;
  * @version $Id$
  * @since <pre>30-Aug-2006</pre>
  */
-@Deprecated
 public class ElapsedTime
 {
 

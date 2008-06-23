@@ -1,6 +1,5 @@
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
-import static org.junit.Assert.*;
 import org.junit.*;
 
 /**

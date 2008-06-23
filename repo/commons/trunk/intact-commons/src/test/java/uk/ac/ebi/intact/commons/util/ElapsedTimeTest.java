@@ -4,7 +4,7 @@
  * in the root directory of this distribution.
  */
 
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import org.junit.Test;
 import org.junit.Before;

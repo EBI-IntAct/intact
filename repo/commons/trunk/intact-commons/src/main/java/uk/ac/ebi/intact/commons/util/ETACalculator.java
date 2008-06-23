@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.util;
+package uk.ac.ebi.intact.commons.util;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import uk.ac.ebi.intact.commons.util.ElapsedTime;
 
 /**
  * ETA (Estimated Time of Arrival) Calculator.
@@ -25,7 +26,6 @@ import org.apache.commons.logging.Log;
  * @version $Id$
  * @since 2.1
  */
-@Deprecated
 public class ETACalculator {
 
     private static final Log log = LogFactory.getLog( ETACalculator.class );
