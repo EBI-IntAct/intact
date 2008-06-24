@@ -15,12 +15,8 @@
  */
 package uk.ac.ebi.intact.commons.util.diff;
 
-import uk.ac.ebi.intact.commons.util.diff.diff_match_patch;
-import uk.ac.ebi.intact.commons.util.diff.Diff;
-
-import java.util.List;
 import java.util.LinkedList;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Compares Strings to find differences. This is kind of a wrapper of the diff_match_patch class
@@ -42,6 +38,9 @@ public class DiffCalculator {
     }
 
     public List<Diff> calculateDiffs(String str1, String str2, boolean checkLines) {
+        if (str1 == null) throw new NullPointerException("String 1 is null");
+        if (str2 == null) throw new NullPointerException("String 2 is null");
+
         final LinkedList<diff_match_patch.Diff> mainDiffs = diffMatchPatch.diff_main(str1, str2, checkLines);
 
         int globalIndexA = 0;
