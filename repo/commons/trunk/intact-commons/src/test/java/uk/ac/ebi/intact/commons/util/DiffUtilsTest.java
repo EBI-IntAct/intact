@@ -15,14 +15,11 @@
  */
 package uk.ac.ebi.intact.commons.util;
 
-import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Test;
 import uk.ac.ebi.intact.commons.util.diff.Diff;
 
 import java.util.List;
-import java.io.FileReader;
-import java.io.BufferedReader;
-import java.io.IOException;
 
 /**
  * TODO comment that class header
@@ -48,36 +45,6 @@ public class DiffUtilsTest {
         char sameCharIn2 = str2.charAt(indexIn2);
 
         Assert.assertEquals(charIn1, sameCharIn2);
-    }
-
-    @Test
-    public void calculateIndexShift333() throws Exception {
-        final String str1 = fileToString("/tmp/titin.txt");
-        final String str2 = fileToString("/tmp/titin2.txt");
-
-        final List<Diff> diffs = DiffUtils.diff(str1, str2);
-
-        for (Diff diff : diffs) {
-            System.out.println(diff);
-        }
-
-   }
-
-    private static String fileToString(String file) {
-        StringBuilder sb = new StringBuilder();
-        try {
-            BufferedReader in = new BufferedReader(new FileReader(file));
-            String str;
-            while ((str = in.readLine()) != null) {
-                str = str.replaceAll(" ", "");
-                str = str.replaceAll("\n", "");
-                sb.append(str);
-            }
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return sb.toString();
     }
 
     @Test
