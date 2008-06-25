@@ -67,4 +67,26 @@ public class DiffUtilsTest {
 
         DiffUtils.calculateIndexShift(diffs, 200);
     }
+
+    @Test
+    public void calculateIndexShift4() throws Exception {
+        final String str1 = "ABCD";
+        final String str2 = "ABCDZZZZ";
+
+        final List<Diff> diffs = DiffUtils.diff(str1, str2);
+
+        int indexIn2 = DiffUtils.calculateIndexShift(diffs, 2);
+        Assert.assertEquals(2, indexIn2);
+    }
+
+    @Test
+    public void calculateIndexShift5() throws Exception {
+        final String str1 = "ABCD";
+        final String str2 = "ABCZZZD";
+
+        final List<Diff> diffs = DiffUtils.diff(str1, str2);
+
+        int indexIn2 = DiffUtils.calculateIndexShift(diffs, 2);
+        Assert.assertEquals(2, indexIn2);
+    }
 }

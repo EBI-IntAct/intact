@@ -77,7 +77,7 @@ public class DiffUtils {
         int diffEnd = -1;
 
         for (Diff diff : diffs) {
-            int diffStart = diff.getIndexInString1();
+            int diffStart = (diff.getIndexInString1() > -1)? diff.getIndexInString1() : diff.getIndexInString2();
 
             final int diffLength = diff.getText().length();
             diffEnd = (diffStart == -1)? -1 : diffStart+diffLength-1;
@@ -104,7 +104,7 @@ public class DiffUtils {
             }
         }
 
-        if (diffEnd < originalIndex) {
+        if (diffEnd > -1 && diffEnd < originalIndex) {
             throw new IndexOutOfBoundsException("Passed original index is outside the expected range: "+originalIndex+" (max:"+diffEnd+")");
         }
 
