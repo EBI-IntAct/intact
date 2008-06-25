@@ -82,14 +82,24 @@ public class DiffUtils {
             final int diffLength = diff.getText().length();
             diffEnd = (diffStart == -1)? -1 : diffStart+diffLength-1;
 
-            if (diffStart <= index && diffEnd <= (index+ diffLength)) {
+            if (diffStart <= index && diffEnd < (index+ diffLength)) {
 
                 switch (diff.getOperation()) {
                     case INSERT:
                         index += diffLength;
                         break;
                     case DELETE:
-                        index -= diffLength;
+                        int newIndex = index-diffLength;
+
+                        if (newIndex > originalIndex)  {
+                           index = newIndex;
+                        } else if (newIndex == originalIndex) {
+                           index = -1; 
+                        } else if (newIndex < index) {
+                           index = Math.max(-1, newIndex);
+                        } else {
+                            index = -1;
+                        }
                 }
 
             } else if (diffStart <= index && diffEnd > (index+diffLength)) {
