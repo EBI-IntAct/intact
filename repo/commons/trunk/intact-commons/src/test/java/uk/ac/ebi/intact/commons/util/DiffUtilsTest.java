@@ -114,12 +114,23 @@ public class DiffUtilsTest {
 
     @Test
     public void calculateIndexShift8() throws Exception {
-        String str1 = "ABCDEF";
-        String str2 = "ZABCDEF";
+        String str1 = "ABC";
+        String str2 = "AZZD";
 
         final List<Diff> diffs = DiffUtils.diff(str1, str2);
 
         int indexIn2 = DiffUtils.calculateIndexShift(diffs, 2);
-        Assert.assertEquals(3, indexIn2);
+        Assert.assertEquals(-1, indexIn2);
+    }
+
+    @Test
+    public void calculateIndexShift9() throws Exception {
+        String str1 = "ABCDEF";
+        String str2 = "ABZDEF";
+
+        final List<Diff> diffs = DiffUtils.diff(str1, str2);
+
+        int indexIn2 = DiffUtils.calculateIndexShift(diffs, 2);
+        Assert.assertEquals(-1, indexIn2);
     }
 }
