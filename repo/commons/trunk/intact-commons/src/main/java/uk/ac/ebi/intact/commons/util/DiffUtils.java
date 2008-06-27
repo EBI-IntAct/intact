@@ -63,61 +63,64 @@ public class DiffUtils {
 
     /**
      * Taking into account the differences, calculates what the index should be in the
-     * second string by providing an index for the first string.
+     * second string by providing an index for the first string. <br/>
+     * The algorithm used: if the originalIndex is contained by any of the deleted regions
+     * in the string 1, then -1 is returned (that bit was deleted). If not, the shifted index will be the difference
+     * between amount of insertions and amount of deletions before and including the original index.<br/>
      * @param diffs Differences for string1 and string2
      * @param originalIndex The index in string1
-     * @return The index in string2, corresponding to the index in string1
+     * @return The index in string2, corresponding to the index in string1 computing the differences
      */
-    public static int calculateIndexShift(List<Diff> diffs, int originalIndex) {
+    public static int calculateIndexShift(List<Diff> diffs, final int originalIndex) {
         if (diffs == null || diffs.isEmpty()) {
             throw new IllegalArgumentException("List of Diffs is null or empty");
         }
 
-        int index = originalIndex;
+        Integer shiftedIndex = null;
+
+        int accummulatedDeletions = 0;
+        int accummulatedInsertions = 0;
+
         int diffEnd = -1;
 
         for (Diff diff : diffs) {
-            int diffStart = (diff.getIndexInString1() > -1)? diff.getIndexInString1() : diff.getIndexInString2();
 
+            int diffStart = diff.getIndexInString1();
             final int diffLength = diff.getText().length();
-            diffEnd = (diffStart == -1)? -1 : diffStart+diffLength-1;
+            diffEnd = diffStart + diffLength - 1;
 
-            if (diffStart <= index && diffEnd < (index+ diffLength)) {
-
-                switch (diff.getOperation()) {
-                    case INSERT:
-                        index += diffLength;
-                        break;
-                    case DELETE:
-                        int newIndex = index-diffLength;
-
-                        if (newIndex > originalIndex)  {
-                           index = newIndex;
-                        } else if (newIndex == originalIndex) {
-                           index = -1; 
-                        } else if (newIndex < index) {
-                           index = Math.max(-1, newIndex);
-                        } else {
-                            index = -1;
-                        }
+            // we check the diff operation and behave accordingly. The iteration through diffs
+            // is going to break when the original index is within the current diff and this diff
+            // is an EQUAL.
+            if (diff.getOperation() == Operation.EQUAL) {
+                // if the original index is within the diff region, we stop the counting loop
+                if (originalIndex >= diffStart && originalIndex <= diffEnd) {
+                    break;
                 }
-
-            } else if (diffStart <= index && diffEnd > (index+diffLength)) {
-
-                switch (diff.getOperation()) {
-                    case INSERT:
-                        index += ((index+ diffLength)-diffStart);
-                        break;
-                    case DELETE:
-                        return -1;
+            } else if (diff.getOperation() == Operation.DELETE) {
+                // if the original index is within the diff region, the shifted index will be -1 (deleted)
+                if (originalIndex >= diffStart && originalIndex <= diffEnd) {
+                    shiftedIndex = -1;
+                } else { // otherwise, we just count the deletions
+                    accummulatedDeletions += diffLength;
                 }
+            } else { // Operation.INSERT
+                // count the insertions
+                accummulatedInsertions += diffLength;
             }
         }
 
-        if (diffEnd > -1 && diffEnd < originalIndex) {
-            throw new IndexOutOfBoundsException("Passed original index is outside the expected range: "+originalIndex+" (max:"+diffEnd+")");
+        if (shiftedIndex == null) {
+            // if the original index is higher than the diff end, throw an exception.
+            // this may happen after iterating through all the loops and never breaking or returning -1
+            if (originalIndex > diffEnd) {
+                throw new IndexOutOfBoundsException("The original index passed was outside the diffs ranges: " + originalIndex + " (max allowed " + diffEnd + ")");
+            }
+
+            // the shifted index is the result of the sum of the original index plus the difference between insertions and deletions
+            shiftedIndex = originalIndex + (accummulatedInsertions - accummulatedDeletions);
         }
 
-        return index;
+        return shiftedIndex;
     }
 }
