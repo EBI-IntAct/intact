@@ -41,23 +41,22 @@ PROMPT *************************************************************************
 PROMPT "Update the mi_identifier column in ia_controlledvocab table"
 PROMPT
 
--- TODO 050_rename_identifier_column.sql
+@050_rename_cv_identifier_field.sql
 
 
 PROMPT *********************************************************************************/
 PROMPT "Update the data stored in ia_controlledvocab.identifier"
 PROMPT
 
--- TODO 060_update_identifier_column.sql
+@060_update_cv_identifier_field.sql
 
 
 PROMPT *********************************************************************************/
 PROMPT "Update the length of the dbi_key and dbi_value in the table ia_db_info"
 PROMPT
 
--- TODO 
+@070_update_db_info_table.sql
 
--- TODO 070_update_db_info_columns.sql
 PROMPT *********************************************************************************/
 PROMPT "Update schema version to 1.9.0"
 PROMPT
