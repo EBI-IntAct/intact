@@ -127,13 +127,13 @@ public class IntactCitationFactory {
             c = citProxy.getCitationById( pubmedId );
         } catch ( Exception e ) {
 
-            if ( e.getMessage().indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
+            final String msg = e.getMessage();
+            if ( msg != null && msg.indexOf( "uk.ac.ebi.cdb.webservice.DataNotFoundException" ) != -1 ) {
                 throw new PublicationNotFoundException( "The PubMed ID " + pubmedId + " could not be found." );
             }
 
             // otherwise throw the original exception
-            e.printStackTrace();
-            throw new UnexpectedException( "An unexpected error occured (ie. " + e.getMessage() + ").", e );
+            throw new UnexpectedException( "An unexpected error occured (ie. " + msg + ").", e );
         }
 
         // retreive information
