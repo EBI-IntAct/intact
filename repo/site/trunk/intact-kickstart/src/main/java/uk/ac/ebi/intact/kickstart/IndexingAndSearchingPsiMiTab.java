@@ -23,7 +23,7 @@ import psidev.psi.mi.tab.model.BinaryInteraction;
 import java.io.InputStream;
 import java.net.URL;
 
-import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
 /**
  * Example of how to index and search PSI-MITAB2.5 data.
