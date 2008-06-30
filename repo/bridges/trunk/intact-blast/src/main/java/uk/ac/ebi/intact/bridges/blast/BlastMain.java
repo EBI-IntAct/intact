@@ -30,6 +30,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * 18 Sep 2007
  * </pre>
  */
+@Deprecated
 public class BlastMain {
 
 	/**
