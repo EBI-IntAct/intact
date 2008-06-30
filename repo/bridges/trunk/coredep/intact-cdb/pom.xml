@@ -28,12 +28,12 @@
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
         </dependency>
-        <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire-jsr181-api</artifactId>
-        </dependency>
 
         <!-- 3rd party -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
