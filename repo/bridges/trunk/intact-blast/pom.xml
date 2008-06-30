@@ -1,5 +1,7 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
 		<artifactId>bridges-master</artifactId>
 		<groupId>uk.ac.ebi.intact.bridges</groupId>
 		<version>2.0.3-SNAPSHOT</version>
@@ -20,7 +22,10 @@
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
+
+                <!-- TODO Update this to use JAXWS instead of AXIS !!! -->
+
+                <groupId>org.codehaus.mojo</groupId>
 				<artifactId>axistools-maven-plugin</artifactId>
 				<version>1.0</version>
 				<configuration>
@@ -32,9 +37,6 @@
 					<generatePackage>
 						uk.ac.ebi.intact.bridges.blast.generated
 					</generatePackage>
-					<!-- <packageSpace>
-						uk.ac.ebi.intact.bridges.blast.generated
-						</packageSpace> -->
 					<testCases>false</testCases>
 					<serverSide>false</serverSide>
 					<subPackageByFileName>false</subPackageByFileName>
@@ -52,7 +54,14 @@
 
 	<dependencies>
 
-		<!-- for web service -->
+        <!-- Blast parser -->
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>blast-mapping-parser</artifactId>
+            <version>2.0.3-SNAPSHOT</version>
+        </dependency>
+        
+        <!-- Axis -->
 		<dependency>
 			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
@@ -84,11 +93,6 @@
 			<version>0.4</version>
 		</dependency>
 		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.0.4</version>
-		</dependency>
-		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
 			<version>1.4</version>
@@ -99,24 +103,17 @@
 			<version>1.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.3.1</version>
-		</dependency>
-
-		<!-- for the blast h2 db -->
+        <!-- 3rd party -->
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+        
+        <!-- for the blast h2 db -->
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<version>1.0.20070617</version>
-		</dependency>
-
-		<!-- for xml parser -->
-		<dependency>
-			<groupId>uk.ac.ebi.intact.bridges</groupId>
-			<artifactId>blast-mapping-parser</artifactId>
-			<version>2.0.3-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

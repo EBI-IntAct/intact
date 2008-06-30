@@ -23,21 +23,6 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxws-maven-plugin</artifactId>
-                <version>1.0-beta-1-EBI-20070310</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>wsimport</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>xfire</groupId>
-                        <artifactId>xfire-jsr181-api</artifactId>
-                        <version>1.0-M1</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
@@ -69,10 +54,6 @@
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire-jsr181-api</artifactId>
         </dependency>
     </dependencies>
 
