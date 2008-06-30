@@ -31,6 +31,7 @@
         <profile>
             <id>default-tools.jar</id>
             <activation>
+                <jdk>1.5</jdk>
                 <property>
                     <name>java.vendor</name>
                     <value>Sun Microsystems Inc.</value>
