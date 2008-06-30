@@ -13,8 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
 import uk.ac.ebi.intact.bridges.blast.client.BlastClientException;
 import uk.ac.ebi.intact.bridges.blast.jdbc.BlastJobEntity;
 import uk.ac.ebi.intact.bridges.blast.model.BlastResult;
@@ -155,7 +153,7 @@ public class BlastMain {
 	
 	private static File getTargetDirectory() {
 		String outputDirPath = BlastMain.class.getResource("/").getFile();
-		Assert.assertNotNull(outputDirPath);
+
 		File outputDir = new File(outputDirPath);
 		// we are in src/main/resources , move 3 up
 
@@ -172,9 +170,6 @@ public class BlastMain {
 		outputDir = new File(outputPath);
 		outputDir.mkdir();
 
-		Assert.assertNotNull(outputDir);
-		Assert.assertTrue(outputDir.getAbsolutePath(), outputDir.isDirectory());
-		Assert.assertEquals("target", outputDir.getName());
 		return outputDir;
 	}
 }
