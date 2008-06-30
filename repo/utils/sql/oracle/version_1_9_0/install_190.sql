@@ -16,6 +16,11 @@ DEFINE intactIndexTablespace        = INTACT_TAB
 
 
 PROMPT *********************************************************************************/
+PROMPT "Verifying current database schema version..."
+@005_check_schema_version.sql
+
+
+PROMPT *********************************************************************************/
 PROMPT "Creating new table ia_confidence..."
 @010_create_tables.sql
 
