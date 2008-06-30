@@ -138,7 +138,7 @@ public class BlastJobDaoTest {
         BlastJobEntity blastJob2 = new BlastJobEntity( "blastJobDaoTest2b", "P45678", "sequence2", BlastJobStatus.DONE, new File(
                 "test2b" ), Timestamp.valueOf( "2007-10-21 10:40:25" ) );
         blastJobDao.saveJobs( Arrays.asList( blastJob, blastJob1, blastJob2 ) );
-        List<BlastJobEntity> jobs = blastJobDao.getJobsByTimestamp( Timestamp.valueOf( "2007-9-13 10:40:25" ) );
+        List<BlastJobEntity> jobs = blastJobDao.getJobsByTimestamp( Timestamp.valueOf( "2007-09-13 10:40:25" ) );
 
         assertNotNull( jobs );
         assertEquals( 2, jobs.size() );
