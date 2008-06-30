@@ -31,6 +31,16 @@ PROMPT "Creating audit tables for new tables..."
 
 
 PROMPT *********************************************************************************/
+PROMPT "Creating grants on created tables..."
+@023_create_grants.sql
+
+
+PROMPT *********************************************************************************/
+PROMPT "Creating public synonyms for newly created tables..."
+@026_create_public_synonyms.sql
+
+
+PROMPT *********************************************************************************/
 PROMPT "Create audit triggers for the parameter tables..."
 PROMPT
 @030_create_audit_trigger.sql
@@ -47,6 +57,11 @@ PROMPT "Update the mi_identifier column in ia_controlledvocab table"
 PROMPT
 
 @050_rename_cv_identifier_field.sql
+
+
+PROMPT *********************************************************************************/
+PROMPT "Re-creating the trigger on ia_controlledvocab to reflect the field change..."
+@055_replace_trigger.sql
 
 
 PROMPT *********************************************************************************/
