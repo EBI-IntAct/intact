@@ -48,7 +48,6 @@
         </profile>
     </profiles>
 
-
     <dependencies>
         <!-- IntAct -->
         <dependency>
@@ -57,17 +56,21 @@
             <version>${pom.version}</version>
         </dependency>
 
-
         <!-- JAX-WS -->
         <dependency>
             <groupId>com.sun.xml.ws</groupId>
             <artifactId>jaxws-tools</artifactId>
         </dependency>
+
+        <!-- 3rd party -->
         <dependency>
-            <groupId>xfire</groupId>
-            <artifactId>xfire-jsr181-api</artifactId>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
         </dependency>
     </dependencies>
-
 
 </project>

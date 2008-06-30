@@ -29,7 +29,6 @@
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <version>2.4</version>
         </dependency>
 
         <!-- UniProt Remote API -->
@@ -70,6 +69,7 @@
             <artifactId>sptr</artifactId>
             <version>(9.0,]</version>
         </dependency>
+        
         <!-- Caching techology-->
         <dependency>
             <groupId>net.sf.ehcache</groupId>
