@@ -1,6 +1,4 @@
 package uk.ac.ebi.intact.bridges.blast.client;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +27,7 @@ import uk.ac.ebi.intact.bridges.blast.model.UniprotAc;
  * 17 Sep 2007
  * </pre>
  */
+@Deprecated
 public class BlastClientMain {
 
 	/**
@@ -55,14 +54,13 @@ public class BlastClientMain {
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
-					fail();
+					e.printStackTrace();
 				}
 				// check for the job status
 				status = bc.checkStatus(job);
 			}
 			if (BlastJobStatus.DONE.equals(status)) {
 				BlastOutput result = bc.getResult(job); // whe done, get the results
-				assertNotNull(result);
 				System.out.println(job);
 			} else {
 				System.out.println("Error with job: " + job );
