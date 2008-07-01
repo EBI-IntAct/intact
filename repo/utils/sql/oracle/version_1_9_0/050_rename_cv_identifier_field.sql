@@ -1,8 +1,8 @@
-PROMPT "Renaming ia_controlledvocab.mi_identifier to identifier"
+PROMPT "Renaming ia_controlledvocab.mi_identifier to cv_identifier"
 ALTER TABLE ia_controlledvocab
-RENAME COLUMN mi_identifier TO identifier;
+RENAME COLUMN mi_identifier TO cv_identifier;
 
 
-PROMPT "Increase field length of ia_controlledvocab.identifier to 30"
+PROMPT "Increase field length of ia_controlledvocab.cv_identifier to 30"
 ALTER TABLE ia_controlledvocab
-MODIFY identifier VARCHAR2(30);
+MODIFY cv_identifier VARCHAR2(30);
