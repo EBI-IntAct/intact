@@ -172,7 +172,7 @@ BEGIN
 
       ELSE
 
-          DBMS_OUTPUT.PUT_LINE('   '''|| cv_rec.shortlabel ||''' has already an identifier: '|| cv_rec.identifier );
+          DBMS_OUTPUT.PUT_LINE('   '''|| cv_rec.shortlabel ||''' has already an identifier: '|| cv_rec.cv_identifier );
 
       END IF; -- identifier not null
 
