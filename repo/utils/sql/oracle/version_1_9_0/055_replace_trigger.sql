@@ -29,7 +29,7 @@ begin
 		, shortlabel
 		, fullname
 		, created_user
-		, cv_identifier
+		, identifier
 		)
 	values
 		( l_event
@@ -43,7 +43,7 @@ begin
 		, :old.shortlabel
 		, :old.fullname
 		, :old.created_user
-		, :old.cv_identifier
+		, :old.identifier
 		);
 end;
 /

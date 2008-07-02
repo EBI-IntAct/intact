@@ -56,7 +56,7 @@ PROMPT *************************************************************************
 PROMPT "Update the mi_identifier column in ia_controlledvocab table"
 PROMPT
 
-@050_rename_cv_identifier_field.sql
+@050_rename_identifier_field.sql
 
 
 PROMPT *********************************************************************************/
@@ -68,7 +68,7 @@ PROMPT *************************************************************************
 PROMPT "Update the data stored in ia_controlledvocab.identifier"
 PROMPT
 
-@060_update_cv_identifier_field.sql
+@060_update_identifier_field.sql
 
 
 PROMPT *********************************************************************************/

@@ -8,7 +8,7 @@
 -- author: Samuel Kerrien (skerrien@ebi.ac.uk)
 -- date:   20080-06-30
 
--- UPDATE ia_controlledvocab SET cv_identifier = NULL;
+-- UPDATE ia_controlledvocab SET identifier = NULL;
 
 set serveroutput on
 
@@ -38,10 +38,10 @@ DECLARE
 
     -- Cursor on all CvObjects
     CURSOR cv_cursor IS
-        SELECT ac, shortlabel, objclass, cv_identifier
+        SELECT ac, shortlabel, objclass, identifier
         FROM ia_controlledvocab
         order by objclass, shortlabel
-    FOR UPDATE OF cv_identifier WAIT 30; -- wait 30 sec. before to throw exception is row is not released.
+    FOR UPDATE OF identifier WAIT 30; -- wait 30 sec. before to throw exception is row is not released.
 
     -- Cursor on identty xref of Cv objects
     CURSOR cv_identity_cursor (p_cv_ac     ia_controlledvocab.ac%TYPE,
@@ -93,7 +93,7 @@ BEGIN
       DBMS_OUTPUT.PUT_LINE( chr(10)||'Processing '|| cv_rec.objclass ||': '|| cv_rec.shortlabel ||'');
       v_count_terms := v_count_terms + 1;
 
-      IF ( cv_rec.cv_identifier IS NULL) THEN
+      IF ( cv_rec.identifier IS NULL) THEN
 
           DBMS_OUTPUT.PUT_LINE( '   ' || cv_rec.shortlabel || ' doesn''t have an identifier. Looking for its identity...');
 
@@ -123,7 +123,7 @@ BEGIN
               DBMS_OUTPUT.PUT_LINE('   Updating '''|| cv_rec.shortlabel ||''' with MI identifier: '|| v_psi_identifier );
 
               UPDATE ia_controlledvocab
-              SET    cv_identifier = v_psi_identifier
+              SET    identifier = v_psi_identifier
               WHERE CURRENT OF cv_cursor;
 
               v_count_mi_update := v_count_mi_update + 1;
@@ -133,7 +133,7 @@ BEGIN
               DBMS_OUTPUT.PUT_LINE('   Updating '''|| cv_rec.shortlabel ||''' with IntAct identifier: '|| v_ia_identifier );
 
               UPDATE ia_controlledvocab
-              SET    cv_identifier = v_ia_identifier
+              SET    identifier = v_ia_identifier
               WHERE CURRENT OF cv_cursor;
 
               v_count_ia_update := v_count_ia_update + 1;
@@ -144,7 +144,7 @@ BEGIN
 
                   DBMS_OUTPUT.PUT_LINE('   Updating '''|| cv_rec.shortlabel ||''' with non MI identifier: '|| v_identifier );
                   UPDATE ia_controlledvocab
-                  SET    cv_identifier = v_identifier
+                  SET    identifier = v_identifier
                   WHERE CURRENT OF cv_cursor;
 
                   v_count_other_update := v_count_other_update + 1;
@@ -152,7 +152,7 @@ BEGIN
               ELSE
 
                   UPDATE ia_controlledvocab
-                  SET    cv_identifier = v_identifier
+                  SET    identifier = v_identifier
                   WHERE CURRENT OF cv_cursor;
 
                   DBMS_OUTPUT.PUT_LINE('   Updating '''|| cv_rec.shortlabel ||''' with non MI identifier: '|| v_identifier || ' (chosen amongst many: found '|| v_count );
@@ -172,7 +172,7 @@ BEGIN
 
       ELSE
 
-          DBMS_OUTPUT.PUT_LINE('   '''|| cv_rec.shortlabel ||''' has already an identifier: '|| cv_rec.cv_identifier );
+          DBMS_OUTPUT.PUT_LINE('   '''|| cv_rec.shortlabel ||''' has already an identifier: '|| cv_rec.identifier );
 
       END IF; -- identifier not null
 
