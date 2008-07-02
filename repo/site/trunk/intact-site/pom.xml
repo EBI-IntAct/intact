@@ -33,6 +33,8 @@
         <jetty.context>site</jetty.context>
 
         <appRoot>/intact</appRoot>
+
+        <google.analytics.account>UA-672146</google.analytics.account>
     </properties>
 
     <build>
