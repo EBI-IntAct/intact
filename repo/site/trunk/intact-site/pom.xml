@@ -34,7 +34,7 @@
 
         <appRoot>/intact</appRoot>
 
-        <google.analytics.account>UA-672146</google.analytics.account>
+        <google.analytics.tracker>UA-672146-1</google.analytics.tracker>
     </properties>
 
     <build>

@@ -96,8 +96,8 @@
         <description>
             Google Analytics account
         </description>
-        <param-name>uk.ac.ebi.intact.GOOGLE_ANALYTICS_ACCOUNT</param-name>
-        <param-value>${google.analytics.account}</param-value>
+        <param-name>uk.ac.ebi.intact.GOOGLE_ANALYTICS_TRACKER</param-name>
+        <param-value>${google.analytics.tracker}</param-value>
     </context-param>
 
     <!-- JSF (MyFaces) Params... -->
