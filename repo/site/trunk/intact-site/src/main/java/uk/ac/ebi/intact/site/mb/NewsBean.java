@@ -20,8 +20,8 @@ import com.sun.syndication.io.FeedException;
 import uk.ac.ebi.faces.component.news.NewsUtil;
 import uk.ac.ebi.faces.component.news.FeedType;
 import uk.ac.ebi.faces.DataLoadingException;
-import uk.ac.ebi.faces.model.News;
-import uk.ac.ebi.faces.model.NewsItem;
+import uk.ac.ebi.faces.model.news.News;
+import uk.ac.ebi.faces.model.news.NewsItem;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -50,16 +50,8 @@ public class NewsBean implements Serializable
 
         String newsXml = FacesContext.getCurrentInstance().getExternalContext().getInitParameter(NEWS_URL);
 
-        try
-        {
-            newsObject = NewsUtil.readNews(newsXml);
-            news = newsObject.getNewsItem();
-        }
-        catch (DataLoadingException e)
-        {
-            e.printStackTrace();
-            news = new ArrayList<NewsItem>();
-        }
+        newsObject = NewsUtil.readNews(newsXml);
+        news = newsObject.getNewsItem();
 
         // urgent news
         urgentNews = new ArrayList<NewsItem>();

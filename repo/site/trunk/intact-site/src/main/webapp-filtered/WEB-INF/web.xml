@@ -92,6 +92,13 @@
         <param-name>uk.ac.ebi.intact.SEARCH_WS_URL</param-name>
         <param-value>search-ws/search?wsdl</param-value>
     </context-param>
+    <context-param>
+        <description>
+            Google Analytics account
+        </description>
+        <param-name>uk.ac.ebi.intact.GOOGLE_ANALYTICS_ACCOUNT</param-name>
+        <param-value>${google.analytics.account}</param-value>
+    </context-param>
 
     <!-- JSF (MyFaces) Params... -->
 
