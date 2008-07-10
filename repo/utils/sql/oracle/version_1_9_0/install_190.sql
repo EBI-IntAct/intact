@@ -78,50 +78,71 @@ PROMPT
 @070_update_db_info_table.sql
 
 PROMPT *********************************************************************************/
-PROMPT "Creating table "ia_component2exprole"
+PROMPT "Creating table ia_component2exprole"
 PROMPT
 
 @080_create_component2exprole_table.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Creating audit table for "ia_component2exprole"
+PROMPT "Creating audit table for ia_component2exprole"
 PROMPT
 
 @090_create_component2exprole_audit_table.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Creating grants for "ia_component2exprole"
+PROMPT "Creating grants for ia_component2exprole"
 PROMPT
 
 @100_create_component2exprole_grant.sql
 
 
 PROMPT *********************************************************************************/
-PROMPT "Creating public synonym for "ia_component2exprole"
+PROMPT "Creating public synonym for ia_component2exprole"
 PROMPT
 
 @110_create_component2exprole_public_synonyms.sql
 
 PROMPT *********************************************************************************/
-PROMPT "Creating audit trigger for "ia_component2exprole"
+PROMPT "Creating audit trigger for ia_component2exprole"
 PROMPT
 
 @120_create_component2exprole_audit_trigger.sql
 
 PROMPT *********************************************************************************/
-PROMPT "Adding index for for "ia_component2exprole"
+PROMPT "Adding index for for ia_component2exprole"
 PROMPT
 
 @130_add_component2exprole_index.sql
 
 PROMPT *********************************************************************************/
-PROMPT "Insert data into "ia_component2exprole" from component table
+PROMPT "Insert data into ia_component2exprole from component table"
 PROMPT
 
 @140_insert_datainto_component2exprole.sql
 
+PROMPT *********************************************************************************/
+PROMPT "Creating grants for component2exprole_audit" 
+PROMPT
+
+@150_create_component2exprole_audit_grant.sql
+
+
+PROMPT *********************************************************************************/
+PROMPT "Creating public synonyms for component2exprole_audit" 
+PROMPT
+
+@160_create_component2exprole_public_synonyms.sql
+
+
+--DO NOT EXECUTE THIS STATEMENT
+PROMPT *********************************************************************************/
+PROMPT "Altering table component" 
+PROMPT
+--DO NOT EXECUTE THIS STATEMENT
+--@170_alter_component_table.sql
+--DO NOT EXECUTE THIS STATEMENT
 
 
 
