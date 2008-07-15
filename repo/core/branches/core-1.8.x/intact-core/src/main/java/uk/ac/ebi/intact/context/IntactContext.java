@@ -131,7 +131,13 @@ public class IntactContext implements Serializable {
     }
 
     public Institution getInstitution() throws IntactException {
-        return getConfig().getInstitution();
+        Institution institution = getConfig().getInstitution();
+
+        if (institution.getAc() != null && getDataContext().getDaoFactory().getInstitutionDao().isTransient(institution)) {
+            institution = getDataContext().getDaoFactory().getInstitutionDao().getByAc(institution.getAc());
+        }
+
+        return institution;
     }
 
     public RuntimeConfig getConfig() {
