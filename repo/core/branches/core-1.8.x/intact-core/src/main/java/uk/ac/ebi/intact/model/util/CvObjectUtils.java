@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.model.util;
 
 import org.apache.commons.collections.CollectionUtils;
+import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.util.ClassUtils;
 
@@ -29,29 +30,29 @@ public class CvObjectUtils {
     /**
      * Gets the unique identifier of a CvObject. If it has PSI MI Identifier (miIdentifier) return it,
      * if not, return the 'CvDatabase.intact' identifier; otherwise return the primaryId of the first identity xref found.
+     *
      * @param cvObject The object to get the identifier from.
      * @return The identifier. Will be null if no miIdentifier or identity xref is found.
-     *
      * @since 1.8.0
      */
     public static String getIdentity( CvObject cvObject ) {
         // try the PSI MI first
-        if (cvObject.getMiIdentifier() != null) {
+        if ( cvObject.getMiIdentifier() != null ) {
             return cvObject.getMiIdentifier();
         }
 
-       // try to get the identity with CvDatabase 'intact'
-       CvObjectXref idXref = XrefUtils.getIdentityXref(cvObject, CvDatabase.INTACT);
+        // try to get the identity with CvDatabase 'intact'
+        CvObjectXref idXref = XrefUtils.getIdentityXref( cvObject, CvDatabase.INTACT );
 
         // get the first identity, if any
-        if (idXref == null) {
-            Collection<CvObjectXref> idXrefs = XrefUtils.getIdentityXrefs(cvObject);
-            if (!idXrefs.isEmpty()) {
+        if ( idXref == null ) {
+            Collection<CvObjectXref> idXrefs = XrefUtils.getIdentityXrefs( cvObject );
+            if ( !idXrefs.isEmpty() ) {
                 idXref = idXrefs.iterator().next();
             }
         }
 
-        return (idXref != null)? idXref.getPrimaryId() : null;
+        return ( idXref != null ) ? idXref.getPrimaryId() : null;
     }
 
     // ex1 : cvObject is supposibly the CvDatabase psi-mi, psiMi is CvDatabase.PSI_MI_MI_REF
@@ -77,7 +78,7 @@ public class CvObjectUtils {
         cv.setOwner( institution );
         cv.setShortLabel( shortLabel );
 
-        if (miIdentifier != null) {
+        if ( miIdentifier != null ) {
             CvObjectXref idXref = XrefUtils.createIdentityXrefPsiMi( cv, miIdentifier );
             cv.addXref( idXref );
             idXref.prepareParentMi();
@@ -109,9 +110,9 @@ public class CvObjectUtils {
     /**
      * Checks if the given term has the given MI identifier. If recursive is true, we also search recursively through its parents.
      *
-     * @param cvDagObject      the cvDagObject to check on.
-     * @param mi        the MI term to look for.
-     * @param recursive request recursive search amongst parents.
+     * @param cvDagObject the cvDagObject to check on.
+     * @param mi          the MI term to look for.
+     * @param recursive   request recursive search amongst parents.
      * @return true of the term or one of its parents has the given MI identity.
      */
     public static boolean isChildOfType( CvDagObject cvDagObject, final String mi, final boolean recursive ) {
@@ -146,7 +147,7 @@ public class CvObjectUtils {
      *
      * @param root         term from which we start traversing children.
      * @param collectedMIs non null collection in which we store collected MIs (if giving a List, you may have
-     * duplicated in case some terms have multiple parents).
+     *                     duplicated in case some terms have multiple parents).
      */
     public static void getChildrenMIs( CvDagObject root, Collection<String> collectedMIs ) {
 
@@ -184,7 +185,7 @@ public class CvObjectUtils {
     }
 
 
-    /**
+     /**
      * This method is an alternative equals to the CvObject.equals method, that basically checks
      * on the MI identifiers and then of the short label if the first check returns false
      * @param cv1 One of the CvObjects
@@ -194,25 +195,54 @@ public class CvObjectUtils {
      * @since 1.8.0
      */
     public static boolean areEqual(CvObject cv1, CvObject cv2) {
+        return areEqual(cv1, cv2, false);
+    }
+
+
+    /**
+     * This method is an alternative equals to the CvObject.equals method, that basically checks
+     * on the MI identifiers and then of the short label if the first check returns false
+     *
+     * @param cv1 One of the CvObjects
+     * @param cv2 The other CvObject
+     * @return True if (A) the MI are the same or (B) the short labels are the same in case A has failed
+     * @since 1.8.0
+     */
+     public static boolean areEqual(CvObject cv1, CvObject cv2, boolean includeCollectionsCheck) {
         if ( cv1 == null || cv2 == null ) {
             return false;
         }
 
-        if (cv1 instanceof CvDagObject) {
-            CvDagObject cv1Dag = (CvDagObject) cv1;
-            CvDagObject cv2Dag = (CvDagObject) cv2;
-            if (!CollectionUtils.isEqualCollection(cv1Dag.getChildren(), cv2Dag.getChildren())) {
-                return false;
-            }
-            if (!CollectionUtils.isEqualCollection(cv1Dag.getParents(), cv2Dag.getParents())) {
-                return false;
-            }
+        if (includeCollectionsCheck && AnnotatedObjectUtils.isNewOrManaged(cv1) && AnnotatedObjectUtils.isNewOrManaged(cv2)) {
+            return AnnotatedObjectUtils.containSameCollections(cv1, cv2);
         }
-        
+
         if (cv1.getMiIdentifier() != null && cv2.getMiIdentifier() != null) {
             return cv1.getMiIdentifier().equals(cv2.getMiIdentifier());
         }
 
         return cv1.getShortLabel().equals(cv2.getShortLabel());
     }
+
+
+    /**
+     * Check if the object state is "new" or "managed"
+     *
+     * @param cvObject The CvObject to check
+     * @return True if is new or managed
+     */
+    protected static boolean isNewOrManaged( CvObject cvObject ) {
+        // is it new?
+        if ( cvObject.getAc() == null ) return true;
+
+        // is it transient? (as in opposition to managed)
+        if ( IntactContext.currentInstanceExists() &&
+             IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getBaseDao().isTransient( cvObject ) ) {
+            return false;
+        }
+
+        return true;
+    }
+
+
 }

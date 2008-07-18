@@ -20,6 +20,11 @@ import com.google.common.collect.HashBiMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LazyInitializationException;
+import org.hibernate.TransientObjectException;
+import org.hibernate.ejb.HibernateEntityManager;
+import org.hibernate.engine.EntityEntry;
+import org.hibernate.engine.Status;
+import org.hibernate.impl.SessionImpl;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -276,15 +281,18 @@ public class CorePersister implements Persister<AnnotatedObject> {
 
                     if (copied) {
                         statistics.addMerged(managedObject);
-                        synchronizeChildren( managedObject );
-                    } 
+                    }
+
+                    // synchronize aliases, xrefs, annotations...
+                    synchronizeChildren( managedObject );
+
                 } catch (LazyInitializationException e) {
                     log.warn("Could not copy the state from the annotated object to the transient object. Any modifications to the transient object will be lost: "+ao.getShortLabel()+" ("+ao.getAc()+")");
                     ao = managedObject;
                 } catch (PersisterException e) {
                     log.warn("Could not copy the state from the annotated object to the transient object. Any modifications to the transient object will be lost: "+ao.getShortLabel()+" ("+ao.getAc()+")");
                     ao = managedObject;
-                }
+                } 
 
             } else {
                 if (log.isTraceEnabled()) log.trace("Managed "+ao.getClass().getSimpleName()+": "+ao.getShortLabel()+" - Decision: IGNORE");
@@ -495,7 +503,28 @@ public class CorePersister implements Persister<AnnotatedObject> {
         try {
             log.debug( "Invoking an EntityManager flush..." );
             daoFactory.getEntityManager().flush();
-        } catch ( Throwable t ) {
+        } catch (IllegalStateException ise) {
+            if (ise.getCause() instanceof TransientObjectException) {
+
+                final SessionImpl session = (SessionImpl) ((HibernateEntityManager) daoFactory.getEntityManager()).getSession();
+                final Map<?, EntityEntry> entityEntries = session.getPersistenceContext().getEntityEntries();
+
+                for (Map.Entry<?, EntityEntry> entry : entityEntries.entrySet()) {
+                    EntityEntry entityEntry = entry.getValue();
+                    Status entityStatus = entityEntry.getStatus();
+
+                    Object ac = entityEntry.getId();
+
+                    if (entityStatus == Status.SAVING) {
+                        throw new PersisterException("Problem persisting this entity because it contains transient members (invoke saveOrUpdate(transientObject) on those first): ac:"+ac+" - "+entry.getKey(), ise);
+                    }
+                }
+
+                throw new PersisterException(ise);
+            } else {
+                throw new PersisterException("Problem flushing the entity manager", ise);
+            }
+        } catch ( Exception t ) {
             StringBuilder sb = new StringBuilder();
             sb.append("Exception when flushing the Persister");
 

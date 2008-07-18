@@ -24,11 +24,13 @@ import uk.ac.ebi.intact.model.clone.IntactCloner;
 import uk.ac.ebi.intact.model.clone.IntactClonerException;
 import uk.ac.ebi.intact.model.util.CrcCalculator;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
+import uk.ac.ebi.intact.util.DebugUtil;
 
 import java.beans.PropertyDescriptor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import uk.ac.ebi.intact.util.DebugUtil;
 
 /**
  * Default implementation of the entity state copier.
@@ -210,19 +212,8 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
         copyProperty(source, "cvCellType", target);
     }
 
-    protected void copyCvObject( CvObject source, CvObject target ) {
-        copyProperty(source, "miIdentifier", target);
-
-        if (source instanceof CvDagObject) {
-            CvDagObject sourceDag = (CvDagObject)source;
-            CvDagObject targetDag = (CvDagObject)target;
-
-            // TODO copying the parents/children cause an error, we should think of an algorithm to avoid that,
-            // due to overriding parents that may be already synchronized with its transient versions
-
-            //copyCollection( sourceDag.getParents(), targetDag.getParents() );
-            //copyCollection( sourceDag.getChildren(), targetDag.getChildren() );
-        }
+   protected void copyCvObject( CvObject source, CvObject target ) {
+        // nothing copied
     }
 
     protected <X extends Xref, A extends Alias> void copyAnotatedObjectCommons( AnnotatedObject<X, A> source,
@@ -247,7 +238,7 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
         }
         
         Collection elementsToAdd = subtractAnnotations( sourceCol, targetCol );
-        Collection elementsToRemove = subtractAnnotations( sourceCol, targetCol );
+        Collection elementsToRemove = subtractAnnotations( targetCol, sourceCol );
         targetCol.removeAll( elementsToRemove );
         targetCol.addAll( elementsToAdd );
     }
@@ -279,7 +270,7 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
         }
 
         Collection elementsToAdd = subtractXrefs( sourceCol, targetCol );
-        Collection elementsToRemove = subtractXrefs( sourceCol, targetCol );
+        Collection elementsToRemove = subtractXrefs( targetCol, sourceCol );
         targetCol.removeAll( elementsToRemove );
         targetCol.addAll( elementsToAdd );
     }
@@ -290,7 +281,7 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
         }
 
         Collection elementsToAdd = subtractAliases( sourceCol, targetCol );
-        Collection elementsToRemove = subtractAliases( sourceCol, targetCol );
+        Collection elementsToRemove = subtractAliases( targetCol, sourceCol );
         targetCol.removeAll( elementsToRemove );
         targetCol.addAll( elementsToAdd );
     }
@@ -367,14 +358,14 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
                 return true;
             }
         } catch (IntactClonerException e) {
-            throw new PersisterException("Problem cloning source or target, to check if they are equals", e);
+            throw new PersisterException("Problem cloning source or target, to check if they are equal", e);
         }
 
         return false;
     }
 
     protected boolean areCvObjectsEqual(CvObject source, CvObject target) {
-        return CvObjectUtils.areEqual(source, target);
+        return CvObjectUtils.areEqual(source, target, true);
     }
 
     protected boolean areInteractionsEqual(Interaction source, Interaction target) {
@@ -411,7 +402,13 @@ public class DefaultEntityStateCopier implements EntityStateCopier {
             copiedProperty = true;
 
         } catch (Throwable e) {
-            throw new PersisterException("Problem copying property '"+propertyName+"' from "+source.getClass().getSimpleName(), e);
+            String sourceInfo = "";
+
+            if (source instanceof AnnotatedObject) {
+                sourceInfo = DebugUtil.annotatedObjectToString((AnnotatedObject) source, true);
+            }
+
+            throw new PersisterException("Problem copying property '"+propertyName+"' from "+source.getClass().getSimpleName()+" "+sourceInfo, e);
         }
 
         return true;

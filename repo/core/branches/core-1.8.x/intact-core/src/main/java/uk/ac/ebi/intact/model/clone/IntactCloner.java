@@ -18,7 +18,9 @@ package uk.ac.ebi.intact.model.clone;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.lang.reflect.Constructor;
 import java.util.Date;
@@ -463,7 +465,7 @@ public class IntactCloner {
         return clone;
     }
 
-    protected AnnotatedObject cloneAnnotatedObjectCommon( AnnotatedObject<?, ?> ao, AnnotatedObject clone ) throws IntactClonerException {
+     protected AnnotatedObject cloneAnnotatedObjectCommon( AnnotatedObject<?, ?> ao, AnnotatedObject clone ) throws IntactClonerException {
 
         if( ao == clone ) {
             throw new IllegalStateException( ao.getClass().getSimpleName() + " are the same instance!!" );
@@ -475,6 +477,13 @@ public class IntactCloner {
 
         clone.setShortLabel( ao.getShortLabel() );
         clone.setFullName( ao.getFullName() );
+
+        // as annotations, alias and xrefs could potentially be dettached, we should check if these
+        // collections are accessible
+        if (!AnnotatedObjectUtils.isNewOrManaged(ao)) {
+            ao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getAnnotatedObjectDao(ao.getClass()).getByAc(ao.getAc());
+        }
 
         for ( Annotation annotation : ao.getAnnotations() ) {
             clone.addAnnotation(clone( annotation ));
