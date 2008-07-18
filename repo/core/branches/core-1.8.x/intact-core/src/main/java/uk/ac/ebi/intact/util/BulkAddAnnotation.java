@@ -70,7 +70,7 @@ public class BulkAddAnnotation {
         AnnotatedObject ao = ( AnnotatedObject ) dao.getByAc( ac );
 
         if ( ao != null ) {
-            Institution owner = IntactContext.getCurrentInstance().getConfig().getInstitution();
+            Institution owner = IntactContext.getCurrentInstance().getInstitution();
             Annotation a = new Annotation( owner, topic, text );
 
             if ( !ao.getAnnotations().contains( a ) ) {
