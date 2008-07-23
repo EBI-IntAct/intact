@@ -127,7 +127,7 @@
                 <db.driver>oracle.jdbc.OracleDriver</db.driver>
                 <db.protocol>jdbc</db.protocol>
                 <db.subprotocol>oracle:thin:@${db.host}:${db.port}</db.subprotocol>
-                <db.dialect>org.hibernate.dialect.Oracle9Dialect</db.dialect>
+                <db.dialect>org.hibernate.dialect.Oracle9iDialect</db.dialect>
                 <db.separator>:</db.separator>
             </properties>
 
