@@ -304,15 +304,21 @@ public abstract class AnnotatedObjectImpl<T extends Xref, A extends Alias> exten
         }
 
         for ( Xref xref : xrefs ) {
-            code = 29 * code + xref.getPrimaryId().hashCode();
+           if(xref.getPrimaryId() != null ) {
+               code = 29 * code + xref.getPrimaryId().hashCode();
+           }
         }
 
         for ( Annotation annotation : annotations ) {
-            code = 29 * code + annotation.getAnnotationText().hashCode();
+            if( annotation.getAnnotationText() != null ){
+	            code = 29 * code + annotation.getAnnotationText().hashCode();
+            }
         }
 
         for ( Alias alias : aliases ) {
-            code = 29 * code + alias.getName().hashCode();
+		    if( alias.getName() != null ) {
+                code = 29 * code + alias.getName().hashCode();
+			}
         }
 
         if ( null != shortLabel ) {
