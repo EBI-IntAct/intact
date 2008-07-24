@@ -1,0 +1,12 @@
+ -----
+ How to use the UniProt Bridge
+ -----
+ Samuel Kerrien
+ -----
+ 19 October 2006
+ -----
+
+Retreiving protein data from UniProtKB
+
+
+  Protein data can be retreived by they accession number. The example below illustrate this:
