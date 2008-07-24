@@ -133,7 +133,7 @@ PROMPT *************************************************************************
 PROMPT "Creating public synonyms for component2exprole_audit" 
 PROMPT
 
-@160_create_component2exprole_public_synonyms.sql
+@160_create_component2exprole_audit_public_synonyms.sql
 
 
 --DO NOT EXECUTE THIS STATEMENT
