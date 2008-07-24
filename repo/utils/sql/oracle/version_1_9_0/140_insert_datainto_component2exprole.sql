@@ -1,4 +1,4 @@
-PROMPT Updating table "ia_component2exprole"
+--PROMPT Updating table "ia_component2exprole"
 set serveroutput on
 
 DECLARE
@@ -21,13 +21,15 @@ BEGIN
   
   	FETCH cursor_component INTO component_ac, experimentalrole_ac;
   	EXIT WHEN cursor_component%NOTFOUND;
-  	v_count_exprole := v_count_exprole+1;             
+    v_count_exprole := v_count_exprole+1;    
   	INSERT INTO ia_component2exprole(component_ac, experimentalrole_ac) VALUES (component_ac, experimentalrole_ac); 
-  END LOOP;
+
+  
+  END LOOP;	
   
   CLOSE cursor_component; 
 
 DBMS_OUTPUT.PUT_LINE('Count of rows inserted: ' || v_count_exprole);
-set serveroutput off
 end;
 /
+
