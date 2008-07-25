@@ -136,6 +136,29 @@ PROMPT
 @160_create_component2exprole_audit_public_synonyms.sql
 
 
+PROMPT *********************************************************************************/
+PROMPT "Creating sequence for ia_controlledvocab" 
+PROMPT
+
+@180_create_cvlocalseq_sequence.sql
+
+
+PROMPT *********************************************************************************/
+PROMPT "Creating public synonyms for cv_local_seq" 
+PROMPT
+
+@190_create_cvlocalseq_public_synonym.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Creating grants for cv_local_seq" 
+PROMPT
+
+@200_create_cvlocalseq_grants.sql
+
+
+
+
+
 --DO NOT EXECUTE THIS STATEMENT
 PROMPT *********************************************************************************/
 PROMPT "Altering table component" 
