@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<EBIApplicationError xmlns="http://www.ebi.ac.uk/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ebi.ac.uk/schema/ApplicationResult.xsd">
+Problems in parsing /ebi/extserv/blast-work/interactive/blast-20071029-23083330.output:
+
+FATAL:  Could not open the database "uniprot".  Please check its spelling, the
+EXIT CODE 18
+</EBIApplicationError>
