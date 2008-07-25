@@ -131,7 +131,7 @@
                         </execution>
                     </executions>
                 </plugin>
-
+<!--
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <configuration>
@@ -151,20 +151,7 @@
                         </additionalparam>
                     </configuration>
                 </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-idea-plugin</artifactId>
-                    <version>2.2-EBI-alpha</version>
-                    <configuration>
-                        <jdkLevel>1.5</jdkLevel>
-                        <downloadSources>true</downloadSources>
-                        <useClassifiers>true</useClassifiers>
-                        <linkModules>true</linkModules>
-                        <exclude>target</exclude>
-                    </configuration>
-                </plugin>
-
+-->
                 <plugin>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <configuration>
@@ -210,25 +197,6 @@
                 </executions>
             </plugin>
 
-            <!--
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-clover-plugin</artifactId>
-                <configuration>
-                    <jdk>1.5</jdk>
-                    <licenseLocation>${basedir}/src/test/clover/myclover.license</licenseLocation>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>pre-site</phase>
-                        <goals>
-                            <goal>instrument</goal>
-                            <goal>aggregate</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            -->
         </plugins>
     </build>
 
@@ -242,6 +210,7 @@
                         <configuration>
                             <source>1.5</source>
                             <aggregate>true</aggregate>
+<!--
                             <doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
                             <docletArtifact>
                                 <groupId>gr.spinellis</groupId>
@@ -253,7 +222,7 @@
                                 -collpackages java.util.* -qualify
                                 -postfixpackage -nodefontsize 9
                                 -nodefontpackagesize 7
-                            </additionalparam>
+                            </additionalparam>-->
                         </configuration>
                     </plugin>
                 </plugins>
