@@ -24,7 +24,7 @@ import uk.ac.ebi.intact.sanity.commons.rules.report.HtmlReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.ReportWriter;
 import uk.ac.ebi.intact.sanity.commons.rules.report.SanityReportUtils;
 import uk.ac.ebi.intact.sanity.commons.rules.report.XmlReportWriter;
-import uk.ac.ebi.intact.util.MailSender;
+import uk.ac.ebi.intact.commons.util.MailSender;
 
 import javax.mail.MessagingException;
 import java.io.*;
