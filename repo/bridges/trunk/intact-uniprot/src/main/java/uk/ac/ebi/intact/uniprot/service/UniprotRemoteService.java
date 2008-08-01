@@ -245,10 +245,12 @@ public class UniprotRemoteService extends AbstractUniprotService {
     private String readDescription(UniProtEntry uniProtEntry) {
         String desc = null;
 
-        final List<Field> fullFields = uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL);
+        if (uniProtEntry.getProteinDescription().hasRecommendedName()) {
+            final List<Field> fullFields = uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL);
 
-        if (!fullFields.isEmpty()) {
-            desc = fullFields.get(0).getValue();
+            if (!fullFields.isEmpty()) {
+                desc = fullFields.get(0).getValue();
+            }
         }
 
         return desc;

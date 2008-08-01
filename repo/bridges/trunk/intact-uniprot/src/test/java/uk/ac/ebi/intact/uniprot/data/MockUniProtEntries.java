@@ -8,7 +8,9 @@ package uk.ac.ebi.intact.uniprot.data;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.dbx.smart.Smart;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.ProteinName;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.Feature;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.VarSeqFeature;
@@ -24,7 +26,6 @@ import uk.ac.ebi.kraken.model.uniprot.dbx.flybase.FlyBaseImpl;
 import uk.ac.ebi.kraken.model.uniprot.dbx.go.GoImpl;
 import uk.ac.ebi.kraken.model.uniprot.dbx.interpro.InterProImpl;
 import uk.ac.ebi.kraken.model.uniprot.dbx.smart.SmartImpl;
-import uk.ac.ebi.kraken.model.uniprot.description.ProteinNameImpl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -53,14 +54,19 @@ public class MockUniProtEntries {
     ///////////////////////
     // Helper methods
 
-    private static Description buildDesctiption( String proteinName ) {
+    private static ProteinDescription buildDescription( String description ) {
         DefaultUniProtFactory factory = DefaultUniProtFactory.getInstance();
-        List<ProteinName> names = new ArrayList<ProteinName>();
-        ProteinName name = new ProteinNameImpl();
-        name.setValue( proteinName );
-        names.add( name );
-        Description d = factory.buildDescription();
-        d.setProteinNames( names );
+        ProteinDescription d = factory.buildProteinDescription();
+
+        final Field fullField = factory.buildField();
+        fullField.setType(FieldType.FULL);
+        fullField.setValue(description);
+
+        final Name recName = factory.buildName();
+        recName.getFields().add(fullField);
+
+        d.setRecommendedName(recName);
+
         return d;
     }
 
@@ -278,7 +284,7 @@ public class MockUniProtEntries {
         entry.setEntryAudit( buildEntryAudit( 41, "23-JAN-2007", "19-JUL-2004" ) );
         entry.setPrimaryUniProtAccession( factory.buildPrimaryUniProtAccession( "Q9VGX3" ) );
         entry.setSecondaryUniProtAccessions( buildSecondaryAcs( new String[]{"Q95S18", "Q9VGX1", "Q9VGX2", "Q9Y0F9"} ) );
-        entry.setDescription( buildDesctiption( "Protein anoxia up-regulated" ) );
+        entry.setProteinDescription( buildDescription( "Protein anoxia up-regulated" ) );
         entry.setOrganisms( Arrays.asList( buildOrganism( "Fruit fly", "Drosophila melanogaster" ) ) );
         entry.setNcbiTaxonomyIds( Arrays.asList( buildTaxid( "7227" ) ) );
         entry.setGenes( Arrays.asList( buildGene( "fau", NONE, new String[]{"CG6544"}, NONE ) ) );
@@ -341,7 +347,7 @@ public class MockUniProtEntries {
         entry.setEntryAudit( buildEntryAudit( 35, "20-FEB-2007", "13-APR-2004" ) );
         entry.setPrimaryUniProtAccession( factory.buildPrimaryUniProtAccession( "P60952" ) );
         entry.setSecondaryUniProtAccessions( buildSecondaryAcs( new String[]{"P21181", "P25763"} ) );
-        entry.setDescription( buildDesctiption( "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)" ) );
+        entry.setProteinDescription( buildDescription( "Cell division control protein 42 homolog precursor (G25K GTP-binding protein)" ) );
         entry.setOrganisms( Arrays.asList( buildOrganism( "Dog", "Canis familiaris" ) ) );
         entry.setNcbiTaxonomyIds( Arrays.asList( buildTaxid( "9615" ) ) );
         entry.setGenes( Arrays.asList( buildGene( "CDC42", NONE, NONE, NONE ) ) );
