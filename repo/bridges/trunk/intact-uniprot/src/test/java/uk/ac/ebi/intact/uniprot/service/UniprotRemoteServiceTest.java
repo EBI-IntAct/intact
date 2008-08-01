@@ -74,7 +74,10 @@ public class UniprotRemoteServiceTest {
     @Test
     public void RetrieveByUniprotId() throws Exception {
         Collection<UniprotProtein> prots = getUniprotService().retrieve( "CDC2_HUMAN" );
-        assertEquals( "P06493", prots.iterator().next().getPrimaryAc() );
+        final UniprotProtein uniprotProtein = prots.iterator().next();
+        assertEquals( "P06493", uniprotProtein.getPrimaryAc() );
+        assertEquals( "Cell division control protein 2 homolog", uniprotProtein.getDescription());
+        assertEquals(2, uniprotProtein.getSynomyms().size());
     }
 
     @Test
