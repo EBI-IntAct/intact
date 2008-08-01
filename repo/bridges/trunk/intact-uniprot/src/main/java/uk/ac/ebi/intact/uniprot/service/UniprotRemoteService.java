@@ -12,6 +12,9 @@ import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.ChainFeature;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureLocation;
@@ -159,11 +162,12 @@ public class UniprotRemoteService extends AbstractUniprotService {
             o.getParents().add( organism.getSynonym().getValue() );
         }
 
-        // TODO check on protein description
+        String description = readDescription(uniProtEntry);
+
         UniprotProtein uniprotProtein = new UniprotProtein( uniProtEntry.getUniProtId().getValue(),
                 uniProtEntry.getPrimaryUniProtAccession().getValue(),
                 o,
-                uniProtEntry.getDescription().getProteinNames().get( 0 ).getValue() );
+                description);
 
         List<SecondaryUniProtAccession> secondaryAcs = uniProtEntry.getSecondaryUniProtAccessions();
         for ( SecondaryUniProtAccession secondaryAc : secondaryAcs ) {
@@ -189,6 +193,15 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
         // Process gene names, orfs, synonyms, locus...
         processGeneNames( uniProtEntry, uniprotProtein );
+
+        // add alternative full names
+        for (Name name : uniProtEntry.getProteinDescription().getAlternativeNames()) {
+            final List<Field> fullFields = name.getFieldsByType(FieldType.FULL);
+
+            for (Field fullField : fullFields) {
+                uniprotProtein.getSynomyms().add(fullField.getValue());
+            }
+        }
 
         // comments: function
         List<FunctionComment> functions = uniProtEntry.getComments( CommentType.FUNCTION );
@@ -227,6 +240,18 @@ public class UniprotRemoteService extends AbstractUniprotService {
 //        processFeatureChain( uniProtEntry, uniprotProtein );
 
         return uniprotProtein;
+    }
+
+    private String readDescription(UniProtEntry uniProtEntry) {
+        String desc = null;
+
+        final List<Field> fullFields = uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL);
+
+        if (!fullFields.isEmpty()) {
+            desc = fullFields.get(0).getValue();
+        }
+
+        return desc;
     }
 
     /**
