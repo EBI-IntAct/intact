@@ -62,7 +62,7 @@ public class MockUniProtEntries {
         final Field fullField = factory.buildField();
         fullField.setType(FieldType.FULL);
         fullField.setValue(description);
-               svn
+              
         final Name recName = factory.buildName();
         recName.getFields().add(fullField);
         recName.setNameType(NameType.RECNAME);
