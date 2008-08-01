@@ -96,7 +96,6 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
-    @Ignore // mock recommended name not correctly build
     public void Convert_FAU_DROME() throws Exception {
 
         UniProtEntry entry = MockUniProtEntries.build_Q9VGX3();

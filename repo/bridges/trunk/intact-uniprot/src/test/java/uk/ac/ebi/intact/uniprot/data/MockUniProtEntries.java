@@ -11,6 +11,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
 import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.NameType;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.Feature;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.VarSeqFeature;
@@ -64,6 +65,7 @@ public class MockUniProtEntries {
 
         final Name recName = factory.buildName();
         recName.getFields().add(fullField);
+        recName.setNameType(NameType.RECNAME);
 
         d.setRecommendedName(recName);
 
