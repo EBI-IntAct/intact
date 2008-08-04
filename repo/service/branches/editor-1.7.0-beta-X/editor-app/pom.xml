@@ -22,6 +22,7 @@
         <maven.test.skip>true</maven.test.skip>
         <db.connectionProviderClass>uk.ac.ebi.intact.application.editor.hibernate.EditorConnectionProvider
         </db.connectionProviderClass>
+        <bridges.version>2.0.5</bridges.version>
     </properties>
 
     <build>
@@ -91,13 +92,20 @@
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges.coredep</groupId>
             <artifactId>intact-cdb</artifactId>
-            <version>2.0.1</version>
+            <version>${bridges.version}</version>
         </dependency>
 
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-go</artifactId>
-            <version>2.0.2-SNAPSHOT</version>
+            <version>${bridges.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-uniprot</artifactId>
+            <!-- Overriding dependency version -->
+            <version>${bridges.version}</version>
         </dependency>
 
         <dependency>
