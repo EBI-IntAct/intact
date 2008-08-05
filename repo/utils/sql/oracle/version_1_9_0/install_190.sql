@@ -156,7 +156,11 @@ PROMPT
 @200_create_cvlocalseq_grants.sql
 
 
+PROMPT *********************************************************************************/
+PROMPT "Resize shortlabel column length to 256" 
+PROMPT
 
+@210_enlarge_shortlabel_columns.sql
 
 
 --DO NOT EXECUTE THIS STATEMENT
