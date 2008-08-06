@@ -157,10 +157,22 @@ PROMPT
 
 
 PROMPT *********************************************************************************/
-PROMPT "Resize shortlabel column length to 256" 
+PROMPT "Resize shortlabel columns' length to 256" 
 PROMPT
 
 @210_enlarge_shortlabel_columns.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Resize fullname columns' length to 1000" 
+PROMPT
+
+@215_enlarge_fullname_columns.sql
+
+PROMPT *********************************************************************************/
+PROMPT "Resize Alias.name columns' length to 256" 
+PROMPT
+
+@220_enlarge_alias_name_columns.txt
 
 
 --DO NOT EXECUTE THIS STATEMENT
