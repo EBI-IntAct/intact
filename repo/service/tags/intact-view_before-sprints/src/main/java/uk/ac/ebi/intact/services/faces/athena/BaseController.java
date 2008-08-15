@@ -1,7 +1,5 @@
 package uk.ac.ebi.intact.services.faces.athena;
 
-import uk.ac.ebi.intact.dataexchange.imex.repository.model.RepoEntry;
-
 import javax.faces.context.FacesContext;
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -60,10 +58,10 @@ public class BaseController implements Serializable {
         Iterator<Object> selection = state.iterator();
         Object oldKey = table.getRowKey();
 
-        List<RepoEntry> selectedEntries = new ArrayList<RepoEntry>();
+        List selectedEntries = new ArrayList();
         while (selection.hasNext()) {
             table.setRowKey(selection.next());
-            selectedEntries.add((RepoEntry) table.getRowData());
+            selectedEntries.add(table.getRowData());
         }
         table.setRowKey(oldKey);
         return selectedEntries;
