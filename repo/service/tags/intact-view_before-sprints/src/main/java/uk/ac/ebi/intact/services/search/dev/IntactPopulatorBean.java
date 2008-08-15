@@ -3,11 +3,13 @@ package uk.ac.ebi.intact.services.search.dev;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdaterStatistics;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
 
 import java.net.URL;
@@ -46,13 +48,14 @@ public class IntactPopulatorBean implements InitializingBean{
 
     public void createCVs() throws Exception{
         // load the latest ontology from internet
-        IntactOntology ontology = OboUtils.createOntologyFromOboLatestPsiMi();
+        OBOSession session = OboUtils.createOBOSessionFromLatestMi();
+        CvObjectOntologyBuilder builder = new CvObjectOntologyBuilder(session);
 
         // Import the ontology into the database, using the CvUpdater
         CvUpdater updater = new CvUpdater();
 
         // this starts the create/update
-        CvUpdaterStatistics stats = updater.createOrUpdateCVs(ontology);
+        CvUpdaterStatistics stats = updater.createOrUpdateCVs(builder.getAllCvs());
 
         log.info("Created terms: "+stats.getCreatedCvs().size());
     }

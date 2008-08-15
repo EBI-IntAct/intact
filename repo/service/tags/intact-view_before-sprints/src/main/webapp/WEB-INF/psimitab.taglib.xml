@@ -6,7 +6,7 @@
 
 <facelet-taglib>
     <namespace>http://www.ebi.ac.uk/psi/mitab</namespace>
-    <function>
+   <!-- <function>
         <function-name>formatAliases</function-name>
         <function-class>psidev.psi.mi.tab.formatter.TabulatedLineFormatter</function-class>
         <function-signature>java.lang.String formatAliases(java.util.Collection)</function-signature>
@@ -35,7 +35,7 @@
         <function-name>formatConfidence</function-name>
         <function-class>psidev.psi.mi.tab.formatter.TabulatedLineFormatter</function-class>
         <function-signature>java.lang.String formatConfidences(java.util.Collection)</function-signature>
-    </function>
+    </function> -->
     <function>
         <function-name>xrefUrl</function-name>
         <function-class>uk.ac.ebi.intact.binarysearch.webapp.util.XrefLinkGenerator</function-class>
