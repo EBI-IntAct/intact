@@ -47,6 +47,7 @@
         <google.analytics.tracker></google.analytics.tracker>
 
         <!-- Other intact apps -->
+        <intact.search.url>${appRoot}/search</intact.search.url>
         <intact.hierarchview.url>${appRoot}/hierarchView</intact.hierarchview.url>
 
         <!-- Das -->
