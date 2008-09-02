@@ -25,6 +25,7 @@ public class Term implements Serializable {
     private String definition;
     private Term parent;
     private Collection<Term> children;
+    private Collection<Term> parents;
     private Map<String,String> metadata;
 
     /**
@@ -32,6 +33,7 @@ public class Term implements Serializable {
      */
     public Term() {
         this.children = new ArrayList<Term>();
+        this.parents  = new ArrayList<Term>();
     }
 
     /**
@@ -44,6 +46,7 @@ public class Term implements Serializable {
         this.id = id;
         this.name = name;
         this.children = new ArrayList<Term>();
+        this.parents = new ArrayList<Term>();
         this.metadata = metadata;
     }
 
@@ -76,6 +79,13 @@ public class Term implements Serializable {
         children.add(child);
     }
 
+
+    public void addParents(Term parent) {
+        Collection<Term> children = this.getChildren();
+        parent.setChildren(children);
+        parents.add( parent);
+    }
+
     public Term getParent() {
         return parent;
     }
@@ -98,6 +108,14 @@ public class Term implements Serializable {
 
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
+    }
+
+    public Collection<Term> getParents() {
+        return parents;
+    }
+
+    public void setParents( Collection<Term> parents ) {
+        this.parents = parents;
     }
 
     @Override
