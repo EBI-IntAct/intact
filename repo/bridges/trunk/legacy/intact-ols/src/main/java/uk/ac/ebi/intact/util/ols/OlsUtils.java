@@ -13,9 +13,7 @@ import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 
 import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
-import java.util.Collection;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Utility giving access to some of the ontologies supported by OLS.
@@ -58,6 +56,7 @@ public class OlsUtils {
         Term term = getTerm( miTermId, PSI_MI_ONTOLOGY );
 
         populateChildren( term, PSI_MI_ONTOLOGY, ontologyQuery );
+        populateParents( term, PSI_MI_ONTOLOGY, ontologyQuery );
 
         return term;
     }
@@ -71,6 +70,66 @@ public class OlsUtils {
             term.addChild( child );
         }
     }
+
+    /**
+     * Returns all the parents for the given mi Identifier, ie goes until the root parent
+     *
+     * @param miId
+     * @param ontology
+     * @param ontologyQuery
+     * @param parents a new List<Term> which holds the collection of parent Terms
+     * @param excludeRootParent if true, doesn't include root parent term
+     * @return List of parent terms
+     * @throws RemoteException   call from OlsUtils throws RemoteException
+     */
+    public static List<Term> getAllParents( String miId, String ontology, Query ontologyQuery, List parents, boolean excludeRootParent ) throws RemoteException {
+
+        Map<String, String> parentMap = ontologyQuery.getTermParents( miId, ontology );
+
+        for ( Map.Entry<String, String> entry : parentMap.entrySet() ) {
+            Term parent = getTerm( entry.getKey(), ontology );
+            getAllParents( entry.getKey(), ontology, ontologyQuery, parents, excludeRootParent );
+
+            if ( excludeRootParent ) {
+                if ( hasParent( parent.getId(), ontology, ontologyQuery ) ) {
+                    parents.add( parent );
+                }
+            } else {
+                parents.add( parent );
+            }
+        }
+
+        return parents;
+    }
+
+    public static boolean hasParent( String miId, String ontology, Query ontologyQuery ) throws RemoteException {
+        Map<String, String> parentMap = ontologyQuery.getTermParents( miId, ontology );
+
+        if (parentMap.size() == 0 ) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    /**
+     * Get all the parents for the given term, but only the immediete parents
+     * @param term
+     * @param ontology
+     * @param ontologyQuery
+     * @throws RemoteException
+     */
+    private static void populateParents( Term term, String ontology, Query ontologyQuery ) throws RemoteException {
+        Map<String, String> parentMap = ontologyQuery.getTermParents( term.getId(), ontology );
+
+        for ( Map.Entry<String, String> entry : parentMap.entrySet() ) {
+            Term parent = getTerm( entry.getKey(), ontology );
+            populateParents( parent, ontology, ontologyQuery );
+            term.addParents( parent );
+        }
+    }
+
 
     protected static Term getTerm(String id, String ontologyId) throws RemoteException {
         OlsClient olsClient = new OlsClient();
