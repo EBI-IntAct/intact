@@ -31,6 +31,12 @@ public class OlsUtils {
     public static final String PSI_MI_ONTOLOGY = "MI";
 
     /**
+     * Identifier of the GO ontology in OLS.
+     */
+    public static final String GO_ONTOLOGY = "GO";
+
+
+    /**
      * Identifier of the Newt ontology in OLS.
      */
     public static final String NEWT_ONTOLOGY = "NEWT";
@@ -59,6 +65,11 @@ public class OlsUtils {
         populateParents( term, PSI_MI_ONTOLOGY, ontologyQuery );
 
         return term;
+    }
+
+    public static Term getGoTerm( String goTermId ) throws RemoteException {
+        return getTerm( goTermId, "GO" );
+        
     }
 
     private static void populateChildren( Term term, String ontology, Query ontologyQuery ) throws RemoteException {
@@ -98,10 +109,13 @@ public class OlsUtils {
                 parents.add( parent );
             }
         }
-
-        return parents;
+        List<Term> allParents = new ArrayList<Term>(new HashSet<Term>(parents));
+        return allParents;
     }
 
+
+
+    
     public static boolean hasParent( String miId, String ontology, Query ontologyQuery ) throws RemoteException {
         Map<String, String> parentMap = ontologyQuery.getTermParents( miId, ontology );
 

@@ -12,6 +12,8 @@ import uk.ac.ebi.ook.web.services.Query;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * TODO comment this
@@ -28,6 +30,48 @@ public class OlsUtilsTest extends TestCase {
         Term term = OlsUtils.getMiTerm(miTermId);
         assertNotNull(term);
         assertEquals(12, term.getChildren().size());
+    }
+
+    @Test
+    public void testGetGOTerm() throws Exception {
+        String goTermId = "GO:0005634";
+
+        Term term = OlsUtils.getGoTerm(goTermId);
+        assertNotNull(term);
+        Assert.assertEquals("GO:0005634",term.getId());
+        Assert.assertEquals("nucleus",term.getName());
+        
+    }
+
+
+    @Test
+    public void testGetAllParentsForGO() throws Exception {
+        OlsClient olsClient = new OlsClient();
+        Query ontologyQuery = olsClient.getOntologyQuery();
+
+        String goTermId = "GO:0005634"; //nucleus
+        Term term = OlsUtils.getGoTerm( goTermId );
+        assertNotNull( term );
+
+        /*All the parents
+        GO:0043226  organelle
+        GO:0043227  membrane-bounded organelle
+        GO:0005622  intracellular
+        GO:0005623  cell
+        GO:0043231  intracellular membrane-bounded organelle
+        GO:0005575  cellular_component
+        GO:0043229  intracellular organelle
+        GO:0044464  cell part
+        GO:0044424  intracellular part*/
+
+
+        List<Term> allParentsWithoutRoot = OlsUtils.getAllParents( goTermId, OlsUtils.GO_ONTOLOGY, ontologyQuery, new ArrayList<Term>(), true );
+        assertEquals( 8, allParentsWithoutRoot.size() );
+
+        List<Term> allParentsWithtRoot = OlsUtils.getAllParents( goTermId, OlsUtils.GO_ONTOLOGY, ontologyQuery, new ArrayList<Term>(), false );
+        assertEquals( 9, allParentsWithtRoot.size() );
+
+
     }
 
 
@@ -58,7 +102,7 @@ public class OlsUtilsTest extends TestCase {
 
 
     @Test
-    public void testGetAllParents() throws Exception {
+    public void testGetAllParentsForMI() throws Exception {
         OlsClient olsClient = new OlsClient();
         Query ontologyQuery = olsClient.getOntologyQuery();
 
@@ -69,8 +113,8 @@ public class OlsUtilsTest extends TestCase {
         List<Term> allParentsWithoutRoot = OlsUtils.getAllParents( miTermId, OlsUtils.PSI_MI_ONTOLOGY, ontologyQuery, new ArrayList<Term>(),true);
         assertEquals( 3, allParentsWithoutRoot.size() );
 
-        List<Term> allParentsWithtRoot = OlsUtils.getAllParents( miTermId, OlsUtils.PSI_MI_ONTOLOGY, ontologyQuery, new ArrayList<Term>(),false);
-        assertEquals( 4, allParentsWithtRoot.size() );
+        List<Term> allParentsWithRoot = OlsUtils.getAllParents( miTermId, OlsUtils.PSI_MI_ONTOLOGY, ontologyQuery, new ArrayList<Term>(),false);
+        assertEquals( 4, allParentsWithRoot.size() );
 
     }
 
