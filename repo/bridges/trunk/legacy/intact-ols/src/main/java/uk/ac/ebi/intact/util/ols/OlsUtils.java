@@ -14,6 +14,11 @@ import uk.ac.ebi.ook.web.services.QueryServiceLocator;
 import javax.xml.rpc.ServiceException;
 import java.rmi.RemoteException;
 import java.util.*;
+import java.net.URL;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Utility giving access to some of the ontologies supported by OLS.
@@ -26,6 +31,13 @@ public class OlsUtils {
     public static final Log log = LogFactory.getLog( OlsUtils.class );
 
     /**
+     * Where the ehcache configuration file is.
+     */
+    public static final String EHCACHE_CONFIG_FILE = "/ehcache-ols-config.xml";
+
+    public static final String CACHE_NAME = "ols-cache";    
+
+    /**
      * Identifier of the PSI-MI ontology in OLS.
      */
     public static final String PSI_MI_ONTOLOGY = "MI";
@@ -35,15 +47,37 @@ public class OlsUtils {
      */
     public static final String GO_ONTOLOGY = "GO";
 
-
     /**
      * Identifier of the Newt ontology in OLS.
      */
     public static final String NEWT_ONTOLOGY = "NEWT";
 
+    /**
+     * Cache for queries to UniProt.
+     */
+    private static Cache cache;
+
     private OlsUtils() {
     }
 
+    static {
+        // building cache
+        // Note: more info on how to use ehcache here: http://ehcache.sourceforge.net/samples.html
+        URL url = OlsUtils.class.getResource( EHCACHE_CONFIG_FILE );
+
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Loading EHCACHE configuration: " + url );
+        }
+
+        // TODO This class could look who has references (soft reference) to it and shutdown the cache when no one is referencing to it anymore.
+        cache = new CacheManager( url ).getCache( CACHE_NAME );
+
+        if ( cache == null ) {
+            log.info( "Could not configure find " + EHCACHE_CONFIG_FILE + ", OlsUtils will wun with caching disabled." );
+        } else {
+            log.info( "OlsUtils will run with caching enabled." );
+        }
+    }
 
     ///////////////////////////
     // MI terms
@@ -56,14 +90,38 @@ public class OlsUtils {
      * @return the term, including the children
      */
     public static Term getMiTerm( String miTermId ) throws RemoteException {
-        OlsClient olsClient = new OlsClient();
-        Query ontologyQuery = olsClient.getOntologyQuery();
+        Term term = getMiTermCached( miTermId, PSI_MI_ONTOLOGY );
 
-        Term term = getTerm( miTermId, PSI_MI_ONTOLOGY );
+        if( term == null ) {
+            OlsClient olsClient = new OlsClient();
+            Query ontologyQuery = olsClient.getOntologyQuery();
 
-        populateChildren( term, PSI_MI_ONTOLOGY, ontologyQuery );
-        populateParents( term, PSI_MI_ONTOLOGY, ontologyQuery );
+            term = getTerm( miTermId, PSI_MI_ONTOLOGY );
 
+            populateChildren( term, PSI_MI_ONTOLOGY, ontologyQuery );
+            populateParents( term, PSI_MI_ONTOLOGY, ontologyQuery );
+
+            storeMiTermInCache( miTermId, PSI_MI_ONTOLOGY, term );
+        }
+
+        return term;
+    }
+
+    private static void storeMiTermInCache( String termId, String ontologyId, Term term ) {
+        if( cache != null ) {
+            Element element = new Element( "getMiTerm#" + ontologyId + "#" + termId, term );
+            cache.put( element );
+        }
+    }
+
+    private static Term getMiTermCached( String termId, String ontologyId ) {
+        Term term = null;
+        if( cache != null ) {
+            final Element element = cache.get( "getMiTerm#" + ontologyId + "#" + termId );
+            if( element != null ) {
+                term = (Term) element.getValue();
+            }
+        }
         return term;
     }
 
@@ -113,9 +171,6 @@ public class OlsUtils {
         return allParents;
     }
 
-
-
-    
     public static boolean hasParent( String miId, String ontology, Query ontologyQuery ) throws RemoteException {
         Map<String, String> parentMap = ontologyQuery.getTermParents( miId, ontology );
 
@@ -144,15 +199,35 @@ public class OlsUtils {
         }
     }
 
-
     protected static Term getTerm(String id, String ontologyId) throws RemoteException {
-        OlsClient olsClient = new OlsClient();
-        Query ontologyQuery = olsClient.getOntologyQuery();
+        Term term = getCached( id, ontologyId );
+        if( term == null ) {
+            OlsClient olsClient = new OlsClient();
+            Query ontologyQuery = olsClient.getOntologyQuery();
+            String termName = ontologyQuery.getTermById( id, ontologyId );
+            Map termMetadata = ontologyQuery.getTermMetadata(id, ontologyId);
+            term = new Term( id, termName, termMetadata);
+            storeTermInCache( id, ontologyId, term );
+        }
+        return term;
+    }
 
-        String termName = ontologyQuery.getTermById( id, ontologyId );
-        Map termMetadata = ontologyQuery.getTermMetadata(id, ontologyId);
+    private static void storeTermInCache( String termId, String ontologyId, Term term ) {
+        if( cache != null ) {
+            Element element = new Element( "getTerm#" + ontologyId + "#" + termId, term );
+            cache.put( element );
+        }
+    }
 
-        return new Term( id, termName, termMetadata);
+    private static Term getCached( String termId, String ontologyId ) {
+        Term term = null;
+        if( cache != null ) {
+            final Element element = cache.get( "getTerm#" + ontologyId + "#" + termId );
+            if( element != null ) {
+                term = (Term) element.getValue();
+            }
+        }
+        return term;
     }
 
     ///////////////////////////
