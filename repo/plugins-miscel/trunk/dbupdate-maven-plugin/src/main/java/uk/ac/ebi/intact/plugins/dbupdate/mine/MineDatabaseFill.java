@@ -73,9 +73,9 @@ public class MineDatabaseFill {
     /**
      * SQL statement to select all interactors from a specific interaction
      */
-    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C.experimentalrole_ac, I.objclass, I.shortLabel "
-                                                    + "FROM ia_component C, ia_interactor I "
-                                                    + "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac";
+    private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C2EXPROLE.experimentalrole_ac, I.objclass, I.shortLabel "
+                                                    + "FROM ia_component C, ia_interactor I, ia_component2exprole C2EXPROLE "
+                                                    + "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac AND C2EXPROLE.component_ac = C.ac;";
 
     /**
      * SQL statement to select the taxid for an interactor
