@@ -8,7 +8,7 @@
                     <psimitabFile>src/test/resources/10026281.txt</psimitabFile>
                     <createIndex>true</createIndex>
                     <containsHeader>true</containsHeader>
-                    <indexWriter>psidev.psi.mi.search.index.impl.PsimiTabIndexWriter</indexWriter>
+                    <indexWriter>psidev.psi.mi.search.index.impl.BinaryInteractionIndexWriter</indexWriter>
                 </configuration>
             </plugin>
         </plugins>
