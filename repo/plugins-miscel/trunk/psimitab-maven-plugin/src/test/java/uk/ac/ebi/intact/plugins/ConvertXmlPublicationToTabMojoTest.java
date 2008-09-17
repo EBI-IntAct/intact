@@ -3,8 +3,6 @@ package uk.ac.ebi.intact.plugins;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import psidev.psi.mi.tab.PsimiTabReader;
-import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.IntActColumnHandler;
 
 import java.io.*;
 import java.util.Enumeration;
@@ -56,9 +54,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
 
         ConvertXmlPublicationToTabMojo mojo = ( ConvertXmlPublicationToTabMojo ) lookupMojo( "pub2tab", pluginXmlFile );
 
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
-
         String root = "target" + File.separator + "test-classes";
         File srcDir = new File( getBasedir(), root + File.separator + "xml-samples" );
         File targetDir = new File( getBasedir(), root + File.separator + "tab-output" );
@@ -68,8 +63,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject( mojo, "sourceDirectoryPath", srcDir.getAbsolutePath() );
         setVariableValueToObject( mojo, "targetDirectoryPath", targetDir.getAbsolutePath() );
         setVariableValueToObject( mojo, "logFilePath", targetDir.getAbsolutePath() + File.separator + "mitab-expanded.log" );
-        setVariableValueToObject( mojo, "binaryInteractionClass", "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction" );
-        setVariableValueToObject( mojo, "columnHandler", "uk.ac.ebi.intact.psimitab.IntActColumnHandler" );
 
         mojo.setLog( new SystemStreamLog() );
 
@@ -90,9 +83,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/pub2tab-simple-test.xml" );
 
         ConvertXmlPublicationToTabMojo mojo = ( ConvertXmlPublicationToTabMojo ) lookupMojo( "pub2tab", pluginXmlFile );
-
-        assertNull( mojo.getBinaryInteractionClass() );
-        assertNull( mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -155,10 +145,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
 
                 if ( file.canRead() ) {
                     PsimiTabReader reader = new PsimiTabReader( true );
-
-                    reader.setBinaryInteractionClass( IntActBinaryInteraction.class );
-                    reader.setColumnHandler( new IntActColumnHandler() );
-
                     reader.read( file );
                     //System.out.println("Checking: " +file.getParentFile().getName()+File.separator + file.getName() +" contains only 15 columns");
                 }
@@ -171,9 +157,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/pub2tab-intact.xml" );
 
         ConvertXmlPublicationToTabMojo mojo = ( ConvertXmlPublicationToTabMojo ) lookupMojo( "pub2tab", pluginXmlFile );
-
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -220,8 +203,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject( mojo, "sourceDirectoryPath", srcDir.getAbsolutePath() );
         setVariableValueToObject( mojo, "targetDirectoryPath", targetDir.getAbsolutePath() );
         setVariableValueToObject( mojo, "logFilePath", targetDir.getParentFile().getAbsolutePath() + File.separator + "pmid.log" );
-        setVariableValueToObject( mojo, "binaryInteractionClass", "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction" );
-        setVariableValueToObject( mojo, "columnHandler", "uk.ac.ebi.intact.psimitab.IntActColumnHandler" );
 
         mojo.setLog( new SystemStreamLog() );
 
@@ -238,10 +219,6 @@ public class ConvertXmlPublicationToTabMojoTest extends AbstractMojoTestCase {
 
                 if ( file.canRead() ) {
                     PsimiTabReader reader = new PsimiTabReader( true );
-
-                    reader.setBinaryInteractionClass( IntActBinaryInteraction.class );
-                    reader.setColumnHandler( new IntActColumnHandler() );
-
                     reader.read( file );
 
                     //System.out.println("Checking: " +file.getParentFile().getName()+File.separator + file.getName() + " contains 15 columns + extra 7");

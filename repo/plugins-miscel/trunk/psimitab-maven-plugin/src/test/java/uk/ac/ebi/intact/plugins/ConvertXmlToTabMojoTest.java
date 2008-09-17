@@ -4,8 +4,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import psidev.psi.mi.tab.PsimiTabReader;
-import uk.ac.ebi.intact.psimitab.IntActBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.IntActColumnHandler;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -68,9 +66,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
 
         ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
 
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
-
         File rootDir = new File( getBasedir(), "target" + File.separator + "test-classes" + File.separator + "xml-samples" );
 
         File tabFile = new File( rootDir.getAbsolutePath() + File.separator + "all-expanded.xls" );
@@ -101,9 +96,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-simple-test.xml" );
 
         ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
-
-        assertNull( mojo.getBinaryInteractionClass() );
-        assertNull( mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -159,9 +151,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
 
         PsimiTabReader reader = new PsimiTabReader( true );
 
-        reader.setBinaryInteractionClass( IntActBinaryInteraction.class );
-        reader.setColumnHandler( new IntActColumnHandler() );
-
         reader.read( tabFile );
     }
 
@@ -170,9 +159,6 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/xml2tab-intact.xml" );
 
         ConvertXmlToTabMojo mojo = ( ConvertXmlToTabMojo ) lookupMojo( "xml2tab", pluginXmlFile );
-
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction", mojo.getBinaryInteractionClass() );
-        assertEquals( "uk.ac.ebi.intact.psimitab.IntActColumnHandler", mojo.getColumnHandler() );
 
         String root = "target" + File.separator + "test-classes";
 
@@ -220,18 +206,12 @@ public class ConvertXmlToTabMojoTest extends AbstractMojoTestCase {
 
         File tabFile = new File( srcDir.getAbsolutePath() + File.separator + "all-extra.txt" );
         setVariableValueToObject( mojo, "tabFile", tabFile.getAbsolutePath() );
-        setVariableValueToObject( mojo, "binaryInteractionClass", "uk.ac.ebi.intact.psimitab.IntActBinaryInteraction" );
-        setVariableValueToObject( mojo, "columnHandler", "uk.ac.ebi.intact.psimitab.IntActColumnHandler" );
 
         mojo.setLog( new SystemStreamLog() );
 
         mojo.execute();
 
         PsimiTabReader reader = new PsimiTabReader( true );
-
-        reader.setBinaryInteractionClass( IntActBinaryInteraction.class );
-        reader.setColumnHandler( new IntActColumnHandler() );
-
         reader.read( tabFile );
     }
 }

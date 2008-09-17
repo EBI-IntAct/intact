@@ -6,12 +6,10 @@
 package uk.ac.ebi.intact.plugins;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import psidev.psi.mi.tab.converter.xml2tab.ColumnHandler;
 import psidev.psi.mi.tab.expansion.SpokeWithoutBaitExpansion;
 import uk.ac.ebi.intact.psimitab.ConvertXml2Tab;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.Map;
 
@@ -101,8 +99,6 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
         System.out.println( "parameter 'targetDirectoryPath' = " + targetDirectoryPath );
         System.out.println( "parameter 'logFilePath' = " + logFilePath );
         System.out.println( "parameter 'fileExtension' = " + fileExtension );
-        System.out.println( "parameter 'binaryInteractionClass' = " + getBinaryInteractionClass() );
-        System.out.println( "parameter 'columnHandler' = " + getColumnHandler() );
 
         // Prepare publication clustering
         PublicationClusterBuilder builder = new PublicationClusterBuilder( new File( sourceDirectoryPath ) );
@@ -113,26 +109,6 @@ public class ConvertXmlPublicationToTabMojo extends AbstractPsimitabConverterMoj
         converter.setOverwriteOutputFile( true );
         converter.setExpansionStrategy( new SpokeWithoutBaitExpansion() );
         converter.setInteractorPairClustering( true );
-
-        if ( hasBinaryInteractionClass() ) {
-
-            if(getLog().isWarnEnabled()) {
-                getLog().warn( "Using BinaryInteraction class: " + getBinaryInteractionClass() );
-                getLog().warn( "Using ColumnHandler class: " + getColumnHandler() );
-            }
-
-            try {
-                converter.setBinaryInteractionClass( Class.forName( getBinaryInteractionClass() ) );
-
-                if ( getColumnHandler() != null ) {
-                    Constructor constructor = Class.forName( getColumnHandler() ).getConstructor( new Class[]{} );
-                    converter.setColumnHandler( ( ColumnHandler ) constructor.newInstance( new Object[]{} ) );
-                }
-
-            } catch ( Exception e ) {
-                throw new MojoExecutionException( "Could not instanciate provided classes, see nested exception", e );
-            }
-        }
 
         if ( logWriter != null ) {
             converter.setLogWriter( logWriter );
