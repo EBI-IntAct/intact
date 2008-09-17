@@ -23,10 +23,12 @@ import org.junit.Test;
 import psidev.psi.mi.search.SearchResult;
 import psidev.psi.mi.search.Searcher;
 import psidev.psi.mi.search.engine.SearchEngineException;
-import uk.ac.ebi.intact.psimitab.search.IntActSearchEngine;
+import psidev.psi.mi.search.engine.SearchEngine;
 
 import java.io.File;
 import java.io.IOException;
+
+import uk.ac.ebi.intact.psimitab.search.IntactSearchEngine;
 
 public class IndexerMojoTest extends AbstractMojoTestCase {
 
@@ -40,7 +42,7 @@ public class IndexerMojoTest extends AbstractMojoTestCase {
         mojo.execute();
 
         SearchResult result = Searcher.search("P38974", FSDirectory.getDirectory(mojo.getIndexDirectory()));
-        assertEquals(1, result.getInteractions().size());
+        assertEquals(1, result.getData().size());
     }
     
     
@@ -56,10 +58,10 @@ public class IndexerMojoTest extends AbstractMojoTestCase {
         
         Directory indexDirectory = FSDirectory.getDirectory(mojo.getIndexDirectory());
         
-        IntActSearchEngine engine;
+        SearchEngine engine;
         try
         {
-            engine = new IntActSearchEngine(indexDirectory);
+            engine = new IntactSearchEngine(indexDirectory);
         }
         catch (IOException e)
         {
@@ -67,9 +69,9 @@ public class IndexerMojoTest extends AbstractMojoTestCase {
         }
         
         SearchResult<?> id_result = Searcher.search("P62993", engine);
-        assertEquals(3, id_result.getInteractions().size());
+        assertEquals(3, id_result.getData().size());
         
         SearchResult<?> go_result = Searcher.search("properties:ENSG00000137332", engine);
-        assertEquals(3, go_result.getInteractions().size());
+        assertEquals(3, go_result.getData().size());
     }
 }
