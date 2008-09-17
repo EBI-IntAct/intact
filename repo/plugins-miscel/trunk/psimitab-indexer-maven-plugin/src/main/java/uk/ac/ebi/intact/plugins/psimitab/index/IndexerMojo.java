@@ -21,11 +21,10 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 
-import psidev.psi.mi.search.index.AbstractIndexWriter;
-import psidev.psi.mi.search.index.impl.PsimiTabIndexWriter;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
-import uk.ac.ebi.intact.psimitab.search.IntActPsimiTabIndexWriter;
+import uk.ac.ebi.intact.psimitab.search.IntactPsimiTabIndexWriter;
+import psidev.psi.mi.search.index.PsimiIndexWriter;
 
 /**
  * Goal which creates a Lucene index from a PSIMITAB file.
@@ -78,7 +77,7 @@ public class IndexerMojo extends IntactAbstractMojo {
      *
      * @parameter expression="${intact.psimitab.index.builder}" default-value="uk.ac.ebi.intact.psimitab.search.IntActPsimiTabIndexWriter"
      */
-    private String indexWriter = IntActPsimiTabIndexWriter.class.getName();
+    private String indexWriter = IntactPsimiTabIndexWriter.class.getName();
     
     /**
      * {@inheritDoc}
@@ -87,10 +86,10 @@ public class IndexerMojo extends IntactAbstractMojo {
         enableLogging();
 
         // instantiate the writer
-        AbstractIndexWriter indexWriterInstance = null;
+        PsimiIndexWriter indexWriterInstance = null;
         try {
             Class<?> indexWriterClass = Class.forName(indexWriter);
-            indexWriterInstance = (AbstractIndexWriter) indexWriterClass.newInstance();
+            indexWriterInstance = (PsimiIndexWriter) indexWriterClass.newInstance();
         } catch (Throwable e) {
             throw new MojoExecutionException("Failed index creation", e);
         }
