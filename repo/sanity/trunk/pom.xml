@@ -19,7 +19,7 @@
 
     <properties>
         <currentVersion>${pom.version}</currentVersion>
-        <core.version>1.9.2-SNAPSHOT</core.version>
+        <core.version>1.9.2</core.version>
     </properties>
 
     <scm>
