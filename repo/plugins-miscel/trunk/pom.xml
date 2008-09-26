@@ -33,7 +33,7 @@
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
 
-        <core.version>1.9.2</core.version>
+        <core.version>1.9.3</core.version>
         <bridges.version>2.0.5</bridges.version>
         <plugin.version>2.4</plugin.version>
     </properties>
