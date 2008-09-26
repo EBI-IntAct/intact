@@ -1,7 +1,7 @@
 PROMPT Creating table "ia_component2exprole"
 CREATE TABLE ia_component2exprole
-(      component_ac            VARCHAR2(30)   NOT NULL   CONSTRAINT fk_comp2exprl$compnt REFERENCES IA_COMPONENT(ac)
-    ,  experimentalrole_ac     VARCHAR2(30)   NOT NULL   CONSTRAINT fk_comp2exprl$exprl  REFERENCES IA_CONTROLLEDVOCAB(ac)
+(      component_ac            VARCHAR2(30)   NOT NULL   CONSTRAINT fk_comp2exprl$compnt REFERENCES IA_COMPONENT(ac) ON DELETE CASCADE
+    ,  experimentalrole_ac     VARCHAR2(30)   NOT NULL   CONSTRAINT fk_comp2exprl$exprl  REFERENCES IA_CONTROLLEDVOCAB(ac) ON DELETE CASCADE
 )
 TABLESPACE &&intactMainTablespace;
 
