@@ -75,7 +75,7 @@ public class MineDatabaseFill {
      */
     private static final String SELECT_INTERACTOR = "SELECT C.interactor_ac, C2EXPROLE.experimentalrole_ac, I.objclass, I.shortLabel "
                                                     + "FROM ia_component C, ia_interactor I, ia_component2exprole C2EXPROLE "
-                                                    + "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac AND C2EXPROLE.component_ac = C.ac;";
+                                                    + "WHERE C.interaction_ac=? AND C.interactor_ac = I.ac AND C2EXPROLE.component_ac = C.ac";
 
     /**
      * SQL statement to select the taxid for an interactor
@@ -509,7 +509,7 @@ public class MineDatabaseFill {
             }
             resultSet.close();
         } catch (SQLException e) {
-            throw new IntactException("Problem processing interactor AC: "+interactionAC, e);
+            throw new IntactException("Problem processing interaction AC: "+interactionAC, e);
         }
     }
 
