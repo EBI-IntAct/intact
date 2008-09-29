@@ -454,59 +454,63 @@ public class MineDatabaseFill {
     private static void getInteractors( List preys, List baits,
                                         String interactionAC,
                                         PreparedStatement selectInteractionStm )
-            throws SQLException, IntactException {
+            throws IntactException {
         // set the current interaction_ac of the select statement
-        selectInteractionStm.setString( 1, interactionAC );
-        ResultSet resultSet = selectInteractionStm.executeQuery();
+        try {
+            selectInteractionStm.setString( 1, interactionAC );
+            ResultSet resultSet = selectInteractionStm.executeQuery();
 
-        String objClass;
-        String interactor_ac;
-        InteractorData interactorData;
-        while ( resultSet.next() ) {
-            // the object class of the interactor is fetched
-            objClass = resultSet.getString( "objclass" );
-            // the ac of the interactor is fetched
-            interactor_ac = resultSet.getString( "interactor_ac" )
-                    .toUpperCase();
-            // if the objclass of the interactor is protein
-            Class aClass = null;
-            if ( classCache.containsKey( objClass ) ) {
-                aClass = (Class) classCache.get( objClass );
+            String objClass;
+            String interactor_ac;
+            InteractorData interactorData;
+            while ( resultSet.next() ) {
+                // the object class of the interactor is fetched
+                objClass = resultSet.getString( "objclass" );
+                // the ac of the interactor is fetched
+                interactor_ac = resultSet.getString( "interactor_ac" )
+                        .toUpperCase();
+                // if the objclass of the interactor is protein
+                Class aClass = null;
+                if ( classCache.containsKey( objClass ) ) {
+                    aClass = (Class) classCache.get( objClass );
 
-            } else {
-                try {
-                    aClass = Class.forName( objClass );
-                } catch ( ClassNotFoundException e ) {
-                    throw new IntactException( "Found as objectclass " + objClass + "this is not an intactClass " );
-                }
-                classCache.put( objClass, aClass );
-            }
-            if ( Interaction.class.isAssignableFrom( aClass ) ) {
-                // the interactor is an interaction and therefore all
-                // interactors of this interaction are fetched into the current
-                // lists.
-                getInteractors( preys, baits, interactor_ac, selectInteractionStm );
-            } else if ( Interactor.class.isAssignableFrom( aClass ) ) {
-//            if ( objClass.indexOf( "Protein" ) != -1 ) {
-                // if the interactor is a bait
-                interactorData = new InteractorData( interactor_ac, resultSet
-                        .getString( "shortLabel" ) );
-                if ( bait_id.equalsIgnoreCase( resultSet.getString( "experimentalrole_ac" ) ) ) {
-                    baits.add( interactorData );
                 } else {
-                    preys.add( interactorData );
+                    try {
+                        aClass = Class.forName( objClass );
+                    } catch ( ClassNotFoundException e ) {
+                        throw new IntactException( "Found as objectclass " + objClass + "this is not an intactClass " );
+                    }
+                    classCache.put( objClass, aClass );
                 }
-            } else {
-                throw new IllegalArgumentException( "Unsupported class " + objClass );
+                if ( Interaction.class.isAssignableFrom( aClass ) ) {
+                    // the interactor is an interaction and therefore all
+                    // interactors of this interaction are fetched into the current
+                    // lists.
+                    getInteractors( preys, baits, interactor_ac, selectInteractionStm );
+                } else if ( Interactor.class.isAssignableFrom( aClass ) ) {
+    //            if ( objClass.indexOf( "Protein" ) != -1 ) {
+                    // if the interactor is a bait
+                    interactorData = new InteractorData( interactor_ac, resultSet
+                            .getString( "shortLabel" ) );
+                    if ( bait_id.equalsIgnoreCase( resultSet.getString( "experimentalrole_ac" ) ) ) {
+                        baits.add( interactorData );
+                    } else {
+                        preys.add( interactorData );
+                    }
+                } else {
+                    throw new IllegalArgumentException( "Unsupported class " + objClass );
+                }
+    //            else {
+    //                // the interactor is an interaction and therefore all
+    //                // interactors of this interaction are fetched into the current
+    //                // lists.
+    //                getInteractors( preys , baits , interactor_ac , selectInteractionStm );
+    //            }
             }
-//            else {
-//                // the interactor is an interaction and therefore all
-//                // interactors of this interaction are fetched into the current
-//                // lists.
-//                getInteractors( preys , baits , interactor_ac , selectInteractionStm );
-//            }
+            resultSet.close();
+        } catch (SQLException e) {
+            throw new IntactException("Problem processing interactor AC: "+interactionAC, e);
         }
-        resultSet.close();
     }
 
     /**
