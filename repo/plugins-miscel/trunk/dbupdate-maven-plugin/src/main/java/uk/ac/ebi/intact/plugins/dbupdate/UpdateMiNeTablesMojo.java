@@ -42,6 +42,7 @@ public class UpdateMiNeTablesMojo extends UpdateAbstractMojo {
         try {
             report = MineDatabaseFill.buildDatabase(ps);
         } catch ( Exception e ) {
+            e.printStackTrace();
             throw new MojoExecutionException( "SQL error while building the MiNe table. cf. nested Exception !", e );
         }
 
