@@ -53,6 +53,9 @@ public class CompressionUtilsTest {
        File fileToZip2 = new File(CompressionUtilsTest.class.getResource("FileToZip2.txt").getFile());
 
         File zippedFile = new File(fileToZip1.getParent(), "FilesZipped.zip");
+        if(zippedFile.exists()){
+            zippedFile.delete();
+        }
         assertFalse(zippedFile.exists());
 
         CompressionUtils.zip(new File[] {fileToZip1, fileToZip2}, zippedFile, false);
@@ -70,5 +73,44 @@ public class CompressionUtilsTest {
 
         zippedFile.delete();
         assertFalse(zippedFile.exists());
+    }
+
+
+    @Test
+    public void zipWithFullPathName() throws Exception {
+        File fileToZip1 = new File( CompressionUtilsTest.class.getResource( "FileToZip1.txt" ).getFile() );
+        File fileToZip2 = new File( CompressionUtilsTest.class.getResource( "FileToZip2.txt" ).getFile() );
+
+        File zippedFile = new File( fileToZip1.getParent(), "FilesZipped2.zip" );
+
+        if ( zippedFile.exists() ) {
+            zippedFile.delete();
+        }
+        assertFalse( zippedFile.exists() );
+
+        //zip with fullpathname
+        CompressionUtils.zip( new File[]{fileToZip1, fileToZip2}, zippedFile, false, false );
+        assertTrue( "Original file should exist", fileToZip1.exists() );
+        assertTrue( "Original file should exist", fileToZip2.exists() );
+        assertTrue( "Gzipped file should exist", zippedFile.exists() );
+
+        if ( fileToZip1.exists() ) {
+            fileToZip1.delete();
+        }
+
+        if ( fileToZip2.exists() ) {
+            fileToZip2.delete();
+        }
+
+        File desDirectory = zippedFile.getParentFile();
+        CompressionUtils.unzip( zippedFile, desDirectory );
+        assertTrue( "File should exist after unzipping ", fileToZip1.exists() );
+        assertTrue( "File should exist after unzipping ", fileToZip2.exists() );
+
+
+        if ( zippedFile.exists() ) {
+            zippedFile.delete();
+        }
+
     }
 }
