@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
@@ -69,16 +68,21 @@ public class CompressionUtils {
         }
     }
 
+    public static void zip( File[] sourceFiles, File destFile, boolean deleteOriginalFiles ) throws IOException {
+        zip( sourceFiles, destFile, deleteOriginalFiles, false );
+
+    }
+
     /**
      * Compresses a file using GZIP
      *
      * @param sourceFiles         the files to include in the zip
      * @param destFile the zipped file
      * @param deleteOriginalFiles if true, the original file is deleted and only the gzipped file remains
+     * @param includeFullPathName if true, then zip file is given full path name, if false, only the file name
      * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
-    public static void zip(File[] sourceFiles, File destFile, boolean deleteOriginalFiles) throws IOException
-    {
+    public static void zip( File[] sourceFiles, File destFile, boolean deleteOriginalFiles, boolean includeFullPathName ) throws IOException {
 
         // Create a buffer for reading the files
         byte[] buf = new byte[1024];
@@ -92,7 +96,11 @@ public class CompressionUtils {
             FileInputStream in = new FileInputStream(sourceFile);
 
             // Add ZIP entry to output stream.
-            out.putNextEntry(new ZipEntry(sourceFile.toString()));
+            if ( includeFullPathName ) {
+                out.putNextEntry( new ZipEntry( sourceFile.toString() ) );
+            } else {
+                out.putNextEntry( new ZipEntry( sourceFile.getName() ) );
+            }
 
             // Transfer bytes from the file to the ZIP file
             int len;
@@ -122,6 +130,7 @@ public class CompressionUtils {
      * Uncompress gzipped files
      * @param gzippedFile The file to uncompress
      * @param destinationFile The resulting file
+     * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
     public static void gunzip(File gzippedFile, File destinationFile) throws IOException
     {
@@ -145,6 +154,8 @@ public class CompressionUtils {
     /**
      * Uncompresses zipped files
      * @param zippedFile The file to uncompress
+     * @return list of unzipped files
+     * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
     public static List<File> unzip(File zippedFile) throws IOException
     {
@@ -155,6 +166,8 @@ public class CompressionUtils {
      * Uncompresses zipped files
      * @param zippedFile The file to uncompress
      * @param destinationDir Where to put the files
+     * @return  list of unzipped files
+     * @throws java.io.IOException thrown if there is a problem finding or writing the files
      */
     public static List<File> unzip(File zippedFile, File destinationDir) throws IOException
     {
@@ -162,8 +175,8 @@ public class CompressionUtils {
 
         List<File> unzippedFiles = new ArrayList<File>();
 
-        BufferedOutputStream dest = null;
-        BufferedInputStream is = null;
+        BufferedOutputStream dest;
+        BufferedInputStream is;
         ZipEntry entry;
         ZipFile zipfile = new ZipFile(zippedFile);
         Enumeration e = zipfile.entries();
