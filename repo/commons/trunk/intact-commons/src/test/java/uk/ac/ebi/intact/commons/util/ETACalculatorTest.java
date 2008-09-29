@@ -30,12 +30,14 @@ public class ETACalculatorTest {
 
     @Test
     public void calculateETA_2() throws Exception {
-        ETACalculator eta = new ETACalculator( 1000 );
+        ETACalculator eta = new ETACalculator( 10000 );
         Thread.sleep( 200 );
         final long t0 = eta.calculateETA( 200 );
         final long t1 = eta.calculateETA( 9999 );
-        final long t2 = eta.calculateETA( 1000 );
+        final long t2 = eta.calculateETA( 10000 );
 
+        System.out.println( "t0 = " + t0 );
+        System.out.println( "t2 = " + t2 );
         Assert.assertTrue( t0 > t2 );
         Assert.assertEquals( 0L, t1 ); // because we are beyond the total count
         Assert.assertEquals( 0L, t2 ); // because we processed them all
