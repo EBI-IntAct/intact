@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+       <groupId>uk.ac.ebi.intact.bridges.coredep</groupId>
+       <artifactId>coredep</artifactId>
+       <version>2.0.6</version>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>intact-cdb</artifactId>
+    <packaging>jar</packaging>
+    <version>2.0.6</version>
+
+    <name>IntAct Bridges :: Core Dependent :: CDB</name>
+    <description>IntAct access to the CDB web service</description>
+  
+    <dependencies>
+        <dependency>
+            <groupId>uk.ac.ebi.intact.bridges</groupId>
+            <artifactId>intact-citexplore</artifactId>
+            <version>${pom.version}</version>
+        </dependency>
+
+        <!-- JAX-WS -->
+        <dependency>
+            <groupId>com.sun.xml.ws</groupId>
+            <artifactId>jaxws-tools</artifactId>
+        </dependency>
+
+        <!-- 3rd party -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>
