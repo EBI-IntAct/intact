@@ -61,7 +61,8 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
         Assert.assertNotNull( mojo );
 
         // set parameters
-        mojo.setUpdatedUniprotLinksFilename( new File( getTargetDirectory(), "uniprotlinks.updated.dat" ).getAbsolutePath() );
+        mojo.setTargetPath( getTargetDirectory().getAbsolutePath() );
+        mojo.setUpdatedUniprotLinksFilename( "uniprotlinks.updated.dat" );
         mojo.setOverwrite( true );
         mojo.setIndexPath( luceneDirectory.getAbsolutePath() );
         mojo.setUniprotLinksFilename( DrLineInteractionCountUpdatetMojoTest.class.getResource( "/uniprotlinks3.dat" ).getFile() );
