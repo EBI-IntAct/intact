@@ -10,8 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.Mojo;
+import org.obo.datamodel.OBOSession;
 
 import java.io.File;
+import java.util.List;
+import java.net.URL;
 
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.psimi.xml.exchange.PsiExchange;
@@ -19,38 +22,39 @@ import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUtils;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.CvTopic;
+import uk.ac.ebi.intact.model.CvDagObject;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 /**
- * TODO comment this!
+ * CcAndGoaExportMojo Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  * @since <pre>14-Aug-2006</pre>
  */
-public class CcAndGoaExportMojoTest extends AbstractMojoTestCase
-{
+public class CcAndGoaExportMojoTest extends AbstractMojoTestCase {
 
     private static final Log log = LogFactory.getLog(CcAndGoaExportMojoTest.class);
 
-    public void testCCAndGoaMojoExport() throws Exception
-    {
-
+    public void testCCAndGoaMojoExport() throws Exception {
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/cc-goa-config.xml" );
         File hibernateConfig = new File (CcAndGoaExportMojoTest.class.getResource("/test-hibernate.cfg.xml").getFile());
 
         IntactContext.initStandaloneContext(hibernateConfig);
-
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         // CVs
-        IntactOntology ontology = OboUtils.createOntologyFromOboDefault(11332);
+        final URL url = CcAndGoaExportMojoTest.class.getResource( "/psi-mi.obo" );
+        OBOSession oboSession = OboUtils.createOBOSessionFromLatestMi();// createOBOSession( url );
+        CvObjectOntologyBuilder ontologyBuilder = new CvObjectOntologyBuilder( oboSession );
+        List<CvDagObject> allCvs = ontologyBuilder.getAllCvs();
         CvUpdater cvUpdater = new CvUpdater();
-        cvUpdater.createOrUpdateCVs(ontology);
+        cvUpdater.createOrUpdateCVs(allCvs);
 
         CvTopic noUniprotUpdate = CvObjectUtils.createCvObject(IntactContext.getCurrentInstance().getInstitution(),
                                                                CvTopic.class, null, CvTopic.NON_UNIPROT);
@@ -66,7 +70,6 @@ public class CcAndGoaExportMojoTest extends AbstractMojoTestCase
         PsiExchange.importIntoIntact(CcAndGoaExportMojoTest.class.getResourceAsStream("/10348744.xml"));
 
         IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
         IntactContext.getCurrentInstance().close();
 
         CcAndGoaExportMojo mojo = (CcAndGoaExportMojo) lookupMojo( "cc-goa", pluginXmlFile );
@@ -75,5 +78,4 @@ public class CcAndGoaExportMojoTest extends AbstractMojoTestCase
 
         mojo.execute();
     }
-
 }
