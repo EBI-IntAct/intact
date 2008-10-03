@@ -29,7 +29,6 @@
     <modules>
         <module>master-pom</module>
         <module>master-hibernate-pom</module>
-        <module>master-webapp-pom</module>
     </modules>
 
     <distributionManagement>
