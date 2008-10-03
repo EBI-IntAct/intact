@@ -1,29 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
-/**
- * Copyright (c) 2006 The European Bioinformatics Institute, and others.
- * All rights reserved.
- */
--->
-
-<project xmlns="http://maven.apache.org/POM/4.0.0" 
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>maven-poms</artifactId>
     <packaging>pom</packaging>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1</version>
     <name>Master POMs</name>
     <url>http://www.ebi.ac.uk/intact</url>
     <description>POM to build the master POMs</description>
 
     <scm>
-        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</connection>
-        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/trunk</developerConnection>
-        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/trunk/</url>
+        <connection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/maven-poms-1.1</connection>
+        <developerConnection>scm:svn:https://intact.svn.sourceforge.net/svnroot/intact/repo/maven/tags/maven-poms-1.1</developerConnection>
+        <url>http://intact.svn.sourceforge.net/viewcvs.cgi/intact/repo/maven/tags/maven-poms-1.1</url>
     </scm>
 
     <modules>
