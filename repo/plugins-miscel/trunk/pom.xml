@@ -10,7 +10,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>27</version>
+        <version>28</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -33,7 +33,7 @@
     <properties>
         <site.remote.basedir>scp://quanea2.ebi.ac.uk/ebi/sp/pro6/intact/local/doc/devsite</site.remote.basedir>
 
-        <core.version>1.9.3</core.version>
+        <core.version>1.9.4</core.version>
         <bridges.version>2.0.5</bridges.version>
         <plugin.version>2.4</plugin.version>
     </properties>
