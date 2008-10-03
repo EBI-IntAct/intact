@@ -5,7 +5,7 @@
     <groupId>uk.ac.ebi.intact.maven</groupId>
     <artifactId>intact-master</artifactId>
     <packaging>pom</packaging>
-    <name>Master POM</name>
+    <name>Master POMs :: Master POM</name>
     <version>15-SNAPSHOT</version>
     
     <description>This is a master POM that is meant to be used by the various Intact modules. It contains information
