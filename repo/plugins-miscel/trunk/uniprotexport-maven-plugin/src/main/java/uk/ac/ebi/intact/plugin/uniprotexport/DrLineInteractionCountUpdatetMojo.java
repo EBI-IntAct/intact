@@ -37,6 +37,14 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
     protected MavenProject project;
 
     /**
+     * File containing the species
+     *
+     * @parameter default-value=""
+     * @required
+     */
+    protected String targetPath;
+
+    /**
      * The path to the Lucene index to be used to query the count of interactions per proteins.
      *
      * @required
@@ -60,6 +68,14 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
      * @required
      */
     private boolean overwrite;
+
+    public String getTargetPath() {
+        return targetPath;
+    }
+
+    public void setTargetPath( String targetPath ) {
+        this.targetPath = targetPath;
+    }
 
     public String getIndexPath() {
         return indexPath;
@@ -120,7 +136,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
         }
 
         // prepare the output file
-        File outputFile = new File( updatedUniprotLinksFilename );
+        File outputFile = new File( targetPath, updatedUniprotLinksFilename );
         isWritableFile( outputFile );
 
         try {
