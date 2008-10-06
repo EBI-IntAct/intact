@@ -14,10 +14,7 @@ import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.search.IntactPsimiTabIndexWriter;
 import uk.ac.ebi.intact.psimitab.search.IntactSearchEngine;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.*;
 
 /**
  * DrLineInteractionCountUpdatetMojo Tester.
@@ -79,9 +76,9 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
         while ( ( line = in.readLine() ) != null ) {
             count++;
             if( line.startsWith( "Q04206" ) ) {
-                Assert.assertTrue( line.endsWith( " 6" ) );
+                Assert.assertTrue( line.endsWith( "\t6" ) );
             } else if( line.startsWith( "P25963" ) ) {
-                Assert.assertTrue( line.endsWith( " 1" ) );
+                Assert.assertTrue( line.endsWith( "\t1" ) );
             } else {
                 fail( "Unexpected line found in the output file: " + line );
             }

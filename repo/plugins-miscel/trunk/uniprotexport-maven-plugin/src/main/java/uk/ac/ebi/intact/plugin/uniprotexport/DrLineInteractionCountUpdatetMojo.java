@@ -46,7 +46,8 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
 
     /**
      * The path to the Lucene index to be used to query the count of interactions per proteins.
-     *
+     * 
+     * @parameter
      * @required
      */
     private String indexPath;
@@ -120,9 +121,15 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
 
         getLog().info("DrLineInteractionCountUpdatetMojo in action");
 
+        if ( uniprotLinksFilename == null ) {
+            throw new MojoExecutionException( "You must give a non null uniprotLinks" );
+        }
         File uniprotLinks = new File( uniprotLinksFilename );
         isReadableFile( uniprotLinks );
 
+        if ( indexPath == null ) {
+            throw new MojoExecutionException( "You must give a non null indexPath" );
+        }
         File luceneDirectory = new File( indexPath );
         isReadableDirectory( luceneDirectory );
 
@@ -149,7 +156,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
             while ( ( drLine = in.readLine() ) != null ) {
                 lineCount++;
                 // extract uniprot AC
-                final int idx = drLine.indexOf( ' ' );
+                final int idx = drLine.indexOf( '\t' );
                 String uniprotAc = null;
                 if( idx != -1 ) {
                     uniprotAc = drLine.substring( 0, idx );
