@@ -86,7 +86,7 @@ public abstract class UniprotExportAbstractMojo extends IntactHibernateMojo {
             return uniprotLinksFile;
         }
 
-        return new File(targetPath, uniprotLinksFilename);
+        return new File(uniprotLinksFilename);
     }
 
 
