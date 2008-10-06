@@ -48,7 +48,7 @@ public class OntologyHits {
         String parentId = null;
         String parentName = null;
 
-        final Field parentField = doc.getField(FieldName.PARENT_ID);
+        Field parentField = doc.getField(FieldName.PARENT_ID);
 
         if (parentField != null) {
             parentId = parentField.stringValue();
@@ -58,7 +58,16 @@ public class OntologyHits {
         String childrenId = doc.getField(FieldName.CHILDREN_ID).stringValue();
         String childrenName = doc.getField(FieldName.CHILDREN_NAME).stringValue();
 
-        return new OntologyDocument(ontology, parentId, parentName, childrenId, childrenName);
+        String relationshipType = null;
+        Field relationshipTypeField = doc.getField(FieldName.RELATIONSHIP_TYPE);
+
+        if (relationshipTypeField != null) {
+            relationshipType = relationshipTypeField.stringValue();
+        }
+
+        boolean cyclic = Boolean.valueOf(doc.getField(FieldName.RELATIONSHIP_CYCLIC).stringValue());
+
+        return new OntologyDocument(ontology, parentId, parentName, childrenId, childrenName, relationshipType, cyclic);
     }
 
     public float score(int i) throws IOException {

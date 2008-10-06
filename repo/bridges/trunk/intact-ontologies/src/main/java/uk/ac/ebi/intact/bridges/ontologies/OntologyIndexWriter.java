@@ -52,6 +52,14 @@ public class OntologyIndexWriter {
         doc.add(new Field(FieldName.CHILDREN_NAME, ontologyDoc.getChildName(), Field.Store.YES, Field.Index.TOKENIZED));
         doc.add(new Field(FieldName.CHILDREN_NAME_SORTABLE, ontologyDoc.getChildName(), Field.Store.YES, Field.Index.UN_TOKENIZED));
 
+        if (ontologyDoc.getRelationshipType() != null) {
+            doc.add(new Field(FieldName.RELATIONSHIP_TYPE, ontologyDoc.getRelationshipType(), Field.Store.YES, Field.Index.UN_TOKENIZED));
+        }
+
+        doc.add(new Field(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(ontologyDoc.isCyclicRelationship()),
+                          Field.Store.YES, Field.Index.UN_TOKENIZED));
+
+
         this.indexWriter.addDocument(doc);
     }
 

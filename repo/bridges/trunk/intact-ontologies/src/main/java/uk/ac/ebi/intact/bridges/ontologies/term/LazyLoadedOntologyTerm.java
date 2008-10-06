@@ -80,6 +80,9 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.parents = new ArrayList<OntologyTerm>();
 
         try {
+            //Query query = new BooleanQuery();
+//            query.combine(new Query[] {new TermQuery(new Term(FieldName.CHILDREN_ID, id)),
+//                                       new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, "false"))});
             final OntologyHits ontologyHits = searcher.searchByChildId(id, new Sort(FieldName.PARENT_NAME_SORTABLE));
             parents.addAll(processParentsHits(ontologyHits, id));
         } catch (IOException e) {

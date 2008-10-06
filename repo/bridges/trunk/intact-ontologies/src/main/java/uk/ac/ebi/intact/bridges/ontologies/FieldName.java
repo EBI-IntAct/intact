@@ -15,4 +15,6 @@ public interface FieldName {
     static final String CHILDREN_ID = "cid";
     static final String CHILDREN_NAME = "cname"; 
     static final String CHILDREN_NAME_SORTABLE = "cname_sort"; 
+    static final String RELATIONSHIP_TYPE = "reltype";
+    static final String RELATIONSHIP_CYCLIC = "cyclic"; 
 }

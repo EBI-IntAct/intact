@@ -69,7 +69,7 @@ public class OntologyIndexSearcherTest {
         OntologyIndexWriter indexer = new OntologyIndexWriter(directory,true);
 
         while (ontologyIterator.hasNext()) {
-            OntologyDocument document = ontologyIterator.nextOntologyDocument();
+            OntologyDocument document = ontologyIterator.next();
             indexer.addDocument(document);
         }
 

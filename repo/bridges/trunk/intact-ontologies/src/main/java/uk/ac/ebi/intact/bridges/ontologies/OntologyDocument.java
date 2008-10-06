@@ -29,13 +29,23 @@ public final class OntologyDocument {
     private String parentName;
     private String childId;
     private String childName;
+    private String relationshipType;
+    private boolean cyclicRelationship;
 
-    public OntologyDocument(String ontology, String parentId, String parentName, String childId, String childName) {
+    public OntologyDocument(String ontology,
+                            String parentId,
+                            String parentName,
+                            String childId,
+                            String childName,
+                            String relationshipType,
+                            boolean cyclicRelationship) {
         this.ontology = ontology;
         this.parentId = parentId;
         this.parentName = parentName;
         this.childId = childId;
         this.childName = childName;
+        this.relationshipType = relationshipType;
+        this.cyclicRelationship = cyclicRelationship;
     }
 
     public String getOntology() {
@@ -56,6 +66,14 @@ public final class OntologyDocument {
 
     public String getChildName() {
         return childName;
+    }
+
+    public String getRelationshipType() {
+        return relationshipType;
+    }
+
+    public boolean isCyclicRelationship() {
+        return cyclicRelationship;
     }
 
     @Override
@@ -91,6 +109,8 @@ public final class OntologyDocument {
         sb.append(", parentName='").append(parentName).append('\'');
         sb.append(", childId='").append(childId).append('\'');
         sb.append(", childName='").append(childName).append('\'');
+        sb.append(", relationshipType='").append(relationshipType).append('\'');
+        sb.append(", cyclicRelationship=").append(cyclicRelationship);
         sb.append('}');
         return sb.toString();
     }
