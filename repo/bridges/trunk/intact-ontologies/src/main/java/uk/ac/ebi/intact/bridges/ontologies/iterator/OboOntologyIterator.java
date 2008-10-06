@@ -30,7 +30,7 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * TODO comment that class header
+ * Reads an OBO File and creates the <code>OntologyDocument<code> iterator.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

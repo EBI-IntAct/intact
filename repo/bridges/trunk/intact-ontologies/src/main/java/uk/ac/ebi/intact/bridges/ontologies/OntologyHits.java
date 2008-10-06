@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Iterator;
 
 /**
- * TODO comment that class header
+ * Contains the hits of an ontology search. From the hits it is possible to get the <code>OntologyDocument</code>s hit.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

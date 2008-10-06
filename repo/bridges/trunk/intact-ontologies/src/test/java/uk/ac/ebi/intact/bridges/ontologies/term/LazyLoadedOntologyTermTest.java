@@ -88,25 +88,25 @@ public class LazyLoadedOntologyTermTest {
 
         Assert.assertEquals(0, term.getParents().size());
         Assert.assertEquals(24, term.getChildren().size());
-        /*
-        Assert.assertEquals("GO:0009653", ontologyHits.doc(0).getChildId());
-        Assert.assertEquals("GO:0007610", ontologyHits.doc(1).getChildId());
-        Assert.assertEquals("GO:0007154", ontologyHits.doc(2).getChildId());
-        Assert.assertEquals("cell cycle", ontologyHits.doc(3).getChildName());
-        Assert.assertEquals("cell differentiation", ontologyHits.doc(4).getChildName());
-        Assert.assertEquals("GO:0016032", ontologyHits.doc(23).getChildId());
-        */
 
+        Assert.assertEquals("GO:0009653", term.getChildren().get(0).getId());
+        Assert.assertEquals("GO:0007610", term.getChildren().get(1).getId());
+        Assert.assertEquals("GO:0007154", term.getChildren().get(2).getId());
+        Assert.assertEquals("cell cycle", term.getChildren().get(3).getName());
+        Assert.assertEquals("cell differentiation", term.getChildren().get(4).getName());
+        Assert.assertEquals("GO:0016032", term.getChildren().get(23).getId());
     }
 
     @Test
     public void parentsAndChildren() throws Exception {
         OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0030154");
         Assert.assertEquals(1, term.getParents().size());
-        /*
-        Assert.assertEquals("GO:0008150", ontologyHits.doc(0).getParentId());
-        Assert.assertEquals("biological_process", ontologyHits.doc(0).getParentName());
-        */
+
+        OntologyTerm parent = term.getParents().get(0);
+
+        Assert.assertEquals("GO:0008150", parent.getId());
+        Assert.assertEquals("biological_process", parent.getName());
+
 
     }
 }

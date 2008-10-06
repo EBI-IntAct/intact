@@ -16,7 +16,8 @@
 package uk.ac.ebi.intact.bridges.ontologies;
 
 /**
- * TODO comment that class header
+ * Represents a document in the lucene index for ontologies. It is just a convenience class that wraps the
+ * access to documents by using the appropriate document fields. 
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
