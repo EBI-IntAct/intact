@@ -18,7 +18,8 @@ package uk.ac.ebi.intact.bridges.ontologies.iterator;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
 /**
- * TODO comment that class header
+ * This class iterates through <code>OntologyDocument</code>s and is used to get documents from
+ * different sources. 
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

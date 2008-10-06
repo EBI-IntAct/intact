@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.term;
 
+import org.apache.lucene.search.Sort;
+import uk.ac.ebi.intact.bridges.ontologies.FieldName;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyHits;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
@@ -24,7 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * When the parents or children are called, the data is loaded from the index using the searcher.
+ * A term in an ontology, with parent and children lazy load.
+ * When the parents or children are invoked, the data is loaded from the index using an <code>OntologySearcher</code>.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -76,8 +79,8 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.parents = new ArrayList<OntologyTerm>();
 
         try {
-            final OntologyHits ontologyHits = searcher.searchByChildId(id);
-             parents.addAll(processParentsHits(ontologyHits, id));
+            final OntologyHits ontologyHits = searcher.searchByChildId(id, new Sort(FieldName.PARENT_NAME_SORTABLE));
+            parents.addAll(processParentsHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting parents for document: "+id, e);
         }
@@ -95,7 +98,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.children = new ArrayList<OntologyTerm>();
 
         try {
-            final OntologyHits ontologyHits = searcher.searchByParentId(id);
+            final OntologyHits ontologyHits = searcher.searchByParentId(id, new Sort(FieldName.CHILDREN_NAME_SORTABLE));
             children.addAll(processChildrenHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting children for document: "+id, e);
@@ -113,7 +116,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         for (int i=0; i<ontologyHits.length(); i++) {
             final OntologyDocument document = ontologyHits.doc(i);
 
-            if (!processedIds.contains(document.getParentId())) {
+            if (document.getParentId() != null && !processedIds.contains(document.getParentId())) {
                 terms.add(new LazyLoadedOntologyTerm(searcher, document.getParentId(), document.getParentName()));
                 processedIds.add(document.getParentId());
             }
@@ -131,7 +134,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         for (int i=0; i<ontologyHits.length(); i++) {
             final OntologyDocument document = ontologyHits.doc(i);
 
-            if (!processedIds.contains(document.getChildId())) {
+            if (document.getChildId() != null && !processedIds.contains(document.getChildId())) {
                 terms.add(new LazyLoadedOntologyTerm(searcher, document.getChildId(), document.getChildName()));
                 processedIds.add(document.getParentId());
             }

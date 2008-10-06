@@ -18,7 +18,7 @@ package uk.ac.ebi.intact.bridges.ontologies.term;
 import java.util.List;
 
 /**
- * TODO comment that class header
+ * Represents a term in an ontology.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

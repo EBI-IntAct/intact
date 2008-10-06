@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.bridges.ontologies;
 
 /**
- * TODO comment that class header
+ * Names of the fields in the lucene directory.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

@@ -26,7 +26,7 @@ import org.apache.lucene.store.Directory;
 import java.io.IOException;
 
 /**
- * TODO comment that class header
+ * Searches an ontology index.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -45,19 +45,35 @@ public class OntologyIndexSearcher extends IndexSearcher {
         super(indexReader);
     }
 
-    public OntologyHits searchByChildId(String childrenId) throws IOException {
-        return new OntologyHits(search(new TermQuery(new Term(FieldName.CHILDREN_ID, childrenId))));
+    public OntologyHits searchByChildId(String childId) throws IOException {
+        return searchByChildId(childId, null);
     }
 
-     public OntologyHits searchByChildId(String childrenId, Sort sort) throws IOException {
-        return new OntologyHits(search(new TermQuery(new Term(FieldName.CHILDREN_ID, childrenId)), sort));
+    public OntologyHits searchByChildId(String childId, Sort sort) throws IOException {
+        return new OntologyHits(search(new TermQuery(new Term(FieldName.CHILDREN_ID, childId)), sort));
+    }
+
+    public OntologyHits searchByChildName(String childName) throws IOException {
+        return searchByChildName(childName, null);
+    }
+
+    public OntologyHits searchByChildName(String childName, Sort sort) throws IOException {
+        return new OntologyHits(search(new TermQuery(new Term(FieldName.CHILDREN_NAME, childName)), sort));
     }
 
     public OntologyHits searchByParentId(String parentId) throws IOException {
-        return new OntologyHits(search(new TermQuery(new Term(FieldName.PARENT_ID, parentId))));
+        return searchByParentId(parentId, null);
     }
 
     public OntologyHits searchByParentId(String parentId, Sort sort) throws IOException {
         return new OntologyHits(search(new TermQuery(new Term(FieldName.PARENT_ID, parentId)), sort));
+    }
+
+    public OntologyHits searchByParentName(String parentName) throws IOException {
+        return searchByParentName(parentName, null);
+    }
+
+    public OntologyHits searchByParentName(String parentName, Sort sort) throws IOException {
+        return new OntologyHits(search(new TermQuery(new Term(FieldName.PARENT_NAME, parentName)), sort));
     }
 }
