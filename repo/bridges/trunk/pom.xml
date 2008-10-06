@@ -37,7 +37,8 @@
        <module>intact-blast</module>
        <module>intact-go</module>
        <module>coredep</module>
-    </modules>
+    <module>intact-ontologies</module>
+  </modules>
 
 
     <build>
