@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.bridges.ontologies;
+package uk.ac.ebi.intact.bridges.ontologies.interator;
 
 import junit.framework.Assert;
 import org.apache.lucene.store.Directory;
@@ -21,6 +21,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OntologyIterator;
 
@@ -32,7 +33,7 @@ import java.net.URL;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class OntologyIndexWriterTest {
+public class OboOntologyIteratorTest {
 
     private Directory directory;
 
@@ -48,26 +49,19 @@ public class OntologyIndexWriterTest {
     }
     
     @Test
-    public void writeGo() throws Exception {
-        final URL goSlimUrl = OntologyIndexWriterTest.class.getResource("/META-INF/goslim_generic.obo");
+    public void next() throws Exception {
+        final URL goUrl = OboOntologyIteratorTest.class.getResource("/META-INF/goslim_generic.obo");
 
-        OntologyIterator ontologyIterator = new OboOntologyIterator("go", goSlimUrl);
+        OntologyIterator ontologyIterator = new OboOntologyIterator("go", goUrl);
 
-        OntologyIndexWriter indexer = new OntologyIndexWriter(directory,true);
+        int count = 0;
 
         while (ontologyIterator.hasNext()) {
             OntologyDocument document = ontologyIterator.next();
-            indexer.addDocument(document);
+            Assert.assertNotNull(document);
+            count++;
         }
 
-        indexer.flush();
-        indexer.optimize();
-        indexer.close();
-
-        // Search
-
-        OntologyIndexSearcher searcher = new OntologyIndexSearcher(directory);
-
-        Assert.assertEquals(154, searcher.getIndexReader().maxDoc());
+        Assert.assertEquals(154, count);
     }
 }

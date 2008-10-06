@@ -17,6 +17,8 @@ package uk.ac.ebi.intact.bridges.ontologies.iterator;
 
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 
+import java.util.Iterator;
+
 /**
  * This class iterates through <code>OntologyDocument</code>s and is used to get documents from
  * different sources. 
@@ -24,10 +26,6 @@ import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface OntologyIterator {
-
-    OntologyDocument nextOntologyDocument();
-
-    boolean hasNext();
+public interface OntologyIterator extends Iterator<OntologyDocument> {
 
 }

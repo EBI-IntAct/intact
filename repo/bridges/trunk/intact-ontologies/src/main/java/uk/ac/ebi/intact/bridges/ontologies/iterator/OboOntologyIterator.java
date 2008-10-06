@@ -64,12 +64,16 @@ public class OboOntologyIterator implements OntologyIterator {
         this.oboClassesIterator = filteredList.iterator();
     }
 
-    public OntologyDocument nextOntologyDocument() {
+    public OntologyDocument next() {
         if (!documentPoolIterator.hasNext()) {
             throw new NoSuchElementException();
         }
 
         return documentPoolIterator.next();
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException("Cannot remove");
     }
 
     public boolean hasNext() {
@@ -85,7 +89,7 @@ public class OboOntologyIterator implements OntologyIterator {
 
             // a root term?
             if (oboClass.getParents().isEmpty()) {
-                OntologyDocument doc = new OntologyDocument(ontology, null, null, id, name);
+                OntologyDocument doc = new OntologyDocument(ontology, null, null, id, name, null, false);
                 documentPool.add(doc);
             }
 
@@ -96,7 +100,10 @@ public class OboOntologyIterator implements OntologyIterator {
                 String parentId = oboParent.getID();
                 String parentName = oboParent.getName();
 
-                OntologyDocument doc = new OntologyDocument(ontology, parentId, parentName, id, name);
+                String relationshipType = link.getType().getID();
+                boolean cyclicRelationship = link.getType().isCyclic();
+
+                OntologyDocument doc = new OntologyDocument(ontology, parentId, parentName, id, name, relationshipType, cyclicRelationship);
                 documentPool.add(doc);
             }
 
