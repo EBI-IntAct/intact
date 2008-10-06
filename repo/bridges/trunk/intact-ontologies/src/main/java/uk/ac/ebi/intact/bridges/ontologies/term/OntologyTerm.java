@@ -27,11 +27,42 @@ import java.util.Set;
  */
 public interface OntologyTerm {
 
+    /**
+     * Id of the term.
+     * @return the id
+     */
     String getId();
+
+    /**
+     * Name of the term.
+     * @return the name
+     */
     String getName();
+
+    /**
+     * Parents of the term.
+     * @return the parents
+     */
     List<OntologyTerm> getParents();
+
+    /**
+     * Children of the term.
+     * @return the children
+     */
     List<OntologyTerm> getChildren();
 
+    /**
+     * Gets a set that contains all the parent terms until the root is reached. The root is included.
+     * @return The set with the parents
+     */
     Set<OntologyTerm> getAllParentsToRoot();
+
+    /**
+     * Gets the children at a certain level of depth. For instance, if we use depth 2 the collection
+     * returned by this method will contain the grandchildren of the term. Depth 1 would be the direct children,
+     * 3 the grandgrandchildren and so on.
+     * @param depth 1 children, 2 grandchildren, 3 grandgranchildren ... Depth 0 returns itself and higher depths may return empty lists.
+     * @return The children at that level of depth.
+     */
     Collection<OntologyTerm> getChildrenAtDepth(int depth);
 }
