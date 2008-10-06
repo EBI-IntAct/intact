@@ -28,6 +28,9 @@ import uk.ac.ebi.intact.bridges.ontologies.iterator.OntologyIterator;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * TODO comment that class header
@@ -106,7 +109,35 @@ public class LazyLoadedOntologyTermTest {
 
         Assert.assertEquals("GO:0008150", parent.getId());
         Assert.assertEquals("biological_process", parent.getName());
+    }
+    
+    @Test
+    public void allParentsToRoot() throws Exception {
+        OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0044238");
 
+        final Set<OntologyTerm> parents = term.getAllParentsToRoot();
 
+        Assert.assertEquals(2, parents.size());
+        
+        final Iterator<OntologyTerm> iterator = parents.iterator();
+        Assert.assertEquals("GO:0008150", iterator.next().getId());
+        Assert.assertEquals("GO:0008152", iterator.next().getId());
+    }
+    
+    @Test
+    public void childrenAtDepth() throws Exception {
+        OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0008150");
+
+        final Collection<OntologyTerm> children = term.getChildrenAtDepth(1);
+        Assert.assertEquals(23, children.size());
+
+        final Collection<OntologyTerm> grandChildren = term.getChildrenAtDepth(2);
+        Assert.assertEquals(15, grandChildren.size());
+
+        final Collection<OntologyTerm> itself = term.getChildrenAtDepth(0);
+        Assert.assertEquals(1, itself.size());
+
+        final Collection<OntologyTerm> superChildren = term.getChildrenAtDepth(40);
+        Assert.assertEquals(0, superChildren.size());
     }
 }

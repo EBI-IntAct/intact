@@ -15,7 +15,9 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.term;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a term in an ontology.
@@ -30,5 +32,6 @@ public interface OntologyTerm {
     List<OntologyTerm> getParents();
     List<OntologyTerm> getChildren();
 
-
+    Set<OntologyTerm> getAllParentsToRoot();
+    Collection<OntologyTerm> getChildrenAtDepth(int depth);
 }
