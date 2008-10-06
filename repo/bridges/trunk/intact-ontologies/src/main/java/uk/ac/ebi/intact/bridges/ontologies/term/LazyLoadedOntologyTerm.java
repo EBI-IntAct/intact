@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.bridges.ontologies.term;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.lucene.search.Sort;
 import uk.ac.ebi.intact.bridges.ontologies.FieldName;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
@@ -22,8 +24,7 @@ import uk.ac.ebi.intact.bridges.ontologies.OntologyHits;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * A term in an ontology, with parent and children lazy load.
@@ -89,7 +90,6 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
     }
 
 
-
     public List<OntologyTerm> getChildren() {
         if (children != null) {
             return children;
@@ -107,6 +107,40 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         return children;
     }
 
+    public Set<OntologyTerm> getAllParentsToRoot() {
+        return getAllParentsToRoot(this);
+    }
+
+    protected Set<OntologyTerm> getAllParentsToRoot(OntologyTerm ontologyTerm) {
+        Set<OntologyTerm> parents = new HashSet<OntologyTerm>();
+
+        for (OntologyTerm parent : ontologyTerm.getParents()) {
+            parents.add(parent);
+            parents.addAll(getAllParentsToRoot(parent));
+        }
+
+        return parents;
+    }
+
+    public Collection<OntologyTerm> getChildrenAtDepth(int depth) {
+        return getChildren(this, 0, depth).get(depth);
+    }
+
+    protected Multimap<Integer, OntologyTerm> getChildren(OntologyTerm term, int currentDepth, int maxDepth) {
+        if (currentDepth > maxDepth) {
+            return new HashMultimap<Integer,OntologyTerm>();
+        }
+
+        Multimap<Integer,OntologyTerm> terms = new HashMultimap<Integer,OntologyTerm>();
+        terms.put(currentDepth, term);
+
+        for (OntologyTerm child : term.getChildren()) {
+            terms.putAll(getChildren(child, currentDepth+1, maxDepth));
+        }
+
+        return terms;
+    }
+
     private List<OntologyTerm> processParentsHits(OntologyHits ontologyHits, String id) throws IOException {
         List<OntologyTerm> terms = new ArrayList<OntologyTerm>();
 
@@ -117,7 +151,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
             final OntologyDocument document = ontologyHits.doc(i);
 
             if (document.getParentId() != null && !processedIds.contains(document.getParentId())) {
-                terms.add(new LazyLoadedOntologyTerm(searcher, document.getParentId(), document.getParentName()));
+                terms.add(newInternalOntologyTerm(searcher, document.getParentId(), document.getParentName()));
                 processedIds.add(document.getParentId());
             }
         }
@@ -135,12 +169,16 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
             final OntologyDocument document = ontologyHits.doc(i);
 
             if (document.getChildId() != null && !processedIds.contains(document.getChildId())) {
-                terms.add(new LazyLoadedOntologyTerm(searcher, document.getChildId(), document.getChildName()));
+                terms.add(newInternalOntologyTerm(searcher, document.getChildId(), document.getChildName()));
                 processedIds.add(document.getParentId());
             }
         }
 
         return terms;
+    }
+
+    protected OntologyTerm newInternalOntologyTerm(OntologyIndexSearcher searcher, String id, String name) {
+        return new LazyLoadedOntologyTerm(searcher, id, name);
     }
 
     @Override
