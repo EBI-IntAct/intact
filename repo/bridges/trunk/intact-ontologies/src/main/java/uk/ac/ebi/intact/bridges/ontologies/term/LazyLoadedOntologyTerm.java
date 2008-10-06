@@ -17,7 +17,8 @@ package uk.ac.ebi.intact.bridges.ontologies.term;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import org.apache.lucene.search.Sort;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.*;
 import uk.ac.ebi.intact.bridges.ontologies.FieldName;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyHits;
@@ -73,6 +74,10 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
     }
 
     public List<OntologyTerm> getParents() {
+        return getParents(false);
+    }
+
+    public List<OntologyTerm> getParents(boolean includeCyclic) {
         if (parents != null) {
             return parents;
        }
@@ -80,10 +85,12 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.parents = new ArrayList<OntologyTerm>();
 
         try {
-            //Query query = new BooleanQuery();
-//            query.combine(new Query[] {new TermQuery(new Term(FieldName.CHILDREN_ID, id)),
-//                                       new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, "false"))});
-            final OntologyHits ontologyHits = searcher.searchByChildId(id, new Sort(FieldName.PARENT_NAME_SORTABLE));
+            BooleanQuery query = new BooleanQuery();
+            query.add(new TermQuery(new Term(FieldName.CHILDREN_ID, id)), BooleanClause.Occur.MUST);
+            query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
+
+            final Hits hits = searcher.search(query, new Sort(FieldName.PARENT_NAME));
+            final OntologyHits ontologyHits = new OntologyHits(hits);
             parents.addAll(processParentsHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting parents for document: "+id, e);
@@ -92,8 +99,11 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         return parents;
     }
 
-
     public List<OntologyTerm> getChildren() {
+        return getChildren(false);
+    }
+
+    public List<OntologyTerm> getChildren(boolean includeCyclic) {
         if (children != null) {
             return children;
         }
@@ -101,7 +111,12 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.children = new ArrayList<OntologyTerm>();
 
         try {
-            final OntologyHits ontologyHits = searcher.searchByParentId(id, new Sort(FieldName.CHILDREN_NAME_SORTABLE));
+            BooleanQuery query = new BooleanQuery();
+            query.add(new TermQuery(new Term(FieldName.PARENT_ID, id)), BooleanClause.Occur.MUST);
+            query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
+
+            final Hits hits = searcher.search(query, new Sort(FieldName.CHILDREN_NAME_SORTABLE));
+            final OntologyHits ontologyHits = new OntologyHits(hits);
             children.addAll(processChildrenHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting children for document: "+id, e);

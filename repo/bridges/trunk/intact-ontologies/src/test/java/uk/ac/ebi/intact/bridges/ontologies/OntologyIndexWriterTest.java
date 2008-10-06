@@ -68,6 +68,6 @@ public class OntologyIndexWriterTest {
 
         OntologyIndexSearcher searcher = new OntologyIndexSearcher(directory);
 
-        Assert.assertEquals(154, searcher.getIndexReader().maxDoc());
+        Assert.assertEquals(241, searcher.getIndexReader().maxDoc());
     }
 }

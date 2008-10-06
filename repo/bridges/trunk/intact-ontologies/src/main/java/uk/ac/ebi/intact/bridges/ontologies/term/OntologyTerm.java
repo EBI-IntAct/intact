@@ -52,6 +52,20 @@ public interface OntologyTerm {
     List<OntologyTerm> getChildren();
 
     /**
+     * Parents of the term.
+     * @param includeCyclic if true, include the cyclic relationships.
+     * @return the parents
+     */
+    List<OntologyTerm> getParents(boolean includeCyclic);
+
+    /**
+     * Children of the term.
+     * @param includeCyclic if true, include the cyclic relationships.
+     * @return the children
+     */
+    List<OntologyTerm> getChildren(boolean includeCyclic);
+
+    /**
      * Gets a set that contains all the parent terms until the root is reached. The root is included.
      * @return The set with the parents
      */

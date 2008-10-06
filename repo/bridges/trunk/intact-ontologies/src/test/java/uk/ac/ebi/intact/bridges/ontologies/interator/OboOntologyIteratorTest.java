@@ -62,6 +62,6 @@ public class OboOntologyIteratorTest {
             count++;
         }
 
-        Assert.assertEquals(154, count);
+        Assert.assertEquals(241, count);
     }
 }

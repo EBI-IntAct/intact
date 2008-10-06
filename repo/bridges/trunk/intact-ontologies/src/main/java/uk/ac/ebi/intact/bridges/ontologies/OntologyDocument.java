@@ -76,6 +76,14 @@ public final class OntologyDocument {
         return cyclicRelationship;
     }
 
+    public boolean isRoot() {
+        return (parentId == null);
+    }
+
+    public boolean isLeaf() {
+        return (childId == null);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

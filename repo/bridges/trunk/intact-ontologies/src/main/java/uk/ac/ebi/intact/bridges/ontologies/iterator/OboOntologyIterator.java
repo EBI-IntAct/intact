@@ -93,7 +93,7 @@ public class OboOntologyIterator implements OntologyIterator {
                 documentPool.add(doc);
             }
 
-            // get parents
+            // parents
             for (Link link : oboClass.getParents()) {
                 LinkedObject oboParent = link.getParent();
 
@@ -104,6 +104,12 @@ public class OboOntologyIterator implements OntologyIterator {
                 boolean cyclicRelationship = link.getType().isCyclic();
 
                 OntologyDocument doc = new OntologyDocument(ontology, parentId, parentName, id, name, relationshipType, cyclicRelationship);
+                documentPool.add(doc);
+            }
+
+            // if it is a leaf, add itself to the index as parent with no children
+            if (oboClass.getChildren().isEmpty()) {
+                OntologyDocument doc = new OntologyDocument(ontology, id, name, null, null, null, false);
                 documentPool.add(doc);
             }
 
