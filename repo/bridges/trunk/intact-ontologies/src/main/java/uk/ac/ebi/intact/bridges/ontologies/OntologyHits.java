@@ -54,9 +54,16 @@ public class OntologyHits {
             parentId = parentField.stringValue();
             parentName = doc.getField(FieldName.PARENT_NAME).stringValue();
         }
-        
-        String childrenId = doc.getField(FieldName.CHILDREN_ID).stringValue();
-        String childrenName = doc.getField(FieldName.CHILDREN_NAME).stringValue();
+
+        String childrenId = null;
+        String childrenName = null;
+
+        Field childrenField = doc.getField(FieldName.CHILDREN_ID);
+
+        if (childrenField != null) {
+            childrenId = doc.getField(FieldName.CHILDREN_ID).stringValue();
+            childrenName = doc.getField(FieldName.CHILDREN_NAME).stringValue();
+        }
 
         String relationshipType = null;
         Field relationshipTypeField = doc.getField(FieldName.RELATIONSHIP_TYPE);
