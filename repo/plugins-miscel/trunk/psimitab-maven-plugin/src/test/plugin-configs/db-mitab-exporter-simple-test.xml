@@ -5,10 +5,24 @@
                 <artifactId>psimitab-maven-plugin</artifactId>
 
                 <configuration>
-					<!-- These parameters are going to be set at runtime -->
-
+                    <ontologies>
+                        <ontologyMapping>
+                            <name>go</name>
+                            <url>http://www.geneontology.org/ontology/gene_ontology_edit.obo</url>
+                        </ontologyMapping>
+                        <ontologyMapping>
+                            <name>psi-mi</name>
+                            <url>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</url>
+                        </ontologyMapping>
+                    </ontologies>
+                    <ontologyIndexPath>C:\ontologyIndex</ontologyIndexPath>
+                    <mitabFilePath>C:\export.tsv</mitabFilePath>
+                    <overwrite>true</overwrite>
+                    <interactionIndexPath>C:\interactionIndex</interactionIndexPath>
+                    <interactorIndexPath>C:\interactorIndex</interactorIndexPath>
+                    <logFilePath>C:\export.log</logFilePath>
                 </configuration>
             </plugin>
         </plugins>
-     </build>
+    </build>
 </project>
