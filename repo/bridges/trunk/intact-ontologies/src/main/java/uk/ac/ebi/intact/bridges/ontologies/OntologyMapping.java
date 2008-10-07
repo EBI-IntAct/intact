@@ -40,4 +40,14 @@ public class OntologyMapping {
     public URL getUrl() {
         return url;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder();
+        sb.append("OntologyMapping");
+        sb.append("{name='").append(name).append('\'');
+        sb.append(", url=").append(url);
+        sb.append('}');
+        return sb.toString();
+    }
 }
