@@ -5,7 +5,8 @@
                 <artifactId>psimitab-maven-plugin</artifactId>
 
                 <configuration>
-                    <ontologies>
+
+                    <ontologyMappings>
                         <ontologyMapping>
                             <name>go</name>
                             <url>http://www.geneontology.org/ontology/gene_ontology_edit.obo</url>
@@ -14,12 +15,18 @@
                             <name>psi-mi</name>
                             <url>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</url>
                         </ontologyMapping>
-                    </ontologies>
+                    </ontologyMappings>
+
                     <ontologyIndexPath>C:\ontologyIndex</ontologyIndexPath>
+
                     <mitabFilePath>C:\export.tsv</mitabFilePath>
+
                     <overwrite>true</overwrite>
+
                     <interactionIndexPath>C:\interactionIndex</interactionIndexPath>
+
                     <interactorIndexPath>C:\interactorIndex</interactorIndexPath>
+
                     <logFilePath>C:\export.log</logFilePath>
                 </configuration>
             </plugin>
