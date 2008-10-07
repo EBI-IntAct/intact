@@ -8,16 +8,10 @@ package uk.ac.ebi.intact.plugins;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.obo.dataadapter.OBOParseException;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexWriter;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
-import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
 import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
 
 import java.io.*;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 

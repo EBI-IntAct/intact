@@ -1,16 +1,11 @@
 package uk.ac.ebi.intact.plugins;
 
+import junit.framework.Assert;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import junit.framework.Assert;
 
 /**
  * DatabaseMitabExporterMojo Tester.
@@ -43,6 +38,23 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject( mojo, "ontologyIndex", ontologyIndexPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "logFilePath", logPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "overwrite", true );
+
+        mojo.setLog( new SystemStreamLog() );
+
+        try {
+            mojo.execute();
+        } catch ( MojoExecutionException e ) {
+            e.printStackTrace();
+            fail();
+        }
+    }
+
+
+    public void testRun() throws Exception {
+
+        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/db-mitab-exporter-simple-test.xml" );
+        Assert.assertTrue( pluginXmlFile.exists() );
+        DatabaseMitabExporterMojo mojo = ( DatabaseMitabExporterMojo ) lookupMojo( "db-mitab-export", pluginXmlFile );
 
         mojo.setLog( new SystemStreamLog() );
 
