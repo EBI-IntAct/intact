@@ -10,6 +10,10 @@ import java.util.List;
 import java.util.ArrayList;
 import java.net.URL;
 
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+
 /**
  * DatabaseMitabExporterMojo Tester.
  *
@@ -21,6 +25,14 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
 
     public void testExecute() throws Exception {
 
+        File hibernateConfig = new File( DatabaseMitabExporterMojoTest.class.getResource( "/test-hibernate.cfg.xml" ).getFile() );
+        IntactContext.initStandaloneContext( hibernateConfig );
+
+        PersisterHelper.saveOrUpdate(new IntactMockBuilder(IntactContext.getCurrentInstance().getInstitution())
+                                        .createInteractionRandomBinary());
+
+
+        // mojo
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/db-mitab-exporter-simple-test.xml" );
 
         DatabaseMitabExporterMojo mojo = ( DatabaseMitabExporterMojo ) lookupMojo( "db-mitab-export", pluginXmlFile );
@@ -35,6 +47,7 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
         File logPath = new File( target, "export.log" );
 
         // set mojo variables
+        setVariableValueToObject( mojo, "hibernateConfig", hibernateConfig );
         setVariableValueToObject( mojo, "mitabFilePath", mitabFile.getAbsolutePath() );
         setVariableValueToObject( mojo, "interactionIndexPath", interactionIndexPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "interactorIndexPath", interactorIndexPath.getAbsolutePath() );

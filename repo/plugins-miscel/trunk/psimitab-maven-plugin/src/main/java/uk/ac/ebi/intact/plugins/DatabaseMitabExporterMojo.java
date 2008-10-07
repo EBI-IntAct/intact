@@ -8,8 +8,11 @@ package uk.ac.ebi.intact.plugins;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
 import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
+import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 // import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 
 import java.io.*;
@@ -24,7 +27,22 @@ import java.util.List;
  * @phase process-sources
  * @since 1.9.0
  */
-public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
+public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
+
+    /**
+     * Project instance
+     *
+     * @parameter expression="${project}"
+     * @required
+     * @readonly
+     */
+    private MavenProject project;
+
+     /**
+     * @parameter expression="${project.build.directory}/hibernate/config/hibernate.cfg.xml"
+     * @required
+     */
+    private File hibernateConfig;
 
     /**
      * All ontologies used to build the ontology index.
@@ -142,7 +160,9 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
     ////////////////
     // Mojo
 
-    public void execute() throws MojoExecutionException {
+    public void executeIntactMojo() throws MojoExecutionException,
+                                           MojoFailureException,
+                                           IOException {
 
         System.out.println( "parameter 'ontologyMappings' = " + ontologyMappings );
         System.out.println( "parameter 'ontologyIndexPath' = " + ontologyIndexPath );
@@ -229,5 +249,17 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
                 // no need to crash here, logs are not critical.
             }
         }
+    }
+
+    public MavenProject getProject() {
+        return project;
+    }
+
+    public File getHibernateConfig() {
+        return hibernateConfig;
+    }
+
+    public void setHibernateConfig( File hibernateConfig ) {
+        this.hibernateConfig = hibernateConfig;
     }
 }
