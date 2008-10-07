@@ -10,6 +10,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.maven.plugin.MojoExecutionException;
 import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
 import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
+// import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
      * @parameter
      * @required
      */
-    private Collection<OntologyMapping> ontologies;
+    private Collection<OntologyMapping> ontologyMappings;
 
     /**
      * Where the ontology index is stored.
@@ -81,12 +82,12 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
     ///////////////////////////
     // Getters and Setters
 
-    public Collection<OntologyMapping> getOntologies() {
-        return ontologies;
+    public Collection<OntologyMapping> getOntologyMappings() {
+        return ontologyMappings;
     }
 
-    public void setOntologies( Collection<OntologyMapping> ontologies ) {
-        this.ontologies = ontologies;
+    public void setOntologyMappings( Collection<OntologyMapping> ontologies ) {
+        this.ontologyMappings = ontologies;
     }
 
     public String getOntologyIndexPath() {
@@ -142,7 +143,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
 
     public void execute() throws MojoExecutionException {
 
-        System.out.println( "parameter 'ontologies' = " + ontologies );
+        System.out.println( "parameter 'ontologyMappings' = " + ontologyMappings );
         System.out.println( "parameter 'ontologyIndexPath' = " + ontologyIndexPath );
         System.out.println( "parameter 'overwrite' = " + overwrite );
         System.out.println( "parameter 'mitabFilePath' = " + mitabFilePath );
@@ -199,13 +200,13 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
         try {
             logWriter.append( "Starting to index ontologies..." );
             ontologyIndex = FSDirectory.getDirectory( ontologyIndexPath );
-            OntologyUtils.buildIndexFromObo( ontologyIndex, ontologies.toArray( new OntologyMapping[ontologies.size( )] ), true );
+            OntologyUtils.buildIndexFromObo( ontologyIndex, ontologyMappings.toArray( new OntologyMapping[ontologyMappings.size( )] ), true );
         } catch ( Exception e ) {
             throw new MojoExecutionException( "Error while building ontology index.", e );
         }
 
-        Collection<String> ontologyNames = new ArrayList<String>( ontologies.size() );
-        for ( OntologyMapping ontology : ontologies ) {
+        Collection<String> ontologyNames = new ArrayList<String>( ontologyMappings.size() );
+        for ( OntologyMapping ontology : ontologyMappings ) {
             ontologyNames.add( ontology.getName() );
         }
 
