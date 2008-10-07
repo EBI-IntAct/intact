@@ -23,7 +23,7 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
 
         File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/db-mitab-exporter-simple-test.xml" );
 
-        DatabaseMitabExporterMojo mojo = ( DatabaseMitabExporterMojo ) lookupEmptyMojo( "db-mitab-export", pluginXmlFile );
+        DatabaseMitabExporterMojo mojo = ( DatabaseMitabExporterMojo ) lookupMojo( "db-mitab-export", pluginXmlFile );
 
         File target = new File( getBasedir(), "target" );
         Assert.assertTrue( target.exists() );
@@ -34,19 +34,12 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
         File ontologyIndexPath = new File( target, "ontologyIndex" );
         File logPath = new File( target, "export.log" );
 
-        List<OntologyMapping> mappings = new ArrayList<OntologyMapping>();
-        mappings.add(new OntologyMapping("go", new URL("http://www.geneontology.org/ontology/gene_ontology_edit.obo")));
-        mappings.add(new OntologyMapping("interpro", new URL("http://www.ebi.ac.uk/~intact/external/InterProHierarchyOBO.obo")));
-        mappings.add(new OntologyMapping("psi-mi", new URL("http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo")));
-
         // set mojo variables
         setVariableValueToObject( mojo, "mitabFilePath", mitabFile.getAbsolutePath() );
         setVariableValueToObject( mojo, "interactionIndexPath", interactionIndexPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "interactorIndexPath", interactorIndexPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "ontologyIndexPath", ontologyIndexPath.getAbsolutePath() );
         setVariableValueToObject( mojo, "logFilePath", logPath.getAbsolutePath() );
-        setVariableValueToObject( mojo, "overwrite", true );
-        setVariableValueToObject( mojo, "ontologyMappings", mappings);
 
         mojo.setLog( new SystemStreamLog() );
 
