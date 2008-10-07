@@ -12,22 +12,26 @@
                             <url>http://www.geneontology.org/ontology/gene_ontology_edit.obo</url>
                         </ontologyMapping>
                         <ontologyMapping>
+                            <name>interpro</name>
+                            <url>http://www.ebi.ac.uk/~intact/external/InterProHierarchyOBO.obo</url>
+                        </ontologyMapping>
+                        <ontologyMapping>
                             <name>psi-mi</name>
                             <url>http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo</url>
                         </ontologyMapping>
                     </ontologyMappings>
 
-                    <ontologyIndexPath>C:\ontologyIndex</ontologyIndexPath>
+                    <ontologyIndexPath>target/ontologyIndex</ontologyIndexPath>
 
-                    <mitabFilePath>C:\export.tsv</mitabFilePath>
+                    <mitabFilePath>target/export.tsv</mitabFilePath>
 
                     <overwrite>true</overwrite>
 
-                    <interactionIndexPath>C:\interactionIndex</interactionIndexPath>
+                    <interactionIndexPath>target/interactionIndex</interactionIndexPath>
 
-                    <interactorIndexPath>C:\interactorIndex</interactorIndexPath>
+                    <interactorIndexPath>target/interactorIndex</interactorIndexPath>
 
-                    <logFilePath>C:\export.log</logFilePath>
+                    <logFilePath>target/export.log</logFilePath>
                 </configuration>
             </plugin>
         </plugins>
