@@ -23,7 +23,6 @@ import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
 
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Convenience methods.
@@ -48,7 +47,7 @@ public final class OntologyUtils {
         OntologyIndexWriter writer = new OntologyIndexWriter( ontologyIndex, create );
 
         for (OntologyMapping mapping : mappings) {
-            addOboOntologyToIndex( mapping.getUrl(), mapping.getName(), writer );
+            addOboOntologyToIndex( mapping, writer );
         }
 
         writer.flush();
@@ -56,9 +55,9 @@ public final class OntologyUtils {
         writer.close();
     }
 
-    private static void addOboOntologyToIndex( URL goUrl, String ontology, OntologyIndexWriter writer ) throws OBOParseException,
+    private static void addOboOntologyToIndex( OntologyMapping mapping, OntologyIndexWriter writer ) throws OBOParseException,
                                                                                                             IOException {
-        OboOntologyIterator iterator = new OboOntologyIterator( ontology, goUrl );
+        OboOntologyIterator iterator = new OboOntologyIterator( mapping.getName(), mapping.getUrl() );
         while ( iterator.hasNext() ) {
             final OntologyDocument ontologyDocument = iterator.next();
             writer.addDocument( ontologyDocument );
