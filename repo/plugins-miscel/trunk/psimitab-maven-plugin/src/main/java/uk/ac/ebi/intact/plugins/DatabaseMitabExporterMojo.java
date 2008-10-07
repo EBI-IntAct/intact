@@ -15,6 +15,7 @@ import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Goal which which exports database interactions into MITAB file and Lucene indexes.
@@ -31,7 +32,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
      * @parameter
      * @required
      */
-    private Collection<OntologyMapping> ontologyMappings;
+    private List<OntologyMapping> ontologyMappings;
 
     /**
      * Where the ontology index is stored.
@@ -82,11 +83,11 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
     ///////////////////////////
     // Getters and Setters
 
-    public Collection<OntologyMapping> getOntologyMappings() {
+    public List<OntologyMapping> getOntologyMappings() {
         return ontologyMappings;
     }
 
-    public void setOntologyMappings( Collection<OntologyMapping> ontologies ) {
+    public void setOntologyMappings( List<OntologyMapping> ontologies ) {
         this.ontologyMappings = ontologies;
     }
 

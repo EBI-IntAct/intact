@@ -21,17 +21,17 @@
                         </ontologyMapping>
                     </ontologyMappings>
 
-                    <ontologyIndexPath>target/ontologyIndex</ontologyIndexPath>
+                    <!--<ontologyIndexPath>target/ontologyIndex</ontologyIndexPath>-->
 
-                    <mitabFilePath>target/export.tsv</mitabFilePath>
+                    <!--<mitabFilePath>target/export.tsv</mitabFilePath>-->
 
                     <overwrite>true</overwrite>
 
-                    <interactionIndexPath>target/interactionIndex</interactionIndexPath>
+                    <!--<interactionIndexPath>target/interactionIndex</interactionIndexPath>-->
 
-                    <interactorIndexPath>target/interactorIndex</interactorIndexPath>
+                    <!--<interactorIndexPath>target/interactorIndex</interactorIndexPath>-->
 
-                    <logFilePath>target/export.log</logFilePath>
+                    <!--<logFilePath>target/export.log</logFilePath>-->
                 </configuration>
             </plugin>
         </plugins>
