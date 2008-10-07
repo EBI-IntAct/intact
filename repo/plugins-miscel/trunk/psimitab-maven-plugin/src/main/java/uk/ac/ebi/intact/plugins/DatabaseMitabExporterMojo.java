@@ -165,7 +165,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
         }
 
         File mitabFile = new File( mitabFilePath );
-        if ( mitabFile.exists() && overwrite ) {
+        if ( mitabFile.exists() && !overwrite ) {
             throw new MojoExecutionException( "MITAB file exist and overwrite parameter set to true: " + mitabFilePath );
         }
         Writer mitabWriter = null;
@@ -196,10 +196,9 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
         // Action !
 
         Directory ontologyIndex = null;
-        FSDirectory ontologyDirectory = null;
         try {
             logWriter.append( "Starting to index ontologies..." );
-            ontologyDirectory = FSDirectory.getDirectory( ontologyIndexPath );
+            ontologyIndex = FSDirectory.getDirectory( ontologyIndexPath );
             OntologyUtils.buildIndexFromObo( ontologyIndex, ontologies.toArray( new OntologyMapping[ontologies.size( )] ), true );
         } catch ( Exception e ) {
             throw new MojoExecutionException( "Error while building ontology index.", e );
