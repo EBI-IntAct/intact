@@ -176,7 +176,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
             throw new MojoExecutionException( "Failed to prepare a MITAB writer", e );
         }
 
-        FSDirectory interactionDirectory = null;
+        Directory interactionDirectory = null;
         if ( interactionIndexPath != null ) {
             try {
                 interactionDirectory = FSDirectory.getDirectory( interactionIndexPath );
@@ -185,7 +185,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
             }
         }
 
-        FSDirectory interactorDirectory = null;
+        Directory interactorDirectory = null;
         if ( interactorIndexPath != null ) {
             try {
                 interactorDirectory = FSDirectory.getDirectory( interactorIndexPath );
@@ -198,7 +198,7 @@ public class DatabaseMitabExporterMojo extends AbstractPsimitabConverterMojo {
 
         Directory ontologyIndex = null;
         try {
-            logWriter.append( "Starting to index ontologies..." );
+            if (logWriter != null) logWriter.append( "Starting to index ontologies..." );
             ontologyIndex = FSDirectory.getDirectory( ontologyIndexPath );
             OntologyUtils.buildIndexFromObo( ontologyIndex, ontologyMappings.toArray( new OntologyMapping[ontologyMappings.size( )] ), true );
         } catch ( Exception e ) {

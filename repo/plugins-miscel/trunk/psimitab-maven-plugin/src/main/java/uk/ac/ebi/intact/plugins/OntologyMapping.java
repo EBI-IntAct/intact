@@ -54,4 +54,12 @@ public class OntologyMapping extends uk.ac.ebi.intact.bridges.ontologies.Ontolog
     public void setUrl( URL url ) {
         this.url = url;
     }
+
+    @Override
+    public String toString() {
+        return "OntologyMapping{" +
+                "name='" + name + '\'' +
+                ", url=" + url +
+                '}';
+    }
 }
