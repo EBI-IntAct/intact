@@ -11,6 +11,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
 // import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
@@ -231,14 +232,18 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
             ontologyNames.add( ontology.getName() );
         }
 
-        DatabaseMitabExporter exporter = new DatabaseMitabExporter(ontologyIndex, ontologyNames.toArray( new String[ontologyNames.size( )] ) );
+        OntologyIndexSearcher ontologyIndexSearcher = new OntologyIndexSearcher(ontologyIndex);
+
+        DatabaseMitabExporter exporter = new DatabaseMitabExporter(ontologyIndexSearcher, ontologyNames.toArray( new String[ontologyNames.size( )] ) );
         try {
-            logWriter.append( "Starting to export MITAB..." );
+            if (logWriter != null) logWriter.append( "Starting to export MITAB..." );
             exporter.exportAllInteractors( mitabWriter, interactionDirectory, interactorDirectory );
-            logWriter.append( "Completed MITAB export..." );
+            if (logWriter != null) logWriter.append( "Completed MITAB export..." );
         } catch ( Exception e ) {
             throw new MojoExecutionException( "Error while exporting MITAB data.", e );
         }
+
+        ontologyIndexSearcher.close();
 
         if ( logWriter != null ) {
             try {
