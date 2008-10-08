@@ -140,4 +140,51 @@ public class LazyLoadedOntologyTermTest {
         final Collection<OntologyTerm> superChildren = term.getChildrenAtDepth(40);
         Assert.assertEquals(0, superChildren.size());
     }
+
+    @Test
+    public void complexParents() throws Exception {
+        //    root
+        //    / |\
+        // c11  | \
+        //  |  /   \
+        //  c21    c22          || -> disjoint_from "cyclic" dependency
+        //  ||   __/
+        //  ||  /
+        //  c31  <- parents for this node
+        //
+
+        OntologyDocument root = new OntologyDocument("test", null, null, "ROOT", "root", null, false);
+        OntologyDocument root_c11 = new OntologyDocument("test", "ROOT", "root", "C1-1", "children 1-1", "is_a", false);
+        OntologyDocument root_c21 = new OntologyDocument("test", "ROOT", "root", "C2-1", "children 2-1", "regulates", false);
+        OntologyDocument root_c22 = new OntologyDocument("test", "ROOT", "root", "C2-2", "children 2-2", "is_a", false);
+        OntologyDocument c11_c21 = new OntologyDocument("test", "C1-1", "children 1-1", "C2-1", "children 2-1", "is_a", false);
+        OntologyDocument c21_c31 = new OntologyDocument("test", "C2-1", "children 2-1", "C3-1", "children 3-1", "regulates", false);
+        OntologyDocument c31_c21 = new OntologyDocument("test", "C3-1", "children 3-1", "C2-1", "children 2-1", "disjoint_from", false);
+        OntologyDocument c22_c31 = new OntologyDocument("test", "C2-2", "children 2-2", "C3-1", "children 3-1", "is_a", false);
+        OntologyDocument c31 = new OntologyDocument("test", "C3-1", "children 3-1", null, null, null, false);
+
+
+        Directory testDir = new RAMDirectory(LazyLoadedOntologyTermTest.class.getName()+"/complexParents");
+        OntologyIndexWriter writer = new OntologyIndexWriter(testDir, true);
+        writer.addDocument(root);
+        writer.addDocument(root_c11);
+        writer.addDocument(root_c21);
+        writer.addDocument(root_c22);
+        writer.addDocument(c11_c21);
+        writer.addDocument(c21_c31);
+        writer.addDocument(c22_c31);
+        writer.addDocument(c31_c21);
+        writer.addDocument(c31);
+        writer.flush();
+        writer.optimize();
+        writer.close();
+
+        OntologyIndexSearcher testSearcher = new OntologyIndexSearcher(testDir);
+
+        Set<OntologyTerm> parents = new LazyLoadedOntologyTerm(testSearcher, "C3-1").getAllParentsToRoot();
+
+        testSearcher.close();
+        
+        Assert.assertEquals(4, parents.size());
+    }
 }
