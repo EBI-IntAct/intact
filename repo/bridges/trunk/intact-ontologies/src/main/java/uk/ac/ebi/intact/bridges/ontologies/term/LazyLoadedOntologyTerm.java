@@ -85,12 +85,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.parents = new ArrayList<OntologyTerm>();
 
         try {
-            BooleanQuery query = new BooleanQuery();
-            query.add(new TermQuery(new Term(FieldName.CHILDREN_ID, id)), BooleanClause.Occur.MUST);
-            query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
-
-            final Hits hits = searcher.search(query, new Sort(FieldName.PARENT_NAME));
-            final OntologyHits ontologyHits = new OntologyHits(hits);
+            final OntologyHits ontologyHits = searchQuery(FieldName.CHILDREN_ID, includeCyclic);
             parents.addAll(processParentsHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting parents for document: "+id, e);
@@ -111,18 +106,27 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         this.children = new ArrayList<OntologyTerm>();
 
         try {
-            BooleanQuery query = new BooleanQuery();
-            query.add(new TermQuery(new Term(FieldName.PARENT_ID, id)), BooleanClause.Occur.MUST);
-            query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
-
-            final Hits hits = searcher.search(query, new Sort(FieldName.CHILDREN_NAME_SORTABLE));
-            final OntologyHits ontologyHits = new OntologyHits(hits);
+            final OntologyHits ontologyHits = searchQuery(FieldName.PARENT_ID, includeCyclic);
             children.addAll(processChildrenHits(ontologyHits, id));
         } catch (IOException e) {
             throw new IllegalStateException("Problem getting children for document: "+id, e);
         }
 
         return children;
+    }
+
+    private OntologyHits searchQuery(String idFieldName, boolean includeCyclic) throws IOException {
+        BooleanQuery query = new BooleanQuery();
+        query.add(new TermQuery(new Term(idFieldName, id)), BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
+
+        if (!includeCyclic) {
+            query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_TYPE, "disjoint_from")), BooleanClause.Occur.MUST_NOT);
+        }
+
+        final Hits hits = searcher.search(query, new Sort(FieldName.CHILDREN_NAME_SORTABLE));
+        final OntologyHits ontologyHits = new OntologyHits(hits);
+        return ontologyHits;
     }
 
     public Set<OntologyTerm> getAllParentsToRoot() {
