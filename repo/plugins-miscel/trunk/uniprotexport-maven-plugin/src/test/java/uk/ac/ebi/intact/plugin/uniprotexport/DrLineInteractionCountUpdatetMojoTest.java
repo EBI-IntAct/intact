@@ -44,7 +44,7 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
         File luceneDirectory = new File( getTargetDirectory(), "index" );
         InputStream is = DrLineInteractionCountUpdatetMojoTest.class.getResourceAsStream( "/mitab-samples/dataset.tsv" );
         Assert.assertNotNull( is );
-        IntactPsimiTabIndexWriter writer = new IntactPsimiTabIndexWriter( false );
+        IntactPsimiTabIndexWriter writer = new IntactPsimiTabIndexWriter();
         writer.index( luceneDirectory, is, true, true );
 
         IntactSearchEngine engine = new IntactSearchEngine( luceneDirectory );
