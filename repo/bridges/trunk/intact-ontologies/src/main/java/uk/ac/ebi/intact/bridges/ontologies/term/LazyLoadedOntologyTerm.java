@@ -119,6 +119,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm{
         BooleanQuery query = new BooleanQuery();
         query.add(new TermQuery(new Term(idFieldName, id)), BooleanClause.Occur.MUST);
         query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_CYCLIC, String.valueOf(includeCyclic))), BooleanClause.Occur.MUST);
+        query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_TYPE, "OBO_REL:is_a")), BooleanClause.Occur.MUST);
 
         if (!includeCyclic) {
             query.add(new TermQuery(new Term(FieldName.RELATIONSHIP_TYPE, "disjoint_from")), BooleanClause.Occur.MUST_NOT);
