@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.bridges.ontologies.util;
 
 import org.apache.lucene.store.Directory;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 import org.obo.dataadapter.OBOParseException;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexWriter;
@@ -31,6 +33,8 @@ import java.io.IOException;
  * @version $Id$
  */
 public final class OntologyUtils {
+
+    private static final Log log = LogFactory.getLog( OntologyUtils.class );
 
     private OntologyUtils() {}
 
@@ -57,10 +61,22 @@ public final class OntologyUtils {
 
     private static void addOboOntologyToIndex( OntologyMapping mapping, OntologyIndexWriter writer ) throws OBOParseException,
                                                                                                             IOException {
+        final long start = System.currentTimeMillis();
         OboOntologyIterator iterator = new OboOntologyIterator( mapping.getName(), mapping.getUrl() );
+        if ( log.isDebugEnabled() ) log.debug( "Starting to index " + mapping.getName() + " (URL: "+ mapping.getUrl() +")");
+
+        int count = 0;
         while ( iterator.hasNext() ) {
+            count++;
+            if ( log.isTraceEnabled() && ( (count % 1000 ) == 0 ) ) {
+                log.trace( "Processed " + count  + " " + mapping.getName() + " terms" );
+            }
+
             final OntologyDocument ontologyDocument = iterator.next();
             writer.addDocument( ontologyDocument );
         }
+
+        final long stop = System.currentTimeMillis();
+        if ( log.isDebugEnabled() ) log.debug( "Completed indexing of " + mapping.getName() + " in " + (stop - start) + "ms" );
     }
 }
