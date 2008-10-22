@@ -90,14 +90,14 @@ public class LazyLoadedOntologyTermTest {
         Assert.assertEquals(term.getName(), "biological_process");
 
         Assert.assertEquals(0, term.getParents().size());
-        Assert.assertEquals(24, term.getChildren().size());
+        Assert.assertEquals(21, term.getChildren().size());
 
-        Assert.assertEquals("GO:0009653", term.getChildren().get(0).getId());
-        Assert.assertEquals("GO:0007610", term.getChildren().get(1).getId());
-        Assert.assertEquals("GO:0007154", term.getChildren().get(2).getId());
-        Assert.assertEquals("cell cycle", term.getChildren().get(3).getName());
-        Assert.assertEquals("cell differentiation", term.getChildren().get(4).getName());
-        Assert.assertEquals("GO:0016032", term.getChildren().get(23).getId());
+        Assert.assertEquals("GO:0007610", term.getChildren().get(0).getId());
+        Assert.assertEquals("GO:0007154", term.getChildren().get(1).getId());
+        Assert.assertEquals("GO:0030154", term.getChildren().get(3).getId());
+        Assert.assertEquals("cell cycle", term.getChildren().get(2).getName());
+        Assert.assertEquals("cell differentiation", term.getChildren().get(3).getName());
+        Assert.assertEquals("GO:0016032", term.getChildren().get(20).getId());
     }
 
     @Test
@@ -129,10 +129,10 @@ public class LazyLoadedOntologyTermTest {
         OntologyTerm term = new LazyLoadedOntologyTerm(searcher, "GO:0008150");
 
         final Collection<OntologyTerm> children = term.getChildrenAtDepth(1);
-        Assert.assertEquals(23, children.size());
+        Assert.assertEquals(21, children.size());
 
         final Collection<OntologyTerm> grandChildren = term.getChildrenAtDepth(2);
-        Assert.assertEquals(15, grandChildren.size());
+        Assert.assertEquals(12, grandChildren.size());
 
         final Collection<OntologyTerm> itself = term.getChildrenAtDepth(0);
         Assert.assertEquals(1, itself.size());
@@ -154,13 +154,13 @@ public class LazyLoadedOntologyTermTest {
         //
 
         OntologyDocument root = new OntologyDocument("test", null, null, "ROOT", "root", null, false);
-        OntologyDocument root_c11 = new OntologyDocument("test", "ROOT", "root", "C1-1", "children 1-1", "is_a", false);
+        OntologyDocument root_c11 = new OntologyDocument("test", "ROOT", "root", "C1-1", "children 1-1", "OBO_REL:is_a", false);
         OntologyDocument root_c21 = new OntologyDocument("test", "ROOT", "root", "C2-1", "children 2-1", "regulates", false);
-        OntologyDocument root_c22 = new OntologyDocument("test", "ROOT", "root", "C2-2", "children 2-2", "is_a", false);
-        OntologyDocument c11_c21 = new OntologyDocument("test", "C1-1", "children 1-1", "C2-1", "children 2-1", "is_a", false);
+        OntologyDocument root_c22 = new OntologyDocument("test", "ROOT", "root", "C2-2", "children 2-2", "OBO_REL:is_a", false);
+        OntologyDocument c11_c21 = new OntologyDocument("test", "C1-1", "children 1-1", "C2-1", "children 2-1", "OBO_REL:is_a", false);
         OntologyDocument c21_c31 = new OntologyDocument("test", "C2-1", "children 2-1", "C3-1", "children 3-1", "regulates", false);
         OntologyDocument c31_c21 = new OntologyDocument("test", "C3-1", "children 3-1", "C2-1", "children 2-1", "disjoint_from", false);
-        OntologyDocument c22_c31 = new OntologyDocument("test", "C2-2", "children 2-2", "C3-1", "children 3-1", "is_a", false);
+        OntologyDocument c22_c31 = new OntologyDocument("test", "C2-2", "children 2-2", "C3-1", "children 3-1", "OBO_REL:is_a", false);
         OntologyDocument c31 = new OntologyDocument("test", "C3-1", "children 3-1", null, null, null, false);
 
 
@@ -185,6 +185,6 @@ public class LazyLoadedOntologyTermTest {
 
         testSearcher.close();
         
-        Assert.assertEquals(4, parents.size());
+        Assert.assertEquals(2, parents.size());
     }
 }
