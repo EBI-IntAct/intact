@@ -302,10 +302,10 @@
         <listener-class>uk.ac.ebi.intact.binarysearch.webapp.StartupListener</listener-class>
     </listener>
 
-    <listener>
-        <description>Forces a garbage collection if more than 1000 open files are found</description>
-        <listener-class>uk.ac.ebi.faces.webapp.EvilOpenFilesListener</listener-class>
-    </listener>
+    <!--<listener>-->
+        <!--<description>Forces a garbage collection if more than 1000 open files are found</description>-->
+        <!--<listener-class>uk.ac.ebi.faces.webapp.EvilOpenFilesListener</listener-class>-->
+    <!--</listener>-->
 
     <listener>
         <listener-class>org.apache.myfaces.webapp.StartupServletContextListener</listener-class>
