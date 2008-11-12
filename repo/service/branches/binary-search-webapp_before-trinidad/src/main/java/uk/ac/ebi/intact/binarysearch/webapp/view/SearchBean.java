@@ -4,7 +4,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.myfaces.component.html.ext.HtmlDataTable;
-import psidev.psi.mi.tab.PsimiTabColumn;
 import uk.ac.ebi.intact.binarysearch.webapp.application.OlsBean;
 import uk.ac.ebi.intact.binarysearch.webapp.generated.SearchConfig;
 import uk.ac.ebi.intact.binarysearch.webapp.model.SearchResultDataModel;
@@ -19,6 +18,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import java.io.Serializable;
 import java.util.Map;
+
+import psidev.psi.mi.tab.model.builder.MitabDocumentDefinition;
+import psidev.psi.mi.tab.model.builder.DocumentDefinition;
 
 /**
  * Main bean, that performs the searches
@@ -81,7 +83,8 @@ public class SearchBean implements Serializable
         String indexDirectory = getDefaultIndex().getLocation();
         try {
             if (sortColumn == null) {
-                sortColumn = PsimiTabColumn.ID_A.getSortableColumnName();
+                DocumentDefinition docDef = new MitabDocumentDefinition();
+                sortColumn = docDef.getColumnDefinition(MitabDocumentDefinition.ID_INTERACTOR_A).getSortableColumnName();
             }
 
             results = new SearchResultDataModel(query, indexDirectory, pageSize, sortColumn, sortAscending);

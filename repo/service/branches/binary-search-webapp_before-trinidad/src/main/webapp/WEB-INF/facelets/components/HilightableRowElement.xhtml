@@ -14,7 +14,6 @@
     <f:view>
 
         <ui:component rendered="#{rendered == null? true : sf:convertToBoolean(rendered)}">
-
             <h:outputLink onmouseover="hilightElements('hilight', '_#{index}_#{rowIndex}', 'span', 'red')"
                           onmouseout="stopHilighting('hilight', 'span')"
                           value="#{url}" target="_blank" rendered="#{url != null}">

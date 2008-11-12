@@ -21,12 +21,16 @@ import org.apache.lucene.search.Sort;
 import psidev.psi.mi.search.SearchResult;
 import psidev.psi.mi.search.Searcher;
 import psidev.psi.mi.search.engine.SearchEngineException;
-import psidev.psi.mi.tab.PsimiTabColumn;
+import psidev.psi.mi.tab.model.builder.MitabDocumentDefinition;
+import psidev.psi.mi.tab.model.builder.DocumentDefinition;
 
 import javax.faces.model.DataModel;
 import javax.faces.model.DataModelEvent;
 import javax.faces.model.DataModelListener;
 import java.io.Serializable;
+import java.io.IOException;
+
+import uk.ac.ebi.intact.psimitab.search.IntactSearchEngine;
 
 /**
  * TODO comment this!
@@ -38,7 +42,12 @@ public class SearchResultDataModel extends DataModel implements Serializable {
 
     private static final Log log = LogFactory.getLog(SearchResultDataModel.class);
 
-    private static final String DEFAULT_SORT_COLUMN = PsimiTabColumn.ID_A.getSortableColumnName();
+    private static final String DEFAULT_SORT_COLUMN;
+
+    static {
+        DocumentDefinition docDef = new MitabDocumentDefinition();
+        DEFAULT_SORT_COLUMN = docDef.getColumnDefinition(MitabDocumentDefinition.ID_INTERACTOR_A).getSortableColumnName();
+    }
 
     private String searchQuery;
     private String indexDirectory;
@@ -75,7 +84,12 @@ public class SearchResultDataModel extends DataModel implements Serializable {
 
         long startTime = System.currentTimeMillis();
 
-        this.result = Searcher.search(searchQuery, indexDirectory, firstResult, maxResults, sort);
+        try {
+            IntactSearchEngine searchEngine = new IntactSearchEngine(indexDirectory);
+            this.result = searchEngine.search(searchQuery, firstResult, maxResults, sort);
+        } catch (IOException e) {
+            throw new SearchEngineException("Problem retrieving results for query '"+searchQuery+" in index: "+indexDirectory, e);
+        }
 
         elapsedTimeMillis = System.currentTimeMillis() - startTime;
     }

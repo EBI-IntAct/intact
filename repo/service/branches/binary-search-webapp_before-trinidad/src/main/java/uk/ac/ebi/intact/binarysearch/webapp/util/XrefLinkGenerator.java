@@ -45,6 +45,12 @@ public class XrefLinkGenerator
             return replacePlaceholderWithId(linkContext.getHierarchViewUrl(), identifier);
         } else if (linkContext.containsKey(database)) {
             // here, the database is the same as the key in the props file (e.g. uniprotkb, intact...)
+
+            // fix uniprot splice variants
+            if ("uniprotkb".equals(database)) {
+                identifier = identifier.split("-")[0];
+            }
+
             return replacePlaceholderWithId(linkContext.getUrl(database), identifier);
         }
 

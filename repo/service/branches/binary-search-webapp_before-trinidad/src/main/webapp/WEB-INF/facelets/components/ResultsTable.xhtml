@@ -267,14 +267,20 @@
                                   text="#{xref.identifier}"
                                   columnAlias="interaction_ac" index="#{index}"
                                   rowIndex="#{rowIndex}" rowCount="#{rowCount}" />
-
-        <!--
-        <h:outputText value="  "/>
-        <h:outputLink value="#{psimitab:xrefUrlForDb(appConfigBean.linkContext, 'hierarchView', xref.identifier)}"
-                      target="_blank">
-            <h:outputText value="[Graph]"/>
-        </h:outputLink>
-        -->
+    </t:dataList>
+</h:column>
+<h:column>
+    <f:facet name="header">
+        <t:commandSortHeader columnName="interaction_id_s" immediate="true"
+                             actionListener="#{searchBean.scrollerAction}">
+            <ui:include src="resultstable/results_table_sorticons.xhtml"/>
+            <h:outputText value="Expansion"/>
+        </t:commandSortHeader>
+    </f:facet>
+    <t:dataList var="expansion" value="#{binaryInteraction.expansionMethods}" rowCountVar="rowCount" rowIndexVar="rowIndex">
+        <bs:hilightableRowElement text="#{expansion}"
+                                  columnAlias="expansion" index="#{index}"
+                                  rowIndex="#{rowIndex}" rowCount="#{rowCount}" />
     </t:dataList>
 </h:column>
 
