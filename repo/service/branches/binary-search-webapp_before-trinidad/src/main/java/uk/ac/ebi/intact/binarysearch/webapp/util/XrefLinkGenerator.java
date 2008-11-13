@@ -60,4 +60,19 @@ public class XrefLinkGenerator
     private static String replacePlaceholderWithId(String url, String identifier) {
         return url.replaceAll("\\{0\\}", identifier);
     }
+
+
+    public static String filterDbSource( psidev.psi.mi.tab.model.CrossReference xref ) {
+        if ( xref == null ) return null;
+       
+        if ( "MI".equals( xref.getDatabase() ) || "psi-mi".equals( xref.getDatabase() ) ) {
+            //return generateUrl( linkContext, xref.getDatabase(), xref.getIdentifier() );
+            return xref.getText();
+        } else {
+            return null;
+        }
+
+    }
+
+
 }

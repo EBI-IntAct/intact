@@ -246,7 +246,7 @@
                 rowIndexVar="rowIndex">
 
         <bs:hilightableRowElement url="#{psimitab:xrefUrl(appConfigBean.linkContext, sourceDb)}"
-                                  text="#{sourceDb.text}"
+                                  text="#{psimitab:filterDbSource(sourceDb)}"
                                   columnAlias="sourceDb" index="#{index}"
                                   rowIndex="#{rowIndex}" rowCount="#{rowCount}" />
 
