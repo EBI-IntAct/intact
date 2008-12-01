@@ -14,6 +14,8 @@ import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.search.IntactSearchEngine;
 
 import java.io.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 import psidev.psi.mi.search.SearchResult;
 
@@ -69,6 +71,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
      * @required
      */
     private boolean overwrite;
+    private static final Pattern PATTERN = Pattern.compile("DR\\s+IntAct;\\s+(\\w+);.*");
 
     public String getTargetPath() {
         return targetPath;
@@ -156,13 +159,19 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
             while ( ( drLine = in.readLine() ) != null ) {
                 lineCount++;
                 // extract uniprot AC
-                final int idx = drLine.indexOf( '\t' );
+                String uniprotAc = extractUniprotAcFromDrLine(drLine);
+
+                if (uniprotAc == null) {
+                    throw new MojoExecutionException("Could not parse DR line at line " + lineCount + ": " + drLine);
+                }
+
+                /*final int idx = drLine.indexOf( '\t' );
                 String uniprotAc = null;
                 if( idx != -1 ) {
                     uniprotAc = drLine.substring( 0, idx );
                 } else {
                     throw new MojoExecutionException("Could not parse DR line at line "+ lineCount +": " + drLine );
-                }
+                }*/
 
                 // query count of binary interactions
                 SearchResult<IntactBinaryInteraction> interactions = engine.search( uniprotAc, 0, Integer.MAX_VALUE );
@@ -182,6 +191,16 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
         getLog().info("Update completed, output file: "+ outputFile.getAbsolutePath() +".");
     }
 
+
+    private String extractUniprotAcFromDrLine(String drLine) {
+
+        Matcher matcher = PATTERN.matcher(drLine);
+
+        if (matcher.matches()) {
+            return matcher.group(1);
+        }
+        return null;
+    }
     /////////////
     // Utils
 

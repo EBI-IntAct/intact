@@ -75,10 +75,12 @@ public class DrLineInteractionCountUpdatetMojoTest extends AbstractMojoTestCase 
         int count = 0;
         while ( ( line = in.readLine() ) != null ) {
             count++;
-            if( line.startsWith( "Q04206" ) ) {
-                Assert.assertTrue( line.endsWith( "\t6" ) );
-            } else if( line.startsWith( "P25963" ) ) {
-                Assert.assertTrue( line.endsWith( "\t1" ) );
+            Assert.assertTrue(line.startsWith("DR"));
+            
+            if( line.contains( "Q04206" ) ) {
+                Assert.assertTrue( line.endsWith( "6." ) );
+            } else if( line.contains( "P25963" ) ) {
+                Assert.assertTrue( line.endsWith( "1." ) );
             } else {
                 fail( "Unexpected line found in the output file: " + line );
             }
