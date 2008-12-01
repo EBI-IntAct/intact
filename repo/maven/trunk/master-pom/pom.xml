@@ -37,7 +37,7 @@
             <notifier>
                 <type>mail</type>
                 <configuration>
-                    <address>cleroy@ebi.ac.uk</address>
+                    <address>prem@ebi.ac.uk</address>
                 </configuration>
             </notifier>
             <notifier>
@@ -59,9 +59,9 @@
             <timezone>0</timezone>
         </developer>
         <developer>
-            <id>cleroy</id>
-            <name>Catherine Leroy</name>
-            <email>cleroy@ebi.ac.uk</email>
+            <id>prem</id>
+            <name>Achuthan Premanand</name>
+            <email>prem@ebi.ac.uk</email>
             <organization>IntAct - EBI</organization>
             <organizationUrl>http://www.ebi.ac.uk/intact</organizationUrl>
             <timezone>0</timezone>
