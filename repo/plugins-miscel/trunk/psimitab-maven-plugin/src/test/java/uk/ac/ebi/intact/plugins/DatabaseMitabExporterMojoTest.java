@@ -4,15 +4,11 @@ import junit.framework.Assert;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-
-import java.io.File;
-import java.util.List;
-import java.util.ArrayList;
-import java.net.URL;
-
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
+
+import java.io.File;
 
 /**
  * DatabaseMitabExporterMojo Tester.
@@ -64,20 +60,4 @@ public class DatabaseMitabExporterMojoTest extends AbstractMojoTestCase {
         }
     }
 
-
-    public void testRun() throws Exception {
-
-        File pluginXmlFile = new File( getBasedir(), "src/test/plugin-configs/db-mitab-exporter-simple-test.xml" );
-        Assert.assertTrue( pluginXmlFile.exists() );
-        DatabaseMitabExporterMojo mojo = ( DatabaseMitabExporterMojo ) lookupMojo( "db-mitab-export", pluginXmlFile );
-
-        mojo.setLog( new SystemStreamLog() );
-
-        try {
-            mojo.execute();
-        } catch ( MojoExecutionException e ) {
-            e.printStackTrace();
-            fail();
-        }
-    }
 }
