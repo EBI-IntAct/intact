@@ -71,7 +71,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
      * @required
      */
     private boolean overwrite;
-    private static final Pattern PATTERN = Pattern.compile("DR\\s+IntAct;\\s+(\\w+);.*");
+    private static final Pattern DRPATTERN = Pattern.compile("DR\\s+IntAct;\\s+(.*?);.*");
 
     public String getTargetPath() {
         return targetPath;
@@ -194,7 +194,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
 
     private String extractUniprotAcFromDrLine(String drLine) {
 
-        Matcher matcher = PATTERN.matcher(drLine);
+        Matcher matcher = DRPATTERN.matcher(drLine);
 
         if (matcher.matches()) {
             return matcher.group(1);
