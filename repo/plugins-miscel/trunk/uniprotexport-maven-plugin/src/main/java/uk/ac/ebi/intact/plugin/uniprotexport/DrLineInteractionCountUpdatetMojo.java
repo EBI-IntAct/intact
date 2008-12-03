@@ -197,7 +197,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
         Matcher matcher = DRPATTERN.matcher(drLine);
 
         if (matcher.matches()) {
-            return matcher.group(1);
+            return matcher.group(1).trim();
         }
         return null;
     }
