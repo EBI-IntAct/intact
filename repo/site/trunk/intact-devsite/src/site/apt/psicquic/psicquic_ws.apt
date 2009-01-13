@@ -1,0 +1,31 @@
+ -----
+ PSICQUIC Web Service
+ -----
+ Bruno Aranda
+ -----
+ 13 Jan 2009
+ -----
+
+IntAct PSICQUIC Web Service
+
+ The most convenient way to access IntAct data remotely and programmaticaly is using the PSICQUIC Web Service.
+ It allows you to query the IntAct database remotely.
+
+
+ The Web Service can be found at:
+
+ {{http://www.ebi.ac.uk/intact/psicquic/webservices}}
+
+ The WSDL file for the web service can be found at:
+
+ {{http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic?wsdl}}
+
+ You can use that file to query the web service with any programming language (e.g. Java, Perl, .NET, etc...). Take a look at our examples:
+
+ * {{{http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemotePsicquicSearch.java}Java example}} (using the {{{psicquic_wsclient.html}Psicquic Client}}).
+
+ []
+
+
+
+  
