@@ -19,29 +19,30 @@ import psidev.psi.mi.search.SearchResult;
 import uk.ac.ebi.intact.binarysearch.wsclient.BinarySearchServiceClient;
 
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
+import uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient;
+import org.hupo.psi.mi.psicquic.QueryResponse;
+import org.hupo.psi.mi.psicquic.DbRef;
+import org.hupo.psi.mi.psicquic.RequestInfo;
+import org.hupo.psi.mi.psicquic.PsicquicService;
 
 /**
  * This example does not need the database to work and shows how to access the EBI IntAct database
  * remotely.
  *
- * @deprecated use the RemotePsicquicSearch instead
  */
-@Deprecated
-public class RemoteBinarySearch {
+public class RemotePsicquicSearch {
 
-    public static void main(String[] args) {
+     public static void main(String[] args) throws Exception {
 
-        // Instantiate the service client
-        BinarySearchServiceClient client = new BinarySearchServiceClient();
+        // change the enpoint address as needed
+        MitabPsicquicClient client = new MitabPsicquicClient("http://www.ebi.ac.uk/intact/psicquic/webservices/psicquic");
 
-        // Example search: brca1
-        // You can use here any lucene query string as you would do for the web site at www.ebi.ac.uk/intact
-        SearchResult<IntactBinaryInteraction> result = client.findBinaryInteractions("brca1");
+        SearchResult<IntactBinaryInteraction> result = client.getByInteractor("brca2", 0, 50);
 
         // Print the results in the console
         System.out.println("Interactions found: "+result.getTotalCount());
 
-        for ( IntactBinaryInteraction binaryInteraction : result.getInteractions()) {
+        for ( IntactBinaryInteraction binaryInteraction : result.getData()) {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 
@@ -49,5 +50,6 @@ public class RemoteBinarySearch {
 
             System.out.println("\tInteraction ("+interactionAc+"): "+interactorIdA+" interacts with "+interactorIdB);
         }
+
     }
 }
