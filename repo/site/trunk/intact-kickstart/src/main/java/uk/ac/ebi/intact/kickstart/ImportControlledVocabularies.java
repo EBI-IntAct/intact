@@ -15,11 +15,12 @@
  */
 package uk.ac.ebi.intact.kickstart;
 
+import org.obo.datamodel.OBOSession;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdaterStatistics;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 
 import java.io.File;
 
@@ -38,13 +39,15 @@ public class ImportControlledVocabularies {
         IntactContext.initStandaloneContext(pgConfigFile);
 
         // load the latest ontology from internet
-        IntactOntology ontology = OboUtils.createOntologyFromOboLatestPsiMi();
+        OBOSession oboSession = OboUtils.createOBOSessionFromLatestMi();
+
+        CvObjectOntologyBuilder cvObjectOntologyBuilder = new CvObjectOntologyBuilder(oboSession);
 
         // Import the ontology into the database, using the CvUpdater
         CvUpdater updater = new CvUpdater();
 
         // this starts the create/update
-        CvUpdaterStatistics stats = updater.createOrUpdateCVs(ontology);
+        CvUpdaterStatistics stats = updater.createOrUpdateCVs(cvObjectOntologyBuilder.getAllCvs());
 
         System.out.println("Created terms: "+stats.getCreatedCvs().size());
     }
