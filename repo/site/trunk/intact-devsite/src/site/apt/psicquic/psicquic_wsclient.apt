@@ -1,0 +1,74 @@
+ -----
+ PSICQUIC client
+ -----
+ Bruno Aranda
+ -----
+ 13 Jan 2009
+ -----
+
+
+
+IntAct Psicquic Client
+
+ The most convenient way to access IntAct data remotely and programmaticaly is using the Intact Psicquic Client.
+ As this service is compliant with PSICQUIC, you can use it with any other molecular interaction database that provides a PSICQUIC
+ web service.
+
+  [[a]] If you are using Maven (recommended), just include this dependency in the POM file:
+
+----------------
+<!-- Binary Search Client -->
+<dependency>
+    <groupId>uk.ac.ebi.intact.service.psicquic</groupId>
+    <artifactId>intact-psicquic-client</artifactId>
+    <version>1.0-SNAPSHOT</version>
+</dependency>
+----------------
+
+  Don't forget to include the EBI repository in your POM file:
+
+----------------
+<repositories>
+    <!-- EBI repositories - Where the IntAct artifacts are stored -->
+    <repository>
+        <id>ebi-repo</id>
+        <name>The EBI internal repository</name>
+        <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+    </repository>
+    <repository>
+        <id>ebi-repo-snapshots</id>
+        <name>The EBI internal repository</name>
+        <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+    </repository>
+
+    ...
+
+</repositories>
+----------------
+
+
+  [[b]] [NOT YET PROVIDED] If you are not using Maven, you can get the client from {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}SourceForge downloads}}.
+  
+* Three flavours: PSI-MITAB, PSI-XML and IntAct
+  
+  Three different client classes can be used:
+  
+  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+  | uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient; | Uses the PSI-MITAB model, so the results of the query will contain a list of IntactBinaryInteractions |
+  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+  | uk.ac.ebi.intact.psicquic.wsclient.XmlPsicquicClient    | Uses the PSI-MIXML model, so the results of the query will be an EntrySet                             |
+  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+  | uk.ac.ebi.intact.psicquic.wsclient.IntactPsicquicClient | Uses the MITAB model, so the results of the query will be an IntactEntry object                       |
+  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+  
+ You can see an example on how to use the web service MITAB client {{{http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemotePsicquicSearch.java}here}}.
+
+ Depending on what model you want to use with your results you will use the corresponding client. However, note that the service works natively
+ with PSI-MITAB, so the XML and Intact objects are created from binary interactions.
+
