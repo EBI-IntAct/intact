@@ -224,4 +224,73 @@ public class PsiExchangeTest extends AbstractPsiExchangeTest  {
         Assert.assertEquals(2, getDaoFactory().getInteractionDao().getByShortLabel("sft2-sft2").getComponents().size());
     }
 
+
+    @Test
+    public void importIntoIntact_withMultipleFeatures() throws Exception {
+
+        PsimiXmlReader reader = new PsimiXmlReader();
+        EntrySet set = reader.read( PsiExchangeTest.class.getResourceAsStream( "/xml/multiplefeature.xml" ) );
+
+        PsiExchange.importIntoIntact( set );
+
+        Assert.assertEquals( 1, getDaoFactory().getInteractionDao().countAll() );
+        Assert.assertEquals( 2, getDaoFactory().getProteinDao().countAll() );
+        Assert.assertEquals( 2, getDaoFactory().getComponentDao().countAll() );
+
+        final InteractionImpl interaction = getDaoFactory().getInteractionDao().getAll().iterator().next();
+
+        Component baitComponent = null;
+        Component preyComponent = null;
+        for ( Component component : interaction.getComponents() ) {
+
+            final CvExperimentalRole cvExperimentalRole = component.getExperimentalRoles().iterator().next();
+            Assert.assertNotNull( cvExperimentalRole );
+
+            if ( cvExperimentalRole.getShortLabel().equals( "bait" ) ) {
+                baitComponent = component;
+            }
+
+            if ( cvExperimentalRole.getShortLabel().equals( "prey" ) ) {
+                preyComponent = component;
+            }
+
+        }
+
+        Assert.assertNotNull( baitComponent );
+        Assert.assertNotNull( preyComponent );
+
+        final Collection<Feature> preyFeatures = baitComponent.getBindingDomains();
+        Assert.assertEquals( 2, preyFeatures.size() );
+
+        String mycFeatureShortLabel = null;
+        String t7FeatureShortLabel = null;
+
+        String mycFeatureType = null;
+        String t7FeatureType = null;
+
+        for ( Feature feature : preyFeatures ) {
+            final String featureShortLabel = feature.getShortLabel();
+            final CvFeatureType featureType = feature.getCvFeatureType();
+
+            if ( featureShortLabel.equals( "region1" ) ) {
+                mycFeatureShortLabel = featureShortLabel;
+                mycFeatureType = featureType.getShortLabel();
+            }
+
+            if ( featureShortLabel.equals( "region2" ) ) {
+                t7FeatureShortLabel = featureShortLabel;
+                t7FeatureType = featureType.getShortLabel();
+            }
+
+        }
+
+        Assert.assertEquals( mycFeatureShortLabel, "region1" );
+        Assert.assertEquals( t7FeatureShortLabel, "region2" );
+
+        Assert.assertEquals( mycFeatureType, "myc tag" );
+        Assert.assertEquals( t7FeatureType, "t7 tag" );
+
+    }
+
+
 }
