@@ -55,17 +55,17 @@ IntAct Psicquic Client
 
   [[b]] [NOT YET PROVIDED] If you are not using Maven, you can get the client from {{{http://sourceforge.net/project/platformdownload.php?group_id=62732&sel_platform=4797}SourceForge downloads}}.
   
-* Three flavours: PSI-MITAB, PSI-XML and IntAct
+Three flavours: PSI-MITAB, PSI-XML and IntAct
   
   Three different client classes can be used:
   
-  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
-  | uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient; | Uses the PSI-MITAB model, so the results of the query will contain a list of IntactBinaryInteractions |
-  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
-  | uk.ac.ebi.intact.psicquic.wsclient.XmlPsicquicClient    | Uses the PSI-MIXML model, so the results of the query will be an EntrySet                             |
-  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
-  | uk.ac.ebi.intact.psicquic.wsclient.IntactPsicquicClient | Uses the MITAB model, so the results of the query will be an IntactEntry object                       |
-  *-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+*-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+| uk.ac.ebi.intact.psicquic.wsclient.MitabPsicquicClient; | Uses the PSI-MITAB model, so the results of the query will contain a list of IntactBinaryInteractions |
+*-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+| uk.ac.ebi.intact.psicquic.wsclient.XmlPsicquicClient    | Uses the PSI-MIXML model, so the results of the query will be an EntrySet                             |
+*-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
+| uk.ac.ebi.intact.psicquic.wsclient.IntactPsicquicClient | Uses the MITAB model, so the results of the query will be an IntactEntry object                       |
+*-----------------------------------------------------------*-----------------------------------------------------------------------------------------------------+
   
  You can see an example on how to use the web service MITAB client {{{http://intact.svn.sourceforge.net/viewvc/*checkout*/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/RemotePsicquicSearch.java}here}}.
 
