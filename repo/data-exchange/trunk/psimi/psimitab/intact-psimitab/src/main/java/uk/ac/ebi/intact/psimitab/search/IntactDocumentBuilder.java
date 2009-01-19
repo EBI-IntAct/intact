@@ -68,7 +68,7 @@ public class IntactDocumentBuilder extends AbstractInteractionDocumentBuilder<In
         //for relevance score
         this.relevanceScoreCalculator = new RelevanceScoreCalculatorImpl( );
         //load the default properties file
-        Properties properties = relevanceScoreCalculator.readPropertiesFile( IntactDocumentBuilder.class.getResource("/relevancescore/rsc.properties" ).getFile());
+        Properties properties = relevanceScoreCalculator.readPropertiesFile( IntactDocumentBuilder.class.getResourceAsStream("/relevancescore/rsc.properties"));
         if(properties != null){
             relevanceScoreCalculator.setWeights( properties );
         }

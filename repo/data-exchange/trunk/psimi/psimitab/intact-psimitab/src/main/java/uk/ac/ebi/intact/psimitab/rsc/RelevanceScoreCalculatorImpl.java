@@ -21,10 +21,7 @@ import psidev.psi.mi.tab.model.builder.Field;
 import psidev.psi.mi.tab.model.builder.MitabDocumentDefinition;
 
 import java.util.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.FileInputStream;
+import java.io.*;
 
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import org.apache.commons.lang.StringUtils;
@@ -185,11 +182,11 @@ public class RelevanceScoreCalculatorImpl implements RelevanceScoreCalculator {
     
 
  
-    public boolean writePropertiesFile( String propertiesFile ) throws IOException {
+    public boolean writePropertiesFile( OutputStream propertiesFileStream ) throws IOException {
         final Properties properties = getWeights();
         if ( properties != null ) {
             try {
-                properties.store( new FileOutputStream( propertiesFile ), null );
+                properties.store(  propertiesFileStream , null );
             } catch ( IOException e ) {
                 throw new IOException( "IOException thrown when writing Rsc Properties File" );
             }
@@ -200,12 +197,13 @@ public class RelevanceScoreCalculatorImpl implements RelevanceScoreCalculator {
     }
 
 
-    public Properties readPropertiesFile( String propertiesFile ) throws IOException {
+    public Properties readPropertiesFile( InputStream propertiesFileStream ) throws IOException {
         Properties properties = new Properties();
         try {
-            properties.load( new FileInputStream( propertiesFile ) );
+            properties.load(  propertiesFileStream  );
         } catch ( IOException e ) {
-            throw new IOException( "IOException thrown when reading Rsc Properties File" );
+            e.printStackTrace();
+            throw new IOException( "IOException thrown when reading Rsc Properties File " );
         }
         return properties;
     }
