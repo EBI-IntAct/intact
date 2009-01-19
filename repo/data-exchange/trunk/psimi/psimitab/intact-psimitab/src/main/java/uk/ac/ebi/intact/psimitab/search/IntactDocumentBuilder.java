@@ -64,7 +64,14 @@ public class IntactDocumentBuilder extends AbstractInteractionDocumentBuilder<In
     public IntactDocumentBuilder( OntologyIndexSearcher ontologySearcher, String[] ontologiesToExpand ) throws IOException {
         this();
         this.ontologySearcher = ontologySearcher;
+
+        //for relevance score
         this.relevanceScoreCalculator = new RelevanceScoreCalculatorImpl( );
+        //load the default properties file
+        Properties properties = relevanceScoreCalculator.readPropertiesFile( IntactDocumentBuilder.class.getResource("/relevancescore/rsc.properties" ).getFile());
+        if(properties != null){
+            relevanceScoreCalculator.setWeights( properties );
+        }
 
         for (String ontologyToExpand : ontologiesToExpand) {
             addExpandableOntology(ontologyToExpand);
@@ -281,25 +288,43 @@ go:"GO:0014911"(positive regulation of smooth muscle cell migration)|
          * getNameA, rsc and add to the doc
          */
 
-        String name = getNameA( row );
+        String nameA = getName( row,MitabDocumentDefinition.ALIAS_INTERACTOR_A,  MitabDocumentDefinition.ALTID_INTERACTOR_A );
+        String nameB = getName( row,MitabDocumentDefinition.ALIAS_INTERACTOR_B,  MitabDocumentDefinition.ALTID_INTERACTOR_B );
 
-        if ( name != null ) {
+        //nameA
+        if ( nameA != null ) {
 
-            name = name.toLowerCase();
+            nameA = nameA.toLowerCase();
             doc.add( new Field( "nameA",
-                                name,
+                                nameA,
                                 Field.Store.YES,
                                 Field.Index.TOKENIZED ) );
 
             doc.add( new Field( "nameA_s",
-                                name,
+                                nameA,
                                 Field.Store.NO,
                                 Field.Index.UN_TOKENIZED ) );
         }
+
+        //nameB
+         if ( nameB != null ) {
+
+            nameB = nameB.toLowerCase();
+            doc.add( new Field( "nameB",
+                                nameB,
+                                Field.Store.YES,
+                                Field.Index.TOKENIZED ) );
+
+            doc.add( new Field( "nameB_s",
+                                nameB,
+                                Field.Store.NO,
+                                Field.Index.UN_TOKENIZED ) );
+        }
+
         //get RSC and add tothe doc
         if ( relevanceScoreCalculator != null ) {
 
-            String rscString = relevanceScoreCalculator.calculateScore( row ) + "-" + name;
+            String rscString = relevanceScoreCalculator.calculateScore( row, nameA, nameB );
 
             doc.add( new Field( "relevancescore",
                                 rscString,
@@ -321,10 +346,12 @@ go:"GO:0014911"(positive regulation of smooth muscle cell migration)|
      * @param  row
      * @return name of interactorA
      */
-    protected String getNameA( Row row ) {
+    public String getName( Row row,int aliasIndex, int altidIndex ) {
         String nameA = null;
         //aliases
-        Column aliasesA = row.getColumnByIndex( MitabDocumentDefinition.ALIAS_INTERACTOR_A );
+        //Column aliasesA = row.getColumnByIndex( MitabDocumentDefinition.ALIAS_INTERACTOR_A );
+        Column aliasesA = row.getColumnByIndex( aliasIndex );
+
         for ( psidev.psi.mi.tab.model.builder.Field field : aliasesA.getFields() ) {
             if ( field.getValue() != null ) {
                 nameA = field.getValue();
@@ -333,21 +360,28 @@ go:"GO:0014911"(positive regulation of smooth muscle cell migration)|
 
         if ( nameA == null ) {
             //alternative identifiers
-            Column altIdA = row.getColumnByIndex( MitabDocumentDefinition.ALTID_INTERACTOR_A );
-            for ( psidev.psi.mi.tab.model.builder.Field field : altIdA.getFields() ) {
-                if ( "gene name".equals( field.getDescription() ) ) {
-                    nameA = field.getValue();
-                }
+            //Column altIdA = row.getColumnByIndex( MitabDocumentDefinition.ALTID_INTERACTOR_A );
+            Column altIdA = row.getColumnByIndex( altidIndex);
 
-                if ( nameA == null ) {
-                    if ( "commercial name".equals( field.getDescription() ) ) {
-                        nameA = field.getValue();
-                    }
-                }
-            }
+            nameA = getAliasByPriority( altIdA, "gene name","gene name synonym","commercial name","go synonym","locus name","orf name" );
+
         }
         return nameA;
     }
+
+    private String getAliasByPriority(Column altIdColumn, String ... aliasTypes) {
+        String aliasName=null;
+        for (String aliasType : aliasTypes) {
+            for ( psidev.psi.mi.tab.model.builder.Field field : altIdColumn.getFields() ) {
+                if (field.getDescription() != null && aliasType.equals(field.getDescription())) {
+                    aliasName = field.getValue();
+                }
+            }
+        }
+
+        return aliasName;
+    }
+
 
     public void setDisableExpandInteractorsProperties( boolean disable ) {
         disableExpandInteractorsProperties = disable;
@@ -488,4 +522,9 @@ go:"GO:0014911"(positive regulation of smooth muscle cell migration)|
     public RelevanceScoreCalculator getRelevanceScoreCalculator(){
         return this.relevanceScoreCalculator;
     }
+
+    public void setRelevanceScoreCalculator( RelevanceScoreCalculator relevanceScoreCalculator ) {
+        this.relevanceScoreCalculator = relevanceScoreCalculator;
+    }
+
 }
