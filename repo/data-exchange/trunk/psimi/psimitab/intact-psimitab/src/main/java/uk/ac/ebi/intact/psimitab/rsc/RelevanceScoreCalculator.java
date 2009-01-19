@@ -4,8 +4,7 @@ import psidev.psi.mi.tab.model.builder.Row;
 
 
 import java.util.Properties;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * 
@@ -20,6 +19,6 @@ public interface RelevanceScoreCalculator {
 
     Properties getWeights();
     void setWeights(Properties properties);
-    Properties readPropertiesFile( String filePath) throws IOException;
-    boolean writePropertiesFile(String filePath) throws IOException;
+    Properties readPropertiesFile( InputStream inputStream) throws IOException;
+    boolean writePropertiesFile( OutputStream outputStream) throws IOException;
 }
