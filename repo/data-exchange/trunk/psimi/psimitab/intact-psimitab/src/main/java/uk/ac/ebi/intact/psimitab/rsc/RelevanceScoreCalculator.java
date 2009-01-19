@@ -16,7 +16,10 @@ import java.io.IOException;
 public interface RelevanceScoreCalculator {
 
     String calculateScore( Row row);
+    String calculateScore( Row row,String nameA,String nameB);
+
     Properties getWeights();
-    Properties readPropertiesFile( File filePath) throws IOException;
-    boolean writePropertiesFile(File filePath) throws IOException;
+    void setWeights(Properties properties);
+    Properties readPropertiesFile( String filePath) throws IOException;
+    boolean writePropertiesFile(String filePath) throws IOException;
 }
