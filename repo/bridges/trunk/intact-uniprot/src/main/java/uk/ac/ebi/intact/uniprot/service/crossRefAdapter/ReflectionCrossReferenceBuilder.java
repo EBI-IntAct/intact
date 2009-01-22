@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
+import uk.ac.ebi.intact.uniprot.UniprotServiceException;
+import uk.ac.ebi.intact.uniprot.service.RuntimeUniprotServiceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -87,18 +89,19 @@ public class ReflectionCrossReferenceBuilder {
 
             boolean foundId = false;
             for ( int i = 0; i < methods.length && !foundId; i++ ) {
-                method = methods[i];
-                String methodName = method.getName();
+                Method candidateMethod = methods[i];
+                String methodName = candidateMethod.getName();
 
                 if ( log.isDebugEnabled() ) {
                     log.debug( "  - method = " + methodName );
                 }
                 if ( ( !methodName.equals( "getId" ) ) && methodName.startsWith( "get" ) &&
-                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "AccessionNumber" ) ) ) {
+                     ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" ) ) ) {
 
                     if ( log.isDebugEnabled() ) {
                         log.debug( "      > looks like a candidate !!" );
                     }
+                    method = candidateMethod;
                     foundId = true;
                 }
             }
@@ -134,6 +137,7 @@ public class ReflectionCrossReferenceBuilder {
 
         String id = null;
         Method method = findMethod( clazz, db );
+        
         try {
             if ( method != null ) {
                 Object o = method.invoke( crossRef, NO_PARAM );
@@ -154,10 +158,8 @@ public class ReflectionCrossReferenceBuilder {
                     }
                 }
             }
-        } catch ( IllegalAccessException e ) {
-            log.error( "Error while trying to build Xref via reflection. See nested exception.", e );
-        } catch ( InvocationTargetException e ) {
-            log.error( "Error while trying to build Xref via reflection, See nested exception.", e );
+        } catch ( Exception e ) {
+            throw new RuntimeUniprotServiceException("Problem getting xref id using reflection: "+crossRef+" / method: "+clazz.getName()+" "+method, e);
         }
 
         // TODO 2006-10-24: how to retreive a description ?!?!

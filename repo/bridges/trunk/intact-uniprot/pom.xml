@@ -38,9 +38,6 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.springframework</groupId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.springframework</groupId>
                     <artifactId>spring-remoting</artifactId>
                 </exclusion>
                 <exclusion>
