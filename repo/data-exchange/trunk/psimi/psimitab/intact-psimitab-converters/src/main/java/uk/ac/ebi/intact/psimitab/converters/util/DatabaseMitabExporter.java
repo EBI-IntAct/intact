@@ -22,34 +22,30 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.store.Directory;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.builder.Row;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.commons.util.ETACalculator;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.Interaction;
 import uk.ac.ebi.intact.model.InteractionImpl;
 import uk.ac.ebi.intact.model.Interactor;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.OntologyNameFinder;
 import uk.ac.ebi.intact.psimitab.PsimitabTools;
-import uk.ac.ebi.intact.psimitab.rsc.RelevanceScoreCalculator;
-import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
-import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.converters.Intact2BinaryInteractionConverter;
 import uk.ac.ebi.intact.psimitab.converters.expansion.SpokeWithoutBaitExpansion;
+import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
+import uk.ac.ebi.intact.psimitab.processor.IntactClusterInteractorPairProcessor;
 import uk.ac.ebi.intact.psimitab.search.IntactInteractorIndexWriter;
 import uk.ac.ebi.intact.psimitab.search.IntactPsimiTabIndexWriter;
-import uk.ac.ebi.intact.psimitab.search.IntactDocumentBuilder;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
-import uk.ac.ebi.intact.commons.util.ETACalculator;
 
 import javax.persistence.Query;
 import java.io.IOException;
 import java.io.Writer;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.*;
 
 /**
@@ -159,7 +155,7 @@ public class DatabaseMitabExporter {
                 final Collection<Component> components = interactor.getActiveInstances();
                 if( components.isEmpty() ) {
                     // not need to index
-                    log.info( "Interactor " + interactor.getShortLabel() + " isn't involved in any interactions, skipping." );
+                    log.debug( "Interactor " + interactor.getShortLabel() + " isn't involved in any interactions, skipping." );
                     continue;
                 }
 
@@ -169,31 +165,39 @@ public class DatabaseMitabExporter {
                 for (Component comp : components) {
                     final Interaction interaction = comp.getInteraction();
 
-                    if (!interactionAcProcessed.contains(interaction.getAc())) {
-                        interactions.add(interaction);
-                        interactionAcProcessed.add(interaction.getAc());
+                    if (interaction != null) {
+                        if (!interactionAcProcessed.contains(interaction.getAc())) {
+                            interactions.add(interaction);
+                            interactionAcProcessed.add(interaction.getAc());
+                        }
+                    } else {
+                        log.error("Component without interaction: "+comp.getAc());
                     }
                 }
 
                 if (log.isTraceEnabled()) log.trace("Starting conversion and property enrichment: "+interactor.getShortLabel());
 
-                Collection<IntactBinaryInteraction> binaryInteractions = converter.convert(interactions);
-                enrich(binaryInteractions);
+                if (!interactions.isEmpty()) {
+                    Collection<IntactBinaryInteraction> binaryInteractions = converter.convert(interactions);
+                    enrich(binaryInteractions);
+    
 
+                    if ( log.isTraceEnabled() ) log.trace( "Storing " + binaryInteractions.size() + " interactions..." );
 
-                if ( log.isTraceEnabled() ) log.trace( "Storing " + binaryInteractions.size() + " interactions..." );
+                    int count = 0;
+                    for (IntactBinaryInteraction bi : binaryInteractions) {
+                        count++;
+                        if ( log.isTraceEnabled() ) {
+                            log.trace( "Processing interaction #" + count );
+                        }
 
-                int count = 0;
-                for (IntactBinaryInteraction bi : binaryInteractions) {
-                    count++;
-                    if ( log.isTraceEnabled() ) {
-                        log.trace( "Processing interaction #" + count );
+                        clusterBuilder.addBinaryInteraction( bi );
                     }
 
-                    clusterBuilder.addBinaryInteraction( bi );
+                    interactorCount++;
+                } else {
+                    log.debug("No interactions to convert for: "+interactor.getShortLabel());
                 }
-
-                interactorCount++;
             }
 
             dataContext.commitTransaction();
