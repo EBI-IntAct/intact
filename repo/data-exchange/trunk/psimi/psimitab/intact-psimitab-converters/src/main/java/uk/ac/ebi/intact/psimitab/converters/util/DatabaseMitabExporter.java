@@ -159,7 +159,7 @@ public class DatabaseMitabExporter {
                     continue;
                 }
 
-                if (log.isTraceEnabled()) log.trace("Processing interactor: "+interactor.getShortLabel());
+                if (log.isDebugEnabled()) log.debug("Processing interactor: "+interactor.getShortLabel());
 
                 List<Interaction> interactions = new ArrayList<Interaction>();
                 for (Component comp : components) {
