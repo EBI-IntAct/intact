@@ -5,16 +5,18 @@
  */
 package uk.ac.ebi.intact.plugins;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
+import uk.ac.ebi.intact.bridges.ontologies.util.OntologyUtils;
 import uk.ac.ebi.intact.plugin.IntactHibernateMojo;
-// import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import uk.ac.ebi.intact.psimitab.converters.util.DatabaseMitabExporter;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -29,6 +31,8 @@ import java.util.List;
  * @since 1.9.0
  */
 public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
+
+    private static final Log log = LogFactory.getLog( DatabaseMitabExporterMojo.class );
 
     /**
      * Project instance
@@ -195,6 +199,7 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
         try {
             mitabWriter = new BufferedWriter( new FileWriter( mitabFile ) );
         } catch ( IOException e ) {
+            log.error(e);
             throw new MojoExecutionException( "Failed to prepare a MITAB writer", e );
         }
 
@@ -203,6 +208,7 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
             try {
                 interactionDirectory = FSDirectory.getDirectory( interactionIndexPath );
             } catch ( IOException e ) {
+                log.error(e);
                 throw new MojoExecutionException( "Failed to build the interaction Directory", e );
             }
         }
@@ -212,6 +218,7 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
             try {
                 interactorDirectory = FSDirectory.getDirectory( interactorIndexPath );
             } catch ( IOException e ) {
+                log.error(e);
                 throw new MojoExecutionException( "Failed to build the interactor Directory", e );
             }
         }
@@ -223,7 +230,8 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
             if (logWriter != null) logWriter.append( "Starting to index ontologies..." );
             ontologyIndex = FSDirectory.getDirectory( ontologyIndexPath );
             OntologyUtils.buildIndexFromObo( ontologyIndex, ontologyMappings.toArray( new OntologyMapping[ontologyMappings.size( )] ), true );
-        } catch ( Exception e ) {
+        } catch ( Throwable e ) {
+            log.error(e);
             throw new MojoExecutionException( "Error while building ontology index.", e );
         }
 
@@ -239,7 +247,9 @@ public class DatabaseMitabExporterMojo extends IntactHibernateMojo {
             if (logWriter != null) logWriter.append( "Starting to export MITAB..." );
             exporter.exportAllInteractors( mitabWriter, interactionDirectory, interactorDirectory );
             if (logWriter != null) logWriter.append( "Completed MITAB export..." );
-        } catch ( Exception e ) {
+        } catch ( Throwable e ) {
+            log.error(e);
+            if (logWriter != null) logWriter.append(ExceptionUtils.getFullStackTrace(e));
             throw new MojoExecutionException( "Error while exporting MITAB data.", e );
         }
 
