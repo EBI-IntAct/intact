@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.dataexchange.psimi.solr;
+package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.builder.*;
+import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.util.Collection;
@@ -28,13 +29,33 @@ import java.util.Collection;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactSolrDocumentConverter implements SolrDocumentConverter {
+public class SolrDocumentConverter {
 
-    public IntactSolrDocumentConverter() {
+    private DocumentDefinition documentDefintion;
+
+    public SolrDocumentConverter(DocumentDefinition documentDefintion) {
+        this.documentDefintion = documentDefintion;
+    }
+
+    public SolrInputDocument toSolrDocument(String mitabLine) {
+        Row row = documentDefintion.createRowBuilder().createRow(mitabLine);
+        return toSolrDocument(row, mitabLine);
+    }
+
+    public SolrInputDocument toSolrDocument(BinaryInteraction binaryInteraction) {
+        Row row = documentDefintion.createInteractionRowConverter().createRow(binaryInteraction);
+        return toSolrDocument(row);
     }
 
     public SolrInputDocument toSolrDocument(Row row) {
+        return toSolrDocument(row, row.toString());
+    }
+
+    protected SolrInputDocument toSolrDocument(Row row, String mitabLine) {
         SolrInputDocument doc = new SolrInputDocument();
+
+        // store the mitab line
+        doc.addField("line", mitabLine);
 
         addColumnToDoc(doc, row, "idA", IntactDocumentDefinition.ID_INTERACTOR_A);
         addColumnToDoc(doc, row, "idB", IntactDocumentDefinition.ID_INTERACTOR_B);
@@ -53,20 +74,24 @@ public class IntactSolrDocumentConverter implements SolrDocumentConverter {
         addColumnToDoc(doc, row, "confidence", IntactDocumentDefinition.CONFIDENCE);
 
         // extended
-        addColumnToDoc(doc, row, "experimentalRoleA", IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
-        addColumnToDoc(doc, row, "experimentalRoleB", IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
-        addColumnToDoc(doc, row, "biologicalRoleA", IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
-        addColumnToDoc(doc, row, "biologicalRoleB", IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
-        addColumnToDoc(doc, row, "typeA", IntactDocumentDefinition.INTERACTOR_TYPE_A);
-        addColumnToDoc(doc, row, "typeB", IntactDocumentDefinition.INTERACTOR_TYPE_B);
-        addColumnToDoc(doc, row, "hostOrganism", IntactDocumentDefinition.HOST_ORGANISM);
-        addColumnToDoc(doc, row, "expansion", IntactDocumentDefinition.EXPANSION_METHOD);
-        addColumnToDoc(doc, row, "dataset", IntactDocumentDefinition.DATASET);
-        addColumnToDoc(doc, row, "annotationA", IntactDocumentDefinition.ANNOTATIONS_A);
-        addColumnToDoc(doc, row, "annotationB", IntactDocumentDefinition.ANNOTATIONS_B);
-        addColumnToDoc(doc, row, "parameterA", IntactDocumentDefinition.PARAMETERS_A);
-        addColumnToDoc(doc, row, "parameterB", IntactDocumentDefinition.PARAMETERS_B);
-        addColumnToDoc(doc, row, "parameterInteraction", IntactDocumentDefinition.PARAMETERS_INTERACTION);
+        if (documentDefintion instanceof IntactDocumentDefinition) {
+            addColumnToDoc(doc, row, "experimentalRoleA", IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
+            addColumnToDoc(doc, row, "experimentalRoleB", IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
+            addColumnToDoc(doc, row, "biologicalRoleA", IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
+            addColumnToDoc(doc, row, "biologicalRoleB", IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
+            addColumnToDoc(doc, row, "propertiesA", IntactDocumentDefinition.PROPERTIES_A);
+            addColumnToDoc(doc, row, "propertiesB", IntactDocumentDefinition.PROPERTIES_B);
+            addColumnToDoc(doc, row, "typeA", IntactDocumentDefinition.INTERACTOR_TYPE_A);
+            addColumnToDoc(doc, row, "typeB", IntactDocumentDefinition.INTERACTOR_TYPE_B);
+            addColumnToDoc(doc, row, "hostOrganism", IntactDocumentDefinition.HOST_ORGANISM);
+            addColumnToDoc(doc, row, "expansion", IntactDocumentDefinition.EXPANSION_METHOD);
+            addColumnToDoc(doc, row, "dataset", IntactDocumentDefinition.DATASET);
+            addColumnToDoc(doc, row, "annotationA", IntactDocumentDefinition.ANNOTATIONS_A);
+            addColumnToDoc(doc, row, "annotationB", IntactDocumentDefinition.ANNOTATIONS_B);
+            addColumnToDoc(doc, row, "parameterA", IntactDocumentDefinition.PARAMETERS_A);
+            addColumnToDoc(doc, row, "parameterB", IntactDocumentDefinition.PARAMETERS_B);
+            addColumnToDoc(doc, row, "parameterInteraction", IntactDocumentDefinition.PARAMETERS_INTERACTION);
+        }
 
         // ac
         Column interactionAcs = row.getColumnByIndex( IntactDocumentDefinition.INTERACTION_ID );
@@ -75,42 +100,16 @@ public class IntactSolrDocumentConverter implements SolrDocumentConverter {
         return doc;
     }
 
+    public BinaryInteraction toBinaryInteraction(SolrDocument doc) {
+        return documentDefintion.interactionFromString(toMitabLine(doc));
+    }
+
     public Row toRow(SolrDocument doc) {
-        Row row = new Row();
+        return documentDefintion.createRowBuilder().createRow(toMitabLine(doc));
+    }
 
-        FieldBuilder xrefFieldBuilder = new CrossReferenceFieldBuilder();
-        FieldBuilder plainFieldBuilder = new PlainTextFieldBuilder();
-
-        row.appendColumn(createColumn(doc, "idA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "idB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "altidA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "altidB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "aliasA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "aliasB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "detmethod_exact", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "pubauth", plainFieldBuilder));
-        row.appendColumn(createColumn(doc, "pubid", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "taxidA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "taxidB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "type_exact", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "source", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "interaction_id", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "confidence", xrefFieldBuilder));
-
-        row.appendColumn(createColumn(doc, "experimentalRoleA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "experimentalRoleB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "biologicalRoleA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "biologicalRoleB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "typeA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "typeB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "hostOrganism", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "expansion", plainFieldBuilder));
-        row.appendColumn(createColumn(doc, "dataset", plainFieldBuilder));
-        row.appendColumn(createColumn(doc, "parameterA", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "parameterB", xrefFieldBuilder));
-        row.appendColumn(createColumn(doc, "parameterInteraction", xrefFieldBuilder));
-
-        return row;
+    public String toMitabLine(SolrDocument doc) {
+        return (String) doc.getFieldValue("line");
     }
 
     private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) {
@@ -141,14 +140,19 @@ public class IntactSolrDocumentConverter implements SolrDocumentConverter {
     private void addColumnToRow(Row row, SolrDocument doc, String fieldName, FieldBuilder fieldBuilder) {
         Column column = createColumn(doc, fieldName, fieldBuilder);
 
+        if (column != null) {
+            row.appendColumn(column);
+        }
     }
 
     private Column createColumn(SolrDocument doc, String fieldName, FieldBuilder fieldBuilder) {
         Collection<Object> values = doc.getFieldValues(fieldName);
 
-        Column column = new Column();
+        Column column = null;
 
         for (Object value : values) {
+            if (column == null) column = new Column();
+
             column.getFields().add(fieldBuilder.createField((String)value));
         }
 
