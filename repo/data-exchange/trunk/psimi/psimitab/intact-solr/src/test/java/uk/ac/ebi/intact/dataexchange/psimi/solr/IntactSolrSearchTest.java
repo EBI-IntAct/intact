@@ -15,19 +15,14 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.mortbay.jetty.Server;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.client.solrj.response.FacetField;
-import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * TODO comment that class header
@@ -41,14 +36,7 @@ public class IntactSolrSearchTest {
 
     @Before
     public void before() throws Exception {
-        File solrHomeTemplate = new File("src/solr/home");
-        File solrWar = new File("src/solr/apache-solr-nightly.war");
-        File workingDir = new File("target/jetty");
-
-        // TODO create a jar (intact-solr-home) with everything
-        // and then the solrJettyRunner could be initialized with a parameter pointing to that jar file/url
-
-        solrJettyRunner = new SolrJettyRunner(solrHomeTemplate, solrWar, workingDir);
+        solrJettyRunner = new SolrJettyRunner();
         solrJettyRunner.start();
     }
 
