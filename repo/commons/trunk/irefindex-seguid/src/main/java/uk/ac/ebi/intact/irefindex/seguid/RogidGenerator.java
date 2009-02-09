@@ -16,14 +16,13 @@
 package uk.ac.ebi.intact.irefindex.seguid;
 
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import uk.ac.ebi.intact.irefindex.seguid.base64.Base64;
 
 
 /**
@@ -48,7 +47,7 @@ public class RogidGenerator {
      * calculates the Seguid for the given protein sequence
      *
      * @param sequence protein sequence
-     * @return
+     * @return Seguid
      * @throws SeguidException handled by  SeguidException class
      */
     public String calculateSeguid( String sequence ) throws SeguidException {
@@ -76,8 +75,12 @@ public class RogidGenerator {
             sequence = sequence.trim().toUpperCase();
             messageDigest.update( sequence.getBytes() );
             byte[] digest = messageDigest.digest();
-            String seguid = Base64.encode( digest );
+            String seguid = Base64.encodeBytes( digest );
             seguid = seguid.replace( "=", "" );
+            if ( log.isTraceEnabled() ) {
+                log.trace("SEGUID " + seguid );
+            }
+
             return seguid;
         } catch ( NoSuchAlgorithmException e ) {
             throw new SeguidException( "Exception thrown when calculating Seguid for " + sequence, e.getMessage() );
@@ -91,7 +94,7 @@ public class RogidGenerator {
      *
      * @param sequence protein sequence
      * @param taxid    taxonomy id
-     * @return
+     * @return Rogid
      * @throws SeguidException handled by  SeguidException class
      */
     public String calculateRogid( String sequence, String taxid ) throws SeguidException {
