@@ -26,6 +26,7 @@
         <module>intact-interolog-prediction</module>
         <module>intact-psimitab-converters</module>
         <module>intact-solr</module>
+    <module>intact-solr-home</module>
   </modules>
 
     <dependencyManagement>

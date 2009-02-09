@@ -43,7 +43,7 @@ public class IntactSolrSearcherTest {
 
     @After
     public void after() throws Exception {
-       // solrJettyRunner.join();
+        solrJettyRunner.join();
         solrJettyRunner.stop();
         solrJettyRunner = null;
     }
@@ -63,14 +63,14 @@ public class IntactSolrSearcherTest {
     }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
-        IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer());
+        IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
         SolrSearchResult result = searcher.search(searchQuery, null, null);
 
         assertEquals(count, result.getTotalCount());
     }
 
     private void indexFromClasspath(String resource, boolean hasHeader) throws IOException, IntactSolrException {
-        IntactSolrIndexer indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer());
+        IntactSolrIndexer indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
         indexer.indexMitabFromClasspath(resource, hasHeader);
     }
 }
