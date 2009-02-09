@@ -15,4 +15,22 @@
     <name>Intact Commons :: Irefindex-Seguid</name>
     <description>Irefindex-Seguid, utility class that generates the RIGIDs and ROGIDs</description>
 
+     <dependencies>
+         <dependency>
+             <groupId>log4j</groupId>
+             <artifactId>log4j</artifactId>
+         </dependency>
+         <dependency>
+             <groupId>commons-logging</groupId>
+             <artifactId>commons-logging</artifactId>
+             <version>1.1.1</version>
+         </dependency>
+         <dependency>
+             <groupId>commons-lang</groupId>
+             <artifactId>commons-lang</artifactId>
+             <version>20030203.000129</version>
+         </dependency>
+
+     </dependencies>
+
 </project>
