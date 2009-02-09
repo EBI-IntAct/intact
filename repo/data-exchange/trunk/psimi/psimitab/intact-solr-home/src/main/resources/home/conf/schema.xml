@@ -327,7 +327,7 @@
      <field name="alias" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="species" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="ac" type="string" indexed="true" stored="true" required="true"/>
+     <field name="pkey" type="string" indexed="true" stored="true" required="true"/>
 
      <!-- IntAct Extended -->
 
@@ -434,9 +434,9 @@
  </fields>
 
  <!-- Field to use to determine and enforce document uniqueness. 
-      Unless this field is marked with required="false", server will be a required field
+      Unless this field is marked with required="false", it will be a required field
    -->
- <uniqueKey>ac</uniqueKey>
+ <uniqueKey>pkey</uniqueKey>
 
  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
  <defaultSearchField>identifier</defaultSearchField>
