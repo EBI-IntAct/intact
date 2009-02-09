@@ -116,7 +116,6 @@ public class SolrJettyRunner {
         }
 
         System.setProperty("solr.solr.home", solrHome.getAbsolutePath());
-        System.setProperty("solr.data.dir", new File(solrHome, "data/").getAbsolutePath());
 
         server = new Server();
 
@@ -146,13 +145,13 @@ public class SolrJettyRunner {
        return solrHome; 
     }
 
-    public String getSolrUrl() {
-        return "http://localhost:"+port+"/solr";
+    public String getSolrUrl(String coreName) {
+        return "http://localhost:"+port+"/solr/"+coreName;
     }
 
-    public SolrServer getSolrServer() {
+    public SolrServer getSolrServer(String coreName) {
         try {
-            return new CommonsHttpSolrServer(getSolrUrl());
+            return new CommonsHttpSolrServer(getSolrUrl(coreName));
         } catch (MalformedURLException e) {
             throw new IllegalStateException("URL should be well formed", e);
         }
