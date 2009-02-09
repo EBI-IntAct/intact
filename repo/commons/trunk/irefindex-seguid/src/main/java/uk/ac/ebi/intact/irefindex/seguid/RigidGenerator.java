@@ -33,8 +33,6 @@ import java.util.*;
  */
 public class RigidGenerator {
 
-    private String sequence;
-    private String taxid;
 
     //Container for RigDataModels
     private List<RigDataModel> sequences = new ArrayList<RigDataModel>();
@@ -43,10 +41,6 @@ public class RigidGenerator {
     public RigidGenerator() {
     }
 
-    public RigidGenerator( String sequence, String taxid ) {
-        this.sequence = sequence;
-        this.taxid = taxid;
-    }
 
     /**
      * Create a RigDataModel with the given sequence and taxid and add
@@ -91,22 +85,6 @@ public class RigidGenerator {
             return null;
         }
 
-    }
-
-    public String getSequence() {
-        return sequence;
-    }
-
-    public void setSequence( String sequence ) {
-        this.sequence = sequence;
-    }
-
-    public String getTaxid() {
-        return taxid;
-    }
-
-    public void setTaxid( String taxid ) {
-        this.taxid = taxid;
     }
 
     public List<RigDataModel> getSequences() {
