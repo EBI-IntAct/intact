@@ -15,12 +15,101 @@
  */
 package uk.ac.ebi.intact.irefindex.seguid;
 
+
+import org.apache.commons.lang.StringUtils;
+
+import java.util.*;
+
 /**
- * TODO comment that class header
+ * A class that generates the RigIds
+ * Reference for the methodology
+ * iRefIndex: A consolidated protein interaction database with provenance
+ * PMID: 18823568
+ * http://www.biomedcentral.com/1471-2105/9/405
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
  * @since TODO specify the maven artifact version
  */
 public class RigidGenerator {
+
+    private String sequence;
+    private String taxid;
+
+    //Container for RigDataModels
+    private List<RigDataModel> sequences = new ArrayList<RigDataModel>();
+
+
+    public RigidGenerator() {
+    }
+
+    public RigidGenerator( String sequence, String taxid ) {
+        this.sequence = sequence;
+        this.taxid = taxid;
+    }
+
+    /**
+     * Create a RigDataModel with the given sequence and taxid and add
+     * it to the collection
+     * @param sequence  protein sequence
+     * @param taxid     taxonomy id
+     */
+    public void addSequence( String sequence, String taxid ) {
+
+        RigDataModel rigDataModel = new RigDataModel( sequence, taxid );
+        this.getSequences().add( rigDataModel );
+    }
+
+    /**
+     * First get all the sequences to be processed,
+     * Calcuate Rigid (seguid+taxid) for them
+     * Sort them lexicographically
+     * Concatinate them
+     * Generate a Seguid for the resulting String
+     *
+     * @return  Rogid
+     * @throws SeguidException  handled by SeguidException class
+     */
+    public String calculateRigid() throws SeguidException {
+
+        final List<RigDataModel> sequencesToBeProcessed = this.getSequences();
+        List<String> rigidCollection = new ArrayList<String>();
+
+        if ( sequencesToBeProcessed != null && sequencesToBeProcessed.size() > 0 ) {
+
+            RogidGenerator rogIdGenerator = new RogidGenerator();
+            for ( RigDataModel rigDataModel : sequencesToBeProcessed ) {
+                String rogid = rogIdGenerator.calculateRogid( rigDataModel.getSequence(), rigDataModel.getTaxid() );
+                rigidCollection.add( rogid );
+            }
+            //sort them
+            Collections.sort( rigidCollection );
+            //concatenate them
+            String allRigIds = StringUtils.concatenate( rigidCollection.toArray() );
+            return rogIdGenerator.calculateSeguid( allRigIds );
+        } else {
+            return null;
+        }
+
+    }
+
+    public String getSequence() {
+        return sequence;
+    }
+
+    public void setSequence( String sequence ) {
+        this.sequence = sequence;
+    }
+
+    public String getTaxid() {
+        return taxid;
+    }
+
+    public void setTaxid( String taxid ) {
+        this.taxid = taxid;
+    }
+
+    public List<RigDataModel> getSequences() {
+        return sequences;
+    }
 }

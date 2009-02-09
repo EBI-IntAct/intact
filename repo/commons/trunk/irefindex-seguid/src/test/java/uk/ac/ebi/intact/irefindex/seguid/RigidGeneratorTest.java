@@ -15,6 +15,11 @@
  */
 package uk.ac.ebi.intact.irefindex.seguid;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.junit.Assert;
+
 /**
  * TODO comment that class header
  *
@@ -23,4 +28,50 @@ package uk.ac.ebi.intact.irefindex.seguid;
  * @since TODO specify the maven artifact version
  */
 public class RigidGeneratorTest {
+
+    @Test
+    public void generateRigidForBinary() throws Exception {
+
+        String P60785 = RogidGeneratorTest.getProteinSequence( "P60785" );
+        String taxid1 = "83333";
+
+        String P33025 = RogidGeneratorTest.getProteinSequence( "P33025" );
+        String taxid2 = "83333";
+
+        RigidGenerator rigidGenerator = new RigidGenerator();
+
+        rigidGenerator.addSequence( P60785, taxid1 );
+        rigidGenerator.addSequence( P33025, taxid2 );
+
+        final String rigid = rigidGenerator.calculateRigid();
+        Assert.assertEquals("+/DyxaNG0mklydsbUh12WcfudXI",rigid);
+
+    }
+
+    @Test
+     public void generateRigidForNnary() throws Exception {
+
+        String P60785 = RogidGeneratorTest.getProteinSequence( "P60785" );
+        String taxid1 = "83333";
+
+        String P33025 = RogidGeneratorTest.getProteinSequence( "P33025" );
+        String taxid2 = "83333";
+
+        String P67080 = RogidGeneratorTest.getProteinSequence( "P67080" );
+        String taxid3 = "83333";
+
+        RigidGenerator rigidGenerator = new RigidGenerator();
+
+        rigidGenerator.addSequence( P60785, taxid1 );
+        rigidGenerator.addSequence( P33025, taxid2 );
+        rigidGenerator.addSequence( P67080, taxid3 );
+
+        final String rigid = rigidGenerator.calculateRigid();
+        Assert.assertEquals("8gCCeMoszv8/PVqk2BhyPCwf5ZI",rigid);
+
+    }
+
+
+
+
 }
