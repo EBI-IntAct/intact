@@ -360,6 +360,14 @@
      <field name="go" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="interpro" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="psi-mi" type="string" indexed="true" stored="false" multiValued="true"/>
+
+     <field name="go_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="go_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="interpro_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="interpro_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="psi-mi_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="psi-mi_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
+
      <field name="spell" type="textSpell" indexed="true" stored="true" multiValued="true"/>
 
      <!-- EXAMPLE -->
