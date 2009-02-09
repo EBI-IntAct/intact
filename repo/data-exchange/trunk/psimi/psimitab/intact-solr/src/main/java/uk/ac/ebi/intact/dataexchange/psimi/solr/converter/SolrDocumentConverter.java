@@ -20,8 +20,11 @@ import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.builder.*;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
+import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 
-import java.util.Collection;
+import java.util.*;
 
 /**
  * Converts from Row to SolrDocument and viceversa.
@@ -31,10 +34,25 @@ import java.util.Collection;
  */
 public class SolrDocumentConverter {
 
+    private static final String DB_GO = "go";
+    private static final String DB_INTERPRO = "interpro";
+    private static final String DB_PSIMI = "psi-mi";
+
     private DocumentDefinition documentDefintion;
+
+    /**
+     * Access to the Ontology index.
+     */
+    private OntologyIndexSearcher ontologySearcher;
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion) {
         this.documentDefintion = documentDefintion;
+    }
+
+    public SolrDocumentConverter(DocumentDefinition documentDefintion,
+                                 OntologyIndexSearcher ontologySearcher) {
+        this.documentDefintion = documentDefintion;
+        this.ontologySearcher = ontologySearcher;
     }
 
     public SolrInputDocument toSolrDocument(String mitabLine) {
@@ -126,35 +144,64 @@ public class SolrDocumentConverter {
                 doc.addField(field.getType()+"_xref", field.getValue());
             }
 
-            if ("go".equals(field.getType()) || "interpro".equals(field.getType()) || "psi-mi".equals(field.getType())) {
+            if (isExpandableOntology(field.getType())) {
                 doc.addField(field.getType(), field.getValue());
 
                 if (field.getDescription() != null) {
                     doc.addField("spell", field.getDescription());
                 }
+
+                for (Field parentField : getAllParents(field)) {
+                    doc.addField(parentField.getType()+"_expanded", parentField.toString());
+                    doc.addField(parentField.getType()+"_expanded_id", parentField.getValue());
+                }
             }
+
         }
     }
 
-    private void addColumnToRow(Row row, SolrDocument doc, String fieldName, FieldBuilder fieldBuilder) {
-        Column column = createColumn(doc, fieldName, fieldBuilder);
-
-        if (column != null) {
-            row.appendColumn(column);
-        }
+    private boolean isExpandableOntology( String name ) {
+        return (DB_GO.equals(name) ||
+                DB_INTERPRO.equals(name) ||
+                DB_PSIMI.equals(name));
     }
 
-    private Column createColumn(SolrDocument doc, String fieldName, FieldBuilder fieldBuilder) {
-        Collection<Object> values = doc.getFieldValues(fieldName);
-
-        Column column = null;
-
-        for (Object value : values) {
-            if (column == null) column = new Column();
-
-            column.getFields().add(fieldBuilder.createField((String)value));
+     /**
+     * @param field the field for which we want to get the parents
+     * @return list of cv terms with parents and itself
+     */
+    private List<Field> getAllParents( psidev.psi.mi.tab.model.builder.Field field ) {
+        if (ontologySearcher == null) {
+            return Collections.EMPTY_LIST;
         }
 
-        return column;
+        List<psidev.psi.mi.tab.model.builder.Field> allParents = null;
+
+        final String type = field.getType();
+
+        if ( isExpandableOntology( type ) ) {
+            String identifier = field.getValue();
+
+            // fetch parents and fill the field list
+            final OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm( ontologySearcher, identifier );
+            final Set<OntologyTerm> parents = ontologyTerm.getAllParentsToRoot();
+
+            allParents = convertTermsToFields( type, parents );
+        }
+
+        return ( allParents != null ? allParents : Collections.EMPTY_LIST );
+    }
+
+    private List<psidev.psi.mi.tab.model.builder.Field> convertTermsToFields( String type, Set<OntologyTerm> terms ) {
+        List<psidev.psi.mi.tab.model.builder.Field> fields =
+                new ArrayList<psidev.psi.mi.tab.model.builder.Field>( terms.size());
+
+        for ( OntologyTerm term : terms ) {
+            psidev.psi.mi.tab.model.builder.Field field =
+                    new psidev.psi.mi.tab.model.builder.Field( type, term.getId(), term.getName() );
+            fields.add( field );
+        }
+
+        return fields;
     }
 }

@@ -20,8 +20,10 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 
 import java.io.*;
+import java.util.Set;
 
 /**
  * Indexes information into a SOLR server
@@ -37,6 +39,11 @@ public class IntactSolrIndexer {
     public IntactSolrIndexer(SolrServer solrServer) {
         this.solrServer = solrServer;
         this.converter = new SolrDocumentConverter(new IntactDocumentDefinition());
+    }
+
+    public IntactSolrIndexer(SolrServer solrServer, SolrDocumentConverter converter) {
+        this.solrServer = solrServer;
+        this.converter = converter;
     }
 
     public int indexMitab(File mitabFile, boolean hasHeader) throws IOException, IntactSolrException {
@@ -108,5 +115,4 @@ public class IntactSolrIndexer {
             throw new IntactSolrException("Problem during commit", e);
         }
     }
-
 }
