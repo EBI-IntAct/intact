@@ -22,10 +22,13 @@ import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.webapp.WebAppContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * TODO comment that class header
@@ -35,6 +38,8 @@ import java.net.MalformedURLException;
  */
 public class SolrJettyRunner {
 
+    private static Logger log = LoggerFactory.getLogger(SolrHomeBuilder.class);
+
     private int port = 18080;
 
     private Server server;
@@ -42,6 +47,8 @@ public class SolrJettyRunner {
     private boolean deleteIfExists;
     private File workingDir;
     private File solrHome;
+
+    private URL solrHomeJar;
 
     public SolrJettyRunner() {
         workingDir = new File(System.getProperty("java.io.tmpdir"), "solr-home-"+System.currentTimeMillis());
@@ -51,6 +58,8 @@ public class SolrJettyRunner {
         } catch (IOException e) {
             throw new IllegalStateException("Problem forcing delete on exit for: "+workingDir);
         }
+
+        if (log.isInfoEnabled()) log.info("Jetty working dir: "+workingDir);
     }
 
     public SolrJettyRunner(File workingDir) {
@@ -63,9 +72,16 @@ public class SolrJettyRunner {
 
     }
 
+    public SolrJettyRunner(File workingDir, URL solrHomeJar, boolean deleteIfExists) {
+        this(workingDir, deleteIfExists);
+        this.solrHomeJar = solrHomeJar;
+
+    }
+
     public void start() throws Exception {
         if (workingDir.exists() && deleteIfExists) {
-            FileUtils.deleteDirectory(workingDir);
+            if (log.isDebugEnabled()) log.debug("Deleting existing directory: "+workingDir);
+            FileUtils.forceDelete(workingDir);
         }
 
         File solrWar;
@@ -81,15 +97,26 @@ public class SolrJettyRunner {
             if (!solrWar.exists()) {
                 throw new IllegalStateException("Working dir "+workingDir+" exists, but no solr.war folder could be found");
             }
+
+            if (log.isDebugEnabled()) log.debug("Using existing directory");
+
         } else {
-            SolrHomeBuilder solrHomeBuilder = new SolrHomeBuilder();
-            solrHomeBuilder.install(workingDir);
+            SolrHomeBuilder solrHomeBuilder;
+
+            if (solrHomeJar != null) {
+                solrHomeBuilder = new SolrHomeBuilder(solrHomeJar);
+            } else {
+                solrHomeBuilder = new SolrHomeBuilder();
+            }
+            
+            solrHomeBuilder.install(workingDir, !deleteIfExists);
 
             solrHome = solrHomeBuilder.getSolrHomeDir();
             solrWar = solrHomeBuilder.getSolrWar();
         }
 
         System.setProperty("solr.solr.home", solrHome.getAbsolutePath());
+        System.setProperty("solr.data.dir", new File(solrHome, "data/").getAbsolutePath());
 
         server = new Server();
 
@@ -100,6 +127,7 @@ public class SolrJettyRunner {
         WebAppContext webapp = new WebAppContext();
         webapp.setContextPath("/solr");
         webapp.setWar(solrWar.getAbsolutePath());
+        webapp.setTempDirectory(workingDir);
 
         server.setHandler(webapp);
 
@@ -111,7 +139,7 @@ public class SolrJettyRunner {
     }
 
     public void stop() throws Exception {
-        server.stop();
+        if (server != null) server.stop();
     }
 
     public File getSolrHome() {

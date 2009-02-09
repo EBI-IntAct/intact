@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.server;
 
+import junit.framework.Assert;
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +41,16 @@ public class SolrHomeBuilderTest {
 
     @Test
     public void testInstall() throws Exception {
+        File workingDir = new File("/tmp/lalasolr");
+
         SolrHomeBuilder solrHomeBuilder = new SolrHomeBuilder();
         solrHomeBuilder.install(new File("/tmp/lalasolr"));
+        
+        Assert.assertTrue(workingDir.exists());
+        Assert.assertTrue(workingDir.isDirectory());
+        Assert.assertTrue(new File(workingDir, "home").exists());
+        Assert.assertTrue(new File(workingDir, "solr.war").exists());
+
+        FileUtils.forceDelete(workingDir);
     }
 }
