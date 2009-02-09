@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr.server;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.JarURLConnection;
@@ -37,6 +39,8 @@ import java.util.jar.JarFile;
  */
 public class SolrHomeBuilder {
 
+    private static Logger log = LoggerFactory.getLogger(SolrHomeBuilder.class);
+
     private URL solrHomeJar;
 
     private File solrHomeDir;
@@ -46,6 +50,7 @@ public class SolrHomeBuilder {
        Properties props = new Properties();
 
         try {
+            if (log.isDebugEnabled()) log.debug("Loading properties from classpath");
             props.load(SolrHomeBuilder.class.getResourceAsStream("/IntactSolrConfig.properties"));
         } catch (IOException e) {
             throw new IllegalStateException("Problem loading properties", e);
@@ -96,6 +101,8 @@ public class SolrHomeBuilder {
     }
 
     public void install(File solrWorkingDir, boolean useLocalJarIfAvailable) throws IOException {
+        if (log.isInfoEnabled()) log.info("Installing Intact SOLR Home at: "+solrWorkingDir+", use local jar if available: "+useLocalJarIfAvailable);
+
         URL jarUrl;
 
         if (useLocalJarIfAvailable) {
@@ -105,7 +112,14 @@ public class SolrHomeBuilder {
             File localJar = new File(System.getProperty("java.io.tmpdir"), "intact-solr-home-"+prefix+".jar");
             
             if (!localJar.exists()) {
-                writeStreamToFile(localJar, solrHomeJar.openStream());
+                if (log.isDebugEnabled()) log.debug("Local jar does not exist. Getting URL: "+solrHomeJar);
+                try {
+                    writeStreamToFile(localJar, solrHomeJar.openStream());
+                } catch (IOException e) {
+                    throw new IOException("Problem opening file: "+solrHomeJar, e);
+                }
+            } else {
+                if (log.isDebugEnabled()) log.debug("Using existing local jar: "+localJar);
             }
 
             jarUrl = new URL("jar:file://"+localJar+"!/");
@@ -122,6 +136,8 @@ public class SolrHomeBuilder {
         }
 
         // read the jar file
+        if (log.isDebugEnabled()) log.debug("Openning connection to: "+jarUrl);
+
         JarURLConnection connection = (JarURLConnection) jarUrl.openConnection();
 
         JarFile jarFile = connection.getJarFile();
@@ -149,6 +165,10 @@ public class SolrHomeBuilder {
 
         solrHomeDir = new File(solrWorkingDir, "home/");
         solrWar = new File(solrWorkingDir, "solr.war");
+
+        if (log.isDebugEnabled()) {
+            log.debug("\nSolr Home: {}\nSolr WAR: {}", solrHomeDir.toString(), solrWar.toString());
+        }
 
     }
 

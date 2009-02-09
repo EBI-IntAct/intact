@@ -17,8 +17,8 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import psidev.psi.mi.tab.model.builder.*;
 import psidev.psi.mi.tab.model.BinaryInteraction;
+import psidev.psi.mi.tab.model.builder.*;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.util.Collection;
@@ -94,8 +94,7 @@ public class SolrDocumentConverter {
         }
 
         // ac
-        Column interactionAcs = row.getColumnByIndex( IntactDocumentDefinition.INTERACTION_ID );
-        doc.addField("ac", interactionAcs.getFields().iterator().next().getValue());
+        doc.addField("pkey", mitabLine);
 
         return doc;
     }
