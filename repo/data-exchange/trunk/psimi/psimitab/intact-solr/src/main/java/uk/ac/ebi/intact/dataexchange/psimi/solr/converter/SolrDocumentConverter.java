@@ -18,13 +18,19 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.model.builder.*;
-import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
-import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
-import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
+import psidev.psi.mi.tab.model.builder.Column;
+import psidev.psi.mi.tab.model.builder.DocumentDefinition;
+import psidev.psi.mi.tab.model.builder.Field;
+import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
+import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
+import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Converts from Row to SolrDocument and viceversa.
@@ -151,13 +157,19 @@ public class SolrDocumentConverter {
                     doc.addField("spell", field.getDescription());
                 }
 
+                addExpandedField(doc, field);
+
                 for (Field parentField : getAllParents(field)) {
-                    doc.addField(parentField.getType()+"_expanded", parentField.toString());
-                    doc.addField(parentField.getType()+"_expanded_id", parentField.getValue());
+                    addExpandedField(doc, parentField);
                 }
             }
 
         }
+    }
+
+    private void addExpandedField(SolrInputDocument doc, Field parentField) {
+        doc.addField(parentField.getType()+"_expanded", parentField.toString());
+        doc.addField(parentField.getType()+"_expanded_id", parentField.getValue());
     }
 
     private boolean isExpandableOntology( String name ) {
