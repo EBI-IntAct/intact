@@ -318,6 +318,7 @@
      <field name="pubid" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="taxidA" type="text" indexed="true" stored="false"/>
      <field name="taxidB" type="text" indexed="true" stored="false"/>
+     <field name="type" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="type_exact" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="source" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="interaction_id" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
@@ -345,8 +346,8 @@
      <field name="properties_exact" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="properties_" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="typeA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="typeB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="typeA" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="typeB" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="interactorType_exact" type="text" indexed="false" stored="false" multiValued="true"/>
      <field name="interactorType" type="text" indexed="true" stored="false" multiValued="true"/>
 
