@@ -16,13 +16,12 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
 import org.obo.dataadapter.OBOParseException;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexWriter;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
@@ -38,9 +37,7 @@ public class TestHelper {
 
     public static Directory buildOntologiesIndex(Map<String,URL> urls) throws Exception {
 
-        File f = new File( "target", "ontologyIndex-"+System.currentTimeMillis() );
-
-        Directory ontologyDirectory = FSDirectory.getDirectory( f );
+        Directory ontologyDirectory = new RAMDirectory();
         OntologyIndexWriter writer = new OntologyIndexWriter( ontologyDirectory, true );
 
         for (Map.Entry<String,URL> entry : urls.entrySet()) {
@@ -56,7 +53,7 @@ public class TestHelper {
 
     public static Directory buildDefaultOntologiesIndex() throws Exception {
         Map<String,URL> urls = new HashMap<String,URL>();
-        urls.put("go", new URL("http://www.geneontology.org/ontology/gene_ontology_edit.obo"));
+        urls.put("go", new URL("http://www.geneontology.org/GO_slims/goslim_generic.obo"));
         urls.put("psi-mi", new URL("http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo"));
 
         return buildOntologiesIndex(urls);
