@@ -4,8 +4,7 @@
  * Copyright (c) 2006 The European Bioinformatics Institute, and others.
  * All rights reserved.
  */
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
@@ -51,7 +50,8 @@
         <module>psimitab-indexer-maven-plugin</module>
         <module>predict-maven-plugin</module>
         <module>update-component-role-maven-plugin</module>
-    </modules>
+    <module>ontology-indexer-maven-plugin</module>
+  </modules>
     <dependencyManagement>
         <dependencies>
          <dependency>
@@ -118,7 +118,7 @@
 
     <repositories>
         <repository>
-            <releases />
+            <releases/>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -130,7 +130,7 @@
             <releases>
                 <enabled>false</enabled>
             </releases>
-            <snapshots />
+            <snapshots/>
             <id>ebi-repo-snapshots</id>
             <name>The EBI internal repository</name>
             <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
