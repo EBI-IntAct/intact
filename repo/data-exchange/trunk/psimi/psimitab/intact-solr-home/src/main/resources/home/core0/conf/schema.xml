@@ -306,21 +306,22 @@
      <field name="line" type="string" indexed="false" stored="true" required="true" multiValued="false"/>
      <field name="mitab" type="text" indexed="true" stored="false" required="true" multiValued="false"/>
 
-     <field name="idA" type="string" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="idB" type="string" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="altidA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="altidB" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="aliasA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="aliasB" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="detmethod_exact" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="pubauth" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="idA" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
+     <field name="idB" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
+     <field name="altidA" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="altidB" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="aliasA" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="aliasB" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="detmethod" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="detmethod_exact" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="pubauth" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="pubid" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="taxidA" type="string" indexed="true" stored="false"/>
-     <field name="taxidB" type="string" indexed="true" stored="false"/>
-     <field name="type_exact" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="source" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="interaction_id" type="string" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="confidence" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="taxidA" type="text" indexed="true" stored="false"/>
+     <field name="taxidB" type="text" indexed="true" stored="false"/>
+     <field name="type_exact" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="source" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="interaction_id" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
+     <field name="confidence" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <field name="identifier" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="altid" type="text" indexed="true" stored="false" multiValued="true"/>
@@ -331,28 +332,30 @@
 
      <!-- IntAct Extended -->
 
-     <field name="experimentalRoleA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="experimentalRoleB" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="experimentalRoleA" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="experimentalRoleB" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="experimentalRole" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="biologicalRoleA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="biologicalRoleB" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="biologicalRoleA" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="biologicalRoleB" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="biologicalRole" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="propertiesA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="propertiesB" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="properties" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="propertiesA" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="propertiesB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="properties_exact" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="properties_" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="typeA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="typeB" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="typeA" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="typeB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="interactorType_exact" type="text" indexed="false" stored="false" multiValued="true"/>
      <field name="interactorType" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="hostOrganism" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="expansion" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="dataset" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="hostOrganism" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="expansion" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="dataset" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="parameterA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="parameterB" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="parameterA" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="parameterB" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="parameters" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <!-- Other -->
@@ -361,13 +364,7 @@
      <field name="interpro" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="psi-mi" type="string" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="go_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="go_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="interpro_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="interpro_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="psi-mi_expanded" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="psi-mi_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
-
+     
      <field name="spell" type="textSpell" indexed="true" stored="true" multiValued="true"/>
 
      <!-- EXAMPLE -->
@@ -431,7 +428,10 @@
 
    <dynamicField name="random*" type="random" />
 
-   <dynamicField name="*_xref"  type="string"  indexed="true"  stored="true" multiValued="true"/>
+   <dynamicField name="*_xref"  type="string"  indexed="true"  stored="false" multiValued="true"/>
+   <dynamicField name="*_desc" type="text" indexed="true" stored="true" multiValued="true"/>
+   <dynamicField name="*_expanded"  type="text"  indexed="true"  stored="false" multiValued="true"/>
+   <dynamicField name="*_expanded_id" type="string" indexed="true" stored="false" multiValued="true"/>
 
    <!-- uncomment the following to ignore any fields that don't already match an existing 
         field name or dynamic field, rather than reporting them as an error. 
@@ -447,7 +447,7 @@
  <uniqueKey>pkey</uniqueKey>
 
  <!-- field for the QueryParser to use when an explicit fieldname is absent -->
- <defaultSearchField>identifier</defaultSearchField>
+ <defaultSearchField>mitab</defaultSearchField>
 
  <!-- SolrQueryParser configuration: defaultOperator="AND|OR" -->
  <solrQueryParser defaultOperator="OR"/>
@@ -465,17 +465,24 @@
     <copyField source="taxidA" dest="species"/>
     <copyField source="taxidB" dest="species"/>
 
+    <copyField source="detmethod_expanded" dest="detmethod"/>
+    <copyField source="type_expanded" dest="type"/>
+
     <copyField source="experimentalRoleA" dest="experimentalRole"/>
     <copyField source="experimentalRoleB" dest="experimentalRole"/>
 
     <copyField source="biologicalRoleA" dest="biologicalRole"/>
     <copyField source="biologicalRoleB" dest="biologicalRole"/>
 
-    <copyField source="propertiesA" dest="properties"/>
-    <copyField source="propertiesB" dest="properties"/>
+    <copyField source="propertiesA" dest="properties_exact"/>
+    <copyField source="propertiesB" dest="properties_exact"/>
+    <copyField source="propertiesA_expanded" dest="properties"/>
+    <copyField source="propertiesB_expanded" dest="properties"/>
 
-    <copyField source="typeA" dest="interactorType"/>
-    <copyField source="typeB" dest="interactorType"/>
+    <copyField source="typeA" dest="interactorType_exact"/>
+    <copyField source="typeB" dest="interactorType_exact"/>
+    <copyField source="typeA_expanded" dest="interactorType"/>
+    <copyField source="typeB_expanded" dest="interactorType"/>
 
     <copyField source="parameterA" dest="parameters"/>
     <copyField source="parameterB" dest="parameters"/>
