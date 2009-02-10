@@ -43,7 +43,7 @@ public class IntactSolrSearcherTest {
 
     @After
     public void after() throws Exception {
-        solrJettyRunner.join();
+        //solrJettyRunner.join();
         solrJettyRunner.stop();
         solrJettyRunner = null;
     }
