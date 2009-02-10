@@ -87,12 +87,12 @@ public class SolrDocumentConverter {
         addColumnToDoc(doc, row, "altidB", IntactDocumentDefinition.ALTID_INTERACTOR_B);
         addColumnToDoc(doc, row, "aliasA", IntactDocumentDefinition.ALIAS_INTERACTOR_A);
         addColumnToDoc(doc, row, "aliasB", IntactDocumentDefinition.ALIAS_INTERACTOR_B);
-        addColumnToDoc(doc, row, "detmethod_exact", IntactDocumentDefinition.INT_DET_METHOD);
+        addColumnToDoc(doc, row, "detmethod", IntactDocumentDefinition.INT_DET_METHOD, true);
         addColumnToDoc(doc, row, "pubauth", IntactDocumentDefinition.PUB_AUTH);
         addColumnToDoc(doc, row, "pubid", IntactDocumentDefinition.PUB_ID);
         addColumnToDoc(doc, row, "taxidA", IntactDocumentDefinition.TAXID_A);
         addColumnToDoc(doc, row, "taxidB", IntactDocumentDefinition.TAXID_B);
-        addColumnToDoc(doc, row, "type_exact", IntactDocumentDefinition.INT_TYPE);
+        addColumnToDoc(doc, row, "type", IntactDocumentDefinition.INT_TYPE, true);
         addColumnToDoc(doc, row, "source", IntactDocumentDefinition.SOURCE);
         addColumnToDoc(doc, row, "interaction_id", IntactDocumentDefinition.INTERACTION_ID);
         addColumnToDoc(doc, row, "confidence", IntactDocumentDefinition.CONFIDENCE);
@@ -103,8 +103,8 @@ public class SolrDocumentConverter {
             addColumnToDoc(doc, row, "experimentalRoleB", IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
             addColumnToDoc(doc, row, "biologicalRoleA", IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
             addColumnToDoc(doc, row, "biologicalRoleB", IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
-            addColumnToDoc(doc, row, "propertiesA", IntactDocumentDefinition.PROPERTIES_A);
-            addColumnToDoc(doc, row, "propertiesB", IntactDocumentDefinition.PROPERTIES_B);
+            addColumnToDoc(doc, row, "propertiesA", IntactDocumentDefinition.PROPERTIES_A, true);
+            addColumnToDoc(doc, row, "propertiesB", IntactDocumentDefinition.PROPERTIES_B, true);
             addColumnToDoc(doc, row, "typeA", IntactDocumentDefinition.INTERACTOR_TYPE_A);
             addColumnToDoc(doc, row, "typeB", IntactDocumentDefinition.INTERACTOR_TYPE_B);
             addColumnToDoc(doc, row, "hostOrganism", IntactDocumentDefinition.HOST_ORGANISM);
@@ -136,6 +136,10 @@ public class SolrDocumentConverter {
     }
 
     private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) {
+        addColumnToDoc(doc, row, fieldName, columnIndex, false);
+    }
+
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, boolean expandableColumn) {
         // do not process columns not found in the row
         if (row.getColumnCount() <= columnIndex) {
             return;
@@ -144,11 +148,18 @@ public class SolrDocumentConverter {
         Column column = row.getColumnByIndex( columnIndex );
 
         for (Field field : column.getFields()) {
-            doc.addField(fieldName, field.toString());
+            if (expandableColumn) {
+                doc.addField(fieldName+"_exact", field.toString());
+            } else {
+                doc.addField(fieldName, field.toString());
+            }
 
             if (field.getType() != null) {
                 doc.addField(field.getType()+"_xref", field.getValue());
             }
+
+            addDescriptionField(doc, field.getType(), field);
+            addDescriptionField(doc, fieldName, field);
 
             if (isExpandableOntology(field.getType())) {
                 doc.addField(field.getType(), field.getValue());
@@ -157,19 +168,31 @@ public class SolrDocumentConverter {
                     doc.addField("spell", field.getDescription());
                 }
 
-                addExpandedField(doc, field);
-
                 for (Field parentField : getAllParents(field)) {
-                    addExpandedField(doc, parentField);
+                    addExpandedFields(doc, fieldName, parentField);
                 }
             }
-
         }
     }
 
-    private void addExpandedField(SolrInputDocument doc, Field parentField) {
-        doc.addField(parentField.getType()+"_expanded", parentField.toString());
-        doc.addField(parentField.getType()+"_expanded_id", parentField.getValue());
+    private void addExpandedFields(SolrInputDocument doc, String fieldName, Field field) {
+        addExpandedField(doc, field, fieldName);
+        addExpandedField(doc, field, field.getType());
+    }
+
+    private void addExpandedField(SolrInputDocument doc, Field field, String fieldPrefix) {
+        doc.addField(fieldPrefix+"_expanded", field.toString());
+        doc.addField(fieldPrefix+"_expanded_id", field.getValue());
+
+        addDescriptionField(doc, fieldPrefix+"_expanded", field);
+    }
+
+    private void addDescriptionField(SolrInputDocument doc, String fieldPrefix, Field field) {
+        if (field.getDescription() != null) {
+
+            doc.addField(fieldPrefix+"_desc", field.getDescription());
+            doc.addField(fieldPrefix+"_desc_s", field.getDescription());
+        }
     }
 
     private boolean isExpandableOntology( String name ) {
