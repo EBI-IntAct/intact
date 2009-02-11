@@ -27,10 +27,7 @@ import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Converts from Row to SolrDocument and viceversa.
@@ -50,6 +47,10 @@ public class SolrDocumentConverter {
      * Access to the Ontology index.
      */
     private OntologyIndexSearcher ontologySearcher;
+
+    public SolrDocumentConverter() {
+        this(new IntactDocumentDefinition());
+    }
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion) {
         this.documentDefintion = documentDefintion;
@@ -120,6 +121,9 @@ public class SolrDocumentConverter {
         // ac
         doc.addField("pkey", mitabLine);
 
+        // add the iRefIndex field from the interaction_id column to the rig field (there should be zero or one)
+        addFilteredField(row, doc, "rig", IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("iRefIndex"));
+
         return doc;
     }
 
@@ -173,6 +177,33 @@ public class SolrDocumentConverter {
                 }
             }
         }
+    }
+
+    private void addFilteredField(Row row, SolrInputDocument doc, String fieldName, int columnIndex, FieldFilter filter) {
+        Collection<Field> fields = getFieldsFromColumn(row, columnIndex, filter);
+
+        for (Field field : fields) {
+            doc.addField(fieldName, field.getValue());
+        }
+    }
+
+    private Collection<Field> getFieldsFromColumn(Row row, int columnIndex, FieldFilter filter) {
+        List<Field> fields = new ArrayList<Field>();
+
+        // do not process columns not found in the row
+        if (row.getColumnCount() <= columnIndex) {
+            return null;
+        }
+
+        Column column = row.getColumnByIndex( columnIndex );
+
+        for (Field field : column.getFields()) {
+            if (filter.acceptField(field)) {
+                fields.add(field);
+            }
+        }
+
+        return fields;
     }
 
     private void addExpandedFields(SolrInputDocument doc, String fieldName, Field field) {

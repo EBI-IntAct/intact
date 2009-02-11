@@ -36,7 +36,7 @@ public class SolrDocumentConverterTest {
 
     @BeforeClass
     public static void prepareOntologyIndex() throws Exception{
-        //ontologyDir = TestHelper.buildDefaultOntologiesIndex();
+        ontologyDir = TestHelper.buildDefaultOntologiesIndex();
     }
 
     @Before
@@ -48,9 +48,7 @@ public class SolrDocumentConverterTest {
     }
 
     @Test
-    public void testToSolrDocument() throws Exception {
-        Directory ontologyDir = TestHelper.buildDefaultOntologiesIndex();
-
+    public void testToSolrDocument_goExpansion() throws Exception {
         String goTermToExpand = "GO:0030246";
         String psiMiTabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
                               "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
@@ -70,5 +68,21 @@ public class SolrDocumentConverterTest {
         Assert.assertTrue(expandedGoIds.contains("GO:0003674"));
         Assert.assertTrue(expandedGoIds.contains("GO:0005488"));
 
+    }
+
+    @Test
+    public void testToSolrDocument() throws Exception {
+        String rig = "THIS_IS_A_RIG";
+        String psiMiTabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
+                              "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
+                              "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
+                              "\tintact:EBI-446356|iRefIndex:"+rig+"(rig)\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
+                              "\tMI:0499(unspecified role)\tinterpro:IPR004829|\tgo:\"GO:0030246\"\tMI:0326(protein)\tMI:0326(protein)\tyeast:4932\t-\t-";
+
+        SolrDocumentConverter converter = new SolrDocumentConverter();
+
+        SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
+
+        Assert.assertEquals(rig, doc.getFieldValue("rig"));
     }
 }
