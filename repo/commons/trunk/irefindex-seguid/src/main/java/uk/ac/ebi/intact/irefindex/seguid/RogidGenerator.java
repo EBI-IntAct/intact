@@ -83,7 +83,7 @@ public class RogidGenerator {
 
             return seguid;
         } catch ( NoSuchAlgorithmException e ) {
-            throw new SeguidException( "Exception thrown when calculating Seguid for " + sequence, e.getMessage() );
+            throw new SeguidException( "Exception thrown when calculating Seguid for " + sequence,e.getCause() );
         }
 
     }

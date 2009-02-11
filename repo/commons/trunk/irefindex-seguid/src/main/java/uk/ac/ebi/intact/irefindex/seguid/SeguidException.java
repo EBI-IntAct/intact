@@ -23,22 +23,22 @@ package uk.ac.ebi.intact.irefindex.seguid;
  * @since TODO specify the maven artifact version
  */
 public class SeguidException extends Exception {
-    String error;
 
     public SeguidException() {
         super();
     }
 
-    public SeguidException( String error ) {
-        this.error = error;
+    public SeguidException( String message ) {
+        super(message);
     }
 
-    public SeguidException( String message, String error ) {
-        super( message );
-        this.error = error;
+    public SeguidException( String message, Throwable cause ) {
+        super( message,cause );
+
     }
 
-    public String getError() {
-        return error;
+    public SeguidException(Throwable cause){
+        super(cause);
     }
+
 }
