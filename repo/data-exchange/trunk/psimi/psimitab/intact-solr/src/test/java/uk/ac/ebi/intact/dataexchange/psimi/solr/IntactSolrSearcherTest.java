@@ -50,12 +50,12 @@ public class IntactSolrSearcherTest {
 
     @Test
     public void search() throws Exception  {
-        assertCount(0, "*:*");
+        assertCount(0L, "*:*");
 
         indexFromClasspath("/mitab_samples/intact200.txt", true);
 
-        assertCount(200, "*:*");
-        assertCount(100, "\"CHEBI:39112\"");
+        assertCount(200L, "*:*");
+        assertCount(100L, "\"CHEBI:39112\"");
         assertCount(183L, "experimentalRole:bait");
         assertCount(197L, "experimentalRole:prey");
         assertCount(1L, "-biologicalRole:\"unspecified role\"");

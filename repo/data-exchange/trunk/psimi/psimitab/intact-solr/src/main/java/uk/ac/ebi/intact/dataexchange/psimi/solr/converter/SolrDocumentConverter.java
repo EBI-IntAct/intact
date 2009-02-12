@@ -25,6 +25,7 @@ import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.util.*;
@@ -36,10 +37,6 @@ import java.util.*;
  * @version $Id$
  */
 public class SolrDocumentConverter {
-
-    private static final String DB_GO = "go";
-    private static final String DB_INTERPRO = "interpro";
-    private static final String DB_PSIMI = "psi-mi";
 
     private DocumentDefinition documentDefintion;
 
@@ -80,49 +77,49 @@ public class SolrDocumentConverter {
         SolrInputDocument doc = new SolrInputDocument();
 
         // store the mitab line
-        doc.addField("line", mitabLine);
+        doc.addField(FieldNames.LINE, mitabLine);
 
-        addColumnToDoc(doc, row, "idA", IntactDocumentDefinition.ID_INTERACTOR_A);
-        addColumnToDoc(doc, row, "idB", IntactDocumentDefinition.ID_INTERACTOR_B);
-        addColumnToDoc(doc, row, "altidA", IntactDocumentDefinition.ALTID_INTERACTOR_A);
-        addColumnToDoc(doc, row, "altidB", IntactDocumentDefinition.ALTID_INTERACTOR_B);
-        addColumnToDoc(doc, row, "aliasA", IntactDocumentDefinition.ALIAS_INTERACTOR_A);
-        addColumnToDoc(doc, row, "aliasB", IntactDocumentDefinition.ALIAS_INTERACTOR_B);
-        addColumnToDoc(doc, row, "detmethod", IntactDocumentDefinition.INT_DET_METHOD, true);
-        addColumnToDoc(doc, row, "pubauth", IntactDocumentDefinition.PUB_AUTH);
-        addColumnToDoc(doc, row, "pubid", IntactDocumentDefinition.PUB_ID);
-        addColumnToDoc(doc, row, "taxidA", IntactDocumentDefinition.TAXID_A);
-        addColumnToDoc(doc, row, "taxidB", IntactDocumentDefinition.TAXID_B);
-        addColumnToDoc(doc, row, "type", IntactDocumentDefinition.INT_TYPE, true);
-        addColumnToDoc(doc, row, "source", IntactDocumentDefinition.SOURCE);
-        addColumnToDoc(doc, row, "interaction_id", IntactDocumentDefinition.INTERACTION_ID);
-        addColumnToDoc(doc, row, "confidence", IntactDocumentDefinition.CONFIDENCE);
+        addColumnToDoc(doc, row, FieldNames.ID_A, IntactDocumentDefinition.ID_INTERACTOR_A);
+        addColumnToDoc(doc, row, FieldNames.ID_B, IntactDocumentDefinition.ID_INTERACTOR_B);
+        addColumnToDoc(doc, row, FieldNames.ALTID_A, IntactDocumentDefinition.ALTID_INTERACTOR_A);
+        addColumnToDoc(doc, row, FieldNames.ALTID_B, IntactDocumentDefinition.ALTID_INTERACTOR_B);
+        addColumnToDoc(doc, row, FieldNames.ALIAS_A, IntactDocumentDefinition.ALIAS_INTERACTOR_A);
+        addColumnToDoc(doc, row, FieldNames.ALIAS_B, IntactDocumentDefinition.ALIAS_INTERACTOR_B);
+        addColumnToDoc(doc, row, FieldNames.DETMETHOD, IntactDocumentDefinition.INT_DET_METHOD, true);
+        addColumnToDoc(doc, row, FieldNames.PUBAUTH, IntactDocumentDefinition.PUB_AUTH);
+        addColumnToDoc(doc, row, FieldNames.PUBID, IntactDocumentDefinition.PUB_ID);
+        addColumnToDoc(doc, row, FieldNames.TAXID_A, IntactDocumentDefinition.TAXID_A);
+        addColumnToDoc(doc, row, FieldNames.TAXID_B, IntactDocumentDefinition.TAXID_B);
+        addColumnToDoc(doc, row, FieldNames.TYPE, IntactDocumentDefinition.INT_TYPE, true);
+        addColumnToDoc(doc, row, FieldNames.SOURCE, IntactDocumentDefinition.SOURCE);
+        addColumnToDoc(doc, row, FieldNames.INTERACTION_ID, IntactDocumentDefinition.INTERACTION_ID);
+        addColumnToDoc(doc, row, FieldNames.CONFIDENCE, IntactDocumentDefinition.CONFIDENCE);
 
         // extended
         if (documentDefintion instanceof IntactDocumentDefinition) {
-            addColumnToDoc(doc, row, "experimentalRoleA", IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
-            addColumnToDoc(doc, row, "experimentalRoleB", IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
-            addColumnToDoc(doc, row, "biologicalRoleA", IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
-            addColumnToDoc(doc, row, "biologicalRoleB", IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
-            addColumnToDoc(doc, row, "propertiesA", IntactDocumentDefinition.PROPERTIES_A, true);
-            addColumnToDoc(doc, row, "propertiesB", IntactDocumentDefinition.PROPERTIES_B, true);
-            addColumnToDoc(doc, row, "typeA", IntactDocumentDefinition.INTERACTOR_TYPE_A);
-            addColumnToDoc(doc, row, "typeB", IntactDocumentDefinition.INTERACTOR_TYPE_B);
-            addColumnToDoc(doc, row, "hostOrganism", IntactDocumentDefinition.HOST_ORGANISM);
-            addColumnToDoc(doc, row, "expansion", IntactDocumentDefinition.EXPANSION_METHOD);
-            addColumnToDoc(doc, row, "dataset", IntactDocumentDefinition.DATASET);
-            addColumnToDoc(doc, row, "annotationA", IntactDocumentDefinition.ANNOTATIONS_A);
-            addColumnToDoc(doc, row, "annotationB", IntactDocumentDefinition.ANNOTATIONS_B);
-            addColumnToDoc(doc, row, "parameterA", IntactDocumentDefinition.PARAMETERS_A);
-            addColumnToDoc(doc, row, "parameterB", IntactDocumentDefinition.PARAMETERS_B);
-            addColumnToDoc(doc, row, "parameterInteraction", IntactDocumentDefinition.PARAMETERS_INTERACTION);
+            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_A, IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
+            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_B, IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
+            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_A, IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
+            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_B, IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
+            addColumnToDoc(doc, row, FieldNames.PROPERTIES_A, IntactDocumentDefinition.PROPERTIES_A, true);
+            addColumnToDoc(doc, row, FieldNames.PROPERTIES_B, IntactDocumentDefinition.PROPERTIES_B, true);
+            addColumnToDoc(doc, row, FieldNames.TYPE_A, IntactDocumentDefinition.INTERACTOR_TYPE_A);
+            addColumnToDoc(doc, row, FieldNames.TYPE_B, IntactDocumentDefinition.INTERACTOR_TYPE_B);
+            addColumnToDoc(doc, row, FieldNames.HOST_ORGANISM, IntactDocumentDefinition.HOST_ORGANISM);
+            addColumnToDoc(doc, row, FieldNames.EXPANSION, IntactDocumentDefinition.EXPANSION_METHOD);
+            addColumnToDoc(doc, row, FieldNames.DATASET, IntactDocumentDefinition.DATASET);
+            addColumnToDoc(doc, row, FieldNames.ANNOTATION_A, IntactDocumentDefinition.ANNOTATIONS_A);
+            addColumnToDoc(doc, row, FieldNames.ANNOTATION_B, IntactDocumentDefinition.ANNOTATIONS_B);
+            addColumnToDoc(doc, row, FieldNames.PARAMETER_A, IntactDocumentDefinition.PARAMETERS_A);
+            addColumnToDoc(doc, row, FieldNames.PARAMETER_B, IntactDocumentDefinition.PARAMETERS_B);
+            addColumnToDoc(doc, row, FieldNames.PARAMETER_INTERACTION, IntactDocumentDefinition.PARAMETERS_INTERACTION);
         }
 
         // ac
-        doc.addField("pkey", mitabLine);
+        doc.addField(FieldNames.PKEY, mitabLine);
 
         // add the iRefIndex field from the interaction_id column to the rig field (there should be zero or one)
-        addFilteredField(row, doc, "rig", IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("iRefIndex"));
+        addFilteredField(row, doc, FieldNames.RIG, IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("irefindex"));
 
         return doc;
     }
@@ -136,7 +133,7 @@ public class SolrDocumentConverter {
     }
 
     public String toMitabLine(SolrDocument doc) {
-        return (String) doc.getFieldValue("line");
+        return (String) doc.getFieldValue(FieldNames.LINE);
     }
 
     private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) {
@@ -227,9 +224,10 @@ public class SolrDocumentConverter {
     }
 
     private boolean isExpandableOntology( String name ) {
-        return (DB_GO.equals(name) ||
-                DB_INTERPRO.equals(name) ||
-                DB_PSIMI.equals(name));
+        return (FieldNames.DB_GO.equals(name) ||
+                FieldNames.DB_INTERPRO.equals(name) ||
+                FieldNames.DB_CHEBI.equals(name) || 
+                FieldNames.DB_PSIMI.equals(name));
     }
 
      /**

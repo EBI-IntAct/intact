@@ -20,10 +20,8 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
 
 import java.io.*;
-import java.util.Set;
 
 /**
  * Indexes information into a SOLR server
@@ -104,7 +102,7 @@ public class IntactSolrIndexer {
 
         commitSolr(true);
 
-        return lineNumber-1;
+        return lineNumber-(hasHeader? 1 : 0);
     }
 
     private void commitSolr(boolean optimize) throws IOException, IntactSolrException {

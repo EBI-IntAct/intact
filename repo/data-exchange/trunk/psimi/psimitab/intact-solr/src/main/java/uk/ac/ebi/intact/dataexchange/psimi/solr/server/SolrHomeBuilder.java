@@ -61,7 +61,7 @@ public class SolrHomeBuilder {
         String artifactId = "intact-solr-home";
         String version = props.getProperty("intact.solr.home.version");
 
-        StringBuilder url = new StringBuilder();
+        StringBuilder url = new StringBuilder(256);
         url.append(repo);
 
         if (version.endsWith("-SNAPSHOT")) {
