@@ -54,45 +54,6 @@ public class DatabaseSimpleMitabExporterTest extends IntactBasicTestCase {
     }
 
     @Test
-    public void exportInteractors() throws Exception {
-
-        // this interaction is going to generate 2 binary i1 via the spoke expansion
-        Interaction i1 = getMockBuilder().createInteraction("a1", "a2", "a3");
-
-        // this interaction is going to be exported even though a1-a2 is already in the i1 above (no clustering)
-        Interaction i2 = getMockBuilder().createInteraction("a1", "a2");
-
-        // this interaction is going to be exported even though a1-a2 is already in the i1 above (no clustering)
-        Interaction i3 = getMockBuilder().createInteraction("a4", "a2");
-
-        final Interactor interactor = i1.getComponents().iterator().next().getInteractor();
-        CvDatabase goDb = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.GO_MI_REF, CvDatabase.GO);
-        interactor.addXref(getMockBuilder().createXref(interactor, "GO:0007028", null, goDb));
-
-        PersisterHelper.saveOrUpdate( i1, i2, i3);
-
-        Assert.assertEquals(3, getDaoFactory().getInteractionDao().countAll());
-        Assert.assertEquals(4, getDaoFactory().getInteractorDao( ProteinImpl.class ).countAll());
-
-        StringWriter mitabWriter = new StringWriter();
-
-        exporter.exportAllInteractors(mitabWriter);
-
-        mitabWriter.close();
-
-        final String mitab = mitabWriter.toString();
-        final String[] lines = mitab.split( "\n" );
-        Assert.assertEquals(4, lines.length);
-        for ( String line : lines ) {
-
-            Assert.assertTrue( line.contains( "(rigid)" ));
-            Assert.assertTrue( line.contains( "(rogid)" ));
-
-            System.out.println( line );
-        }
-    }
-
-    @Test
     public void exportInteractions() throws Exception {
 
         // this interaction is going to generate 2 binary i1 via the spoke expansion
