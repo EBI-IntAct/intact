@@ -306,21 +306,21 @@
      <field name="line" type="string" indexed="false" stored="true" required="true" multiValued="false"/>
      <field name="mitab" type="text" indexed="true" stored="false" required="true" multiValued="false"/>
 
-     <field name="idA" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="idB" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="altidA" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="altidB" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="aliasA" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="aliasB" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="idA" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
+     <field name="idB" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
+     <field name="altidA" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="altidB" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="aliasA" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="aliasB" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="detmethod" type="text" indexed="true" stored="true" multiValued="true"/>
-     <field name="pubauth" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="pubid" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="taxidA" type="text" indexed="true" stored="false"/>
-     <field name="taxidB" type="text" indexed="true" stored="false"/>
-     <field name="type" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="source" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="interaction_id" type="text" indexed="true" stored="false" required="true" multiValued="true"/>
-     <field name="confidence" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="pubauth" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="pubid" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="taxidA" type="text" indexed="true" stored="true"/>
+     <field name="taxidB" type="text" indexed="true" stored="true"/>
+     <field name="type" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="source" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="interaction_id" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
+     <field name="confidence" type="text" indexed="true" stored="true" multiValued="true"/>
 
      <field name="identifier" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="altid" type="text" indexed="true" stored="false" multiValued="true"/>
@@ -331,28 +331,28 @@
 
      <!-- IntAct Extended -->
 
-     <field name="experimentalRoleA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="experimentalRoleB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="experimentalRoleA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="experimentalRoleB" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="experimentalRole" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="biologicalRoleA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="biologicalRoleB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="biologicalRoleA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="biologicalRoleB" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="biologicalRole" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="propertiesA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="propertiesB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="propertiesA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="propertiesB" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="properties" type="text" indexed="true" stored="true" multiValued="true"/>
 
-     <field name="typeA" type="text" indexed="true" stored="false" multiValued="true"/>
-     <field name="typeB" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="typeA" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="typeB" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="interactorType" type="text" indexed="true" stored="true" multiValued="true"/>
 
-     <field name="hostOrganism" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="expansion" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="dataset" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="hostOrganism" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="expansion" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="dataset" type="text" indexed="true" stored="true" multiValued="true"/>
 
-     <field name="parameterA" type="string" indexed="true" stored="false" multiValued="true"/>
-     <field name="parameterB" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="parameterA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="parameterB" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="parameters" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <!-- Other -->
