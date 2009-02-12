@@ -52,7 +52,7 @@ public class SolrSearchResult {
             return lineList;
         }
 
-        lineList = new ArrayList<String>();
+        lineList = new ArrayList<String>(Long.valueOf(getTotalCount()).intValue());
         SolrDocumentConverter converter = new SolrDocumentConverter(new IntactDocumentDefinition());
 
         for (SolrDocument doc : queryResponse.getResults()) {
@@ -67,7 +67,7 @@ public class SolrSearchResult {
             return rowList;
         }
 
-        rowList = new ArrayList<Row>();
+        rowList = new ArrayList<Row>(Long.valueOf(getTotalCount()).intValue());
         SolrDocumentConverter converter = new SolrDocumentConverter(new IntactDocumentDefinition());
 
         for (SolrDocument doc : queryResponse.getResults()) {
@@ -82,7 +82,7 @@ public class SolrSearchResult {
             return binaryInteractionList;
         }
 
-        binaryInteractionList = new ArrayList<IntactBinaryInteraction>();
+        binaryInteractionList = new ArrayList<IntactBinaryInteraction>(Long.valueOf(getTotalCount()).intValue());
         SolrDocumentConverter converter = new SolrDocumentConverter(new IntactDocumentDefinition());
 
         for (SolrDocument doc : queryResponse.getResults()) {

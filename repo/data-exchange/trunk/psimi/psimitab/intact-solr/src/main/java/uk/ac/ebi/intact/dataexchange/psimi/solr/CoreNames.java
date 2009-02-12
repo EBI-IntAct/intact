@@ -23,6 +23,6 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
  */
 public interface CoreNames {
 
-    static String CORE_PUB = "core_pub";
-    static String CORE_STAGE = "core_stage";
+    String CORE_PUB = "core_pub";
+    String CORE_STAGE = "core_stage";
 }
