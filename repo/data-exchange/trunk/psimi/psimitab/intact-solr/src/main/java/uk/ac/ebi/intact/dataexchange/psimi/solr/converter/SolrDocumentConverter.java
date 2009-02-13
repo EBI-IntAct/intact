@@ -169,6 +169,8 @@ public class SolrDocumentConverter {
                     doc.addField("spell", field.getDescription());
                 }
 
+                addExpandedFields(doc, fieldName, field);
+
                 for (Field parentField : getAllParents(field)) {
                     addExpandedFields(doc, fieldName, parentField);
                 }

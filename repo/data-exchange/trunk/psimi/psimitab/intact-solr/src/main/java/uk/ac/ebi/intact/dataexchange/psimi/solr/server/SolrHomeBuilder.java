@@ -32,7 +32,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * TODO comment that class header
+ * Creates a filesystem to host a solr home with IntAct configuration.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -116,13 +116,19 @@ public class SolrHomeBuilder {
                 try {
                     writeStreamToFile(localJar, solrHomeJar.openStream());
                 } catch (IOException e) {
-                    throw new IOException("Problem opening file: "+solrHomeJar, e);
+                    throw new RuntimeException("Problem opening file: "+solrHomeJar, e);
                 }
             } else {
                 if (log.isDebugEnabled()) log.debug("Using existing local jar: "+localJar);
             }
 
-            jarUrl = new URL("jar:file://"+localJar+"!/");
+            String additionalSlash = "";
+
+            if (!System.getProperty("os.name").contains("Windows")) {
+                additionalSlash = "/";
+            }
+
+            jarUrl = new URL("jar:file:/"+additionalSlash+localJar+"!/");
         } else {
             if (!solrHomeJar.toString().startsWith("jar:")) {
                 try {
