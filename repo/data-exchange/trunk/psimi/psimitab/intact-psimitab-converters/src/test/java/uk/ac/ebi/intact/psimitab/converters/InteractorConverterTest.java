@@ -3,18 +3,22 @@ package uk.ac.ebi.intact.psimitab.converters;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.junit.Assert;
+import org.junit.Ignore;
 import psidev.psi.mi.tab.model.Interactor;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.XrefUtils;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
+import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.List;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.ArrayList;
 
 /**
  * InteractorConverter Tester.
@@ -115,5 +119,34 @@ public class InteractorConverterTest extends IntactBasicTestCase {
             }
         }
         return hasIdentifierInPropertyCounter;
+    }
+
+  
+    @Test
+    public void addShortLabelToAlternativeId() {
+
+        final uk.ac.ebi.intact.model.Interactor interactorA_dna = getMockBuilder().createNucleicAcidRandom();
+        final Protein interactorB_protein = getMockBuilder().createProteinRandom();
+
+        Interaction binaryInteraction = getMockBuilder().createInteraction( interactorA_dna, interactorB_protein );
+
+        interactorA_dna.setAc( "EBI-xxxxxA" );
+        interactorB_protein.setAc( "EBI-xxxxxB" );
+
+        interactorA_dna.setShortLabel( "iamadna" );
+        interactorB_protein.setShortLabel( "iamaprotein" );
+
+        InteractionConverter interactionConverter = new InteractionConverter();
+        IntactBinaryInteraction intactBi = interactionConverter.toBinaryInteraction( binaryInteraction );
+
+        Assert.assertEquals(1,intactBi.getInteractorA().getAlternativeIdentifiers().size());
+        Assert.assertEquals("iamadna",intactBi.getInteractorA().getAlternativeIdentifiers().iterator().next().getIdentifier());
+        Assert.assertEquals("intact",intactBi.getInteractorA().getAlternativeIdentifiers().iterator().next().getDatabase());
+        Assert.assertEquals("shortlabel",intactBi.getInteractorA().getAlternativeIdentifiers().iterator().next().getText());
+
+        Assert.assertEquals("iamaprotein",intactBi.getInteractorB().getAlternativeIdentifiers().iterator().next().getIdentifier());
+        Assert.assertEquals("uniprotkb",intactBi.getInteractorB().getAlternativeIdentifiers().iterator().next().getDatabase());
+        Assert.assertEquals("shortlabel",intactBi.getInteractorB().getAlternativeIdentifiers().iterator().next().getText());
+
     }
 }

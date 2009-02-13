@@ -29,14 +29,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+
 /**
- * Interactor Converter.
+ * Contains method to convert the IntactInteractor database data model to Intact psimitab data model
  *
  * @author Nadin Neuhauser
  * @version $Id$
  * @since 2.0.0
  */
 public class InteractorConverter {
+
+    private static final Log log = LogFactory.getLog( InteractorConverter.class );
 
     private CrossReferenceConverter<InteractorXref> xRefConverter = new CrossReferenceConverter<InteractorXref>();
 
@@ -48,6 +53,13 @@ public class InteractorConverter {
                                                             ORF_NAME_MI_REF ) );
     }
 
+    /**
+     *  Converts the database IntactInteractor data model to intactpsimitab datamodel
+     *
+     * @param intactInteractor The interactor to be converted
+     * @param interaction      Passed to get the components of the interaction
+     * @return ExtendedInteractor with additional fields specific to Intact
+     */
     public ExtendedInteractor toMitab( uk.ac.ebi.intact.model.Interactor intactInteractor, Interaction interaction ) {
         if ( intactInteractor == null ) {
             throw new IllegalArgumentException( "Interactor must not be null" );
@@ -109,9 +121,13 @@ public class InteractorConverter {
             Protein prot = (Protein)intactInteractor;
 
             if (ProteinUtils.isFromUniprot(prot)) {
-                CrossReference altId = CrossReferenceFactory.getInstance().build( CvDatabase.UNIPROT, prot.getShortLabel() );
+                CrossReference altId = CrossReferenceFactory.getInstance().build( CvDatabase.UNIPROT, prot.getShortLabel(),"shortlabel" );
                 tabInteractor.getAlternativeIdentifiers().add(altId);
             }
+        }else{
+          //if it is not a instance of protein, add the short label to alternative identifiers with INTACT as database  
+               CrossReference altId = CrossReferenceFactory.getInstance().build( CvDatabase.INTACT, intactInteractor.getShortLabel(),"shortlabel" );
+               tabInteractor.getAlternativeIdentifiers().add(altId);
         }
 
         // taxid
