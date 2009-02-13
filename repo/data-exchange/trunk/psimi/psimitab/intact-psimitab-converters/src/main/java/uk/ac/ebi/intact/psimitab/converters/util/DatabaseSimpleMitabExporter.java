@@ -58,7 +58,8 @@ public class DatabaseSimpleMitabExporter {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private static final String SMALLMOLECULE_MI_REF = "MI:0328";
-    
+    private static final String UNKNOWN_TAXID = "-3";
+
 
     public DatabaseSimpleMitabExporter() {
     }
@@ -192,18 +193,28 @@ public class DatabaseSimpleMitabExporter {
         String taxid = null;
         if( interactor.getBioSource() != null ) {
             taxid =interactor.getBioSource().getTaxId();
+        } else {
+            taxid = UNKNOWN_TAXID;
         }
 
         String seq = null;
         if( interactor.getClass().isAssignableFrom( Polymer.class ) ) {
             Polymer polymer = (Polymer) interactor;
             seq = polymer.getSequence();
-//        } else if( interactor instanceof SmallMolecule ) {
-            // find INCHI key
-            // AnnotatedObjectUtils.searchXrefs( interactor, CvDatabase.INCHI );
-        } else {
-            // use IntAct AC
-            seq = interactor.getAc();
+        }
+
+        if( seq == null ) {
+            if( interactor instanceof SmallMolecule ) {
+                // find INCHI key
+                final Annotation annotation = AnnotatedObjectUtils.findAnnotationByTopicMiOrLabel( interactor, "MI:2010" );// INCHI_MI_REF
+                if( annotation != null ) {
+                    seq = annotation.getAnnotationText();
+                }
+            }
+
+            if( seq == null ) {
+                seq = interactor.getAc();
+            }
         }
 
         return new RigDataModel( seq, taxid );
@@ -217,14 +228,27 @@ public class DatabaseSimpleMitabExporter {
         String interactorB = getIntactAc( binaryInteraction.getInteractorB() );
 
         for ( Component component : interaction.getComponents() ) {
-            if( component.getInteractor().getAc().equals( interactorA ) ) {
+
+            final String interactorAc = component.getInteractor().getAc();
+
+            if( interactorAc.equals( interactorA ) && pair[0] == null ) {
                 pair[0] = component.getInteractor();
-            } else if( component.getInteractor().getAc().equals( interactorB ) ){
+            } else if( interactorAc.equals( interactorB ) ){
                 pair[1] = component.getInteractor();
             } else {
-                throw new IllegalStateException( "Found Ac: '"+ component.getInteractor().getAc() +
+                throw new IllegalStateException( "Found Ac: '"+ interactorAc +
                                                  "' when expeting '"+interactorA+"' or '"+interactorB+"'" );
             }
+        }
+
+        if( pair[0] == null ) {
+            System.out.println( interaction );
+            throw new IllegalStateException( "Interaction '"+ interaction.getAc() +"': Could not identify interactor A: AC='" + interactorA +"' ");
+        }
+
+        if( pair[1] == null ) {
+            System.out.println( interaction );
+            throw new IllegalStateException( "Interaction '"+ interaction.getAc() +"':Could not identify interactor B: AC='" + interactorB +"' ");
         }
 
         return pair;
