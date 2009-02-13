@@ -51,6 +51,8 @@ fi
 
 rm home -rf
 
+jar -xvf $JAR solr.war
+
 cd $CURRENT_DIR
 
 mv $WORKING_DIR/solr.war .
