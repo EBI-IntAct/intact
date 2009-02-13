@@ -59,6 +59,6 @@ mv $WORKING_DIR/solr.war .
 
 rm -rf $WORKING_DIR
 
-echo "SOLR WAR found at: $WORKING_DIR/solr.war"
+echo "SOLR WAR found at: $CURRENT_DIR/solr.war"
 
 exit 0
