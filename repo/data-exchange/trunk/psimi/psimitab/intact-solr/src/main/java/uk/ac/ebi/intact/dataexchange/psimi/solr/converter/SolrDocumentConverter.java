@@ -15,6 +15,7 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
+import org.apache.commons.collections.map.LRUMap;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.BinaryInteraction;
@@ -40,6 +41,8 @@ public class SolrDocumentConverter {
 
     private DocumentDefinition documentDefintion;
 
+    private Map<String,Collection<Field>> cvCache;
+
     /**
      * Access to the Ontology index.
      */
@@ -51,11 +54,12 @@ public class SolrDocumentConverter {
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion) {
         this.documentDefintion = documentDefintion;
+        cvCache = new LRUMap(10000);
     }
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion,
                                  OntologyIndexSearcher ontologySearcher) {
-        this.documentDefintion = documentDefintion;
+        this(documentDefintion);
         this.ontologySearcher = ontologySearcher;
     }
 
@@ -236,7 +240,7 @@ public class SolrDocumentConverter {
      * @param field the field for which we want to get the parents
      * @return list of cv terms with parents and itself
      */
-    private List<Field> getAllParents( psidev.psi.mi.tab.model.builder.Field field ) {
+    private Collection<Field> getAllParents( psidev.psi.mi.tab.model.builder.Field field ) {
         if (ontologySearcher == null) {
             return Collections.EMPTY_LIST;
         }
@@ -248,11 +252,17 @@ public class SolrDocumentConverter {
         if ( isExpandableOntology( type ) ) {
             String identifier = field.getValue();
 
+            if (cvCache.containsKey(identifier)) {
+                return cvCache.get(identifier);
+            }
+
             // fetch parents and fill the field list
             final OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm( ontologySearcher, identifier );
             final Set<OntologyTerm> parents = ontologyTerm.getAllParentsToRoot();
 
             allParents = convertTermsToFields( type, parents );
+
+            cvCache.put(identifier, allParents);
         }
 
         return ( allParents != null ? allParents : Collections.EMPTY_LIST );
