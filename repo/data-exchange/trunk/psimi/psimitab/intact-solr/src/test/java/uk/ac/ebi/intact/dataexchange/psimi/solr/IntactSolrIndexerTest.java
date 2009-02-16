@@ -21,6 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
+import java.io.ByteArrayInputStream;
+
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -63,6 +65,26 @@ public class IntactSolrIndexerTest {
     public void testIndexMitabFromClasspath3() throws Exception {
         indexer.indexMitabFromClasspath("/mitab_samples/intact200.txt", true, 190, 20);
         assertCount(10, "*:*");
+    }
+
+    @Test
+    public void index1() throws Exception {
+        // mitab line with annotations
+        String mitabLine = "uniprotkb:Q7Z4T9-4|intact:EBI-2119735\tuniprotkb:Q92667-2|intact:EBI-2120060\tuniprotkb:AAT1-alpha(isoform synonym)|uniprotkb:q7z4t9-4|irefindex:+ReKZkaGc+yy9DYMbJ/aHHCMHmw9606(rogid)\t" +
+                           "uniprotkb:S-AKAP84(isoform synonym)|uniprotkb:q92667-2|irefindex:iV8hJ/bPZ/NLER8WZj02X6SD+mw9606(rogid)\t-\t-\t" +
+                           "psi-mi:\"MI:0007\"(anti tag coip)\tYukitake et al. (2002)\tpubmed:12223483\ttaxid:9606(human)\t" +
+                           "taxid:9606(human)\tpsi-mi:\"MI:0915\"(physical association)\tpsi-mi:\"MI:0469\"(IntAct)\t" +
+                           "intact:EBI-2120363|irefindex:T3w4Q7GYZthAQDYDWB84nhCnkNQ(rigid)\t-\tpsi-mi:\"MI:0498\"(prey)\t" +
+                           "psi-mi:\"MI:0496\"(bait)\tpsi-mi:\"MI:0499\"(unspecified role)\tpsi-mi:\"MI:0499\"(unspecified role)\t" +
+                           "intact:EBI-2119657(isoform-parent)|uniprotkb:Q7Z4T9-4(identity)\t" +
+                           "intact:EBI-2119593(isoform-parent)|uniprotkb:Q92667-2(identity)\tpsi-mi:\"MI:0326\"(protein)\t" +
+                           "psi-mi:\"MI:0326\"(protein)\ttaxid:-1(in vitro)\t-\t-\t" +
+                           "isoform-comment:May be produced by alternative promoter usage\t" +
+                           "isoform-comment:May be produced at very low levels due to a premature stop codon in the mRNA, leading to nonsense-mediated mRNA decay\t-\t-\t-";
+
+        indexer.indexMitab(new ByteArrayInputStream(mitabLine.getBytes()), false);
+
+        assertCount(1, "*:*");
     }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
