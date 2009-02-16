@@ -352,7 +352,7 @@
      <field name="dataset" type="text" indexed="true" stored="true" multiValued="true"/>
 
      <field name="annotationA" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="annotationA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="annotationB" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="annotation" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <field name="parameterA" type="string" indexed="true" stored="true" multiValued="true"/>
