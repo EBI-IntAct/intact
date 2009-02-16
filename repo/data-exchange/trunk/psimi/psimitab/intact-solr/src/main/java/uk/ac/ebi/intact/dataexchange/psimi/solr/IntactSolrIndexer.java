@@ -19,6 +19,8 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
@@ -32,6 +34,8 @@ import java.net.MalformedURLException;
  * @version $Id$
  */
 public class IntactSolrIndexer {
+
+    private Logger log = LoggerFactory.getLogger(IntactSolrIndexer.class);
 
     private SolrServer solrServer;
     private SolrDocumentConverter converter;
@@ -152,11 +156,16 @@ public class IntactSolrIndexer {
                     throw new IntactSolrException("Problem processing line " + (lineCount+1) + ": " + line, e);
                 }
 
+                processed++;
+                
                 if (lineCount > 0 && lineCount % 100 == 0) {
                     commitSolr(false);
                 }
 
-                processed++;
+                if (log.isDebugEnabled() && processed % 1000 == 0) {
+                    if (log.isDebugEnabled()) log.debug("Processed: "+processed);
+                }
+
             }
 
             if (lineCount >= end) {
