@@ -17,11 +17,13 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.io.*;
+import java.net.MalformedURLException;
 
 /**
  * Indexes information into a SOLR server
@@ -34,9 +36,17 @@ public class IntactSolrIndexer {
     private SolrServer solrServer;
     private SolrDocumentConverter converter;
 
+    public IntactSolrIndexer(String solrServerUrl) throws MalformedURLException {
+        this(new CommonsHttpSolrServer(solrServerUrl));
+    }
+
     public IntactSolrIndexer(SolrServer solrServer) {
         this.solrServer = solrServer;
         this.converter = new SolrDocumentConverter(new IntactDocumentDefinition());
+    }
+
+    public IntactSolrIndexer(String solrServerUrl, SolrDocumentConverter converter) throws MalformedURLException {
+        this(new CommonsHttpSolrServer(solrServerUrl), converter);
     }
 
     public IntactSolrIndexer(SolrServer solrServer, SolrDocumentConverter converter) {

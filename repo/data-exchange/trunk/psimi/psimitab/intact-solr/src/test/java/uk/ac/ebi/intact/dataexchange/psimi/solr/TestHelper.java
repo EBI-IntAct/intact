@@ -33,7 +33,7 @@ import java.util.Map;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class TestHelper {
+public abstract class TestHelper {
 
     public static Directory buildOntologiesIndex(Map<String,URL> urls) throws Exception {
 
