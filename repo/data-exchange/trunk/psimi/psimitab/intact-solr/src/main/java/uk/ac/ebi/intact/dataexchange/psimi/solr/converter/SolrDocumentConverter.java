@@ -79,8 +79,8 @@ public class SolrDocumentConverter {
         // store the mitab line
         doc.addField(FieldNames.LINE, mitabLine);
 
-        addColumnToDoc(doc, row, FieldNames.ID_A, IntactDocumentDefinition.ID_INTERACTOR_A);
-        addColumnToDoc(doc, row, FieldNames.ID_B, IntactDocumentDefinition.ID_INTERACTOR_B);
+        addColumnToDoc(doc, row, FieldNames.ID_A, IntactDocumentDefinition.ID_INTERACTOR_A, true);
+        addColumnToDoc(doc, row, FieldNames.ID_B, IntactDocumentDefinition.ID_INTERACTOR_B, true);
         addColumnToDoc(doc, row, FieldNames.ALTID_A, IntactDocumentDefinition.ALTID_INTERACTOR_A);
         addColumnToDoc(doc, row, FieldNames.ALTID_B, IntactDocumentDefinition.ALTID_INTERACTOR_B);
         addColumnToDoc(doc, row, FieldNames.ALIAS_A, IntactDocumentDefinition.ALIAS_INTERACTOR_A);
@@ -151,9 +151,9 @@ public class SolrDocumentConverter {
         for (Field field : column.getFields()) {
             if (expandableColumn) {
                 doc.addField(fieldName+"_exact", field.toString());
-            } else {
-                doc.addField(fieldName, field.toString());
             }
+
+            doc.addField(fieldName, field.toString());
 
             if (field.getType() != null) {
                 doc.addField(field.getType()+"_xref", field.getValue());

@@ -48,12 +48,20 @@ public class IntactSolrIndexer {
         return indexMitab(new FileInputStream(mitabFile), hasHeader);
     }
 
+    public int indexMitab(File mitabFile, boolean hasHeader, Integer firstLine, Integer batchSize) throws IOException, IntactSolrException {
+        return indexMitab(new FileInputStream(mitabFile), hasHeader, firstLine, batchSize);
+    }
+
     public int indexMitabFromClasspath(String resourceUrl, boolean hasHeader) throws IOException, IntactSolrException {
+        return indexMitabFromClasspath(resourceUrl, hasHeader, null, null);
+    }
+
+    public int indexMitabFromClasspath(String resourceUrl, boolean hasHeader, Integer firstLine, Integer batchSize) throws IOException, IntactSolrException {
         InputStream resourceStream = IntactSolrIndexer.class.getResourceAsStream(resourceUrl);
 
         if (resourceStream == null) throw new IntactSolrException("Resource not found in the classpath: "+resourceUrl);
 
-        return indexMitab(resourceStream, hasHeader);
+        return indexMitab(resourceStream, hasHeader, firstLine, batchSize);
     }
 
     /**
@@ -65,9 +73,23 @@ public class IntactSolrIndexer {
      * @throws IntactSolrException Thrown if there is a problem indexing the data
      */
     public int indexMitab(InputStream mitabStream, boolean hasHeader) throws IOException, IntactSolrException {
+        return indexMitab(mitabStream, hasHeader, null, null);
+    }
+
+    /**
+     * Indexes a MITAB formatted input stream into the database.
+     * @param mitabStream The stream to index
+     * @param hasHeader Whether the data has header or not
+     * @param firstLine The first line to process, being line 0 the first line in the file ignoring the header
+     * @param batchSize Number of lines to process
+     * @return Count of indexed lines
+     * @throws IOException Thrown if there is a problem reading the stream
+     * @throws IntactSolrException Thrown if there is a problem indexing the data
+     */
+    public int indexMitab(InputStream mitabStream, boolean hasHeader, Integer firstLine, Integer batchSize) throws IOException, IntactSolrException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(mitabStream));
 
-        return indexMitab(reader, hasHeader);
+        return indexMitab(reader, hasHeader, firstLine, batchSize);
     }
 
     /**
@@ -78,31 +100,65 @@ public class IntactSolrIndexer {
      * @throws IOException Thrown if there is a problem reading
      * @throws IntactSolrException Thrown if there is a problem indexing the data
      */
-    private int indexMitab(BufferedReader reader, boolean hasHeader) throws IOException, IntactSolrException {
+    public int indexMitab(BufferedReader reader, boolean hasHeader) throws IOException, IntactSolrException {
+        return indexMitab(reader, hasHeader, null, null);
+    }
+
+    /**
+     * Indexes MITAB data using a Reader into the database.
+     * @param reader The reader to use
+     * @param hasHeader Whether the data has header or not
+     * @param firstLine The first line to process, being line 0 the first line in the file ignoring the header
+     * @param batchSize Number of lines to process
+     * @return Count of indexed lines
+     * @throws IOException Thrown if there is a problem reading
+     * @throws IntactSolrException Thrown if there is a problem indexing the data
+     */
+    public int indexMitab(BufferedReader reader, boolean hasHeader, Integer firstLine, Integer batchSize) throws IOException, IntactSolrException {
+        int lineCount = 0;
+
+        int first = (firstLine == null)? 0 : firstLine;
+        int lastRes = (batchSize == null)? Integer.MAX_VALUE : batchSize;
+        int end = first + lastRes;
+
+        if (hasHeader) {
+            first++;
+            if (end != Integer.MAX_VALUE) end++;
+        }
+
+        int processed = 0;
+
         String line;
-        int lineNumber = 0;
 
         while ((line = reader.readLine()) != null) {
-            lineNumber++;
 
-            if (hasHeader && lineNumber == 1) continue;
-            
-            SolrInputDocument inputDocument = converter.toSolrDocument(line);
+            if (lineCount >= first && lineCount < end) {
 
-            try {
-                solrServer.add(inputDocument);
-            } catch (SolrServerException e) {
-                throw new IntactSolrException("Problem processing line "+lineNumber+": "+line, e);
+                SolrInputDocument inputDocument = converter.toSolrDocument(line);
+
+                try {
+                    solrServer.add(inputDocument);
+                } catch (Throwable e) {
+                    throw new IntactSolrException("Problem processing line " + (lineCount+1) + ": " + line, e);
+                }
+
+                if (lineCount > 0 && lineCount % 100 == 0) {
+                    commitSolr(false);
+                }
+
+                processed++;
             }
 
-            if (lineNumber > 0 && lineNumber % 100 == 0) {
-                commitSolr(false);
+            if (lineCount >= end) {
+                break;
             }
+
+            lineCount++;
         }
 
         commitSolr(true);
 
-        return lineNumber-(hasHeader? 1 : 0);
+        return processed;
     }
 
     private void commitSolr(boolean optimize) throws IOException, IntactSolrException {
