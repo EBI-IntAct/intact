@@ -366,7 +366,7 @@
      <field name="psi-mi" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="chebi" type="string" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="rig" type="string" indexed="true" stored="true" multiValued="false"/>
+     <field name="rigid" type="string" indexed="true" stored="true" multiValued="false"/>
 
      <field name="relevancescore" type="string" indexed="true" stored="true" multiValued="false"/>
      <field name="evidences" type="sint" indexed="true" stored="true" multiValued="false"/>
