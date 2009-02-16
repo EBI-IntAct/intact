@@ -322,10 +322,12 @@
      <field name="interaction_id" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
      <field name="confidence" type="text" indexed="true" stored="true" multiValued="true"/>
 
-     <field name="identifier" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="identifier" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="altid" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="alias" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="species" type="text" indexed="true" stored="false" multiValued="true"/>
+
+     <field name="intact" type="string" indexed="true" stored="true" required="true"/>
 
      <field name="pkey" type="string" indexed="true" stored="true" required="true"/>
 
