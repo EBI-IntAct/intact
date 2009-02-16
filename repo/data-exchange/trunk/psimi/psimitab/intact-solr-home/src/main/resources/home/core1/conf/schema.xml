@@ -474,8 +474,6 @@
     <copyField source="taxidA" dest="species"/>
     <copyField source="taxidB" dest="species"/>
 
-    <copyField source="dataset" dest="dataset_s"/>
-
     <copyField source="detmethod_exact" dest="detmethod"/>
     <copyField source="detmethod_expanded" dest="detmethod"/>
     <copyField source="type_exact" dest="type"/>
