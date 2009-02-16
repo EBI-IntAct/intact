@@ -351,9 +351,13 @@
      <field name="expansion" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="dataset" type="text" indexed="true" stored="true" multiValued="true"/>
 
+     <field name="annotationA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="annotationA" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="annotation" type="text" indexed="true" stored="false" multiValued="true"/>
+
      <field name="parameterA" type="string" indexed="true" stored="true" multiValued="true"/>
      <field name="parameterB" type="string" indexed="true" stored="true" multiValued="true"/>
-     <field name="parameters" type="text" indexed="true" stored="false" multiValued="true"/>
+     <field name="parameter" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <!-- Other -->
 
@@ -503,8 +507,11 @@
     <copyField source="typeB_expanded" dest="interactorType"/>
     <copyField source="typeB_exact" dest="interactorType"/>
 
-    <copyField source="parameterA" dest="parameters"/>
-    <copyField source="parameterB" dest="parameters"/>
+    <copyField source="annotationA" dest="annotation"/>
+    <copyField source="annotationB" dest="annotation"/>
+
+    <copyField source="parameterA" dest="parameter"/>
+    <copyField source="parameterB" dest="parameter"/>
 
     <copyField source="line" dest="mitab"/>
 
