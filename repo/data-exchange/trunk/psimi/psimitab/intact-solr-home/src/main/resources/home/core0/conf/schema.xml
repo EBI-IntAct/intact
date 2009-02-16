@@ -360,6 +360,7 @@
      <field name="go" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="interpro" type="string" indexed="true" stored="false" multiValued="true"/>
      <field name="psi-mi" type="string" indexed="true" stored="false" multiValued="true"/>
+     <field name="chebi" type="string" indexed="true" stored="false" multiValued="true"/>
 
      <field name="rig" type="string" indexed="true" stored="true" multiValued="false"/>
 
