@@ -35,6 +35,10 @@ public class IntactSolrSearcher {
     }
 
     public SolrSearchResult search(String query, Integer firstResult, Integer maxResults) throws IntactSolrException {
+        if (query == null) throw new NullPointerException("Null query");
+        
+        if ("*".equals(query)) query = "*:*";
+
         SolrQuery solrQuery = new SolrQuery(query);
 
         if (firstResult != null) solrQuery.setStart(firstResult);
