@@ -48,5 +48,5 @@ public interface FieldNames {
     String LINE = "line";
 
     String PKEY = "pkey";
-    String RIG = "rig";
+    String RIGID = "rigid";
 }

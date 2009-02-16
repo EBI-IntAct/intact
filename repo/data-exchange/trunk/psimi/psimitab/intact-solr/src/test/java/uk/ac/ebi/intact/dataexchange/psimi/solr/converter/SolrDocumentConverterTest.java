@@ -19,6 +19,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.solr.common.SolrInputDocument;
 import org.junit.*;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.TestHelper;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
@@ -72,17 +73,17 @@ public class SolrDocumentConverterTest {
 
     @Test
     public void testToSolrDocument() throws Exception {
-        String rig = "THIS_IS_A_RIG";
+        String rigid = "THIS_IS_A_RIGID";
         String psiMiTabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
                               "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
                               "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
-                              "\tintact:EBI-446356|irefindex:"+rig+"(rig)\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
+                              "\tintact:EBI-446356|irefindex:"+ rigid +"("+ FieldNames.RIGID+")\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
                               "\tMI:0499(unspecified role)\tinterpro:IPR004829|\tgo:\"GO:0030246\"\tMI:0326(protein)\tMI:0326(protein)\tyeast:4932\t-\t-";
 
         SolrDocumentConverter converter = new SolrDocumentConverter();
 
         SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
 
-        Assert.assertEquals(rig, doc.getFieldValue("rig"));
+        Assert.assertEquals(rigid, doc.getFieldValue(FieldNames.RIGID));
     }
 }

@@ -119,7 +119,7 @@ public class SolrDocumentConverter {
         doc.addField(FieldNames.PKEY, mitabLine);
 
         // add the iRefIndex field from the interaction_id column to the rig field (there should be zero or one)
-        addFilteredField(row, doc, FieldNames.RIG, IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("irefindex"));
+        addFilteredField(row, doc, FieldNames.RIGID, IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("irefindex"));
 
         return doc;
     }
