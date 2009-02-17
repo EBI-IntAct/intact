@@ -23,10 +23,10 @@ import psidev.psi.mi.tab.model.builder.Column;
 import psidev.psi.mi.tab.model.builder.DocumentDefinition;
 import psidev.psi.mi.tab.model.builder.Field;
 import psidev.psi.mi.tab.model.builder.Row;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.bridges.ontologies.term.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.util.*;
@@ -46,7 +46,7 @@ public class SolrDocumentConverter {
     /**
      * Access to the Ontology index.
      */
-    private OntologyIndexSearcher ontologySearcher;
+    private OntologySearcher ontologySearcher;
 
     public SolrDocumentConverter() {
         this(new IntactDocumentDefinition());
@@ -58,7 +58,7 @@ public class SolrDocumentConverter {
     }
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion,
-                                 OntologyIndexSearcher ontologySearcher) {
+                                 OntologySearcher ontologySearcher) {
         this(documentDefintion);
         this.ontologySearcher = ontologySearcher;
     }

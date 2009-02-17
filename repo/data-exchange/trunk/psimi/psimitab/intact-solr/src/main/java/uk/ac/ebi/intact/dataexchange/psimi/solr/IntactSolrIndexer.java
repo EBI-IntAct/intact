@@ -22,7 +22,10 @@ import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -38,6 +41,7 @@ public class IntactSolrIndexer {
     private Logger log = LoggerFactory.getLogger(IntactSolrIndexer.class);
 
     private SolrServer solrServer;
+    private SolrServer ontologySolrServer;
     private SolrDocumentConverter converter;
 
     public IntactSolrIndexer(String solrServerUrl) throws MalformedURLException {
@@ -49,13 +53,25 @@ public class IntactSolrIndexer {
         this.converter = new SolrDocumentConverter(new IntactDocumentDefinition());
     }
 
-    public IntactSolrIndexer(String solrServerUrl, SolrDocumentConverter converter) throws MalformedURLException {
-        this(new CommonsHttpSolrServer(solrServerUrl), converter);
+    public IntactSolrIndexer(String solrServerUrl, String ontologySolrServerUrl) throws MalformedURLException {
+        this(new CommonsHttpSolrServer(solrServerUrl), new CommonsHttpSolrServer(ontologySolrServerUrl));
     }
 
-    public IntactSolrIndexer(SolrServer solrServer, SolrDocumentConverter converter) {
+    public IntactSolrIndexer(SolrServer solrServer, SolrServer ontologySolrServer) {
         this.solrServer = solrServer;
-        this.converter = converter;
+        this.ontologySolrServer = ontologySolrServer;
+        this.converter = new SolrDocumentConverter(new IntactDocumentDefinition(), new OntologySearcher(ontologySolrServer));
+    }
+
+    public void indexOntologies(OntologyMapping[] ontologyMappings) throws IntactSolrException {
+        if (ontologySolrServer == null) {
+            throw new IllegalStateException("To index an ontology, an ontology SolrServer must be passed to the constructor");
+        }
+        
+        if (log.isInfoEnabled()) log.info("Indexing ontologies: "+ontologyMappings);
+        
+        OntologyIndexer ontologyIndexer = new OntologyIndexer(ontologySolrServer);
+        ontologyIndexer.indexObo(ontologyMappings);
     }
 
     public int indexMitab(File mitabFile, boolean hasHeader) throws IOException, IntactSolrException {

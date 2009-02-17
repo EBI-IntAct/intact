@@ -19,9 +19,17 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Assert;
+import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.io.ByteArrayInputStream;
+import java.util.Collection;
 
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
@@ -37,7 +45,8 @@ public class IntactSolrIndexerTest {
         solrJettyRunner = new SolrJettyRunner();
         solrJettyRunner.start();
 
-        indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
+        indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB),
+                                        solrJettyRunner.getSolrServer(CoreNames.CORE_ONTOLOGY_PUB));
 
     }
 
@@ -85,6 +94,33 @@ public class IntactSolrIndexerTest {
         indexer.indexMitab(new ByteArrayInputStream(mitabLine.getBytes()), false);
 
         assertCount(1, "*:*");
+    }
+
+    @Test
+    public void testToSolrDocument_goExpansion() throws Exception {
+        indexer.indexOntologies(new OntologyMapping[] {
+                new OntologyMapping("go", IntactSolrIndexerTest.class.getResource("/META-INF/goslim_generic.obo"))
+        });
+
+        String goTermToExpand = "GO:0030246";
+        String psiMiTabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
+                              "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
+                              "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
+                              "\tintact:EBI-446356\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
+                              "\tMI:0499(unspecified role)\tinterpro:IPR004829|\tgo:\""+goTermToExpand+"\"\tMI:0326(protein)\tMI:0326(protein)\tyeast:4932\t-\t-";
+
+        OntologySearcher ontologySearcher = new OntologySearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_ONTOLOGY_PUB));
+        SolrDocumentConverter converter = new SolrDocumentConverter(new IntactDocumentDefinition(), ontologySearcher);
+
+        SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
+
+        Collection<Object> expandedGoIds = doc.getFieldValues("go_expanded_id");
+
+        Assert.assertEquals(3, expandedGoIds.size());
+        Assert.assertTrue(expandedGoIds.contains(goTermToExpand));
+        Assert.assertTrue(expandedGoIds.contains("GO:0003674"));
+        Assert.assertTrue(expandedGoIds.contains("GO:0005488"));
+
     }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
