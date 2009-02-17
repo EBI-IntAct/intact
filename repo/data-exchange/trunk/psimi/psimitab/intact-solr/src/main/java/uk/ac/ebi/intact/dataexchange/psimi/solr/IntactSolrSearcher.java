@@ -48,7 +48,7 @@ public class IntactSolrSearcher {
     }
 
     public SolrSearchResult search(SolrQuery query) throws IntactSolrException {
-        query.setFields("line");
+        query.setFields(query.getFields()+", line, pkey");
 
         QueryResponse queryResponse;
         try {

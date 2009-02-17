@@ -120,7 +120,7 @@ public class SolrDocumentConverter {
         }
 
         // ac
-        doc.addField(FieldNames.PKEY, mitabLine);
+        //doc.addField(FieldNames.PKEY, "NEW"); // pkey is generated automatically and using UUID
 
         // add the iRefIndex field from the interaction_id column to the rig field (there should be zero or one)
         addFilteredField(row, doc, FieldNames.RIGID, IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("irefindex"));
