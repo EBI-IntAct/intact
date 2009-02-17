@@ -327,8 +327,6 @@
      <field name="alias" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="species" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="intact" type="string" indexed="true" stored="true" required="true"/>
-
      <field name="pkey" type="string" indexed="true" stored="true" required="true"/>
 
      <!-- IntAct Extended -->
