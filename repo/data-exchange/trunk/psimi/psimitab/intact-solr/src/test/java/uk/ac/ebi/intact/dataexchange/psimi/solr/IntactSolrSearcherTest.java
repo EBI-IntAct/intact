@@ -19,6 +19,8 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
+import org.apache.solr.client.solrj.SolrServer;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
 import java.io.IOException;

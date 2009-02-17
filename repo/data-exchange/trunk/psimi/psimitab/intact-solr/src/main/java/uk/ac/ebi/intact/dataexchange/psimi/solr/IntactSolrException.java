@@ -21,7 +21,7 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class IntactSolrException extends Exception {
+public class IntactSolrException extends RuntimeException {
 
     public IntactSolrException() {
     }

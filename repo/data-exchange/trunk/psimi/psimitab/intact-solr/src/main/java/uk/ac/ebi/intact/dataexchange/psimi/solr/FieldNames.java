@@ -49,4 +49,6 @@ public interface FieldNames {
 
     String PKEY = "pkey";
     String RIGID = "rigid";
+    String RELEVANCE_SCORE = "relevancescore";
+    String EVIDENCES = "evidences";
 }
