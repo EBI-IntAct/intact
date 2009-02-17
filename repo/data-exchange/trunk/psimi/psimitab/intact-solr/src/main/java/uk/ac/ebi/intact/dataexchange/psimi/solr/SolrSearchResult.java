@@ -91,4 +91,8 @@ public class SolrSearchResult {
 
         return binaryInteractionList;
     }
+
+    public QueryResponse getQueryResponse() {
+        return queryResponse;
+    }
 }
