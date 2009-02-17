@@ -332,7 +332,7 @@
      <field name="species" type="text" indexed="true" stored="false" multiValued="true"/>
 
      <!--<field name="pkey" type="string" indexed="true" stored="true" required="true"/>-->
-     <field name="pkey" type="uuid" indexed="true" stored="true" default="NEW"/>
+     <field name="pkey" type="uuid" indexed="true" stored="true" default="NEW" multiValued="false"/>
 
      <!-- IntAct Extended -->
 
