@@ -31,5 +31,7 @@
   <cores adminPath="/admin/cores">
     <core name="core_pub,core0" instanceDir="core0" />
     <core name="core_stage,core1" instanceDir="core1" />
+    <core name="core_ontology_pub,core_ontology0" instanceDir="core_ontology0" />
+    <core name="core_ontology_stage,core_ontology1" instanceDir="core_ontology1" />
   </cores>
 </solr>
