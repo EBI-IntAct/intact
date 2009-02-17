@@ -132,11 +132,19 @@ public class SolrDocumentConverter {
         return documentDefintion.interactionFromString(toMitabLine(doc));
     }
 
+    public BinaryInteraction toBinaryInteraction(SolrInputDocument doc) {
+        return documentDefintion.interactionFromString(toMitabLine(doc));
+    }
+
     public Row toRow(SolrDocument doc) {
         return documentDefintion.createRowBuilder().createRow(toMitabLine(doc));
     }
 
     public String toMitabLine(SolrDocument doc) {
+        return (String) doc.getFieldValue(FieldNames.LINE);
+    }
+
+    public String toMitabLine(SolrInputDocument doc) {
         return (String) doc.getFieldValue(FieldNames.LINE);
     }
 

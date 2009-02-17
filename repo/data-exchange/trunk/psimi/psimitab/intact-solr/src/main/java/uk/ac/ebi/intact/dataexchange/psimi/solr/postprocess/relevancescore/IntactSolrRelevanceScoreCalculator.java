@@ -17,12 +17,15 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.solr.common.SolrInputDocument;
 
 import java.util.*;
+import java.io.IOException;
 
 import psidev.psi.mi.tab.model.CrossReference;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 
 /**
  * /**
@@ -53,11 +56,31 @@ public class IntactSolrRelevanceScoreCalculator {
     Properties rscProperties;
 
 
-    public IntactSolrRelevanceScoreCalculator() {
+    public IntactSolrRelevanceScoreCalculator() throws IOException {
+        this.rscProperties = getDefaultProperties();
     }
 
     public IntactSolrRelevanceScoreCalculator( Properties rscProperties ) {
         this.rscProperties = rscProperties;
+    }
+
+    /**
+     * Calculates the relevance score based on the principle
+     * explained in the class header
+     *
+     * @param inputDocument SolrInputDocument
+     * @param converter SolrDocumentConverter
+     * @return relevance Score of the format B1B2E1E2T1T2N1N2
+     */
+    public String calculateScore( SolrInputDocument inputDocument,SolrDocumentConverter converter) {
+        if ( inputDocument == null ) {
+            throw new NullPointerException( "You must give a non null inputDocument" );
+        }
+        if ( converter == null ) {
+            throw new NullPointerException( "You must give a non null converter" );
+        }
+        final IntactBinaryInteraction binaryInteraction = (IntactBinaryInteraction)converter.toBinaryInteraction( inputDocument );
+        return calculateScore( binaryInteraction);
     }
 
 
@@ -72,45 +95,63 @@ public class IntactSolrRelevanceScoreCalculator {
         final ExtendedInteractor interactorA = binaryInteraction.getInteractorA();
         final ExtendedInteractor interactorB = binaryInteraction.getInteractorB();
 
-
         final List<CrossReference> biologicalRoles_A = interactorA.getBiologicalRoles();
-        Set<String> uniqueBioRoles_A = getSetOfRoles( biologicalRoles_A );
-        String B1 = getScoreForGivenRolesAndTypes( uniqueBioRoles_A );
-
         final List<CrossReference> biologicalRoles_B = interactorB.getBiologicalRoles();
-        Set<String> uniqueBioRoles_B = getSetOfRoles( biologicalRoles_B );
-        String B2 = getScoreForGivenRolesAndTypes( uniqueBioRoles_B );
-
         final List<CrossReference> experimentalRoles_A = interactorA.getExperimentalRoles();
-        Set<String> uniqueExpRoles_A = getSetOfRoles( experimentalRoles_A );
-        String E1 = getScoreForGivenRolesAndTypes( uniqueExpRoles_A );
-
         final List<CrossReference> experimentalRoles_B = interactorB.getExperimentalRoles();
-        Set<String> uniqueExpRoles_B = getSetOfRoles( experimentalRoles_B );
-        String E2 = getScoreForGivenRolesAndTypes( uniqueExpRoles_B );
-
-
         final CrossReference interactorType_A = interactorA.getInteractorType();
-        String type_A = interactorType_A.getText();
-        String T1 = getScoreForGivenRole( type_A );
-
         final CrossReference interactorType_B = interactorB.getInteractorType();
+
+        String interactorName_A = getInteractorName( interactorA );
+        String interactorName_B = getInteractorName( interactorB );
+
+        return calculateScore(biologicalRoles_A,biologicalRoles_B,experimentalRoles_A,experimentalRoles_B,interactorType_A,interactorType_B,interactorName_A,interactorName_B);
+    }
+
+    /**
+     * Calculates relevance Score
+     * @param biologicalRoles_A list of bioRoles for A
+     * @param biologicalRoles_B list of bioRoles for B
+     * @param experimentalRoles_A list of expRoles for A
+     * @param experimentalRoles_B list of expRoles for B
+     * @param interactorType_A  interactorType A
+     * @param interactorType_B  interactorType B
+     * @param interactorName_A  interactor Name of A
+     * @param interactorName_B  interactor Name of B
+     * @return score
+     */
+    public String calculateScore( List<CrossReference> biologicalRoles_A, List<CrossReference> biologicalRoles_B, List<CrossReference> experimentalRoles_A, List<CrossReference> experimentalRoles_B, CrossReference interactorType_A, CrossReference interactorType_B, String interactorName_A, String interactorName_B ) {
+
+        Set<String> uniqueBioRoles_A = getSetOfRoles( biologicalRoles_A );
+        String b1 = getScoreForGivenRolesAndTypes( uniqueBioRoles_A );
+
+        Set<String> uniqueBioRoles_B = getSetOfRoles( biologicalRoles_B );
+        String b2 = getScoreForGivenRolesAndTypes( uniqueBioRoles_B );
+
+        Set<String> uniqueExpRoles_A = getSetOfRoles( experimentalRoles_A );
+        String e1 = getScoreForGivenRolesAndTypes( uniqueExpRoles_A );
+
+        Set<String> uniqueExpRoles_B = getSetOfRoles( experimentalRoles_B );
+        String e2 = getScoreForGivenRolesAndTypes( uniqueExpRoles_B );
+
+        String type_A = interactorType_A.getText();
+        String t1 = getScoreForGivenRole( type_A );
+
         String type_B = interactorType_B.getText();
-        String T2 = getScoreForGivenRole( type_B );
+        String t2 = getScoreForGivenRole( type_B );
 
-        String N1 = getInteractorName( interactorA );
-        N1 = limitToFixedLength( N1 );
+        String n1 = limitToFixedLength( interactorName_A );
+        String n2 = limitToFixedLength( interactorName_B );
 
-        String N2 = getInteractorName( interactorB );
-        N2 = limitToFixedLength( N2 );
-
-        String B1B2E1E2T1T2N1N2 = appendAll( B1, B2, E1, E2, T1, T2, N1, N2 );
+        String B1B2E1E2T1T2N1N2 = appendAll( b1, b2, e1, e2, t1, t2, n1, n2 );
         if ( log.isDebugEnabled() ) {
-            log.debug( "B1B2E1E2T1T2N1N2  " + B1B2E1E2T1T2N1N2 );
+            log.debug( "B1B2E1E2T1T2N1N2->  " + B1B2E1E2T1T2N1N2 );
         }
 
         return B1B2E1E2T1T2N1N2;
+
     }
+
 
     /**
      * First tries to get the name from the Aliases, as this contains the genename
@@ -232,5 +273,11 @@ public class IntactSolrRelevanceScoreCalculator {
 
     public void setRscProperties( Properties rscProperties ) {
         this.rscProperties = rscProperties;
+    }
+
+    private Properties getDefaultProperties() throws IOException {
+        Properties properties = new Properties();
+        properties.load( IntactSolrRelevanceScoreCalculator.class.getResourceAsStream( "/relevancescore.properties" ) );
+        return properties;
     }
 }

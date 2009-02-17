@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.apache.solr.common.SolrInputDocument;
 
 import java.util.Properties;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import java.util.List;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.psimitab.mock.IntactPsimiTabMockBuilder;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.CrossReferenceImpl;
 
@@ -105,6 +107,11 @@ public class IntactSolrRelevanceScoreCalculatorTest {
         //BB: enzyme, enzyme target
         Assert.assertEquals("BBBCDEblablaklakla",score2);
 
+        //Test with SolrInputDocument
+        SolrDocumentConverter converter = new SolrDocumentConverter( );
+        final SolrInputDocument inputDocument = converter.toSolrDocument( interaction );
+        final String score3 = rscSolr.calculateScore( inputDocument, converter );
+        Assert.assertEquals("BBBCDEblablaklakla",score3);
     }
 
     private List<CrossReference> getAsCollection( CrossReference role ) {
@@ -113,7 +120,7 @@ public class IntactSolrRelevanceScoreCalculatorTest {
         return roles;
     }
 
-    private Properties getTestProperties() throws Exception {
+    public static Properties getTestProperties() throws Exception {
         Properties properties = new Properties();
         properties.load( IntactSolrRelevanceScoreCalculatorTest.class.getResourceAsStream( "/relevancescore/relevancescoretest.properties" ) );
         return properties;
