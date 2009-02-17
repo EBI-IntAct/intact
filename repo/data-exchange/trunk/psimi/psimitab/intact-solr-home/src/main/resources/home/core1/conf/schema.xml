@@ -278,6 +278,10 @@
      -->
     <fieldtype name="ignored" stored="false" indexed="false" class="solr.StrField" />
 
+      <!-- unique identifier
+     -->
+    <fieldtype name="uuid" stored="true" indexed="true" class="solr.UUIDField" />
+
  </types>
 
 
@@ -327,7 +331,8 @@
      <field name="alias" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="species" type="text" indexed="true" stored="false" multiValued="true"/>
 
-     <field name="pkey" type="string" indexed="true" stored="true" required="true"/>
+     <!--<field name="pkey" type="string" indexed="true" stored="true" required="true"/>-->
+     <field name="pkey" type="uuid" indexed="true" stored="true" default="NEW"/>
 
      <!-- IntAct Extended -->
 
