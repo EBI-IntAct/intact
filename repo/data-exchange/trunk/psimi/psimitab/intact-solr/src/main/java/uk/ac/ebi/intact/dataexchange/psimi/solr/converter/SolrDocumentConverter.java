@@ -25,8 +25,8 @@ import psidev.psi.mi.tab.model.builder.Field;
 import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.LazyLoadedOntologyTerm;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.util.*;
@@ -158,6 +158,7 @@ public class SolrDocumentConverter {
             }
 
             doc.addField(fieldName, field.toString());
+            doc.addField(fieldName+"_ms", field.toString());
 
             if (field.getType() != null) {
                 doc.addField(field.getType()+"_xref", field.getValue());
