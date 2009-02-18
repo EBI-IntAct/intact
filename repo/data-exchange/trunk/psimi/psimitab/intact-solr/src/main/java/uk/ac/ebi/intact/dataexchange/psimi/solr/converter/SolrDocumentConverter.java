@@ -170,7 +170,7 @@ public class SolrDocumentConverter {
 
             if (field.getType() != null) {
                 doc.addField(field.getType()+"_xref", field.getValue());
-                doc.addField(field.getType()+"_xref_ms", field.getValue());
+                doc.addField(field.getType()+"_xref_ms", field.toString());
             }
 
             addDescriptionField(doc, field.getType(), field);
@@ -227,7 +227,7 @@ public class SolrDocumentConverter {
     private void addExpandedField(SolrInputDocument doc, Field field, String fieldPrefix) {
         doc.addField(fieldPrefix+"_expanded", field.toString());
         doc.addField(fieldPrefix+"_expanded_id", field.getValue());
-        doc.addField(fieldPrefix+"_expanded_ms", field.getValue());
+        doc.addField(fieldPrefix+"_expanded_ms", field.toString());
 
         addDescriptionField(doc, fieldPrefix+"_expanded", field);
     }
