@@ -21,6 +21,7 @@ import psidev.psi.mi.search.Searcher;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 
 import java.io.InputStream;
+import java.io.FileInputStream;
 import java.net.URL;
 
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
@@ -53,7 +54,7 @@ public class IndexingAndSearchingPsiMiTab {
         // We print some information about the interactions found
         System.out.println("Interactions found: "+result.getTotalCount());
 
-        for (BinaryInteraction binaryInteraction : result.getInteractions()) {
+        for (BinaryInteraction binaryInteraction : result.getData()) {
             String interactorIdA = binaryInteraction.getInteractorA().getIdentifiers().iterator().next().getIdentifier();
             String interactorIdB = binaryInteraction.getInteractorB().getIdentifiers().iterator().next().getIdentifier();
 
