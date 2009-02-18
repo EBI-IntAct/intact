@@ -211,7 +211,7 @@ public class SolrDocumentConverter {
         Column column = row.getColumnByIndex( columnIndex );
 
         for (Field field : column.getFields()) {
-            if (filter.acceptField(field)) {
+            if (field != null && filter.acceptField(field)) {
                 fields.add(field);
             }
         }
