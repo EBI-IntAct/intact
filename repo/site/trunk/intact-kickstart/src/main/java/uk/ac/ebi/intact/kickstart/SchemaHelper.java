@@ -4,7 +4,8 @@ import uk.ac.ebi.intact.core.util.SchemaUtils;
 import org.hibernate.dialect.H2Dialect;
 
 /**
- * Helps to create the DDL
+ * Helps to create the DDL. This will output the file that you can use to create
+ * the tables in your database.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

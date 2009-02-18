@@ -21,6 +21,7 @@ import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdater;
 import uk.ac.ebi.intact.dataexchange.cvutils.CvUpdaterStatistics;
 import uk.ac.ebi.intact.dataexchange.cvutils.OboUtils;
 import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
+import uk.ac.ebi.intact.dataexchange.cvutils.model.AnnotationInfoDataset;
 
 import java.io.File;
 
@@ -40,6 +41,7 @@ public class ImportControlledVocabularies {
 
         // load the latest ontology from internet
         OBOSession oboSession = OboUtils.createOBOSessionFromLatestMi();
+        AnnotationInfoDataset annotationInfoDs = OboUtils.createAnnotationInfoDatasetFromLatestResource();
 
         CvObjectOntologyBuilder cvObjectOntologyBuilder = new CvObjectOntologyBuilder(oboSession);
 
@@ -47,7 +49,7 @@ public class ImportControlledVocabularies {
         CvUpdater updater = new CvUpdater();
 
         // this starts the create/update
-        CvUpdaterStatistics stats = updater.createOrUpdateCVs(cvObjectOntologyBuilder.getAllCvs());
+        CvUpdaterStatistics stats = updater.createOrUpdateCVs(cvObjectOntologyBuilder.getAllCvs(), annotationInfoDs);
 
         System.out.println("Created terms: "+stats.getCreatedCvs().size());
     }
