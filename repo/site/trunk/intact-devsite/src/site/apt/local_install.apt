@@ -103,19 +103,19 @@ svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres
 ----------------------
 
  in this directory you will find a file called 'create_schema.ddl'. (Note: alternatively, you may want to use the DDL creation script
- {{{http://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java}SchemaHelper}}
+ {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java}SchemaHelper}}
  from the IntAct Kickstart application described below. We use this script to create the file create_schema.ddl).
 
 	[[a]] Back to pgAdmin III, select 'intact-db' under 'Databases'
 
 	[[b]] open a Query Tool (Tools > Query Tool)
 
-	[[c]] Copy the content of '{{{http://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_9_0/create_schema.ddl}create_schema.ddl}}'
+	[[c]] Copy the content of '{{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_9_0/create_schema.ddl}create_schema.ddl}}'
 	and paste it into the top left window of the Query Tool and execute it (press F5 or Query > Execute).
 
 	[[d]] You should now have 51 tables and 3 sequences created in 'intact-db'.
 
-    [[e]] Now the last step is to grant access to your user on these tables by executing this script: {{{http://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_9_0/grants.ddl}grants.ddl}}.
+    [[e]] Now the last step is to grant access to your user on these tables by executing this script: {{{https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres/version_1_9_0/grants.ddl}grants.ddl}}.
 
 V) Preparing your Maven Configuration
 
