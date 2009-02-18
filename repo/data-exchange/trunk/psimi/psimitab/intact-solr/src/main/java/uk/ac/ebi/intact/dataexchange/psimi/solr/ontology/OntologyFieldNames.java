@@ -1,7 +1,7 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr.ontology;
 
 /**
- * TODO comment that class header
+ * Names of the fields in the ontology index.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
