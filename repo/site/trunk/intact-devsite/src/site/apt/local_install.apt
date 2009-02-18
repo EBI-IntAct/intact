@@ -103,7 +103,7 @@ svn co https://intact.svn.sourceforge.net/svnroot/intact/repo/utils/sql/postgres
 ----------------------
 
  in this directory you will find a file called 'create_schema.ddl'. (Note: alternatively, you may want to use the DDL creation script
- {{http://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java}SchemaHelper}
+ {{{http://intact.svn.sourceforge.net/svnroot/intact/repo/site/trunk/intact-kickstart/src/main/java/uk/ac/ebi/intact/kickstart/SchemaHelper.java}SchemaHelper}}
  from the IntAct Kickstart application described below. We use this script to create the file create_schema.ddl).
 
 	[[a]] Back to pgAdmin III, select 'intact-db' under 'Databases'
