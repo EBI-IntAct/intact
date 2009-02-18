@@ -15,18 +15,18 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.ontology;
 
-import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException;
 
 import java.net.URL;
 
-import org.apache.solr.client.solrj.SolrServer;
-import org.apache.solr.common.SolrInputDocument;
-
 /**
- * TODO comment that class header
+ * Indexes in a SOLR instance the ontologies passed as URL. The created index is useful
+ * to do fast queries to find elements, parents and children in the indexed ontologies.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -80,7 +80,7 @@ public class OntologyIndexer {
         addField(doc, OntologyFieldNames.CHILD_ID, ontologyDocument.getChildId(), false);
         addField(doc, OntologyFieldNames.CHILD_NAME, ontologyDocument.getChildName(), true);
         addField(doc, OntologyFieldNames.RELATIONSHIP_TYPE, ontologyDocument.getRelationshipType(), false);
-        addField(doc, OntologyFieldNames.CYCLIC, ontologyDocument.isCyclicRelationship(), true);
+        addField(doc, OntologyFieldNames.CYCLIC, ontologyDocument.isCyclicRelationship(), false);
 
         try {
             solrServer.add(doc);
