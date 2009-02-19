@@ -25,8 +25,7 @@ import uk.ac.ebi.intact.dataexchange.cvutils.model.CvObjectOntologyBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import static java.util.Collections.sort;
 
@@ -48,12 +47,11 @@ public class CvExporter {
     private static final String ALIAS_IDENTIFIER = "PSI-MI-alternate";
     private static final String SHORTLABEL_IDENTIFIER = "PSI-MI-short";
 
-    public CvDatabase psi = null;
-    public CvDatabase intact = null;
-    public CvXrefQualifier identity = null;
-    public CvTopic definitionTopic = null;
-    public CvTopic obsolete = null;
+    private Map<CvClassIdentifier, OBOClass> cvToOboCache;
 
+    private OBOClass rootObj;
+    private OBOClass tissueObj;
+    private OBOClass cellTypeObj;
 
     private OBOSession oboSession;
 
@@ -61,6 +59,8 @@ public class CvExporter {
         ObjectFactory objFactory;
         objFactory = new DefaultObjectFactory();
         oboSession = new OBOSessionImpl( objFactory );
+
+        cvToOboCache = new HashMap<CvClassIdentifier,OBOClass>();
     } //end constructor
 
     /**
@@ -154,25 +154,48 @@ public class CvExporter {
      */
     public void writeOBOFile( OBOSession oboSession, File outFile ) throws DataAdapterException, IOException {
 
+        // HACK: we write to a temp file, because we need to process the file again
+        // to remove some double slashes created by the OBO writer.
+        File tempFile = File.createTempFile("obofile-", ".obo");
+
         final OBOFileAdapter.OBOAdapterConfiguration config = new OBOFileAdapter.OBOAdapterConfiguration();
-        config.setWritePath( outFile.getAbsolutePath() );
+        config.setWritePath( tempFile.getAbsolutePath() );
         OBOFileAdapter adapter = new OBOFileAdapter();
         adapter.doOperation( OBOFileAdapter.WRITE_ONTOLOGY, config, oboSession );
+
+        // rewrite the file (part of the hack)
+        FileWriter writer = new FileWriter(outFile);
+
+        BufferedReader reader = new BufferedReader(new FileReader(tempFile));
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+            if (line.contains("regexp")) {
+                line = line.replaceAll("\\\\\\\\\"", "\\\\\"");
+            }
+            writer.write(line+"\n");
+        }
+
+        writer.close();
+
+        tempFile.delete();
 
     }//end method
 
 
     private void addHeaderInfo() {
-
-
         oboSession.setDefaultNamespace( new Namespace( "PSI-MI" ) );
-        //extend it more when u find the right methods
-
+        oboSession.addPropertyValue(new PropertyValueImpl("auto-generated-by", "IntAct CvExporter"));
+        oboSession.addSynonymCategory(new SynonymCategoryImpl("PSI-MI-alternate", "Alternate label curated by PSI-MI"));
+        oboSession.addSynonymCategory(new SynonymCategoryImpl("PSI-MI-short", "Unique short label curated by PSI-MI"));
     }
-
+            
     private void addFooterInfo() {
-        //todo if necessary
+        OBOPropertyImpl partOf = new OBOPropertyImpl("part_of");
+        partOf.setName("part of");
+        partOf.setTransitive(true);
 
+        oboSession.addObject(partOf);
     }
 
     /**
@@ -211,15 +234,22 @@ public class CvExporter {
      */
 
     protected OBOClass convertCv2OBO( CvDagObject dagObj, Map<String, HashSet<CvDagObject>> cvMapWithParents ) {
+        final String cvId = CvObjectUtils.getIdentity(dagObj);
 
-        OBOClass oboObj;
-
-
-        if ( CvObjectUtils.getIdentity( dagObj ) == null ) {
+        if ( cvId == null ) {
             throw new NullPointerException( "Identifier is null" );
         }
 
-        oboObj = new OBOClassImpl( dagObj.getFullName(), CvObjectUtils.getIdentity( dagObj ) );
+        CvClassIdentifier cvClassId = new CvClassIdentifier(cvId, dagObj.getClass());
+
+        if (cvToOboCache.containsKey(cvClassId)) {
+            return cvToOboCache.get(cvClassId);
+        }
+
+        OBOClass oboObj = new OBOClassImpl( dagObj.getFullName(), cvId);
+
+        cvToOboCache.put(cvClassId, oboObj);
+        
         //assign short label
 
         if ( dagObj.getShortLabel() != null ) {
@@ -285,25 +315,16 @@ public class CvExporter {
                 } else if ( cvTopic.getShortLabel().equalsIgnoreCase( CvTopic.URL ) ) {
                     definitionSuffix = "\n" + annotation.getAnnotationText();
                 } else if ( cvTopic.getShortLabel().equalsIgnoreCase( CvTopic.SEARCH_URL ) ) {
-                    String annotationText = annotation.getAnnotationText();
-                    if ( log.isTraceEnabled() ) log.trace( "annotationText before " + annotationText );
-                    annotationText = annotationText.replaceAll( "\\\\", "" );
-
-                    annotationText = " \"" + annotationText + "\"";
-                    if ( log.isTraceEnabled() ) log.trace( "annotationText after " + annotationText );
-                    Dbxref dbxref = new DbxrefImpl( CvTopic.SEARCH_URL, annotationText );
-
-                    oboObj.addDbxref( dbxref );
+                    String annotationText = "\""+annotation.getAnnotationText()+"\"";
+                    oboObj.addPropertyValue(new PropertyValueImpl("xref", CvTopic.SEARCH_URL+": "+annotationText));
                 } else if ( cvTopic.getShortLabel().equalsIgnoreCase( CvTopic.XREF_VALIDATION_REGEXP ) ) {
-                    Dbxref dbxref = new DbxrefImpl( CvTopic.XREF_VALIDATION_REGEXP, annotation.getAnnotationText() );
-                    oboObj.addDbxref( dbxref );
+                    String annotationText = "\\\""+annotation.getAnnotationText()+"\\\"";
+                    oboObj.addPropertyValue(new PropertyValueImpl("xref", CvTopic.XREF_VALIDATION_REGEXP+":"+annotationText));
                 } else if ( cvTopic.getShortLabel().equalsIgnoreCase( CvTopic.COMMENT ) ) {
-                    oboObj.setComment( annotation.getAnnotationText() );
+                    oboObj.setComment( removeLineReturns(annotation.getAnnotationText() ));
                 } else if ( cvTopic.getShortLabel().equalsIgnoreCase( CvTopic.OBSOLETE ) ) {
                     oboObj.setObsolete( true );
                     definitionSuffix = "\n" + annotation.getAnnotationText();
-                } else {
-                    if ( log.isDebugEnabled() ) log.debug( "Annotation don't fit anywhere-----" );
                 }
             } //end if
         }//end for
@@ -319,34 +340,53 @@ public class CvExporter {
         //add children and parents
         //check if root
 
-        if ( checkIfRootMI( CvObjectUtils.getIdentity( dagObj ) ) ) {
-
-            OBOClass rootObject = getRootObject();
-            Link linkToRoot = new OBORestrictionImpl( oboObj );
-            OBOProperty oboProp = new OBOPropertyImpl( "part_of" );
-            linkToRoot.setType( oboProp );
-            rootObject.addChild( linkToRoot );
+        if ( checkIfRootMI(cvId) ) {
+            addLinkToRootFor(oboObj);
         }
 
-
-        HashSet<CvDagObject> cvParents = cvMapWithParents.get( CvObjectUtils.getIdentity( dagObj ) );
+        Set<CvDagObject> cvParents = cvMapWithParents.get( dagObj.getIdentifier() );
 
 
         if ( cvParents != null ) {
             for ( CvDagObject cvParentObj : cvParents ) {
 
                 OBOClass isA = convertCv2OBO( cvParentObj, cvMapWithParents );
-                Link linkToIsA = new OBORestrictionImpl( oboObj );
-                linkToIsA.setType( OBOProperty.IS_A );
-                isA.addChild( linkToIsA );
+                addChild(isA, oboObj);
             }//end for
         }
 
+        if (dagObj instanceof CvTissue && !"IAX:0001".equals(dagObj.getIdentifier())) {
+            addChild(getOBOTissue(), oboObj);
+        } else if (dagObj instanceof CvCellType && !"IAX:0002".equals(dagObj.getIdentifier())) {
+            addChild(getOBOCellType(), oboObj);
+        }
 
         return oboObj;
     }//end method
 
+    private void addChild(OBOClass parent, OBOClass child) {
+        Link linkToIsA = new OBORestrictionImpl(child);
+        linkToIsA.setType( OBOProperty.IS_A );
+        parent.addChild( linkToIsA );
+    }
+
+    private void addLinkToRootFor(OBOClass oboObj) {
+        OBOClass rootObject = getRootObject();
+        Link linkToRoot = new OBORestrictionImpl( oboObj );
+        OBOProperty oboProp = new OBOPropertyImpl( "part_of" );
+        linkToRoot.setType( oboProp );
+        rootObject.addChild( linkToRoot );
+    }
+
+    private String removeLineReturns(String annotationText) {
+        return annotationText.replaceAll("\r\n", " ");
+    }
+
     private OBOClass getRootObject() {
+        if (rootObj != null) {
+            return rootObj;
+        }
+
         /*
           [Term]
           id: MI:0000
@@ -357,22 +397,57 @@ public class CvExporter {
           synonym: "mi" EXACT PSI-MI-short []
         */
 
-        OBOClass rootObj = new OBOClassImpl( "molecular interaction", "MI:0000" );
+        rootObj = new OBOClassImpl( "molecular interaction", "MI:0000" );
         rootObj.setDefinition( "Controlled vocabularies originally created for protein protein interactions, extended to other molecules interactions." );
         //[PMID:14755292]"
         Dbxref dbxref = new DbxrefImpl( "PMID", "14755292" );
         dbxref.setType( Dbxref.DEFINITION );
         rootObj.addDefDbxref( dbxref );
+
+        addPsimiShortSyn(rootObj, "mi");
+
+        return rootObj;
+    }//end of method
+
+    private void addPsimiShortSyn(OBOClass oboObj, String synonym) {
         Synonym syn = new SynonymImpl();
-        syn.setText( "mi" );
+        syn.setText( synonym );
         SynonymCategory synCat = new SynonymCategoryImpl();
         synCat.setID( SHORTLABEL_IDENTIFIER );
         syn.setSynonymCategory( synCat );
         syn.setScope( 1 );
-        rootObj.addSynonym( syn );
+        oboObj.addSynonym( syn );
+    }
 
-        return rootObj;
-    }//end of method
+    public OBOClass getOBOTissue() {
+        if (tissueObj != null) {
+            return tissueObj;
+        }
+
+        tissueObj = new OBOClassImpl("tissue", "IAX:0001");
+        tissueObj.setDefinition("IntAct tissue base object");
+
+        addLinkToRootFor(tissueObj);
+
+        oboSession.addObject(tissueObj);
+
+        return tissueObj;
+    }
+
+    public OBOClass getOBOCellType() {
+        if (cellTypeObj != null) {
+            return cellTypeObj;
+        }
+
+        cellTypeObj = new OBOClassImpl("cell type", "IAX:0002");
+        cellTypeObj.setDefinition("IntAct cell type base object");
+
+        addLinkToRootFor(cellTypeObj);
+
+        oboSession.addObject(cellTypeObj);
+
+        return cellTypeObj;
+    }
 
 
     private boolean checkIfRootMI( String mi ) {
@@ -408,5 +483,53 @@ public class CvExporter {
         return oboSession;
     } //end method
 
+    private static class CvClassIdentifier {
+
+        private String identifier;
+        private Class<? extends CvObject> cvClass;
+
+        private CvClassIdentifier(String identifier, Class<? extends CvObject> cvClass) {
+            this.identifier = identifier;
+            this.cvClass = cvClass;
+        }
+
+        public String getIdentifier() {
+            return identifier;
+        }
+
+        public Class<? extends CvObject> getCvClass() {
+            return cvClass;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            CvClassIdentifier that = (CvClassIdentifier) o;
+
+            if (!cvClass.equals(that.cvClass)) return false;
+            if (!identifier.equals(that.identifier)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = identifier.hashCode();
+            result = 31 * result + cvClass.hashCode();
+            return result;
+        }
+
+        @Override
+        public String toString() {
+            final StringBuilder sb = new StringBuilder();
+            sb.append(identifier).append('(');
+            sb.append(cvClass.getSimpleName());
+            sb.append(')');
+            return sb.toString();
+        }
+
+    }
 
 } //end class
