@@ -88,6 +88,8 @@ public class CvObjectOntologyBuilder {
         mi2Class.put( "MI:0590", CvTopic.class );
         mi2Class.put( "MI:0640", CvParameterType.class );
         mi2Class.put( "MI:0647", CvParameterUnit.class );
+        mi2Class.put( "IAX:0001", CvTissue.class );
+        mi2Class.put( "IAX:0002", CvCellType.class );
 
         //
         class2mi = new HashMap<String, String>();
@@ -108,6 +110,8 @@ public class CvObjectOntologyBuilder {
         class2mi.put( "CvTopic", "MI:0590" );
         class2mi.put( "CvParameterType", "MI:0640" );
         class2mi.put( "CvParameterUnit", "MI:0647" );
+        class2mi.put( CvTissue.class.getSimpleName(), "IAX:0001");
+        class2mi.put( CvCellType.class.getSimpleName(), "IAX:0002");
 
 
     }
@@ -400,18 +404,15 @@ public class CvObjectOntologyBuilder {
 
                 String xref = dbxref.toString();
                 if ( xref.contains( CvTopic.XREF_VALIDATION_REGEXP ) ) {
-
                     int firstIndex = xref.indexOf( '"' );
                     int lastIndex = xref.lastIndexOf( '"' );
 
-                    String annotaionText = xref.substring( firstIndex + 1, lastIndex );
-                    Annotation annot = toAnnotation( CvTopic.XREF_VALIDATION_REGEXP, annotaionText );
+                    String annotationText = xref.substring( firstIndex + 1, lastIndex );
+                    Annotation annot = toAnnotation( CvTopic.XREF_VALIDATION_REGEXP, annotationText );
                     if ( annot != null ) {
                         cvObject.addAnnotation( annot );
                     }
-                }//end if
-                if ( xref.contains( CvTopic.SEARCH_URL ) ) {
-
+                } else if ( xref.contains( CvTopic.SEARCH_URL ) ) {
                     Annotation annot = toAnnotation( CvTopic.SEARCH_URL, dbxref.getDesc() );
                     if ( annot != null ) {
                         cvObject.addAnnotation( annot );
@@ -455,40 +456,29 @@ public class CvObjectOntologyBuilder {
 
                 for ( Link childLink1 : childLinks ) {
 
-                    Pattern p = Pattern.compile( "(MI:\\d+)-OBO_REL:is_a->(MI:\\d+)" );
-                    Matcher m = p.matcher( childLink1.getID() );
+                    CvDagObject dagObject = (CvDagObject) cvObject;
 
-                    if ( m.matches() ) {
+                    OBOObject childObj = (OBOObject) childLink1.getChild();
 
-                        if ( m.group( 2 ).equalsIgnoreCase( oboObj.getID() ) ) {
-                            CvDagObject dagObject = ( CvDagObject ) cvObject;
-                            OBOObject childObj = ( OBOObject ) oboSession.getObject( m.group( 1 ) );
+                    //check for subset
+                    if (categories == null || categories.length == 0) {
+                        dagObject.addChild((CvDagObject) toCvObject(childObj, categories));
 
-                            //check for subset
-                            if ( categories == null || categories.length == 0 ) {
-                                dagObject.addChild( ( CvDagObject ) toCvObject( childObj, categories ) );
+                    } else {
+                        for (OboCategory category : categories) {
+                            for (TermCategory oboCat : childObj.getCategories()) {
+                                if (category.getName().equalsIgnoreCase(oboCat.getName())) {
+                                    if (log.isTraceEnabled()) {
+                                        log.trace("Adding child after subset check: " + childObj.getID() + "   " + childObj.getName());
+                                    }
 
-                            } else {
-                                for ( OboCategory category : categories ) {
-                                    for ( TermCategory oboCat : childObj.getCategories() ) {
-                                        if ( category.getName().equalsIgnoreCase( oboCat.getName() ) ) {
-                                            if ( log.isTraceEnabled() ) {
-                                                log.trace( "Adding child after subset check: " + childObj.getID() + "   " + childObj.getName() );
-                                            }
+                                    dagObject.addChild((CvDagObject) toCvObject(childObj, categories));
+                                } //end if
 
-                                            // if ( !isHavingMoreThanOneParent( childObj.getID() ) ) {
-                                            dagObject.addChild( ( CvDagObject ) toCvObject( childObj, categories ) );
-                                            // }
-                                        } //end if
+                            } //end for
 
-                                    } //end for
-
-                                }//end for
-                            } //end else
-                            //check end
-
-                        }//end if
-                    }//end matches
+                        }//end for
+                    } //end else
                 } //end for
             }//end if
 
@@ -550,24 +540,9 @@ public class CvObjectOntologyBuilder {
 
             for ( Link parentLink : parentLinks ) {
 
+                String parentId = parentLink.getParent().getID();
 
-                String miIdentifierRight = parseToGetRightMI( parentLink.getID() );//eg: MI:0436-OBO_REL:is_a->MI:0659
-                String miIdentifierLeft = parseToGetLeftMI( parentLink.getID() );//eg: MI:0436-OBO_REL:is_a->MI:0659
-
-
-                if ( miIdentifierLeft != null && miIdentifierRight != null && miIdentifierLeft.equalsIgnoreCase( oboObj.getID() ) ) {
-
-                    cvClass = mi2Class.get( miIdentifierRight );
-                    if ( cvClass != null ) {
-                        //then it is one of rootCv
-
-                        return cvClass;
-                    }//end if
-                    else {
-                        return findCvClassforMI( miIdentifierRight );
-
-                    }
-                }//end if
+                return findCvClassforMI( parentId );
 
             }  //end for
 
@@ -596,23 +571,16 @@ public class CvObjectOntologyBuilder {
 
                     for ( Link parentLink : parentLinks ) {
 
+                        final String parentId = parentLink.getParent().getID();
+                        cvClass = findCvClassforMI(parentId);
 
-                        String miIdentifierRight = parseToGetRightMI( parentLink.getID() );//eg: MI:0436-OBO_REL:is_a->MI:0659
-                        String miIdentifierLeft = parseToGetLeftMI( parentLink.getID() );//eg: MI:0436-OBO_REL:is_a->MI:0659
+                        if (cvClass == null) {
+                            throw new RuntimeException("Couldn't find class type for identifier: " + parentId);
+                        }
 
-
-                        if ( miIdentifierLeft != null && miIdentifierRight != null && miIdentifierLeft.equalsIgnoreCase( oboObj.getID() ) ) {
-
-                            cvClass = mi2Class.get( miIdentifierRight );
-                            if ( cvClass == null ) {
-
-                                cvClass = findCvClassforMI( miIdentifierRight );
-
-                            }
-                            hashSet.add( cvClass.getSimpleName() );
-                            //parentMap.put(miIdentifierRight+":"+cvClass.getSimpleName(),id);
-                            map4misWithMoreParent.put( oboObj.getID(), hashSet );
-                        }//end if
+                        hashSet.add(cvClass.getSimpleName());
+                        //parentMap.put(miIdentifierRight+":"+cvClass.getSimpleName(),id);
+                        map4misWithMoreParent.put(oboObj.getID(), hashSet);
 
 
                     }  //end for
@@ -640,35 +608,6 @@ public class CvObjectOntologyBuilder {
 
 
         return map4misWithMoreParent;
-    } //end method
-
-
-    /**
-    *  Parses the given String and returns the MI identifier in
-    * the left side of is_a
-    *
-    */
-    private String parseToGetLeftMI( String relationString ) {
-        Pattern p = Pattern.compile( "(MI:\\d+)-OBO_REL:is_a->(MI:\\d+)" );
-        Matcher m = p.matcher( relationString );
-        if ( m.matches() ) {
-            return m.group( 1 );
-        }//end matches
-        return null;
-    }//end method
-
-    /**
-    *  Parses the given String and returns the MI identifier in
-    * the right side of is_a
-    *
-    */
-    private String parseToGetRightMI( String relationString ) {
-        Pattern p = Pattern.compile( "(MI:\\d+)-OBO_REL:is_a->(MI:\\d+)" );
-        Matcher m = p.matcher( relationString );
-        if ( m.matches() ) {
-            return m.group( 2 );
-        }//end matches
-        return null;
     } //end method
 
 
@@ -706,6 +645,10 @@ public class CvObjectOntologyBuilder {
             identifier = defDbxref.getDatabase() + ":" + defDbxref.getDatabaseID();
             database = CvDatabase.GO;
             qualifier = CvXrefQualifier.IDENTITY;
+        } else if ( defDbxref.getDatabase().equalsIgnoreCase( CvDatabase.INTACT ) ) {
+            identifier = defDbxref.getDatabase() + ":" + defDbxref.getDatabaseID();
+            database = CvDatabase.INTACT;
+            qualifier = CvXrefQualifier.IDENTITY;
         } else if ( defDbxref.getDatabase().equalsIgnoreCase( CvDatabase.RESID ) ) {
             identifier = defDbxref.getDatabaseID();
             database = CvDatabase.RESID;
@@ -719,14 +662,26 @@ public class CvObjectOntologyBuilder {
             identifier = defDbxref.getDatabase() + ":" + defDbxref.getDatabaseID();
             database = CvDatabase.SO;
             qualifier = CvXrefQualifier.IDENTITY;
-        } else if ( defDbxref.getDatabase().equalsIgnoreCase( "MOD" ) ) {
+        } else if ( defDbxref.getDatabase().equalsIgnoreCase( "MOD" ) || defDbxref.getDatabase().equalsIgnoreCase("PSI-MOD") ) {
             identifier = defDbxref.getDatabase() + ":" + defDbxref.getDatabaseID();
-            database = "psi-mod";
+            database = "PSI-MOD";
             qualifier = CvXrefQualifier.IDENTITY;
         } else if ( defDbxref.getDatabase().equalsIgnoreCase( "UNIMOD" ) ) {
             identifier = defDbxref.getDatabaseID();
             database = "UNIMOD";
-            qualifier = CvXrefQualifier.IDENTITY;    //check later
+            qualifier = CvXrefQualifier.IDENTITY;
+        } else if ( defDbxref.getDatabase().equalsIgnoreCase( "TISSUE LIST" ) ) {
+            identifier = defDbxref.getDatabaseID();
+            database = "tissue list";
+            qualifier = CvXrefQualifier.PRIMARY_REFERENCE;
+        } else if ( defDbxref.getDatabase().equalsIgnoreCase( CvDatabase.CABRI ) ) {
+            identifier = defDbxref.getDatabaseID();
+            database = CvDatabase.CABRI;
+            qualifier = CvXrefQualifier.IDENTITY;
+        } else if ( defDbxref.getDatabase().equalsIgnoreCase( CvDatabase.NEWT ) ) {
+            identifier = defDbxref.getDatabaseID();
+            database = CvDatabase.NEWT;
+            qualifier = CvXrefQualifier.IDENTITY;
         } else {
             throw new IllegalArgumentException( "Unknown database: " + defDbxref.getDatabaseID() + " (" + defDbxref.getDatabase() + ")" );
         }
@@ -776,14 +731,18 @@ public class CvObjectOntologyBuilder {
 
 
     protected CvObjectXref createIdentityXref( CvObject parent, String id ) {
-        CvObjectXref idXref;
+        CvObjectXref idXref = null;
 
-
-        if ( id != null && id.startsWith( "MI" ) ) {
-            idXref = XrefUtils.createIdentityXrefPsiMi( parent, id );
-            idXref.prepareParentMi();
-        } else {
-            idXref = XrefUtils.createIdentityXref( parent, id, nonMiCvDatabase );
+        if (id != null) {
+            if (id.startsWith("MI")) {
+                idXref = XrefUtils.createIdentityXrefPsiMi(parent, id);
+                idXref.prepareParentMi();
+            } else if (id.startsWith("IA")) {
+                idXref = XrefUtils.createIdentityXref(parent, id, nonMiCvDatabase);
+            } else {
+                if (log.isWarnEnabled()) log.warn("Uknown prefix for id: "+id+". Will store as a cross reference to database: "+nonMiCvDatabase.getShortLabel());
+                idXref = XrefUtils.createIdentityXref(parent, id, nonMiCvDatabase);
+            }
         }
 
         return idXref;
@@ -897,23 +856,13 @@ public class CvObjectOntologyBuilder {
 
         for ( Link childLink : childLinks ) {
 
+            if (MI_ROOT_IDENTIFIER.equals(childLink.getParent().getID())) {
+                OBOObject immediateChildOfRoot = (OBOObject) childLink.getChild();
 
-            Pattern p = Pattern.compile( "(MI:\\d+)-part_of->(MI:\\d+)" );
-            Matcher m = p.matcher( childLink.getID() );
-            if ( m.matches() ) {
-
-                if ( m.group( 2 ).equalsIgnoreCase( MI_ROOT_IDENTIFIER ) ) {
-
-                    OBOObject immediateChildOfRoot = ( OBOObject ) oboSession.getObject( m.group( 1 ) );
-
-
-                    if ( checkIfCategorySubset( immediateChildOfRoot, categories ) ) {
-                        rootOboObjects.add( immediateChildOfRoot );
-                    }
-
+                if ( checkIfCategorySubset( immediateChildOfRoot, categories ) ) {
+                    rootOboObjects.add( immediateChildOfRoot );
                 }
-
-            }//end matches
+            }
 
         } //end for
         log.debug( "oboObjects " + rootOboObjects.size() );
@@ -960,6 +909,15 @@ public class CvObjectOntologyBuilder {
             } else if ( "psi-mod".equalsIgnoreCase( database ) ) {
                 qualifierCv = CvObjectUtils.createCvObject( owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier );
                 databaseCv = CvObjectUtils.createCvObject( owner, CvDatabase.class, "MI:0897", "psi-mod" );
+            } else if ( CvDatabase.NEWT.equalsIgnoreCase( database ) ) {
+                qualifierCv = CvObjectUtils.createCvObject( owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier );
+                databaseCv = CvObjectUtils.createCvObject( owner, CvDatabase.class, CvDatabase.NEWT_MI_REF, CvDatabase.NEWT );
+            } else if ( CvDatabase.CABRI.equalsIgnoreCase( database ) ) {
+                qualifierCv = CvObjectUtils.createCvObject( owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier );
+                databaseCv = CvObjectUtils.createCvObject( owner, CvDatabase.class, CvDatabase.CABRI_MI_REF, CvDatabase.CABRI );
+            } else if ( "tissue list".equalsIgnoreCase( database ) ) {
+                qualifierCv = CvObjectUtils.createCvObject( owner, CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF, qualifier );
+                databaseCv = CvObjectUtils.createCvObject( owner, CvDatabase.class, "MI:0830", "tissue list" );
             } else {
                 log.error( "Unexpected combination qualifier-database found on xref: " + qualifier + " - " + database );
                 return null;
@@ -1024,6 +982,7 @@ public class CvObjectOntologyBuilder {
 
         if ( log.isTraceEnabled() )
             log.debug( "Returning from toAnnotation: owner: " + owner + "  topic: " + topic + " annotation  " + annotation );
+
         return new Annotation( owner, topic, annotation );
     }//end method
 

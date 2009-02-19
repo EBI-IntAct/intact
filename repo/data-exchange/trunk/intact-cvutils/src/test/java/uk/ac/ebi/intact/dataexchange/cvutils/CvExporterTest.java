@@ -34,6 +34,8 @@ import uk.ac.ebi.intact.model.CvObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -114,16 +116,10 @@ public class CvExporterTest {
 
         if ( log.isDebugEnabled() ) log.debug( "From Test all : " + allCvs.size() );
 
-
         OBOSession oboSession = downloadCv.convertToOBOSession( allCvs );
-        // Create temp directory
-        File tempDir = new File( "temp" );
-        boolean success = tempDir.mkdir();
-        if(success){
-        File outFile = File.createTempFile( "test", ".obo", tempDir );
-        downloadCv.writeOBOFile( oboSession, outFile );
-        }
 
+        File outFile = new File( "target", "test"+System.currentTimeMillis()+".obo" );
+        downloadCv.writeOBOFile( oboSession, outFile );
     }//end method
 
 
