@@ -183,9 +183,9 @@ public class SolrDocumentConverter {
                     doc.addField("spell", field.getDescription());
                 }
 
-                addExpandedFields(doc, fieldName, field);
+                boolean includeItself = true;
 
-                for (Field parentField : getAllParents(field)) {
+                for (Field parentField : getAllParents(field, includeItself)) {
                     addExpandedFields(doc, fieldName, parentField);
                 }
             }
@@ -247,11 +247,12 @@ public class SolrDocumentConverter {
                 FieldNames.DB_PSIMI.equals(name));
     }
 
-     /**
-     * @param field the field for which we want to get the parents
+    /**
+     * @param field         the field for which we want to get the parents
+     * @param includeItself if true, the passed field will be part of the collection (its description updated from the index)
      * @return list of cv terms with parents and itself
      */
-    private Collection<Field> getAllParents( psidev.psi.mi.tab.model.builder.Field field ) {
+    private Collection<Field> getAllParents(psidev.psi.mi.tab.model.builder.Field field, boolean includeItself) {
         if (ontologySearcher == null) {
             return Collections.EMPTY_LIST;
         }
@@ -260,23 +261,26 @@ public class SolrDocumentConverter {
 
         final String type = field.getType();
 
-        if ( isExpandableOntology( type ) ) {
-            String identifier = field.getValue();
+        String identifier = field.getValue();
 
-            if (cvCache.containsKey(identifier)) {
-                return cvCache.get(identifier);
-            }
-
-            // fetch parents and fill the field list
-            final OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm( ontologySearcher, identifier );
-            final Set<OntologyTerm> parents = ontologyTerm.getAllParentsToRoot();
-
-            allParents = convertTermsToFields( type, parents );
-
-            cvCache.put(identifier, allParents);
+        if (cvCache.containsKey(identifier)) {
+            return cvCache.get(identifier);
         }
 
-        return ( allParents != null ? allParents : Collections.EMPTY_LIST );
+        // fetch parents and fill the field list
+        final OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm(ontologySearcher, identifier);
+        final Set<OntologyTerm> parents = ontologyTerm.getAllParentsToRoot();
+
+        allParents = convertTermsToFields(type, parents);
+
+        if (includeItself) {
+            Field updatedItself = convertTermToField(type, ontologyTerm);
+            allParents.add(updatedItself);
+        }
+
+        cvCache.put(identifier, allParents);
+
+        return (allParents != null ? allParents : Collections.EMPTY_LIST);
     }
 
     private List<psidev.psi.mi.tab.model.builder.Field> convertTermsToFields( String type, Set<OntologyTerm> terms ) {
@@ -284,11 +288,16 @@ public class SolrDocumentConverter {
                 new ArrayList<psidev.psi.mi.tab.model.builder.Field>( terms.size());
 
         for ( OntologyTerm term : terms ) {
-            psidev.psi.mi.tab.model.builder.Field field =
-                    new psidev.psi.mi.tab.model.builder.Field( type, term.getId(), term.getName() );
+            Field field = convertTermToField(type, term);
             fields.add( field );
         }
 
         return fields;
+    }
+
+    private Field convertTermToField(String type, OntologyTerm term) {
+        Field field =
+                new Field( type, term.getId(), term.getName() );
+        return field;
     }
 }
