@@ -42,7 +42,12 @@ public class IntactSolrSearcher {
         SolrQuery solrQuery = new SolrQuery(query);
 
         if (firstResult != null) solrQuery.setStart(firstResult);
-        if (maxResults != null) solrQuery.setRows(maxResults);
+
+        if (maxResults != null) {
+            solrQuery.setRows(maxResults);
+        } else {
+            solrQuery.setRows(Integer.MAX_VALUE);
+        }
 
         return search(solrQuery);
     }
