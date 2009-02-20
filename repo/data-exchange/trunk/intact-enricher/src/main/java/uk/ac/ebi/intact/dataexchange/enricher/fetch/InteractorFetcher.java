@@ -23,6 +23,10 @@ import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
 import uk.ac.ebi.intact.uniprot.service.UniprotRemoteService;
 import uk.ac.ebi.intact.uniprot.service.UniprotService;
+import uk.ac.ebi.intact.dataexchange.enricher.EnricherException;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.ChebiWebServiceFault_Exception;
+import uk.ac.ebi.chebi.webapps.chebiWS.client.ChebiWebServiceClient;
 
 import java.util.Collection;
 
@@ -43,6 +47,7 @@ public class InteractorFetcher {
         }
     };
     private UniprotService uniprotRemoteService;
+    private ChebiWebServiceClient chebiServiceClient;
 
     public static InteractorFetcher getInstance() {
         return instance.get();
@@ -50,6 +55,7 @@ public class InteractorFetcher {
 
     public InteractorFetcher() {
         uniprotRemoteService = new UniprotRemoteService();
+        chebiServiceClient = new ChebiWebServiceClient();
     }
 
     public UniprotProtein fetchInteractorFromUniprot(String uniprotId, int taxId) {
@@ -102,6 +108,45 @@ public class InteractorFetcher {
         uniprotRemoteService.clearErrors();
 
         return uniprotProtein;
+    }
+
+    public Entity fetchInteractorFromChebi( String chebiId ) {
+        if ( chebiId == null ) {
+            throw new NullPointerException( "You must give a non null chebiId" );
+        }
+
+        Cache interactorCache = CacheManager.getInstance().getCache( "Interactor" );
+        Entity smallMoleculeEntity = null;
+
+
+        String cacheKey = chebiId;
+
+        if ( interactorCache.isKeyInCache( cacheKey ) ) {
+            final Element element = interactorCache.get( cacheKey );
+
+            if ( element != null ) {
+                smallMoleculeEntity = ( Entity ) element.getObjectValue();
+            } else {
+                if ( log.isDebugEnabled() )
+                    log.debug( "SmallMoleculeEntity was found in the cache but the element returned was null: " + chebiId );
+            }
+        }
+
+        if ( smallMoleculeEntity == null ) {
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Retrieving SmallMoleculeEntity using Chebi Web Service" );
+            }
+            try {
+                smallMoleculeEntity = chebiServiceClient.getCompleteEntity( chebiId );
+            } catch ( ChebiWebServiceFault_Exception e ) {
+                throw new EnricherException( "Retriving SmallMoleculeEntity failed for " + chebiId, e );
+            }
+
+            if ( smallMoleculeEntity != null ) {
+                interactorCache.put( new Element( chebiId, smallMoleculeEntity ) );
+            }
+        }
+        return smallMoleculeEntity;
     }
 
     private String cacheKey(String uniprotId, int taxId) {

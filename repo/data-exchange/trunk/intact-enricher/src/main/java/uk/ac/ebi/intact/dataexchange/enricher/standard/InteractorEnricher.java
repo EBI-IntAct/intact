@@ -18,14 +18,16 @@ package uk.ac.ebi.intact.dataexchange.enricher.standard;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import uk.ac.ebi.intact.dataexchange.enricher.fetch.InteractorFetcher;
+import uk.ac.ebi.intact.dataexchange.enricher.fetch.CvObjectFetcher;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.*;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 import java.util.Collection;
 
 /**
- * TODO comment this
+ * This class enriches ie adds additional information to the Interactor by utilizing the webservices from UniProt and Chebi.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -48,6 +50,19 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
     protected InteractorEnricher() {
     }
 
+    /**
+     * If the interactor is an instance of Protein then,
+     1.	Update Biosource, if taxid is known, if not update it will -3 //unknown
+     2.	Get the UniprotXref from the interactor and fetch the UniprotProtein with  the uniprotId  using the UniprotRemoteService from intact-uniprot module in the bridges.
+     3.	Update the Interactor to be enriched with data from the returned UniprotProtein with xrefs, aliases, sequences, shortlabel and fullname.
+
+     If the interactor is an instance of Small molecule then,
+
+     1. Fetch the chemical entity from Chebi using the Chebi Web Service.
+     2. Update the shortlabel with ChebiAscii name.
+     3. Add Chebi Inchi id as annotation.
+     * @param objectToEnrich Interactor
+     */
     public void enrich(Interactor objectToEnrich) {
         if (log.isDebugEnabled()) {
             log.debug("Enriching Interactor: " + objectToEnrich.getShortLabel());
@@ -107,8 +122,68 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
 
         }
 
+        if ( objectToEnrich instanceof SmallMolecule ) {
+            enrichWithChebi( objectToEnrich );
+        }
         super.enrich(objectToEnrich);
 
+    }
+
+    /**
+     *  Enriches the small molecule with chebiAsciiName and inchi Annotation
+     * @param objectToEnrich SmallMolecule to be enriched
+     */
+    private void enrichWithChebi( Interactor objectToEnrich ) {
+        if ( objectToEnrich == null ) {
+            throw new NullPointerException( "You must give a non null objectToEnrich" );
+        }
+        if(!(objectToEnrich instanceof SmallMoleculeImpl)){
+          throw new IllegalStateException( "Interactor is not SmallMolecule"+objectToEnrich.getShortLabel());
+        }
+        SmallMolecule smallMoleculeToEnrich = ( SmallMolecule ) objectToEnrich;
+        final InteractorXref chebiXref = SmallMoleculeUtils.getChebiXref( smallMoleculeToEnrich );
+
+        if ( chebiXref != null ) {
+            String chebiId = chebiXref.getPrimaryId();
+            if ( log.isDebugEnabled() ) {
+                log.debug( "Enriching Chebi SmallMolecule: " + chebiId );
+            }
+            final Entity smallMoleculeChebiEntity = InteractorFetcher.getInstance().fetchInteractorFromChebi( chebiId );
+
+            if ( smallMoleculeChebiEntity != null ) {
+                String chebiAsciiName = smallMoleculeChebiEntity.getChebiAsciiName();
+                //update shortlabel
+                if ( chebiAsciiName != null ) {
+                    smallMoleculeToEnrich.setShortLabel( prepareSmallMoleculeShortLabel( chebiAsciiName ) );
+                }
+                String inchiId = smallMoleculeChebiEntity.getInchi();
+                //update annotation
+                CvTopic inchiCvTopic = CvObjectFetcher.getInstance().fetchByTermId(CvTopic.class, CvTopic.INCHI_ID_MI_REF);
+                if(inchiCvTopic!=null){
+                updateAnnotations( smallMoleculeToEnrich,inchiCvTopic,inchiId);
+                }
+            }
+        }
+    }
+
+    private void updateAnnotations( Interactor interactor, CvTopic cvTopic, String annotationText ) {
+        Annotation annotation = new Annotation( interactor.getOwner(), cvTopic, annotationText );
+        interactor.addAnnotation( annotation );
+    }
+
+    /**
+     * max size is 255 only
+     * @param name chebiasciiname to be edited
+     * @return altered chebiasciiname
+     */
+    private String prepareSmallMoleculeShortLabel(String name){
+        if ( name == null ) {
+            throw new NullPointerException( "You must give a non null name" );
+        }
+        if(name.length()>255){
+            return name.substring( 0,255 );
+        }
+       return name.trim().toLowerCase();
     }
 
     private void updateAliases(Interactor interactor, UniprotProtein uniprotProt) {
