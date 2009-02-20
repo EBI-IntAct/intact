@@ -107,6 +107,7 @@ public class DatabaseSimpleMitabExporter {
         int firstResult = 0;
         int maxResults = 1;
         int interactionCount = 0;
+        int lineCount = 0;
 
         final IntactDocumentDefinition docDef = new IntactDocumentDefinition();
         final ExpansionStrategy expansion = new SpokeWithoutBaitExpansion();
@@ -167,13 +168,15 @@ public class DatabaseSimpleMitabExporter {
 
                     final String line = row.toString();
                     mitabWriter.write(line+ NEW_LINE);
+                    lineCount++;
                 }
 
                 interactionCount++;
 
                 if( (interactionCount % 100) == 0 ) {
                     if ( log.isDebugEnabled() ) {
-                        log.debug( "Processed " + interactionCount + " of " + interactionTotalCount + " interactor(s)" );
+                        log.debug( "Processed " + interactionCount + " of " + interactionTotalCount + " interactions ("
+                                   + lineCount + " MITAB lines) - ETA: " + eta.printETA( interactionCount ) );
                     }
                     mitabWriter.flush();
                 }
