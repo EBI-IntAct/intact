@@ -236,8 +236,10 @@ public class DatabaseSimpleMitabExporter {
             } else if( interactorAc.equals( interactorB ) ){
                 pair[1] = component.getInteractor();
             } else {
-                throw new IllegalStateException( "Found Ac: '"+ interactorAc +
-                                                 "' when expeting '"+interactorA+"' or '"+interactorB+"'" );
+                throw new IllegalStateException( "Interaction AC: "+ interaction.getAc() + " with "+
+                                                 interaction.getComponents().size()+" participants" + 
+                                                 ", found Interactor '"+ interactorAc +
+                                                 "' when expecting '"+interactorA+"' or '"+interactorB+"'" );
             }
         }
 
