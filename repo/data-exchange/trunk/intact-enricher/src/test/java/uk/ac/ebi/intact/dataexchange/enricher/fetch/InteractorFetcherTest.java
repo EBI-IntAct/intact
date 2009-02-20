@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 /**
  * TODO comment this
@@ -56,5 +57,24 @@ public class InteractorFetcherTest {
         Assert.assertEquals("P28482", uniprotProtein.getPrimaryAc());
 
         Assert.assertEquals(1, CacheManager.getInstance().getCache("Interactor").getStatistics().getInMemoryHits());
+    }
+
+    @Test
+    public void fetchFromChebi() throws Exception {
+
+        EnricherContext.getInstance().getCache( "Interactor" ).getStatistics().clearStatistics();
+
+        Entity smallMoleculeEntity = fetcher.fetchInteractorFromChebi( "CHEBI:16851" );
+        Assert.assertNotNull( smallMoleculeEntity );
+        Assert.assertEquals( "CHEBI:16851", smallMoleculeEntity.getChebiId() );
+        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphates", smallMoleculeEntity.getChebiAsciiName() );
+
+        smallMoleculeEntity = fetcher.fetchInteractorFromChebi( "CHEBI:16851" );
+        Assert.assertEquals( "CHEBI:16851", smallMoleculeEntity.getChebiId() );
+        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphates", smallMoleculeEntity.getChebiAsciiName() );
+
+
+        Assert.assertEquals( 1, CacheManager.getInstance().getCache( "Interactor" ).getStatistics().getInMemoryHits() );
+
     }
 }

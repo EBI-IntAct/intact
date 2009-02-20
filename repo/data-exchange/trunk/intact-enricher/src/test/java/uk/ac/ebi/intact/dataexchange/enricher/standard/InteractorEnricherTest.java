@@ -23,6 +23,7 @@ import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.SmallMolecule;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 
 /**
@@ -58,6 +59,17 @@ public class InteractorEnricherTest extends IntactBasicTestCase {
         Assert.assertEquals("atf6a_human", protein.getShortLabel());
         Assert.assertEquals("Cyclic AMP-dependent transcription factor ATF-6 alpha", protein.getFullName());
         Assert.assertNotNull(protein.getSequence());
+    }
+
+    @Test
+    public void enrich_chebi(){
+        final SmallMolecule smallMolecule = getMockBuilder().createSmallMolecule( "CHEBI:15367", "unknownShortName" );
+        Assert.assertEquals(0,smallMolecule.getAnnotations().size());
+
+        enricher.enrich( smallMolecule );
+
+        Assert.assertEquals("all-trans-retinoic acid",smallMolecule.getShortLabel());
+        Assert.assertEquals("inchi id",smallMolecule.getAnnotations().iterator().next().getCvTopic().getShortLabel());
     }
 
     @Test
