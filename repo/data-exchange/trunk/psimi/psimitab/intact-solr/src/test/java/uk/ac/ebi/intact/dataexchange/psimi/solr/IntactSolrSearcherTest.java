@@ -67,7 +67,7 @@ public class IntactSolrSearcherTest {
     }
 
     @Test
-    public void search_interactors() throws Exception  {
+    public void search_interactors1() throws Exception  {
         assertCount(0L, "*:*");
 
         indexFromClasspath("/mitab_samples/intact200.txt", true);
@@ -87,6 +87,21 @@ public class IntactSolrSearcherTest {
         FacetField ffSm = response.getFacetField("acByInteractorType_mi0328");
         Assert.assertEquals(5, ffSm.getValueCount());
     }
+
+    @Test
+    public void search_interactors2() throws Exception {
+        assertCount(0L, "*:*");
+
+        indexFromClasspath("/mitab_samples/intact200.txt", true);
+
+        SolrQuery query = new SolrQuery("*:*");
+
+        IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
+
+        Assert.assertEquals(100, searcher.searchInteractors(query, "MI:0326").size());
+        Assert.assertEquals(5, searcher.searchInteractors(query, "MI:0328").size());
+    }
+
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));

@@ -15,10 +15,17 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Convenience class to simplify searching.
@@ -55,12 +62,54 @@ public class IntactSolrSearcher {
     public SolrSearchResult search(SolrQuery query) throws IntactSolrException {
         query.setFields(query.getFields()+", line, pkey");
 
+        QueryResponse queryResponse = executeQuery(query);
+        return new SolrSearchResult(queryResponse);
+    }
+
+    public Collection<String> searchInteractors(SolrQuery query, String interactorMi) throws IntactSolrException {
+        Multimap<String,String> interactors = searchInteractors(query, new String[] {interactorMi});
+        return interactors.values();
+    }
+
+    public Multimap<String,String> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
+        query.setRows(0);
+        query.setFacet(true);
+
+        Multimap<String,String> interactors = new HashMultimap<String,String>();
+
+        Map<String,String> fieldNameToTypeMap = new HashMap<String,String>(interactorTypeMis.length);
+
+        for (String mi : interactorTypeMis) {
+            final String fieldName = createFieldName(mi);
+
+            query.addFacetField(fieldName);
+            fieldNameToTypeMap.put(fieldName, mi);
+        }
+
+        QueryResponse queryResponse = executeQuery(query);
+
+        for (Map.Entry<String,String> entry : fieldNameToTypeMap.entrySet()) {
+            FacetField ff = queryResponse.getFacetField(entry.getKey());
+
+            for (FacetField.Count c : ff.getValues()) {
+                interactors.put(entry.getValue(), c.getName());
+            }
+        }
+
+        return interactors;
+    }
+
+    private String createFieldName(String mi) {
+        return FieldNames.AC_BY_INTERACTOR_TYPE_PREFIX+mi.replaceAll(":", "").toLowerCase();
+    }
+
+    private QueryResponse executeQuery(SolrQuery query) {
         QueryResponse queryResponse;
         try {
             queryResponse = solrServer.query(query);
         } catch (SolrServerException e) {
             throw new IntactSolrException("Problem searching with query: "+query, e);
         }
-        return new SolrSearchResult(queryResponse);
+        return queryResponse;
     }
 }
