@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
+package uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl;
 
 import psidev.psi.mi.tab.model.builder.Field;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.FieldFilter;
 
 /**
  * Accepts the fields that match the type passed to the constructor.

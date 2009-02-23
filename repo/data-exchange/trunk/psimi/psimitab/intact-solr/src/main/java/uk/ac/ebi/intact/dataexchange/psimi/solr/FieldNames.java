@@ -51,4 +51,6 @@ public interface FieldNames {
     String RIGID = "rigid";
     String RELEVANCE_SCORE = "relevancescore";
     String EVIDENCES = "evidences";
+
+    String AC_BY_INTERACTOR_TYPE_PREFIX = "acByInteractorType_";
 }
