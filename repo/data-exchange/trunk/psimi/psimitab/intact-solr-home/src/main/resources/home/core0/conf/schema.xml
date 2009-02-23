@@ -376,12 +376,6 @@
      <field name="relevancescore" type="string" indexed="true" stored="true" multiValued="false"/>
      <field name="evidences" type="sint" indexed="true" stored="true" multiValued="false"/>
 
-     <!-- This field stores the interactor type and the AC of that interactor separated by a space.
-     This is used to do a facet search and list all the interactor types and AC founds at the same time -->
-     <field name="interactorTypeAndAcA" type="string" indexed="true" stored="false"/>
-     <field name="interactorTypeAndAcB" type="string" indexed="true" stored="false"/>
-     <field name="interactorTypeAndAc" type="string" indexed="true" stored="true" multiValued="true"/>
-
      <field name="spell" type="textSpell" indexed="true" stored="true" multiValued="true"/>
 
      <!-- EXAMPLE -->
@@ -453,6 +447,10 @@
    <dynamicField name="*_expanded"  type="text"  indexed="true"  stored="true" multiValued="true"/>
    <dynamicField name="*_expanded_id" type="string" indexed="true" stored="true" multiValued="true"/>
 
+     <!-- Field used to store the ACs by interactorType.
+     The * should correspond to an MI, in lower case and without any colon (e.g. mi0326) -->
+   <dynamicField name="acByInteractorType_*" type="string" indexed="true" stored="true" multiValued="true"/>
+
    <!-- uncomment the following to ignore any fields that don't already match an existing
         field name or dynamic field, rather than reporting them as an error.
         alternately, change the type="ignored" to some other type e.g. "text" if you want
@@ -521,9 +519,6 @@
 
     <copyField source="parameterA" dest="parameter"/>
     <copyField source="parameterB" dest="parameter"/>
-
-    <copyField source="interactorTypeAndAcA" dest="interactorTypeAndAc"/>
-    <copyField source="interactorTypeAndAcB" dest="interactorTypeAndAc"/>
 
     <copyField source="line" dest="mitab"/>
 
