@@ -15,7 +15,7 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.iterators;
 
-import uk.ac.ebi.intact.dataexchange.psimi.solr.TestSolrJettyRunner;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.AbstractSolrJettyRunnableTestCase;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import org.junit.Test;
@@ -30,13 +30,13 @@ import java.util.Collection;
 
 
 /**
- * Tests to test SolrDocumentIterator and SolrRigIterator
+ * Tests to test SolrDocumentIterator and SolrRigIterator.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.3
  */
-public class SolrIteratorTest extends TestSolrJettyRunner {
+public class SolrIteratorTest extends AbstractSolrJettyRunnableTestCase {
 
     @Test
     public void testIterator() throws IOException, IntactSolrException, SolrServerException {

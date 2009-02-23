@@ -23,22 +23,20 @@ import org.apache.solr.client.solrj.SolrServer;
 import java.io.IOException;
 
 /**
- * TODO comment that class header
+ * Provide a running instance of solr embedded in a local Jetty server.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.3
  */
-public class TestSolrJettyRunner {
+public abstract class AbstractSolrJettyRunnableTestCase {
 
 private SolrJettyRunner solrJettyRunner;
 
     @Before
     public void before() throws Exception {
         solrJettyRunner = new SolrJettyRunner();
-
         solrJettyRunner.start();
-
     }
 
     @After
@@ -48,7 +46,6 @@ private SolrJettyRunner solrJettyRunner;
         solrJettyRunner = null;
     }
 
-
     public void indexFromClasspath(String resource, boolean hasHeader) throws IOException, IntactSolrException {
         IntactSolrIndexer indexer = new IntactSolrIndexer(getTestSolrServer());
         indexer.indexMitabFromClasspath(resource, hasHeader);
@@ -57,5 +54,4 @@ private SolrJettyRunner solrJettyRunner;
     public SolrServer getTestSolrServer(){
         return solrJettyRunner.getSolrServer(CoreNames.CORE_PUB );
     }
-
 }
