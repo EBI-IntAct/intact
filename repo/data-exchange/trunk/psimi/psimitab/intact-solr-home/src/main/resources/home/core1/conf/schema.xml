@@ -376,6 +376,11 @@
      <field name="relevancescore" type="string" indexed="true" stored="true" multiValued="false"/>
      <field name="evidences" type="sint" indexed="true" stored="true" multiValued="false"/>
 
+     <!-- This field stores the interactor type and the AC of that interactor separated by a space.
+     This is used to do a facet search and list all the interactor types and AC founds at the same time -->
+     <field name="interactorTypeAndAcA" type="string" indexed="true" stored="false"/>
+     <field name="interactorTypeAndAcB" type="string" indexed="true" stored="false"/>
+     <field name="interactorTypeAndAc" type="string" indexed="true" stored="true" multiValued="true"/>
 
      <field name="spell" type="textSpell" indexed="true" stored="true" multiValued="true"/>
 
@@ -516,6 +521,9 @@
 
     <copyField source="parameterA" dest="parameter"/>
     <copyField source="parameterB" dest="parameter"/>
+
+    <copyField source="interactorTypeAndAcA" dest="interactorTypeAndAc"/>
+    <copyField source="interactorTypeAndAcB" dest="interactorTypeAndAc"/>
 
     <copyField source="line" dest="mitab"/>
 
