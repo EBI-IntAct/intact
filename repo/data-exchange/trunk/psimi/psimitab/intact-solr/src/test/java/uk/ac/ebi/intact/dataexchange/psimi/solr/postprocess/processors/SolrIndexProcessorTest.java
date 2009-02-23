@@ -23,13 +23,13 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore.Intac
 import java.util.*;
 
 /**
- * Class to test SolrPostProcessor
+ * Class to test SolrPostProcessor.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.3
  */
-public class SolrIndexProcessorTest extends TestSolrJettyRunner {
+public class SolrIndexProcessorTest extends AbstractSolrJettyRunnableTestCase {
 
 
     @Test
