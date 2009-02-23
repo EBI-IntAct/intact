@@ -15,18 +15,12 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
-import org.apache.lucene.store.Directory;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.client.solrj.SolrServer;
-import org.junit.*;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrIndexer;
-import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
-
-import java.util.Collection;
-
+import org.apache.solr.common.SolrInputField;
+import org.junit.Assert;
+import org.junit.Test;
 import psidev.psi.mi.tab.model.BinaryInteraction;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 
 /**
  * TODO comment that class header
@@ -52,7 +46,7 @@ public class SolrDocumentConverterTest {
         Assert.assertEquals(rigid, doc.getFieldValue(FieldNames.RIGID));
     }
 
-     @Test
+    @Test
     public void testToSolrInputDocument2BinaryInteraction() throws Exception {
         String psiMiTabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
                               "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
@@ -71,5 +65,24 @@ public class SolrDocumentConverterTest {
         Assert.assertEquals(inputDoc1.getFieldValues("idA").size(),inputDoc2.getFieldValues("idA").size());
 
      }
+
+    @Test
+    public void testTypeAndAc() throws Exception {
+        String psiMiTabLine = "intact:EBI-12345\tintact:EBI-1443\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
+                              "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
+                              "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
+                              "\tintact:EBI-446356|irefindex:arigidblabla(" + FieldNames.RIGID + ")\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
+                              "\tMI:0499(unspecified role)\tinterpro:IPR004829|\tgo:\"GO:0030246\"\tMI:0326(protein)\tMI:0326(protein)\tyeast:4932\t-\t-";
+
+        SolrDocumentConverter converter = new SolrDocumentConverter();
+        SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
+
+        final SolrInputField field = doc.getField("acByInteractorType_mi0326");
+        Assert.assertEquals(2, field.getValueCount());
+        Assert.assertTrue(field.getValues().contains("EBI-12345"));
+        Assert.assertTrue(field.getValues().contains("EBI-1443"));
+
+    }
+
 
 }

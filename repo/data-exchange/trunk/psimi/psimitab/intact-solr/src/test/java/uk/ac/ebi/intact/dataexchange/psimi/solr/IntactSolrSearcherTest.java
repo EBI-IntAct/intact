@@ -15,12 +15,14 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.response.FacetField;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Ignore;
-import org.apache.solr.client.solrj.SolrServer;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
 import java.io.IOException;
@@ -62,6 +64,28 @@ public class IntactSolrSearcherTest {
         assertCount(197L, "experimentalRole:prey");
         assertCount(1L, "-biologicalRole:\"unspecified role\"");
         assertCount(1L, "properties:ENSG00000169047");
+    }
+
+    @Test
+    public void search_interactors() throws Exception  {
+        assertCount(0L, "*:*");
+
+        indexFromClasspath("/mitab_samples/intact200.txt", true);
+
+        //MI:0326(protein)	MI:0328(small molecule)
+        SolrQuery query = new SolrQuery("*:*")
+                .setRows(0)
+                .setFacet(true)
+                .addFacetField("acByInteractorType_mi0326")
+                .addFacetField("acByInteractorType_mi0328");
+
+        QueryResponse response = solrJettyRunner.getSolrServer(CoreNames.CORE_PUB).query(query);
+
+        FacetField ffProt = response.getFacetField("acByInteractorType_mi0326");
+        Assert.assertEquals(100, ffProt.getValueCount());
+        
+        FacetField ffSm = response.getFacetField("acByInteractorType_mi0328");
+        Assert.assertEquals(5, ffSm.getValueCount());
     }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
