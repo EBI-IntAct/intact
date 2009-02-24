@@ -74,6 +74,7 @@ public class IntactSolrSearcher {
     public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
         query.setRows(0);
         query.setFacet(true);
+        query.setFacetMinCount(1);
 
         Multimap<String,InteractorIdCount> interactors = new HashMultimap<String,InteractorIdCount>();
 
