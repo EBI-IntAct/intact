@@ -66,16 +66,16 @@ public class IntactSolrSearcher {
         return new SolrSearchResult(queryResponse);
     }
 
-    public Collection<String> searchInteractors(SolrQuery query, String interactorMi) throws IntactSolrException {
-        Multimap<String,String> interactors = searchInteractors(query, new String[] {interactorMi});
+    public Collection<InteractorIdCount> searchInteractors(SolrQuery query, String interactorMi) throws IntactSolrException {
+        Multimap<String,InteractorIdCount> interactors = searchInteractors(query, new String[] {interactorMi});
         return interactors.values();
     }
 
-    public Multimap<String,String> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
+    public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
         query.setRows(0);
         query.setFacet(true);
 
-        Multimap<String,String> interactors = new HashMultimap<String,String>();
+        Multimap<String,InteractorIdCount> interactors = new HashMultimap<String,InteractorIdCount>();
 
         Map<String,String> fieldNameToTypeMap = new HashMap<String,String>(interactorTypeMis.length);
 
@@ -92,7 +92,7 @@ public class IntactSolrSearcher {
             FacetField ff = queryResponse.getFacetField(entry.getKey());
 
             for (FacetField.Count c : ff.getValues()) {
-                interactors.put(entry.getValue(), c.getName());
+                interactors.put(entry.getValue(), new InteractorIdCount(c.getName(), c.getCount()));
             }
         }
 
