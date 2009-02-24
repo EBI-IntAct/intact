@@ -98,8 +98,8 @@ public class IntactSolrSearcherTest {
 
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
 
-        Assert.assertEquals(100, searcher.searchInteractors(query, "MI:0326").size());
-        Assert.assertEquals(5, searcher.searchInteractors(query, "MI:0328").size());
+        Assert.assertEquals(100, searcher.searchIntactInteractors(query, "MI:0326").size());
+        Assert.assertEquals(5, searcher.searchIntactInteractors(query, "MI:0328").size());
     }
 
 
