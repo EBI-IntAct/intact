@@ -19,67 +19,40 @@ import psidev.psi.mi.tab.model.builder.Column;
 import psidev.psi.mi.tab.model.builder.Field;
 import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.RowDataExtractor;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.RowDataSelectiveAdder;
+import org.apache.solr.common.SolrInputDocument;
 
 /**
- * Creates a String that looks like "MI:1234 EBI-12345"
+ * Adds IDs classified by interactor type to the SOlR document.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class TypeAndAcRowDataExtractor implements RowDataExtractor {
+public class ByInteractorTypeRowDataAdder implements RowDataSelectiveAdder {
 
-    private String databaseLabel = "intact";
     private int columnId;
     private int columnInteractorType;
 
-    private String fieldName;
-
-    public TypeAndAcRowDataExtractor(int columnId, int columnInteractorType) {
+    public ByInteractorTypeRowDataAdder(int columnId, int columnInteractorType) {
         this.columnId = columnId;
         this.columnInteractorType = columnInteractorType;
     }
 
-    public TypeAndAcRowDataExtractor(int columnId, int columnInteractorType, String databaseLabel) {
-        this.columnId = columnId;
-        this.columnInteractorType = columnInteractorType;
-        this.databaseLabel = databaseLabel;
-    }
-
-    public String extractValue(Row row) {
+    public void addToDoc(SolrInputDocument doc, Row row) {
         if (row.getColumnCount() <= columnInteractorType) {
-            return null;
+            return;
         }
-        
+
         Column colId = row.getColumnByIndex(columnId);
         Column colType = row.getColumnByIndex(columnInteractorType);
 
-        String ac = getAccession(colId);
         String typeMi = getInteractorTypeMi(colType);
 
-        if (ac == null || typeMi == null) {
-            return null;
-        }
-
         // e.g. acByInteractorType_mi1234
-        fieldName = FieldNames.AC_BY_INTERACTOR_TYPE_PREFIX+(typeMi.replaceAll(":", "").toLowerCase());
-
-        return ac;
-    }
-
-    public String getFieldName() {
-        if (fieldName == null) throw new IllegalStateException("Invoke extractValue(Row) first");
-        return fieldName;
-    }
-
-    private String getAccession(Column colId) {
-        for (Field field : colId.getFields()) {
-            if (databaseLabel.equals(field.getType())) {
-                return field.getValue();
-            }
+        for (Field idField : colId.getFields()) {
+            String fieldName = idField.getType()+FieldNames.AC_BY_INTERACTOR_TYPE_MIDDLE+(typeMi.replaceAll(":", "").toLowerCase());
+            doc.addField(fieldName, idField.getValue());
         }
-
-        return null;
     }
 
     private String getInteractorTypeMi(Column colType) {

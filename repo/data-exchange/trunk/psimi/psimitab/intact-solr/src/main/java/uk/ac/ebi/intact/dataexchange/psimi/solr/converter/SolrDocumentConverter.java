@@ -25,7 +25,7 @@ import psidev.psi.mi.tab.model.builder.Field;
 import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.TypeAndAcRowDataExtractor;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.ByInteractorTypeRowDataAdder;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.TypeFieldFilter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
@@ -120,8 +120,8 @@ public class SolrDocumentConverter {
             addColumnToDoc(doc, row, FieldNames.PARAMETER_B, IntactDocumentDefinition.PARAMETERS_B);
             addColumnToDoc(doc, row, FieldNames.PARAMETER_INTERACTION, IntactDocumentDefinition.PARAMETERS_INTERACTION);
 
-            addCustomField(row, doc, new TypeAndAcRowDataExtractor(IntactDocumentDefinition.ID_INTERACTOR_A, IntactDocumentDefinition.INTERACTOR_TYPE_A, "intact"));
-            addCustomField(row, doc, new TypeAndAcRowDataExtractor(IntactDocumentDefinition.ID_INTERACTOR_B, IntactDocumentDefinition.INTERACTOR_TYPE_B, "intact"));
+            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_A, IntactDocumentDefinition.INTERACTOR_TYPE_A));
+            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_B, IntactDocumentDefinition.INTERACTOR_TYPE_B));
         }
 
         // ac
@@ -205,12 +205,8 @@ public class SolrDocumentConverter {
         }
     }
 
-    private void addCustomField(Row row, SolrInputDocument doc, RowDataExtractor extractor) {
-        final String value = extractor.extractValue(row);
-
-        if (value != null) {
-            doc.addField(extractor.getFieldName(), value);
-        }
+    private void addCustomField(Row row, SolrInputDocument doc, RowDataSelectiveAdder selectiveAdder) {
+        selectiveAdder.addToDoc(doc, row);
     }
 
     private Collection<Field> getFieldsFromColumn(Row row, int columnIndex, FieldFilter filter) {

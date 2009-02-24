@@ -52,5 +52,5 @@ public interface FieldNames {
     String RELEVANCE_SCORE = "relevancescore";
     String EVIDENCES = "evidences";
 
-    String AC_BY_INTERACTOR_TYPE_PREFIX = "acByInteractorType_";
+    String AC_BY_INTERACTOR_TYPE_MIDDLE = "_byInteractorType_";
 }

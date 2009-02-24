@@ -449,7 +449,7 @@
 
      <!-- Field used to store the ACs by interactorType.
      The * should correspond to an MI, in lower case and without any colon (e.g. mi0326) -->
-   <dynamicField name="acByInteractorType_*" type="string" indexed="true" stored="true" multiValued="true"/>
+   <dynamicField name="*_byInteractorType_*" type="string" indexed="true" stored="true" multiValued="true"/>
 
    <!-- uncomment the following to ignore any fields that don't already match an existing
         field name or dynamic field, rather than reporting them as an error.

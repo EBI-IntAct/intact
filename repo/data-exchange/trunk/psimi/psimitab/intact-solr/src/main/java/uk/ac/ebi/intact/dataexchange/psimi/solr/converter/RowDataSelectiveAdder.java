@@ -16,22 +16,21 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
 import psidev.psi.mi.tab.model.builder.Row;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrInputDocument;
 
 /**
- * Gets specific data from a row and returns it as a String. Used to
- * index specific data created using many fields or data transformations.
+ * Adds specific data to the document, creating any necessary field.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public interface RowDataExtractor {
+public interface RowDataSelectiveAdder {
 
     /**
-     * Extracts or calculates a value using the provided data
+     * Adds specific data to the document, creating any necessary field.
+     * @param doc the solr document
      * @param row The row containing the data
-     * @return can return null if it was not possible to extract a value with the provided data.
      */
-    String extractValue(Row row);
-
-    String getFieldName();
+    void addToDoc(SolrInputDocument doc, Row row);
 }

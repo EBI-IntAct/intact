@@ -101,7 +101,7 @@ public class IntactSolrSearcher {
     }
 
     private String createFieldName(String mi) {
-        return FieldNames.AC_BY_INTERACTOR_TYPE_PREFIX+mi.replaceAll(":", "").toLowerCase();
+        return FieldNames.AC_BY_INTERACTOR_TYPE_MIDDLE +mi.replaceAll(":", "").toLowerCase();
     }
 
     private QueryResponse executeQuery(SolrQuery query) {
