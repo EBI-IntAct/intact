@@ -77,7 +77,7 @@ public class SolrDocumentConverterTest {
         SolrDocumentConverter converter = new SolrDocumentConverter();
         SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
 
-        final SolrInputField field = doc.getField("acByInteractorType_mi0326");
+        final SolrInputField field = doc.getField("intact_byInteractorType_mi0326");
         Assert.assertEquals(2, field.getValueCount());
         Assert.assertTrue(field.getValues().contains("EBI-12345"));
         Assert.assertTrue(field.getValues().contains("EBI-1443"));
