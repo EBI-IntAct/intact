@@ -76,13 +76,15 @@ public class IntactSolrSearcherTest {
         SolrQuery query = new SolrQuery("*:*")
                 .setRows(0)
                 .setFacet(true)
+                .setFacetMinCount(1)
+                .setFacetLimit(Integer.MAX_VALUE)
                 .addFacetField("intact_byInteractorType_mi0326")
                 .addFacetField("intact_byInteractorType_mi0328");
 
         QueryResponse response = solrJettyRunner.getSolrServer(CoreNames.CORE_PUB).query(query);
 
         FacetField ffProt = response.getFacetField("intact_byInteractorType_mi0326");
-        Assert.assertEquals(100, ffProt.getValueCount());
+        Assert.assertEquals(129, ffProt.getValueCount());
         
         FacetField ffSm = response.getFacetField("intact_byInteractorType_mi0328");
         Assert.assertEquals(5, ffSm.getValueCount());
@@ -98,7 +100,7 @@ public class IntactSolrSearcherTest {
 
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
 
-        Assert.assertEquals(100, searcher.searchInteractors(query, "MI:0326").size());
+        Assert.assertEquals(129, searcher.searchInteractors(query, "MI:0326").size());
         Assert.assertEquals(5, searcher.searchInteractors(query, "MI:0328").size());
     }
 

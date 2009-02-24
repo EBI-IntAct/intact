@@ -78,8 +78,7 @@ public class IntactSolrSearcher {
         query.setRows(0);
         query.setFacet(true);
         query.setFacetMinCount(1);
-
-        // TODO don't limit max facets - Don't add filter if existing
+        query.setFacetLimit(Integer.MAX_VALUE);
 
         Multimap<String,InteractorIdCount> interactors = new HashMultimap<String,InteractorIdCount>();
 
