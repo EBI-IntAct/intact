@@ -45,6 +45,8 @@ public class SolrDocumentConverter {
 
     private Map<String,Collection<Field>> cvCache;
 
+    private Set<String> expandableOntologies;
+
     /**
      * Access to the Ontology index.
      */
@@ -55,6 +57,9 @@ public class SolrDocumentConverter {
     }
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion) {
+        expandableOntologies = new HashSet<String>( );
+        createDefaultExpandableOntologies();
+
         this.documentDefintion = documentDefintion;
         cvCache = new LRUMap(10000);
     }
@@ -63,6 +68,21 @@ public class SolrDocumentConverter {
                                  OntologySearcher ontologySearcher) {
         this(documentDefintion);
         this.ontologySearcher = ontologySearcher;
+    }
+
+    private void createDefaultExpandableOntologies() {
+        expandableOntologies.add( FieldNames.DB_GO );
+        expandableOntologies.add( FieldNames.DB_INTERPRO );
+        expandableOntologies.add( FieldNames.DB_CHEBI );
+        expandableOntologies.add( FieldNames.DB_PSIMI );
+    }
+
+    public Set<String> getExpandableOntologies() {
+        return expandableOntologies;
+    }
+
+    public void setExpandableOntologies( Set<String> expandableOntologies ) {
+        this.expandableOntologies = expandableOntologies;
     }
 
     public SolrInputDocument toSolrDocument(String mitabLine) {
@@ -252,10 +272,7 @@ public class SolrDocumentConverter {
     }
 
     private boolean isExpandableOntology( String name ) {
-        return (FieldNames.DB_GO.equals(name) ||
-                FieldNames.DB_INTERPRO.equals(name) ||
-                FieldNames.DB_CHEBI.equals(name) || 
-                FieldNames.DB_PSIMI.equals(name));
+        return ( expandableOntologies.contains( name ) );
     }
 
     /**
