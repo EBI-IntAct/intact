@@ -22,6 +22,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.FacetField;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.params.FacetParams;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -79,6 +80,7 @@ public class IntactSolrSearcher {
         query.setFacet(true);
         query.setFacetMinCount(1);
         query.setFacetLimit(Integer.MAX_VALUE);
+        query.setFacetSort(FacetParams.FACET_SORT_COUNT);
 
         Multimap<String,InteractorIdCount> interactors = new HashMultimap<String,InteractorIdCount>();
 
