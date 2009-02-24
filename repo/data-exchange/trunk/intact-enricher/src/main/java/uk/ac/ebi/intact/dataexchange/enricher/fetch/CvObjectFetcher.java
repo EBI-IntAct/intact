@@ -19,11 +19,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.CvTerm;
-import uk.ac.ebi.intact.dataexchange.cvutils.model.IntactOntology;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
-import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvDagObject;
+import uk.ac.ebi.intact.model.CvObject;
 
 import java.util.List;
 
@@ -124,7 +122,7 @@ public class CvObjectFetcher {
 
     private <T extends CvObject> T searchByLabel(List<CvDagObject> ontology, Class<T> objClass, String shortLabel) {
         for (CvObject cv : ontology) {
-            System.out.println(cv.getObjClass()+"\t"+cv.getShortLabel());
+
             if (objClass.getName().equals(cv.getObjClass()) && shortLabel.equals(cv.getShortLabel())) {
                 return (T) cv;
             }

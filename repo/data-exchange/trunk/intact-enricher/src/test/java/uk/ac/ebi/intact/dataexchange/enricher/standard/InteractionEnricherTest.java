@@ -100,8 +100,6 @@ public class InteractionEnricherTest extends IntactBasicTestCase {
 
         enricher.enrich(interaction);
 
-        System.out.println(interaction.getShortLabel());
-
         Assert.assertEquals("tusc-ebi_12345", interaction.getShortLabel());
         Assert.assertEquals("83333", interactor2.getBioSource().getTaxId());
         Assert.assertEquals("ecoli", interactor2.getBioSource().getShortLabel());
