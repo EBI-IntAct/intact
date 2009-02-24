@@ -23,9 +23,6 @@ import java.io.*;
 import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
 import java.util.jar.JarEntry;
@@ -75,7 +72,7 @@ public class SolrHomeBuilder {
         url.append("intact-solr-home-").append(version).append(".jar");
 
         try {
-            solrHomeJar = new URL(url.toString());
+            solrHomeJar = new URL("jar:" + url.toString() + "!/");
         } catch (MalformedURLException e) {
             throw new RuntimeException("Problem creating url: "+url, e);
         }
@@ -97,52 +94,30 @@ public class SolrHomeBuilder {
     }
 
     public void install(File solrWorkingDir) throws IOException {
-       install(solrWorkingDir, true);
-    }
+        if (log.isInfoEnabled()) log.info("Installing Intact SOLR Home at: "+solrWorkingDir);
 
-    public void install(File solrWorkingDir, boolean useLocalJarIfAvailable) throws IOException {
-        if (log.isInfoEnabled()) log.info("Installing Intact SOLR Home at: "+solrWorkingDir+", use local jar if available: "+useLocalJarIfAvailable);
+        if (log.isDebugEnabled()) log.debug("Openning connection to: "+solrHomeJar);
 
-        URL jarUrl;
+        JarURLConnection remoteConnection = (JarURLConnection) solrHomeJar.openConnection();
 
-        if (useLocalJarIfAvailable) {
-            DateFormat df = new SimpleDateFormat("yyyyMMdd");
-            String prefix = df.format(new Date());
+        long lastModified = remoteConnection.getLastModified();
 
-            File localJar = new File(System.getProperty("java.io.tmpdir"), "intact-solr-home-"+prefix+".jar");
-            
-            if (!localJar.exists()) {
-                if (log.isDebugEnabled()) log.debug("Local jar does not exist. Getting URL: "+solrHomeJar);
-                try {
-                    writeStreamToFile(localJar, solrHomeJar.openStream());
-                } catch (IOException e) {
-                    throw new RuntimeException("Problem opening file: "+solrHomeJar, e);
-                }
-            } else {
-                if (log.isDebugEnabled()) log.debug("Using existing local jar: "+localJar);
-            }
+        File localJar = new File(System.getProperty("java.io.tmpdir"), "intact-solr-home-"+lastModified+".jar");
 
-            String additionalSlash = "";
+        if (localJar.exists()) {
+            if (log.isDebugEnabled()) log.debug("Reading from local JAR");
 
-            if (!System.getProperty("os.name").contains("Windows")) {
-                additionalSlash = "/";
-            }
-
-            jarUrl = new URL("jar:file:/"+additionalSlash+localJar+"!/");
         } else {
-            if (!solrHomeJar.toString().startsWith("jar:")) {
-                try {
-                    solrHomeJar = new URL("jar:" + solrHomeJar.toString() + "!/");
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException("Problem jar creating url: " + solrHomeJar, e);
-                }
-            }
+            if (log.isDebugEnabled()) log.debug("Reading from remote JAR");
+            URL remoteURL = new URL(solrHomeJar.toString().substring(4, solrHomeJar.toString().length()-2));
 
-            jarUrl = solrHomeJar;
+            writeStreamToFile(localJar, remoteURL.openStream());
         }
 
+        URL jarUrl = createJarURL(localJar);
+
         // read the jar file
-        if (log.isDebugEnabled()) log.debug("Openning connection to: "+jarUrl);
+        if (log.isDebugEnabled()) log.debug("Reading JAR: "+jarUrl);
 
         JarURLConnection connection = (JarURLConnection) jarUrl.openConnection();
 
@@ -176,6 +151,17 @@ public class SolrHomeBuilder {
             log.debug("\nSolr Home: {}\nSolr WAR: {}", solrHomeDir.toString(), solrWar.toString());
         }
 
+    }
+
+    private URL createJarURL(File localJar) throws MalformedURLException {
+        String additionalSlash = "";
+
+        if (!System.getProperty("os.name").contains("Windows")) {
+            additionalSlash = "/";
+        }
+
+        URL jarUrl = new URL("jar:file:/"+additionalSlash+localJar+"!/");
+        return jarUrl;
     }
 
     private void writeStreamToFile( File fileToCreate, InputStream inputStream) throws IOException {

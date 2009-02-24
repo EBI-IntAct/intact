@@ -44,7 +44,6 @@ public class SolrJettyRunner {
 
     private Server server;
 
-    private boolean deleteIfExists;
     private File workingDir;
     private File solrHome;
 
@@ -63,27 +62,17 @@ public class SolrJettyRunner {
     }
 
     public SolrJettyRunner(File workingDir) {
-        this(workingDir, false);
-    }
-
-    public SolrJettyRunner(File workingDir, boolean deleteIfExists) {
         this.workingDir = workingDir;
-        this.deleteIfExists = deleteIfExists;
 
     }
 
-    public SolrJettyRunner(File workingDir, URL solrHomeJar, boolean deleteIfExists) {
-        this(workingDir, deleteIfExists);
+    public SolrJettyRunner(File workingDir, URL solrHomeJar) {
+        this(workingDir);
         this.solrHomeJar = solrHomeJar;
 
     }
 
     public void start() throws Exception {
-        if (workingDir.exists() && deleteIfExists) {
-            if (log.isDebugEnabled()) log.debug("Deleting existing directory: "+workingDir);
-            FileUtils.forceDelete(workingDir);
-        }
-
         File solrWar;
 
         if (workingDir.exists()) {
@@ -109,7 +98,7 @@ public class SolrJettyRunner {
                 solrHomeBuilder = new SolrHomeBuilder();
             }
             
-            solrHomeBuilder.install(workingDir, !deleteIfExists);
+            solrHomeBuilder.install(workingDir);
 
             solrHome = solrHomeBuilder.getSolrHomeDir();
             solrWar = solrHomeBuilder.getSolrWar();

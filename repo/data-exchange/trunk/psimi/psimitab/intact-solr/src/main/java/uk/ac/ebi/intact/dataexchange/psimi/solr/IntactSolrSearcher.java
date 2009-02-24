@@ -43,6 +43,7 @@ public class IntactSolrSearcher {
 
     public SolrSearchResult search(String query, Integer firstResult, Integer maxResults) throws IntactSolrException {
         if (query == null) throw new NullPointerException("Null query");
+
         
         if ("*".equals(query)) query = "*:*";
 
@@ -59,7 +60,8 @@ public class IntactSolrSearcher {
         return search(solrQuery);
     }
 
-    public SolrSearchResult search(SolrQuery query) throws IntactSolrException {
+    public SolrSearchResult search(SolrQuery originalQuery) throws IntactSolrException {
+        SolrQuery query = originalQuery.getCopy();
         query.setFields(query.getFields()+", line, pkey");
 
         QueryResponse queryResponse = executeQuery(query);
@@ -71,10 +73,13 @@ public class IntactSolrSearcher {
         return interactors.values();
     }
 
-    public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
+    public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery originalQuery, String[] interactorTypeMis) throws IntactSolrException {
+        SolrQuery query = originalQuery.getCopy();
         query.setRows(0);
         query.setFacet(true);
         query.setFacetMinCount(1);
+
+        // TODO don't limit max facets - Don't add filter if existing
 
         Multimap<String,InteractorIdCount> interactors = new HashMultimap<String,InteractorIdCount>();
 
