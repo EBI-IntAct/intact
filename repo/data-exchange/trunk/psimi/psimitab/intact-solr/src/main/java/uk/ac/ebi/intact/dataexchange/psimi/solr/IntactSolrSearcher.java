@@ -66,20 +66,12 @@ public class IntactSolrSearcher {
         return new SolrSearchResult(queryResponse);
     }
 
-    public Collection<InteractorIdCount> searchIntactInteractors(SolrQuery query, String interactorMi) throws IntactSolrException {
-        return searchInteractors(query, "intact", interactorMi);
-    }
-
-    public Collection<InteractorIdCount> searchInteractors(SolrQuery query, String database, String interactorMi) throws IntactSolrException {
-        Multimap<String,InteractorIdCount> interactors = searchInteractors(query, database, new String[] {interactorMi});
+    public Collection<InteractorIdCount> searchInteractors(SolrQuery query, String interactorMi) throws IntactSolrException {
+        Multimap<String,InteractorIdCount> interactors = searchInteractors(query, new String[] {interactorMi});
         return interactors.values();
     }
 
-    public Multimap<String,InteractorIdCount> searchIntactInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
-        return searchInteractors(query, "intact", interactorTypeMis);
-    }
-
-    public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery query, String database, String[] interactorTypeMis) throws IntactSolrException {
+    public Multimap<String,InteractorIdCount> searchInteractors(SolrQuery query, String[] interactorTypeMis) throws IntactSolrException {
         query.setRows(0);
         query.setFacet(true);
         query.setFacetMinCount(1);
@@ -89,7 +81,7 @@ public class IntactSolrSearcher {
         Map<String,String> fieldNameToTypeMap = new HashMap<String,String>(interactorTypeMis.length);
 
         for (String mi : interactorTypeMis) {
-            final String fieldName = createFieldName(database, mi);
+            final String fieldName = createFieldName(mi);
 
             query.addFacetField(fieldName);
             fieldNameToTypeMap.put(fieldName, mi);
@@ -108,8 +100,8 @@ public class IntactSolrSearcher {
         return interactors;
     }
 
-    private String createFieldName(String database, String mi) {
-        return database+FieldNames.AC_BY_INTERACTOR_TYPE_MIDDLE +mi.replaceAll(":", "").toLowerCase();
+    private String createFieldName(String mi) {
+        return FieldNames.INTACT_BY_INTERACTOR_TYPE_PREFIX +mi.replaceAll(":", "").toLowerCase();
     }
 
     private QueryResponse executeQuery(SolrQuery query) {
