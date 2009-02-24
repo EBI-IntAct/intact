@@ -50,8 +50,10 @@ public class ByInteractorTypeRowDataAdder implements RowDataSelectiveAdder {
 
         // e.g. acByInteractorType_mi1234
         for (Field idField : colId.getFields()) {
-            String fieldName = idField.getType()+FieldNames.AC_BY_INTERACTOR_TYPE_MIDDLE+(typeMi.replaceAll(":", "").toLowerCase());
-            doc.addField(fieldName, idField.getValue());
+            if ("intact".equals(idField.getType())) {
+                String fieldName = FieldNames.INTACT_BY_INTERACTOR_TYPE_PREFIX +(typeMi.replaceAll(":", "").toLowerCase());
+                doc.addField(fieldName, idField.getValue());
+            }
         }
     }
 

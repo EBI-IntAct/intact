@@ -120,8 +120,10 @@ public class SolrDocumentConverter {
             addColumnToDoc(doc, row, FieldNames.PARAMETER_B, IntactDocumentDefinition.PARAMETERS_B);
             addColumnToDoc(doc, row, FieldNames.PARAMETER_INTERACTION, IntactDocumentDefinition.PARAMETERS_INTERACTION);
 
-            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_A, IntactDocumentDefinition.INTERACTOR_TYPE_A));
-            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_B, IntactDocumentDefinition.INTERACTOR_TYPE_B));
+            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_A,
+                                                                      IntactDocumentDefinition.INTERACTOR_TYPE_A));
+            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_B, 
+                                                                      IntactDocumentDefinition.INTERACTOR_TYPE_B));
         }
 
         // ac
