@@ -24,10 +24,7 @@ import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
@@ -69,6 +66,11 @@ public class InteractorConverter {
 
         // identifiers
         Collection<CrossReference> identifiers = xRefConverter.toCrossReferences( intactInteractor.getXrefs(), true, false );
+
+        // remove existing IntAct cross reference so we end up with at most one in the identifiers
+        Collection<CrossReference> intactRefs =  removeIntactXrefs( identifiers );
+
+        // add the intact AC of the interactor as an indentifier
         identifiers.add( CrossReferenceFactory.getInstance().build( CvDatabase.INTACT, intactInteractor.getAc() ) );
         tabInteractor.setIdentifiers( identifiers );
 
@@ -113,6 +115,14 @@ public class InteractorConverter {
             }
             tabInteractor.setAlternativeIdentifiers( altIds );
             tabInteractor.setAliases( tabAliases );
+        }
+
+        if( !intactRefs.isEmpty() ) {
+            if( tabInteractor.getAlternativeIdentifiers() == null ) {
+               tabInteractor.setAlternativeIdentifiers( intactRefs );
+            } else {
+                tabInteractor.getAlternativeIdentifiers().addAll( intactRefs ); 
+            }
         }
 
         // if it is a protein from uniprot, assume the short label is the uniprot ID and add it to the
@@ -198,6 +208,19 @@ public class InteractorConverter {
         }
 
         return tabInteractor;
+    }
+
+    private Collection<CrossReference> removeIntactXrefs( Collection<CrossReference> identifiers ) {
+
+        Collection<CrossReference> refs = new ArrayList<CrossReference>( identifiers.size() );
+        for ( Iterator<CrossReference> iterator = identifiers.iterator(); iterator.hasNext(); ) {
+            CrossReference reference = iterator.next();
+            if( CvDatabase.INTACT.equals( reference.getDatabase() ) ) {
+                refs.add( reference );
+                iterator.remove();
+            }
+        }
+        return refs;
     }
 
     public Component fromMitab() {
