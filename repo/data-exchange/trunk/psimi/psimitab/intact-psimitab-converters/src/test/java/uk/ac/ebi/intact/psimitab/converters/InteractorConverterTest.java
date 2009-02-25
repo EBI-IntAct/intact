@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.util.XrefUtils;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
+import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
 import uk.ac.ebi.intact.context.IntactContext;
 
 import java.util.List;
@@ -111,7 +112,7 @@ public class InteractorConverterTest extends IntactBasicTestCase {
         return hasIdentifierInProperty;
     }
 
-     private int  checkNumberOfIdentifiersInProperties(Collection<CrossReference> crossReferences) {
+    private int  checkNumberOfIdentifiersInProperties(Collection<CrossReference> crossReferences) {
         int hasIdentifierInPropertyCounter = 0;
         for (CrossReference crossReference : crossReferences) {
             if (crossReference.getText().equals("identity")) {
@@ -121,7 +122,55 @@ public class InteractorConverterTest extends IntactBasicTestCase {
         return hasIdentifierInPropertyCounter;
     }
 
-  
+    @Test
+    public void intactIdentity_1() throws Exception {
+        final Interaction bi = getMockBuilder().createInteractionRandomBinary();
+        final Protein protein = getMockBuilder().createProtein( "P12345", "ABC_HUMAN" );
+        protein.setAc( "EBI-12345" );
+        Assert.assertEquals( 1, protein.getXrefs().size() );
+        Assert.assertEquals( 1, protein.getAliases().size() );
+
+        bi.getComponents().iterator().next().setInteractor( protein );
+        
+        final InteractorConverter converter = new InteractorConverter();
+        final ExtendedInteractor ei = converter.toMitab( protein, bi );
+
+        Assert.assertNotNull( ei );
+
+        Assert.assertNotNull( ei.getIdentifiers() );
+        Assert.assertEquals( 2, ei.getIdentifiers().size() );
+
+        Assert.assertNotNull( ei.getAlternativeIdentifiers() );
+        Assert.assertEquals( 1, ei.getAlternativeIdentifiers().size() );
+
+    }
+
+    @Test
+    public void intactIdentity_2() throws Exception {
+        final Interaction bi = getMockBuilder().createInteractionRandomBinary();
+        final Protein protein = getMockBuilder().createProtein( "P12345", "ABC_HUMAN" );
+        protein.setAc( "EBI-12345" );
+        CvDatabase intact = getMockBuilder().createCvObject( CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
+        protein.getXrefs().add( getMockBuilder().createIdentityXref( protein, "EBI-99999", intact ) );
+
+        Assert.assertEquals( 2, protein.getXrefs().size() );
+        Assert.assertEquals( 1, protein.getAliases().size() );
+
+        bi.getComponents().iterator().next().setInteractor( protein );
+
+        final InteractorConverter converter = new InteractorConverter();
+        final ExtendedInteractor ei = converter.toMitab( protein, bi );
+
+        Assert.assertNotNull( ei );
+
+        Assert.assertNotNull( ei.getIdentifiers() );
+        Assert.assertEquals( 2, ei.getIdentifiers().size() );
+
+        Assert.assertNotNull( ei.getAlternativeIdentifiers() );
+        Assert.assertEquals( 2, ei.getAlternativeIdentifiers().size() );
+
+    }
+
     @Test
     public void addShortLabelToAlternativeId() {
 
