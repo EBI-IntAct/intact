@@ -156,9 +156,9 @@ public class DatabaseSimpleMitabExporter {
                         mitabInteraction.getInteractionAcs().add( new CrossReferenceImpl( "irefindex", rig, "rigid" ) );
 
                     } catch ( SeguidException e ) {
-                        throw new RuntimeException( "An error occured while generating RIG/ROG identifier", e );
+                        throw new RuntimeException( "An error occured while generating RIG/ROG identifier for " +
+                                                    "interaction " + interaction.getAc(), e );
                     }
-
 
                     // write MITAB line
                     final Row row = docDef.createInteractionRowConverter().createRow( mitabInteraction );
