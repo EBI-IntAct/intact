@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
  */
 public interface FieldNames {
 
+    String IDENTIFIER = "id";
     String ID_A = "idA";
     String ID_B = "idB";
     String ALTID_A = "altidA";
