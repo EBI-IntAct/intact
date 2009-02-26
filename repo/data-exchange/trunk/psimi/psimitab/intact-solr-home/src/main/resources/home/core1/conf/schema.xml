@@ -374,6 +374,8 @@
 
      <field name="rigid" type="string" indexed="true" stored="true" multiValued="false"/>
 
+     <field name="geneName" type="string" indexed="true" stored="true" multiValued="true"/>
+
      <field name="relevancescore" type="string" indexed="true" stored="true" multiValued="false"/>
      <field name="evidences" type="sint" indexed="true" stored="true" multiValued="false"/>
 
@@ -447,6 +449,9 @@
    <dynamicField name="*_desc_s" type="string" indexed="true" stored="true" multiValued="true"/>
    <dynamicField name="*_expanded"  type="text"  indexed="true"  stored="true" multiValued="true"/>
    <dynamicField name="*_expanded_id" type="string" indexed="true" stored="true" multiValued="true"/>
+
+      <!-- Used to store the fields in the identifier columns, by database type (e.g.  uniprotkb_id=P12345) -->
+   <dynamicField name="*_id"  type="string"  indexed="true"  stored="true" multiValued="true"/>
 
      <!-- Field used to store the ACs by interactorType.
      The * should correspond to an MI, in lower case and without any colon (e.g. mi0326) -->
