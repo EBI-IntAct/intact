@@ -43,13 +43,7 @@ public class MitabSolrIndexerMojoTest extends AbstractMojoTestCase {
         super.tearDown();
 
 //        solrJettyRunner.join(); // block the server here
-        System.out.println( "===================================================================" );
-        System.out.println( "===================================================================" );
-        System.out.println( "===================================================================" );
-        System.out.println( "                   STOPPING SOLR SERVER" );
-        System.out.println( "===================================================================" );
-        System.out.println( "===================================================================" );
-        System.out.println( "===================================================================" );
+
         solrJettyRunner.stop();
         solrJettyRunner = null;
     }
