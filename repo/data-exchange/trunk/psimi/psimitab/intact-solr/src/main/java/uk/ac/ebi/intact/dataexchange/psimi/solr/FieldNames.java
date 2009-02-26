@@ -53,4 +53,5 @@ public interface FieldNames {
     String EVIDENCES = "evidences";
 
     String INTACT_BY_INTERACTOR_TYPE_PREFIX = "intact_byInteractorType_";
+    String GENE_NAME = "geneName";
 }
