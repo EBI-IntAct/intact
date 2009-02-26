@@ -26,6 +26,8 @@ import psidev.psi.mi.tab.model.builder.Row;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.ByInteractorTypeRowDataAdder;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.GeneNameSelectiveAdder;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.IdSelectiveAdder;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.TypeFieldFilter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.LazyLoadedOntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
@@ -140,9 +142,9 @@ public class SolrDocumentConverter {
             addColumnToDoc(doc, row, FieldNames.PARAMETER_B, IntactDocumentDefinition.PARAMETERS_B);
             addColumnToDoc(doc, row, FieldNames.PARAMETER_INTERACTION, IntactDocumentDefinition.PARAMETERS_INTERACTION);
 
-            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_A,
+            addCustomFields(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_A,
                                                                       IntactDocumentDefinition.INTERACTOR_TYPE_A));
-            addCustomField(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_B, 
+            addCustomFields(row, doc, new ByInteractorTypeRowDataAdder(IntactDocumentDefinition.ID_INTERACTOR_B,
                                                                       IntactDocumentDefinition.INTERACTOR_TYPE_B));
         }
 
@@ -151,6 +153,12 @@ public class SolrDocumentConverter {
 
         // add the iRefIndex field from the interaction_id column to the rig field (there should be zero or one)
         addFilteredField(row, doc, FieldNames.RIGID, IntactDocumentDefinition.INTERACTION_ID, new TypeFieldFilter("irefindex"));
+
+        // ids
+        addCustomFields(row, doc, new IdSelectiveAdder());
+
+        // gene names
+        addCustomFields(row, doc, new GeneNameSelectiveAdder());
 
         return doc;
     }
@@ -227,7 +235,7 @@ public class SolrDocumentConverter {
         }
     }
 
-    private void addCustomField(Row row, SolrInputDocument doc, RowDataSelectiveAdder selectiveAdder) {
+    private void addCustomFields(Row row, SolrInputDocument doc, RowDataSelectiveAdder selectiveAdder) {
         selectiveAdder.addToDoc(doc, row);
     }
 
