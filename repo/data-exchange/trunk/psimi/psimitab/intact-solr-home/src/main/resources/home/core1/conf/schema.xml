@@ -326,6 +326,7 @@
      <field name="interaction_id" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
      <field name="confidence" type="text" indexed="true" stored="true" multiValued="true"/>
 
+     <field name="id" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="identifier" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="altid" type="text" indexed="true" stored="false" multiValued="true"/>
      <field name="alias" type="text" indexed="true" stored="false" multiValued="true"/>
@@ -476,6 +477,8 @@
 
     <copyField source="idA" dest="identifier"/>
     <copyField source="idB" dest="identifier"/>
+    <copyField source="idA" dest="id"/>
+    <copyField source="idB" dest="id"/>
     <copyField source="altidA" dest="altid"/>
     <copyField source="altidB" dest="altid"/>
     <copyField source="aliasA" dest="alias"/>
