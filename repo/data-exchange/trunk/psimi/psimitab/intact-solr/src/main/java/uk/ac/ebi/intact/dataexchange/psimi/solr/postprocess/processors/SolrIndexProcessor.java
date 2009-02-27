@@ -68,6 +68,7 @@ public class SolrIndexProcessor {
 
         }//end while
         solrServer.commit();
+        solrServer.optimize();
     }
 
     protected SolrDocumentIterator createDocumentIterator() {

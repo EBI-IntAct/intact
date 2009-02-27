@@ -88,7 +88,7 @@ public class IntactSolrRelevanceScoreCalculatorTest {
          * BC - scores for bait,prey
          * DD - scores for protein, protein
          */
-         Assert.assertEquals("NNBCDDblablaklakla",score1);
+         Assert.assertEquals("NNBCDDblablklakl",score1);
 
 
         //Again modify the interactors
@@ -105,13 +105,52 @@ public class IntactSolrRelevanceScoreCalculatorTest {
 
         String score2 =  rscSolr.calculateScore( interaction );
         //BB: enzyme, enzyme target
-        Assert.assertEquals("BBBCDEblablaklakla",score2);
+        Assert.assertEquals("BBBCDEblablklakl",score2);
 
         //Test with SolrInputDocument
         SolrDocumentConverter converter = new SolrDocumentConverter( );
         final SolrInputDocument inputDocument = converter.toSolrDocument( interaction );
         final String score3 = rscSolr.calculateScore( inputDocument, converter );
-        Assert.assertEquals("BBBCDEblablaklakla",score3);
+        Assert.assertEquals("BBBCDEblablklakl",score3);
+
+    }
+
+    @Test
+    public void convertToFloatTest() throws Exception {
+        Properties rscProperties = getTestProperties();
+        IntactSolrRelevanceScoreCalculator rscSolr = new IntactSolrRelevanceScoreCalculator( rscProperties );
+
+        //first case normal
+        String relevanceScore = "BBBCDEblablklakl";
+        //convert Score to Float
+        float boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        String boostScoreString = String.valueOf( boostScore );
+        Assert.assertEquals("6.666667E31",boostScoreString);
+
+        //second case with name less than 10
+        relevanceScore = "BBBCDEblablk";
+        //convert Score to Float
+        boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        boostScoreString = String.valueOf( boostScore );
+        Assert.assertEquals("6.666667E31",boostScoreString);
+
+         //third case with special character in name
+        relevanceScore = "BBBCDEbla-bla";
+        //convert Score to Float
+        boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        boostScoreString = String.valueOf( boostScore );
+        Assert.assertEquals("6.666667E31",boostScoreString);
+
+    }
+
+    @Test
+    public void convertToAsciiTest() throws Exception {
+        //Important: Properties has to be set and passed to IntactSolrRelevanceScoreCalculator constructor
+        Properties rscProperties = getTestProperties();
+        IntactSolrRelevanceScoreCalculator rscSolr = new IntactSolrRelevanceScoreCalculator( rscProperties );
+        CharSequence sequence = "BBBCDE";
+        final StringBuilder ascii = rscSolr.getAsciiString( sequence );
+        Assert.assertEquals( "666666676869", ascii.toString() );
     }
 
     private List<CrossReference> getAsCollection( CrossReference role ) {

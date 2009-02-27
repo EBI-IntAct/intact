@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
 
 import java.util.*;
@@ -152,6 +153,42 @@ public class IntactSolrRelevanceScoreCalculator {
 
     }
 
+    /**
+     * converts the relevancescore string to float
+     * @param relevanceScore as String
+     * @return score as float
+     */
+    public float convertScoreToFloat( String relevanceScore ) {
+        if ( relevanceScore == null ) {
+            throw new NullPointerException( "You must give a non null relevanceScore" );
+        }
+        //B1B2E1E2T1T2N1N2  -the first 6 characters are role and the remaining characters from index 6(0 based) is name
+        relevanceScore = relevanceScore.toUpperCase().replaceAll( "[^A-Z]","Z" );
+
+        //pad if name is less than 6+10=16 pad with @ (Ascii value 64)
+        if ( relevanceScore.length() < 16 ) {
+            relevanceScore = StringUtils.rightPad( relevanceScore, 16, '@' );
+        }
+
+        final CharSequence rolesCharSequence = relevanceScore;
+        StringBuilder asciiString = getAsciiString( rolesCharSequence );
+        if ( log.isDebugEnabled()) {
+            log.debug( "String <-> AsciiString =>  " + rolesCharSequence + " <-> "+asciiString);
+        }
+
+        return Float.valueOf( asciiString.toString() );
+    }
+
+
+    protected StringBuilder getAsciiString( CharSequence rolesCharSequence ) {
+        //iterate thru the characters and convert to int and append (A-65 Z-90)
+        StringBuilder scoreBuilder = new StringBuilder();
+        for(int i =0;i<rolesCharSequence.length();i++){
+            int ascii = rolesCharSequence.charAt( i );
+            scoreBuilder.append( ascii );
+        }
+        return scoreBuilder;
+    }
 
     /**
      * First tries to get the name from the Aliases, as this contains the genename
@@ -250,8 +287,8 @@ public class IntactSolrRelevanceScoreCalculator {
 
     private String limitToFixedLength( String name ) {
         if ( name != null ) {
-            if ( name.length() > 20 ) {
-                name = name.substring( 0, 20 ).toLowerCase();
+            if ( name.length() > 5 ) {
+                name = name.substring( 0, 5 ).toLowerCase();
             }
             return name.toLowerCase();
         }
