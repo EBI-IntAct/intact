@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <faqs title="Maven tips for IntAct developers">
 <part id="about">
-    <faq>
+    <faq id="1">
       <question>How to get the classpath of an artifact ?</question>
       <answer>
         <p>
@@ -12,7 +12,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="2">
       <question>How to run an IntAct web-application in Jetty ?</question>
       <answer>
         <p>
@@ -23,7 +23,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="3">
       <question>How to create an IntelliJ/Eclipse project for a given Maven module ?</question>
       <answer>
         <p>
@@ -40,7 +40,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="4">
       <question>How to run create a new Maven artifact for IntAct ?</question>
       <answer>
         <p>
@@ -54,7 +54,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="5">
       <question>How to run create a new Maven plugin for IntAct ?</question>
       <answer>
         <p>
@@ -69,7 +69,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="6">
       <question>How to install a Jar file onto my local maven repository ?</question>
       <answer>
         <p>
@@ -87,7 +87,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="7">
       <question>How to deploy a Jar file onto a maven repository ?</question>
       <answer>
         <p>
@@ -108,7 +108,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="8">
       <question>Releasing a Maven module is a pain, is there a way to do this easily ?</question>
       <answer>
         <p>
@@ -140,7 +140,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="9">
       <question>How to generate the hibernate.cfg.xml file?</question>
       <answer>
         <p>
@@ -150,7 +150,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="10">
       <question>How to skip db schema version check?</question>
       <answer>
         <p>
@@ -162,7 +162,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="11">
       <question> How to skip the tests?</question>
       <answer>
         <p>

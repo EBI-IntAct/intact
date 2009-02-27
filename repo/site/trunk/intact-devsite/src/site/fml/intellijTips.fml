@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <faqs title="Maven tips for IntAct developers">
 <part id="about">
-    <faq>
+    <faq id="1">
       <question>Is there an IntelliJ plugin repository out there ?</question>
       <answer>
         <p>
@@ -10,7 +10,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="2">
       <question>How to do ease the pain of writing JUnit test ?</question>
       <answer>
         <p>
