@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<faqs title="How to link your application to IntAct">
+    <part id="about">
+        <faq id="miql">
+            <question>How can I search using a MIQL query ?</question>
+            <answer>
+                <p>
+                    Querying using MIQL (Molecular Interaction Query Langage) is the most versatile way to extract data
+                    from IntAct.
+                    <br/>
+                    This simple, yet powerful, langage allows you to build complex queries by combining several
+                    criterion and boolean logic.
+                    <br/>
+
+                    <ul>
+                        <li>Use OR or space ' ' to search for ANY of the terms in a field</li>
+                        <li>Use AND if you want to search for those interactions where ALL of your terms are found</li>
+                        <li>Use quotes (") if you look for a specific phrase (group of terms that must be searched together)
+                        </li>
+                        <li>Use parenthesis for complex queries (e.g. '(XXX OR YYY) AND ZZZ')</li>
+                        <li>Wildcards (*,?) can be used between letters in a term or at the end of terms to do fuzzy queries,
+                            <br/>but never at the beginning of a term
+                        </li>
+                    </ul>
+
+                    <br/>
+                    List of fields currently available:
+                    <br/>
+
+                    <table cellpadding="10" cellspacing="0" border="1" >
+                        <tr>
+                            <td align="center">Field Name</td>
+                            <td align="center">Searches on</td>
+                            <td align="center">Implicit*</td>
+                            <td align="center">Example</td>
+                        </tr>
+                        <tr>
+                            <td align="center">id</td>
+                            <td align="center">Identifiers (A or B)</td>
+                            <td align="center">No</td>
+                            <td align="center">Example: id:P123*</td>
+                        </tr>
+                        <tr>
+
+                            <td align=" center">alias</td>
+                            <td align="center">Aliases (A or B)</td>
+                            <td align="center">No</td>
+                            <td align="center">Example: alias:(SAM68 OR DNM)</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">identifiers</td>
+                            <td align="center">Identifiers and Aliases indisctinctively</td>
+                            <td align="center">Yes</td>
+                            <td align="center">Example: identifiers:P12345</td>
+
+                        </tr>
+                        <tr>
+                            <td align=" center">pubauth</td>
+                            <td align="center">Publication 1st author(s)</td>
+                            <td align="center">Yes</td>
+                            <td align="center">pubauth:bantscheff</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">pubid</td>
+                            <td align="center">Publication Identifier(s)</td>
+                            <td align="center">Yes</td>
+                            <td align="center">Example: pubid:(14605208 OR 17353931)"</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">taxidA</td>
+                            <td align="center">Tax ID interactor A: be it the tax ID or the species name</td>
+                            <td align="center">No</td>
+                            <td align="center">Example: taxidA:mouse"</td>
+                        </tr>
+                        <tr>
+
+                            <td align=" center">taxidB</td>
+                            <td align="center">Tax ID interactor B: be it the tax ID or species name</td>
+                            <td align="center">No</td>
+                            <td align="center">Example: taxidB:9606"</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">species</td>
+                            <td align="center">Species. Tax ID A and Tax ID B</td>
+                            <td align="center">Yes</td>
+                            <td align="center">Example: species:human"</td>
+                        </tr>
+                        <tr>
+
+                            <td align=" center">type</td>
+                            <td align="center">Interaction type(s)</td>
+                            <td align="center">Yes</td>
+                            <td align="center">Example: type:&quot;physical interaction&quot;</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">detmehod</td>
+                            <td align="center">Interaction Detection method(s)</td>
+                            <td align="center">Yes</td>
+                            <td align="center">Example: detmethod:&quot;two hybrid*&quot;</td>
+                        </tr>
+                        <tr>
+
+                            <td align="center">interaction_id</td>
+                            <td align="center">Interaction identifier(s)</td>
+                            <td align="center">No</td>
+                            <td align="center"> Example: interaction_id:EBI-396959</td>
+                        </tr>
+                    </table>
+
+                    <p>(*) Implicit fields are used when no field is specified (simple search). For instance, if you put
+                        <i>'P12345'</i> in the simple query box,
+                        this will mean the same as <i>identifiers:P12345 OR pubid:P12345 OR pubauth:P12345 OR species:P12345 OR
+                            type:"P12345" OR detmethod:"P12345"</i></p>
+
+            </p>
+        </answer>
+    </faq>
+    <faq id="interaction">
+        <question>How can I search for an interaction by accession number ?</question>
+        <answer>
+            <p>
+                First you need to get an interaction accession number, for instance
+                <b>EBI-931053</b>
+                and then format a URL as follow:
+                <br/>
+                <pre>http://www.ebi.ac.uk/intact/binary-search/faces/search.xhtml?query=interaction_id:
+                    <font color="red">EBI-931053</font>
+                </pre>
+                <br/>
+            </p>
+        </answer>
+    </faq>
+    <faq id="2interactors">
+        <question>How can I search for all interactions between two given interactors ?</question>
+        <answer>
+            <p>
+                First of all, you need to get the identifiers of the molecule you want to search for, for instance
+                <b>Q14275</b>
+                and<b>P19838</b>.
+                <br/>
+                In MIQL terms, this would look like:
+                <pre>+(id:Q14275) +(id:P19838)</pre>
+                <br/>
+                Now you only have to format a URL accordingly:
+                <br/>
+                <pre>http://www.ebi.ac.uk/intact/binary-search/faces/search.xhtml?query=
+                    <font color="red">%2b(id:Q14275)%20%2b(id:P19838)</font>
+                </pre>
+                <br/>
+                <u>Note</u>: the <pre>+</pre> symbol should be encoded as <pre>%2b</pre> as defined in the
+                <a href="http://www.w3schools.com/TAGS/ref_urlencode.asp" target="_blank">URL Encoding Reference</a>
+            </p>
+        </answer>
+    </faq>
+</part>
+        </faqs>
