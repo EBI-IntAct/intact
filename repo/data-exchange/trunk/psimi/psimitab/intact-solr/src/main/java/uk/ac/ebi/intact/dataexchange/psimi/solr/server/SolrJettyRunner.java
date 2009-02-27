@@ -49,13 +49,16 @@ public class SolrJettyRunner {
 
     private URL solrHomeJar;
 
+    private boolean deleteSolrHomeOnServerStop = false;
+
     public SolrJettyRunner() {
         workingDir = new File(System.getProperty("java.io.tmpdir"), "solr-home-"+System.currentTimeMillis());
 
         try {
+            deleteSolrHomeOnServerStop = true;
             FileUtils.forceDeleteOnExit(workingDir);
         } catch (IOException e) {
-            throw new IllegalStateException("Problem forcing delete on exit for: "+workingDir);
+            throw new IllegalStateException("Problem forcing delete on exit for: "+workingDir, e);
         }
 
         if (log.isInfoEnabled()) log.info("Jetty working dir: "+workingDir);
@@ -128,6 +131,13 @@ public class SolrJettyRunner {
 
     public void stop() throws Exception {
         if (server != null) server.stop();
+        if( deleteSolrHomeOnServerStop ) {
+            try {
+                FileUtils.forceDeleteOnExit(workingDir);
+            } catch (IOException e) {
+                throw new IllegalStateException("Problem forcing delete on exit for: "+workingDir, e);
+            }
+        }
     }
 
     public File getSolrHome() {
