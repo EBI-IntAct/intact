@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <faqs title="Subversion tips for IntAct developers">
 <part id="about">
-    <faq>
+    <faq id="1">
       <question>Where can I get Subversion from ?</question>
       <answer>
         <p>
@@ -9,7 +9,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="2">
       <question>Which version of Subversion are you working with ?</question>
       <answer>
         <p>
@@ -17,7 +17,7 @@
         </p>
       </answer>
     </faq>
-    <faq>
+    <faq id="3">
       <question>How to get Subversion to ignore files and directories ?</question>
       <answer>
         <p>
