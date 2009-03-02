@@ -230,6 +230,10 @@ public class SolrDocumentConverter {
     private void addFilteredField(Row row, SolrInputDocument doc, String fieldName, int columnIndex, FieldFilter filter) {
         Collection<Field> fields = getFieldsFromColumn(row, columnIndex, filter);
 
+        if (fields == null) {
+            return;
+        }
+
         for (Field field : fields) {
             doc.addField(fieldName, field.getValue());
         }
