@@ -98,7 +98,7 @@ public class IntactSolrSearcher {
         for (Map.Entry<String,String> entry : fieldNameToTypeMap.entrySet()) {
             FacetField ff = queryResponse.getFacetField(entry.getKey());
 
-            if (ff != null) {
+            if (ff != null && ff.getValues() != null) {
                 for (FacetField.Count c : ff.getValues()) {
                     interactors.put(entry.getValue(), new InteractorIdCount(c.getName(), c.getCount()));
                 }
