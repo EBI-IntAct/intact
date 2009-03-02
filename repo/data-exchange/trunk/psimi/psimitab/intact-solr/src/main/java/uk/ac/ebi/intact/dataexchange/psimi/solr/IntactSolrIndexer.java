@@ -21,11 +21,11 @@ import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -164,12 +164,11 @@ public class IntactSolrIndexer {
 
             if (lineCount >= first && lineCount < end) {
 
-                SolrInputDocument inputDocument = converter.toSolrDocument(line);
-
                 try {
+                    SolrInputDocument inputDocument = converter.toSolrDocument(line);
                     solrServer.add(inputDocument);
                 } catch (Throwable e) {
-                    throw new IntactSolrException("Problem processing line " + (lineCount+1) + ": " + line, e);
+                    throw new IntactSolrException("Problem processing line " + (lineCount + 1) + ": " + line, e);
                 }
 
                 processed++;
