@@ -107,12 +107,12 @@ public class SolrDocumentConverter {
         // store the mitab line
         doc.addField(FieldNames.LINE, mitabLine);
 
-        addColumnToDoc(doc, row, FieldNames.ID_A, IntactDocumentDefinition.ID_INTERACTOR_A, true);
-        addColumnToDoc(doc, row, FieldNames.ID_B, IntactDocumentDefinition.ID_INTERACTOR_B, true);
-        addColumnToDoc(doc, row, FieldNames.ALTID_A, IntactDocumentDefinition.ALTID_INTERACTOR_A);
-        addColumnToDoc(doc, row, FieldNames.ALTID_B, IntactDocumentDefinition.ALTID_INTERACTOR_B);
-        addColumnToDoc(doc, row, FieldNames.ALIAS_A, IntactDocumentDefinition.ALIAS_INTERACTOR_A);
-        addColumnToDoc(doc, row, FieldNames.ALIAS_B, IntactDocumentDefinition.ALIAS_INTERACTOR_B);
+        addColumnToDoc(doc, row, FieldNames.ID_A, IntactDocumentDefinition.ID_INTERACTOR_A, 10f, true);
+        addColumnToDoc(doc, row, FieldNames.ID_B, IntactDocumentDefinition.ID_INTERACTOR_B, 10f, true);
+        addColumnToDoc(doc, row, FieldNames.ALTID_A, IntactDocumentDefinition.ALTID_INTERACTOR_A, 8f);
+        addColumnToDoc(doc, row, FieldNames.ALTID_B, IntactDocumentDefinition.ALTID_INTERACTOR_B, 8f);
+        addColumnToDoc(doc, row, FieldNames.ALIAS_A, IntactDocumentDefinition.ALIAS_INTERACTOR_A, 7f);
+        addColumnToDoc(doc, row, FieldNames.ALIAS_B, IntactDocumentDefinition.ALIAS_INTERACTOR_B, 7f);
         addColumnToDoc(doc, row, FieldNames.DETMETHOD, IntactDocumentDefinition.INT_DET_METHOD, true);
         addColumnToDoc(doc, row, FieldNames.PUBAUTH, IntactDocumentDefinition.PUB_AUTH);
         addColumnToDoc(doc, row, FieldNames.PUBID, IntactDocumentDefinition.PUB_ID);
@@ -120,7 +120,7 @@ public class SolrDocumentConverter {
         addColumnToDoc(doc, row, FieldNames.TAXID_B, IntactDocumentDefinition.TAXID_B);
         addColumnToDoc(doc, row, FieldNames.TYPE, IntactDocumentDefinition.INT_TYPE, true);
         addColumnToDoc(doc, row, FieldNames.SOURCE, IntactDocumentDefinition.SOURCE);
-        addColumnToDoc(doc, row, FieldNames.INTERACTION_ID, IntactDocumentDefinition.INTERACTION_ID);
+        addColumnToDoc(doc, row, FieldNames.INTERACTION_ID, IntactDocumentDefinition.INTERACTION_ID, 11f);
         addColumnToDoc(doc, row, FieldNames.CONFIDENCE, IntactDocumentDefinition.CONFIDENCE);
 
         // extended
@@ -184,10 +184,18 @@ public class SolrDocumentConverter {
     }
 
     private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) {
-        addColumnToDoc(doc, row, fieldName, columnIndex, false);
+        addColumnToDoc(doc, row, fieldName, columnIndex, 1f, false);
     }
 
-    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, boolean expandableColumn) {
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost) {
+        addColumnToDoc(doc, row, fieldName, columnIndex, boost, false);
+    }
+
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex,  boolean expandableColumn) {
+        addColumnToDoc(doc, row, fieldName, columnIndex, 1f, expandableColumn); 
+    }
+
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost, boolean expandableColumn) {
         // do not process columns not found in the row
         if (row.getColumnCount() <= columnIndex) {
             return;
@@ -197,15 +205,15 @@ public class SolrDocumentConverter {
 
         for (Field field : column.getFields()) {
             if (expandableColumn) {
-                doc.addField(fieldName+"_exact", field.toString());
+                doc.addField(fieldName+"_exact", field.toString(), boost);
             }
 
-            doc.addField(fieldName, field.toString());
-            doc.addField(fieldName+"_ms", field.toString());
+            doc.addField(fieldName, field.toString(), boost);
+            doc.addField(fieldName+"_ms", field.toString(), boost);
 
             if (field.getType() != null) {
-                doc.addField(field.getType()+"_xref", field.getValue());
-                doc.addField(field.getType()+"_xref_ms", field.toString());
+                doc.addField(field.getType()+"_xref", field.getValue(), boost);
+                doc.addField(field.getType()+"_xref_ms", field.toString(), boost);
             }
 
             addDescriptionField(doc, field.getType(), field);
