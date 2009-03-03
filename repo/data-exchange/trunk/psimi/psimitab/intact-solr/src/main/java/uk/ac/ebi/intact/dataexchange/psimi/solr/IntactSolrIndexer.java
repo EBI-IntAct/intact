@@ -44,6 +44,8 @@ public class IntactSolrIndexer {
     private SolrServer ontologySolrServer;
     private SolrDocumentConverter converter;
 
+    private int timesToRetry = 100;
+
     public IntactSolrIndexer(String solrServerUrl) throws MalformedURLException {
         this(new CommonsHttpSolrServer(solrServerUrl));
     }
@@ -164,17 +166,12 @@ public class IntactSolrIndexer {
 
             if (lineCount >= first && lineCount < end) {
 
-                try {
-                    SolrInputDocument inputDocument = converter.toSolrDocument(line);
-                    solrServer.add(inputDocument);
-                } catch (Throwable e) {
-                    throw new IntactSolrException("Problem processing line " + (lineCount + 1) + ": " + line, e);
-                }
+                addSolrDocument(line, timesToRetry);
 
                 processed++;
                 
                 if (lineCount > 0 && lineCount % 100 == 0) {
-                    commitSolr(false);
+                    commitSolr(false, timesToRetry);
                 }
 
                 if (log.isDebugEnabled() && processed % 1000 == 0) {
@@ -190,17 +187,64 @@ public class IntactSolrIndexer {
             lineCount++;
         }
 
-        commitSolr(true);
+        commitSolr(true, timesToRetry);
 
         return processed;
     }
 
-    private void commitSolr(boolean optimize) throws IOException, IntactSolrException {
+    private void addSolrDocument(String line, int retriesLeft) throws IOException {
+        try {
+           SolrInputDocument inputDocument = converter.toSolrDocument(line);
+           solrServer.add(inputDocument);
+
+        } catch (SolrServerException e) {
+            if (retriesLeft > 0) {
+                if (log.isErrorEnabled())
+                    log.error("Error adding document to the server. Retrying in 10 seconds. Times to retry: " + retriesLeft+". Line in process: "+line, e);
+
+                try {
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e1) {
+                    log.error("Interrupted thread", e1);
+                }
+
+                addSolrDocument(line, retriesLeft - 1);
+
+            } else {
+                throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
+            }
+        }
+    }
+
+    private void commitSolr(boolean optimize, int retriesLeft) throws IOException, IntactSolrException {
         try {
             solrServer.commit();
             if (optimize) solrServer.optimize();
+
         } catch (SolrServerException e) {
-            throw new IntactSolrException("Problem during commit", e);
+             if (retriesLeft > 0) {
+                if (log.isErrorEnabled())
+                    log.error("Error committing. Retrying in 10 seconds. Times to retry: " + retriesLeft, e);
+
+                try {
+                    Thread.sleep(10 * 1000);
+                } catch (InterruptedException e1) {
+                    log.error("Interrupted thread", e1);
+                }
+
+                commitSolr(optimize, retriesLeft - 1);
+
+            } else {
+                throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
+            }
         }
+    }
+
+    public int getTimesToRetry() {
+        return timesToRetry;
+    }
+
+    public void setTimesToRetry(int timesToRetry) {
+        this.timesToRetry = timesToRetry;
     }
 }

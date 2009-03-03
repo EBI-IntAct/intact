@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr.converter;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.BinaryInteraction;
@@ -87,21 +88,21 @@ public class SolrDocumentConverter {
         this.expandableOntologies = expandableOntologies;
     }
 
-    public SolrInputDocument toSolrDocument(String mitabLine) {
+    public SolrInputDocument toSolrDocument(String mitabLine) throws SolrServerException {
         Row row = documentDefintion.createRowBuilder().createRow(mitabLine);
         return toSolrDocument(row, mitabLine);
     }
 
-    public SolrInputDocument toSolrDocument(BinaryInteraction binaryInteraction) {
+    public SolrInputDocument toSolrDocument(BinaryInteraction binaryInteraction) throws SolrServerException {
         Row row = documentDefintion.createInteractionRowConverter().createRow(binaryInteraction);
         return toSolrDocument(row);
     }
 
-    public SolrInputDocument toSolrDocument(Row row) {
+    public SolrInputDocument toSolrDocument(Row row) throws SolrServerException {
         return toSolrDocument(row, row.toString());
     }
 
-    protected SolrInputDocument toSolrDocument(Row row, String mitabLine) {
+    protected SolrInputDocument toSolrDocument(Row row, String mitabLine) throws SolrServerException {
         SolrInputDocument doc = new SolrInputDocument();
 
         // store the mitab line
@@ -183,19 +184,19 @@ public class SolrDocumentConverter {
         return (String) doc.getFieldValue(FieldNames.LINE);
     }
 
-    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) {
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) throws SolrServerException {
         addColumnToDoc(doc, row, fieldName, columnIndex, 1f, false);
     }
 
-    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost) {
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost) throws SolrServerException {
         addColumnToDoc(doc, row, fieldName, columnIndex, boost, false);
     }
 
-    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex,  boolean expandableColumn) {
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex,  boolean expandableColumn) throws SolrServerException {
         addColumnToDoc(doc, row, fieldName, columnIndex, 1f, expandableColumn); 
     }
 
-    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost, boolean expandableColumn) {
+    private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex, float boost, boolean expandableColumn) throws SolrServerException {
         // do not process columns not found in the row
         if (row.getColumnCount() <= columnIndex) {
             return;
@@ -300,7 +301,7 @@ public class SolrDocumentConverter {
      * @param includeItself if true, the passed field will be part of the collection (its description updated from the index)
      * @return list of cv terms with parents and itself
      */
-    private Collection<Field> getAllParents(psidev.psi.mi.tab.model.builder.Field field, boolean includeItself) {
+    private Collection<Field> getAllParents(psidev.psi.mi.tab.model.builder.Field field, boolean includeItself) throws SolrServerException {
         if (ontologySearcher == null) {
             return Collections.EMPTY_LIST;
         }
