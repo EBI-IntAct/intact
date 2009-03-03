@@ -15,22 +15,24 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.lang.StringUtils;
 import org.apache.solr.common.SolrInputDocument;
-
-import java.util.*;
-import java.io.IOException;
-
-import psidev.psi.mi.tab.model.builder.Row;
 import psidev.psi.mi.tab.model.builder.Column;
 import psidev.psi.mi.tab.model.builder.Field;
+import psidev.psi.mi.tab.model.builder.Row;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 import uk.ac.ebi.intact.psimitab.IntactInteractionRowConverter;
 import uk.ac.ebi.intact.psimitab.util.IntactPsimitabUtils;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * /**
@@ -61,7 +63,7 @@ public class IntactRelevanceScoreCalculator {
     Properties rscProperties;
 
 
-    public IntactRelevanceScoreCalculator() throws IOException {
+    public IntactRelevanceScoreCalculator() {
         this.rscProperties = getDefaultProperties();
     }
 
@@ -197,7 +199,7 @@ public class IntactRelevanceScoreCalculator {
         }
 
         final CharSequence rolesCharSequence = relevanceScore;
-        StringBuilder asciiString = getAsciiString( rolesCharSequence );
+        String asciiString = getAsciiString( rolesCharSequence );
 
         if ( log.isDebugEnabled()) {
             log.debug( "String <-> AsciiString =>  " + rolesCharSequence + " <-> "+asciiString);
@@ -207,17 +209,28 @@ public class IntactRelevanceScoreCalculator {
     }
 
 
-    protected StringBuilder getAsciiString( CharSequence rolesCharSequence ) {
+    protected String getAsciiString( CharSequence rolesCharSequence ) {
         //iterate thru the characters and convert to int and append (A-65 Z-90)
         StringBuilder scoreBuilder = new StringBuilder();
         for(int i =0;i<rolesCharSequence.length();i++){
             int ascii = rolesCharSequence.charAt( i );
             scoreBuilder.append( ascii );
         }
-        return scoreBuilder;
+        return scoreBuilder.toString();
     }
 
+    protected BigDecimal simplify(BigDecimal bdToSimplify) {
+        BigDecimal bd = bdToSimplify;
 
+        int[] divs = new int[] {42, 23, 2, 334, 58, 12, 42, 554, 143, 1665};
+
+        for (int div : divs) {
+            bd = bd.divideToIntegralValue(new BigDecimal(div));
+            //System.out.println("-"+bd);
+        }
+
+        return bd;
+    }
 
     private String getScoreForGivenCol( Set<String> roles ) {
         String score = DEFAULT_SCORE;
@@ -293,9 +306,13 @@ public class IntactRelevanceScoreCalculator {
         this.rscProperties = rscProperties;
     }
 
-    private Properties getDefaultProperties() throws IOException {
+    private Properties getDefaultProperties() {
         Properties properties = new Properties();
-        properties.load( IntactRelevanceScoreCalculator.class.getResourceAsStream( "/relevancescore.properties" ) );
+        try {
+            properties.load( IntactRelevanceScoreCalculator.class.getResourceAsStream("/META-INF/relevancescore.properties") );
+        } catch (IOException e) {
+            throw new IllegalStateException("Could not load /META-INF/relevancescore.properties file from the classpath", e);
+        }
         return properties;
     }
 }

@@ -48,7 +48,7 @@ public class SolrHomeBuilder {
 
         try {
             if (log.isDebugEnabled()) log.debug("Loading properties from classpath");
-            props.load(SolrHomeBuilder.class.getResourceAsStream("/IntactSolrConfig.properties"));
+            props.load(SolrHomeBuilder.class.getResourceAsStream("/META-INF/IntactSolrConfig.properties"));
         } catch (IOException e) {
             throw new IllegalStateException("Problem loading properties", e);
         }
