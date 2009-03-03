@@ -48,9 +48,8 @@ public class SolrIndexProcessorTest extends AbstractSolrJettyRunnableTestCase {
         Assert.assertEquals( 0, resultBeforeProcessing.getTotalCount() );
 
         //start the processing  by getting all
-        Properties rscProperties = IntactSolrRelevanceScoreCalculatorTest.getTestProperties();
         SolrIndexProcessor indexProcessor = new SolrIndexProcessor( getTestSolrServer() );
-        indexProcessor.registerProcessor( new SolrRelevanceScoreProcessor( rscProperties ) );
+        indexProcessor.registerProcessor( new SolrRelevanceScoreProcessor( ) );
         indexProcessor.startProcessing();
 
         //after processing by adding relevance score
@@ -107,9 +106,8 @@ public class SolrIndexProcessorTest extends AbstractSolrJettyRunnableTestCase {
         Assert.assertEquals( 0, resultBeforeProcessing.getTotalCount() );
 
         //start the processing  by getting all
-        Properties rscProperties = IntactSolrRelevanceScoreCalculatorTest.getTestProperties();
         SolrIndexProcessor indexProcessor = new SolrIndexProcessor( getTestSolrServer() );
-        indexProcessor.registerProcessor( new SolrRelevanceScoreProcessor( rscProperties ) );
+        indexProcessor.registerProcessor( new SolrRelevanceScoreProcessor( ) );
         indexProcessor.registerProcessor( new SolrEvidenceCountProcessor() );
         indexProcessor.startProcessing();
 

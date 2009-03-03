@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Properties;
 import java.io.IOException;
 
-import uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore.IntactSolrRelevanceScoreCalculator;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore.IntactRelevanceScoreCalculator;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 
@@ -35,17 +35,17 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 public class SolrRelevanceScoreProcessor implements SolrDocumentProcessor{
 
     private SolrDocumentConverter converter = new SolrDocumentConverter();
-    IntactSolrRelevanceScoreCalculator relevanceScoreCalculator;
+    IntactRelevanceScoreCalculator relevanceScoreCalculator;
 
     public SolrRelevanceScoreProcessor() throws IOException {
-        this.relevanceScoreCalculator = new IntactSolrRelevanceScoreCalculator( );
+        this.relevanceScoreCalculator = new IntactRelevanceScoreCalculator( );
     }
 
     public SolrRelevanceScoreProcessor( Properties rscProperties) {
-        this.relevanceScoreCalculator = new IntactSolrRelevanceScoreCalculator( rscProperties);
+        this.relevanceScoreCalculator = new IntactRelevanceScoreCalculator( rscProperties);
     }
 
-    public SolrRelevanceScoreProcessor( IntactSolrRelevanceScoreCalculator relevanceScoreCalculator ) {
+    public SolrRelevanceScoreProcessor( IntactRelevanceScoreCalculator relevanceScoreCalculator ) {
         this.relevanceScoreCalculator = relevanceScoreCalculator;
     }
 
