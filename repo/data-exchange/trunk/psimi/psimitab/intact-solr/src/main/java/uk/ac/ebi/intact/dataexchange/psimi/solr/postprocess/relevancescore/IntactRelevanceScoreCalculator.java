@@ -23,9 +23,13 @@ import org.apache.solr.common.SolrInputDocument;
 import java.util.*;
 import java.io.IOException;
 
-import psidev.psi.mi.tab.model.CrossReference;
+import psidev.psi.mi.tab.model.builder.Row;
+import psidev.psi.mi.tab.model.builder.Column;
+import psidev.psi.mi.tab.model.builder.Field;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
-import uk.ac.ebi.intact.psimitab.model.ExtendedInteractor;
+import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
+import uk.ac.ebi.intact.psimitab.IntactInteractionRowConverter;
+import uk.ac.ebi.intact.psimitab.util.IntactPsimitabUtils;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 
 /**
@@ -49,19 +53,19 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
  * @version $Id$
  * @since TODO specify the maven artifact version
  */
-public class IntactSolrRelevanceScoreCalculator {
+public class IntactRelevanceScoreCalculator {
 
-    private static final Log log = LogFactory.getLog( IntactSolrRelevanceScoreCalculator.class );
+    private static final Log log = LogFactory.getLog( IntactRelevanceScoreCalculator.class );
 
     private static final String DEFAULT_SCORE = "N";
     Properties rscProperties;
 
 
-    public IntactSolrRelevanceScoreCalculator() throws IOException {
+    public IntactRelevanceScoreCalculator() throws IOException {
         this.rscProperties = getDefaultProperties();
     }
 
-    public IntactSolrRelevanceScoreCalculator( Properties rscProperties ) {
+    public IntactRelevanceScoreCalculator( Properties rscProperties ) {
         this.rscProperties = rscProperties;
     }
 
@@ -92,21 +96,20 @@ public class IntactSolrRelevanceScoreCalculator {
      * @return relevance Score of the format B1B2E1E2T1T2N1N2
      */
     public String calculateScore( IntactBinaryInteraction binaryInteraction ) {
+        IntactInteractionRowConverter converter = new IntactInteractionRowConverter();
+        return calculateScore(converter.createRow(binaryInteraction));
+    }
 
-        final ExtendedInteractor interactorA = binaryInteraction.getInteractorA();
-        final ExtendedInteractor interactorB = binaryInteraction.getInteractorB();
 
-        final List<CrossReference> biologicalRoles_A = interactorA.getBiologicalRoles();
-        final List<CrossReference> biologicalRoles_B = interactorB.getBiologicalRoles();
-        final List<CrossReference> experimentalRoles_A = interactorA.getExperimentalRoles();
-        final List<CrossReference> experimentalRoles_B = interactorB.getExperimentalRoles();
-        final CrossReference interactorType_A = interactorA.getInteractorType();
-        final CrossReference interactorType_B = interactorB.getInteractorType();
-
-        String interactorName_A = getInteractorName( interactorA );
-        String interactorName_B = getInteractorName( interactorB );
-
-        return calculateScore(biologicalRoles_A,biologicalRoles_B,experimentalRoles_A,experimentalRoles_B,interactorType_A,interactorType_B,interactorName_A,interactorName_B);
+    /**
+     *  Calculates the relevance score based on the principle
+     * explained in the class header
+     * @param binaryInteraction  IntactBinaryInteraction
+     * @return relevance Score of the format B1B2E1E2T1T2N1N2
+     */
+    public float calculateScoreFloat( IntactBinaryInteraction binaryInteraction ) {
+        String scoreStr = calculateScore(binaryInteraction);
+        return convertScoreToFloat(scoreStr);
     }
 
     /**
@@ -121,25 +124,25 @@ public class IntactSolrRelevanceScoreCalculator {
      * @param interactorName_B  interactor Name of B
      * @return score
      */
-    public String calculateScore( List<CrossReference> biologicalRoles_A, List<CrossReference> biologicalRoles_B, List<CrossReference> experimentalRoles_A, List<CrossReference> experimentalRoles_B, CrossReference interactorType_A, CrossReference interactorType_B, String interactorName_A, String interactorName_B ) {
+    protected String calculateScore( Column biologicalRoles_A, Column biologicalRoles_B, Column experimentalRoles_A, Column experimentalRoles_B, Column interactorType_A, Column interactorType_B, String interactorName_A, String interactorName_B ) {
 
-        Set<String> uniqueBioRoles_A = getSetOfRoles( biologicalRoles_A );
-        String b1 = getScoreForGivenRolesAndTypes( uniqueBioRoles_A );
+        Set<String> uniqueBioRoles_A = getValues( biologicalRoles_A );
+        String b1 = getScoreForGivenCol( uniqueBioRoles_A );
 
-        Set<String> uniqueBioRoles_B = getSetOfRoles( biologicalRoles_B );
-        String b2 = getScoreForGivenRolesAndTypes( uniqueBioRoles_B );
+        Set<String> uniqueBioRoles_B = getValues( biologicalRoles_B );
+        String b2 = getScoreForGivenCol( uniqueBioRoles_B );
 
-        Set<String> uniqueExpRoles_A = getSetOfRoles( experimentalRoles_A );
-        String e1 = getScoreForGivenRolesAndTypes( uniqueExpRoles_A );
+        Set<String> uniqueExpRoles_A = getValues( experimentalRoles_A );
+        String e1 = getScoreForGivenCol( uniqueExpRoles_A );
 
-        Set<String> uniqueExpRoles_B = getSetOfRoles( experimentalRoles_B );
-        String e2 = getScoreForGivenRolesAndTypes( uniqueExpRoles_B );
+        Set<String> uniqueExpRoles_B = getValues( experimentalRoles_B );
+        String e2 = getScoreForGivenCol( uniqueExpRoles_B );
 
-        String type_A = interactorType_A.getText();
-        String t1 = getScoreForGivenRole( type_A );
+        Set<String> uniqueInteractor_A = getValues( interactorType_A );
+        String t1 = getScoreForGivenCol( uniqueInteractor_A );
 
-        String type_B = interactorType_B.getText();
-        String t2 = getScoreForGivenRole( type_B );
+        Set<String> uniqueInteractor_B = getValues( interactorType_B );
+        String t2 = getScoreForGivenCol( uniqueInteractor_B );
 
         String n1 = limitToFixedLength( interactorName_A );
         String n2 = limitToFixedLength( interactorName_B );
@@ -153,12 +156,35 @@ public class IntactSolrRelevanceScoreCalculator {
 
     }
 
+    public float calculateScoreFloat(Row row) {
+        String strScore = calculateScore(row);
+        return convertScoreToFloat(strScore);
+    }
+
+    public String calculateScore(Row row) {
+        if (row.getColumnCount() < IntactDocumentDefinition.BIOLOGICAL_ROLE_A) {
+           return DEFAULT_SCORE;
+        }
+
+        final Column biologicalRoles_A = row.getColumnByIndex(IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
+        final Column biologicalRoles_B = row.getColumnByIndex(IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
+        final Column experimentalRoles_A = row.getColumnByIndex(IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
+        final Column experimentalRoles_B = row.getColumnByIndex(IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
+        final Column interactorType_A = row.getColumnByIndex(IntactDocumentDefinition.INTERACTOR_TYPE_A);
+        final Column interactorType_B = row.getColumnByIndex(IntactDocumentDefinition.INTERACTOR_TYPE_B);
+
+        String interactorName_A = IntactPsimitabUtils.getInteractorANameField( row ).getValue();
+        String interactorName_B = IntactPsimitabUtils.getInteractorBNameField( row ).getValue();
+
+        return calculateScore(biologicalRoles_A,biologicalRoles_B,experimentalRoles_A,experimentalRoles_B,interactorType_A,interactorType_B,interactorName_A,interactorName_B);
+    }
+
     /**
      * converts the relevancescore string to float
      * @param relevanceScore as String
      * @return score as float
      */
-    public float convertScoreToFloat( String relevanceScore ) {
+    protected float convertScoreToFloat( String relevanceScore ) {
         if ( relevanceScore == null ) {
             throw new NullPointerException( "You must give a non null relevanceScore" );
         }
@@ -172,6 +198,7 @@ public class IntactSolrRelevanceScoreCalculator {
 
         final CharSequence rolesCharSequence = relevanceScore;
         StringBuilder asciiString = getAsciiString( rolesCharSequence );
+
         if ( log.isDebugEnabled()) {
             log.debug( "String <-> AsciiString =>  " + rolesCharSequence + " <-> "+asciiString);
         }
@@ -190,58 +217,12 @@ public class IntactSolrRelevanceScoreCalculator {
         return scoreBuilder;
     }
 
-    /**
-     * First tries to get the name from the Aliases, as this contains the genename
-     * if not, then tries to get from alternative identifiers as this contains
-     * all the other alias type and name is returned based on the priority
-     * @param interactor ExtendedInteractor
-     * @return  interactor Name
-     */
-    private String getInteractorName( ExtendedInteractor interactor ) {
-        String interactorName = null;
-        //we add to the tabalias only if the alias type is GENE_NAME, so return the first one
-        if(interactor.getAliases()!=null && interactor.getAliases().size()>0){
-            interactorName = interactor.getAliases().iterator().next().getName();
-        }
-
-        if(interactorName==null){
-          final Collection<CrossReference> alternativeIds = interactor.getAlternativeIdentifiers();
-          interactorName = getAliasByPriority( alternativeIds,"gene name","gene name synonym","commercial name","go synonym","locus name","orf name","shortlabel" );
-         }
 
 
-        return interactorName;
-    }
-
-    /**
-     *  In the interactorconver all the aliases other than genename are addeded
-     * to alternative identifiers.  So we have to check in alternative ids
-     * @param alternativeIds  alternative ids
-     * @param aliasTypes      aliastypes by priority
-     * @return  InteractorName
-     */
-    private String getAliasByPriority( Collection<CrossReference> alternativeIds, String... aliasTypes ) {
-        String aliasName = null;
-        for ( CrossReference altId : alternativeIds ) {
-            for ( String aliasType : aliasTypes ) {
-                if ( aliasType.equals( altId.getText() ) ) {
-                    aliasName = altId.getIdentifier();
-                    return aliasName;
-                }
-            }
-        }
-        return aliasName;
-    }
-
-
-    private String getScoreForGivenRolesAndTypes( Set<String> roles ) {
+    private String getScoreForGivenCol( Set<String> roles ) {
         String score = DEFAULT_SCORE;
-        if ( roles != null && roles.size() > 0 ) {
-            if ( roles.size() > 1 ) {
-                score = getMaxScoreForGivenRoles( roles );
-            } else if ( roles.size() == 1 ) {
-                score = getScoreForGivenRole( roles.iterator().next() );
-            }
+        if ( roles != null) {
+            score = getMaxScoreForGivenRoles(roles);
         }
 
         return score;
@@ -261,7 +242,6 @@ public class IntactSolrRelevanceScoreCalculator {
     }
 
     protected String getScoreForGivenRole( String role ) {
-        role = role.replaceAll( "\\s+", "" );
         if ( rscProperties.containsKey( role ) ) {
             return ( String ) rscProperties.get( role );
         } else {
@@ -271,18 +251,19 @@ public class IntactSolrRelevanceScoreCalculator {
     }
 
 
-    private Set<String> getSetOfRoles( List<CrossReference> roles ) {
+    private Set<String> getValues( Column column ) {
 
-        Set<String> uniqueRoles = new HashSet<String>();
-        for ( CrossReference crossReference : roles ) {
-            String role = crossReference.getText();
-            if(role!=null){
-            role = role.trim().replaceAll( "\\s+", "" );
-            uniqueRoles.add( role );
+        Set<String> values = new HashSet<String>();
+
+        for (Field crossReference : column.getFields()) {
+            String role = crossReference.getValue();
+
+            if (role != null) {
+                values.add(role);
             }
 
         }
-        return uniqueRoles;
+        return values;
     }
 
     private String limitToFixedLength( String name ) {
@@ -314,7 +295,7 @@ public class IntactSolrRelevanceScoreCalculator {
 
     private Properties getDefaultProperties() throws IOException {
         Properties properties = new Properties();
-        properties.load( IntactSolrRelevanceScoreCalculator.class.getResourceAsStream( "/relevancescore.properties" ) );
+        properties.load( IntactRelevanceScoreCalculator.class.getResourceAsStream( "/relevancescore.properties" ) );
         return properties;
     }
 }

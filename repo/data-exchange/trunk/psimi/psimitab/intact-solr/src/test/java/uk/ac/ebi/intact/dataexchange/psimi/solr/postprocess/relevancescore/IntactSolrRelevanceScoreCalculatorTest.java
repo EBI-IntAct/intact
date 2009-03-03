@@ -78,11 +78,9 @@ public class IntactSolrRelevanceScoreCalculatorTest {
         interactorB.setAliases( null );
         interactorB.setAlternativeIdentifiers( getAsCollection(name_B ));
 
-        //Important: Properties has to be set and passed to IntactSolrRelevanceScoreCalculator constructor
-        Properties rscProperties = getTestProperties();
-        IntactSolrRelevanceScoreCalculator rscSolr = new IntactSolrRelevanceScoreCalculator( rscProperties);
+        IntactRelevanceScoreCalculator rsc = new IntactRelevanceScoreCalculator();
 
-        String score1 = rscSolr.calculateScore( interaction );
+        String score1 = rsc.calculateScore( interaction );
         /**
          * NN-unspecified-role B1,B2
          * BC - scores for bait,prey
@@ -103,41 +101,40 @@ public class IntactSolrRelevanceScoreCalculatorTest {
         CrossReference dna = new CrossReferenceImpl("psi-mi","MI:0318","nucleicacid");
         interactorB.setInteractorType( dna );
 
-        String score2 =  rscSolr.calculateScore( interaction );
+        String score2 =  rsc.calculateScore( interaction );
         //BB: enzyme, enzyme target
         Assert.assertEquals("BBBCDEblablklakl",score2);
 
         //Test with SolrInputDocument
         SolrDocumentConverter converter = new SolrDocumentConverter( );
         final SolrInputDocument inputDocument = converter.toSolrDocument( interaction );
-        final String score3 = rscSolr.calculateScore( inputDocument, converter );
+        final String score3 = rsc.calculateScore( inputDocument, converter );
         Assert.assertEquals("BBBCDEblablklakl",score3);
 
     }
 
     @Test
     public void convertToFloatTest() throws Exception {
-        Properties rscProperties = getTestProperties();
-        IntactSolrRelevanceScoreCalculator rscSolr = new IntactSolrRelevanceScoreCalculator( rscProperties );
+        IntactRelevanceScoreCalculator rsc = new IntactRelevanceScoreCalculator( );
 
         //first case normal
         String relevanceScore = "BBBCDEblablklakl";
         //convert Score to Float
-        float boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        float boostScore = rsc.convertScoreToFloat( relevanceScore );
         String boostScoreString = String.valueOf( boostScore );
         Assert.assertEquals("6.666667E31",boostScoreString);
 
         //second case with name less than 10
         relevanceScore = "BBBCDEblablk";
         //convert Score to Float
-        boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        boostScore = rsc.convertScoreToFloat( relevanceScore );
         boostScoreString = String.valueOf( boostScore );
         Assert.assertEquals("6.666667E31",boostScoreString);
 
          //third case with special character in name
         relevanceScore = "BBBCDEbla-bla";
         //convert Score to Float
-        boostScore = rscSolr.convertScoreToFloat( relevanceScore );
+        boostScore = rsc.convertScoreToFloat( relevanceScore );
         boostScoreString = String.valueOf( boostScore );
         Assert.assertEquals("6.666667E31",boostScoreString);
 
@@ -145,11 +142,9 @@ public class IntactSolrRelevanceScoreCalculatorTest {
 
     @Test
     public void convertToAsciiTest() throws Exception {
-        //Important: Properties has to be set and passed to IntactSolrRelevanceScoreCalculator constructor
-        Properties rscProperties = getTestProperties();
-        IntactSolrRelevanceScoreCalculator rscSolr = new IntactSolrRelevanceScoreCalculator( rscProperties );
+        IntactRelevanceScoreCalculator rsc = new IntactRelevanceScoreCalculator( );
         CharSequence sequence = "BBBCDE";
-        final StringBuilder ascii = rscSolr.getAsciiString( sequence );
+        final StringBuilder ascii = rsc.getAsciiString( sequence );
         Assert.assertEquals( "666666676869", ascii.toString() );
     }
 
@@ -157,12 +152,6 @@ public class IntactSolrRelevanceScoreCalculatorTest {
         List<CrossReference> roles = new ArrayList<CrossReference>();
         roles.add( role );
         return roles;
-    }
-
-    public static Properties getTestProperties() throws Exception {
-        Properties properties = new Properties();
-        properties.load( IntactSolrRelevanceScoreCalculatorTest.class.getResourceAsStream( "/relevancescore/relevancescoretest.properties" ) );
-        return properties;
     }
 
 
