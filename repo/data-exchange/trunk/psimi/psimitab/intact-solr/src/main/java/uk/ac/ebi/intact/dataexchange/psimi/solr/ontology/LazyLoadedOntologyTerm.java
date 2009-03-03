@@ -15,23 +15,17 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.ontology;
 
-import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyIndexSearcher;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyHits;
-import uk.ac.ebi.intact.bridges.ontologies.FieldName;
-import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
-
-import java.util.*;
-import java.io.IOException;
-
-import org.apache.lucene.search.*;
-import org.apache.lucene.index.Term;
-import org.apache.solr.client.solrj.response.QueryResponse;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.HashMultimap;
+import uk.ac.ebi.intact.bridges.ontologies.FieldName;
+import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
+
+import java.io.IOException;
+import java.util.*;
 
 /**
  * A term in an ontology, with parent and children lazy load.
@@ -50,18 +44,14 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
     private List<OntologyTerm> parents;
     private List<OntologyTerm> children;
 
-    public LazyLoadedOntologyTerm(OntologySearcher searcher, String id) {
+    public LazyLoadedOntologyTerm(OntologySearcher searcher, String id) throws SolrServerException {
         this.searcher = searcher;
         this.id = id;
 
-        try {
-            QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
+        QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
 
-            if (queryResponse.getResults().getNumFound() > 0) {
-                this.name = (String) queryResponse.getResults().iterator().next().getFieldValue(OntologyFieldNames.PARENT_NAME);
-            }
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Problem loading name for term: "+id, e);
+        if (queryResponse.getResults().getNumFound() > 0) {
+            this.name = (String) queryResponse.getResults().iterator().next().getFieldValue(OntologyFieldNames.PARENT_NAME);
         }
     }
 

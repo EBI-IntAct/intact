@@ -16,14 +16,15 @@
 package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.iterators;
 
 import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
-import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 
 
 /**
@@ -52,7 +53,7 @@ public class SolrRigIterator extends SolrDocumentIterator {
         return super.hasNext() || isCurrentSolrDocumentYetToBeAddedToList;
     }
 
-    public Collection<SolrInputDocument> nextSolrDocumentGroup(){
+    public Collection<SolrInputDocument> nextSolrDocumentGroup() throws SolrServerException {
 
         Collection<SolrInputDocument> solrInputDocuments = new ArrayList<SolrInputDocument>();
         final Collection<IntactBinaryInteraction> interactionCollection = nextIntactBinaryInteractionGroup();

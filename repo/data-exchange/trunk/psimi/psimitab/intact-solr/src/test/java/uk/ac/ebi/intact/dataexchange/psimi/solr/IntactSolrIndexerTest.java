@@ -28,6 +28,7 @@ import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -152,5 +153,35 @@ public class IntactSolrIndexerTest {
         SolrSearchResult result = searcher.search(searchQuery, null, null);
 
         assertEquals(count, result.getTotalCount());
+    }
+
+    @Test
+    public void retrying() throws Exception {
+        solrJettyRunner.stop();
+
+        Thread t = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    indexer.indexMitabFromClasspath("/mitab_samples/intact200.txt", true);
+                } catch (IOException e) {
+                    Assert.fail("An IOException was thrown");
+                }
+            }
+        };
+
+        t.start();
+        
+        Thread.sleep(5*1000);
+
+        solrJettyRunner.start();
+
+        while (t.isAlive()) {
+           Thread.sleep(500);
+        }
+
+        assertCount(200, "*:*");
+
     }
 }
