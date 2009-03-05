@@ -29,6 +29,8 @@ import java.io.IOException;
  */
 public class WriteOnlyFailureHandling extends AbstractFailureHandlingStrategy {
 
+    public static final String NEW_LINE = System.getProperty( "line.separator" );
+
     private Writer writer;
 
     public WriteOnlyFailureHandling( Writer writer ) {
@@ -40,9 +42,10 @@ public class WriteOnlyFailureHandling extends AbstractFailureHandlingStrategy {
 
     public void handleFailure( Throwable t, String mitabLine, int lineCount ) {
         try {
-            writer.write( "Error while processing MITAB line " + lineCount + ": " + mitabLine );
-            writer.write( "Reason:" );
-            writer.write( ExceptionUtils.getStackTrace( t ) );
+            writer.write( "Error while processing MITAB line " + lineCount + ": " + mitabLine + NEW_LINE );
+            writer.write( "Reason:" + NEW_LINE );
+            writer.write( ExceptionUtils.getStackTrace( t ) + NEW_LINE );
+            writer.write( "------------------------------------------------------------------------------" + NEW_LINE );
         } catch ( IOException e ) {
             e.printStackTrace();
         }
