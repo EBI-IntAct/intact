@@ -25,6 +25,8 @@ import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.SolrDocumentConverter;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologyIndexer;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.ontology.OntologySearcher;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.failure.FailFastFailureHandling;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.failure.FailureHandlingStrategy;
 import uk.ac.ebi.intact.psimitab.IntactDocumentDefinition;
 
 import java.io.*;
@@ -46,6 +48,11 @@ public class IntactSolrIndexer {
 
     private int timesToRetry = 100;
 
+    private FailureHandlingStrategy failureHandlingStrategy = new FailFastFailureHandling();
+
+    //////////////////
+    // Constructors
+
     public IntactSolrIndexer(String solrServerUrl) throws MalformedURLException {
         this(new CommonsHttpSolrServer(solrServerUrl));
     }
@@ -64,6 +71,20 @@ public class IntactSolrIndexer {
         this.ontologySolrServer = ontologySolrServer;
         this.converter = new SolrDocumentConverter(new IntactDocumentDefinition(), new OntologySearcher(ontologySolrServer));
     }
+
+    ///////////////////////////
+    // Getters and Setters
+
+    public FailureHandlingStrategy getFailureHandlingStrategy() {
+        return failureHandlingStrategy;
+    }
+
+    public void setFailureHandlingStrategy( FailureHandlingStrategy failureHandlingStrategy ) {
+        this.failureHandlingStrategy = failureHandlingStrategy;
+    }
+
+    /////////////////////
+    // Indexing
 
     public void indexOntologies(OntologyMapping[] ontologyMappings) throws IntactSolrException {
         if (ontologySolrServer == null) {
@@ -164,24 +185,29 @@ public class IntactSolrIndexer {
 
         while ((line = reader.readLine()) != null) {
 
-            if (lineCount >= first && lineCount < end) {
+            try {
 
-                addSolrDocument(line, timesToRetry);
+                if (lineCount >= first && lineCount < end) {
 
-                processed++;
-                
-                if (lineCount > 0 && lineCount % 100 == 0) {
-                    commitSolr(false, timesToRetry);
+                    addSolrDocument(line, timesToRetry);
+
+                    processed++;
+
+                    if (lineCount > 0 && lineCount % 100 == 0) {
+                        commitSolr(false, timesToRetry);
+                    }
+
+                    if (log.isDebugEnabled() && processed % 1000 == 0) {
+                        if (log.isDebugEnabled()) log.debug("Processed: "+processed);
+                    }
                 }
 
-                if (log.isDebugEnabled() && processed % 1000 == 0) {
-                    if (log.isDebugEnabled()) log.debug("Processed: "+processed);
+                if (lineCount >= end) {
+                    break;
                 }
 
-            }
-
-            if (lineCount >= end) {
-                break;
+            } catch( Throwable t ) {
+                failureHandlingStrategy.handleFailure( t, line, lineCount );
             }
 
             lineCount++;
