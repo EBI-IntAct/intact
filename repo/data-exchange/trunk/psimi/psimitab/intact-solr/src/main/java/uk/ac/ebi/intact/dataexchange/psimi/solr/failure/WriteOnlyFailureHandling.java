@@ -42,10 +42,14 @@ public class WriteOnlyFailureHandling extends AbstractFailureHandlingStrategy {
 
     public void handleFailure( Throwable t, String mitabLine, int lineCount ) {
         try {
-            writer.write( "Error while processing MITAB line " + lineCount + ": " + mitabLine + NEW_LINE );
-            writer.write( "Reason:" + NEW_LINE );
-            writer.write( ExceptionUtils.getStackTrace( t ) + NEW_LINE );
+            writer.write( "Error while processing MITAB line " + lineCount + ": " + NEW_LINE );
+            writer.write( mitabLine + NEW_LINE );
+            if( t != null ) {
+                writer.write( "Reason:" + NEW_LINE );
+                writer.write( ExceptionUtils.getStackTrace( t ) + NEW_LINE );
+            }
             writer.write( "------------------------------------------------------------------------------" + NEW_LINE );
+            writer.flush();
         } catch ( IOException e ) {
             e.printStackTrace();
         }
