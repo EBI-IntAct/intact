@@ -12,7 +12,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import java.io.File;
 
 /**
- * TODO comment this!
+ * DrExportMojo Tester.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
