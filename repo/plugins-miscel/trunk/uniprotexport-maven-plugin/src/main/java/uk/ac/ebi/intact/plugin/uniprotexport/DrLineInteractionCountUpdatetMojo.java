@@ -12,10 +12,19 @@ import org.apache.maven.plugin.MojoFailureException;
 import uk.ac.ebi.intact.plugin.IntactAbstractMojo;
 import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 import uk.ac.ebi.intact.psimitab.search.IntactSearchEngine;
+import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.ProteinDao;
+import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.Protein;
+import uk.ac.ebi.intact.model.InteractorXref;
+import uk.ac.ebi.intact.model.util.ProteinUtils;
+import uk.ac.ebi.intact.business.IntactTransactionException;
 
 import java.io.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.List;
 
 import psidev.psi.mi.search.SearchResult;
 
@@ -28,7 +37,7 @@ import psidev.psi.mi.search.SearchResult;
  * @phase process-resources
  * @since 1.9.0
  */
-public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
+public class DrLineInteractionCountUpdatetMojo extends UniprotExportAbstractMojo {
 
     /**
      * Project instance
@@ -73,9 +82,9 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
     private boolean overwrite;
     private static final Pattern DRPATTERN = Pattern.compile("DR\\s+IntAct;\\s+(.*?);.*");
 
-    public String getTargetPath() {
-        return targetPath;
-    }
+//    public String getTargetPath() {
+//        return targetPath;
+//    }
 
     public void setTargetPath( String targetPath ) {
         this.targetPath = targetPath;
@@ -120,7 +129,7 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
         return project;
     }
 
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void executeIntactMojo() throws MojoExecutionException, MojoFailureException {
 
         getLog().info("DrLineInteractionCountUpdatetMojo in action");
 
@@ -165,20 +174,59 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
                     throw new MojoExecutionException("Could not parse DR line at line " + lineCount + ": " + drLine);
                 }
 
-                /*final int idx = drLine.indexOf( '\t' );
-                String uniprotAc = null;
-                if( idx != -1 ) {
-                    uniprotAc = drLine.substring( 0, idx );
-                } else {
-                    throw new MojoExecutionException("Could not parse DR line at line "+ lineCount +": " + drLine );
-                }*/
-
                 // query count of binary interactions
-                SearchResult<IntactBinaryInteraction> interactions = engine.search( uniprotAc, 0, Integer.MAX_VALUE );
+                SearchResult<IntactBinaryInteraction> interactions = engine.search( uniprotAc, 0, 0 );
+                int interactionCount = interactions.getTotalCount();
+                getLog().info( uniprotAc + " has " + interactionCount + " interactions..." );
 
+                // Check if out protein has splice variants and add their interaction count
+
+                DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+                IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+
+                final ProteinDao proteinDao = daoFactory.getProteinDao();
+                final List<ProteinImpl> proteins = proteinDao.getByUniprotId( uniprotAc );
+                Protein protein = null;
+                switch( proteins.size() ) {
+                    case 0:
+                        getLog().error( "Could not find protein for AC: " + uniprotAc );
+                        break;
+                    case 1:
+                        protein = proteins.iterator().next();
+                        break;
+                    default:
+                        getLog().error( "Found more than one protein ("+ proteins.size() +") for AC: " + uniprotAc );
+                        protein = proteins.iterator().next();
+                }
+
+                if( protein != null ) {
+                    // search for splice variants
+                    final List<ProteinImpl> isoforms = proteinDao.getSpliceVariants( protein );
+                    getLog().info( uniprotAc + " has " + isoforms.size() + " splice variants" );
+                    for ( ProteinImpl isoform : isoforms ) {
+                        final InteractorXref xref = ProteinUtils.getUniprotXref( isoform );
+                        if( xref != null ) {
+                            interactions = engine.search( xref.getPrimaryId(), 0, 0 );
+                            interactionCount += interactions.getTotalCount();
+
+                            getLog().info( uniprotAc + " has a splice variant ("+ xref.getPrimaryId() +") with " +
+                                           interactions.getTotalCount() + " interaction(s)" );
+                        } else {
+                            getLog().error( "Could not find a UniProt AC for splice variant: " + isoform.getAc() );
+                        }
+                    }
+                }
+
+                try {
+                    IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+                } catch ( IntactTransactionException e ) {
+                    e.printStackTrace();
+                    throw new MojoExecutionException("An error occured while updating the DR line interaction counts.", e);
+                }
                 // write to output file
-                String count = String.valueOf( interactions.getTotalCount() );
-                String updateDrLine = drLine.replace( "-", count );
+                String updateDrLine = drLine.replace( "-", String.valueOf( interactionCount ) );
+                getLog().info( drLine + "  ---("+ interactionCount +")-->  " + updateDrLine );
+
                 out.write( updateDrLine + "\n" );
             }
             in.close();
@@ -190,7 +238,6 @@ public class DrLineInteractionCountUpdatetMojo extends IntactAbstractMojo {
 
         getLog().info("Update completed, output file: "+ outputFile.getAbsolutePath() +".");
     }
-
 
     private String extractUniprotAcFromDrLine(String drLine) {
 
