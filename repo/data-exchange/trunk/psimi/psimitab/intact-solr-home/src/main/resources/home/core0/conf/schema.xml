@@ -308,7 +308,7 @@
 
      <!-- IntAct -->
      <field name="line" type="string" indexed="false" stored="true" required="true" multiValued="false"/>
-     <field name="mitab" type="text" indexed="true" stored="false" required="true" multiValued="false"/>
+     <field name="mitab" type="textTight" indexed="true" stored="false" required="true" multiValued="false"/>
 
      <field name="idA" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
      <field name="idB" type="text" indexed="true" stored="true" required="true" multiValued="true"/>
