@@ -144,8 +144,19 @@ public class IntactSolrIndexerTest {
         Collection<Object> expandedGoIds = doc.getFieldValues("go_expanded");
         Assert.assertEquals(3, expandedGoIds.size());
         Assert.assertTrue(expandedGoIds.contains("go:\"GO:0030246\"(carbohydrate binding)"));
+    }
 
+    @Test
+    public void testToSolrDocument_wildcard() throws Exception {
+        String mitabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
+                              "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
+                              "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
+                              "\tintact:EBI-446356\t-\tMI:0498(prey)\tMI:0496(bait)\tMI:0499(unspecified role)" +
+                              "\tMI:0499(unspecified role)\tinterpro:IPR004829|\tGO:012345\tMI:0326(protein)\tMI:0326(protein)\tyeast:4932\t-\t-";
+        
+        indexer.indexMitab(new ByteArrayInputStream(mitabLine.getBytes()), false);
 
+        assertCount(1, "Nefh*");
     }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {

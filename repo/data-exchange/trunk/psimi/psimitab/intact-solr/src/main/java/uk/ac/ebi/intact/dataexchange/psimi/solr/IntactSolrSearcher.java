@@ -44,7 +44,6 @@ public class IntactSolrSearcher {
 
     public SolrSearchResult search(String query, Integer firstResult, Integer maxResults) throws IntactSolrException {
         if (query == null) throw new NullPointerException("Null query");
-
         
         if ("*".equals(query)) query = "*:*";
 
@@ -64,6 +63,12 @@ public class IntactSolrSearcher {
     public SolrSearchResult search(SolrQuery originalQuery) throws IntactSolrException {
         SolrQuery query = originalQuery.getCopy();
         query.setFields(query.getFields()+", line, pkey");
+
+        // if using a wildcard query we convert to lower case
+        // as of http://mail-archives.apache.org/mod_mbox/lucene-solr-user/200903.mbox/%3CFD3AFB65-AEC1-40B2-A0A4-7E14A519AB05@ehatchersolutions.com%3E
+        if (query.getQuery().contains("*")) {
+            query.setQuery(query.getQuery().toLowerCase());
+        }
 
         QueryResponse queryResponse = executeQuery(query);
         return new SolrSearchResult(queryResponse);
