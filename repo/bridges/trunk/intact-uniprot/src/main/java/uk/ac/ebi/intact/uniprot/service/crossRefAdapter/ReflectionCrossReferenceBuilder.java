@@ -7,9 +7,8 @@ package uk.ac.ebi.intact.uniprot.service.crossRefAdapter;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
-import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.service.RuntimeUniprotServiceException;
+import uk.ac.ebi.kraken.interfaces.uniprot.DatabaseCrossReference;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -92,17 +91,23 @@ public class ReflectionCrossReferenceBuilder {
                 Method candidateMethod = methods[i];
                 String methodName = candidateMethod.getName();
 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "  - method = " + methodName );
-                }
                 if ( ( !methodName.equals( "getId" ) ) && methodName.startsWith( "get" ) &&
                      ( methodName.endsWith( "Id" ) || methodName.endsWith( "Number" ) ) ) {
-
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "      > looks like a candidate !!" );
-                    }
                     method = candidateMethod;
                     foundId = true;
+                }
+            }
+
+            // check for a name if still not found
+            if (!foundId) {
+                for (int i = 0; i < methods.length && !foundId; i++) {
+                    Method candidateMethod = methods[i];
+                    String methodName = candidateMethod.getName();
+
+                    if ((methodName.startsWith("get") && methodName.endsWith("Name"))) {
+                        method = candidateMethod;
+                        foundId = true;
+                    }
                 }
             }
 
