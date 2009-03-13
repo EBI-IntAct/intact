@@ -12,10 +12,10 @@ import uk.ac.ebi.intact.uniprot.model.*;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.ReflectionCrossReferenceBuilder;
 import uk.ac.ebi.intact.uniprot.service.crossRefAdapter.UniprotCrossReference;
 import uk.ac.ebi.kraken.interfaces.uniprot.*;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
-import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.*;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Field;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.ChainFeature;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureLocation;
 import uk.ac.ebi.kraken.interfaces.uniprot.features.FeatureType;
@@ -353,6 +353,12 @@ public class UniprotRemoteService extends AbstractUniprotService {
         for ( UniprotCrossReference xref : xrefs ) {
 
             String ac = xref.getAccessionNumber();
+
+            if (ac == null) {
+                log.error("No AC could be found for xref: "+xref);
+                continue;
+            }
+
             String db = xref.getDatabase();
 
             if ( getCrossReferenceSelector() != null && !getCrossReferenceSelector().isSelected( db ) ) {
