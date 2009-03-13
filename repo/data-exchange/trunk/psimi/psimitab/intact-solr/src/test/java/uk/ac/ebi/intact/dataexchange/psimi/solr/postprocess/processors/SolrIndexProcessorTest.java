@@ -15,12 +15,12 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.processors;
 
-import org.junit.Test;
 import org.junit.Assert;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.*;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.postprocess.relevancescore.IntactSolrRelevanceScoreCalculatorTest;
-
-import java.util.*;
+import org.junit.Ignore;
+import org.junit.Test;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.AbstractSolrJettyRunnableTestCase;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrSearcher;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.SolrSearchResult;
 
 /**
  * Class to test SolrPostProcessor.
@@ -29,6 +29,7 @@ import java.util.*;
  * @version $Id$
  * @since 2.0.3
  */
+@Ignore
 public class SolrIndexProcessorTest extends AbstractSolrJettyRunnableTestCase {
 
 
