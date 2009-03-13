@@ -64,6 +64,7 @@ public class IntactSolrSearcherTest {
         assertCount(197L, "experimentalRole:prey");
         assertCount(1L, "-biologicalRole:\"unspecified role\"");
         assertCount(1L, "properties:ENSG00000169047");
+        assertCount(183L, "experimentalRoleA:bait");
     }
 
     @Test
