@@ -39,7 +39,7 @@ public class InteractorConverterTest extends IntactBasicTestCase {
         final Component c = interaction.getComponents().iterator().next();
         c.getInteractor().setAc( "EBI-xxxxxx" );
 
-        Interactor interactor = converter.toMitab( c.getInteractor(), interaction );
+        Interactor interactor = converter.toMitab( c, interaction );
         assertNotNull( interactor );
 
     }
@@ -133,7 +133,7 @@ public class InteractorConverterTest extends IntactBasicTestCase {
         bi.getComponents().iterator().next().setInteractor( protein );
         
         final InteractorConverter converter = new InteractorConverter();
-        final ExtendedInteractor ei = converter.toMitab( protein, bi );
+        final ExtendedInteractor ei = converter.toMitab(  bi.getComponents().iterator().next(), bi );
 
         Assert.assertNotNull( ei );
 
@@ -159,7 +159,7 @@ public class InteractorConverterTest extends IntactBasicTestCase {
         bi.getComponents().iterator().next().setInteractor( protein );
 
         final InteractorConverter converter = new InteractorConverter();
-        final ExtendedInteractor ei = converter.toMitab( protein, bi );
+        final ExtendedInteractor ei = converter.toMitab(  bi.getComponents().iterator().next(), bi );
 
         Assert.assertNotNull( ei );
 
