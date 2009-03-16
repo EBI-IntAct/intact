@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.psimitab.converters;
 import psidev.psi.mi.tab.model.Alias;
 import psidev.psi.mi.tab.model.*;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Interactor;
 import static uk.ac.ebi.intact.model.CvAliasType.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
@@ -53,14 +54,16 @@ public class InteractorConverter {
     /**
      *  Converts the database IntactInteractor data model to intactpsimitab datamodel
      *
-     * @param intactInteractor The interactor to be converted
+     * @param component The component to be converted
      * @param interaction      Passed to get the components of the interaction
      * @return ExtendedInteractor with additional fields specific to Intact
      */
-    public ExtendedInteractor toMitab( uk.ac.ebi.intact.model.Interactor intactInteractor, Interaction interaction ) {
-        if ( intactInteractor == null ) {
-            throw new IllegalArgumentException( "Interactor must not be null" );
+    public ExtendedInteractor toMitab( uk.ac.ebi.intact.model.Component component, Interaction interaction ) {
+        if ( component == null ) {
+            throw new IllegalArgumentException( "component must not be null" );
         }
+
+        final Interactor intactInteractor = component.getInteractor();
 
         ExtendedInteractor tabInteractor = new ExtendedInteractor();
 
@@ -174,12 +177,11 @@ public class InteractorConverter {
         CrossReference interactorTypeA = cvObjectConverter.toCrossReference( intactInteractor.getCvInteractorType() );
         tabInteractor.setInteractorType( interactorTypeA );
 
-        // expermimental role
+        // expermimental role & parameters
         List<CrossReference> experimentRoles = new ArrayList<CrossReference>();
         List<CrossReference> biologicalRoles = new ArrayList<CrossReference>();
 
-        //set parameters
-        for ( Component component : interaction.getComponents() ) {
+        //earlier here there used to be  a forloop, where we get the components and iterate over it, now it is not needed as we have passed the component directly 
             if ( component.getInteractor().equals( intactInteractor ) ) {
                 biologicalRoles.add( cvObjectConverter.toCrossReference( component.getCvBiologicalRole() ) );
                 experimentRoles.add( cvObjectConverter.toCrossReference( component.getCvExperimentalRole() ) );
@@ -195,7 +197,7 @@ public class InteractorConverter {
                     tabInteractor.getParameters().add( parameter );
                 }
             }
-        }
+
 
         tabInteractor.setExperimentalRoles( experimentRoles );
         tabInteractor.setBiologicalRoles( biologicalRoles );

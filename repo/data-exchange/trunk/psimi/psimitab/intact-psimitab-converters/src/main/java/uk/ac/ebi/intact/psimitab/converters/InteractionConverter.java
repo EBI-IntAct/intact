@@ -69,13 +69,13 @@ public class InteractionConverter {
         }
 
         Iterator<Component> iterator = components.iterator();
-        uk.ac.ebi.intact.model.Interactor intactInteractorA = iterator.next().getInteractor();
-        uk.ac.ebi.intact.model.Interactor intactInteractorB = iterator.next().getInteractor();
+        final Component componentA = iterator.next();
+        final Component componentB = iterator.next();
 
         InteractorConverter interactorConverter = new InteractorConverter();
         
-        ExtendedInteractor interactorA = interactorConverter.toMitab( intactInteractorA, interaction );
-        ExtendedInteractor interactorB = interactorConverter.toMitab( intactInteractorB, interaction );
+        ExtendedInteractor interactorA = interactorConverter.toMitab( componentA, interaction );
+        ExtendedInteractor interactorB = interactorConverter.toMitab( componentB, interaction );
 
         IntactBinaryInteraction bi = new IntactBinaryInteraction( interactorA, interactorB );
 

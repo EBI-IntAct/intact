@@ -23,12 +23,10 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.util.SchemaUtils;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.Interaction;
-import uk.ac.ebi.intact.model.Interactor;
-import uk.ac.ebi.intact.model.ProteinImpl;
+import uk.ac.ebi.intact.model.*;
 
 import java.io.StringWriter;
+import java.util.List;
 
 /**
  * DatabaseSimpleMitabExporter Tester.
@@ -91,4 +89,51 @@ public class DatabaseSimpleMitabExporterTest extends IntactBasicTestCase {
             System.out.println( line );
         }
     }
+
+    @Test
+    public void exportInteractionsWithSameRoles() throws Exception {
+
+        Assert.assertEquals( 0, getDaoFactory().getInteractorDao( InteractorImpl.class ).countAll() );
+
+        Protein prot1 = getMockBuilder().createDeterministicProtein( "P1234", "p1" );
+        Interaction interaction1 = getMockBuilder().createInteraction( prot1 );
+        interaction1.setShortLabel( "p1-p1" );
+        final Component baitComponent = getMockBuilder().createComponentBait(interaction1, prot1 );
+        final Component preyComponent = getMockBuilder().createComponentPrey(interaction1, prot1 );
+
+        PersisterHelper.saveOrUpdate( baitComponent );
+        PersisterHelper.saveOrUpdate( preyComponent );
+
+        Assert.assertEquals( 1, getDaoFactory().getProteinDao().countAll() );
+        Assert.assertEquals( 3, getDaoFactory().getComponentDao().countAll() );
+
+        Protein prot2 = getMockBuilder().createDeterministicProtein( "Q3334", "q2" );
+        Protein prot3 = getMockBuilder().createDeterministicProtein( "Q3335", "q3" );
+        PersisterHelper.saveOrUpdate( prot2,prot3 );
+
+        Interaction interaction2 = getMockBuilder().createInteraction( prot2, prot3 );
+        interaction2.setShortLabel( "q2-q3" );
+
+        PersisterHelper.saveOrUpdate( interaction1,interaction2 );
+        Assert.assertEquals( 3, getDaoFactory().getProteinDao().countAll() );
+
+        //p1,q2,q3, and interaction p1-p1 and interaction q2-q2
+        Assert.assertEquals( 5, getDaoFactory().getInteractorDao( InteractorImpl.class ).countAll() );
+
+        final List<InteractorImpl> proteinList = getDaoFactory().getInteractorDao( InteractorImpl.class ).getAll();
+        StringWriter mitabWriter = new StringWriter();
+
+        exporter.exportAllInteractions( mitabWriter );
+
+        mitabWriter.close();
+
+        final String mitab = mitabWriter.toString();
+        final String[] lines = mitab.split( "\n" );
+        Assert.assertEquals( 3, lines.length );
+        for ( String line : lines ) {
+          Assert.assertFalse( line.contains("psi-mi:\"MI:0498\"(prey)|psi-mi:\"MI:0496\"(bait)"));
+        }
+
+    }
+
 }
