@@ -225,21 +225,30 @@ public class IntactSolrIndexer {
            solrServer.add(inputDocument);
 
         } catch (SolrServerException e) {
-            if (retriesLeft > 0) {
-                if (log.isErrorEnabled())
-                    log.error("Error adding document to the server. Retrying in 10 seconds. Times to retry: " + retriesLeft+". Line in process: "+line, e);
 
-                try {
-                    Thread.sleep(10 * 1000);
-                } catch (InterruptedException e1) {
-                    log.error("Interrupted thread", e1);
-                }
+            handleAddDocumentException( e, line, retriesLeft );
 
-                addSolrDocument(line, retriesLeft - 1);
+        } catch (SolrException e) {
 
-            } else {
-                throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
+            handleAddDocumentException( e, line, retriesLeft );
+        }
+    }
+
+    private void handleAddDocumentException( Exception e, String line, int retriesLeft ) throws IOException {
+        if (retriesLeft > 0) {
+            if (log.isErrorEnabled())
+                log.error("Error adding document to the server. Retrying in 10 seconds. Times to retry: " + retriesLeft + ". Line in process: "+line, e);
+
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e1) {
+                log.error("Interrupted thread", e1);
             }
+
+            addSolrDocument(line, retriesLeft - 1);
+
+        } else {
+            throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
         }
     }
 
