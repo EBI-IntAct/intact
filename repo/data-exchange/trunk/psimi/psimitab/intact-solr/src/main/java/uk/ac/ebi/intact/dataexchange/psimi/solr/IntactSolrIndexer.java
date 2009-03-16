@@ -19,6 +19,7 @@ import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.SolrException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
@@ -247,22 +248,31 @@ public class IntactSolrIndexer {
             solrServer.commit();
             if (optimize) solrServer.optimize();
 
-        } catch (SolrServerException e) {
-             if (retriesLeft > 0) {
-                if (log.isErrorEnabled())
-                    log.error("Error committing. Retrying in 10 seconds. Times to retry: " + retriesLeft, e);
+        } catch ( SolrServerException e ) {
 
-                try {
-                    Thread.sleep(10 * 1000);
-                } catch (InterruptedException e1) {
-                    log.error("Interrupted thread", e1);
-                }
+            handleCommitException( e, optimize, retriesLeft );
 
-                commitSolr(optimize, retriesLeft - 1);
+        } catch ( SolrException e ) {
 
-            } else {
-                throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
+            handleCommitException( e, optimize, retriesLeft );
+        }
+    }
+
+    private void handleCommitException( Exception e, boolean optimize, int retriesLeft ) throws IOException {
+        if (retriesLeft > 0) {
+            if (log.isErrorEnabled())
+                log.error("Error committing. Retrying in 10 seconds. Times to retry: " + retriesLeft, e);
+
+            try {
+                Thread.sleep(10 * 1000);
+            } catch (InterruptedException e1) {
+                log.error("Interrupted thread", e1);
             }
+
+            commitSolr(optimize, retriesLeft - 1);
+
+        } else {
+            throw new IntactSolrException("Cannot add the document to the server, after retrying " + timesToRetry + " times");
         }
     }
 
