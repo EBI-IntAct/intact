@@ -103,6 +103,15 @@ public class IntactSolrSearcherTest {
 
         Assert.assertEquals(129, searcher.searchInteractors(query, "MI:0326").size());
         Assert.assertEquals(5, searcher.searchInteractors(query, "MI:0328").size());
+
+        
+        final SolrSearchResult result1 = searcher.search( "GRB2", null, null );
+        assertEquals(3, result1.getTotalCount());
+
+        SolrQuery query2 = new SolrQuery("GRB2*");
+        final SolrSearchResult result2 = searcher.search( query2 );
+        assertEquals(3, result2.getTotalCount());
+
     }
 
 

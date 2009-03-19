@@ -62,7 +62,11 @@ public class IntactSolrSearcher {
 
     public SolrSearchResult search(SolrQuery originalQuery) throws IntactSolrException {
         SolrQuery query = originalQuery.getCopy();
-        query.setFields(query.getFields()+", line, pkey");
+        if(query.getFields()!=null){
+        query.setFields(query.getFields()+", mitab, pkey");
+        }else{
+        query.setFields("mitab, pkey" );
+        }
 
         // if using a wildcard query we convert to lower case
         // as of http://mail-archives.apache.org/mod_mbox/lucene-solr-user/200903.mbox/%3CFD3AFB65-AEC1-40B2-A0A4-7E14A519AB05@ehatchersolutions.com%3E

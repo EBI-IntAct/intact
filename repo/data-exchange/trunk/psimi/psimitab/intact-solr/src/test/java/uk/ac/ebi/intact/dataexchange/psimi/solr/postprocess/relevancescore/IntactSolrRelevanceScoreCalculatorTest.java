@@ -101,13 +101,13 @@ public class IntactSolrRelevanceScoreCalculatorTest {
 
         String score2 =  rsc.calculateScore( interaction );
         //BB: enzyme, enzyme target
-        Assert.assertEquals("BBBCDEblablklakl",score2);
+        Assert.assertEquals("EEEMNNblablklakl",score2);
 
         //Test with SolrInputDocument
         SolrDocumentConverter converter = new SolrDocumentConverter( );
         final SolrInputDocument inputDocument = converter.toSolrDocument( interaction );
         final String score3 = rsc.calculateScore( inputDocument, converter );
-        Assert.assertEquals("BBBCDEblablklakl",score3);
+        Assert.assertEquals("EEEMNNblablklakl",score3);
 
     }
 
