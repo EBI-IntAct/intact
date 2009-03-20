@@ -124,6 +124,7 @@ public class DatabaseSimpleMitabExporter {
 
                 // expand our interaction into binary
                 final Collection<Interaction> expandedInteractions = expansion.expand( interaction );
+                final boolean isExpanded = expandedInteractions.size() > 1;
                 if (log.isTraceEnabled()) log.trace( expansion.getName() + " generated "+ expandedInteractions.size() + " binary interactions");
 
                 for ( Interaction expandedInteraction : expandedInteractions ) {
@@ -132,7 +133,9 @@ public class DatabaseSimpleMitabExporter {
                     final IntactBinaryInteraction mitabInteraction = mitabInteractions.iterator().next();
 
                     //adding the expansion strategy here
-                    mitabInteraction.getExpansionMethods().add( expansion.getName() );
+                    if ( isExpanded ) {
+                        mitabInteraction.getExpansionMethods().add( expansion.getName() );
+                    }
 
                     flipInteractorsIfNecessary(mitabInteraction);
 

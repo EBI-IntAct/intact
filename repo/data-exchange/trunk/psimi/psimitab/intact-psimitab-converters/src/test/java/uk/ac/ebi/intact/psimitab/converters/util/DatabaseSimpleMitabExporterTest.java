@@ -86,9 +86,6 @@ public class DatabaseSimpleMitabExporterTest extends IntactBasicTestCase {
             Assert.assertTrue( line.contains( "(rigid)" ));
             Assert.assertTrue( line.contains( "(rogid)" ));
 
-            Assert.assertTrue( line.contains( "Spoke" ));
-            Assert.assertTrue( line.contains( "Spoke" ));
-
         }
     }
 
