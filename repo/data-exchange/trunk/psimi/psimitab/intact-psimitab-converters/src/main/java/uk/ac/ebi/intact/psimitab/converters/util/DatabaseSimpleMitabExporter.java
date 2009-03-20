@@ -131,6 +131,9 @@ public class DatabaseSimpleMitabExporter {
                     final Collection<IntactBinaryInteraction> mitabInteractions = converter.convert( expandedInteraction );
                     final IntactBinaryInteraction mitabInteraction = mitabInteractions.iterator().next();
 
+                    //adding the expansion strategy here
+                    mitabInteraction.getExpansionMethods().add( expansion.getName() );
+
                     flipInteractorsIfNecessary(mitabInteraction);
 
                     Interactor[] pair = findInteractors( expandedInteraction, mitabInteraction );
