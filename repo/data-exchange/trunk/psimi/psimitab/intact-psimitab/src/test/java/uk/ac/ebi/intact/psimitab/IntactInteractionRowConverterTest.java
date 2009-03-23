@@ -119,7 +119,7 @@ public class IntactInteractionRowConverterTest {
     @Test
     public void removeLineCharacterFromAnnotationTest() throws Exception {
         IntactInteractionRowConverter converter = new IntactInteractionRowConverter();
-        Annotation annotation = new Annotation( "comment", "test\ntext\n test\n\rtext" );
+        Annotation annotation = new Annotation( "comment", "test\ntext\n test\r\ntext" );
 
         Assert.assertTrue( annotation.getText().contains( "\n" ) );
         Assert.assertTrue( annotation.getText().contains( "\r" ) );
