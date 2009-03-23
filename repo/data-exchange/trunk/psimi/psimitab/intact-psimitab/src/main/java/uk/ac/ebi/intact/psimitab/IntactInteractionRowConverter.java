@@ -230,7 +230,7 @@ public class IntactInteractionRowConverter extends AbstractInteractionRowConvert
 
     protected String removeCarriageReturnFromText( String text ) {
         if ( text != null ) {
-            text = text.replaceAll( "\\n\\r|\\n", " " );
+            text = text.replaceAll( "\\r?\\n", " " );
         }
         return text;
     }

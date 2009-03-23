@@ -130,4 +130,38 @@ public class IntactInteractionRowConverterTest {
         Assert.assertFalse( field.getValue().contains( "\r" ) );
 
     }
+
+
+    @Test
+    public void removeLineCharacterFromAnnotationFromBigMitabFile() throws Exception {
+
+        String testString = "comment:\"Sequence:ACACAGAGAGAAAGGCTAAAGTTCTCTGGAGGATGTGGCTGCAGAGCCTGCTGCTCTTGG\n" +
+                            " GCACTGTGGCCTGCAGCATCTCTGCACCCGCCCGCTCGCCCAGCCCCAGCACGCAGCCCT\n" +
+                            " GGGAGCATGTGAATGCCATCCAGGAGGCCCGGCGTCTCCTGAACCTGAGTAGAGACACTG\n" +
+                            " CTGCTGAGATGAATGAAACAG\r\nTAGAAGTCATCTCAGAAATGTTTGACCTCCAGGAGCCGA\n" +
+                            " CCTGCCTACAGACCCGCCTGGAGCTGTACAAGCAGGGCCTGCGGGGCAGCCTCACCAAGC\n" +
+                            " TCAAGGGCCCCTTGACCATGATGGCCAGCCACTACAAGCAGCACTGCCCTCCAACCCCGG\n" +
+                            " AAACTTCCTGTGCAACCCAGATTATCACCTTTGAAAGTTTCAAAGAGAACCTGAAGGACT\r\n" +
+                            " TTCTGCTTGTCATCCCCTTTGACTGCTGGGAGCCAGTCCAGGAGTGAGACCGGCCAGATG\n" +
+                            " AGGCTGGCCAAGCCGGGGAGCTGCTCTCTCATGAAACAAGAGCTAGAAACTCAGGATGGT\n\n\n\n" +
+                            " CATCTTGGAGGGACCAAGGGGTGGGCCACAGCCATGGTGGGAGTGGCCTGGACCTGCCCT\n" +
+                            " GGGCCACACTGACCCTGATACAGGCATGGCAGAAGAATGGGAATATTTTATACTGACAGA\n" +
+                            " AATCAGTAATATTTATATATTTATATTTTTAAAATATTTATTTATTTATTTATTTAAGTT\n" +
+                            " CATATTCCATATTTATTCAAGATGTTTTACCGTAATAATTATTATTAAAAATATGCTTCT\n" +
+                            " A\"";
+
+        
+        Annotation annotation = new Annotation( "comment", testString );
+        Assert.assertTrue( annotation.getText().contains( "\n" ) );
+
+        IntactInteractionRowConverter converter = new IntactInteractionRowConverter();
+        Field field = converter.createFieldFromAnnotation( annotation );
+
+        Assert.assertFalse( field.getValue().contains( "\n" ) );
+        Assert.assertFalse( field.getValue().contains( "\r" ) );
+
+
+    }
+
+
 }
