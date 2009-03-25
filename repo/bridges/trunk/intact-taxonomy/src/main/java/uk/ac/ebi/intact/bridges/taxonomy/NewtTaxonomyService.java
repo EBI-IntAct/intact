@@ -73,6 +73,13 @@ public class NewtTaxonomyService implements TaxonomyService {
         if ( cacheEnabled ) {
             cache = new HashMap<Integer, TaxonomyTerm>();
         }
+
+        // TODO to bring back Newt to life, one could parse the RDF provided by the Taxonomy service:
+        //      eg. http://www.uniprot.org/taxonomy/9606.rdf
+
+        throw new UnsupportedOperationException( "The Newt service has been replaced by the UniProt Taxonomy " +
+                                                 "in March 2009, please use the OLS service instead: " +
+                                                 "uk.ac.ebi.intact.bridges.taxonomy.OLSTaxonomyService" );
     }
 
     /////////////////////

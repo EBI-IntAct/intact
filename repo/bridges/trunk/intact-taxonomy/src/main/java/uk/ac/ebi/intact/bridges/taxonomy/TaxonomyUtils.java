@@ -22,7 +22,7 @@ public class TaxonomyUtils {
      * @return true is the taxid is supported, false otherwise.
      */
     public static boolean isSupportedTaxid( int taxid ) {
-        // -3, -2, -1 and 0 are defined by PSI
+        // -5, -4, -3, -2, -1 and 0 are defined by PSI
         // 1 and above are in the NCBI taxonomy.
         return taxid >= -5 && taxid != 0;
     }
