@@ -59,19 +59,19 @@ public class IntactSolrIndexerTest {
     }
 
     @Test
-    public void testIndexMitabFromClasspath() throws Exception {
+    public void indexMitabFromClasspath() throws Exception {
         indexer.indexMitabFromClasspath("/mitab_samples/intact200.txt", true);
         assertCount(200, "*:*");
     }
 
     @Test
-    public void testIndexMitabFromClasspath2() throws Exception {
+    public void indexMitabFromClasspath2() throws Exception {
         indexer.indexMitabFromClasspath("/mitab_samples/intact200.txt", true, 10, 20);
         assertCount(20, "*:*");
     }
     
     @Test
-    public void testIndexMitabFromClasspath3() throws Exception {
+    public void indexMitabFromClasspath3() throws Exception {
         indexer.indexMitabFromClasspath("/mitab_samples/intact200.txt", true, 190, 20);
         assertCount(10, "*:*");
     }
@@ -97,7 +97,7 @@ public class IntactSolrIndexerTest {
     }
 
     @Test
-    public void testToSolrDocument_goExpansion() throws Exception {
+    public void toSolrDocument_goExpansion() throws Exception {
         indexer.indexOntologies(new OntologyMapping[] {
                 new OntologyMapping("go", IntactSolrIndexerTest.class.getResource("/META-INF/goslim_generic.obo"))
         });
@@ -124,7 +124,7 @@ public class IntactSolrIndexerTest {
     }
 
     @Test
-    public void testToSolrDocument_goDescriptionUpdate() throws Exception {
+    public void toSolrDocument_goDescriptionUpdate() throws Exception {
         indexer.indexOntologies(new OntologyMapping[] {
                 new OntologyMapping("go", IntactSolrIndexerTest.class.getResource("/META-INF/goslim_generic.obo"))
         });
@@ -147,7 +147,7 @@ public class IntactSolrIndexerTest {
     }
 
     @Test
-    public void testToSolrDocument_wildcard() throws Exception {
+    public void toSolrDocument_wildcard() throws Exception {
         String mitabLine = "uniprotkb:P16884\tuniprotkb:Q60824\tuniprotkb:Nefh(gene name)\tuniprotkb:Dst(gene name)" +
                               "\tintact:Nfh\tintact:Bpag1\tMI:0018(2 hybrid)\tLeung et al. (1999)\tpubmed:9971739" +
                               "\ttaxid:10116(rat)\ttaxid:10090(mouse)\tMI:0218(physical interaction)\tMI:0469(intact)" +
