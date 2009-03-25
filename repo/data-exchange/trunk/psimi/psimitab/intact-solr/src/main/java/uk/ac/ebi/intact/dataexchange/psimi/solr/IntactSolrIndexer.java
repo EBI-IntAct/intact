@@ -171,6 +171,8 @@ public class IntactSolrIndexer {
     public int indexMitab(BufferedReader reader, boolean hasHeader, Integer firstLine, Integer batchSize) throws IOException, IntactSolrException {
         int lineCount = 0;
 
+        if ( log.isDebugEnabled() ) log.debug( "indexMitab( reader, "+ hasHeader +", "+firstLine+", "+ batchSize +" )" );
+
         int first = (firstLine == null)? 0 : firstLine;
         int lastRes = (batchSize == null)? Integer.MAX_VALUE : batchSize;
         int end = first + lastRes;
@@ -179,6 +181,8 @@ public class IntactSolrIndexer {
             first++;
             if (end != Integer.MAX_VALUE) end++;
         }
+
+        if ( log.isDebugEnabled() ) log.debug( "Processing from " + first + ".." + end );
 
         int processed = 0;
 
@@ -204,6 +208,8 @@ public class IntactSolrIndexer {
                 }
 
                 if (lineCount >= end) {
+                    if ( log.isDebugEnabled() ) log.debug( "Reached the end of the chunk to be processed (lineCount:"+
+                                                           lineCount+", end:"+ end +"), stopping here. " );
                     break;
                 }
 
@@ -212,6 +218,8 @@ public class IntactSolrIndexer {
             }
 
             lineCount++;
+            if ( log.isDebugEnabled() ) log.debug("linecount: " + lineCount); 
+
         }
 
         commitSolr(true, timesToRetry);
