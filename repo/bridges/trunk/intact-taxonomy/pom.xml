@@ -23,6 +23,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.pride</groupId>
+            <artifactId>ols-client</artifactId>
+            <version>1.15</version>
+        </dependency>
     </dependencies>
 
 </project>
