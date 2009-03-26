@@ -20,7 +20,7 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <bridges.version>2.0.9-SNAPSHOT</bridges.version>
+        <bridges.version>2.0.9</bridges.version>
         <core.version>1.9.5</core.version>
     </properties>
 
