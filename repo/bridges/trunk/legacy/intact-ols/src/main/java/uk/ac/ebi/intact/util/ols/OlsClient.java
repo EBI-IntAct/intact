@@ -8,6 +8,7 @@ package uk.ac.ebi.intact.util.ols;
 import uk.ac.ebi.ook.web.services.Query;
 import uk.ac.ebi.ook.web.services.QueryService;
 import uk.ac.ebi.ook.web.services.QueryServiceLocator;
+import uk.ac.ebi.ook.Constants;
 
 import java.util.Map;
 
@@ -21,7 +22,7 @@ import java.util.Map;
 public class OlsClient {
 
     private static final String DEFAULT_URL = "http://www.ebi.ac.uk/ontology-lookup/services/OntologyQuery?wsdl";
-
+    private static final String URL =         "http://www.ebi.ac.uk/ontology-lookup/OntologyQuery.wsdl"; 
     /**
      * Stub to handle the search web service
      */
@@ -40,11 +41,9 @@ public class OlsClient {
             this.ontologyQuery = locator.getOntologyQuery();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException( e );
         }
-
-    } // constructor
-
+    }
 
     public Query getOntologyQuery() {
         return ontologyQuery;
@@ -54,14 +53,56 @@ public class OlsClient {
         //System.out.println("Version: "+new OlsClient().getOntologyQuery().getVersion());
         //System.out.println("Test2: "+new OlsClient().getOntologyQuery().getOntologyNames());
 
-        Map map = new OlsClient().getOntologyQuery().getTermChildren("MI:0001", "MI", 1, new int[]{0, 1, 2, 3, 4, 5, 6});
-        System.out.println(map);
+        final OlsClient client = new OlsClient();
 
-        Query ontologyQuery = new OlsClient().getOntologyQuery();
-        String exampleTerm = ontologyQuery.getTermById("MI:0001", "MI");
-        System.out.println(exampleTerm);
+//        Map map = client.getOntologyQuery().getTermChildren("MI:0001", "MI", 1, new int[]{0, 1, 2, 3, 4, 5, 6});
+//        System.out.println(map);
+//
+//        Query ontologyQuery = client.getOntologyQuery();
+//        String exampleTerm = ontologyQuery.getTermById("MI:0001", "MI");
+//        System.out.println(exampleTerm);
 
-        Term term = OlsUtils.getTerm("MI:0001", "MI");
-        System.out.println(term.getExactSynonim());
+        final String taxid = "10090";
+
+        final String eukariote = client.getOntologyQuery().getTermById( taxid, "NEWT" );
+        System.out.println( taxid+"'s name: " + eukariote );
+        
+        Map children = client.getOntologyQuery().getTermChildren( taxid, "NEWT", 2,
+                                                                  new int[]{
+                                                                          Constants.IS_A_RELATION_TYPE_ID,
+                                                                          Constants.PART_OF_RELATION_TYPE_ID
+                                                                  } );
+        System.out.println( "Children of "+ taxid +": " + children.size() );
+        for ( Object o : children.keySet() ) {
+            System.out.println( o + " -> " + children.get( o ) );
+        }
+
+        Map relationship = client.getOntologyQuery().getTermRelations( taxid, "NEWT" );
+        System.out.println( "Relationship of "+ taxid +": "+ relationship.size() );
+        for ( Object o : relationship.keySet() ) {
+            System.out.println( o + " -> " + relationship.get( o ) );
+        }
+
+
+        final Map metadata = client.getOntologyQuery().getTermMetadata( taxid, "NEWT" );
+        System.out.println( "Metadata of "+ taxid +": "+ metadata.size() );
+        for ( Object o : metadata.keySet() ) {
+            System.out.println( o + " -> " + metadata.get( o ) );
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////
+
+//        final String mi = client.getOntologyQuery().getTermById( "MI:0001", "MI" );
+//        System.out.println( "term = " + mi );
+//
+//        children = client.getOntologyQuery().getTermChildren( "MI:0001", "MI", 2,
+//                                                              new int[]{
+//                                                                      Constants.IS_A_RELATION_TYPE_ID,
+//                                                                      Constants.PART_OF_RELATION_TYPE_ID
+//                                                              } );
+//        System.out.println( "Children of \"MI:0001\":" + children.size() );
+//        for ( Object o : children.keySet() ) {
+//            System.out.println( o + " -> " + children.get( o ) );
+//        }
     }
 }
