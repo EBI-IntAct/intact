@@ -23,7 +23,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * TODO comment this
+ * Citexplore Client.
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -40,7 +40,7 @@ public class CitexploreClient {
         try {
             service = new WSCitationImplService(new URL(wsdlUrl), new QName("http://webservice.cdb.ebi.ac.uk/", "WSCitationImplService"));
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            throw new RuntimeException( e );
         }
     }
 
@@ -60,8 +60,8 @@ public class CitexploreClient {
 
     private ResultListBean searchCitationsByExternalId(String id) {
         try {
-            // SRC:med is needed as the externat ids are not unique. ex : extId1 coresponds to 2 publication in citexplore
-            // one from medline, one from CiteSeer.
+            // SRC:med is needed as the external ids are not unique.
+            // ex : extId1 coresponds to 2 publication in citexplore one from medline, one from CiteSeer.
             // Putting : core allow to get a lighter object just with the title, authors name...
             return getPort().searchCitations("EXT_ID:"+id+" SRC:med", "core", 0, null); //"core"
         } catch (QueryException_Exception e) {
