@@ -4,7 +4,7 @@
     <parent>
         <groupId>uk.ac.ebi.intact.maven</groupId>
         <artifactId>intact-hibernate-master</artifactId>
-        <version>27</version>
+        <version>29</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -21,7 +21,7 @@
     <properties>
         <currentVersion>${version}</currentVersion>
         <bridges.version>2.0.9-SNAPSHOT</bridges.version>
-        <core.version>1.9.4</core.version>
+        <core.version>1.9.5</core.version>
     </properties>
 
     <scm>
