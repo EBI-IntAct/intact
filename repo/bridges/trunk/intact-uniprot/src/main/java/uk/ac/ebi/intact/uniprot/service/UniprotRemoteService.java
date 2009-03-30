@@ -138,18 +138,10 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
     protected UniprotProtein buildUniprotProtein( UniProtEntry uniProtEntry ) {
 
-        int organismCount = uniProtEntry.getOrganisms().size();
-
-        if ( organismCount > 1 ) {
-            throw new IllegalStateException( "Entry: " + uniProtEntry.getUniProtId() +
-                    ": expected to find a single organism. Instead found " + organismCount );
-        }                               
-
         // Process OS, OC, OX
-        List<uk.ac.ebi.kraken.interfaces.uniprot.Organism> organisms = uniProtEntry.getOrganisms();
         List<NcbiTaxonomyId> taxids = uniProtEntry.getNcbiTaxonomyIds();
 
-        uk.ac.ebi.kraken.interfaces.uniprot.Organism organism = organisms.get( 0 );
+        final uk.ac.ebi.kraken.interfaces.uniprot.Organism organism = uniProtEntry.getOrganism();
         String organismName = organism.getScientificName().getValue();
         String entryTaxid = taxids.get( 0 ).getValue();
         Organism o = new Organism( Integer.parseInt( entryTaxid ), organismName );
