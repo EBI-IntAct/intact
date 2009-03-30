@@ -287,7 +287,7 @@ public class MockUniProtEntries {
         entry.setPrimaryUniProtAccession( factory.buildPrimaryUniProtAccession( "Q9VGX3" ) );
         entry.setSecondaryUniProtAccessions( buildSecondaryAcs( new String[]{"Q95S18", "Q9VGX1", "Q9VGX2", "Q9Y0F9"} ) );
         entry.setProteinDescription( buildDescription( "Protein anoxia up-regulated" ) );
-        entry.setOrganisms( Arrays.asList( buildOrganism( "Fruit fly", "Drosophila melanogaster" ) ) );
+        entry.setOrganism( buildOrganism( "Fruit fly", "Drosophila melanogaster" ) );
         entry.setNcbiTaxonomyIds( Arrays.asList( buildTaxid( "7227" ) ) );
         entry.setGenes( Arrays.asList( buildGene( "fau", NONE, new String[]{"CG6544"}, NONE ) ) );
 
