@@ -34,6 +34,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.collect.Maps;
+
 
 /**
  * Contains methods to build the CvObject from OBOSession object. Basically
@@ -66,7 +68,7 @@ public class CvObjectOntologyBuilder {
 
     private CvDatabase nonMiCvDatabase;
 
-    private HashMap<String, LinkedHashSet<String>> map4misWithMoreParent;
+    private Map<String, Set<String>> map4misWithMoreParent;
 
 
     static {
@@ -112,29 +114,24 @@ public class CvObjectOntologyBuilder {
         class2mi.put( "CvParameterUnit", "MI:0647" );
         class2mi.put( CvTissue.class.getSimpleName(), "IAX:0001");
         class2mi.put( CvCellType.class.getSimpleName(), "IAX:0002");
-
-
     }
 
 
     public CvObjectOntologyBuilder() {
-
-    }//end constructor
-
+    }
 
     public CvObjectOntologyBuilder( OBOSession oboSession_ ) {
         oboSession = oboSession_;
         this.nonMiCvDatabase = CvObjectUtils.createCvObject( IntactContext.getCurrentInstance().getInstitution(),
                                                              CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT );
-        this.processed = new HashMap<String, CvObject>();
-        this.map4misWithMoreParent = new HashMap<String, LinkedHashSet<String>>();
+        this.processed = Maps.newHashMap();
+        this.map4misWithMoreParent = Maps.newHashMap();
         map4misWithMoreParent = initializeMisWithMoreParents();
 
         if ( log.isDebugEnabled() ) {
             log.debug( "map4misWithMoreParent size " + map4misWithMoreParent.size() );
         }
     }
-
 
     /**
      * Sometimes Cvterms with more than one parent will
@@ -147,18 +144,14 @@ public class CvObjectOntologyBuilder {
      */
     private String[] getChildren4MisWithMoreParent( OBOObject oboObj ) {
 
-
         Collection<Link> childLinks = oboObj.getChildren();
         String[] mis = new String[childLinks.size()];
-
 
         int i = -1;
         for ( Link childLink1 : childLinks ) {
 
-
             Pattern p = Pattern.compile( "(MI:\\d+)-OBO_REL:is_a->(MI:\\d+)" );
             Matcher m = p.matcher( childLink1.getID() );
-
 
             if ( m.matches() ) {
 
@@ -168,13 +161,10 @@ public class CvObjectOntologyBuilder {
                     mis[++i] = childObj.getID();
                 }
             }
-
-
-        } //end for
-
+        } 
 
         return mis;
-    }   //end method
+    }   
 
 
     protected boolean isHavingMoreThanOneParent( String id ) {
@@ -183,8 +173,7 @@ public class CvObjectOntologyBuilder {
         }
 
         return map4misWithMoreParent.get( id ) != null;
-
-    }//end method
+    }
 
 
     private <T extends CvObject> Class<T> getRootClass( String className ) {
@@ -205,7 +194,6 @@ public class CvObjectOntologyBuilder {
         Class<T> cvClass = null;
         try {
 
-
             if ( log.isTraceEnabled() ) log.trace( "ID    ->" + oboObj.getID() + "   Name ->" + oboObj.getName() );
 
             /*first check if it has more than one parents
@@ -219,7 +207,7 @@ public class CvObjectOntologyBuilder {
                 String[] children = getChildren4MisWithMoreParent( oboObj );
 
                 for ( String child : children ) {
-                    LinkedHashSet<String> linkedSet4child = map4misWithMoreParent.get( oboObj.getID() );
+                    Set<String> linkedSet4child = map4misWithMoreParent.get( oboObj.getID() );
 
                     LinkedHashSet<String> newLinkedSet4child = new LinkedHashSet<String>();
                     newLinkedSet4child.addAll( linkedSet4child );
@@ -237,17 +225,15 @@ public class CvObjectOntologyBuilder {
                *
                * */
                 String rootclass = null;
-                LinkedHashSet<String> linkedSet = map4misWithMoreParent.get( oboObj.getID() );
+                Set<String> linkedSet = map4misWithMoreParent.get( oboObj.getID() );
                 if ( linkedSet != null && linkedSet.size() > 0 ) {
                     rootclass = ( String ) linkedSet.toArray()[0];
                     cvClass = getRootClass( rootclass );
-
                 }
 
                 if ( rootclass != null ) {
                     linkedSet.remove( rootclass );
                 }
-
 
                 if ( log.isTraceEnabled() ) {
                     log.trace( "More than One Parent True " + oboObj.getID() );
@@ -260,7 +246,6 @@ public class CvObjectOntologyBuilder {
                 if ( cvClass == null ) {
                     cvClass = findCvClassforMI( oboObj.getID() );
                     String processedKey_ = createCvKey( cvClass, oboObj.getID() );
-
 
                     if ( processed.containsKey( processedKey_ ) ) {
                         return ( T ) processed.get( processedKey_ );
@@ -275,13 +260,11 @@ public class CvObjectOntologyBuilder {
             //if CvClass is null then CvTopic.class is taken as default
             if ( cvClass == null ) {
                 cvClass = ( Class<T> ) CvTopic.class;
-
             }
             if ( log.isTraceEnabled() ) log.trace( "cvClass ->" + cvClass.getName() );
 
             //Checks if the given object is already mi2cv. If so, returns the CvObject
             String processedKey = createCvKey( cvClass, oboObj.getID() );
-
 
             if ( processed.containsKey( processedKey ) ) {
                 return ( T ) processed.get( processedKey );
@@ -326,11 +309,9 @@ public class CvObjectOntologyBuilder {
                     xref = toXref( cvObject, cvtermXref.getId(), cvtermXref.getQualifier(), cvtermXref.getDatabase() );
                     if ( xref != null ) {
                         cvObject.addXref( xref );
-                    }//end inner if
-
-                }//end for
-            }  //end elseif
-            else {
+                    }
+                }
+            } else {
                 log.debug( "No dbxreference" );
             }
 
@@ -361,8 +342,8 @@ public class CvObjectOntologyBuilder {
                                 suffixString = suffixString + "\n" + defArray[i];
                             }
                         }
-
                     }
+
                     if ( suffixString.startsWith( "OBSOLETE" ) || oboObj.isObsolete() ) {
 
 
@@ -372,6 +353,7 @@ public class CvObjectOntologyBuilder {
                         }
                         CvTopic definitionTopicDef = CvObjectUtils.createCvObject( institution, CvTopic.class, null, CvTopic.DEFINITION );
                         cvObject.addAnnotation( new Annotation( institution, definitionTopicDef, prefixString ) );
+                    
                     } else if ( suffixString.startsWith( "http" ) ) {
 
                         Annotation annot = toAnnotation( CvTopic.URL, suffixString );
@@ -388,8 +370,7 @@ public class CvObjectOntologyBuilder {
                     }
 
 
-                }//end outer if
-                else {
+                } else {
 
                     CvTopic definitionTopic = CvObjectUtils.createCvObject( institution, CvTopic.class, null, CvTopic.DEFINITION );
                     cvObject.addAnnotation( new Annotation( institution, definitionTopic, oboObj.getDefinition() ) );
@@ -417,12 +398,11 @@ public class CvObjectOntologyBuilder {
                     if ( annot != null ) {
                         cvObject.addAnnotation( annot );
                     }
-                } //end if
-
-            }  //end for
+                } 
+            }  
 
             /********************************
-             *comment
+             * comment
              ********************************/
             if ( oboObj.getComment() != null && oboObj.getComment().length() > 0 ) {
 
@@ -433,7 +413,7 @@ public class CvObjectOntologyBuilder {
             } //end comment
 
             /********************************
-             *Alias
+             * Alias
              ********************************/
             Set<Synonym> syn = oboObj.getSynonyms();
             CvObjectAlias alias_;
@@ -473,21 +453,19 @@ public class CvObjectOntologyBuilder {
                                     }
 
                                     dagObject.addChild((CvDagObject) toCvObject(childObj, categories));
-                                } //end if
-
-                            } //end for
-
-                        }//end for
-                    } //end else
-                } //end for
-            }//end if
+                                } 
+                            } 
+                        }
+                    } 
+                } 
+            }
 
         } catch ( Exception ex ) {
             throw new IntactException( "Exception converting to CvObject from OBOObject: " + oboObj.getID(), ex );
         }
 
         return cvObject;
-    }    //end method
+    }    
 
     private int getPubmedIndex( Object[] dbxrefArray ) {
         int index = 0;
@@ -495,13 +473,11 @@ public class CvObjectOntologyBuilder {
             Dbxref defDbxref = ( Dbxref ) dbxrefArray[i];
 
             if ( defDbxref.getDatabase().equalsIgnoreCase( "PMID" ) ) {
-
                 return i;
             }
-
-        }//end for
+        }
         return index;
-    } //end method
+    } 
 
     private boolean checkIfUniqueResid( Object[] dbxrefArray ) {
         int countResid = 0;
@@ -509,12 +485,11 @@ public class CvObjectOntologyBuilder {
             Dbxref defDbxref = ( Dbxref ) aDbxrefArray;
             if ( defDbxref.getDatabase().equalsIgnoreCase( "RESID" ) ) {
                 countResid++;
-            }//end if
-
-        }//end for
+            }
+        }
         return countResid == 1;
 
-    }//end method
+    }
 
     private <T extends CvObject> String createCvKey( Class<T> cvClass, String primaryId ) {
         return cvClass.getSimpleName() + ":" + primaryId;
@@ -527,7 +502,6 @@ public class CvObjectOntologyBuilder {
     * */
     protected <T extends CvObject> Class<T> findCvClassforMI( String id ) {
 
-
         Class<T> cvClass;
         cvClass = mi2Class.get( id );
         if ( cvClass != null ) {
@@ -537,27 +511,22 @@ public class CvObjectOntologyBuilder {
             OBOObject oboObj = ( OBOObject ) oboSession.getObject( id );
             Collection<Link> parentLinks = oboObj.getParents();
 
-
             for ( Link parentLink : parentLinks ) {
 
                 String parentId = parentLink.getParent().getID();
 
                 return findCvClassforMI( parentId );
-
-            }  //end for
-
+            }  
         }
         return cvClass;
-    } //end method
+    } 
 
-
-    protected <T extends CvObject> HashMap<String, LinkedHashSet<String>> initializeMisWithMoreParents() {
+    protected <T extends CvObject> Map<String, Set<String>> initializeMisWithMoreParents() {
 
         for ( IdentifiedObject identifiedObject : oboSession.getObjects() ) {
 
             if ( identifiedObject instanceof OBOObject ) {
                 OBOObject oboObj = ( OBOObject ) identifiedObject;
-
 
                 Class<T> cvClass;
                 //cvClass = mi2Class.get( id );
@@ -567,7 +536,7 @@ public class CvObjectOntologyBuilder {
 
                 if ( parentLinks != null && parentLinks.size() > 1 ) {
 
-                    LinkedHashSet<String> hashSet = new LinkedHashSet<String>();
+                    Set<String> hashSet = new LinkedHashSet<String>();
 
                     for ( Link parentLink : parentLinks ) {
 
@@ -581,14 +550,11 @@ public class CvObjectOntologyBuilder {
                         hashSet.add(cvClass.getSimpleName());
                         //parentMap.put(miIdentifierRight+":"+cvClass.getSimpleName(),id);
                         map4misWithMoreParent.put(oboObj.getID(), hashSet);
-
-
-                    }  //end for
-
-                }//end of if
-
-            }//end of if
-        }//end for
+                    }  
+                }
+            }
+        }
+        
         int counter = 0;
         List<String> falseList = new ArrayList<String>();
         for ( String key : map4misWithMoreParent.keySet() ) {
@@ -599,16 +565,15 @@ public class CvObjectOntologyBuilder {
             } else {
                 falseList.add( key );
             }
-        } //end for
+        } 
 
         for ( String falseKey : falseList ) {
             map4misWithMoreParent.remove( falseKey );
         }
         log.debug( "More than two parents count " + counter );
 
-
         return map4misWithMoreParent;
-    } //end method
+    } 
 
 
     /**
@@ -686,12 +651,10 @@ public class CvObjectOntologyBuilder {
             throw new IllegalArgumentException( "Unknown database: " + defDbxref.getDatabaseID() + " (" + defDbxref.getDatabase() + ")" );
         }
 
-
         if ( log.isTraceEnabled() )
             log.trace( "Returning identifier:  " + identifier + "  " + "  database: " + database + "  qualifier:  " + qualifier );
         return new CvTermXref( identifier, database, qualifier );
-
-    }   //end method
+    }   
 
   /**
    * This method returns the shortLabel for the term
@@ -712,7 +675,7 @@ public class CvObjectOntologyBuilder {
                     //another check just to reduce the length to 256 characters--rarely happens
                     if ( shortLabel != null && shortLabel.length() > AnnotatedObject.MAX_SHORT_LABEL_LEN) {
                         shortLabel = shortLabel.substring( 0, AnnotatedObject.MAX_SHORT_LABEL_LEN );
-                    }//end if
+                    }
                 }
             }
         }
@@ -746,7 +709,7 @@ public class CvObjectOntologyBuilder {
         }
 
         return idXref;
-    } //end method
+    } 
 
 
     public Collection<IdentifiedObject> getAllMIOBOObjects() {
@@ -766,13 +729,13 @@ public class CvObjectOntologyBuilder {
                         obsoleteCounter++;
 
                     allMIObjects.add( identifiedObject );
-                }//end if
-            }  //end if
-        }//end for
+                }
+            }  
+        }
 
         log.info( "obsoleteCounter  " + obsoleteCounter );
         return allMIObjects;
-    }//end method
+    }
 
     public Collection<IdentifiedObject> getAllOBOObjects() {
         Collection<IdentifiedObject> allOBOObjects = oboSession.getObjects();
@@ -786,7 +749,7 @@ public class CvObjectOntologyBuilder {
             }
         }
         return allOBOObjectsCol;
-    } //end method
+    } 
 
     public Collection<IdentifiedObject> getObsoleteOBOObjects() {
         Collection<IdentifiedObject> ObsoloteOboObjects = new ArrayList<IdentifiedObject>();
@@ -799,12 +762,12 @@ public class CvObjectOntologyBuilder {
                     String defText = obj.getDefinition();
                     if ( obj.isObsolete() || defText.contains( "\nOBSOLETE" ) ) {
                         ObsoloteOboObjects.add( identifiedObject );
-                    } //end if
-                } //end if
-            } //end if
-        } //end for
+                    } 
+                } 
+            } 
+        } 
         return ObsoloteOboObjects;
-    }//end of method
+    }
 
     public Collection<IdentifiedObject> getInvalidOBOObjects() {
         Collection<IdentifiedObject> invalidOboObjects = new ArrayList<IdentifiedObject>();
@@ -817,13 +780,10 @@ public class CvObjectOntologyBuilder {
                     if ( log.isTraceEnabled() )
                         log.trace( "invalidCv## " + identifiedObject.getID() + "  " + identifiedObject.getName() );
                 }
-
-            } //end if
-
-        } //end for
+            } 
+        } 
         return invalidOboObjects;
-    }//end of method
-
+    }
 
     public Collection<IdentifiedObject> getOrphanOBOObjects() {
         Collection<IdentifiedObject> orphanOboObjects = new ArrayList<IdentifiedObject>();
@@ -839,14 +799,12 @@ public class CvObjectOntologyBuilder {
                         if ( !identifiedObject.getID().startsWith( MI_ROOT_IDENTIFIER ) ) {
                             orphanOboObjects.add( identifiedObject );
                         }
-
-                    } //end if
-
-                } //end if
-            } //end if
-        } //end for
+                    } 
+                } 
+            } 
+        } 
         return orphanOboObjects;
-    }//end of method
+    }
 
     public Collection<IdentifiedObject> getRootOBOObjects( OboCategory... categories ) {
         ArrayList<IdentifiedObject> rootOboObjects = new ArrayList<IdentifiedObject>();
@@ -863,11 +821,10 @@ public class CvObjectOntologyBuilder {
                     rootOboObjects.add( immediateChildOfRoot );
                 }
             }
-
-        } //end for
+        } 
         log.debug( "oboObjects " + rootOboObjects.size() );
         return rootOboObjects;
-    }//end method
+    }
 
 
     private CvObjectXref toXref( CvObject cvObj, String identifier, String qualifier, String database ) {
@@ -890,7 +847,6 @@ public class CvObjectOntologyBuilder {
         CvDatabase databaseCv = getCvObjectByLabel( CvDatabase.class, database );
 
         if ( log.isTraceEnabled() ) log.trace( "qualifierCv  " + qualifierCv + "   databaseCv  " + databaseCv );
-
 
         if ( qualifierCv == null || databaseCv == null ) {
             if ( CvDatabase.PUBMED.equalsIgnoreCase( database ) ) {
@@ -922,23 +878,12 @@ public class CvObjectOntologyBuilder {
                 log.error( "Unexpected combination qualifier-database found on xref: " + qualifier + " - " + database );
                 return null;
             }
-
-//            if ( qualifierCv != null ) {
-//                String processedKey = createCvKey( CvXrefQualifier.class, qualifierCv.getMiIdentifier() );
-//                mi2cv.put( processedKey, qualifierCv );
-//            }
-//
-//            if ( databaseCv != null ) {
-//                String processedKey = createCvKey( CvDatabase.class, databaseCv.getMiIdentifier() );
-//                mi2cv.put( processedKey, databaseCv );
-//            }
-
-        }//end if
+        }
 
         if ( log.isTraceEnabled() )
             log.trace( "Returning from toXref: identifier_: " + identifier + "  qualifierCv: " + qualifierCv + " databaseCv  " + databaseCv );
         return XrefUtils.createIdentityXref( cvObj, identifier, qualifierCv, databaseCv );
-    } //end method
+    } 
 
 
     protected Alias toAlias( CvObject cvobj, String aliasName ) {
@@ -948,14 +893,10 @@ public class CvObjectOntologyBuilder {
         if ( alias == null ) {
             if ( log.isTraceEnabled() ) log.trace( "alias ==null creating new" );
             alias = CvObjectUtils.createCvObject( owner, CvAliasType.class, CvAliasType.GO_SYNONYM_MI_REF, CvAliasType.GO_SYNONYM );
-
-//            String processedKey = createCvKey( CvAliasType.class, alias.getMiIdentifier() );
-//            mi2cv.put( processedKey, alias );
         }
 
         return AliasUtils.createAlias( cvobj, aliasName, alias );
-
-    } //end alias
+    }
 
     protected Annotation toAnnotation( String cvTopic, String annotation ) {
         Institution owner = IntactContext.getCurrentInstance().getInstitution();
@@ -984,7 +925,7 @@ public class CvObjectOntologyBuilder {
             log.debug( "Returning from toAnnotation: owner: " + owner + "  topic: " + topic + " annotation  " + annotation );
 
         return new Annotation( owner, topic, annotation );
-    }//end method
+    }
 
 
     protected <T extends CvObject> T getCvObjectByLabel( Class<T> cvObjectClass, String label ) {
@@ -997,16 +938,14 @@ public class CvObjectOntologyBuilder {
 
         for ( CvObject cvObject : processed.values() ) {
 
-
             if ( cvObjectClass.isAssignableFrom( cvObject.getClass() ) && label.equals( cvObject.getShortLabel() ) ) {
-
                 return ( T ) cvObject;
             }
         }
 
         return IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
                 .getCvObjectDao( cvObjectClass ).getByShortLabel( cvObjectClass, label );
-    }  //end method
+    }  
 
 
     /**
@@ -1016,7 +955,6 @@ public class CvObjectOntologyBuilder {
      */
     public Collection<CvDagObject> getAllValidCvs() {
 
-
         List<CvObject> validCvs = new ArrayList<CvObject>();
         Collection<IdentifiedObject> rootOboObjects = getRootOBOObjects();
 
@@ -1024,8 +962,7 @@ public class CvObjectOntologyBuilder {
             OBOObject rootObject = ( OBOObject ) rootOboObject;
             CvObject cvObjectRoot = toCvObject( rootObject );
             validCvs.add( cvObjectRoot );
-
-        }//end for
+        }
 
         if ( log.isDebugEnabled() ) log.debug( "validCvs size :" + validCvs.size() );
 
@@ -1035,9 +972,7 @@ public class CvObjectOntologyBuilder {
         }
 
         return new HashSet<CvDagObject>( allValidCvs );
-
-
-    } //end of method
+    } 
 
     /**
      * @param oboObject  The current OBOObject instance
@@ -1050,16 +985,13 @@ public class CvObjectOntologyBuilder {
         if ( categories == null || categories.length == 0 )
             return true;
 
-
         for ( OboCategory category : categories ) {
             for ( TermCategory oboCat : oboObject.getCategories() ) {
                 if ( category.getName().equalsIgnoreCase( oboCat.getName() ) ) {
                     return true;
-                } //end if
-
-            } //end for
-
-        }//end for
+                } 
+            } 
+        }
         return false;
     }
 
@@ -1082,11 +1014,9 @@ public class CvObjectOntologyBuilder {
             CvObject cvObjectRoot = toCvObject( rootObject, categories );
 
             rootsAndChildren.add( cvObjectRoot );
-        }//end for
+        }
 
-        //handle the cvobjects with more than one parent here
-
-
+        // handle the cvobjects with more than one parent here
         if ( log.isDebugEnabled() ) log.debug( "Roots and children size :" + rootsAndChildren.size() );
 
         for ( CvObject validCv : rootsAndChildren ) {
@@ -1102,7 +1032,7 @@ public class CvObjectOntologyBuilder {
                     allCvs.addAll( itselfAndChildrenAsList( ( CvDagObject ) cvOrphan ) );
                 }
             }
-        }//end for
+        }
 
         allCvs = new ArrayList<CvDagObject>( new HashSet<CvDagObject>( allCvs ) );
 
@@ -1121,8 +1051,7 @@ public class CvObjectOntologyBuilder {
 
         //Order by Putting CvXrefs first and CvDatabases next followed by all other topics
         return getAllOrderedCvs( orderedList );
-
-    } //end of method
+    }
 
 
     public List<CvDagObject> getAllOrderedCvs( List<CvDagObject> allCvs ) {
@@ -1140,7 +1069,7 @@ public class CvObjectOntologyBuilder {
             } else {
                 otherList.add( cvDag );
             }
-        }//end for
+        }
         //add in an order
         orderedList.addAll( xrefList );
         orderedList.addAll( databaseList );
@@ -1167,7 +1096,7 @@ public class CvObjectOntologyBuilder {
         }
 
         return orderedList;
-    }//end of method
+    }
 
     private List<CvDagObject> itselfAndChildrenAsList( CvDagObject cv ) {
         List<CvDagObject> itselfAndChildren = new ArrayList<CvDagObject>();
@@ -1178,7 +1107,7 @@ public class CvObjectOntologyBuilder {
         }
 
         return itselfAndChildren;
-    }  //end method
+    }  
 
     public int getInvalidTermCount() {
         //Invalid Terms
@@ -1187,10 +1116,10 @@ public class CvObjectOntologyBuilder {
             if ( invalidObo instanceof OBOObject ) {
                 invalidCounter++;
             }
-        } //
+        }
 
         return invalidCounter;
-    }  //end method
+    }  
 
     public List<CvObject> getOrphanCvObjects() {
 
@@ -1201,11 +1130,10 @@ public class CvObjectOntologyBuilder {
                 CvObject cvOrphan = toCvObject( orphanObj );
                 orphanList.add( cvOrphan );
             }
-        }//end for
+        }
         //until here
         return orphanList;
-
-    } //end method
+    }
 
     private class CvResolverVisitor extends BaseIntactVisitor {
 
@@ -1214,8 +1142,6 @@ public class CvObjectOntologyBuilder {
         private CvResolverVisitor( Map<String, CvObject> mi2cv ) {
             this.mi2cv = mi2cv;
         }
-
-
 
         @Override
         public void visitAlias( Alias alias ) {
@@ -1281,4 +1207,4 @@ public class CvObjectOntologyBuilder {
             }
         }
     }
-}//end class
+}
