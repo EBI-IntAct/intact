@@ -26,6 +26,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * TODO comment that class header
@@ -125,5 +126,60 @@ public class IntactSolrSearcherTest {
     private void indexFromClasspath(String resource, boolean hasHeader) throws IOException, IntactSolrException {
         IntactSolrIndexer indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
         indexer.indexMitabFromClasspath(resource, hasHeader);
+    }
+
+    @Test
+    public void compare_facetted_nonfacetted_interactors_search() throws Exception {
+        assertCount( 0L, "*:*" );
+
+        indexFromClasspath( "/mitab_samples/p20053.txt", true );
+
+        SolrQuery query = new SolrQuery( "P20053" );
+
+        IntactSolrSearcher searcher = new IntactSolrSearcher( solrJettyRunner.getSolrServer( CoreNames.CORE_PUB ) );
+
+        Assert.assertEquals( 34, searcher.searchInteractors( query, "MI:0326" ).size() );
+
+        SolrQuery queryFacetted = new SolrQuery( "P20053" )
+                .setRows( 0 )
+                .setFacet( true )
+                .setFacetMinCount( 1 )
+                .setFacetLimit( Integer.MAX_VALUE )
+                .addFacetField( "intact_byInteractorType_mi0326" )
+                .addFacetField( "intact_byInteractorType_mi0328" );
+
+        QueryResponse response = solrJettyRunner.getSolrServer( CoreNames.CORE_PUB ).query( queryFacetted );
+
+        boolean ebi340 = false;
+        boolean ebi421 = false;
+        FacetField ffProt = response.getFacetField( "intact_byInteractorType_mi0326" );
+        if ( ffProt != null && ffProt.getValues() != null ) {
+            for ( FacetField.Count c : ffProt.getValues() ) {
+                if ( c.getName().equals( "EBI-340" ) && c.getCount() == 8 ) {
+                    ebi340 = true;
+                }
+                if ( c.getName().equals( "EBI-421" ) && c.getCount() == 5 ) {
+                    ebi421 = true;
+                }
+            }
+        }
+        Assert.assertTrue( ebi340 );
+        Assert.assertTrue( ebi421 );
+
+        SolrQuery queryNonfacetEbi340 = new SolrQuery( "P20053 +EBI-340" );
+        final SolrSearchResult nonFacetResult1 = searcher.search( queryNonfacetEbi340 );
+        Assert.assertEquals( 8, nonFacetResult1.getTotalCount() );
+
+        SolrQuery queryNonfacetEbi421 = new SolrQuery( "P20053 +EBI-421" );
+        final SolrSearchResult nonFacetResult2 = searcher.search( queryNonfacetEbi421 );
+        Assert.assertEquals( 5, nonFacetResult2.getTotalCount() );
+
+        SolrQuery queryNonfacetEbi340_with_id = new SolrQuery( "P20053 +id:EBI-340" );
+        final SolrSearchResult nonFacetResult3 = searcher.search( queryNonfacetEbi340_with_id );
+        Assert.assertEquals( 8, nonFacetResult3.getTotalCount() );
+
+        SolrQuery queryNonfacetEbi421_with_id = new SolrQuery( "P20053 +id:EBI-421" );
+        final SolrSearchResult nonFacetResult4 = searcher.search( queryNonfacetEbi421_with_id );
+        Assert.assertEquals( 5, nonFacetResult4.getTotalCount() );
     }
 }
