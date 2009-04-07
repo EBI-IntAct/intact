@@ -225,7 +225,7 @@ public class CvObjectOntologyBuilderTest {
 
         Collection<String> drugablemis = new ArrayList<String>();
         for ( CvDagObject cvDag : allDrugableCvs ) {
-            if ( log.isDebugEnabled() ) log.debug( cvDag.getMiIdentifier() + " -> " + cvDag.getShortLabel() );
+            if ( log.isDebugEnabled() ) log.debug( cvDag.getIdentifier() + " -> " + cvDag.getShortLabel() );
             OBOObject drugable = ( OBOObject ) oboSession.getObject( cvDag.getMiIdentifier() );
             Assert.assertTrue( ontologyBuilder.checkIfCategorySubset( drugable, oboCatDrug ) );
             drugablemis.add( drugable.getID() );

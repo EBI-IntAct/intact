@@ -196,11 +196,11 @@ public class CvObjectOntologyBuilder {
 
             if ( log.isTraceEnabled() ) log.trace( "ID    ->" + oboObj.getID() + "   Name ->" + oboObj.getName() );
 
-            /*first check if it has more than one parents
-            * it true, get all the children
-            * and add to the map4misWithMoreParent but with a new
-            * LinkedHashset same as that of the parent
-            */
+            /* first check if it has more than one parents
+             * it true, get all the children
+             * and add to the map4misWithMoreParent but with a new
+             * LinkedHashset same as that of the parent
+             */
 
             if ( this.isHavingMoreThanOneParent( oboObj.getID() ) ) {
 

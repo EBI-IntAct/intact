@@ -61,7 +61,7 @@ public class CvExporter {
         oboSession = new OBOSessionImpl( objFactory );
 
         cvToOboCache = new HashMap<CvClassIdentifier,OBOClass>();
-    } //end constructor
+    }
 
     /**
      * Converts a list of Cvs to list of OBOObjects and add it to the OBOSession
@@ -69,7 +69,6 @@ public class CvExporter {
      * @param allCvs List of all Cvs
      * @return OBOSession objects with all Cvs converted to OBOObject and added to the OBOsession
      */
-
     public OBOSession convertToOBOSession( List<CvDagObject> allCvs ) {
 
         List<CvDagObject> allUniqCvs;
@@ -113,7 +112,7 @@ public class CvExporter {
 
 
         return oboSession;
-    }//end method
+    }
 
     public void exportToFile(List<? extends CvObject> cvObjects, File oboFileToExport) throws IOException, DataAdapterException {
         OBOSession oboSession = convertToOBOSession((List<CvDagObject>) cvObjects);
@@ -141,8 +140,7 @@ public class CvExporter {
 
     protected void addObject( OBOClass oboObj ) {
         oboSession.addObject( oboObj );
-    } //end method
-
+    }
 
     /**
      * The OBOFileAdapter writes the OBOSession object in to the given file specified
@@ -158,10 +156,7 @@ public class CvExporter {
         // to remove some double slashes created by the OBO writer.
         File tempFile = File.createTempFile("obofile-", ".obo");
 
-        final OBOFileAdapter.OBOAdapterConfiguration config = new OBOFileAdapter.OBOAdapterConfiguration();
-        config.setWritePath( tempFile.getAbsolutePath() );
-        OBOFileAdapter adapter = new OBOFileAdapter();
-        adapter.doOperation( OBOFileAdapter.WRITE_ONTOLOGY, config, oboSession );
+        OboUtils.saveSession( oboSession, tempFile );
 
         // rewrite the file (part of the hack)
         FileWriter writer = new FileWriter(outFile);
@@ -179,9 +174,7 @@ public class CvExporter {
         writer.close();
 
         tempFile.delete();
-
-    }//end method
-
+    }
 
     private void addHeaderInfo() {
         oboSession.setDefaultNamespace( new Namespace( "PSI-MI" ) );
@@ -206,7 +199,6 @@ public class CvExporter {
      * @param allCvs List of all Cvs with duplicates
      * @return Lists of Uniq Cvs
      */
-
     protected List<CvDagObject> removeCvsDuplicated( List<CvDagObject> allCvs ) {
 
         HashMap<String, CvDagObject> cvHash = new HashMap<String, CvDagObject>();
@@ -222,8 +214,7 @@ public class CvExporter {
         }
 
         return allUniqCvs;
-    }//end of method
-
+    }
 
     /**
      * Converts cvobject to OBOobject
@@ -232,7 +223,6 @@ public class CvExporter {
      * @param cvMapWithParents a HashMap with CvDag object and all its parents as HashSet
      * @return a OBOClass instance
      */
-
     protected OBOClass convertCv2OBO( CvDagObject dagObj, Map<String, HashSet<CvDagObject>> cvMapWithParents ) {
         final String cvId = CvObjectUtils.getIdentity(dagObj);
 
@@ -449,7 +439,6 @@ public class CvExporter {
         return cellTypeObj;
     }
 
-
     private boolean checkIfRootMI( String mi ) {
         for ( String s : CvObjectOntologyBuilder.mi2Class.keySet() ) {
             if ( mi.equalsIgnoreCase( s ) ) {
@@ -457,7 +446,7 @@ public class CvExporter {
             } //end if
         }//end for
         return false;
-    }//end method
+    }
 
     private Synonym createAlias( CvObjectAlias cvAlias ) {
         Synonym syn = new SynonymImpl();
@@ -467,7 +456,7 @@ public class CvExporter {
         syn.setSynonymCategory( synCat );
         syn.setScope( 1 );
         return syn;
-    } //end method
+    }
 
     private Synonym createSynonym( String shortLabel ) {
         Synonym syn = new SynonymImpl();
@@ -477,11 +466,11 @@ public class CvExporter {
         syn.setSynonymCategory( synCat );
         syn.setScope( 1 );
         return syn;
-    } //end method
+    }
 
     protected OBOSession getOboSession() {
         return oboSession;
-    } //end method
+    }
 
     private static class CvClassIdentifier {
 
@@ -531,5 +520,4 @@ public class CvExporter {
         }
 
     }
-
-} //end class
+}
