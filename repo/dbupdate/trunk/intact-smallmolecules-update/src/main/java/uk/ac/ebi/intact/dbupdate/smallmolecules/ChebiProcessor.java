@@ -30,11 +30,11 @@ import java.util.List;
 import java.util.Collection;
 
 /**
- * Implementation class for SmallMoleculeProcessor
+ * Implementation class for SmallMoleculeProcessor.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.1
  */
 public class ChebiProcessor implements SmallMoleculeProcessor {
 
@@ -64,7 +64,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
             smallMolecule.getXrefs().size();
             smallMolecule.getAnnotations().size();
 
-            enricher.enrich( smallMolecule, false );
+            enricher.enrich( smallMolecule );
 
             final Collection<Annotation> interactorTypeAnnotationCollection = smallMolecule.getCvInteractorType().getAnnotations();
             final Collection<Annotation> smallmoleculeAnnotationCollection = smallMolecule.getAnnotations();
@@ -76,7 +76,6 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         }
     }
 
-
     private void persistAnnotations( Collection<Annotation> annotationCollection ) {
 
         for ( Annotation annotation : annotationCollection ) {
@@ -84,9 +83,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                 persistCvTopic( annotation );
             }
         }
-
     }
-
 
     private void persistCvTopic( Annotation annotation ) {
         if ( annotation.getCvTopic() != null && annotation.getCvTopic().getAc() == null ) {
@@ -104,5 +101,4 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
             }
         }
     }
-
 }

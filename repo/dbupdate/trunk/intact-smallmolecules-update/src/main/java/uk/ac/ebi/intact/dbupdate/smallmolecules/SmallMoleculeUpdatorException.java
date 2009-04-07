@@ -16,11 +16,11 @@
 package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
 /**
- * TODO comment that class header
+ * Small Molecule Updator Exception.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.1
  */
 public class SmallMoleculeUpdatorException extends Exception {
 

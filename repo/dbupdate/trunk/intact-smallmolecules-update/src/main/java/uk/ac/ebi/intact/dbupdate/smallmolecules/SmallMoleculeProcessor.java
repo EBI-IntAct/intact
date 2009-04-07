@@ -9,10 +9,9 @@ import java.util.List;
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.1
  */
 public interface SmallMoleculeProcessor {
 
     public void updateByAcs(List<String> acs) throws SmallMoleculeUpdatorException;
-
 }

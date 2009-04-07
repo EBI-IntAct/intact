@@ -31,11 +31,11 @@ import org.junit.Assert;
 import org.junit.Ignore;
 
 /**
- * TODO comment that class header
+ * SmallMoleculeUpdator Tester.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.1
  */
 public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
 
@@ -79,11 +79,4 @@ public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
 
 
     }
-
-    
-
-
-
-
-
 }

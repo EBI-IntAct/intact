@@ -23,11 +23,11 @@ import uk.ac.ebi.intact.core.unit.IntactTestException;
 import java.util.List;
 
 /**
- * TODO comment that class header
+ * Small molecule updator.
  *
  * @author Prem Anand (prem@ebi.ac.uk)
  * @version $Id$
- * @since TODO specify the maven artifact version
+ * @since 2.0.1
  */
 public class SmallMoleculeUpdator {
 
@@ -37,19 +37,15 @@ public class SmallMoleculeUpdator {
         this.smallMoleculeProcessor = smallMoleculeProcessor;
     }
 
-
-
     public void startUpdate() throws SmallMoleculeUpdatorException, IntactTransactionException {
 
         DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         List<String> smallMoleculeAcs = dataContext.getDaoFactory().getEntityManager().createQuery( "select sm.ac from SmallMoleculeImpl sm order by sm.created" ).getResultList();
          //get list of smallmolecules and call updateByAcs
         smallMoleculeProcessor.updateByAcs(smallMoleculeAcs);
-
     }
 
-
-     protected void commitTransaction() throws SmallMoleculeUpdatorException {
+    protected void commitTransaction() throws SmallMoleculeUpdatorException {
          DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         if (dataContext.isTransactionActive()) {
             try {
@@ -59,6 +55,4 @@ public class SmallMoleculeUpdator {
             }
         }
     }
-
-
 }
