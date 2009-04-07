@@ -496,7 +496,7 @@
     <copyField source="altidA" dest="identifier"/>
     <copyField source="altidB" dest="identifier"/>
     <copyField source="idA" dest="id"/>
-    <copyField source="idA" dest="id"/>
+    <copyField source="idB" dest="id"/>
     <copyField source="altidA" dest="id"/>
     <copyField source="altidB" dest="id"/>
     <copyField source="altidA" dest="altid"/>
