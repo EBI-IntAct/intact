@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.dataexchange.cvutils;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -114,6 +115,42 @@ public class CvUtils {
         }
 
         return null;
+    }
+
+    private static void findParents( final List<CvDagObject> parents, final CvDagObject child, final boolean recursive ) {
+        for ( CvDagObject parent : child.getParents() ) {
+            parents.add( parent );
+            if( recursive && !parent.getParents().isEmpty() ) {
+                findParents( parents, parent, recursive );
+            }
+        }
+    }
+
+    public static List<CvDagObject> findParents( final CvDagObject child, final boolean recursive ) {
+        List<CvDagObject> parents = Lists.newArrayList();
+        findParents( parents, child, recursive );
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Found " + parents.size() + " parents for term " + child.getIdentifier() );
+        }
+        return parents;
+    }
+
+    private static void findChildren( final List<CvDagObject> children, final CvDagObject parent, final boolean recursive ) {
+        for ( CvDagObject child : parent.getChildren() ) {
+            children.add( child );
+            if( recursive && !child.hasChildren() ) {
+                findChildren( children, child, recursive );
+            }
+        }
+    }
+
+    public static List<CvDagObject> findChildren( final CvDagObject parent, final boolean recursive ) {
+        List<CvDagObject> children = Lists.newArrayList();
+        findChildren( children, parent, recursive );
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Found " + children.size() + " parents for term " + parent.getIdentifier() );
+        }
+        return children;
     }
 
     protected static List<String> findAllParentsForTerm( CvDagObject child ) {
