@@ -33,10 +33,7 @@ import java.util.List;
 import java.util.Collection;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.io.Writer;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
@@ -127,12 +124,12 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
 
                 case 0:
                     // ERROR - no identity found
-                    logMultipleIdentity( sm, xrefs );
+                    logNoIdentity( sm );
                     continue; // abort and go to next molecule
 
                 default: // more than one
                     // ERROR - more than one identity
-                    logNoIdentity( sm );
+                    logMultipleIdentity( sm, xrefs );
                     continue; // abort and go to next molecule
             }
 
@@ -178,6 +175,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         final String msg = sm.getAc() + TAB + sm.getShortLabel() + chebiId + NEW_LINE;
         try {
             noIdentityWriter.write( msg );
+            noIdentityWriter.flush();
         } catch ( IOException e ) {
             log.error( "Could not log no unknown chebi id:" + NEW_LINE + msg, e );
         }
@@ -196,6 +194,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         final String msg = sm.getAc() + TAB + sm.getShortLabel() + TAB + sb.toString() + NEW_LINE;
         try {
             multipleIdentityWriter.write( msg );
+            multipleIdentityWriter.flush();
         } catch ( IOException e ) {
             log.error( "Could not log multiple identity:" + NEW_LINE + msg, e );
         }
@@ -208,6 +207,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         final String msg = sm.getAc() + TAB + sm.getShortLabel() + NEW_LINE;
         try {
             noIdentityWriter.write( msg );
+            noIdentityWriter.flush();
         } catch ( IOException e ) {
             log.error( "Could not log no identity:" + NEW_LINE + msg, e );
         }
@@ -221,10 +221,13 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                 log.info( "No output directory set for small molecule update log file, setting default:" + outputDirectory.getAbsolutePath() );
             }
         }
+        
         try {
-            multipleIdentityWriter = new FileWriter( new File( outputDirectory, MULTIPLE_IDENTITY_LOG_FILENAME ) );
-            noIdentityWriter = new FileWriter( new File( outputDirectory, NO_IDENTITY_LOG_FILENAME ) );
-            unknownChebiIdWriter = new FileWriter( new File( outputDirectory, UNKNOWN_CHEBI_ID_LOG_FILENAME ) );
+            final File multipleFile = new File( outputDirectory, MULTIPLE_IDENTITY_LOG_FILENAME );
+            System.out.println( "multipleFile: " + multipleFile.getAbsolutePath() );
+            multipleIdentityWriter = new BufferedWriter( new FileWriter( multipleFile ) );
+            noIdentityWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, NO_IDENTITY_LOG_FILENAME ) ) );
+            unknownChebiIdWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, UNKNOWN_CHEBI_ID_LOG_FILENAME ) ) );
         } catch ( IOException e ) {
             log.error( "Could not create log files", e );
         }
