@@ -26,7 +26,7 @@ public class SmallMoleculeUpdateReport {
 
     private int moleculeCount;
     private int totalFailureCount;
-    private int multipleIdentyCount;
+    private int multipleIdentityCount;
     private int noIdentityCount;
     private int unknownChebiIdCount;
 
@@ -44,8 +44,8 @@ public class SmallMoleculeUpdateReport {
         return totalFailureCount;
     }
 
-    public int getMultipleIdentyCount() {
-        return multipleIdentyCount;
+    public int getMultipleIdentityCount() {
+        return multipleIdentityCount;
     }
 
     public int getNoIdentityCount() {
@@ -64,7 +64,7 @@ public class SmallMoleculeUpdateReport {
     }
 
     public void incrementMultipleIdentyCount() {
-        multipleIdentyCount++;
+        multipleIdentityCount++;
         totalFailureCount++;
     }
 
@@ -83,7 +83,7 @@ public class SmallMoleculeUpdateReport {
         return "SmallMolecule Update Report{" +
                "moleculeCount=" + moleculeCount +
                ", totalFailureCount=" + totalFailureCount +
-               ", multipleIdentyCount=" + multipleIdentyCount +
+               ", multipleIdentityCount=" + multipleIdentityCount +
                ", noIdentityCount=" + noIdentityCount +
                ", unknownChebiIdCount=" + unknownChebiIdCount +
                '}';
