@@ -172,10 +172,10 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
 
         report.incrementUnknownChebiIdCount();
 
-        final String msg = sm.getAc() + TAB + sm.getShortLabel() + chebiId + NEW_LINE;
+        final String msg = sm.getAc() + TAB + sm.getShortLabel() + TAB + chebiId + NEW_LINE;
         try {
-            noIdentityWriter.write( msg );
-            noIdentityWriter.flush();
+            unknownChebiIdWriter.write( msg );
+            unknownChebiIdWriter.flush();
         } catch ( IOException e ) {
             log.error( "Could not log no unknown chebi id:" + NEW_LINE + msg, e );
         }
