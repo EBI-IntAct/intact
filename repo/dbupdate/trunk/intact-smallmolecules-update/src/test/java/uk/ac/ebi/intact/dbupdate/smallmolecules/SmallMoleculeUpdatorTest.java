@@ -18,19 +18,15 @@ package uk.ac.ebi.intact.dbupdate.smallmolecules;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.InteractorDao;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
-import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.config.CvPrimer;
-import uk.ac.ebi.intact.config.impl.EssentialCvPrimer;
 import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
 import org.junit.Test;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Before;
 
 import java.util.List;
@@ -81,7 +77,7 @@ public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
 
         final SmallMoleculeUpdateReport report = updator.getUpdateReport();
         Assert.assertEquals( 1, report.getMoleculeCount() );
-        Assert.assertEquals( 0, report.getMultipleIdentyCount() );
+        Assert.assertEquals( 0, report.getMultipleIdentityCount() );
         Assert.assertEquals( 0, report.getNoIdentityCount() );
         Assert.assertEquals( 0, report.getUnknownChebiIdCount() );
         Assert.assertEquals( 0, report.getTotalFailureCount() );
