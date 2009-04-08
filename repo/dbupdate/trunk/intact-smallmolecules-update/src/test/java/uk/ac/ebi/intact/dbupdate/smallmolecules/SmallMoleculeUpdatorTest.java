@@ -17,18 +17,23 @@ package uk.ac.ebi.intact.dbupdate.smallmolecules;
 
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
-import uk.ac.ebi.intact.model.SmallMolecule;
-import uk.ac.ebi.intact.model.SmallMoleculeImpl;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.Annotation;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.config.CvPrimer;
+import uk.ac.ebi.intact.config.impl.EssentialCvPrimer;
+import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
 import org.junit.Test;
 import org.junit.Assert;
 import org.junit.Ignore;
+import org.junit.Before;
+
+import java.util.List;
 
 /**
  * SmallMoleculeUpdator Tester.
@@ -39,44 +44,74 @@ import org.junit.Ignore;
  */
 public class SmallMoleculeUpdatorTest extends IntactBasicTestCase {
 
-    @Ignore
+    @Before
+    public void cvSetup() throws Exception {
+
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        CvPrimer primer = new SmallCvPrimer( daoFactory );
+
+        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
+        primer.createCVs();
+        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
+
+        final CvXrefQualifier secondaryAc = getMockBuilder().createCvObject( CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF, CvXrefQualifier.SECONDARY_AC );
+        final CvTopic inchi = getMockBuilder().createCvObject( CvTopic.class, CvTopic.INCHI_ID_MI_REF, CvTopic.INCHI_ID );
+        PersisterHelper.saveOrUpdate( secondaryAc, inchi );
+    }
+
     @Test
-    public void updateSmallMolecule() throws SmallMoleculeUpdatorException, IntactTransactionException {
+    public void updateByAcs() throws Exception {
+
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        DaoFactory daoFactory = dataContext.getDaoFactory();
-
         dataContext.beginTransaction();
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        // create a small molecule with an outdated id
+        final SmallMolecule imatinib = getMockBuilder().createSmallMolecule( "CHEBI:38918", "lala" );  // CHEBI:38918
 
-        final SmallMolecule smallMolecule = getMockBuilder().createSmallMolecule( "CHEBI:18348", "noname" );
-        CvTopic testCvTopic = CvObjectUtils.createCvObject(smallMolecule.getOwner(), CvTopic.class, "MI:1111", "test annotation");
+        final InteractorDao<SmallMoleculeImpl> smDao = daoFactory.getInteractorDao( SmallMoleculeImpl.class );
+        PersisterHelper.saveOrUpdate( imatinib );
+        smDao.persist( (SmallMoleculeImpl) imatinib );
 
-        PersisterHelper.saveOrUpdate( testCvTopic );
-
-        Annotation annotation = new Annotation( smallMolecule.getOwner(), testCvTopic, "blabla" );
-        smallMolecule.addAnnotation( annotation );
-
-        PersisterHelper.saveOrUpdate( smallMolecule );
-
-        Assert.assertEquals(1,daoFactory.getInteractorDao( SmallMoleculeImpl.class ).countAll());
-
-        SmallMoleculeImpl byShortLabel = daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByShortLabel( "noname" );
-        Assert.assertEquals("noname",byShortLabel.getShortLabel());
-
+        Assert.assertEquals( 1, smDao.countAllInteractors() );
+        Assert.assertNotNull( smDao.getByXref( "CHEBI:38918" ) );
         dataContext.commitTransaction();
 
         SmallMoleculeUpdator updator = new SmallMoleculeUpdator(new ChebiProcessor());
         updator.startUpdate();
 
-        byShortLabel = daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByShortLabel( "noname" );
-        Assert.assertNull(byShortLabel);
+        final SmallMoleculeUpdateReport report = updator.getUpdateReport();
+        Assert.assertEquals( 1, report.getMoleculeCount() );
+        Assert.assertEquals( 0, report.getMultipleIdentyCount() );
+        Assert.assertEquals( 0, report.getNoIdentityCount() );
+        Assert.assertEquals( 0, report.getUnknownChebiIdCount() );
+        Assert.assertEquals( 0, report.getTotalFailureCount() );
 
-        byShortLabel=daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByShortLabel( "newname" );
-        Assert.assertNotNull( byShortLabel );
+        final CvObjectDao<CvXrefQualifier> qDao = daoFactory.getCvObjectDao( CvXrefQualifier.class );
+        final CvXrefQualifier identity = qDao.getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
+        final CvXrefQualifier secondaryAc = qDao.getByPsiMiRef( CvXrefQualifier.SECONDARY_AC_MI_REF );
 
-        Assert.assertEquals("CHEBI:18348",byShortLabel.getXrefs().iterator().next().getPrimaryId());
-        Assert.assertEquals(2,byShortLabel.getAnnotations().size());
-        //Assert.assertEquals("inchi id",byShortLabel.getAnnotations().iterator().next().getCvTopic().getShortLabel());
+        final CvObjectDao<CvDatabase> dbDao = daoFactory.getCvObjectDao( CvDatabase.class );
+        final CvDatabase chebi = dbDao.getByPsiMiRef( CvDatabase.CHEBI_MI_REF );
 
+        final List<SmallMoleculeImpl> molecules = smDao.getAll();
 
+        // there should be still a single interactor after update
+        Assert.assertEquals( 1, smDao.countAllInteractors() );
+
+        // check that the small molecule Xrefs have been updated.
+        Assert.assertEquals( 1, smDao.getByXrefLike( chebi, identity,    "CHEBI:45783" ).size() ); // identity
+//        Assert.assertEquals( 1, smDao.getByXrefLike( chebi, secondaryAc, "CHEBI:45781" ).size() ); // secondary ac
+
+        final List<SmallMoleculeImpl> moleculeList = smDao.getByXrefLike( chebi, secondaryAc, "CHEBI:38918" );
+        Assert.assertEquals( 1, moleculeList.size() );
+        final SmallMoleculeImpl compound = moleculeList.iterator().next();
+        Assert.assertEquals( 2, compound.getXrefs().size() );
+
+        // shortlabel should have been updated
+        Assert.assertEquals( "imatinib", compound.getShortLabel() );
+
+        Assert.assertEquals( 1, compound.getAnnotations().size() );
+        Assert.assertEquals( "InChI=1/C29H31N7O/c1-21-5-10-25(18-27(21)34-29-31-13-11-26(33-29)24-4-3-12-30-19-24)32-28(37)23-8-6-22(7-9-23)20-36-16-14-35(2)15-17-36/h3-13,18-19H,14-17,20H2,1-2H3,(H,32,37)(H,31,33,34)/f/h32,34H",
+                             compound.getAnnotations().iterator().next().getAnnotationText() );
     }
 }
