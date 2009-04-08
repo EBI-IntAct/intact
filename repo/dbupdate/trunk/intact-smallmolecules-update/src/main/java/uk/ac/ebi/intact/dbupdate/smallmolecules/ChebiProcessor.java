@@ -23,7 +23,6 @@ import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.persistence.dao.XrefDao;
-import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactTestException;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.chebi.webapps.chebiWS.client.ChebiWebServiceClient;
@@ -125,7 +124,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                 case 0:
                     // ERROR - no identity found
                     if( ! autoFixNoIdentity( sm ) ) {
-                        log.warn( "Auto fix of checbi molecule without checbi identity failed." );
+                        log.warn( "Auto fix ("+sm.getAc()+") of chebi molecule without checbi identity failed." );
                         logNoIdentity( sm );
                         continue; // abort and go to next molecule
                     }
@@ -179,17 +178,19 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final CvDatabase chebi = daoFactory.getCvObjectDao( CvDatabase.class ).getByPsiMiRef( CvDatabase.CHEBI_MI_REF );
         final Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( sm, chebi );
-        if( xrefs.size() == 1 ) {
 
+        if( xrefs.size() == 1 ) {
             final InteractorXref x = (InteractorXref) xrefs.iterator().next();
             // autofix it
             final CvXrefQualifier identity =
                     daoFactory.getCvObjectDao( CvXrefQualifier.class ).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
 
-            log.warn( "AUTOFIX - found a small molecule that has a single chebi xref but of which the qualifier was '"+
+            log.warn( "AUTOFIX - " + sm.getAc() + " - found a small molecule that has a single chebi xref but of which the qualifier was '"+
                       x.getCvXrefQualifier().getShortLabel() +"', updating it to 'identity'..." );
+
             x.setCvXrefQualifier( identity );
             daoFactory.getXrefDao( InteractorXref.class ).update( x );
+            daoFactory.getInteractorDao( SmallMoleculeImpl.class ).update( sm );
             autoFixSuccess = true;
         }
 
