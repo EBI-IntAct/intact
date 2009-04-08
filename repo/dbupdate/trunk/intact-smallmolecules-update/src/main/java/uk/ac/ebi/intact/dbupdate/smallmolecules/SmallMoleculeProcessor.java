@@ -14,4 +14,8 @@ import java.util.List;
 public interface SmallMoleculeProcessor {
 
     public void updateByAcs(List<String> acs) throws SmallMoleculeUpdatorException;
+
+    public SmallMoleculeUpdateReport getReport();
+
+    public void setReport( SmallMoleculeUpdateReport report );
 }

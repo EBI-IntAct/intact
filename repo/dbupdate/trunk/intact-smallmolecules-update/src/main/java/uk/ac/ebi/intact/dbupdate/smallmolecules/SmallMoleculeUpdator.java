@@ -22,6 +22,9 @@ import uk.ac.ebi.intact.core.unit.IntactTestException;
 
 import java.util.List;
 
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
+
 /**
  * Small molecule updator.
  *
@@ -30,6 +33,8 @@ import java.util.List;
  * @since 2.0.1
  */
 public class SmallMoleculeUpdator {
+
+    private static final Log log = LogFactory.getLog( SmallMoleculeUpdator.class );
 
     private SmallMoleculeProcessor smallMoleculeProcessor;
 
@@ -40,19 +45,17 @@ public class SmallMoleculeUpdator {
     public void startUpdate() throws SmallMoleculeUpdatorException, IntactTransactionException {
 
         DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        List<String> smallMoleculeAcs = dataContext.getDaoFactory().getEntityManager().createQuery( "select sm.ac from SmallMoleculeImpl sm order by sm.created" ).getResultList();
-         //get list of smallmolecules and call updateByAcs
+        final String hql = "select sm.ac from SmallMoleculeImpl sm order by sm.created";
+        List<String> smallMoleculeAcs = dataContext.getDaoFactory().getEntityManager().createQuery( hql ).getResultList();
+
+        if ( log.isDebugEnabled() ) {
+            log.debug( "Found " + smallMoleculeAcs.size() + " small molecules in the database." );
+        }
+
         smallMoleculeProcessor.updateByAcs(smallMoleculeAcs);
     }
 
-    protected void commitTransaction() throws SmallMoleculeUpdatorException {
-         DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        if (dataContext.isTransactionActive()) {
-            try {
-                dataContext.commitTransaction();
-            } catch (IntactTransactionException e) {
-                throw new IntactTestException(e);
-            }
-        }
+    public SmallMoleculeUpdateReport getUpdateReport() {
+        return smallMoleculeProcessor.getReport();
     }
 }
