@@ -124,8 +124,11 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
 
                 case 0:
                     // ERROR - no identity found
-                    logNoIdentity( sm );
-                    continue; // abort and go to next molecule
+                    if( ! autoFixNoIdentity( sm ) ) {
+                        log.warn( "Auto fix of checbi molecule without checbi identity failed." );
+                        logNoIdentity( sm );
+                        continue; // abort and go to next molecule
+                    }
 
                 default: // more than one
                     // ERROR - more than one identity
@@ -162,6 +165,35 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         }
 
         closeLogFiles();
+    }
+
+    /**
+     * If we have a single chebi Xref with a qualifier that is not identify, we log it and update to identity.
+     * @param sm
+     * @return
+     */
+    private boolean autoFixNoIdentity( SmallMoleculeImpl sm ) {
+
+        boolean autoFixSuccess = false;
+
+        DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
+        final CvDatabase chebi = daoFactory.getCvObjectDao( CvDatabase.class ).getByPsiMiRef( CvDatabase.CHEBI_MI_REF );
+        final Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( sm, chebi );
+        if( xrefs.size() == 1 ) {
+
+            final InteractorXref x = (InteractorXref) xrefs.iterator().next();
+            // autofix it
+            final CvXrefQualifier identity =
+                    daoFactory.getCvObjectDao( CvXrefQualifier.class ).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
+
+            log.warn( "AUTOFIX - found a small molecule that has a single chebi xref but of which the qualifier was '"+
+                      x.getCvXrefQualifier().getShortLabel() +"', updating it to 'identity'..." );
+            x.setCvXrefQualifier( identity );
+            daoFactory.getXrefDao( InteractorXref.class ).update( x );
+            autoFixSuccess = true;
+        }
+
+        return autoFixSuccess;
     }
 
 
@@ -223,9 +255,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         }
         
         try {
-            final File multipleFile = new File( outputDirectory, MULTIPLE_IDENTITY_LOG_FILENAME );
-            System.out.println( "multipleFile: " + multipleFile.getAbsolutePath() );
-            multipleIdentityWriter = new BufferedWriter( new FileWriter( multipleFile ) );
+            multipleIdentityWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, MULTIPLE_IDENTITY_LOG_FILENAME ) ) );
             noIdentityWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, NO_IDENTITY_LOG_FILENAME ) ) );
             unknownChebiIdWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, UNKNOWN_CHEBI_ID_LOG_FILENAME ) ) );
         } catch ( IOException e ) {
