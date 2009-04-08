@@ -150,7 +150,9 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
             sm.setShortLabel( entity.getChebiAsciiName() );
             updateChebiXrefs( identityXref, sm, entity );
 
-            updateInchiAnnotation( sm, entity );
+            if( entity.getInchi() != null ) {
+                updateInchiAnnotation( sm, entity );
+            }
 
             if ( log.isTraceEnabled() ) {
                 log.trace( "Completed update of Small Molecule: " + sm );
