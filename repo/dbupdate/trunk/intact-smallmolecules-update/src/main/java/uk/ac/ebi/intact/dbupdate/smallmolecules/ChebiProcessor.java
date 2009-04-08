@@ -51,7 +51,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
     public static final String NO_IDENTITY_LOG_FILENAME = "no-identity.tsv";
     public static final String UNKNOWN_CHEBI_ID_LOG_FILENAME = "unknown-chebi-id.tsv";
 
-    private static final String TAB = "\n";
+    private static final String TAB = "\t";
     private static final String NEW_LINE = System.getProperty( "line.separator" );
 
     private File outputDirectory;
