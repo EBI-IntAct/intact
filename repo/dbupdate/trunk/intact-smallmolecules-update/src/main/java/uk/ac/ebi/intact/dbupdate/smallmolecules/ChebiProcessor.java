@@ -128,6 +128,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                         logNoIdentity( sm );
                         continue; // abort and go to next molecule
                     }
+                    break;
 
                 default: // more than one
                     // ERROR - more than one identity
