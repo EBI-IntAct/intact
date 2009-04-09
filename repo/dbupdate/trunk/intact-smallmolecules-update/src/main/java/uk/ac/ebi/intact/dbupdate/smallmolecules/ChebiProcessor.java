@@ -94,81 +94,110 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
      */
     public void updateByAcs( List<String> smallMoleculeAcs ) throws SmallMoleculeUpdatorException {
 
-        openLogFiles();
+        try {
 
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        final DaoFactory daoFactory = dataContext.getDaoFactory();
+            openLogFiles();
 
-        for ( String smallMoleculeAc : smallMoleculeAcs ) {
 
-            report.incrementMoleculeCount();
+            final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
+            final DaoFactory daoFactory = dataContext.getDaoFactory();
 
-            // Honnor already running transaction
-            final boolean wasTransactionActive = dataContext.isTransactionActive();
-            if ( !wasTransactionActive ) {
-                dataContext.beginTransaction();
-            }
+            for ( String smallMoleculeAc : smallMoleculeAcs ) {
 
-            final SmallMoleculeImpl sm = daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByAc( smallMoleculeAc );
-            final Collection<InteractorXref> xrefs = XrefUtils.getIdentityXrefs( sm );
+                report.incrementMoleculeCount();
 
-            String chebiId = null;
-            InteractorXref identityXref = null;
+                // Honnor already running transaction
+                final boolean wasTransactionActive = dataContext.isTransactionActive();
+                if ( !wasTransactionActive ) {
+                    dataContext.beginTransaction();
+                }
 
-            switch ( xrefs.size() ) {
-                case 1:
-                    identityXref = xrefs.iterator().next();
-                    chebiId = identityXref.getPrimaryId();
-                    break;
+                final SmallMoleculeImpl sm = daoFactory.getInteractorDao( SmallMoleculeImpl.class ).getByAc( smallMoleculeAc );
+                Collection<InteractorXref> xrefs = XrefUtils.getIdentityXrefs( sm );
 
-                case 0:
-                    // ERROR - no identity found
-                    if( ! autoFixNoIdentity( sm ) ) {
-                        log.warn( "Auto fix ("+sm.getAc()+") of chebi molecule without checbi identity failed." );
-                        logNoIdentity( sm );
-                        continue; // abort and go to next molecule
+                String chebiId = null;
+                InteractorXref identityXref = null;
+
+                boolean singleIndentityAvailable = false;
+
+                switch ( xrefs.size() ) {
+                    case 1:
+                        identityXref = xrefs.iterator().next();
+                        chebiId = identityXref.getPrimaryId();
+                        singleIndentityAvailable = true;
+                        break;
+
+                    case 0:
+                        // ERROR - no identity found
+                        if ( !autoFixNoIdentity( sm ) ) {
+                            log.warn( "Auto fix (" + sm.getAc() + ") of chebi molecule without checbi identity failed." );
+                            logNoIdentity( sm );
+                        } else {
+
+                            // fetch the chebi id
+                            xrefs = XrefUtils.getIdentityXrefs( sm );
+                            if( xrefs.size() == 1 ) {
+                                identityXref = xrefs.iterator().next();
+                                chebiId = identityXref.getPrimaryId();
+
+                                singleIndentityAvailable = true;
+                            } else {
+                                log.error( "FAILURE - autofixed failed to update xref to 'identity'" );
+                            }
+                        }
+                        break;
+
+                    default: // more than one
+                        // ERROR - more than one identity
+                        logMultipleIdentity( sm, xrefs );
+                }
+
+                if( singleIndentityAvailable ) {
+                    // get CHEBI molecule
+                    ChebiWebServiceClient chebiClient = new ChebiWebServiceClient();
+                    Entity entity = null;
+                    try {
+                        entity = chebiClient.getCompleteEntity( chebiId );
+                    } catch ( ChebiWebServiceFault_Exception e ) {
+                        logUnknownChebiId( sm, chebiId );
                     }
-                    break;
 
-                default: // more than one
-                    // ERROR - more than one identity
-                    logMultipleIdentity( sm, xrefs );
-                    continue; // abort and go to next molecule
-            }
+                    if ( entity != null ) {
+                        // start updating intact small molecule
+                        sm.setShortLabel( entity.getChebiAsciiName() );
+                        updateChebiXrefs( identityXref, sm, entity );
 
-            // get CHEBI molecule
-            ChebiWebServiceClient chebiClient = new ChebiWebServiceClient();
-            final Entity entity;
-            try {
-                entity = chebiClient.getCompleteEntity( chebiId );
-            } catch ( ChebiWebServiceFault_Exception e ) {
-                logUnknownChebiId( sm, chebiId );
-                continue; // abort and go to next molecule
-            }
+                        if ( entity.getInchi() != null ) {
+                            updateInchiAnnotation( sm, entity );
+                        }
 
-            // start updating intact small molecule
-            sm.setShortLabel( entity.getChebiAsciiName() );
-            updateChebiXrefs( identityXref, sm, entity );
+                        if ( log.isTraceEnabled() ) {
+                            log.trace( "Completed update of Small Molecule: " + sm );
+                        }
+                    } else {
+                        log.error( "FAILURE - could not retreive compound for id: " + chebiId +
+                                   " when processing small molecule: " + sm.getAc() + " " + sm.getShortLabel() );
+                    }
+                } else {
+                    log.error( "There was an issue with the Xref Small Molecule:  " + smallMoleculeAc + " - aborting update." );
+                }
 
-            if( entity.getInchi() != null ) {
-                updateInchiAnnotation( sm, entity );
-            }
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "-------------------------------------------" );
+                }
 
-            if ( log.isTraceEnabled() ) {
-                log.trace( "Completed update of Small Molecule: " + sm );
-            }
-
-            if ( !wasTransactionActive ) {
-                commitTransaction();
-            }
-
+                if ( !wasTransactionActive ) {
+                    commitTransaction();
+                }
+            } // for
+        } finally {
+            closeLogFiles();
         }
-
-        closeLogFiles();
     }
 
     /**
      * If we have a single chebi Xref with a qualifier that is not identify, we log it and update to identity.
+     *
      * @param sm
      * @return
      */
@@ -180,14 +209,14 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
         final CvDatabase chebi = daoFactory.getCvObjectDao( CvDatabase.class ).getByPsiMiRef( CvDatabase.CHEBI_MI_REF );
         final Collection<Xref> xrefs = AnnotatedObjectUtils.searchXrefs( sm, chebi );
 
-        if( xrefs.size() == 1 ) {
-            final InteractorXref x = (InteractorXref) xrefs.iterator().next();
+        if ( xrefs.size() == 1 ) {
+            final InteractorXref x = ( InteractorXref ) xrefs.iterator().next();
             // autofix it
             final CvXrefQualifier identity =
                     daoFactory.getCvObjectDao( CvXrefQualifier.class ).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
 
-            log.warn( "AUTOFIX - " + sm.getAc() + " - found a small molecule that has a single chebi xref but of which the qualifier was '"+
-                      x.getCvXrefQualifier().getShortLabel() +"', updating it to 'identity'..." );
+            log.warn( "AUTOFIX - " + sm.getAc() + " - found a small molecule that has a single chebi xref but of which the qualifier was '" +
+                      x.getCvXrefQualifier().getShortLabel() + "', updating it to 'identity'..." );
 
             x.setCvXrefQualifier( identity );
             daoFactory.getXrefDao( InteractorXref.class ).update( x );
@@ -255,7 +284,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                 log.info( "No output directory set for small molecule update log file, setting default:" + outputDirectory.getAbsolutePath() );
             }
         }
-        
+
         try {
             multipleIdentityWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, MULTIPLE_IDENTITY_LOG_FILENAME ) ) );
             noIdentityWriter = new BufferedWriter( new FileWriter( new File( outputDirectory, NO_IDENTITY_LOG_FILENAME ) ) );
@@ -267,14 +296,20 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
 
     private void closeLogFiles() {
         try {
-            multipleIdentityWriter.flush();
-            multipleIdentityWriter.close();
+            if( multipleIdentityWriter != null ) {
+                multipleIdentityWriter.flush();
+                multipleIdentityWriter.close();
+            }
 
-            noIdentityWriter.flush();
-            noIdentityWriter.close();
+            if( noIdentityWriter != null ) {
+                noIdentityWriter.flush();
+                noIdentityWriter.close();
+            }
 
-            unknownChebiIdWriter.flush();
-            unknownChebiIdWriter.close();
+            if( unknownChebiIdWriter != null ) {
+                unknownChebiIdWriter.flush();
+                unknownChebiIdWriter.close();
+            }
         } catch ( IOException e ) {
             log.error( "Could not close log files", e );
         }
@@ -326,7 +361,8 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                         a = annotation;
                     } else {
                         // delete it as this is not in ChEBI
-                        if ( log.isDebugEnabled() ) log.debug( "Removing outdated Inchi annotation: " + annotation.getAnnotationText() );
+                        if ( log.isDebugEnabled() )
+                            log.debug( "Removing outdated Inchi annotation: " + annotation.getAnnotationText() );
                         sm.removeAnnotation( annotation );
                         needUpdating = true;
                     }
@@ -359,7 +395,8 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
             final CvXrefQualifier secondary = qdao.getByPsiMiRef( CvXrefQualifier.SECONDARY_AC_MI_REF );
             final CvXrefQualifier identity = qdao.getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
 
-            if ( log.isDebugEnabled() ) log.debug( "Updating qualifier of outdated Chebi Xref to secondary-ac: " + identityXref.getPrimaryId() );
+            if ( log.isDebugEnabled() )
+                log.debug( "Updating qualifier of outdated Chebi Xref to secondary-ac: " + identityXref.getPrimaryId() );
             identityXref.setCvXrefQualifier( secondary );
             final XrefDao<InteractorXref> xrefDao = daoFactory.getXrefDao( InteractorXref.class );
             xrefDao.update( identityXref );
@@ -370,7 +407,7 @@ public class ChebiProcessor implements SmallMoleculeProcessor {
                                                              e.getChebiId(),
                                                              null, null,
                                                              identity );
-            
+
             if ( log.isDebugEnabled() ) log.debug( "Adding new identity Chebi Xref: " + e.getChebiId() );
             xrefDao.persist( newIdentity );
             sm.addXref( newIdentity );
