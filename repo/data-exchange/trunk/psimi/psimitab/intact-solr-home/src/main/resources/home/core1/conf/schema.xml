@@ -329,7 +329,7 @@
      <field name="aliasB" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="detmethod" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="pubauth" type="textIntact" indexed="true" stored="true" multiValued="true"/>
-     <field name="pubid" type="string" indexed="true" stored="true" multiValued="true"/>
+     <field name="pubid" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="taxidA" type="text" indexed="true" stored="true"/>
      <field name="taxidB" type="text" indexed="true" stored="true"/>
      <field name="type" type="text" indexed="true" stored="true" multiValued="true"/>
