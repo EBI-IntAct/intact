@@ -89,7 +89,7 @@ public class ExperimentEnricherTest extends IntactBasicTestCase {
 
         enricher.enrich(experiment);
 
-        Assert.assertEquals("ecoli", experiment.getBioSource().getShortLabel());
+        Assert.assertEquals("strain k12", experiment.getBioSource().getShortLabel());
     }
 
     @Test

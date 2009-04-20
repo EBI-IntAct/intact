@@ -19,10 +19,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.bridges.taxonomy.NewtTaxonomyService;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyService;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyServiceException;
-import uk.ac.ebi.intact.bridges.taxonomy.TaxonomyTerm;
+import uk.ac.ebi.intact.bridges.taxonomy.*;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherContext;
 import uk.ac.ebi.intact.dataexchange.enricher.EnricherException;
 
@@ -53,7 +50,7 @@ public class BioSourceFetcher {
     private TaxonomyService taxonomyService;
 
     public BioSourceFetcher() {
-        this.taxonomyService = new NewtTaxonomyService();
+        this.taxonomyService = new OLSTaxonomyService();
     }
 
     public TaxonomyTerm fetchByTaxId(int taxId) {

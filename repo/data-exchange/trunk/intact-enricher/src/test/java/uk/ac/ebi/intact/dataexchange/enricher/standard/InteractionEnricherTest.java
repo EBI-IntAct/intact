@@ -60,7 +60,7 @@ public class InteractionEnricherTest extends IntactBasicTestCase {
 
         Assert.assertEquals("myInteraction", interaction.getShortLabel());
         Assert.assertEquals("83333", interactor1.getBioSource().getTaxId());
-        Assert.assertEquals("ecoli", interactor1.getBioSource().getShortLabel());
+        Assert.assertEquals("strain k12", interactor1.getBioSource().getShortLabel());
         Assert.assertEquals("tusd_ecoli", interactor2.getShortLabel());
     }
 
@@ -81,7 +81,7 @@ public class InteractionEnricherTest extends IntactBasicTestCase {
 
         Assert.assertEquals("tusc-tusd", interaction.getShortLabel());
         Assert.assertEquals("83333", interactor2.getBioSource().getTaxId());
-        Assert.assertEquals("ecoli", interactor2.getBioSource().getShortLabel());
+        Assert.assertEquals("strain k12", interactor2.getBioSource().getShortLabel());
         Assert.assertEquals("tusc_ecoli", interactor1.getShortLabel());
     }
 
@@ -102,7 +102,7 @@ public class InteractionEnricherTest extends IntactBasicTestCase {
 
         Assert.assertEquals("tusc-ebi_12345", interaction.getShortLabel());
         Assert.assertEquals("83333", interactor2.getBioSource().getTaxId());
-        Assert.assertEquals("ecoli", interactor2.getBioSource().getShortLabel());
+        Assert.assertEquals("strain k12", interactor2.getBioSource().getShortLabel());
         Assert.assertEquals("tusc_ecoli", interactor1.getShortLabel());
     }
 }
