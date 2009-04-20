@@ -67,11 +67,11 @@ public class InteractorFetcherTest {
         Entity smallMoleculeEntity = fetcher.fetchInteractorFromChebi( "CHEBI:16851" );
         Assert.assertNotNull( smallMoleculeEntity );
         Assert.assertEquals( "CHEBI:16851", smallMoleculeEntity.getChebiId() );
-        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphates", smallMoleculeEntity.getChebiAsciiName() );
+        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphate", smallMoleculeEntity.getChebiAsciiName() );
 
         smallMoleculeEntity = fetcher.fetchInteractorFromChebi( "CHEBI:16851" );
         Assert.assertEquals( "CHEBI:16851", smallMoleculeEntity.getChebiId() );
-        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphates", smallMoleculeEntity.getChebiAsciiName() );
+        Assert.assertEquals( "1-phosphatidyl-1D-myo-inositol 3,5-bisphosphate", smallMoleculeEntity.getChebiAsciiName() );
 
 
         Assert.assertEquals( 1, CacheManager.getInstance().getCache( "Interactor" ).getStatistics().getInMemoryHits() );
