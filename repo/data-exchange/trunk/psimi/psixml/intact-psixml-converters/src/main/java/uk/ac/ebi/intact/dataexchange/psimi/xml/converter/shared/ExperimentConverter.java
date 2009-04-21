@@ -157,10 +157,14 @@ public class ExperimentConverter extends AbstractAnnotatedObjectConverter<Experi
     private Publication createPublication(ExperimentDescription experiment) {
         final DbReference primaryRef = experiment.getBibref().getXref().getPrimaryRef();
 
-        if (!CvDatabase.PUBMED_MI_REF.equals(primaryRef.getDbAc())) {
-            throw new UnsupportedConversionException("The bibref (bibliographic xref) of the experiment is not pointing to Pubmed " +
-                                                     "(dbAc="+ CvDatabase.PUBMED_MI_REF+"). Experiment PSI Id: "+experiment.getId()+", ref found: " +
-                                                     "db="+primaryRef.getDb()+", dbAc="+primaryRef.getDbAc()+", id="+primaryRef.getId());
+        final String dbac = primaryRef.getDbAc();
+        if (!CvDatabase.PUBMED_MI_REF.equals( dbac ) && !CvDatabase.DOI_MI_REF.equals( dbac )) {
+            throw new UnsupportedConversionException("The bibref (bibliographic xref) of the experiment is not " +
+                                                     "pointing to pubmed or doi (expected dbAc to be "+
+                                                     CvDatabase.PUBMED_MI_REF + " or " + CvDatabase.DOI_MI_REF +
+                                                     "). Experiment PSI Id: "+ experiment.getId() + ", ref found: db=" +
+                                                     primaryRef.getDb()+ ", dbAc=" + primaryRef.getDbAc() +
+                                                     ", id=" + primaryRef.getId());
         }
 
         String pubId = primaryRef.getId();
