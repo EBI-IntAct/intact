@@ -19,6 +19,8 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 /**
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
@@ -39,7 +41,7 @@ public class UrlSolrParamsTest {
         Assert.assertEquals(30, solrQuery.getRows());
         Assert.assertEquals(0, solrQuery.getStart());
 
-        Assert.assertEquals("+go_expanded_id:(\"GO:0048511\")", solrQuery.getFilterQueries()[0]);
-        Assert.assertEquals("+dataset:(\"Cancer\")", solrQuery.getFilterQueries()[1]);
+        Assert.assertTrue(Arrays.asList(solrQuery.getFilterQueries()).contains("+go_expanded_id:(\"GO:0048511\")"));
+        Assert.assertTrue(Arrays.asList(solrQuery.getFilterQueries()).contains("+dataset:(\"Cancer\")"));
     }
 }
