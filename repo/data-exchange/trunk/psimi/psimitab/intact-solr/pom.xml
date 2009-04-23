@@ -37,12 +37,12 @@
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.4</version>
         </dependency>
         <dependency>
             <groupId>psidev.psi.mi</groupId>
             <artifactId>psimitab-search</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.4</version>
         </dependency>
 
         <dependency>
