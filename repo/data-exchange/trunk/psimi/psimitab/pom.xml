@@ -18,7 +18,6 @@
 
     <properties>
         <currentVersion>${version}</currentVersion>
-        <psimitab.version>1.0-rc2</psimitab.version>
     </properties>
 
     <modules>
@@ -35,7 +34,7 @@
             <dependency>
                 <groupId>psidev.psi.mi</groupId>
                 <artifactId>psimitab</artifactId>
-                <version>${psimitab.version}</version>
+                <version>1.7.4</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
