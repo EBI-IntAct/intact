@@ -15,6 +15,8 @@
  */
 package uk.ac.ebi.intact.psimitab;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import psidev.psi.mi.tab.model.BinaryInteraction;
 import psidev.psi.mi.tab.model.CrossReference;
 import psidev.psi.mi.tab.model.Interactor;
@@ -32,6 +34,8 @@ import java.util.*;
  * @version $Id$
  */
 public class IntactInteractionRowConverter extends AbstractInteractionRowConverter<IntactBinaryInteraction> {
+
+    private static final Log log = LogFactory.getLog( IntactInteractionRowConverter.class );
 
     public static final String EMPTY_COLUMN = String.valueOf( Column.EMPTY_COLUMN );
 
@@ -155,12 +159,20 @@ public class IntactInteractionRowConverter extends AbstractInteractionRowConvert
         ibi.getInteractorB().setBiologicalRoles(ParseUtils.createCrossReferences(bioRoleB) );
         ibi.getInteractorA().setProperties(ParseUtils.createCrossReferences(propA) );
         ibi.getInteractorB().setProperties(ParseUtils.createCrossReferences(propB) );
-        ibi.getInteractorA().setInteractorType( ParseUtils.createCrossReferences( typeA ).iterator().next() );
 
-        List<CrossReference> interactorTypes = ParseUtils.createCrossReferences(typeB);
+        List<CrossReference> interactorTypesA = ParseUtils.createCrossReferences(typeA);
+        if (!interactorTypesA.isEmpty()) {
+            if (log.isWarnEnabled()) log.warn("No interactor type A found for row: "+row);
 
-        if (!interactorTypes.isEmpty()) {
-            ibi.getInteractorB().setInteractorType( interactorTypes.iterator().next() );
+            ibi.getInteractorA().setInteractorType( interactorTypesA.iterator().next() );
+        }
+
+        List<CrossReference> interactorTypesB = ParseUtils.createCrossReferences(typeB);
+
+        if (!interactorTypesB.isEmpty()) {
+            if (log.isWarnEnabled()) log.warn("No interactor type B found for row: "+row);
+
+            ibi.getInteractorB().setInteractorType( interactorTypesB.iterator().next() );
         }
 
         ibi.setHostOrganism( ParseUtils.createCrossReferences( hostOrganism ) );
