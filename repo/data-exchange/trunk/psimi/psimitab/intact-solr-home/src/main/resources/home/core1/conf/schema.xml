@@ -546,6 +546,9 @@
     <copyField source="typeB_expanded" dest="interactorType"/>
     <copyField source="typeB_exact" dest="interactorType"/>
 
+    <copyField source="hostOrganism_expanded" dest="hostOrganism"/>
+    <copyField source="hostOrganism_exact" dest="hostOrganism"/>
+
     <copyField source="annotationA" dest="annotation"/>
     <copyField source="annotationB" dest="annotation"/>
 
