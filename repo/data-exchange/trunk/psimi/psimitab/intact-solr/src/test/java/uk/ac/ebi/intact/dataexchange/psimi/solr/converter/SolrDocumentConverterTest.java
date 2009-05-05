@@ -19,8 +19,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.SolrInputField;
 import org.junit.Assert;
 import org.junit.Test;
-import psidev.psi.mi.tab.model.BinaryInteraction;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
 /**
  * TODO comment that class header
@@ -43,6 +43,8 @@ public class SolrDocumentConverterTest {
 
         SolrInputDocument doc = converter.toSolrDocument(psiMiTabLine);
 
+        Assert.assertEquals("psi-mi:\"MI:0326\"(protein)", doc.getFieldValue(FieldNames.TYPE_A));
+        Assert.assertEquals("psi-mi:\"MI:0326\"(protein)", doc.getFieldValue(FieldNames.TYPE_B));
         Assert.assertEquals(rigid, doc.getFieldValue(FieldNames.RIGID));
     }
 
@@ -58,8 +60,12 @@ public class SolrDocumentConverterTest {
          //mitab to solrinputdoc
         SolrInputDocument inputDoc1 = converter.toSolrDocument(psiMiTabLine);
         //solrinputdoc to binaryinteraction 
-        final BinaryInteraction binaryInteraction = converter.toBinaryInteraction( inputDoc1 );
-         //binaryinteraction back to solrinputdoc
+        final IntactBinaryInteraction binaryInteraction = (IntactBinaryInteraction) converter.toBinaryInteraction( inputDoc1 );
+        
+        Assert.assertEquals("MI:0326", binaryInteraction.getInteractorA().getInteractorType().getIdentifier());
+        Assert.assertEquals("MI:0326", binaryInteraction.getInteractorB().getInteractorType().getIdentifier());
+
+        //binaryinteraction back to solrinputdoc
         final SolrInputDocument inputDoc2 = converter.toSolrDocument( binaryInteraction );
 
         Assert.assertEquals(inputDoc1.getFieldValues("idA").size(),inputDoc2.getFieldValues("idA").size());

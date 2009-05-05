@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.dataexchange.psimi.solr;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -62,10 +63,11 @@ public class IntactSolrSearcher {
 
     public SolrSearchResult search(SolrQuery originalQuery) throws IntactSolrException {
         SolrQuery query = originalQuery.getCopy();
+
         if(query.getFields()!=null){
-        query.setFields(query.getFields()+", line, mitab, pkey");
+            query.setFields(query.getFields()+StringUtils.join(FieldNames.DATA_FIELDS, ", ")+", pkey");
         }else{
-        query.setFields("line, mitab, pkey" );
+            query.setFields(StringUtils.join(FieldNames.DATA_FIELDS, ", ")+", pkey" );
         }
 
         // if using a wildcard query we convert to lower case
