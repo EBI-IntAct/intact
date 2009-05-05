@@ -520,11 +520,23 @@
     <copyField source="type_exact" dest="type"/>
     <copyField source="type_expanded" dest="type"/>
 
-    <copyField source="experimentalRoleA" dest="experimentalRole"/>
-    <copyField source="experimentalRoleB" dest="experimentalRole"/>
+    <copyField source="experimentalRoleA_exact" dest="experimentalRoleA"/>
+    <copyField source="experimentalRoleA_expanded" dest="experimentalRoleA"/>
+    <copyField source="experimentalRoleA_exact" dest="experimentalRole"/>
+    <copyField source="experimentalRoleA_expanded" dest="experimentalRole"/>
+    <copyField source="experimentalRoleB_exact" dest="experimentalRoleB"/>
+    <copyField source="experimentalRoleB_expanded" dest="experimentalRoleB"/>
+    <copyField source="experimentalRoleB_exact" dest="experimentalRole"/>
+    <copyField source="experimentalRoleB_expanded" dest="experimentalRole"/>
 
-    <copyField source="biologicalRoleA" dest="biologicalRole"/>
-    <copyField source="biologicalRoleB" dest="biologicalRole"/>
+    <copyField source="biologicalRoleA_exact" dest="biologicalRoleA"/>
+    <copyField source="biologicalRoleA_expanded" dest="biologicalRoleA"/>
+    <copyField source="biologicalRoleA_exact" dest="biologicalRole"/>
+    <copyField source="biologicalRoleA_expanded" dest="biologicalRole"/>
+    <copyField source="biologicalRoleB_exact" dest="biologicalRoleB"/>
+    <copyField source="biologicalRoleB_expanded" dest="biologicalRoleB"/>
+    <copyField source="biologicalRoleB_exact" dest="biologicalRole"/>
+    <copyField source="biologicalRoleB_expanded" dest="biologicalRole"/>
 
     <copyField source="propertiesA_exact" dest="propertiesA"/>
     <copyField source="propertiesA_expanded" dest="propertiesA"/>
