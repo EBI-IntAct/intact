@@ -20,10 +20,7 @@ import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
 import psidev.psi.mi.tab.model.BinaryInteraction;
-import psidev.psi.mi.tab.model.builder.Column;
-import psidev.psi.mi.tab.model.builder.DocumentDefinition;
-import psidev.psi.mi.tab.model.builder.Field;
-import psidev.psi.mi.tab.model.builder.Row;
+import psidev.psi.mi.tab.model.builder.*;
 import uk.ac.ebi.intact.bridges.ontologies.term.OntologyTerm;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.FieldNames;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.converter.impl.ByInteractorTypeRowDataAdder;
@@ -47,6 +44,7 @@ public class SolrDocumentConverter {
     private DocumentDefinition documentDefintion;
 
     private Map<String,Collection<Field>> cvCache;
+    private Map<String,OntologyTerm> ontologyTermCache;
 
     private Set<String> expandableOntologies;
 
@@ -65,6 +63,7 @@ public class SolrDocumentConverter {
 
         this.documentDefintion = documentDefintion;
         cvCache = new LRUMap(10000);
+        ontologyTermCache = new LRUMap(10000);
     }
 
     public SolrDocumentConverter(DocumentDefinition documentDefintion,
@@ -78,6 +77,7 @@ public class SolrDocumentConverter {
         expandableOntologies.add( FieldNames.DB_INTERPRO );
         expandableOntologies.add( FieldNames.DB_CHEBI );
         expandableOntologies.add( FieldNames.DB_PSIMI );
+        expandableOntologies.add( "taxid" );
     }
 
     public Set<String> getExpandableOntologies() {
@@ -117,8 +117,8 @@ public class SolrDocumentConverter {
         addColumnToDoc(doc, row, FieldNames.DETMETHOD, IntactDocumentDefinition.INT_DET_METHOD, true);
         addColumnToDoc(doc, row, FieldNames.PUBAUTH, IntactDocumentDefinition.PUB_AUTH);
         addColumnToDoc(doc, row, FieldNames.PUBID, IntactDocumentDefinition.PUB_ID);
-        addColumnToDoc(doc, row, FieldNames.TAXID_A, IntactDocumentDefinition.TAXID_A);
-        addColumnToDoc(doc, row, FieldNames.TAXID_B, IntactDocumentDefinition.TAXID_B);
+        addColumnToDoc(doc, row, FieldNames.TAXID_A, IntactDocumentDefinition.TAXID_A, true);
+        addColumnToDoc(doc, row, FieldNames.TAXID_B, IntactDocumentDefinition.TAXID_B, true);
         addColumnToDoc(doc, row, FieldNames.TYPE, IntactDocumentDefinition.INT_TYPE, true);
         addColumnToDoc(doc, row, FieldNames.SOURCE, IntactDocumentDefinition.SOURCE);
         addColumnToDoc(doc, row, FieldNames.INTERACTION_ID, IntactDocumentDefinition.INTERACTION_ID, 11f);
@@ -126,15 +126,15 @@ public class SolrDocumentConverter {
 
         // extended
         if (documentDefintion instanceof IntactDocumentDefinition) {
-            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_A, IntactDocumentDefinition.EXPERIMENTAL_ROLE_A);
-            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_B, IntactDocumentDefinition.EXPERIMENTAL_ROLE_B);
-            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_A, IntactDocumentDefinition.BIOLOGICAL_ROLE_A);
-            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_B, IntactDocumentDefinition.BIOLOGICAL_ROLE_B);
+            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_A, IntactDocumentDefinition.EXPERIMENTAL_ROLE_A, true);
+            addColumnToDoc(doc, row, FieldNames.EXPERIMENTAL_ROLE_B, IntactDocumentDefinition.EXPERIMENTAL_ROLE_B, true);
+            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_A, IntactDocumentDefinition.BIOLOGICAL_ROLE_A, true);
+            addColumnToDoc(doc, row, FieldNames.BIOLOGICAL_ROLE_B, IntactDocumentDefinition.BIOLOGICAL_ROLE_B, true);
             addColumnToDoc(doc, row, FieldNames.PROPERTIES_A, IntactDocumentDefinition.PROPERTIES_A, true);
             addColumnToDoc(doc, row, FieldNames.PROPERTIES_B, IntactDocumentDefinition.PROPERTIES_B, true);
-            addColumnToDoc(doc, row, FieldNames.TYPE_A, IntactDocumentDefinition.INTERACTOR_TYPE_A);
-            addColumnToDoc(doc, row, FieldNames.TYPE_B, IntactDocumentDefinition.INTERACTOR_TYPE_B);
-            addColumnToDoc(doc, row, FieldNames.HOST_ORGANISM, IntactDocumentDefinition.HOST_ORGANISM);
+            addColumnToDoc(doc, row, FieldNames.TYPE_A, IntactDocumentDefinition.INTERACTOR_TYPE_A, true);
+            addColumnToDoc(doc, row, FieldNames.TYPE_B, IntactDocumentDefinition.INTERACTOR_TYPE_B, true);
+            addColumnToDoc(doc, row, FieldNames.HOST_ORGANISM, IntactDocumentDefinition.HOST_ORGANISM, true);
             addColumnToDoc(doc, row, FieldNames.EXPANSION, IntactDocumentDefinition.EXPANSION_METHOD);
             addColumnToDoc(doc, row, FieldNames.DATASET, IntactDocumentDefinition.DATASET);
             addColumnToDoc(doc, row, FieldNames.ANNOTATION_A, IntactDocumentDefinition.ANNOTATIONS_A);
@@ -165,23 +165,99 @@ public class SolrDocumentConverter {
     }
 
     public BinaryInteraction toBinaryInteraction(SolrDocument doc) {
-        return documentDefintion.interactionFromString(toMitabLine(doc));
+        return documentDefintion.createInteractionRowConverter().createBinaryInteraction(toRow(doc));
     }
 
     public BinaryInteraction toBinaryInteraction(SolrInputDocument doc) {
-        return documentDefintion.interactionFromString(toMitabLine(doc));
+        return documentDefintion.createInteractionRowConverter().createBinaryInteraction(toRow(doc));
     }
 
     public Row toRow(SolrDocument doc) {
-        return documentDefintion.createRowBuilder().createRow(toMitabLine(doc));
+        return toRow((Object)doc);
+    }
+    
+    public Row toRow(SolrInputDocument doc) {
+        return toRow((Object)doc);
+    }
+    
+    protected Row toRow(Object doc) {
+        int i = 0;
+
+        Row row = new Row();
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ID_A), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ID_B), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ALTID_A), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ALTID_B), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ALIAS_A), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ALIAS_B), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.DETMETHOD_EXACT), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PUBAUTH), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PUBID), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.TAXID_A_EXACT), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.TAXID_B_EXACT), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.TYPE_EXACT), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.SOURCE), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.INTERACTION_ID), i++));
+        row.appendColumn(toColumn(getFieldValue(doc, FieldNames.CONFIDENCE), i++));
+
+        // extended
+        if (documentDefintion instanceof IntactDocumentDefinition) {
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.EXPERIMENTAL_ROLE_A_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.EXPERIMENTAL_ROLE_B_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.BIOLOGICAL_ROLE_A_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.BIOLOGICAL_ROLE_B_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PROPERTIES_A_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PROPERTIES_B_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.TYPE_A_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.TYPE_B_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.HOST_ORGANISM_EXACT), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.EXPANSION), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.DATASET), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ANNOTATION_A), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.ANNOTATION_B), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PARAMETER_A), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PARAMETER_B), i++));
+            row.appendColumn(toColumn(getFieldValue(doc, FieldNames.PARAMETER_INTERACTION), i++));
+        }
+
+        return row;
+    }
+
+    private Collection<Object> getFieldValue(Object doc, String fieldName) {
+        if (doc instanceof SolrDocument) {
+            return ((SolrDocument)doc).getFieldValues(fieldName);
+        } else if (doc instanceof SolrInputDocument) {
+            return ((SolrInputDocument)doc).getFieldValues(fieldName);
+        }
+       
+        throw new IllegalArgumentException("Unexpected object type: "+doc.getClass().getName());
+    }
+
+    protected Column toColumn(Collection<Object> strCol, int docDefinitionIndex) {
+        return toColumn(strCol, documentDefintion.getColumnDefinition(docDefinitionIndex).getBuilder());
+    }
+
+    protected Column toColumn(Collection<Object> strFields, FieldBuilder fieldBuilder) {
+        if (strFields == null || strFields.isEmpty()) {
+            return new Column();
+        }
+
+        List<Field> fields = new ArrayList<Field>(strFields.size());
+
+        for (Object strField : strFields) {
+            Field field = fieldBuilder.createField((String)strField);
+            fields.add(field);
+        }
+
+        return new Column(fields);
     }
 
     public String toMitabLine(SolrDocument doc) {
-        return (String) doc.getFieldValue(FieldNames.LINE);
+        return toRow(doc).toString();
     }
 
     public String toMitabLine(SolrInputDocument doc) {
-        return (String) doc.getFieldValue(FieldNames.LINE);
+        return toRow(doc).toString();
     }
 
     private void addColumnToDoc(SolrInputDocument doc, Row row, String fieldName, int columnIndex) throws SolrServerException {
@@ -205,22 +281,9 @@ public class SolrDocumentConverter {
         Column column = row.getColumnByIndex( columnIndex );
 
         for (Field field : column.getFields()) {
-            if (expandableColumn) {
-                doc.addField(fieldName+"_exact", field.toString(), boost);
-            }
-
-            doc.addField(fieldName, field.toString(), boost);
-            doc.addField(fieldName+"_ms", field.toString(), boost);
-
-            if (field.getType() != null) {
-                doc.addField(field.getType()+"_xref", field.getValue(), boost);
-                doc.addField(field.getType()+"_xref_ms", field.toString(), boost);
-            }
-
-            addDescriptionField(doc, field.getType(), field);
-            addDescriptionField(doc, fieldName, field);
-
             if (isExpandableOntology(field.getType())) {
+                field = enrichField(field);
+
                 doc.addField(field.getType(), field.getValue());
 
                 if (field.getDescription() != null) {
@@ -233,7 +296,45 @@ public class SolrDocumentConverter {
                     addExpandedFields(doc, fieldName, parentField);
                 }
             }
+
+            if (expandableColumn) {
+                doc.addField(fieldName+"_exact", field.toString(), boost);
+            }
+            addDescriptionField(doc, field.getType(), field);
+            doc.addField(fieldName, field.toString(), boost);
+            doc.addField(fieldName+"_ms", field.toString(), boost);
+
+            if (field.getType() != null) {
+                doc.addField(field.getType()+"_xref", field.getValue(), boost);
+                doc.addField(field.getType()+"_xref_ms", field.toString(), boost);
+            }
+
+            addDescriptionField(doc, field.getType(), field);
+            addDescriptionField(doc, fieldName, field);
+
         }
+    }
+
+    private Field enrichField(Field field) throws SolrServerException {
+        if (field == null) return null;
+        
+        final OntologyTerm ontologyTerm = findOntologyTerm(field);
+
+        if (ontologyTerm == null) return field;
+
+        return new Field(field.getType(), ontologyTerm.getId(), ontologyTerm.getName());
+    }
+
+    private OntologyTerm findOntologyTerm(Field field) throws SolrServerException {
+        if (ontologySearcher == null) {
+            return null;
+        }
+
+        if (ontologyTermCache.containsKey(field.getValue())) {
+            return ontologyTermCache.get(field.getValue());
+        }
+
+        return new LazyLoadedOntologyTerm(ontologySearcher, field.getValue(), field.getDescription());
     }
 
     private void addFilteredField(Row row, SolrInputDocument doc, String fieldName, int columnIndex, FieldFilter filter) {
@@ -317,7 +418,7 @@ public class SolrDocumentConverter {
         }
 
         // fetch parents and fill the field list
-        final OntologyTerm ontologyTerm = new LazyLoadedOntologyTerm(ontologySearcher, identifier);
+        final OntologyTerm ontologyTerm = findOntologyTerm(field);
         final Set<OntologyTerm> parents = ontologyTerm.getAllParentsToRoot();
 
         allParents = convertTermsToFields(type, parents);

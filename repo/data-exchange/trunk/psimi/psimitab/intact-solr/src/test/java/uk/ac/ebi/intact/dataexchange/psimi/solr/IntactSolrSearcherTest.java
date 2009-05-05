@@ -23,9 +23,13 @@ import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
+import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
+import uk.ac.ebi.intact.psimitab.IntactBinaryInteraction;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -115,6 +119,114 @@ public class IntactSolrSearcherTest {
 
     }
 
+    @Test
+    public void search_integrityTest() throws Exception {
+        String mitab = "uniprotkb:P35568|intact:EBI-517592\tuniprotkb:Q08345-2|intact:EBI-711903\tuniprotkb:IRS1(gene name)" +
+                "\t-\tintact:irs1_human(shortLabel)\tuniprotkb:CAK II(isoform synonym)|uniprotkb:Short(isoform synonym)|intact:Q08345-2(shortLabel)" +
+                "\tMI:0424(protein kinase assay)\tBantscheff et al. (2007)" +
+                "\tpubmed:17721511\ttaxid:9606(human)\ttaxid:9606(human)\tMI:0217(phosphorylation)" +
+                "\tMI:0469(intact)\tintact:EBI-1381086\t-\t" +
+                "MI:0499(unspecified role)\tMI:0499(unspecified role)" +
+                "\tMI:0502(enzyme target)\tMI:0501(enzyme)" +
+                "\tgo:\"GO:0030188\"|go:\"GO:0005159\"|" +
+                "go:\"GO:0005158\"|interpro:IPR002404|" +
+                "interpro:IPR001849|interpro:IPR011993|ensembl:ENSG00000169047|rcsb pdb:1IRS|rcsb pdb:1K3A|rcsb pdb:1QQG" +
+                "\tintact:EBI-711879\tMI:0326(protein)\tMI:0326(protein)\ttaxid:-1(in vitro)\t-\t-\t-";
+
+        IntactSolrIndexer indexer = new IntactSolrIndexer(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB), solrJettyRunner.getSolrServer(CoreNames.CORE_ONTOLOGY_PUB));
+        indexer.indexOntologies(new OntologyMapping[] {
+                new OntologyMapping("go", IntactSolrIndexerTest.class.getResource("/META-INF/goslim_generic.obo"))});
+        indexer.indexMitab(new ByteArrayInputStream(mitab.getBytes()), false);
+
+        SolrQuery solrQuery = new SolrQuery("P35568");
+
+        IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));
+
+        SolrSearchResult result = searcher.search(solrQuery);
+
+        IntactBinaryInteraction binaryInteraction = result.getBinaryInteractionList().iterator().next();
+        
+        Assert.assertEquals("P35568", get(0, binaryInteraction.getInteractorA().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("uniprotkb", get(0, binaryInteraction.getInteractorA().getIdentifiers()).getDatabase());
+        Assert.assertEquals("EBI-517592", get(1, binaryInteraction.getInteractorA().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("intact", get(1, binaryInteraction.getInteractorA().getIdentifiers()).getDatabase());
+        Assert.assertEquals("Q08345-2", get(0, binaryInteraction.getInteractorB().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("uniprotkb", get(0, binaryInteraction.getInteractorB().getIdentifiers()).getDatabase());
+        Assert.assertEquals("EBI-711903", get(1, binaryInteraction.getInteractorB().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("intact", get(1, binaryInteraction.getInteractorB().getIdentifiers()).getDatabase());
+        Assert.assertEquals("IRS1", get(0, binaryInteraction.getInteractorA().getAlternativeIdentifiers()).getIdentifier());
+        Assert.assertEquals("uniprotkb", get(0, binaryInteraction.getInteractorA().getAlternativeIdentifiers()).getDatabase());
+        Assert.assertEquals("gene name", get(0, binaryInteraction.getInteractorA().getAlternativeIdentifiers()).getText());
+        Assert.assertEquals(0, binaryInteraction.getInteractorB().getAlternativeIdentifiers().size());
+        Assert.assertEquals("irs1_human", get(0, binaryInteraction.getInteractorA().getAliases()).getName());
+        Assert.assertEquals("intact", get(0, binaryInteraction.getInteractorA().getAliases()).getDbSource());
+        Assert.assertEquals("shortLabel", get(0, binaryInteraction.getInteractorA().getAliases()).getAliasType());
+        Assert.assertEquals("CAK II", get(0, binaryInteraction.getInteractorB().getAliases()).getName());
+        Assert.assertEquals("uniprotkb", get(0, binaryInteraction.getInteractorB().getAliases()).getDbSource());
+        Assert.assertEquals("isoform synonym", get(0, binaryInteraction.getInteractorB().getAliases()).getAliasType());
+        Assert.assertEquals("MI:0424", get(0, binaryInteraction.getDetectionMethods()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getDetectionMethods()).getDatabase());
+        Assert.assertEquals("protein kinase assay", get(0, binaryInteraction.getDetectionMethods()).getText());
+        Assert.assertEquals("Bantscheff et al. (2007)", get(0, binaryInteraction.getAuthors()).getName());
+        Assert.assertEquals("17721511", get(0, binaryInteraction.getPublications()).getIdentifier());
+        Assert.assertEquals("pubmed", get(0, binaryInteraction.getPublications()).getDatabase());
+        Assert.assertEquals("9606", get(0, binaryInteraction.getInteractorA().getOrganism().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("taxid", get(0, binaryInteraction.getInteractorA().getOrganism().getIdentifiers()).getDatabase());
+        Assert.assertEquals("human", get(0, binaryInteraction.getInteractorA().getOrganism().getIdentifiers()).getText());
+        Assert.assertEquals("9606", get(0, binaryInteraction.getInteractorB().getOrganism().getIdentifiers()).getIdentifier());
+        Assert.assertEquals("taxid", get(0, binaryInteraction.getInteractorB().getOrganism().getIdentifiers()).getDatabase());
+        Assert.assertEquals("human", get(0, binaryInteraction.getInteractorB().getOrganism().getIdentifiers()).getText());
+        Assert.assertEquals("MI:0217", get(0, binaryInteraction.getInteractionTypes()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getInteractionTypes()).getDatabase());
+        Assert.assertEquals("phosphorylation", get(0, binaryInteraction.getInteractionTypes()).getText());
+        Assert.assertEquals("MI:0469", get(0, binaryInteraction.getSourceDatabases()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getSourceDatabases()).getDatabase());
+        Assert.assertEquals("intact", get(0, binaryInteraction.getSourceDatabases()).getText());
+        Assert.assertEquals("EBI-1381086", get(0, binaryInteraction.getInteractionAcs()).getIdentifier());
+        Assert.assertEquals("intact", get(0, binaryInteraction.getInteractionAcs()).getDatabase());
+        Assert.assertEquals(0, binaryInteraction.getConfidenceValues().size());
+        Assert.assertEquals(1, binaryInteraction.getInteractorA().getExperimentalRoles().size());
+        Assert.assertEquals("MI:0499", get(0, binaryInteraction.getInteractorA().getExperimentalRoles()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getInteractorA().getExperimentalRoles()).getDatabase());
+        Assert.assertEquals("unspecified role", get(0, binaryInteraction.getInteractorA().getExperimentalRoles()).getText());
+        Assert.assertEquals(1, binaryInteraction.getInteractorB().getExperimentalRoles().size());
+        Assert.assertEquals("MI:0499", get(0, binaryInteraction.getInteractorB().getExperimentalRoles()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getInteractorB().getExperimentalRoles()).getDatabase());
+        Assert.assertEquals("unspecified role", get(0, binaryInteraction.getInteractorB().getExperimentalRoles()).getText());
+        Assert.assertEquals(1, binaryInteraction.getInteractorA().getBiologicalRoles().size());
+        Assert.assertEquals("MI:0502", get(0, binaryInteraction.getInteractorA().getBiologicalRoles()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getInteractorA().getBiologicalRoles()).getDatabase());
+        Assert.assertEquals("enzyme target", get(0, binaryInteraction.getInteractorA().getBiologicalRoles()).getText());
+        Assert.assertEquals(1, binaryInteraction.getInteractorB().getBiologicalRoles().size());
+        Assert.assertEquals("MI:0501", get(0, binaryInteraction.getInteractorB().getBiologicalRoles()).getIdentifier());
+        Assert.assertEquals("psi-mi", get(0, binaryInteraction.getInteractorB().getBiologicalRoles()).getDatabase());
+        Assert.assertEquals("enzyme", get(0, binaryInteraction.getInteractorB().getBiologicalRoles()).getText());
+        Assert.assertEquals("GO:0030188", get(0, binaryInteraction.getInteractorA().getProperties()).getIdentifier());
+        Assert.assertEquals("go", get(0, binaryInteraction.getInteractorA().getProperties()).getDatabase());
+        Assert.assertEquals("chaperone regulator activity", get(0, binaryInteraction.getInteractorA().getProperties()).getText());
+        Assert.assertEquals(10, binaryInteraction.getInteractorA().getProperties().size());
+        Assert.assertEquals("EBI-711879", get(0, binaryInteraction.getInteractorB().getProperties()).getIdentifier());
+        Assert.assertEquals("intact", get(0, binaryInteraction.getInteractorB().getProperties()).getDatabase());
+        Assert.assertEquals(1, binaryInteraction.getInteractorB().getProperties().size());
+        Assert.assertEquals("MI:0326", binaryInteraction.getInteractorA().getInteractorType().getIdentifier());
+        Assert.assertEquals("psi-mi", binaryInteraction.getInteractorA().getInteractorType().getDatabase());
+        Assert.assertEquals("protein", binaryInteraction.getInteractorA().getInteractorType().getText());
+        Assert.assertEquals("MI:0326", binaryInteraction.getInteractorB().getInteractorType().getIdentifier());
+        Assert.assertEquals("psi-mi", binaryInteraction.getInteractorB().getInteractorType().getDatabase());
+        Assert.assertEquals("protein", binaryInteraction.getInteractorB().getInteractorType().getText());
+        Assert.assertEquals("-1", get(0, binaryInteraction.getHostOrganism()).getIdentifier());
+        Assert.assertEquals("taxid", get(0, binaryInteraction.getHostOrganism()).getDatabase());
+        Assert.assertEquals("in vitro", get(0, binaryInteraction.getHostOrganism()).getText());
+        Assert.assertEquals(0, binaryInteraction.getInteractorA().getAnnotations().size());
+        Assert.assertEquals(0, binaryInteraction.getInteractorB().getAnnotations().size());
+        Assert.assertEquals(0, binaryInteraction.getInteractorA().getParameters().size());
+        Assert.assertEquals(0, binaryInteraction.getInteractorB().getParameters().size());
+        Assert.assertEquals(0, binaryInteraction.getParameters().size());  
+    }
+
+    private <T> T get(int position, Collection<T> elements) {
+        return new ArrayList<T>(elements).get(position);
+    }
 
     private void assertCount(Number count, String searchQuery) throws IntactSolrException {
         IntactSolrSearcher searcher = new IntactSolrSearcher(solrJettyRunner.getSolrServer(CoreNames.CORE_PUB));

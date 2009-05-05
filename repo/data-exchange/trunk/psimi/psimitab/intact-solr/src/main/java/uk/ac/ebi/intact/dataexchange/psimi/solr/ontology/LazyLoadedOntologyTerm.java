@@ -47,18 +47,29 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
     public LazyLoadedOntologyTerm(OntologySearcher searcher, String id) throws SolrServerException {
         this.searcher = searcher;
         this.id = id;
-
-        QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
-
-        if (queryResponse.getResults().getNumFound() > 0) {
-            this.name = (String) queryResponse.getResults().iterator().next().getFieldValue(OntologyFieldNames.PARENT_NAME);
-        }
+        this.name = findName(searcher, id);
     }
 
-    public LazyLoadedOntologyTerm(OntologySearcher searcher, String id, String name) {
+
+
+    public LazyLoadedOntologyTerm(OntologySearcher searcher, String id, String name) throws SolrServerException {
         this.searcher = searcher;
         this.id = id;
         this.name = name;
+
+        if (name == null) {
+           this.name = findName(searcher, id);
+        }
+    }
+
+    private String findName(OntologySearcher searcher, String id) throws SolrServerException {
+        QueryResponse queryResponse = searcher.searchByParentId(id, 0, 1);
+
+        if (queryResponse.getResults().getNumFound() > 0) {
+            return (String) queryResponse.getResults().iterator().next().getFieldValue(OntologyFieldNames.PARENT_NAME);
+        }
+
+        return null;
     }
 
     public String getId() {
@@ -170,7 +181,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
         return terms;
     }
 
-    private List<OntologyTerm> processParentsHits(QueryResponse queryResponse, String id) throws IOException {
+    private List<OntologyTerm> processParentsHits(QueryResponse queryResponse, String id) throws IOException, SolrServerException {
         List<OntologyTerm> terms = new ArrayList<OntologyTerm>();
 
         List<String> processedIds = new ArrayList<String>();
@@ -190,7 +201,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
         return terms;
     }
 
-    private List<OntologyTerm> processChildrenHits(QueryResponse queryResponse, String id) throws IOException {
+    private List<OntologyTerm> processChildrenHits(QueryResponse queryResponse, String id) throws IOException, SolrServerException {
         List<OntologyTerm> terms = new ArrayList<OntologyTerm>();
 
         List<String> processedIds = new ArrayList<String>();
@@ -210,7 +221,7 @@ public class LazyLoadedOntologyTerm implements OntologyTerm {
         return terms;
     }
 
-    protected OntologyTerm newInternalOntologyTerm(OntologySearcher searcher, String id, String name) {
+    protected OntologyTerm newInternalOntologyTerm(OntologySearcher searcher, String id, String name) throws SolrServerException {
         return new LazyLoadedOntologyTerm(searcher, id, name);
     }
 
