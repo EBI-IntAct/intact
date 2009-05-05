@@ -330,8 +330,8 @@
      <field name="detmethod" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="pubauth" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="pubid" type="textIntact" indexed="true" stored="true" multiValued="true"/>
-     <field name="taxidA" type="text" indexed="true" stored="true"/>
-     <field name="taxidB" type="text" indexed="true" stored="true"/>
+     <field name="taxidA" type="text" indexed="true" stored="true" multiValued="true"/>
+     <field name="taxidB" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="type" type="text" indexed="true" stored="true" multiValued="true"/>
      <field name="source" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="interaction_id" type="textIntact" indexed="true" stored="true" required="true" multiValued="true"/>
@@ -341,6 +341,7 @@
      <field name="identifier" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="altid" type="textIntact" indexed="true" stored="false" multiValued="true"/>
      <field name="alias" type="textIntact" indexed="true" stored="false" multiValued="true"/>
+     <field name="taxid" type="textIntact" indexed="true" stored="true" multiValued="true"/>
      <field name="species" type="text" indexed="true" stored="true" multiValued="true"/>
 
      <!--<field name="pkey" type="string" indexed="true" stored="true" required="true"/>-->
