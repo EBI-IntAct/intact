@@ -162,17 +162,17 @@ public class IntactInteractionRowConverter extends AbstractInteractionRowConvert
 
         List<CrossReference> interactorTypesA = ParseUtils.createCrossReferences(typeA);
         if (!interactorTypesA.isEmpty()) {
-            if (log.isWarnEnabled()) log.warn("No interactor type A found for row: "+row);
-
             ibi.getInteractorA().setInteractorType( interactorTypesA.iterator().next() );
+        } else if (log.isWarnEnabled()) {
+           log.warn("No interactor type A found for row: "+row);
         }
 
         List<CrossReference> interactorTypesB = ParseUtils.createCrossReferences(typeB);
 
         if (!interactorTypesB.isEmpty()) {
-            if (log.isWarnEnabled()) log.warn("No interactor type B found for row: "+row);
-
-            ibi.getInteractorB().setInteractorType( interactorTypesB.iterator().next() );
+              ibi.getInteractorB().setInteractorType( interactorTypesB.iterator().next() );
+        } else if (log.isWarnEnabled()) {
+           log.warn("No interactor type B found for row: "+row);
         }
 
         ibi.setHostOrganism( ParseUtils.createCrossReferences( hostOrganism ) );
