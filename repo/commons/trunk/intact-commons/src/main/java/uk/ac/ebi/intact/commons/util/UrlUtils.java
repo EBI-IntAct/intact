@@ -83,7 +83,7 @@ public class UrlUtils
 
                 boolean isLocalDir = isLocal && new File(url.getFile()).isDirectory();
 
-                if (isLocalDir || isRemoteDirectory(line))
+                if (isLocalDir || isRemoteDirectory(url))
                 {
                     if (recursive)
                     {
@@ -132,9 +132,9 @@ public class UrlUtils
         return new URL(folderUrl.toString()+tokens[tokens.length-1]);
     }
 
-    private static boolean isRemoteDirectory(String line)
+    private static boolean isRemoteDirectory(URL url)
     {
-        return line.startsWith("d");
+        System.out.println(url.getProtocol());
+        return ! "file".equals( url.getProtocol() );
     }
-
 }
