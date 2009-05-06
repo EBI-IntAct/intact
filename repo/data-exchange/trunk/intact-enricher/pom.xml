@@ -57,6 +57,12 @@
             <groupId>uk.ac.ebi.intact.bridges</groupId>
             <artifactId>intact-taxonomy</artifactId>
             <version>${bridges.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.axis</groupId>
+                    <artifactId>axis-saaj</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>uk.ac.ebi.intact.bridges</groupId>
