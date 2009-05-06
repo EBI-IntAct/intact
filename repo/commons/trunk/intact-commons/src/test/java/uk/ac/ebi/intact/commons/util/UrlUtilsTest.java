@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
+import java.util.Iterator;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -36,13 +37,21 @@ public class UrlUtilsTest {
 
     @Test
     public void listFromUrlFolder_nonRecursive() throws Exception {
-        List<URL> urls = UrlUtils.listFilesFromFolderUrl(UrlUtils.class.getResource(".."));
-        assertTrue(urls.isEmpty());
+        File file = new File( "target/foo" );
+        if( !file.exists() ) assertTrue( file.createNewFile() );
+        URL url = file.toURL();
+        List<URL> urls = UrlUtils.listFilesFromFolderUrl( url );
+        assertEquals( 0, urls.size() );
     }
 
     @Test
     public void listFromUrlFolder_recursive() throws Exception {
-        List<URL> urls = UrlUtils.listFilesFromFolderUrl(UrlUtils.class.getResource(".."), null, true);
+        File file = new File( "target/foo" );
+        if( !file.exists() ) assertTrue( file.createNewFile() );
+        final File parent = file.getParentFile();
+        assertTrue( parent.isDirectory() );
+        URL url = parent.toURL();
+        List<URL> urls = UrlUtils.listFilesFromFolderUrl(url, null, true);
         assertFalse(urls.isEmpty());
     }
 
