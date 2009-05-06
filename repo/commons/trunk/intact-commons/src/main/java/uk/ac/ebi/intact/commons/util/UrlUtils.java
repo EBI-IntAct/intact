@@ -134,7 +134,6 @@ public class UrlUtils
 
     private static boolean isRemoteDirectory(URL url)
     {
-        System.out.println(url.getProtocol());
         return ! "file".equals( url.getProtocol() );
     }
 }
