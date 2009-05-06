@@ -73,7 +73,7 @@ public class NewtServerProxy {
         private String myShortLabel;
         private String myFullName;
 
-        private NewtResponse(String taxid, String shortLabel, String fullName) {
+        public NewtResponse(String taxid, String shortLabel, String fullName) {
             myTaxId = Integer.parseInt(taxid);
             myShortLabel= shortLabel;
             myFullName = fullName;
