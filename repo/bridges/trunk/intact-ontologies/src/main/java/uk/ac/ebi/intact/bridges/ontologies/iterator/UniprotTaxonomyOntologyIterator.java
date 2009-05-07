@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.net.URLEncoder;
 
 /**
  * Example URL: http://www.uniprot.org/taxonomy/?query=*&limit=10&format=list
@@ -57,8 +58,9 @@ public class UniprotTaxonomyOntologyIterator extends LineOntologyIterator {
     }
 
     public UniprotTaxonomyOntologyIterator(String query, int offset, int limit, boolean onlyReviewed) throws IOException {
-       this(new URL(BASE_URL+query+(onlyReviewed? " AND reviewed:yes" : "")+
-               "&offset="+offset+"&limit="+limit));
+       this(new URL(BASE_URL + URLEncoder.encode(query+(onlyReviewed? " AND reviewed:yes" : ""), "UTF-8") +
+               "&offset=" + offset+
+               "&limit=" + limit));
     }
 
     @Override
