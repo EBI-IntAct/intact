@@ -389,9 +389,21 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
     private void processSpliceVariants( UniProtEntry uniProtEntry, UniprotProtein protein ) {
 
+        Map<String,String> seqMap = new HashMap<String,String>();
+
+        List<UniprotSpliceVariant> spliceVariants = findSpliceVariants(uniProtEntry, protein.getOrganism(), seqMap);
+
+        // add the splice variant to the original protein
+        protein.getSpliceVariants().addAll( spliceVariants );
+    }
+
+    private List<UniprotSpliceVariant> findSpliceVariants(UniProtEntry uniProtEntry, Organism organism, Map<String,String> seqMap) {
+        List<UniprotSpliceVariant> spliceVariants = new ArrayList<UniprotSpliceVariant>();
+
         List<AlternativeProductsComment> comments = uniProtEntry.getComments( CommentType.ALTERNATIVE_PRODUCTS );
         for ( AlternativeProductsComment comment : comments ) {
             List<AlternativeProductsIsoform> isoforms = comment.getIsoforms();
+
             for ( AlternativeProductsIsoform isoform : isoforms ) {
 
                 List<String> ids = new ArrayList<String>();
@@ -414,53 +426,73 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 }
 
                 // process alternative sequence
-                // check that the sequence is in the current entry
+                String spliceVarId = ids.get(0);
+
                 String sequence = null;
-                String status = isoform.getIsoformSequenceStatus().getValue();
-                log.debug( "Sequence status: " + status );
-                String parentProtein = getUniProtAccFromSpliceVariantId( ids.get( 0 ) );
 
-                switch (isoform.getIsoformSequenceStatus()) {
-                    case NOT_DESCRIBED:
-                        log.error("According to uniprot the splice variant " + ids.get(0) + " has no sequence (status = NOT_DESCRIBED)");
-                    case DESCRIBED:
-                        sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
-                        break;
-                    case DISPLAYED:
-                        sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
-                        break;
-                    case EXTERNAL:
-                        // then we need to load an external protein entry
-                        log.warn( "The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein );
+                if (seqMap.containsKey(spliceVarId)) {
+                    sequence = seqMap.get(spliceVarId);
+                } else {
 
-                        if ( log.isDebugEnabled() ) {
-                            log.debug( "Loading external parent protein: " + parentProtein );
-                        }
-                        Iterator<UniProtEntry> iterator =  getUniProtEntry(parentProtein);
-                        int numberOfEntryInIterator = 0;
-                        while(iterator.hasNext()){
+                    String parentProtein = getUniProtAccFromSpliceVariantId(spliceVarId);
 
-                            UniProtEntry uniprotEntryParentProtein = iterator.next();
+                    // check that the sequence is in the current entry
+
+                    String status = isoform.getIsoformSequenceStatus().getValue();
+                    log.debug("Sequence status: " + status);
+
+                    switch (isoform.getIsoformSequenceStatus()) {
+                        case NOT_DESCRIBED:
+                            //log.error("According to uniprot the splice variant " + spliceVarId + " has no sequence (status = NOT_DESCRIBED)");
+                        case DESCRIBED:
+                            sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
+                            break;
+                        case DISPLAYED:
+                            sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
+                            break;
+                        case EXTERNAL:
+                            // then we need to load an external protein entry
+                            log.warn("The alternative sequence has to be calculated on the basis of an external entry: " + parentProtein);
+
+                            if (log.isDebugEnabled()) {
+                                log.debug("Loading external parent protein: " + parentProtein);
+                            }
+
+                            Iterator<UniProtEntry> iterator = getUniProtEntry(parentProtein);
+                            int numberOfEntryInIterator = 0;
+                            while (iterator.hasNext()) {
+
+                                UniProtEntry uniprotEntryParentProtein = iterator.next();
 //                            sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
 //                            System.out.println("SEQUENCE before while : " + sequence);
 
-                            if(numberOfEntryInIterator >= 1){
-                                // we were expecting to find only one protein - hopefully that should not happen !
-                                log.error( "We were expecting to find only one protein while loading external sequence from: " + parentProtein );
-                                log.error( "Found " + uniprotEntryParentProtein.getUniProtId() );
-                                while ( iterator.hasNext() ) {
-                                    UniProtEntry p = iterator.next();
-                                    log.error( "Found " + p.getUniProtId() );
-                                    sequence = null;
-                                }
+                                if (numberOfEntryInIterator >= 1) {
+                                    // we were expecting to find only one protein - hopefully that should not happen !
+                                    log.error("We were expecting to find only one protein while loading external sequence from: " + parentProtein);
+                                    log.error("Found " + uniprotEntryParentProtein.getUniProtId());
+                                    while (iterator.hasNext()) {
+                                        UniProtEntry p = iterator.next();
+                                        log.error("Found " + p.getUniProtId());
+                                        sequence = null;
+                                    }
 
-                            }else{
+                                } else {
+                                    numberOfEntryInIterator++;
+                                    //sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
+
+                                    for (UniprotSpliceVariant uniprotSpliceVariant : findSpliceVariants(uniprotEntryParentProtein, organism, seqMap)) {
+                                        if (uniprotSpliceVariant.getPrimaryAc().equals(spliceVarId)) {
+                                            sequence = uniprotSpliceVariant.getSequence();
+                                            break;
+                                        }
+                                    }
+
+                                }
                                 numberOfEntryInIterator++;
-                                sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
                             }
-                            numberOfEntryInIterator++;
-                        }
-//                        break;
+                    }
+
+                    seqMap.put(spliceVarId, sequence);
                 }
 
                 if ( log.isDebugEnabled() ) {
@@ -468,8 +500,8 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 }
 
                 // build splice variant
-                UniprotSpliceVariant sv = new UniprotSpliceVariant( ids.get( 0 ),
-                        protein.getOrganism(),
+                UniprotSpliceVariant sv = new UniprotSpliceVariant(spliceVarId,
+                        organism,
                         sequence );
                 // add secondary ids (if any)
                 for ( int i = 1; i < ids.size(); i++ ) {
@@ -486,11 +518,12 @@ public class UniprotRemoteService extends AbstractUniprotService {
                 // process note
                 sv.setNote( isoform.getNote().getValue() );
 
-                // add the splice variant to the original protein
-                protein.getSpliceVariants().add( sv );
+                spliceVariants.add(sv);
+
 
             } // for isoform
         } // for comments
+        return spliceVariants;
     }
 
     private String getUniProtAccFromSpliceVariantId( String svId ) {

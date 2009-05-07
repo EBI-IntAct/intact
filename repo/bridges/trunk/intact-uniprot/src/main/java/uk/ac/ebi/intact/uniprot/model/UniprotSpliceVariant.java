@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import uk.ac.ebi.intact.uniprot.service.UniprotService;
+
 /**
  * Splice variant of a UniProt protein.
  *
