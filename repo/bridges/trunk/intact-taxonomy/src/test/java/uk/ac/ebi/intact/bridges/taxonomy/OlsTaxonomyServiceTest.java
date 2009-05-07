@@ -1,6 +1,7 @@
 package uk.ac.ebi.intact.bridges.taxonomy;
 
 import org.junit.Test;
+import org.junit.Ignore;
 import static org.junit.Assert.*;
 
 /**
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
 public class OlsTaxonomyServiceTest {
 
     @Test
+    @Ignore
     public void getTerm_mouse() throws Exception {
         TaxonomyService taxonomy = new OLSTaxonomyService();
         TaxonomyTerm term = taxonomy.getTaxonomyTerm( 10090 );
