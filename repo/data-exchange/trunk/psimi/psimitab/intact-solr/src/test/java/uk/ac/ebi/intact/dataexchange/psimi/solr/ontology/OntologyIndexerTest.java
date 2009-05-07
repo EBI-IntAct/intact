@@ -15,19 +15,18 @@
  */
 package uk.ac.ebi.intact.dataexchange.psimi.solr.ontology;
 
-import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
-import uk.ac.ebi.intact.dataexchange.psimi.solr.CoreNames;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Test;
-import org.junit.Assert;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.UniprotTaxonomyOntologyIterator;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.CoreNames;
+import uk.ac.ebi.intact.dataexchange.psimi.solr.server.SolrJettyRunner;
 
 import java.net.URL;
-import java.util.Map;
-import java.util.HashMap;
 
 
 /**
@@ -61,11 +60,25 @@ public class OntologyIndexerTest  {
 
         OntologyIndexer ontologyIndexer = new OntologyIndexer(solrServer);
 
-        ontologyIndexer.indexObo("psi-mi", new URL("http://psidev.sourceforge.net/mi/rel25/data/psi-mi25.obo"));
+        ontologyIndexer.indexObo("psi-mi", new URL("http://psidev.cvs.sourceforge.net/viewvc/*checkout*/psidev/psi/mi/rel25/data/psi-mi25.obo?revision=1.52"));
 
         SolrQuery query = new SolrQuery("*:*");
         QueryResponse queryResponse = solrServer.query(query);
 
         Assert.assertEquals(1799, queryResponse.getResults().getNumFound());
+    }
+
+     @Test
+    public void testIndexTaxonomy() throws Exception{
+        SolrServer solrServer = solrJettyRunner.getSolrServer(CoreNames.CORE_ONTOLOGY_PUB);
+
+        OntologyIndexer ontologyIndexer = new OntologyIndexer(solrServer);
+
+        ontologyIndexer.indexOntology(new UniprotTaxonomyOntologyIterator(0, 3));
+         
+        SolrQuery query = new SolrQuery("*:*");
+        QueryResponse queryResponse = solrServer.query(query);
+
+        Assert.assertEquals(3, queryResponse.getResults().getNumFound());
     }
 }

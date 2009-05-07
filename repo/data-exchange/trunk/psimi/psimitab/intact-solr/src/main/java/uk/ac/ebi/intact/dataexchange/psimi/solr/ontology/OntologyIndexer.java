@@ -20,6 +20,8 @@ import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyDocument;
 import uk.ac.ebi.intact.bridges.ontologies.OntologyMapping;
 import uk.ac.ebi.intact.bridges.ontologies.iterator.OboOntologyIterator;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.OntologyIterator;
+import uk.ac.ebi.intact.bridges.ontologies.iterator.UniprotTaxonomyOntologyIterator;
 import uk.ac.ebi.intact.dataexchange.psimi.solr.IntactSolrException;
 
 import java.net.URL;
@@ -46,17 +48,32 @@ public class OntologyIndexer {
     }
 
     public void indexObo(String ontologyName, URL oboUrl) throws IntactSolrException {
-        OboOntologyIterator oboIterator = null;
+        OntologyIterator oboIterator;
         try {
             oboIterator = new OboOntologyIterator(ontologyName, oboUrl);
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new IntactSolrException("Problem creating OBO iterator for: "+ontologyName+" URL: "+oboUrl, e);
         }
 
+        indexOntology(oboIterator);
+    }
+
+    public void indexUniprotTaxonomy() throws IntactSolrException {
+        OntologyIterator ontologyIterator;
+        try {
+            ontologyIterator = new UniprotTaxonomyOntologyIterator();
+        } catch (Throwable e) {
+            throw new IntactSolrException("Problem creating default Uniprot taxonomy iterator", e);
+        }
+
+        indexOntology(ontologyIterator);
+    }
+
+    public void indexOntology(OntologyIterator ontologyIterator) {
         int i = 0;
 
-        while (oboIterator.hasNext()) {
-            OntologyDocument doc = oboIterator.next();
+        while (ontologyIterator.hasNext()) {
+            OntologyDocument doc = ontologyIterator.next();
             index(doc);
 
             i++;
