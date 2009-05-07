@@ -17,12 +17,13 @@ package uk.ac.ebi.intact.dataexchange.enricher.standard;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.dataexchange.enricher.fetch.InteractorFetcher;
+import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 import uk.ac.ebi.intact.dataexchange.enricher.fetch.CvObjectFetcher;
+import uk.ac.ebi.intact.dataexchange.enricher.fetch.InteractorFetcher;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.*;
+import uk.ac.ebi.intact.uniprot.model.Organism;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
-import uk.ac.ebi.chebi.webapps.chebiWS.model.Entity;
 
 import java.util.Collection;
 
@@ -66,10 +67,6 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
     public void enrich(Interactor objectToEnrich) {
         if (log.isDebugEnabled()) {
             log.debug("Enriching Interactor: " + objectToEnrich.getShortLabel());
-        }
-
-        if (objectToEnrich.getBioSource() != null) {
-            BioSourceEnricher.getInstance().enrich(objectToEnrich.getBioSource());
         }
 
         // replace short label invalid chars
@@ -118,6 +115,14 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
 
                 proteinToEnrich.setShortLabel(AnnotatedObjectUtils.prepareShortLabel(uniprotProt.getId().toLowerCase()));
                 proteinToEnrich.setFullName(uniprotProt.getDescription());
+
+                Organism organism = uniprotProt.getOrganism();
+                BioSource bioSource = new BioSource(objectToEnrich.getOwner(), organism.getName(), String.valueOf(organism.getTaxid()));
+                proteinToEnrich.setBioSource(bioSource);
+            }
+
+            if (objectToEnrich.getBioSource() != null) {
+                BioSourceEnricher.getInstance().enrich(objectToEnrich.getBioSource());
             }
 
         }
@@ -221,12 +226,19 @@ public class InteractorEnricher extends AnnotatedObjectEnricher<Interactor> {
     private void updateXrefs(Protein protein, UniprotProtein uniprotProt) {
         InteractorXref uniprotXref = ProteinUtils.getUniprotXref(protein);
 
-        if (uniprotXref == null) {
-            CvObjectBuilder cvObjectBuilder = new CvObjectBuilder();
-            CvXrefQualifier identityQual = cvObjectBuilder.createIdentityCvXrefQualifier(protein.getOwner());
-            CvDatabase uniprotDb = CvObjectUtils.createCvObject(protein.getOwner(), CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT);
+        CvObjectBuilder cvObjectBuilder = new CvObjectBuilder();
+        CvXrefQualifier identityQual = cvObjectBuilder.createIdentityCvXrefQualifier(protein.getOwner());
+        CvDatabase uniprotDb = CvObjectUtils.createCvObject(protein.getOwner(), CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT);
 
+        if (uniprotXref == null) {
             InteractorXref xref = XrefUtils.createIdentityXref(protein, uniprotProt.getPrimaryAc(), identityQual, uniprotDb);
+            protein.addXref(xref);
+        }
+
+        CvXrefQualifier secondaryAcQual = CvObjectUtils.createCvObject(protein.getOwner(), CvXrefQualifier.class, CvXrefQualifier.SECONDARY_AC_MI_REF, CvXrefQualifier.SECONDARY_AC);
+
+        for (String secondaryAc : uniprotProt.getSecondaryAcs()) {
+            InteractorXref xref = XrefUtils.createIdentityXref(protein, secondaryAc, secondaryAcQual, uniprotDb);
             protein.addXref(xref);
         }
     }
