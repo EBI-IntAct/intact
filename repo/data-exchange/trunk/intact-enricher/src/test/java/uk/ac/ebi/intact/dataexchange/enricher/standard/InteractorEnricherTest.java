@@ -21,8 +21,8 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
-import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Protein;
 import uk.ac.ebi.intact.model.SmallMolecule;
 import uk.ac.ebi.intact.model.util.ProteinUtils;
 
@@ -109,6 +109,20 @@ public class InteractorEnricherTest extends IntactBasicTestCase {
         enricher.enrich(protein);
 
         Assert.assertEquals("EBI12345", protein.getShortLabel());
+    }
+
+    @Test
+    public void enrich_uniprot_biosource() {
+        BioSource lalaOrganism = getMockBuilder().createBioSource(50, "lala");
+        Protein protein = getMockBuilder().createProtein("P18850", "unknownName", lalaOrganism);
+
+        enricher.enrich(protein);
+
+        Assert.assertEquals("atf6a_human", protein.getShortLabel());
+        Assert.assertEquals("Cyclic AMP-dependent transcription factor ATF-6 alpha", protein.getFullName());
+        Assert.assertNotNull(protein.getSequence());
+        Assert.assertEquals("9606", protein.getBioSource().getTaxId());
+        Assert.assertEquals("human", protein.getBioSource().getShortLabel());
     }
 
 }
