@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.Ignore;
+import org.junit.Assert;
 import uk.ac.ebi.intact.uniprot.UniprotServiceException;
 import uk.ac.ebi.intact.uniprot.data.MockUniProtEntries;
 import uk.ac.ebi.intact.uniprot.model.UniprotProtein;
@@ -440,6 +441,22 @@ public class UniprotRemoteServiceTest {
         for ( UniprotProtein protein : proteins ) {
             assertTrue( ids.contains( protein.getId() ) );
         }
+    }
+
+    @Test
+    public void retrieveEntryWithExternalSpliceVar() throws UniprotServiceException {
+        UniprotService uniprotService = getUniprotService();
+        Collection<UniprotProtein> proteins = uniprotService.retrieve("P47100");
+
+        UniprotProtein prot = proteins.iterator().next();
+
+        List<UniprotSpliceVariant> uniprotSpliceVariants = new ArrayList<UniprotSpliceVariant>(prot.getSpliceVariants());
+        
+        Assert.assertEquals(2, uniprotSpliceVariants.size());
+        Assert.assertEquals("P47100-1", uniprotSpliceVariants.get(0).getPrimaryAc());
+        Assert.assertTrue(uniprotSpliceVariants.get(0).getSequence() != null);
+        Assert.assertEquals("Q12162-1", uniprotSpliceVariants.get(1).getPrimaryAc());
+        Assert.assertTrue(uniprotSpliceVariants.get(1).getSequence() != null);
     }
 
     @Test
