@@ -112,6 +112,6 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getLastCvIdentifierWithPrefix() throws Exception {
-        Assert.assertEquals(612, getDaoFactory().getCvObjectDao().getLastCvIdentifierWithPrefix("MI"));
+        Assert.assertEquals(612, getDaoFactory().getCvObjectDao().getLastCvIdentifierWithPrefix("MI").intValue());
     }
 }

@@ -40,7 +40,7 @@ public class MockDaoFactoryTest extends IntactAbstractMockTestCase  {
         ProteinDao proteinDao = IntactContext.getCurrentInstance().getDataContext()
                 .getDaoFactory().getProteinDao();
 
-        assertEquals(75, proteinDao.countUniprotProteins());
+        assertEquals(75, proteinDao.countUniprotProteins().intValue());
     }
 
     @Test(expected = UnsupportedOperationException.class)
