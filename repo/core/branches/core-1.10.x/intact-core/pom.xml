@@ -81,6 +81,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.4</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.agitar</groupId>
@@ -158,7 +159,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>2.5.6</version>
-            <scope>test</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- server -->
@@ -177,6 +178,23 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>JDK5</id>
+            <activation>
+                <jdk>1.5</jdk>
+            </activation>
+            <dependencies>
+                <!-- @PostConstruct -->
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-annotation_1.0_spec</artifactId>
+                    <version>1.1.1</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <!-- EBI repositories -->
     <repositories>
