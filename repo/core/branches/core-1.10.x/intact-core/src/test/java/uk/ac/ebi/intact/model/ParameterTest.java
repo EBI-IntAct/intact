@@ -24,7 +24,7 @@ public class ParameterTest extends IntactBasicTestCase {
         Assert.assertEquals( Parameter.DEFAULT_BASE, p.getBase() );
 
         p.setBase( 5 );
-        Assert.assertEquals( 5, p.getBase() );
+        Assert.assertEquals( 5, p.getBase().intValue() );
     }
 
     @Test
@@ -38,7 +38,7 @@ public class ParameterTest extends IntactBasicTestCase {
         Assert.assertEquals( Parameter.DEFAULT_EXPONENT, p.getExponent() );
 
         p.setExponent( 2 );
-        Assert.assertEquals( 2, p.getExponent() );
+        Assert.assertEquals( 2, p.getExponent().intValue() );
     }
 
     @Test
@@ -49,10 +49,10 @@ public class ParameterTest extends IntactBasicTestCase {
         CvParameterType type = getMockBuilder().createCvObject( CvParameterType.class, "IA:9999", "kd" );
         CvParameterUnit unit = getMockBuilder().createCvObject( CvParameterUnit.class, "IA:9990", "molar/L" );
         p = new InteractionParameter( getMockBuilder().getInstitution(), type, unit, 3D );
-        Assert.assertEquals( 3D, p.getFactor() );
+        Assert.assertEquals( 3D, p.getFactor().doubleValue() );
 
         p.setFactor( 50D );
-        Assert.assertEquals( 50D, p.getFactor() );
+        Assert.assertEquals( 50D, p.getFactor().doubleValue() );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ParameterTest extends IntactBasicTestCase {
         Assert.assertEquals( null, p.getUncertainty() );
 
         p.setUncertainty( 0.05D );
-        Assert.assertEquals( 0.05D, p.getUncertainty() );
+        Assert.assertEquals( 0.05D, p.getUncertainty().doubleValue() );
     }
 
     @Test

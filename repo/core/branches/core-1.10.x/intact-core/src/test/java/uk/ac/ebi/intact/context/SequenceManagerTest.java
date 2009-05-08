@@ -50,12 +50,12 @@ public class SequenceManagerTest extends IntactBasicTestCase {
         seqManager.createSequenceIfNotExists(getDaoFactory().getEntityManager(), "test2_seq", 5);
         commitTransaction();
 
-        Assert.assertEquals(5L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
-        Assert.assertEquals(6L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
-        Assert.assertEquals(7L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
-        Assert.assertEquals(8L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
-        Assert.assertEquals(9L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
-        Assert.assertEquals(10L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq"));
+        Assert.assertEquals(5L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(6L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(7L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(8L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(9L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(10L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
 
 
     }
