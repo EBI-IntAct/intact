@@ -25,12 +25,15 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.engine.Status;
 import org.hibernate.impl.SessionImpl;
+import org.springframework.stereotype.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -46,6 +49,7 @@ import java.util.*;
  * @version $Id$
  * @since 1.8.0
  */
+@org.springframework.stereotype.Component
 public class CorePersister implements Persister<AnnotatedObject> {
 
     private static final Log log = LogFactory.getLog( CorePersister.class );
@@ -54,7 +58,9 @@ public class CorePersister implements Persister<AnnotatedObject> {
     private Map<Key, AnnotatedObject> annotatedObjectsToMerge;
     private Map<Key, AnnotatedObject> synched;
 
+    @Autowired
     private Finder finder;
+
     private KeyBuilder keyBuilder;
     private EntityStateCopier entityStateCopier;
 
@@ -78,7 +84,6 @@ public class CorePersister implements Persister<AnnotatedObject> {
         annotatedObjectsToMerge = new HashMap<Key, AnnotatedObject>();
         synched = new HashMap<Key, AnnotatedObject>();
 
-        finder = new DefaultFinder();
         keyBuilder = new KeyBuilder();
         entityStateCopier = new DefaultEntityStateCopier();
 
