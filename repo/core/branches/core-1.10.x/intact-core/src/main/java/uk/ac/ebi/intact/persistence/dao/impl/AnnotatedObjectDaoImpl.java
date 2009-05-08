@@ -14,6 +14,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.HibernateQuery;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.CvDatabase;
@@ -63,6 +64,7 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         return (T) criteria.uniqueResult();
     }
 
+    @Transactional
     public T getByShortLabel( String value ) {
         return getByShortLabel( value, true );
     }

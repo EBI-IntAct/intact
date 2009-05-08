@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.Finder;
 import uk.ac.ebi.intact.model.*;
@@ -44,6 +45,7 @@ import java.util.List;
  * @version $Id$
  * @since 1.8.0
  */
+@org.springframework.stereotype.Component
 public class DefaultFinder implements Finder {
 
     /**
@@ -445,6 +447,7 @@ public class DefaultFinder implements Finder {
         return value;
     }
 
+    @Transactional
     private String getFirstAcForQuery( Query query, AnnotatedObject ao ) {
         List<String> results = query.getResultList();
         String ac = null;
