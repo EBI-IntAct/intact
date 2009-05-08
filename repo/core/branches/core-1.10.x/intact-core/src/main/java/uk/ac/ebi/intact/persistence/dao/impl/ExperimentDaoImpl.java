@@ -10,6 +10,7 @@ import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.Experiment;
 import uk.ac.ebi.intact.model.Interaction;
@@ -29,6 +30,7 @@ import java.util.List;
  * @since <pre>26-Apr-2006</pre>
  */
 @Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class ExperimentDaoImpl extends AnnotatedObjectDaoImpl<Experiment> implements ExperimentDao {
 

@@ -18,6 +18,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.MineInteraction;
 import uk.ac.ebi.intact.persistence.dao.MineInteractionDao;
@@ -32,9 +34,15 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
+@Repository
+@Transactional
 @SuppressWarnings( "unchecked" )
 public class MineInteractionDaoImpl extends HibernateBaseDaoImpl<MineInteraction>
         implements MineInteractionDao {
+
+    public MineInteractionDaoImpl() {
+        super(MineInteraction.class);
+    }
 
     public MineInteractionDaoImpl( EntityManager entityManager, IntactSession intactSession ) {
         super( MineInteraction.class, entityManager, intactSession );

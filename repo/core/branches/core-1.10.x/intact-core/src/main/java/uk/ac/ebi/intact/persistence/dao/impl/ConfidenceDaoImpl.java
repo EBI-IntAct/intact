@@ -22,6 +22,9 @@ import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * TODO comment that class header
  *
@@ -32,7 +35,13 @@ import javax.persistence.EntityManager;
  *        05-Dec-2007
  *        </pre>
  */
+@Repository
+@Transactional
 public class ConfidenceDaoImpl  extends IntactObjectDaoImpl<Confidence> implements ConfidenceDao {
+
+    public ConfidenceDaoImpl() {
+        super(Confidence.class);
+    }
 
       public ConfidenceDaoImpl( EntityManager entityManager, IntactSession intactSession ) {
         super( Confidence.class, entityManager, intactSession );

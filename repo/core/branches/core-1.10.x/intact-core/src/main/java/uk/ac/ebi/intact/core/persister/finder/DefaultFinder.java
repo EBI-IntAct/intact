@@ -21,6 +21,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.Finder;
 import uk.ac.ebi.intact.model.*;
@@ -46,6 +48,7 @@ import java.util.List;
  * @since 1.8.0
  */
 @org.springframework.stereotype.Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DefaultFinder implements Finder {
 
     /**
@@ -53,6 +56,7 @@ public class DefaultFinder implements Finder {
      */
     private static final Log log = LogFactory.getLog( DefaultFinder.class );
 
+    @Transactional
     public String findAc( AnnotatedObject annotatedObject ) {
         String ac;
 

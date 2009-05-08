@@ -12,6 +12,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
@@ -29,6 +31,8 @@ import java.util.*;
  * @version $Id$
  * @since <pre>27-Apr-2006</pre>
  */
+@Repository
+@Qualifier("interactorDao")
 @SuppressWarnings( "unchecked" )
 public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObjectDaoImpl<T> implements InteractorDao<T> {
 
@@ -46,6 +50,14 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
         geneNameFilter.add( "gene name-synonym" );
         geneNameFilter.add( "orf name" );
         geneNameFilter.add( "locus name" );
+    }
+
+    public InteractorDaoImpl() {
+        super((Class<T>) InteractorImpl.class);
+    }
+
+    public InteractorDaoImpl( Class<T> entityClass ) {
+        super( entityClass );
     }
 
     public InteractorDaoImpl( Class<T> entityClass, EntityManager entityManager ) {
@@ -141,7 +153,7 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
      * @return the interactors in that page
      */
     public List<Interactor> getInteractors(Integer firstResult, Integer maxResults) {
-        Query query = getEntityManager().createQuery("from InteractorImpl  where objClass <> :interactionClass");
+        Query query = getEntityManager().createQuery("select i from InteractorImpl i where i.objClass <> :interactionClass");
         query.setParameter("interactionClass", InteractionImpl.class.getName());
         query.setFirstResult(firstResult);
         query.setMaxResults(maxResults);

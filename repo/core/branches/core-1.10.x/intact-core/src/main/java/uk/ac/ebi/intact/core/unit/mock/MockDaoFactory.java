@@ -57,7 +57,6 @@ public class MockDaoFactory extends DaoFactory {
     private PublicationDao publicationDao;
     private RangeDao rangeDao;
     private SearchableDao searchableDao;
-    private SearchItemDao searchItemDao;
     private XrefDao<? extends Xref> xrefDao;
 
     protected MockDaoFactory(DataConfig dataConfig, IntactSession intactSession) {
@@ -85,12 +84,6 @@ public class MockDaoFactory extends DaoFactory {
     public <T extends Alias> AliasDao<T> getAliasDao(Class<T> aliasType) {
         checkIfDaoIsSet(aliasDao, AliasDao.class);
         return (AliasDao<T>) aliasDao;
-    }
-
-    @Override
-    public AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao() {
-        checkIfDaoIsSet(annotatedObjectDao, AnnotatedObjectDao.class);
-        return (AnnotatedObjectDao<AnnotatedObject>) annotatedObjectDao;
     }
 
     @Override
@@ -176,12 +169,6 @@ public class MockDaoFactory extends DaoFactory {
     }
 
     @Override
-    public <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao(Class<T> entityType) {
-        checkIfDaoIsSet(interactionDao, IntactObjectDao.class);
-        return (IntactObjectDao<T>) intactObjectDao;
-    }
-
-    @Override
     public InteractionDao getInteractionDao() {
         checkIfDaoIsSet(interactionDao, InteractionDao.class);
         return interactionDao;
@@ -257,12 +244,6 @@ public class MockDaoFactory extends DaoFactory {
     public SearchableDao getSearchableDao() {
         checkIfDaoIsSet(searchableDao, SearchableDao.class);
         return searchableDao;
-    }
-
-    @Override
-    public SearchItemDao getSearchItemDao() {
-        checkIfDaoIsSet(searchItemDao, SearchItemDao.class);
-        return searchItemDao;
     }
 
     @Override
@@ -380,10 +361,6 @@ public class MockDaoFactory extends DaoFactory {
 
     public void setMockSearchableDao(SearchableDao searchableDao) {
         this.searchableDao = searchableDao;
-    }
-
-    public void setMockSearchItemDao(SearchItemDao searchItemDao) {
-        this.searchItemDao = searchItemDao;
     }
 
     public void setMockXrefDao(XrefDao<? extends Xref> xrefDao) {

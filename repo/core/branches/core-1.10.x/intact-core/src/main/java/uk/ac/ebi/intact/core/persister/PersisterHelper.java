@@ -18,6 +18,10 @@ package uk.ac.ebi.intact.core.persister;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
@@ -31,16 +35,34 @@ import uk.ac.ebi.intact.model.Interaction;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PersisterHelper {
+
+    @Autowired
+    private CorePersister corePersister;
 
     /**
      * Sets up a logger for that class.
      */
     private static final Log log = LogFactory.getLog(PersisterHelper.class);
 
-    private PersisterHelper() {}
+    public PersisterHelper() {}
 
     public static void saveOrUpdate( IntactEntry... intactEntries ) throws PersisterException {
+        IntactContext.getCurrentInstance().getPersisterHelper().save(intactEntries);
+    }
+
+    public static PersisterStatistics saveOrUpdate( AnnotatedObject... annotatedObjects ) throws PersisterException {
+        return IntactContext.getCurrentInstance().getPersisterHelper().save(annotatedObjects);
+    }
+
+    @Deprecated
+    public static PersisterStatistics saveOrUpdate( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
+        return IntactContext.getCurrentInstance().getPersisterHelper().save(corePersister, annotatedObjects);
+    }
+
+    public void save( IntactEntry... intactEntries ) throws PersisterException {
         for ( IntactEntry intactEntry : intactEntries ) {
             for ( Interaction interaction : intactEntry.getInteractions() ) {
                 saveOrUpdate( interaction );
@@ -48,11 +70,13 @@ public class PersisterHelper {
         }
     }
 
-    public static PersisterStatistics saveOrUpdate( AnnotatedObject... annotatedObjects ) throws PersisterException {
-        return saveOrUpdate(new CorePersister(), annotatedObjects);
+    @Transactional
+    public PersisterStatistics save( AnnotatedObject... annotatedObjects ) throws PersisterException {
+        return save(corePersister, annotatedObjects);
     }
 
-    public static PersisterStatistics saveOrUpdate( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
+    @Transactional
+    public PersisterStatistics save( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         boolean inTransaction = dataContext.isTransactionActive();
 
@@ -61,8 +85,8 @@ public class PersisterHelper {
         // during synchronization-persistence there is a lot of things going on, which involve
         // reading the database and persisting at the same time, but only flushing at the very end.
         // If autoflush, the entity manager will attempt a flush when not everything is ready, and it will fail.
-        boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
-        dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
+        //boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
+        //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
 
         try {
             for ( AnnotatedObject ao : annotatedObjects ) {
@@ -70,7 +94,7 @@ public class PersisterHelper {
             }
             corePersister.commit();
         } finally {
-            dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
+            //dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
         }
 
         // we reload the annotated objects by its AC

@@ -7,6 +7,7 @@ import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
 import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * DAO for institutions
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Repository;
  * @since <pre>07-jul-2006</pre>
  */
 @Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class InstitutionDaoImpl extends AnnotatedObjectDaoImpl<Institution> implements InstitutionDao {
 

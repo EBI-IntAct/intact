@@ -18,6 +18,9 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.PolymerImpl;
 import uk.ac.ebi.intact.model.SequenceChunk;
@@ -34,8 +37,14 @@ import java.util.List;
  * @version $Id$
  * @since 1.5
  */
+@Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class PolymerDaoImpl<T extends PolymerImpl> extends InteractorDaoImpl<T> implements PolymerDao<T> {
+
+    public PolymerDaoImpl() {
+        super((Class<T>) PolymerImpl.class);
+    }
 
     public PolymerDaoImpl( Class<T> entityClass, EntityManager entityManager ) {
         super( entityClass, entityManager);

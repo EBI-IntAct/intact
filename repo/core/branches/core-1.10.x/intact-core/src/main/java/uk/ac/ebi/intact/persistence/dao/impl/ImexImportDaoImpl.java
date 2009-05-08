@@ -16,6 +16,8 @@
 package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.joda.time.DateTime;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.meta.ImexImport;
 import uk.ac.ebi.intact.model.meta.ImexImportActivationType;
@@ -31,7 +33,13 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Repository
+@Transactional
 public class ImexImportDaoImpl extends HibernateBaseDaoImpl<ImexImport> implements ImexImportDao {
+
+    public ImexImportDaoImpl() {
+        super(ImexImport.class);
+    }
 
     public ImexImportDaoImpl(EntityManager entityManager, IntactSession intactSession) {
         super(ImexImport.class, entityManager, intactSession);

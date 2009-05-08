@@ -15,11 +15,10 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.ejb.HibernateQuery;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.CvTopic;
-import uk.ac.ebi.intact.model.CvXrefQualifier;
+import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.persistence.dao.AnnotatedObjectDao;
 
 import javax.persistence.EntityManager;
@@ -36,8 +35,9 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Transactional
 @SuppressWarnings( {"unchecked"} )
-public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObjectDaoImpl<T> implements AnnotatedObjectDao<T> {
+public abstract class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObjectDaoImpl<T> implements AnnotatedObjectDao<T> {
 
     private static final Log log = LogFactory.getLog( AnnotatedObjectDaoImpl.class );
 
@@ -64,7 +64,6 @@ public class AnnotatedObjectDaoImpl<T extends AnnotatedObject> extends IntactObj
         return (T) criteria.uniqueResult();
     }
 
-    @Transactional
     public T getByShortLabel( String value ) {
         return getByShortLabel( value, true );
     }

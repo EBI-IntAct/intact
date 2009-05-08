@@ -18,6 +18,7 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
@@ -33,6 +34,7 @@ import java.util.List;
  * @since <pre>01-Sep-2006</pre>
  */
 @Repository
+@Transactional
 @SuppressWarnings( "unchecked" )
 public class DbInfoDaoImpl extends HibernateBaseDaoImpl<DbInfo> implements DbInfoDao {
 

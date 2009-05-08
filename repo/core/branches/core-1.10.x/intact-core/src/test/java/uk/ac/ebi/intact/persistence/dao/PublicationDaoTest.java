@@ -49,6 +49,9 @@ public class PublicationDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getByShortLabel() {
+        Assert.assertEquals(1, publicationDao.countAll());
+        Assert.assertEquals(0, IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getExperimentDao().countAll());
+
         final String label = "10029528";
         Publication pub = publicationDao.getByShortLabel( label );
         assertNotNull( pub );

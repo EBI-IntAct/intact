@@ -18,6 +18,11 @@ package uk.ac.ebi.intact.core.unit;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -29,6 +34,10 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"/intact.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml"})
+@TransactionConfiguration
+@Transactional
 public abstract class IntactBasicTestCase
 {
 
@@ -46,7 +55,7 @@ public abstract class IntactBasicTestCase
 
     @After
     public void end() throws Exception {
-        IntactContext.closeCurrentInstance();
+       // IntactContext.closeCurrentInstance();
     }
 
     protected void beginTransaction() {

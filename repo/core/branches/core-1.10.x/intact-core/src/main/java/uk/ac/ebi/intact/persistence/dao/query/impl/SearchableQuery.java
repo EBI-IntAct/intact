@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 
 /**
  * Class to be used as query value for searches. It is used
- * in the {@link uk.ac.ebi.intact.persistence.dao.SearchItemDao}
+ * in the {@link uk.ac.ebi.intact.persistence.dao.SearchableDao}
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$

@@ -12,6 +12,7 @@ import uk.ac.ebi.intact.persistence.dao.PublicationDao;
 import javax.persistence.EntityManager;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * DAO for publications
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Repository;
  * @since <pre>14-aug-2006</pre>
  */
 @Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class PublicationDaoImpl extends AnnotatedObjectDaoImpl<Publication> implements PublicationDao {
 
