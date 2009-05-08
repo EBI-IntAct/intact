@@ -21,7 +21,7 @@
     <properties>
         <currentVersion>${version}</currentVersion>
         <bridges.version>2.0.11</bridges.version>
-        <core.version>1.9.6</core.version>
+        <core.version>1.9.5</core.version>
     </properties>
 
     <scm>
