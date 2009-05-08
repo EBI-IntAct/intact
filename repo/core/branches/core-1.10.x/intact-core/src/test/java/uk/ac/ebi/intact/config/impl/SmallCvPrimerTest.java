@@ -32,7 +32,7 @@ public class SmallCvPrimerTest extends IntactBasicTestCase {
 
     @Before
     public void prepare() throws Exception {
-        new IntactUnit().createSchema(true);
+        // create schema
     }
 
     @Test
