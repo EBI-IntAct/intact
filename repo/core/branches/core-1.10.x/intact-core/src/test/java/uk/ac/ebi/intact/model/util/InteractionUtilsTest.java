@@ -22,6 +22,7 @@ import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.core.unit.mock.MockIntactContext;
 import uk.ac.ebi.intact.core.unit.mock.MockInteractionDao;
 import uk.ac.ebi.intact.model.Interaction;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-public class InteractionUtilsTest extends IntactBasicTestCase{
+public class InteractionUtilsTest {
 
     @Before
     public void prepare() throws Exception {
@@ -119,15 +120,15 @@ public class InteractionUtilsTest extends IntactBasicTestCase{
 
     @Test
     public void getInteractorPrimaryIDs_default() throws Exception {
-        Interaction interaction = getMockBuilder().createInteraction("A1", "A2");
+        Interaction interaction = new IntactMockBuilder().createInteraction("A1", "A2");
         Assert.assertEquals(2, InteractionUtils.getInteractorPrimaryIDs(interaction).size());
     }
 
     @Test
     public void getInteractorPrimaryIDs_moreThanOneIDInInteractor() throws Exception {
-        Interaction interaction = getMockBuilder().createInteraction("A1", "A2");
+        Interaction interaction = new IntactMockBuilder().createInteraction("A1", "A2");
         interaction.getComponents().iterator().next().getInteractor().getXrefs()
-                .add(getMockBuilder().createIdentityXrefUniprot(interaction, "B2"));
+                .add(new IntactMockBuilder().createIdentityXrefUniprot(interaction, "B2"));
         Assert.assertEquals(2, InteractionUtils.getInteractorPrimaryIDs(interaction).size());
     }
 

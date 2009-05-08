@@ -12,6 +12,10 @@ import uk.ac.ebi.intact.persistence.dao.XrefDao;
 import javax.persistence.EntityManager;
 import java.util.Collection;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
+
 /**
  * TODO comment this
  *
@@ -19,7 +23,13 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>03-May-2006</pre>
  */
+@Repository
+@Transactional
 public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implements XrefDao<T> {
+
+    public XrefDaoImpl() {
+        super((Class<T>) Xref.class);
+    }
 
     public XrefDaoImpl( Class<T> entityClass, EntityManager entityManager, IntactSession intactSession ) {
         super( entityClass, entityManager, intactSession );

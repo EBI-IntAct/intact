@@ -64,11 +64,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
     private Collection<Component> components; // initialized via constructor
 
     /**
-     * Product of this interaction (NOTE IMPLEMENTED YET).
-     */
-    private Collection<Product> released; // mapping not implemented yet
-
-    /**
      * Experiments that have detected this interactions.
      */
     private Collection<Experiment> experiments; // initialized via constructor
@@ -330,29 +325,6 @@ public class InteractionImpl extends InteractorImpl implements Editable, Interac
         boolean removed = this.components.remove( component );
         if ( removed ) {
             component.setInteraction( null );
-        }
-    }
-
-    public void setReleased( Collection<Product> someReleased ) {
-        this.released = someReleased;
-    }
-
-    @Transient
-    public Collection<Product> getReleased() {
-        return released;
-    }
-
-    public void addReleased( Product product ) {
-        if ( !this.released.contains( product ) ) {
-            this.released.add( product );
-            product.setInteraction( this );
-        }
-    }
-
-    public void removeReleased( Product product ) {
-        boolean removed = this.released.remove( product );
-        if ( removed ) {
-            product.setInteraction( null );
         }
     }
 

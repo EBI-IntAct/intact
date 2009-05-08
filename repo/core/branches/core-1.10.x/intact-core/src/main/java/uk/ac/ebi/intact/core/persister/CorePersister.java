@@ -27,6 +27,8 @@ import org.hibernate.engine.Status;
 import org.hibernate.impl.SessionImpl;
 import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.Scope;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
@@ -50,6 +52,7 @@ import java.util.*;
  * @since 1.8.0
  */
 @org.springframework.stereotype.Component
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class CorePersister implements Persister<AnnotatedObject> {
 
     private static final Log log = LogFactory.getLog( CorePersister.class );

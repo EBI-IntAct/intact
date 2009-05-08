@@ -13,6 +13,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.*;
@@ -30,6 +31,7 @@ import java.util.*;
  * @since <pre>03-May-2006</pre>
  */
 @Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class ProteinDaoImpl extends PolymerDaoImpl<ProteinImpl> implements ProteinDao {
 

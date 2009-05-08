@@ -8,8 +8,12 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.HibernateException;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.IntactObject;
+import uk.ac.ebi.intact.model.IntactObjectImpl;
 import uk.ac.ebi.intact.persistence.dao.IntactObjectDao;
 
 import javax.persistence.EntityManager;
@@ -24,6 +28,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class IntactObjectDaoImpl<T extends IntactObject> extends HibernateBaseDaoImpl<T> implements IntactObjectDao<T> {
 

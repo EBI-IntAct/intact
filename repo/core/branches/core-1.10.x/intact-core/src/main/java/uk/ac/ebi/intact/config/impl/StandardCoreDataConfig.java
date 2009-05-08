@@ -18,6 +18,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Collections;
 
 /**
  * TODO comment this!
@@ -54,7 +55,7 @@ public class StandardCoreDataConfig extends AbstractHibernateDataConfig {
 
     public List<String> getExcludedEntities()
     {
-        return Arrays.asList("uk.ac.ebi.intact.model.SearchItem");
+        return Collections.EMPTY_LIST;
     }
 
     protected File getConfigFile() {

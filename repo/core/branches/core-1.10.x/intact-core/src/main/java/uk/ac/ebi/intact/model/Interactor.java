@@ -32,14 +32,6 @@ public interface Interactor extends AnnotatedObject<InteractorXref, InteractorAl
 
     void removeActiveInstance( Component component );
 
-    void setProducts( Collection<Product> someProduct );
-
-    Collection<Product> getProducts();
-
-    void addProduct( Product product );
-
-    void removeProduct( Product product );
-
     CvInteractorType getCvInteractorType();
 
     void setCvInteractorType( CvInteractorType type );

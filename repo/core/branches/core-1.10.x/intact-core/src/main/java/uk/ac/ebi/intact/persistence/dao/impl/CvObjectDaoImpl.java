@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.annotation.PotentialThreat;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -31,8 +33,14 @@ import java.util.List;
  * @version $Id$
  * @since <pre>02-May-2006</pre>
  */
+@Repository
+@Transactional
 @SuppressWarnings( "unchecked" )
 public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<T> implements CvObjectDao<T> {
+
+    public CvObjectDaoImpl() {
+        super((Class<T>) CvObject.class);
+    }
 
     public CvObjectDaoImpl( Class<T> entityClass, EntityManager entityManager ) {
         super( entityClass, entityManager );

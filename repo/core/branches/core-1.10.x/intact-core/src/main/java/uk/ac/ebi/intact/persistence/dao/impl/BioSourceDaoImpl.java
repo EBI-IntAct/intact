@@ -8,6 +8,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.persistence.dao.BioSourceDao;
@@ -20,9 +22,15 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>09-Jun-2006</pre>
  */
+@Repository
+@Transactional
 public class BioSourceDaoImpl extends AnnotatedObjectDaoImpl<BioSource> implements BioSourceDao {
 
     private static final Log log = LogFactory.getLog( BioSourceDaoImpl.class );
+
+    public BioSourceDaoImpl() {
+        super(BioSource.class);
+    }
 
     public BioSourceDaoImpl( EntityManager entityManager, IntactSession intactSession ) {
         super( BioSource.class, entityManager, intactSession );

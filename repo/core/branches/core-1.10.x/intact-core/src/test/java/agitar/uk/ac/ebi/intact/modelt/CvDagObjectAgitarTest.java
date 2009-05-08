@@ -28,20 +28,6 @@ public class CvDagObjectAgitarTest extends AgitarTestCase {
         assertEquals( "(CvInteraction) cvInteraction.getChildren().size()", 2, cvInteraction.getChildren().size() );
     }
 
-    public void testAddParent() throws Throwable {
-        CvDagObject cvGoNode = new CvGoNode();
-        cvGoNode.addParent( new CvIdentification( new Institution( "testCvLabel" ), "testCvLabel" ) );
-        assertEquals( "(CvGoNode) cvGoNode.getParents().size()", 1, cvGoNode.getParents().size() );
-    }
-
-    public void testAddParent1() throws Throwable {
-        CvDagObject cvGoNode = new CvGoNode();
-        CvDagObject cvDagObject = new CvIdentification( new Institution( "testCvLabel" ), "testCvLabel" );
-        cvGoNode.addParent( cvDagObject );
-        cvGoNode.addParent( cvDagObject );
-        assertEquals( "(CvGoNode) cvGoNode.getParents().size()", 1, cvGoNode.getParents().size() );
-    }
-
     public void testAncestors() throws Throwable {
         CvDagObject cvFeatureType = new CvFeatureType( new Institution( "testCvLabel" ), "testCvLabel" );
         ArrayList result = ( ArrayList ) cvFeatureType.ancestors();
@@ -103,12 +89,6 @@ public class CvDagObjectAgitarTest extends AgitarTestCase {
         assertSame( "(CvFeatureIdentification) cvFeatureIdentification.getChildren()", children, cvFeatureIdentification.getChildren() );
     }
 
-    public void testSetLeftBound() throws Throwable {
-        CvDagObject cvGoNode = new CvGoNode();
-        cvGoNode.setLeftBound( 100L );
-        assertEquals( "(CvGoNode) cvGoNode.getLeftBound()", 100L, cvGoNode.getLeftBound() );
-    }
-
     public void testSetParents() throws Throwable {
         Collection parents = new ArrayList( 100 );
         CvDagObject cvFeatureIdentification = new CvFeatureIdentification( new Institution( "testCvLabel" ), "testCvLabel" );
@@ -122,19 +102,6 @@ public class CvDagObjectAgitarTest extends AgitarTestCase {
         CvDagObject cvFeatureIdentification = new CvFeatureIdentification( new Institution( "testCvLabel" ), "testCvLabel" );
         cvFeatureIdentification.setRightBound( 100L );
         assertEquals( "(CvFeatureIdentification) cvFeatureIdentification.getRightBound()", 100L, cvFeatureIdentification.getRightBound() );
-    }
-
-    public void testSetChildrenThrowsIllegalArgumentException() throws Throwable {
-        CvDagObject cvGoNode = new CvGoNode();
-        try {
-            super.callPrivateMethod("uk.ac.ebi.intact.model.CvDagObject", "setChildren", new Class[]{Collection.class}, cvGoNode, new Object[]{null} );
-//            cvGoNode.setChildren( null );
-            fail( "Expected IllegalArgumentException to be thrown" );
-        } catch ( IllegalArgumentException ex ) {
-            assertEquals( "ex.getMessage()", "Children cannot be null.", ex.getMessage() );
-            assertThrownBy( CvDagObject.class, ex );
-            assertEquals( "(CvGoNode) cvGoNode.getChildren().size()", 0, cvGoNode.getChildren().size() );
-        }
     }
 
     public void testSetParentsThrowsIllegalArgumentException() throws Throwable {

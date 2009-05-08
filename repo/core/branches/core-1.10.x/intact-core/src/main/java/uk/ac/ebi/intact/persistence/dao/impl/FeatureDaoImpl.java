@@ -6,6 +6,9 @@ import uk.ac.ebi.intact.persistence.dao.FeatureDao;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * DAO for features
  *
@@ -13,8 +16,14 @@ import javax.persistence.EntityManager;
  * @version $Id$
  * @since <pre>08-jul-2006</pre>
  */
+@Repository
+@Transactional
 @SuppressWarnings( {"unchecked"} )
 public class FeatureDaoImpl extends AnnotatedObjectDaoImpl<Feature> implements FeatureDao {
+
+    public FeatureDaoImpl() {
+        super(Feature.class);
+    }
 
     public FeatureDaoImpl( EntityManager entityManager, IntactSession intactSession ) {
         super( Feature.class, entityManager, intactSession );

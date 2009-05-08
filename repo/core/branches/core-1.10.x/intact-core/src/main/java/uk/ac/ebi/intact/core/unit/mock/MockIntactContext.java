@@ -33,12 +33,11 @@ public class MockIntactContext extends IntactContext {
     private CvContext cvContext;
     private UserContext userContext;
 
-    public MockIntactContext(DataContext dataContext, IntactSession session) {
+    public MockIntactContext(RuntimeConfig runtimeConfig, DataContext dataContext, IntactSession session) {
         super(session);
         this.dataContext = dataContext;
         this.session = session;
-
-        runtimeConfig = null;
+        this.runtimeConfig = runtimeConfig;
         cvContext = CvContext.getCurrentInstance(session);
 
         setCurrentInstance(this);
@@ -50,8 +49,11 @@ public class MockIntactContext extends IntactContext {
         MockDaoFactory daoFactory = new MockDaoFactory(dataConfig, intactSession);
         MockDataContext dataContext = new MockDataContext(intactSession, daoFactory);
 
+        RuntimeConfig runtimeConfig = new RuntimeConfig();
+        runtimeConfig.addDataConfig(dataConfig);
+
         // start the mock context
-        new MockIntactContext(dataContext, intactSession);
+        new MockIntactContext(runtimeConfig, dataContext, intactSession);
     }
 
     @Override

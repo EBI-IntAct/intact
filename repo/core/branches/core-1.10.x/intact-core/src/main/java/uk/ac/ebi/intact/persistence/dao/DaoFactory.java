@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.AbstractHibernateDataConfig;
@@ -19,6 +20,7 @@ import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.persistence.dao.impl.*;
 import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
@@ -46,13 +48,29 @@ public class DaoFactory implements Serializable {
     @Autowired
     private RuntimeConfig runtimeConfig;
 
+    @Autowired AliasDao aliasDao;
+    @Autowired AnnotationDao annotationDao;
+    @Autowired BioSourceDao bioSourceDao;
+    @Autowired ComponentDao componentDao;
+    @Autowired ComponentParameterDao componentParameterDao;
+    @Autowired ConfidenceDao confidenceDao;
+    @Autowired CvObjectDao cvObjectDao;
     @Autowired DbInfoDao dbInfoDao;
     @Autowired ExperimentDao experimentDao;
+    @Autowired FeatureDao featureDao;
+    @Autowired ImexImportDao imexImportDao;
+    @Autowired ImexImportPublicationDao imexImportPublicationDao;
     @Autowired InstitutionDao institutionDao;
     @Autowired InteractionDao interactionDao;
+    @Autowired InteractionParameterDao interactionParameterDao;
+    @Autowired @Qualifier("interactorDaoImpl") InteractorDao interactorDao;
+    @Autowired MineInteractionDao mineInteractionDao;
+    @Autowired @Qualifier("polymerDaoImpl") PolymerDao polymerDao;
     @Autowired ProteinDao proteinDao;
     @Autowired PublicationDao publicationDao;
+    @Autowired RangeDao rangeDao;
     @Autowired SearchableDao searchableDao;
+    @Autowired XrefDao xrefDao;
 
     private IntactSession intactSession;
 
@@ -119,26 +137,39 @@ public class DaoFactory implements Serializable {
     }
 
     public AliasDao<Alias> getAliasDao() {
-        return new AliasDaoImpl( Alias.class, getEntityManager(), intactSession );
+        return aliasDao;
     }
 
     public <T extends Alias> AliasDao<T> getAliasDao( Class<T> aliasType ) {
-        return new AliasDaoImpl<T>( aliasType, getEntityManager(), intactSession );
-    }
-
-    public AnnotatedObjectDao<AnnotatedObject> getAnnotatedObjectDao() {
-        return new AnnotatedObjectDaoImpl<AnnotatedObject>( AnnotatedObject.class, getEntityManager(), intactSession );
+        return aliasDao;
     }
 
     public <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao( Class<T> entityType ) {
-        entityType = CgLibUtil.removeCglibEnhanced(entityType);
-        HibernateBaseDaoImpl.validateEntity( entityType );
-
-        return new AnnotatedObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
+        if (entityType.isAssignableFrom(Institution.class)) {
+            return (AnnotatedObjectDao<T>)institutionDao;
+        } else if (Publication.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)publicationDao;
+        } else if (CvObject.class.isAssignableFrom(entityType)) {
+            return cvObjectDao;
+        } else if (Experiment.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)experimentDao;
+        } else if (Interaction.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)interactionDao;
+        } else if (Interactor.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)interactorDao;
+        } else if (BioSource.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)bioSourceDao;
+        } else if (Component.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)componentDao;
+        } else if (Feature.class.isAssignableFrom(entityType)) {
+            return (AnnotatedObjectDao<T>)featureDao;
+        } else {
+            throw new IllegalArgumentException( "No Dao for entity type: "+entityType.getClass().getName());
+        }
     }
 
     public AnnotationDao getAnnotationDao() {
-        return new AnnotationDaoImpl( getEntityManager(), intactSession );
+        return annotationDao;
     }
 
     public BaseDao getBaseDao() {
@@ -148,19 +179,19 @@ public class DaoFactory implements Serializable {
     }
 
     public BioSourceDao getBioSourceDao() {
-        return new BioSourceDaoImpl( getEntityManager(), intactSession );
+        return bioSourceDao;
     }
 
     public ComponentDao getComponentDao() {
-        return new ComponentDaoImpl( getEntityManager(), intactSession );
+        return componentDao;
     }
 
     public CvObjectDao<CvObject> getCvObjectDao() {
-        return new CvObjectDaoImpl<CvObject>( CvObject.class, getEntityManager(), intactSession );
+        return cvObjectDao;
     }
 
     public <T extends CvObject> CvObjectDao<T> getCvObjectDao( Class<T> entityType ) {
-        return new CvObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
+        return cvObjectDao;
     }
 
     public DbInfoDao getDbInfoDao() {
@@ -172,35 +203,29 @@ public class DaoFactory implements Serializable {
     }
 
     public FeatureDao getFeatureDao() {
-        return new FeatureDaoImpl( getEntityManager(), intactSession );
+        return featureDao;
     }
 
     /**
      * @since 1.7.2
      */
     public ImexImportDao getImexImportDao() {
-        return new ImexImportDaoImpl(getEntityManager(), intactSession);
+        return imexImportDao;
     }
 
     /**
      * @since 1.7.2
      */
     public ImexImportPublicationDao getImexImportPublicationDao() {
-        return new ImexImportPublicationDaoImpl(getEntityManager(), intactSession);
+        return imexImportPublicationDao;
     }
 
     public InstitutionDao getInstitutionDao() {
         return institutionDao;
     }
 
-    public IntactObjectDao<IntactObject> getIntactObjectDao() {
-        return new IntactObjectDaoImpl<IntactObject>( IntactObject.class, getEntityManager(), intactSession );
-    }
-
-    public <T extends IntactObject> IntactObjectDao<T> getIntactObjectDao( Class<T> entityType ) {
-        HibernateBaseDaoImpl.validateEntity( entityType );
-
-        return new IntactObjectDaoImpl<T>( entityType, getEntityManager(), intactSession );
+    public IntactObjectDao<? extends IntactObject> getIntactObjectDao() {
+        return experimentDao;
     }
 
     public InteractionDao getInteractionDao() {
@@ -208,22 +233,22 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends InteractorImpl> InteractorDao<T> getInteractorDao( Class<T> entityType ) {
-        return new InteractorDaoImpl<T>( entityType, getEntityManager(), intactSession );
+        return interactorDao;
     }
 
     public InteractorDao<InteractorImpl> getInteractorDao() {
-        return new InteractorDaoImpl<InteractorImpl>( InteractorImpl.class, getEntityManager(), intactSession );
+        return interactorDao;
     }
 
     /**
      * @since 1.5
      */
     public MineInteractionDao getMineInteractionDao() {
-        return new MineInteractionDaoImpl( getEntityManager(), intactSession );
+        return mineInteractionDao;
     }
 
     public PolymerDao<PolymerImpl> getPolymerDao() {
-        return new PolymerDaoImpl<PolymerImpl>( PolymerImpl.class, getEntityManager(), intactSession );
+        return polymerDao;
     }
 
     public <T extends PolymerImpl> PolymerDao<T> getPolymerDao( Class<T> clazz ) {
@@ -239,31 +264,27 @@ public class DaoFactory implements Serializable {
     }
 
     public RangeDao getRangeDao() {
-        return new RangeDaoImpl( getEntityManager(), intactSession );
+        return rangeDao;
     }
 
     public ConfidenceDao getConfidenceDao(){
-        return new ConfidenceDaoImpl(getEntityManager(), intactSession);
+        return confidenceDao;
     }
     
     public InteractionParameterDao getInteractionParameterDao(){
-        return new InteractionParameterDaoImpl(getEntityManager(), intactSession);
+        return interactionParameterDao;
     }
     
     public ComponentParameterDao getComponentParameterDao(){
-        return new ComponentParameterDaoImpl(getEntityManager(), intactSession);
+        return componentParameterDao;
     }
 
     public SearchableDao getSearchableDao() {
         return searchableDao;
     }
 
-    public SearchItemDao getSearchItemDao() {
-        return new SearchItemDaoImpl( getEntityManager(), intactSession );
-    }
-
     public XrefDao<Xref> getXrefDao() {
-        return new XrefDaoImpl<Xref>( Xref.class, getEntityManager(), intactSession );
+        return xrefDao;
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao( Class<T> xrefClass ) {

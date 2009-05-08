@@ -24,13 +24,22 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import java.util.List;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * TODO comment this
  *
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
+@Repository
+@Transactional
 public class ImexImportPublicationDaoImpl extends HibernateBaseDaoImpl<ImexImportPublication> implements ImexImportPublicationDao {
+
+    public ImexImportPublicationDaoImpl() {
+        super(ImexImportPublication.class);
+    }
 
     public ImexImportPublicationDaoImpl(EntityManager entityManager, IntactSession intactSession) {
         super(ImexImportPublication.class, entityManager, intactSession);

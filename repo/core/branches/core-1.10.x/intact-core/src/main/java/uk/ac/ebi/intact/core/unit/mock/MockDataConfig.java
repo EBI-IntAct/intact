@@ -19,6 +19,8 @@ import uk.ac.ebi.intact.config.impl.JpaCoreDataConfig;
 import uk.ac.ebi.intact.context.IntactSession;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import java.util.Map;
 
 /**
  * TODO comment this
@@ -40,7 +42,23 @@ public class MockDataConfig extends JpaCoreDataConfig {
     }
 
     public EntityManagerFactory getEntityManagerFactory() {
-        throw new UnsupportedOperationException();
+        return new EntityManagerFactory(){
+            public EntityManager createEntityManager() {
+                throw new UnsupportedOperationException();
+            }
+
+            public EntityManager createEntityManager(Map map) {
+                throw new UnsupportedOperationException();
+            }
+
+            public void close() {
+
+            }
+
+            public boolean isOpen() {
+                return false;
+            }
+        };
     }
 
 }

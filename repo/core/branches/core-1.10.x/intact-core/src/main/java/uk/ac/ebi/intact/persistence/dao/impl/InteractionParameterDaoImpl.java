@@ -21,6 +21,9 @@ import uk.ac.ebi.intact.persistence.dao.InteractionParameterDao;
 
 import javax.persistence.EntityManager;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * Data Access Object for Interaction parameter.
  *
@@ -28,7 +31,13 @@ import javax.persistence.EntityManager;
  * @version $Id$
  * @since 1.9.0
  */
+@Repository
+@Transactional
 public class InteractionParameterDaoImpl extends IntactObjectDaoImpl<InteractionParameter> implements InteractionParameterDao {
+
+    public InteractionParameterDaoImpl() {
+        super(InteractionParameter.class);
+    }
 
     public InteractionParameterDaoImpl( EntityManager entityManager, IntactSession intactSession ) {
         super( InteractionParameter.class, entityManager, intactSession );

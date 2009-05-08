@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
@@ -34,6 +35,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Transactional
 public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
 
     public static final Log log = LogFactory.getLog( HibernateBaseDaoImpl.class );
@@ -46,6 +48,8 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
 
     @Autowired
     private EntityManagerFactory entityManagerFactory;
+
+    public HibernateBaseDaoImpl() {}
 
     public HibernateBaseDaoImpl( Class<T> entityClass) {
         this.entityClass = entityClass;

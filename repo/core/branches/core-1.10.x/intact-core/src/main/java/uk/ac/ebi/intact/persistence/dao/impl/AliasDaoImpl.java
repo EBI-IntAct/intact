@@ -12,6 +12,9 @@ import uk.ac.ebi.intact.persistence.dao.AliasDao;
 import javax.persistence.EntityManager;
 import java.util.Collection;
 
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 /**
  * TODO comment this
  *
@@ -19,7 +22,13 @@ import java.util.Collection;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Repository
+@Transactional
 public class AliasDaoImpl<T extends Alias> extends IntactObjectDaoImpl<T> implements AliasDao<T> {
+
+    public AliasDaoImpl() {
+        super((Class<T>) Alias.class);
+    }
 
     public AliasDaoImpl( Class<T> aliasClass, EntityManager entityManager, IntactSession intactSession ) {
         super( aliasClass, entityManager, intactSession );

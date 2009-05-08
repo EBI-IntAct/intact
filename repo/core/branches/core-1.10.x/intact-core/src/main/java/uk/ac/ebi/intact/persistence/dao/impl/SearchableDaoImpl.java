@@ -22,6 +22,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.model.AnnotatedObjectImpl;
 import uk.ac.ebi.intact.model.Searchable;
@@ -40,6 +41,7 @@ import java.util.*;
  * @since 1.5
  */
 @Repository
+@Transactional
 public class SearchableDaoImpl extends HibernateBaseDaoImpl<AnnotatedObjectImpl> implements SearchableDao {
 
     public SearchableDaoImpl( ) {

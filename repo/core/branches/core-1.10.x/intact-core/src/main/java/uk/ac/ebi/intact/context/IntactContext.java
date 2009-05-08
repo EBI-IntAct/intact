@@ -11,8 +11,10 @@ import uk.ac.ebi.intact.config.DataConfig;
 import uk.ac.ebi.intact.config.impl.*;
 import uk.ac.ebi.intact.context.impl.StandaloneSession;
 import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
 import javax.persistence.EntityManagerFactory;
+import javax.annotation.PostConstruct;
 import java.io.Closeable;
 import java.io.File;
 import java.io.Serializable;
@@ -51,8 +53,16 @@ public class IntactContext implements Serializable, Closeable {
     @Autowired
     private DataContext dataContext;
 
+    @Autowired
+    private PersisterHelper persisterHelper;
+
     public IntactContext() {
 
+    }
+
+    @PostConstruct
+    public void init() {
+        currentInstance.set(this);
     }
 
     protected IntactContext( IntactSession session ) {
@@ -320,5 +330,7 @@ public class IntactContext implements Serializable, Closeable {
         return dataConfig;
     }
 
-
+    public PersisterHelper getPersisterHelper() {
+        return persisterHelper;
+    }
 }

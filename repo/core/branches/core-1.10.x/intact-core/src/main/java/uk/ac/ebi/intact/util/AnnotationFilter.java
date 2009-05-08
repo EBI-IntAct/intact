@@ -53,7 +53,7 @@ public class AnnotationFilter {
         logger.debug( "Initializing which CvTopic should be filtered out." );
 
         // search for the CvTopic no-export
-        CvTopic noExport = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getAnnotatedObjectDao( CvTopic.class ).getByShortLabel( CvTopic.NO_EXPORT );
+        CvTopic noExport = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getCvObjectDao( CvTopic.class ).getByShortLabel( CvTopic.NO_EXPORT );
 
         if ( noExport != null ) {
 
