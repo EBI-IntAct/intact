@@ -23,10 +23,17 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persister.PersisterHelper;
+
+import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * Base for all intact-tests.
@@ -41,6 +48,15 @@ import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 public abstract class IntactBasicTestCase
 {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
+    private PersisterHelper persisterHelper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
     private IntactMockBuilder mockBuilder;
 
     @Before
@@ -51,6 +67,7 @@ public abstract class IntactBasicTestCase
     @After
     public final void afterBasicTest() throws Exception {
         mockBuilder = null;
+        entityManager.clear();
     }
 
     @After
@@ -86,5 +103,17 @@ public abstract class IntactBasicTestCase
 
     protected IntactMockBuilder getMockBuilder() {
         return mockBuilder;
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
+    public PersisterHelper getPersisterHelper() {
+        return persisterHelper;
     }
 }

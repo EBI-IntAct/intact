@@ -25,15 +25,15 @@ import org.hibernate.ejb.HibernateEntityManager;
 import org.hibernate.engine.EntityEntry;
 import org.hibernate.engine.Status;
 import org.hibernate.impl.SessionImpl;
-import org.springframework.stereotype.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.business.IntactTransactionException;
 import uk.ac.ebi.intact.context.DataContext;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
+import uk.ac.ebi.intact.core.persister.finder.DefaultFinder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.util.InteractionUtils;
@@ -42,6 +42,7 @@ import uk.ac.ebi.intact.persistence.dao.BaseDao;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.util.DebugUtil;
 
+import javax.persistence.FlushModeType;
 import java.util.*;
 
 /**
@@ -53,19 +54,23 @@ import java.util.*;
  */
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class CorePersister implements Persister<AnnotatedObject> {
+public class CorePersister  {
 
     private static final Log log = LogFactory.getLog( CorePersister.class );
+
+    @Autowired
+    private DataContext dataContext;
+
+    @Autowired
+    private Finder finder;
 
     private BiMap<Key, AnnotatedObject> annotatedObjectsToPersist;
     private Map<Key, AnnotatedObject> annotatedObjectsToMerge;
     private Map<Key, AnnotatedObject> synched;
 
-    @Autowired
-    private Finder finder;
-
     private KeyBuilder keyBuilder;
     private EntityStateCopier entityStateCopier;
+
 
     /**
      * When true, if an annotated object that do not have an AC has an equivalent
@@ -86,6 +91,8 @@ public class CorePersister implements Persister<AnnotatedObject> {
         annotatedObjectsToPersist = new HashBiMap<Key, AnnotatedObject>();
         annotatedObjectsToMerge = new HashMap<Key, AnnotatedObject>();
         synched = new HashMap<Key, AnnotatedObject>();
+
+        finder = new DefaultFinder();
 
         keyBuilder = new KeyBuilder();
         entityStateCopier = new DefaultEntityStateCopier();
@@ -119,27 +126,23 @@ public class CorePersister implements Persister<AnnotatedObject> {
 
     ////////////////////////
     // Implement Persister
-
+    @Transactional
     public void saveOrUpdate( AnnotatedObject ao ) {
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-
-        boolean inTransaction = IntactContext.getCurrentInstance().getDataContext().isTransactionActive();
-
-        if ( !inTransaction ) IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
         boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
-        dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
+        dataContext.getDaoFactory().getEntityManager().setFlushMode(FlushModeType.COMMIT);
+        //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
 
         try {
             synchronize( ao );
             commit();
         } finally {
-           dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush); 
+          // dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
+            dataContext.getDaoFactory().getEntityManager().setFlushMode(FlushModeType.AUTO);
         }
 
         reload( ao );
 
-        if ( !inTransaction ) commitTransactionAndRollbackIfNecessary();
 
 
     }
