@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Scope;
 
 /**
  * TODO comment this
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Repository
 @Transactional
+@Scope(org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE)
 public class AliasDaoImpl<T extends Alias> extends IntactObjectDaoImpl<T> implements AliasDao<T> {
 
     public AliasDaoImpl() {

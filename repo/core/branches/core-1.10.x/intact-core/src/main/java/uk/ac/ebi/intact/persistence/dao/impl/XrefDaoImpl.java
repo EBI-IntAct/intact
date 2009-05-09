@@ -15,6 +15,7 @@ import java.util.Collection;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.annotation.Scope;
+import org.springframework.beans.factory.config.BeanDefinition;
 
 /**
  * TODO comment this
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Scope;
  */
 @Repository
 @Transactional
+@Scope(org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE)
 public class XrefDaoImpl<T extends Xref> extends IntactObjectDaoImpl<T> implements XrefDao<T> {
 
     public XrefDaoImpl() {

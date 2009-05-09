@@ -4,11 +4,15 @@ import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -76,6 +80,10 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
 
         PersisterHelper.saveOrUpdate(exp);
 
+        Assert.assertEquals(1, getDaoFactory().getExperimentDao().countAll());
+
+        getEntityManager().clear();
+
         Experiment exp2 = getMockBuilder().createExperimentRandom(1);
         exp2.setShortLabel("tata-2005");
         xref.setAc(null);
@@ -83,6 +91,8 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
         exp2.addXref(xref);
 
         PersisterHelper.saveOrUpdate(exp2);
+
+        Assert.assertEquals(2, getDaoFactory().getExperimentDao().countAll());
 
         Experiment reloadedExperiment = getDaoFactory().getExperimentDao().getByShortLabel("tata-2005-1");
 
@@ -118,6 +128,8 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
         Assert.assertEquals(1, getDaoFactory().getExperimentDao().countAll());
         Assert.assertEquals(2, getDaoFactory().getInteractionDao().countAll());
         Assert.assertEquals(1, getDaoFactory().getPublicationDao().countAll());
+
+        getEntityManager().clear();
 
         Experiment reloadedExp = getDaoFactory().getExperimentDao().getByShortLabel("nopub-2006-1");
         Assert.assertNotNull(reloadedExp.getPublication());
@@ -169,6 +181,8 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
 
         PersisterHelper.saveOrUpdate(expWithout);
 
+        getEntityManager().clear();
+
         Experiment expWith = getMockBuilder().createExperimentRandom(1);
         expWith.setShortLabel("nopub-2006-1");
         expWith.setPublication(null);
@@ -178,10 +192,8 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
 
         expWith.addAlias( getMockBuilder().createAlias( expWith, "comment", "MI:xxxx", "topic" ) );
 
-        CorePersister updaterPersister = new CorePersister();
-        updaterPersister.setUpdateWithoutAcEnabled(true);
-
-        PersisterHelper.saveOrUpdate(updaterPersister, expWith);
+        getPersisterHelper().getCorePersister().setUpdateWithoutAcEnabled(true);
+        getPersisterHelper().save(expWith);
 
         Assert.assertEquals(1, getDaoFactory().getExperimentDao().countAll());
 

@@ -84,4 +84,6 @@ public interface BaseDao<T> {
 
     boolean isTransient(T object);
 
+    void setEntityClass(Class<T> entityClass);
+
 }

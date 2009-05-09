@@ -56,6 +56,9 @@ public class IntactContext implements Serializable, Closeable {
     @Autowired
     private PersisterHelper persisterHelper;
 
+    @Autowired
+    private IntactConfigurator configurator;
+
     public IntactContext() {
 
     }
@@ -63,6 +66,8 @@ public class IntactContext implements Serializable, Closeable {
     @PostConstruct
     public void init() {
         currentInstance.set(this);
+
+        configurator.initIntact( new StandaloneSession() );
     }
 
     protected IntactContext( IntactSession session ) {

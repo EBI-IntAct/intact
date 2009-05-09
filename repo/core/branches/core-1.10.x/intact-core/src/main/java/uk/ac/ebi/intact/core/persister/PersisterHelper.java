@@ -29,6 +29,10 @@ import uk.ac.ebi.intact.model.AnnotatedObject;
 import uk.ac.ebi.intact.model.IntactEntry;
 import uk.ac.ebi.intact.model.Interaction;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.FlushModeType;
+
 /**
  * Helper class to reduce the code needed to save or update an Annotated object.
  *
@@ -41,6 +45,9 @@ public class PersisterHelper {
 
     @Autowired
     private CorePersister corePersister;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     /**
      * Sets up a logger for that class.
@@ -77,16 +84,13 @@ public class PersisterHelper {
 
     @Transactional
     public PersisterStatistics save( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
-        final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        boolean inTransaction = dataContext.isTransactionActive();
-
-        if ( !inTransaction ) dataContext.beginTransaction();
 
         // during synchronization-persistence there is a lot of things going on, which involve
         // reading the database and persisting at the same time, but only flushing at the very end.
         // If autoflush, the entity manager will attempt a flush when not everything is ready, and it will fail.
         //boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
         //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
+        entityManager.setFlushMode(FlushModeType.COMMIT);
 
         try {
             for ( AnnotatedObject ao : annotatedObjects ) {
@@ -95,21 +99,25 @@ public class PersisterHelper {
             corePersister.commit();
         } finally {
             //dataContext.getDaoFactory().getDataConfig().setAutoFlush(originalAutoFlush);
+            entityManager.setFlushMode(FlushModeType.AUTO);
         }
+
 
         // we reload the annotated objects by its AC
         // note: if an object does not have one, it is probably a duplicate
         for ( AnnotatedObject ao : annotatedObjects ) {
             corePersister.reload( ao );
         }
-
-        if ( !inTransaction ) corePersister.commitTransactionAndRollbackIfNecessary();
-
+        
         final PersisterStatistics stats = corePersister.getStatistics();
 
         if (log.isDebugEnabled()) log.debug(stats);
 
         return stats;
 
+    }
+
+    public CorePersister getCorePersister() {
+        return corePersister;
     }
 }

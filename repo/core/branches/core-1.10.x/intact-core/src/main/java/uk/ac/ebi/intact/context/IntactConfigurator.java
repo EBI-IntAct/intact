@@ -43,6 +43,12 @@ public class IntactConfigurator {
 
     private static final Log log = LogFactory.getLog( IntactConfigurator.class );
 
+    // required version is 1.9.0 (build version should always be 0, as a change in the build
+    // version should not break compatibility)
+    protected static final Integer DEFAULT_REQUIRED_VERSION_MAJOR = 1;
+    protected static final Integer DEFAULT_REQUIRED_VERSION_MINOR = 9;
+    protected static final Integer DEFAULT_REQUIERD_VERSION_BUILD = 0;
+
     private static final String DEFAULT_INSTITUTION_LABEL = "Unknown";
 
     private static final String EBI_INSTITUTION_LABEL = Institution.INTACT;
@@ -146,7 +152,7 @@ public class IntactConfigurator {
         boolean forceNoSchemaCheck = Boolean.parseBoolean( strForceNoSchemaCheck );
 
         if ( !forceNoSchemaCheck ) {
-            checkSchemaCompatibility( config.getDataConfig(), session );
+            checkSchemaCompatibility( session );
         }
 
         // read only
@@ -208,22 +214,6 @@ public class IntactConfigurator {
         setInitialized( session, true );
     }
 
-    /**
-     * Registers a data-config, returning true if it has been correctly registered, false otherwise
-     * @return true if it has been correctly registered, false otherwise
-     */
-    private static boolean registerDataConfig(DataConfig dataConfig, RuntimeConfig config, boolean isDefault) {
-        log.info("Registering data-config: " + dataConfig.getName());
-
-        if (!dataConfig.isInitialized()) {
-            dataConfig.initialize();
-        }
-
-        config.addDataConfig(dataConfig, isDefault);
-
-        return true;
-    }
-
     public static IntactContext createIntactContext( IntactSession session ) {
 //        if ( RuntimeConfig.getCurrentInstance( session ).getDataConfigs().isEmpty() ) {
 //            log.warn( "No data configs found. Re-initializing IntAct" );
@@ -274,8 +264,10 @@ public class IntactConfigurator {
         persistBasicCvObjects(context);
     }
 
-    private void checkSchemaCompatibility( DataConfig dataConfig, IntactSession session ) {
-        SchemaVersion requiredVersion = dataConfig.getMinimumRequiredVersion();
+    private void checkSchemaCompatibility( IntactSession session ) {
+        SchemaVersion requiredVersion = new SchemaVersion(DEFAULT_REQUIRED_VERSION_MAJOR,
+                DEFAULT_REQUIRED_VERSION_MINOR,
+                DEFAULT_REQUIERD_VERSION_BUILD);
 
         EntityTransaction tx = daoFactory.beginTransaction();
         DbInfo dbInfoSchemaVersion = daoFactory.getDbInfoDao().get( DbInfo.SCHEMA_VERSION );

@@ -23,7 +23,9 @@ import org.springframework.stereotype.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.annotation.Scope;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.core.persister.Finder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Component;
@@ -50,6 +52,9 @@ import java.util.List;
 @org.springframework.stereotype.Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class DefaultFinder implements Finder {
+
+    @Autowired
+    private RuntimeConfig runtimeConfig;
 
     /**
      * Sets up a logger for that class.
@@ -354,7 +359,7 @@ public class DefaultFinder implements Finder {
      * @return
      */
     private boolean xrefPointsToOwnAc(Xref xref) {
-        if (xref.getPrimaryId().startsWith(IntactContext.getCurrentInstance().getConfig().getAcPrefix())) {
+        if (xref.getPrimaryId().startsWith(runtimeConfig.getAcPrefix())) {
             return true;
         } else {
             for (InstitutionXref institutionXref : IntactContext.getCurrentInstance().getInstitution().getXrefs()) {

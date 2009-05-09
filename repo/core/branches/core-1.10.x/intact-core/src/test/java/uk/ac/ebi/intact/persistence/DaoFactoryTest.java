@@ -69,7 +69,7 @@ public class DaoFactoryTest extends IntactBasicTestCase {
     }
 
     @Test
-    public void getEntityManager() throws Exception {
+    public void getEntityManagerTest() throws Exception {
         EntityManager em1 = getDaoFactory().getEntityManager();
         Assert.assertTrue(em1.isOpen());
 

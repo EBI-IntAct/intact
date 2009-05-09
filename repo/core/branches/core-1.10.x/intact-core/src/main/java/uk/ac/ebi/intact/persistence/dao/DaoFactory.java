@@ -141,6 +141,7 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends Alias> AliasDao<T> getAliasDao( Class<T> aliasType ) {
+        aliasDao.setEntityClass(aliasType);
         return aliasDao;
     }
 
@@ -288,7 +289,9 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao( Class<T> xrefClass ) {
-        return new XrefDaoImpl<T>( xrefClass, getEntityManager(), intactSession );
+        // TODO check if this is really safe
+        xrefDao.setEntityClass(xrefClass);
+        return xrefDao;
     }
 
     public Connection connection() {

@@ -380,4 +380,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
         return (T) results.iterator().next();
     }
 
+    public void setEntityClass(Class<T> entityClass) {
+        this.entityClass = entityClass;
+    }
 }
