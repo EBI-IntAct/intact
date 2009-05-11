@@ -42,7 +42,7 @@ import javax.persistence.EntityManagerFactory;
  * @version $Id$
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"/intact.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml",
+@ContextConfiguration(locations = {"/META-INF/intact-base.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml",
         "/META-INF/standalone/intact-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional

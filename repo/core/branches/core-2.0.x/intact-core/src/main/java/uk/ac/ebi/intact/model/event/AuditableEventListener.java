@@ -7,7 +7,11 @@ package uk.ac.ebi.intact.model.event;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.context.UserContext;
 import uk.ac.ebi.intact.model.Auditable;
 
 import javax.persistence.PrePersist;

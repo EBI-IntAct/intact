@@ -31,6 +31,8 @@ public class IntactContext implements Serializable, Closeable {
 
     private static final Log log = LogFactory.getLog( IntactContext.class );
 
+    private static IntactContext instance;
+
     /**
      * Contains scoped data and variables
      */
@@ -57,14 +59,9 @@ public class IntactContext implements Serializable, Closeable {
 
     @PostConstruct
     public void init() {
-        currentInstance.set(this);
 
         //configurator.initIntact( new StandaloneSession() );
-    }
-
-    protected IntactContext( IntactSession session ) {
-        //this.userContext = userContext;
-        this.session = session;
+        instance = this;
     }
 
     /**
@@ -73,19 +70,18 @@ public class IntactContext implements Serializable, Closeable {
      * DataConfigs and, if these are not found, using a temporary database.
      * @return the IntactContext instance
      */
-    public static synchronized IntactContext getCurrentInstance() {
+    public static IntactContext getCurrentInstance() {
         if ( !currentInstanceExists() ) {
             // stack trace element to know from where this method was called
             StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
 
-            log.debug( "Current instance of IntactContext is null. Initializing with StandaloneSession," +
-                      "because probably this application is not a web application.\nCalled at:\n\t" +
+            log.debug( "Current instance of IntactContext is null. Initializing a context in memory.\nCalled at:\n\t" +
                       ste.toString() );
 
-            initStandaloneContext();
+            initStandaloneContextInMemory();
         }
 
-        return currentInstance.get();
+        return instance;
     }
 
     /**
@@ -93,7 +89,7 @@ public class IntactContext implements Serializable, Closeable {
      * @return True if an instance of IntactContext exist.
      */
     public static boolean currentInstanceExists() {
-        return currentInstance.get() != null;
+        return instance != null;
     }
 
     /**
@@ -153,26 +149,9 @@ public class IntactContext implements Serializable, Closeable {
 
         // init Spring
         ClassPathXmlApplicationContext springContext = new ClassPathXmlApplicationContext(
-                new String[] {"/intact.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml", "/META-INF/standalone/intact-standalone.spring.xml"});
+                new String[] {"/META-INF/intact-base.spring.xml", "/META-INF/standalone/jpa-standalone.spring.xml", "/META-INF/standalone/intact-standalone.spring.xml"});
 
-        IntactContext intactContext = (IntactContext) springContext.getBean("intactContext");
-
-        currentInstance.set(intactContext);
-    }
-
-    private static ThreadLocal<IntactContext> currentInstance = new ThreadLocal<IntactContext>() {
-        protected IntactContext initialValue() {
-            return null;
-        }
-    };
-
-    /**
-     * This allows to set the current instance. This method is used during initialization by the {@code IntactConfiguration}
-     * and using it for other purposes is not advisable
-     * @param context The instance to set
-     */
-    public static void setCurrentInstance( IntactContext context ) {
-        currentInstance.set( context );
+        instance = (IntactContext) springContext.getBean("intactContext");
     }
 
 
@@ -224,7 +203,7 @@ public class IntactContext implements Serializable, Closeable {
     public void close() {
         getSpringContext().close();
         session = null;
-        currentInstance.set(null);
+        instance = null;
     }
 
     /**
@@ -232,14 +211,13 @@ public class IntactContext implements Serializable, Closeable {
      */
     public static void closeCurrentInstance() {
         if (currentInstanceExists()) {
-            currentInstance.get().close();
+            instance.close();
         } else {
             if (log.isDebugEnabled()) log.debug("No IntactContext found, so it didn't need to be closed");
         }
     }
 
     public PersisterHelper getPersisterHelper() {
-        // TODO prototype bean, so instantiate every time here
         return persisterHelper;
     }
 

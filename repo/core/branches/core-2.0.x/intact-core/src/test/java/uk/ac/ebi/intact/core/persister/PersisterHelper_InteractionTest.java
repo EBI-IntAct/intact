@@ -559,10 +559,8 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Interaction clonedInteraction = (Interaction) ((InteractionImpl)interaction).clone();
         clonedInteraction.setExperiments(interaction.getExperiments());
 
-        CorePersister corePersister = new CorePersister();
-        corePersister.setUpdateWithoutAcEnabled(true);
-
-        PersisterStatistics stats2 = PersisterHelper.saveOrUpdate(corePersister, clonedInteraction);
+        getPersisterHelper().getCorePersister().setUpdateWithoutAcEnabled(true);
+        PersisterStatistics stats2 = getPersisterHelper().save(clonedInteraction);
 
         Assert.assertEquals(1, getDaoFactory().getInteractionDao().countAll());
         Assert.assertEquals("fooprey-barbait", getDaoFactory().getInteractionDao().getByAc(clonedInteraction.getAc()).getShortLabel());
@@ -575,10 +573,8 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Interaction clonedInteraction2 = (Interaction) ((InteractionImpl)interaction).clone();
         clonedInteraction2.setExperiments(interaction.getExperiments());
 
-        CorePersister corePersister2 = new CorePersister();
-        corePersister2.setUpdateWithoutAcEnabled(false);
-
-        PersisterStatistics stats3 = PersisterHelper.saveOrUpdate(corePersister2, clonedInteraction2);
+        getPersisterHelper().getCorePersister().setUpdateWithoutAcEnabled(false);
+        PersisterStatistics stats3 = getPersisterHelper().save(clonedInteraction2);
 
         Assert.assertEquals(1, getDaoFactory().getInteractionDao().countAll());
         Assert.assertEquals("fooprey-barbait", getDaoFactory().getInteractionDao().getByAc(clonedInteraction2.getAc()).getShortLabel());
