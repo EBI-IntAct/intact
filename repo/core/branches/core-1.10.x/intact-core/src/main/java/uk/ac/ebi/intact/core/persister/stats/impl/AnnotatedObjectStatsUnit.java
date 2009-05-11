@@ -16,7 +16,6 @@
 package uk.ac.ebi.intact.core.persister.stats.impl;
 
 import uk.ac.ebi.intact.model.AnnotatedObject;
-import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 import uk.ac.ebi.intact.core.persister.stats.StatsUnit;
 
 /**

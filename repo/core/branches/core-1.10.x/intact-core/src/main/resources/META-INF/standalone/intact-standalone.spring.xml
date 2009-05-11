@@ -9,18 +9,19 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 
-    <bean name="intactConfig" class="uk.ac.ebi.intact.config.IntactConfiguration">
+    <bean name="intactConfig" class="uk.ac.ebi.intact.core.config.IntactConfiguration">
         <property name="acPrefix" value="TEST"/>
         <property name="defaultInstitution" ref="defaultInstitution"/>
         <property name="autoUpdateExperimentLabel" value="true"/>
         <property name="autoUpdateInteractionLabel" value="true"/>
     </bean>
 
+    <!-- TODO use a FactoryBean to set common props, like MI, address, etc...-->
     <bean name="defaultInstitution" class="uk.ac.ebi.intact.model.Institution">
         <property name="shortLabel" value="IntAct-Tests"/>
     </bean>
 
-    <bean name="userContext" class="uk.ac.ebi.intact.context.UserContext">
+    <bean name="userContext" class="uk.ac.ebi.intact.core.context.UserContext">
         <property name="userId" value="TEST_USER"/>
     </bean>
 

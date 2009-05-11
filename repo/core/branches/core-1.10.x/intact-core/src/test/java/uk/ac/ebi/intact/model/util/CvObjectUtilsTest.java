@@ -2,9 +2,9 @@ package uk.ac.ebi.intact.model.util;
 
 import org.junit.*;
 import static org.junit.Assert.*;
-import uk.ac.ebi.intact.config.impl.SmallCvPrimer;
-import uk.ac.ebi.intact.context.DataContext;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
+import uk.ac.ebi.intact.core.context.DataContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;

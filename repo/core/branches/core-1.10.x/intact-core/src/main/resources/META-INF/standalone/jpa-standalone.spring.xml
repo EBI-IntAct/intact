@@ -35,7 +35,7 @@
         </property>
 
         <property name="jpaVendorAdapter">
-            <bean class="uk.ac.ebi.intact.config.hibernate.IntactHibernateJpaVendorAdapter">
+            <bean class="uk.ac.ebi.intact.core.config.hibernate.IntactHibernateJpaVendorAdapter">
                 <property name="databasePlatform" value="org.hibernate.dialect.H2Dialect"/>
                 <property name="showSql" value="false"/>
                 <property name="generateDdl" value="false"/>
