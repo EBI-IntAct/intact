@@ -5,18 +5,14 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.model;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.collections.CollectionUtils;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.CascadeType;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * The specific instance of an interactor which participates in an interaction.
@@ -650,7 +646,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         final Component component = ( Component ) o;
 
         // check cvs and interactor first, and then check the interaction
-        if ( !CollectionUtils.isEqualCollection(experimentalRoles, component.getExperimentalRoles()) ) {
+        if ( !CollectionUtils.isEqualCollection(getExperimentalRoles(), component.getExperimentalRoles()) ) {
             return false;
         }
         if ( biologicalRole != null && !biologicalRole.equals( component.getCvBiologicalRole() ) ) {
