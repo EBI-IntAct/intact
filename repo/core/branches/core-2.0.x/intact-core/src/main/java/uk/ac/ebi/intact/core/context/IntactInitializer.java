@@ -32,6 +32,7 @@ import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.core.persistence.dao.DbInfoDao;
 import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 
 /**
  * TODO write description of the class.
@@ -56,6 +57,9 @@ public class IntactInitializer implements InitializingBean {
     
     @Autowired
     private DbInfoDao dbInfoDao;
+
+    @Autowired
+    private CvObjectDao cvObjectDao;
 
     @Autowired
     private InstitutionDao institutionDao;
@@ -118,10 +122,13 @@ public class IntactInitializer implements InitializingBean {
 
     @Transactional
      public void persistBasicCvObjects() {
-        log.debug("Persisting necessary CvObjects (EssentialCvPrimer)");
 
-        CvDatabase intact = CvObjectUtils.createCvObject(intactContext.getInstitution(), CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
-        persisterHelper.save(intact);
+        if (cvObjectDao.getByPsiMiRef(CvDatabase.INTACT_MI_REF) == null) {
+            log.info("Persisting necessary CvObjects");
+
+            CvDatabase intact = CvObjectUtils.createCvObject(intactContext.getInstitution(), CvDatabase.class, CvDatabase.INTACT_MI_REF, CvDatabase.INTACT);
+            persisterHelper.save(intact);
+        }
     }
 
 }

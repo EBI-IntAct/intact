@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.ApplicationContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.model.AnnotatedObject;
@@ -39,14 +40,13 @@ import javax.persistence.FlushModeType;
  * @version $Id$
  */
 @Component
-@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class PersisterHelper {
-
-    @Autowired
-    private CorePersister corePersister;
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private ApplicationContext springContext;
 
     /**
      * Sets up a logger for that class.
@@ -63,11 +63,6 @@ public class PersisterHelper {
         return IntactContext.getCurrentInstance().getPersisterHelper().save(annotatedObjects);
     }
 
-    @Deprecated
-    public static PersisterStatistics saveOrUpdate( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
-        return IntactContext.getCurrentInstance().getPersisterHelper().save(corePersister, annotatedObjects);
-    }
-
     public void save( IntactEntry... intactEntries ) throws PersisterException {
         for ( IntactEntry intactEntry : intactEntries ) {
             for ( Interaction interaction : intactEntry.getInteractions() ) {
@@ -76,22 +71,18 @@ public class PersisterHelper {
         }
     }
 
-    @Transactional
-    public PersisterStatistics save( AnnotatedObject... annotatedObjects ) throws PersisterException {
-        return save(corePersister, annotatedObjects);
-    }
 
     @Transactional
-    public PersisterStatistics save( CorePersister corePersister, AnnotatedObject... annotatedObjects ) throws PersisterException {
+    public PersisterStatistics save( AnnotatedObject... annotatedObjects ) throws PersisterException {
 
         // during synchronization-persistence there is a lot of things going on, which involve
         // reading the database and persisting at the same time, but only flushing at the very end.
         // If autoflush, the entity manager will attempt a flush when not everything is ready, and it will fail.
-        //boolean originalAutoFlush = dataContext.getDaoFactory().getDataConfig().isAutoFlush();
-        //dataContext.getDaoFactory().getDataConfig().setAutoFlush(false);
         entityManager.setFlushMode(FlushModeType.COMMIT);
 
-        corePersister.getStatistics().reset();
+        CorePersister corePersister = getCorePersister();
+
+        //corePersister.getStatistics().reset();
 
         try {
             for ( AnnotatedObject ao : annotatedObjects ) {
@@ -118,6 +109,6 @@ public class PersisterHelper {
     }
 
     public CorePersister getCorePersister() {
-        return corePersister;
+        return (CorePersister) springContext.getBean("corePersister");
     }
 }

@@ -79,9 +79,9 @@ public class SchemaVersion {
      * @return if true, the schemas are compatible
      */
     public boolean isCompatibleWith( SchemaVersion schemaVersion ) {
-        if ( getMajor() != schemaVersion.getMajor() ) {
+        if ( getMajor().intValue() != schemaVersion.getMajor().intValue() ) {
             return false;
-        } else if ( getMinor() != schemaVersion.getMinor() ) {
+        } else if ( getMinor().intValue() != schemaVersion.getMinor().intValue() ) {
             return false;
         } else if ( getBuild() < schemaVersion.getBuild() ) {
             return false;
