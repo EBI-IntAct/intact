@@ -23,21 +23,20 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.Oracle9iDialect;
 import org.hibernate.dialect.PostgreSQLDialect;
 import org.hibernate.ejb.Ejb3Configuration;
-import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.mapping.PersistentClass;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
-import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.IntactException;
+import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.config.hibernate.IntactHibernatePersistence;
-import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.context.IntactInitializer;
 
 import javax.persistence.spi.PersistenceUnitInfo;
-import java.util.Properties;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  * IntAct schema utils, that contains methods to create/drop the database schema, create DDLs...
@@ -171,7 +170,7 @@ public class SchemaUtils {
             IntactInitializer initializer = (IntactInitializer) IntactContext.getCurrentInstance()
                     .getSpringContext().getBean("intactInitializer");
             try {
-                initializer.afterPropertiesSet();
+                initializer.init();
             } catch (Exception e) {
                 throw new IntactException("Problem re-initializing core", e);
             }
@@ -212,12 +211,6 @@ public class SchemaUtils {
      */
     public static void resetSchema(boolean initializeDatabase) throws IntactTransactionException {
         if (log.isDebugEnabled()) log.debug("Resetting schema");
-
-        DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-
-        if (dataContext.isTransactionActive()) {
-            throw new IllegalStateException("To reset the schema, the transaction must NOT be active: "+dataContext.getDaoFactory().getCurrentTransaction());
-        }
 
         dropSchema();
         createSchema(initializeDatabase);

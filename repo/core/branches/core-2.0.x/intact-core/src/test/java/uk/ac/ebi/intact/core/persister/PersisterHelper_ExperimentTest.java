@@ -1,25 +1,12 @@
 package uk.ac.ebi.intact.core.persister;
 
 import org.junit.Assert;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.clone.IntactCloner;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.List;
 
 /**
@@ -206,8 +193,9 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
 
         expWith.addAlias( getMockBuilder().createAlias( expWith, "comment", "MI:xxxx", "topic" ) );
 
-        getPersisterHelper().getCorePersister().setUpdateWithoutAcEnabled(true);
-        getPersisterHelper().save(expWith);
+        CorePersister persister = getPersisterHelper().getCorePersister();
+        persister.setUpdateWithoutAcEnabled(true);
+        persister.saveOrUpdate(expWith);
 
         Assert.assertEquals(1, getDaoFactory().getExperimentDao().countAll());
 

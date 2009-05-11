@@ -17,22 +17,18 @@ package uk.ac.ebi.intact.core.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.config.SchemaVersion;
-import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.core.context.IntactInitializationError;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
+import uk.ac.ebi.intact.core.persistence.dao.DbInfoDao;
+import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.core.persistence.dao.DbInfoDao;
-import uk.ac.ebi.intact.core.persistence.dao.InstitutionDao;
-import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 
 /**
  * TODO write description of the class.
@@ -40,8 +36,7 @@ import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
  * @author Bruno Aranda (baranda@ebi.ac.uk)
  * @version $Id$
  */
-@Component
-public class IntactInitializer implements InitializingBean {
+public class IntactInitializer {
 
     @Autowired
     private IntactContext intactContext;
@@ -70,7 +65,7 @@ public class IntactInitializer implements InitializingBean {
         
     }
 
-    public void afterPropertiesSet() throws Exception {
+    public void init() {
         if (log.isInfoEnabled()) {
             log.info("Starting IntAct Core module");
             log.info("\tDefault institution: " + configuration.getDefaultInstitution());

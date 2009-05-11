@@ -20,14 +20,12 @@ public class HibernateBaseDaoImplTest extends IntactBasicTestCase {
 
     @Test
     public void getDbName() throws Exception {
-        Assert.assertFalse( getDataContext().isTransactionActive() );
         final String name = getDaoFactory().getBaseDao().getDbName();
         Assert.assertNotNull( name );
     }
 
     @Test
     public void getDbUserName() throws Exception {
-        Assert.assertFalse( getDataContext().isTransactionActive() );
         final String name = getDaoFactory().getBaseDao().getDbUserName();
         Assert.assertNotNull( name );
     }
