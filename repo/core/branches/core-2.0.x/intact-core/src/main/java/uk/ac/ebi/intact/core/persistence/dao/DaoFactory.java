@@ -5,18 +5,19 @@
  */
 package uk.ac.ebi.intact.core.persistence.dao;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
+import uk.ac.ebi.intact.core.persistence.dao.impl.*;
 import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.Component;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.PersistenceContext;
 import java.io.Serializable;
-import java.sql.Connection;
 
 /**
  * Factory for all the intact DAOs using Hibernate
@@ -33,13 +34,14 @@ public class DaoFactory implements Serializable {
     @PersistenceContext
     private EntityManager currentEntityManager;
 
-    @Autowired AliasDao aliasDao;
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Autowired AnnotationDao annotationDao;
     @Autowired BioSourceDao bioSourceDao;
     @Autowired ComponentDao componentDao;
     @Autowired ComponentParameterDao componentParameterDao;
     @Autowired ConfidenceDao confidenceDao;
-    @Autowired CvObjectDao cvObjectDao;
     @Autowired DbInfoDao dbInfoDao;
     @Autowired ExperimentDao experimentDao;
     @Autowired FeatureDao featureDao;
@@ -48,14 +50,11 @@ public class DaoFactory implements Serializable {
     @Autowired InstitutionDao institutionDao;
     @Autowired InteractionDao interactionDao;
     @Autowired InteractionParameterDao interactionParameterDao;
-    @Autowired @Qualifier("interactorDaoImpl") InteractorDao interactorDao;
     @Autowired MineInteractionDao mineInteractionDao;
-    @Autowired @Qualifier("polymerDaoImpl") PolymerDao polymerDao;
     @Autowired ProteinDao proteinDao;
     @Autowired PublicationDao publicationDao;
     @Autowired RangeDao rangeDao;
     @Autowired SearchableDao searchableDao;
-    @Autowired XrefDao xrefDao;
 
     public DaoFactory() {
 
@@ -70,36 +69,37 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends Alias> AliasDao<T> getAliasDao( Class<T> aliasType ) {
+        AliasDao aliasDao = (AliasDao) applicationContext.getBean("aliasDaoImpl");
         aliasDao.setEntityClass(aliasType);
         return aliasDao;
     }
 
     public <T extends AnnotatedObject> AnnotatedObjectDao<T> getAnnotatedObjectDao( Class<T> entityType ) {
         if (entityType.isAssignableFrom(Institution.class)) {
-            return (AnnotatedObjectDao<T>)institutionDao;
+            return (AnnotatedObjectDao<T>)getInstitutionDao();
         } else if (Publication.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)publicationDao;
+            return (AnnotatedObjectDao<T>)getPublicationDao();
         } else if (CvObject.class.isAssignableFrom(entityType)) {
             return getCvObjectDao((Class)entityType);
         } else if (Experiment.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)experimentDao;
+            return (AnnotatedObjectDao<T>)getExperimentDao();
         } else if (Interaction.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)interactionDao;
+            return (AnnotatedObjectDao<T>)getInteractionDao();
         } else if (Interactor.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)interactorDao;
+            return (AnnotatedObjectDao<T>)getInteractorDao();
         } else if (BioSource.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)bioSourceDao;
+            return (AnnotatedObjectDao<T>)getBioSourceDao();
         } else if (Component.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)componentDao;
+            return (AnnotatedObjectDao<T>)getComponentDao();
         } else if (Feature.class.isAssignableFrom(entityType)) {
-            return (AnnotatedObjectDao<T>)featureDao;
+            return (AnnotatedObjectDao<T>)getFeatureDao();
         } else {
             throw new IllegalArgumentException( "No Dao for entity type: "+entityType.getClass().getName());
         }
     }
 
     public AnnotationDao getAnnotationDao() {
-        return annotationDao;
+        return getBean(AnnotationDaoImpl.class);
     }
 
     public BaseDao getBaseDao() {
@@ -121,6 +121,7 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends CvObject> CvObjectDao<T> getCvObjectDao( Class<T> entityType ) {
+        CvObjectDao cvObjectDao = getBean(CvObjectDaoImpl.class);
         cvObjectDao.setEntityClass(entityType);
         return cvObjectDao;
     }
@@ -164,6 +165,7 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends InteractorImpl> InteractorDao<T> getInteractorDao( Class<T> entityType ) {
+        InteractorDao interactorDao = getBean(InteractorDaoImpl.class);
         interactorDao.setEntityClass(entityType);
         return interactorDao;
     }
@@ -184,6 +186,7 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends PolymerImpl> PolymerDao<T> getPolymerDao( Class<T> clazz ) {
+        PolymerDao polymerDao = getBean(PolymerDaoImpl.class);
         polymerDao.setEntityClass(clazz);
         return polymerDao;
     }
@@ -221,77 +224,22 @@ public class DaoFactory implements Serializable {
     }
 
     public <T extends Xref> XrefDao<T> getXrefDao( Class<T> xrefClass ) {
-        // TODO check if this is really safe
-        XrefDao dao = (XrefDao) IntactContext.getCurrentInstance().getSpringContext()
-                .getBean("xrefDaoImpl");
+        XrefDao dao = getBean(XrefDaoImpl.class);
         dao.setEntityClass(xrefClass);
         return dao;
     }
 
     @Deprecated
-    public Connection connection() {
-        return getCurrentSession().connection();
-    }
-
     public EntityTransaction beginTransaction() {
-        /*
-        log.debug("Starting transaction...");
-        EntityTransaction transaction = getEntityManager().getTransaction();
-        if (!transaction.isActive()) {
-            transaction.begin();
-        }
-        return transaction;
-        */
         return null;
     }
 
+    @Deprecated
     public void commitTransaction() {
         getEntityManager().flush();
-//        if (currentEntityManager.getTransaction().isActive()) {
-//            if (log.isDebugEnabled()) log.debug("Committing transaction");
-//
-//            //if (getEntityManager().getFlushMode() == FlushModeType.COMMIT) {
-//                getEntityManager().flush();
-//            //}
-//
-//            currentEntityManager.getTransaction().commit();
-//            currentEntityManager.close();
-//
-//        } else {
-//            if (log.isWarnEnabled()) log.warn("Attempted commit on a transaction that was not active");
-//        }
-
-//        JpaTransactionManager transactionManager = (JpaTransactionManager) getApplicationContext().getBean("transactionManager");
-//        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_MANDATORY));
-//        System.out.println("Is new: "+status.isNewTransaction());
-//        transactionManager.commit(status);
-//        System.out.println("Completed: "+status.isCompleted());
     }
 
     public EntityManager getEntityManager() {
-//        if (currentEntityManager == null || !currentEntityManager.isOpen()) {
-//            if (log.isDebugEnabled()) log.debug("Creating new EntityManager");
-//
-//            if (runtimeConfig.getDataConfig() == null) {
-//                throw new IllegalStateException("No DataConfig found");
-//            }
-//
-//            EntityManagerFactory entityManagerFactory = runtimeConfig.getDataConfig().getEntityManagerFactory();
-//
-//            if (entityManagerFactory == null) {
-//                throw new IllegalStateException("Null EntityManagerFactory for DataConfig with name: " + runtimeConfig.getDataConfig().getName());
-//            }
-//
-//            currentEntityManager = entityManagerFactory.createEntityManager();
-//
-//        }
-//
-//        if (!runtimeConfig.getDataConfig().isAutoFlush()) {
-//            if (log.isDebugEnabled())
-//                log.debug("Data-config is not autoflush. Using flush mode: " + FlushModeType.COMMIT);
-//            currentEntityManager.setFlushMode(FlushModeType.COMMIT);
-//        }
-
         return currentEntityManager;
     }
 
@@ -299,27 +247,11 @@ public class DaoFactory implements Serializable {
         currentEntityManager = entityManager;
     }
 
-    @Deprecated
-    public synchronized Session getCurrentSession() {
-        return (Session) getEntityManager().getDelegate();
-    }
-
-    public boolean isTransactionActive() {
-//        if (currentEntityManager == null) {
-//            if (log.isWarnEnabled()) log.warn("Cannot check if the transaction is active as the current EntityManager is null");
-//            return false;
-//        }
-//
-//        EntityTransaction currentTransaction = currentEntityManager.getTransaction();
-//        boolean active = currentTransaction.isActive();
-//        if( log.isDebugEnabled() ) {
-//            log.debug( "Current transaction is " + ( active ? "active" : "committed" ) );
-//        }
-//        return active;
-        return false;
-    }
-
     public EntityTransaction getCurrentTransaction() {
         return currentEntityManager.getTransaction();
+    }
+
+    private <T> T getBean(Class<T> beanType) {
+        return (T) applicationContext.getBean(StringUtils.uncapitalize(beanType.getSimpleName()));
     }
 }

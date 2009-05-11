@@ -7,8 +7,8 @@ package uk.ac.ebi.intact.core.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 
@@ -36,24 +36,18 @@ public class DataContext implements Serializable {
 //        beginTransaction(  );
 //    }
 
+    @Deprecated
     public void beginTransactionManualFlush() {
         //getDefaultDataConfig().setAutoFlush(true);
         beginTransaction(  );
     }
 
+    @Deprecated
     public void beginTransaction(  ) {
-        if ( !daoFactory.isTransactionActive() ) {
-            log.debug( "Creating new transaction" );
-            daoFactory.beginTransaction();
-        } else {
-            log.debug( "Using existing transaction" );
-        }
+        daoFactory.beginTransaction();
     }
 
-    public boolean isTransactionActive(  ) {
-        return getDaoFactory().isTransactionActive();
-    }
-
+    @Deprecated
     public void commitTransaction(  ) throws IntactTransactionException {
         try {
             DaoFactory daoFactory = getDaoFactory();
@@ -63,8 +57,6 @@ public class DataContext implements Serializable {
             }
 
             daoFactory.commitTransaction();
-
-            assert ( daoFactory.isTransactionActive() == false );
 
         } catch (Exception e) {
             throw new IntactTransactionException( e );

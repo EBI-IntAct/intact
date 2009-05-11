@@ -19,21 +19,22 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 
-import javax.persistence.PersistenceContext;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 /**
  * Base for all intact-tests.
@@ -46,7 +47,7 @@ import javax.persistence.EntityManagerFactory;
         "/META-INF/standalone/intact-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional
-public abstract class IntactBasicTestCase
+public abstract class IntactBasicTestCase extends AbstractDependencyInjectionSpringContextTests
 {
     @Autowired
     private IntactContext intactContext;
@@ -115,9 +116,9 @@ public abstract class IntactBasicTestCase
         return mockBuilder;
     }
 
-    public ApplicationContext getApplicationContext() {
-        return applicationContext;
-    }
+//    public ApplicationContext getApplicationContext() {
+//        return applicationContext;
+//    }
 
     public EntityManager getEntityManager() {
         return entityManager;

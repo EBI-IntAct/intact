@@ -24,6 +24,6 @@
         <constructor-arg value="0"/>
     </bean>
 
-    <!--<bean class="uk.ac.ebi.intact.core.context.IntactInitializer" depends-on="entityManagerFactory"/>-->
+    <bean class="uk.ac.ebi.intact.core.context.IntactInitializer" init-method="init"/>
 
 </beans>

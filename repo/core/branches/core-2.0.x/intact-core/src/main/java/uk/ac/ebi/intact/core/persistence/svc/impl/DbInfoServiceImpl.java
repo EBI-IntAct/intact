@@ -17,13 +17,12 @@ package uk.ac.ebi.intact.core.persistence.svc.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
-import uk.ac.ebi.intact.model.meta.DbInfo;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persistence.svc.DbInfoService;
 import uk.ac.ebi.intact.core.persistence.svc.DbInfoServiceException;
+import uk.ac.ebi.intact.model.meta.DbInfo;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,9 +51,6 @@ public class DbInfoServiceImpl implements DbInfoService {
         }
 
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
-        boolean inTransaction = dataContext.isTransactionActive();
-
-        if ( !inTransaction ) dataContext.beginTransaction();
 
         DaoFactory daof = dataContext.getDaoFactory();
         Date lastUpdated = getLastProteinUpdate();
@@ -74,12 +70,6 @@ public class DbInfoServiceImpl implements DbInfoService {
 
 
         }//end else
-
-        try {
-            if ( !inTransaction ) dataContext.commitTransaction();
-        } catch ( IntactTransactionException e ) {
-            throw new DbInfoServiceException( e );
-        }
 
 
     }//end method
@@ -106,9 +96,6 @@ public class DbInfoServiceImpl implements DbInfoService {
 
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         DaoFactory daof = dataContext.getDaoFactory();
-        boolean inTransaction = dataContext.isTransactionActive();
-
-        if ( !inTransaction ) dataContext.beginTransaction();
 
         if ( namespace.equals( DbInfo.NAMESPACE_PSIMI ) ) {
 
@@ -130,14 +117,6 @@ public class DbInfoServiceImpl implements DbInfoService {
 
 
         }//end else
-
-        try {
-            if ( !inTransaction ) dataContext.commitTransaction();
-        } catch ( IntactTransactionException e ) {
-            throw new DbInfoServiceException( e );
-        }
-
-
     }
 
     public Date getLastProteinUpdate() throws DbInfoServiceException {

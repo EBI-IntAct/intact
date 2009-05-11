@@ -9,9 +9,8 @@
 
 package agitar.uk.ac.ebi.intact.modelt;
 
-import uk.ac.ebi.intact.model.*;
-
 import com.agitar.lib.junit.AgitarTestCase;
+import uk.ac.ebi.intact.model.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -96,12 +95,6 @@ public class CvDagObjectAgitarTest extends AgitarTestCase {
         super.callPrivateMethod("uk.ac.ebi.intact.model.CvDagObject", "setParents", new Class[]{Collection.class}, cvFeatureIdentification, new Object[]{parents} );
 
         assertSame( "(CvFeatureIdentification) cvFeatureIdentification.getParents()", parents, cvFeatureIdentification.getParents() );
-    }
-
-    public void testSetRightBound() throws Throwable {
-        CvDagObject cvFeatureIdentification = new CvFeatureIdentification( new Institution( "testCvLabel" ), "testCvLabel" );
-        cvFeatureIdentification.setRightBound( 100L );
-        assertEquals( "(CvFeatureIdentification) cvFeatureIdentification.getRightBound()", 100L, cvFeatureIdentification.getRightBound() );
     }
 
     public void testSetParentsThrowsIllegalArgumentException() throws Throwable {
