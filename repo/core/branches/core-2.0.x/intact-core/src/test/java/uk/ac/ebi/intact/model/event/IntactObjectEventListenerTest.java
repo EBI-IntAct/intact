@@ -27,6 +27,7 @@ public class IntactObjectEventListenerTest extends IntactBasicTestCase {
         
         institution.setFullName("Different full name");
         getDaoFactory().getInstitutionDao().merge(institution);
+        getEntityManager().flush();
 
         Assert.assertNotNull(institution.getCreated());
         Assert.assertNotNull(institution.getUpdated());
