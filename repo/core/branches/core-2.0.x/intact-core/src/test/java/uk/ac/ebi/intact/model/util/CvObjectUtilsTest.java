@@ -1,9 +1,7 @@
 package uk.ac.ebi.intact.model.util;
 
-import org.junit.After;
 import org.junit.Assert;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
 import uk.ac.ebi.intact.core.context.DataContext;
@@ -18,13 +16,7 @@ import java.util.Collection;
 
 public class CvObjectUtilsTest extends IntactBasicTestCase {
 
-    @After
-    public void end() throws Exception {
-        // override default behaviour of closing IntactContext after each test
-    }
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    private void createSomeCVs() throws Exception {
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         SmallCvPrimer primer = new SmallCvPrimer(dataContext.getDaoFactory());
 
@@ -42,6 +34,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void isNucleicAcidType() throws Exception {
+        createSomeCVs();
 
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
@@ -86,6 +79,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void isChildOfType() throws Exception {
+        createSomeCVs();
 
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
@@ -125,6 +119,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void getChildrenMIs() throws Exception {
+        createSomeCVs();
 
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
@@ -158,6 +153,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void getChildrenMIs_collection() throws Exception {
+        createSomeCVs();
 
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
@@ -202,6 +198,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void createCvObject() throws Exception {
+        createSomeCVs();
         CvObject cv = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.PSI_MI_MI_REF, CvDatabase.PSI_MI);
         Assert.assertNotNull(cv.getIdentifier());
         Assert.assertEquals(1, cv.getXrefs().size());
@@ -209,12 +206,14 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void getPsiMiXref() throws Exception {
+        createSomeCVs();
         CvObject cv = getMockBuilder().createCvObject(CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT);
         Assert.assertEquals(CvDatabase.UNIPROT_MI_REF, CvObjectUtils.getPsiMiIdentityXref(cv).getPrimaryId());
     }
 
     @Test
     public void testGetPsiMiIdentityXref() throws Exception {
+        createSomeCVs();
         assertFalse( 0 == getDaoFactory().getCvObjectDao().countAll() );
 
         CvDatabase uniprotKb = getDaoFactory().getCvObjectDao(CvDatabase.class).getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
@@ -227,6 +226,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void testGetPsiMiIdentityXref_psiMiRef() throws Exception {
+        createSomeCVs();
         assertFalse( 0 == getDaoFactory().getCvObjectDao().countAll() );
 
         CvXrefQualifier identityQual = getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
@@ -247,6 +247,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
 
     @Test
     public void createRoleInfo_relevant() throws Exception {
+        createSomeCVs();
 
         String labelUnspecified = CvExperimentalRole.UNSPECIFIED;
         String miUnspecified = CvExperimentalRole.UNSPECIFIED_PSI_REF;
