@@ -17,6 +17,7 @@ package uk.ac.ebi.intact.context;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.config.SequenceManager;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 
@@ -28,34 +29,34 @@ import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
  */
 public class SequenceManagerTest extends IntactBasicTestCase {
 
+    @Autowired
+    private SequenceManager seqManager;
+
     @Test
     public void createSequenceIfNotExists() throws Exception {
-        SequenceManager seqManager = new SequenceManager(getIntactContext().getConfig().getDefaultDataConfig());
 
-        Assert.assertFalse(seqManager.sequenceExists(getDaoFactory().getEntityManager(), "lala_seq"));
+        Assert.assertFalse(seqManager.sequenceExists("lala_seq"));
 
         beginTransaction();
-        seqManager.createSequenceIfNotExists(getDaoFactory().getEntityManager(), "lala_seq");
+        seqManager.createSequenceIfNotExists("lala_seq");
         commitTransaction();
 
-        Assert.assertTrue(seqManager.sequenceExists(getDaoFactory().getEntityManager(), "lala_seq"));
+        Assert.assertTrue(seqManager.sequenceExists("lala_seq"));
     }
 
     @Test
     public void getNextValueForSequence() throws Exception {
 
-        SequenceManager seqManager = new SequenceManager(getIntactContext().getConfig().getDefaultDataConfig());
+//        beginTransaction();
+        seqManager.createSequenceIfNotExists("test2_seq", 5);
+//        commitTransaction();
 
-        beginTransaction();
-        seqManager.createSequenceIfNotExists(getDaoFactory().getEntityManager(), "test2_seq", 5);
-        commitTransaction();
-
-        Assert.assertEquals(5L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
-        Assert.assertEquals(6L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
-        Assert.assertEquals(7L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
-        Assert.assertEquals(8L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
-        Assert.assertEquals(9L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
-        Assert.assertEquals(10L, seqManager.getNextValueForSequence(getDaoFactory().getEntityManager(), "test2_seq").longValue());
+        Assert.assertEquals(5L, seqManager.getNextValueForSequence("test2_seq").longValue());
+        Assert.assertEquals(6L, seqManager.getNextValueForSequence("test2_seq").longValue());
+        Assert.assertEquals(7L, seqManager.getNextValueForSequence("test2_seq").longValue());
+        Assert.assertEquals(8L, seqManager.getNextValueForSequence("test2_seq").longValue());
+        Assert.assertEquals(9L, seqManager.getNextValueForSequence("test2_seq").longValue());
+        Assert.assertEquals(10L, seqManager.getNextValueForSequence("test2_seq").longValue());
 
 
     }

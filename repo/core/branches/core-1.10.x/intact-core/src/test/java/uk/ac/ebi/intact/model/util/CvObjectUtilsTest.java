@@ -221,7 +221,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
     public void testGetPsiMiIdentityXref() throws Exception {
         assertFalse( 0 == getDaoFactory().getCvObjectDao().countAll() );
 
-        CvDatabase uniprotKb = getIntactContext().getCvContext().getByMiRef( CvDatabase.class, CvDatabase.UNIPROT_MI_REF );
+        CvDatabase uniprotKb = getDaoFactory().getCvObjectDao(CvDatabase.class).getByPsiMiRef( CvDatabase.UNIPROT_MI_REF );
 
         CvObjectXref cvObjectXref = CvObjectUtils.getPsiMiIdentityXref( uniprotKb );
 
@@ -233,7 +233,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
     public void testGetPsiMiIdentityXref_psiMiRef() throws Exception {
         assertFalse( 0 == getDaoFactory().getCvObjectDao().countAll() );
 
-        CvXrefQualifier identityQual = getIntactContext().getCvContext().getByMiRef( CvXrefQualifier.class, CvXrefQualifier.IDENTITY_MI_REF );
+        CvXrefQualifier identityQual = getDaoFactory().getCvObjectDao(CvXrefQualifier.class).getByPsiMiRef( CvXrefQualifier.IDENTITY_MI_REF );
 
         CvObjectXref cvObjectXref = CvObjectUtils.getPsiMiIdentityXref( identityQual );
 
@@ -259,10 +259,10 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
         String labelBioDefined = CvBiologicalRole.ENZYME;
         String miBioDefined = CvBiologicalRole.ENZYME_PSI_REF;
 
-        CvExperimentalRole expUnspecified = getIntactContext().getCvContext().getByMiRef( CvExperimentalRole.class, miUnspecified );
-        CvExperimentalRole expDefined = getIntactContext().getCvContext().getByMiRef( CvExperimentalRole.class, miExpDefined );
-        CvBiologicalRole bioUnspecified = getIntactContext().getCvContext().getByMiRef( CvBiologicalRole.class, miUnspecified );
-        CvBiologicalRole bioDefined = getIntactContext().getCvContext().getByMiRef( CvBiologicalRole.class, miBioDefined );
+        CvExperimentalRole expUnspecified = getDaoFactory().getCvObjectDao(CvExperimentalRole.class).getByPsiMiRef( miUnspecified );
+        CvExperimentalRole expDefined = getDaoFactory().getCvObjectDao(CvExperimentalRole.class).getByPsiMiRef( miExpDefined );
+        CvBiologicalRole bioUnspecified = getDaoFactory().getCvObjectDao(CvBiologicalRole.class).getByPsiMiRef( miUnspecified );
+        CvBiologicalRole bioDefined = getDaoFactory().getCvObjectDao(CvBiologicalRole.class).getByPsiMiRef( miBioDefined );
 
         assertNotNull( expUnspecified );
         assertNotNull( expDefined );

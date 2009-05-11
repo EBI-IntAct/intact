@@ -16,6 +16,7 @@
 package uk.ac.ebi.intact.config;
 
 import org.hibernate.ejb.Ejb3Configuration;
+import org.hibernate.cfg.Configuration;
 import uk.ac.ebi.intact.config.hibernate.SequenceAuxiliaryDatabaseObject;
 
 /**

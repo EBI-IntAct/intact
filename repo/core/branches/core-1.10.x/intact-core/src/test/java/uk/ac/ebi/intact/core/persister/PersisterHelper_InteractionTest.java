@@ -697,7 +697,6 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         PersisterHelper.saveOrUpdate(interaction1);
 
         getDaoFactory().getEntityManager().clear();
-        getDaoFactory().getEntityManager().close();
 
         final IntactCloner intactCloner = new IntactCloner();
         intactCloner.setExcludeACs(true);
@@ -841,7 +840,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
     @Test
     public void persist_longInteractionShortlabel() throws Exception {
 
-        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionShortlabel(false);
+        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionLabel(false);
 
         Protein p = getMockBuilder().createProtein("P12345", "lala");
         final SmallMolecule sm = getMockBuilder().createSmallMolecule( "CHEBI:00001", "2-{1-[2-(2-amino-thiazol-4-yl)-2-methoxyimino-acetylamino]-2-oxo-ethyl}-5,5-dimethyl-thiazolidine-4-carboxylic acid" );
@@ -859,13 +858,13 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         final InteractionImpl interaction = getDaoFactory().getInteractionDao().getAll().get( 0 );
         Assert.assertEquals("2-{1-[2-(2-amino-thiazol-4-yl)-2-methoxyimino-acetylamino]-2-oxo-ethyl}-5,5-dimethyl-thiazolidine-4-carboxylic acid-lala", interaction.getShortLabel());
 
-        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionShortlabel(false);
+        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionLabel(false);
     }
 
     @Test
     public void persist_longInteractionShortlabel_autoUpdateShortlabel() throws Exception {
 
-        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionShortlabel(true);
+        IntactContext.getCurrentInstance().getConfig().setAutoUpdateInteractionLabel(true);
 
         Protein p = getMockBuilder().createProtein("P12345", "lala");
         final SmallMolecule sm = getMockBuilder().createSmallMolecule( "CHEBI:00001", "2-{1-[2-(2-amino-thiazol-4-yl)-2-methoxyimino-acetylamino]-2-oxo-ethyl}-5,5-dimethyl-thiazolidine-4-carboxylic acid" );

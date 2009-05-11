@@ -7,7 +7,6 @@ package uk.ac.ebi.intact.webapp;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.context.IntactConfigurator;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.impl.WebappSession;
@@ -45,6 +44,7 @@ import java.util.List;
  * @version $Id$
  * @since <pre>24-Apr-2006</pre>
  */
+@Deprecated
 public class IntactSessionRequestFilter implements Filter {
 
     private FilterConfig myFilterConfig;
@@ -89,7 +89,9 @@ public class IntactSessionRequestFilter implements Filter {
         }
 
         IntactSession intactSession = new WebappSession( session.getServletContext(), session, req );
-        IntactContext context = IntactConfigurator.createIntactContext( intactSession );
+
+        if (true) throw new UnsupportedOperationException("Use Spring instead");
+
         if ( log.isDebugEnabled() ) log.debug("Beginning the transaction");
         IntactContext.getCurrentInstance().getDataContext().beginTransaction();
 
@@ -125,13 +127,13 @@ public class IntactSessionRequestFilter implements Filter {
         finally {
             if ( log.isDebugEnabled() ) log.debug( "Committing active transactions" );
             try {
-                context.getDataContext().commitTransaction();
+                //context.getDataContext().commitTransaction();
                 out.write( responseWrapper.toString() );
             }
             catch ( Exception e ) {
                 log.error( "Exception commiting trying to commit : ", e );
                 try {
-                    context.getDataContext().getDaoFactory().getCurrentTransaction().rollback();
+                   // context.getDataContext().getDaoFactory().getCurrentTransaction().rollback();
                 } catch ( Exception ie ) {
                     log.error( "Couldn't rollback." + ie );
                     throw new ServletException( "Couldn't rollback." + ie );

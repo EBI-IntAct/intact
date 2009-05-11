@@ -5,6 +5,7 @@ import org.junit.Test;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.BioSource;
 import uk.ac.ebi.intact.model.CvTissue;
+import uk.ac.ebi.intact.model.CvObject;
 
 /**
  * TODO comment this
@@ -44,9 +45,19 @@ public class PersisterHelper_BioSourceTest extends IntactBasicTestCase
         Assert.assertEquals(4, getDaoFactory().getCvObjectDao().countAll());
         Assert.assertEquals(6, getDaoFactory().getXrefDao().countAll());
 
+        for (CvObject cv : getDaoFactory().getCvObjectDao().getAll()) {
+            System.out.println("1: "+cv);
+        }
+
+        getEntityManager().clear();
+
         BioSource bs2 = getMockBuilder().createBioSource( 9606, "human" );
         bs2.setCvTissue(getMockBuilder().createCvObject(CvTissue.class, "IA:xxxx", "blood"));
         PersisterHelper.saveOrUpdate( bs2 );
+        
+        for (CvObject cv : getDaoFactory().getCvObjectDao().getAll()) {
+            System.out.println("2: "+cv);
+        }
 
         Assert.assertEquals(2, getDaoFactory().getBioSourceDao().countAll());
         Assert.assertEquals(2, getDaoFactory().getInstitutionDao().countAll());

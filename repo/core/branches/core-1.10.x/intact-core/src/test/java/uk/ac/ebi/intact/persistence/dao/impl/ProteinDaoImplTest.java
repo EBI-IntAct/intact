@@ -2,6 +2,8 @@ package uk.ac.ebi.intact.persistence.dao.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.Rollback;
 import uk.ac.ebi.intact.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -22,6 +24,7 @@ import java.util.List;
 public class ProteinDaoImplTest extends IntactBasicTestCase {
 
     @Test
+    @Rollback(true)
     public void getUniprotProteinsInvolvedInInteractions() throws Exception {
         PersisterHelper.saveOrUpdate( getMockBuilder().createInteractionRandomBinary() );
         PersisterHelper.saveOrUpdate( getMockBuilder().createInteractionRandomBinary() );
@@ -48,6 +51,7 @@ public class ProteinDaoImplTest extends IntactBasicTestCase {
     }
 
     @Test
+    @Rollback(true)
     public void getAllUniprotAcs() throws Exception {
         Protein nonInteractingProt = getMockBuilder().createProtein("Q00000", "non");
 
@@ -64,6 +68,7 @@ public class ProteinDaoImplTest extends IntactBasicTestCase {
     }
 
     @Test
+    @Rollback(true)
     public void getSpliceVariants() throws Exception {
         Protein masterProt1 = getMockBuilder().createProtein("P12345", "master1");
 
@@ -81,6 +86,7 @@ public class ProteinDaoImplTest extends IntactBasicTestCase {
     }
 
     @Test
+    @Rollback(true)
     public void getSpliceVariantMasterProtein() throws Exception {
         Protein masterProt1 = getMockBuilder().createProtein("P12345", "master1");
 

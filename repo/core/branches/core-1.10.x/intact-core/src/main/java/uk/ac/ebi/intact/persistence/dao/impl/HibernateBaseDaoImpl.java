@@ -14,10 +14,10 @@ import org.hibernate.criterion.*;
 import org.hibernate.ejb.HibernateEntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import uk.ac.ebi.intact.business.IntactException;
 import uk.ac.ebi.intact.context.IntactEnvironment;
 import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.RuntimeConfig;
 import uk.ac.ebi.intact.model.IntactObject;
 import uk.ac.ebi.intact.model.NotAnEntityException;
 import uk.ac.ebi.intact.persistence.dao.BaseDao;
@@ -94,6 +94,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
      *
      * @return String the database name, or an empty String if the query fails
      */
+    @Transactional(readOnly = true)
     public String getDbName() throws SQLException {
         String url = getSession().connection().getMetaData().getURL();
 
@@ -104,20 +105,24 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
         return url;
     }
 
+    @Transactional(readOnly = true)
     public List<T> getAll() {
         return getSession().createCriteria( getEntityClass() ).list();
     }
 
+    @Transactional(readOnly = true, propagation = Propagation.MANDATORY)
     public Iterator<T> getAllIterator() {
         return getSession().createQuery("from "+getEntityClass().getSimpleName()).iterate();
     }
 
+    @Transactional(readOnly = true)
     public List<T> getAll( int firstResult, int maxResults ) {
         return getSession().createCriteria( getEntityClass() )
                 .setFirstResult( firstResult )
                 .setMaxResults( maxResults ).list();
     }
 
+    @Transactional(readOnly = true)
     public List<T> getAllSorted(int firstResult, int maxResults, String sortProperty, boolean ascendant) {
         String strQuery = "from "+getEntityClass().getSimpleName()+" order by "+sortProperty+" "+((ascendant)? "asc" : "desc");
         Query query = getEntityManager().createQuery(strQuery);
@@ -128,6 +133,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
         return query.getResultList();
     }
 
+    @Transactional(readOnly = true)
     public int countAll() {
         return ( Integer ) getSession()
                 .createCriteria( getEntityClass() )
@@ -142,6 +148,7 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
      *
      * @throws SQLException thrown if the metatdata can't be obtained
      */
+    @Transactional(readOnly = true)
     public String getDbUserName() throws SQLException {
         final String name = getSession().connection().getMetaData().getUserName();
         getSession().connection().close();
@@ -180,6 +187,12 @@ public abstract class HibernateBaseDaoImpl<T> implements BaseDao<T> {
         for ( T objToDelete : objsToDelete ) {
             delete( objToDelete );
         }
+    }
+
+    public int deleteAll() {
+        // TODO fix this
+        Query query = getEntityManager().createQuery("delete from " + getEntityClass());
+        return query.executeUpdate();
     }
 
     public void saveOrUpdate( T objToPersist ) {

@@ -2,6 +2,7 @@ package uk.ac.ebi.intact.persistence.svc.impl;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.test.annotation.DirtiesContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
 import uk.ac.ebi.intact.model.Protein;
@@ -21,6 +22,7 @@ import java.util.Map;
 public class SimpleSearchServiceTest extends IntactBasicTestCase{
 
    @Test
+   @DirtiesContext
     public void getByQuery_default() throws Exception {
         Assert.assertEquals(0, getDaoFactory().getProteinDao().countAll());
 
@@ -38,6 +40,7 @@ public class SimpleSearchServiceTest extends IntactBasicTestCase{
     }
 
     @Test
+    @DirtiesContext
     public void getByQuery_sorted() throws Exception {
         Assert.assertEquals(0, getDaoFactory().getProteinDao().countAll());
 
@@ -63,6 +66,7 @@ public class SimpleSearchServiceTest extends IntactBasicTestCase{
     }
 
     @Test
+    @DirtiesContext
     public void count_default() throws Exception {
         Assert.assertEquals(0, getDaoFactory().getProteinDao().countAll());
 

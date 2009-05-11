@@ -357,8 +357,8 @@ public class SearchableCriteriaBuilder {
 
         for ( QueryTerm term : cvShortLabelPhrase.getTerms() ) {
             String cvShortLabel = ( String ) term.getValue();
-            CvDagObject cvDagObject = ( CvDagObject ) IntactContext.getCurrentInstance().getCvContext()
-                    .getByLabel( cvType, cvShortLabel );
+            CvDagObject cvDagObject = ( CvDagObject ) IntactContext.getCurrentInstance().getDataContext().getDaoFactory()
+                    .getCvObjectDao(cvType).getByShortLabel( cvType, cvShortLabel );
 
             log.debug( "\tGetting children for: " + term.getValue() );
 

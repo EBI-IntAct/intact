@@ -29,7 +29,6 @@ import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 
-import javax.persistence.EntityManager;
 import java.util.Collection;
 
 /**
@@ -123,12 +122,12 @@ public class CvObjectIdentifierGenerator {
                 .getCvObjectDao().getLastCvIdentifierWithPrefix(prefix);
 
         if (max == null) max = 0;
-        SequenceManager seqManager = new SequenceManager(context.getConfig().getDefaultDataConfig());
-        final EntityManager entityManager = context.getDataContext().getDaoFactory().getEntityManager();
 
-        seqManager.createSequenceIfNotExists(entityManager, IntactAuxiliaryConfigurator.CV_LOCAL_SEQ, max+1);
+        SequenceManager seqManager = (SequenceManager) context.getSpringContext().getBean("sequenceManager");
 
-        String nextIntegerAsString = String.valueOf(seqManager.getNextValueForSequence(entityManager, IntactAuxiliaryConfigurator.CV_LOCAL_SEQ));
+        seqManager.createSequenceIfNotExists(IntactAuxiliaryConfigurator.CV_LOCAL_SEQ, max+1);
+
+        String nextIntegerAsString = String.valueOf(seqManager.getNextValueForSequence(IntactAuxiliaryConfigurator.CV_LOCAL_SEQ));
         return prefix+":" + StringUtils.leftPad(nextIntegerAsString, 4, "0");
     }
 

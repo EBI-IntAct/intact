@@ -49,10 +49,10 @@ public class ParameterTest extends IntactBasicTestCase {
         CvParameterType type = getMockBuilder().createCvObject( CvParameterType.class, "IA:9999", "kd" );
         CvParameterUnit unit = getMockBuilder().createCvObject( CvParameterUnit.class, "IA:9990", "molar/L" );
         p = new InteractionParameter( getMockBuilder().getInstitution(), type, unit, 3D );
-        Assert.assertEquals( 3D, p.getFactor().doubleValue() );
+        Assert.assertEquals( Double.valueOf(3), p.getFactor() );
 
-        p.setFactor( 50D );
-        Assert.assertEquals( 50D, p.getFactor().doubleValue() );
+        p.setFactor( 50d );
+        Assert.assertEquals( Double.valueOf(50), p.getFactor() );
     }
 
     @Test
@@ -66,7 +66,7 @@ public class ParameterTest extends IntactBasicTestCase {
         Assert.assertEquals( null, p.getUncertainty() );
 
         p.setUncertainty( 0.05D );
-        Assert.assertEquals( 0.05D, p.getUncertainty().doubleValue() );
+        Assert.assertEquals( Double.valueOf(0.05), p.getUncertainty() );
     }
 
     @Test
