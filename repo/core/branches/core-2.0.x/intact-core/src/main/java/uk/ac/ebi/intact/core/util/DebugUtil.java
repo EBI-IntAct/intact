@@ -13,6 +13,7 @@ import uk.ac.ebi.intact.model.visitor.DefaultTraverser;
 import uk.ac.ebi.intact.model.visitor.impl.JTreeBuilderVisitor;
 import uk.ac.ebi.intact.model.visitor.impl.PrintVisitor;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persistence.util.CgLibUtil;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
