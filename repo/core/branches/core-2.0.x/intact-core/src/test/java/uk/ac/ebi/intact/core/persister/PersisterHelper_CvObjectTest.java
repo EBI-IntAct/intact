@@ -65,12 +65,12 @@ public class PersisterHelper_CvObjectTest extends IntactBasicTestCase {
 
         CvExperimentalRole newExpRole = getDaoFactory().getCvObjectDao( CvExperimentalRole.class ).getByShortLabel( expRoleLabel );
 
-        assertNotNull( newExpRole );
-        assertFalse( newExpRole.getXrefs().isEmpty() );
+        Assert.assertNotNull( newExpRole );
+        Assert.assertFalse( newExpRole.getXrefs().isEmpty() );
 
         String miIdentifier = newExpRole.getIdentifier();
-        assertNotNull( miIdentifier );
-        assertEquals( "roleMi", miIdentifier );
+        Assert.assertNotNull( miIdentifier );
+        Assert.assertEquals( "roleMi", miIdentifier );
     }
 
     @Test

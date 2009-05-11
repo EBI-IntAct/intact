@@ -57,9 +57,7 @@ public class ImexImportDaoTest extends IntactBasicTestCase {
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "1234567", institution, ImexImportPublicationStatus.OK ) );
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "7654321", institution, ImexImportPublicationStatus.ERROR ) );
 
-        beginTransaction();
         imexImportDao.persist( imexImport );
-        commitTransaction();
 
         Assert.assertEquals( 1, imexImportDao.countAll() );
         Assert.assertEquals( 2, imexImportPublicationDao.countAll() );

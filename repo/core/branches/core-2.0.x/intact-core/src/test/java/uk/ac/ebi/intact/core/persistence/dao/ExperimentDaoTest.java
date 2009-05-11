@@ -15,8 +15,9 @@
  */
 package uk.ac.ebi.intact.core.persistence.dao;
 
-import org.junit.*;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -34,13 +35,7 @@ import java.util.List;
  */
 public class ExperimentDaoTest extends IntactBasicTestCase {
 
-    @After
-    public void end() throws Exception {
-        // nothing
-    }
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    public void createSomeExps(){
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
         Experiment exp1 = mockBuilder.createExperimentRandom( "thoden-1999-1", 1 );
@@ -53,13 +48,9 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
         PersisterHelper.saveOrUpdate( exp1, exp2, exp3, exp4, exp5, exp6 );
     }
 
-    @AfterClass
-    public static void afterClass() throws Exception {
-        IntactContext.closeCurrentInstance();
-    }
-
     @Test
     public void getAllScrolled() throws Exception {
+        createSomeExps();
         Iterator<Experiment> expIter = getDaoFactory().getExperimentDao().getAllIterator();
 
         int i = 0;
@@ -74,6 +65,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getInteractionsForExperimentWithAcScroll() throws Exception {
+        createSomeExps();
         Experiment exp = getDaoFactory().getExperimentDao().getByShortLabel( "thoden-1999-1" );
         Iterator<Interaction> expInteraction =
                 getDaoFactory().getExperimentDao().getInteractionsForExperimentWithAcIterator( exp.getAc() ); //giot
@@ -90,6 +82,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
     @Test
     public void countInteractionsForExperimentWithAc() {
+        createSomeExps();
         Experiment exp = getDaoFactory().getExperimentDao().getByShortLabel( "thoden-1999-1" );
         String ac = exp.getAc();
         int interactionsCount = getDaoFactory().getExperimentDao().countInteractionsForExperimentWithAc( ac );
@@ -98,6 +91,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getInteractionsForExperimentWithAc() {
+        createSomeExps();
         Experiment exp = getDaoFactory().getExperimentDao().getByShortLabel( "thoden-1999-1" );
         String ac = exp.getAc();
         List<Interaction> interactions = getDaoFactory().getExperimentDao().getInteractionsForExperimentWithAc( ac, 0, 50 );
@@ -106,9 +100,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
     @Test
     public void saveAnnotation() throws Exception {
-
-        IntactContext.getCurrentInstance().getDataContext().beginTransaction();
-
+        createSomeExps();
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final ExperimentDao edao = daoFactory.getExperimentDao();
         final Iterator<Experiment> iterator = edao.getAllIterator();
@@ -130,8 +122,6 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
         edao.saveOrUpdate( e );
         final String ac = e.getAc();
 
-        IntactContext.getCurrentInstance().getDataContext().commitTransaction();
-
         // now check that the new annotation has been persisted
         final Experiment e2 = edao.getByAc( ac );
         Assert.assertNotNull( e2 );
@@ -140,6 +130,7 @@ public class ExperimentDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getByPubIdAndLabelLike() throws Exception {
+        createSomeExps();
         Assert.assertEquals(1, getDaoFactory().getExperimentDao().getByPubIdAndLabelLike("1234567", "lala-2014%").size());
         Assert.assertEquals(0, getDaoFactory().getExperimentDao().getByPubIdAndLabelLike("1234567", "lala-2014").size()); 
     }

@@ -46,10 +46,8 @@ public class MineInteractionDaoTest extends IntactBasicTestCase {
         newMi.setGraphId( 5 );
         newMi.setExperiment( interaction.getExperiments().iterator().next() );
 
-        beginTransaction();
         getDaoFactory().getMineInteractionDao().persist( newMi );
-        getDataContext().flushSession();
-        commitTransaction();
+        //getEntityManager().flush();
 
         String ac1 = prot1.getAc();
         String ac2 = prot2.getAc();

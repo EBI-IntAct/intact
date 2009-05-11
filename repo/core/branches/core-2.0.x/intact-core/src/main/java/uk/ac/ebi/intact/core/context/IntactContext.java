@@ -2,21 +2,21 @@ package uk.ac.ebi.intact.core.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Controller;
-import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.IntactException;
-import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.config.ConfigurationException;
+import uk.ac.ebi.intact.core.config.IntactConfiguration;
 import uk.ac.ebi.intact.core.context.impl.StandaloneSession;
-import uk.ac.ebi.intact.model.Institution;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
+import uk.ac.ebi.intact.model.Institution;
 
-import javax.persistence.EntityManagerFactory;
 import javax.annotation.PostConstruct;
-import java.io.Closeable;
+import javax.persistence.EntityManagerFactory;
 import java.io.File;
 import java.io.Serializable;
 
@@ -27,7 +27,7 @@ import java.io.Serializable;
  * @version $Id$
  */
 @Controller
-public class IntactContext implements Serializable, Closeable {
+public class IntactContext implements Serializable {
 
     private static final Log log = LogFactory.getLog( IntactContext.class );
 
@@ -40,6 +40,9 @@ public class IntactContext implements Serializable, Closeable {
 
     @Autowired
     private DataContext dataContext;
+
+    @Autowired
+    private DaoFactory daoFactory;
 
     @Autowired
     private PersisterHelper persisterHelper;
@@ -196,26 +199,30 @@ public class IntactContext implements Serializable, Closeable {
         return dataContext;
     }
 
+    public DaoFactory getDaoFactory() {
+        return daoFactory;
+    }
+
     /**
      * Closes this instance of {@code IntactContext} and finalizes the data access, by closing the EntityManagerFactories
      * for all the registered DataConfigs. Other fields are set to null, as well as the current instance.     *
      */
-    public void close() {
-        getSpringContext().close();
-        session = null;
-        instance = null;
-    }
+//    public void close() {
+//        getSpringContext().close();
+//        session = null;
+//        instance = null;
+//    }
 
     /**
      * Closes the current IntactContext.
      */
-    public static void closeCurrentInstance() {
-        if (currentInstanceExists()) {
-            instance.close();
-        } else {
-            if (log.isDebugEnabled()) log.debug("No IntactContext found, so it didn't need to be closed");
-        }
-    }
+//    public static void closeCurrentInstance() {
+//        if (currentInstanceExists()) {
+//            instance.close();
+//        } else {
+//            if (log.isDebugEnabled()) log.debug("No IntactContext found, so it didn't need to be closed");
+//        }
+//    }
 
     public PersisterHelper getPersisterHelper() {
         return persisterHelper;

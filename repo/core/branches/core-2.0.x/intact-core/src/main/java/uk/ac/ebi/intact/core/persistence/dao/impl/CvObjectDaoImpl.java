@@ -8,17 +8,18 @@ package uk.ac.ebi.intact.core.persistence.dao.impl;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Restrictions;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.context.annotation.Scope;
 import uk.ac.ebi.intact.annotation.PotentialThreat;
 import uk.ac.ebi.intact.core.IntactException;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.context.IntactSession;
+import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.model.CvInteractorType;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
 import uk.ac.ebi.intact.model.util.CvObjectUtils;
-import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -105,8 +106,8 @@ public class CvObjectDaoImpl<T extends CvObject> extends AnnotatedObjectDaoImpl<
     }
 
     public Collection<String> getNucleicAcidMIs() {
-
-         final CvObjectDao<CvInteractorType> itdao = new CvObjectDaoImpl( CvInteractorType.class, getEntityManager());
+         final CvObjectDao<CvInteractorType> itdao = IntactContext.getCurrentInstance().getDataContext()
+                    .getDaoFactory().getCvObjectDao( CvInteractorType.class);
 
         // 1. load the root term
         CvInteractorType root = itdao.getByPsiMiRef( CvInteractorType.NUCLEIC_ACID_MI_REF );

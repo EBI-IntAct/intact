@@ -1,18 +1,17 @@
 package uk.ac.ebi.intact.core.persistence.dao.impl;
 
 import org.junit.After;
-import static org.junit.Assert.fail;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
+import uk.ac.ebi.intact.core.persistence.dao.ImexImportDao;
+import uk.ac.ebi.intact.core.persistence.dao.ImexImportPublicationDao;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.Institution;
 import uk.ac.ebi.intact.model.meta.ImexImport;
 import uk.ac.ebi.intact.model.meta.ImexImportPublication;
 import uk.ac.ebi.intact.model.meta.ImexImportPublicationStatus;
-import uk.ac.ebi.intact.core.persistence.dao.ImexImportDao;
-import uk.ac.ebi.intact.core.persistence.dao.ImexImportPublicationDao;
 
 import java.util.List;
 
@@ -48,9 +47,7 @@ public class ImexImportPublicationDaoImplTest extends IntactBasicTestCase {
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "1234567", institution, ImexImportPublicationStatus.OK ) );
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "7654321", institution, ImexImportPublicationStatus.ERROR ) );
 
-        beginTransaction();
         imexImportDao.persist( imexImport );
-        commitTransaction();
 
         final List<ImexImportPublication> publications = imexImportPublicationDao.getFailed();
         Assert.assertNotNull( publications );
@@ -64,9 +61,7 @@ public class ImexImportPublicationDaoImplTest extends IntactBasicTestCase {
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "1234567", institution, ImexImportPublicationStatus.OK ) );
         imexImport.getImexImportPublications().add( new ImexImportPublication( imexImport, "7654321", institution, ImexImportPublicationStatus.ERROR ) );
 
-        beginTransaction();
         imexImportDao.persist( imexImport );
-        commitTransaction();
 
         List<ImexImportPublication> publications;
 

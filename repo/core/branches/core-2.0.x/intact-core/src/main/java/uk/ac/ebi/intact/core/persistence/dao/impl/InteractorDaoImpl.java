@@ -12,13 +12,14 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.context.IntactSession;
-import uk.ac.ebi.intact.model.*;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.core.persistence.dao.CvObjectDao;
 import uk.ac.ebi.intact.core.persistence.dao.InteractorDao;
+import uk.ac.ebi.intact.model.*;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -235,8 +236,8 @@ public class InteractorDaoImpl<T extends InteractorImpl> extends AnnotatedObject
         cvIdentifiers.add(cvIdentifer);
 
         if (includeChildren) {
-            CvObjectDao<CvInteractorType> cvObjectDao =
-                    new CvObjectDaoImpl<CvInteractorType>(CvInteractorType.class, getEntityManager());
+            CvObjectDao<CvInteractorType> cvObjectDao = IntactContext.getCurrentInstance().getDaoFactory()
+                    .getCvObjectDao(CvInteractorType.class);
             CvDagObject cvInteractorType = cvObjectDao.getByPsiMiRef(cvIdentifer);
 
             if (cvInteractorType != null) {
