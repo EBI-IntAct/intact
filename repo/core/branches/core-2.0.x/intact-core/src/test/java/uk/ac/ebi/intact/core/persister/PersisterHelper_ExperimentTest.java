@@ -26,11 +26,11 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
         PersisterHelper.saveOrUpdate(exp);
 
         Experiment refreshedExperiment = getDaoFactory().getExperimentDao().getByShortLabel("lala-2005-1");
-        assertNotNull(refreshedExperiment);
+        Assert.assertNotNull(refreshedExperiment);
 
-        assertNotNull(refreshedExperiment.getPublication());
-        assertEquals("1234567", refreshedExperiment.getPublication().getShortLabel());
-        assertEquals(1, refreshedExperiment.getInteractions().size());
+        Assert.assertNotNull(refreshedExperiment.getPublication());
+        Assert.assertEquals("1234567", refreshedExperiment.getPublication().getShortLabel());
+        Assert.assertEquals(1, refreshedExperiment.getInteractions().size());
     }
 
     @Test
@@ -43,8 +43,8 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
         System.out.println(getDaoFactory().getExperimentDao().getAll());
 
         Experiment refreshedExperiment = getDaoFactory().getExperimentDao().getByShortLabel("lala-2005-1");
-        assertNotNull(refreshedExperiment);
-        assertEquals(1, refreshedExperiment.getInteractions().size());
+        Assert.assertNotNull(refreshedExperiment);
+        Assert.assertEquals(1, refreshedExperiment.getInteractions().size());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class PersisterHelper_ExperimentTest extends IntactBasicTestCase
         PersisterHelper.saveOrUpdate(exp);
 
         Experiment refreshedExperiment = getDaoFactory().getExperimentDao().getByAc(exp.getAc());
-        assertNotNull(refreshedExperiment);
+        Assert.assertNotNull(refreshedExperiment);
         Assert.assertEquals(anotherInstitution.getShortLabel(), refreshedExperiment.getOwner().getShortLabel());
     }
 

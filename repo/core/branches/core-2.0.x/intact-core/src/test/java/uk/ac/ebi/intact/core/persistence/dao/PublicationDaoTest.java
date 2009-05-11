@@ -5,9 +5,12 @@
  */
 package uk.ac.ebi.intact.core.persistence.dao;
 
-import org.junit.*;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
@@ -22,29 +25,16 @@ import uk.ac.ebi.intact.model.Publication;
  * @since <pre>08-Aug-2006</pre>
  */
 public class PublicationDaoTest extends IntactBasicTestCase {
+
+    @Autowired
     private PublicationDao publicationDao;
 
     @Before
-    public void prepare() throws Exception {
-        publicationDao = IntactContext.getCurrentInstance().getDataContext().getDaoFactory().getPublicationDao();
-    }
-
-    @After
-    public void end() throws Exception {
-        publicationDao = null;
-    }
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    public void beforeClass() throws Exception {
         IntactMockBuilder mockBuilder = new IntactMockBuilder();
 
         Publication pub1 = mockBuilder.createPublication( "10029528" );
         PersisterHelper.saveOrUpdate( pub1 );
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        IntactContext.closeCurrentInstance();
     }
 
     @Test

@@ -5,9 +5,10 @@ in the root directory of this distribution.
 */
 package uk.ac.ebi.intact.core.persistence.dao;
 
-import org.junit.*;
+import org.junit.Assert;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import org.junit.Test;
 import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
@@ -28,19 +29,11 @@ import java.util.List;
  */
 public class CvObjectDaoTest extends IntactBasicTestCase {
 
-    @After
-    public void end() throws Exception {
-        // nothing
-    }
-
-    @BeforeClass
-    public static void beforeClass() throws Exception {
+    public void createSomeCvs()  {
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         SmallCvPrimer primer = new SmallCvPrimer( dataContext.getDaoFactory() );
 
-        dataContext.beginTransaction();
         primer.createCVs();
-        dataContext.commitTransaction();
 
         // add some nucleic acid CVs
         CvInteractorType nucAcid = new IntactMockBuilder().createCvObject( CvInteractorType.class, CvInteractorType.NUCLEIC_ACID_MI_REF, CvInteractorType.NUCLEIC_ACID );
@@ -52,13 +45,9 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
         PersisterHelper.saveOrUpdate( nucAcid, dna, otherNucAcid );
     }
 
-    @AfterClass
-    public static void afterClass() throws Exception {
-        IntactContext.closeCurrentInstance();
-    }
-
     @Test
     public void testgetByPsiMiRefCollection() {
+        createSomeCvs();
         Collection<String> psiMiRefs = new ArrayList<String>();
         psiMiRefs.add( CvDatabase.INTACT_MI_REF );
         psiMiRefs.add( CvDatabase.PUBMED_MI_REF );
@@ -72,6 +61,8 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
 
     @Test
     public void testGetByObjClass() {
+        createSomeCvs();
+
         Class[] classes = {CvTopic.class, CvXrefQualifier.class};
         CvObjectDao<CvObject> cvObjectDao = getDaoFactory().getCvObjectDao( CvObject.class );
         List cvObjects = cvObjectDao.getByObjClass( classes );
@@ -94,6 +85,7 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getNucleicAcidMIs() throws Exception {
+        createSomeCvs();
 
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final Collection<String> mis = daoFactory.getCvObjectDao().getNucleicAcidMIs();
@@ -105,6 +97,8 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getAll() throws Exception {
+        createSomeCvs();
+
         DaoFactory daoFactory = IntactContext.getCurrentInstance().getDataContext().getDaoFactory();
         final Collection<CvObject> cvs = daoFactory.getCvObjectDao().getAll();
         Assert.assertTrue( cvs.size() > 0 );
@@ -112,6 +106,7 @@ public class CvObjectDaoTest extends IntactBasicTestCase {
 
     @Test
     public void getLastCvIdentifierWithPrefix() throws Exception {
+        createSomeCvs();
         Assert.assertEquals(612, getDaoFactory().getCvObjectDao().getLastCvIdentifierWithPrefix("MI").intValue());
     }
 }

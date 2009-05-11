@@ -178,7 +178,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         Assert.assertEquals( 1, reloadedInteraction.getConfidences().size() );
         Assert.assertEquals( confidence, reloadedInteraction.getConfidences().iterator().next() );
 
-        getDataContext().beginTransaction();
+
 
         CvConfidenceType cvConfidenceType = builder.createCvObject( CvConfidenceType.class, "IA:997", "testShortLabel" );
         confidence.setCvConfidenceType( cvConfidenceType );
@@ -187,7 +187,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         getDaoFactory().getConfidenceDao().persist( confidence);
 
 
-        getDataContext().commitTransaction();
+
 
         Interaction reloadedInteraction2 = getDaoFactory().getInteractionDao().getByAc( interaction.getAc() );
         Assert.assertEquals( reloadedInteraction, reloadedInteraction2 );
@@ -251,7 +251,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         PersisterHelper.saveOrUpdate( reloadedInteraction );
         
         
-        //getDataContext().beginTransaction();
+        //
 
         CvParameterType cvParameterType = builder.createCvObject( CvParameterType.class, "JB:666", "testShortLabel" );
         interactionParameter.setCvParameterType( cvParameterType );
@@ -260,7 +260,7 @@ public class PersisterHelper_InteractionTest extends IntactBasicTestCase {
         getDaoFactory().getInteractionParameterDao().persist( interactionParameter);
 
 
-        //getDataContext().commitTransaction();
+        //
 
         Interaction reloadedInteraction2 = getDaoFactory().getInteractionDao().getByAc( interaction.getAc() );
         Assert.assertEquals( reloadedInteraction, reloadedInteraction2 );

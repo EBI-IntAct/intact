@@ -37,9 +37,7 @@ public class SequenceManagerTest extends IntactBasicTestCase {
 
         Assert.assertFalse(seqManager.sequenceExists("lala_seq"));
 
-        beginTransaction();
         seqManager.createSequenceIfNotExists("lala_seq");
-        commitTransaction();
 
         Assert.assertTrue(seqManager.sequenceExists("lala_seq"));
     }

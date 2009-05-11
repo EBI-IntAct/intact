@@ -25,10 +25,8 @@ public class IntactObjectEventListenerTest extends IntactBasicTestCase {
 
         getIntactContext().getUserContext().setUserId("Sam");
         
-        beginTransaction();
         institution.setFullName("Different full name");
         getDaoFactory().getInstitutionDao().merge(institution);
-        commitTransaction();
 
         Assert.assertNotNull(institution.getCreated());
         Assert.assertNotNull(institution.getUpdated());

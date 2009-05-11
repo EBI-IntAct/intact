@@ -15,14 +15,14 @@
  */
 package uk.ac.ebi.intact.core.persistence.dao;
 
-import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.model.ExperimentXref;
-import uk.ac.ebi.intact.model.BioSourceXref;
-import uk.ac.ebi.intact.model.BioSourceAlias;
-import uk.ac.ebi.intact.model.ExperimentAlias;
+import junit.framework.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.NotTransactional;
-import junit.framework.Assert;
+import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
+import uk.ac.ebi.intact.model.BioSourceAlias;
+import uk.ac.ebi.intact.model.BioSourceXref;
+import uk.ac.ebi.intact.model.ExperimentAlias;
+import uk.ac.ebi.intact.model.ExperimentXref;
 
 /**
  * TODO comment that class header
@@ -35,8 +35,8 @@ public class DaoFactoryTest extends IntactBasicTestCase {
     @Test
     @NotTransactional
     public void daoFactory_correctInstantiation() throws Exception {
-        DaoFactory daoFactory1 = (DaoFactory) getApplicationContext().getBean("daoFactory");
-        DaoFactory daoFactory2 = (DaoFactory) getApplicationContext().getBean("daoFactory");
+        DaoFactory daoFactory1 = (DaoFactory) getSpringContext().getBean("daoFactory");
+        DaoFactory daoFactory2 = (DaoFactory) getSpringContext().getBean("daoFactory");
 
         Assert.assertSame(daoFactory1, daoFactory2);
     }
@@ -44,8 +44,8 @@ public class DaoFactoryTest extends IntactBasicTestCase {
     @Test
     @NotTransactional
     public void xrefDao_correctInstantiation() throws Exception {
-        XrefDao xrefDao1 = (XrefDao) getApplicationContext().getBean("xrefDaoImpl");
-        XrefDao xrefDao2 = (XrefDao) getApplicationContext().getBean("xrefDaoImpl");
+        XrefDao xrefDao1 = (XrefDao) getSpringContext().getBean("xrefDaoImpl");
+        XrefDao xrefDao2 = (XrefDao) getSpringContext().getBean("xrefDaoImpl");
         
         Assert.assertNotSame(xrefDao1, xrefDao2);
     }
@@ -53,7 +53,7 @@ public class DaoFactoryTest extends IntactBasicTestCase {
     @Test
     @NotTransactional
     public void xrefDaoFromDaoFactory_correctInstantiation() throws Exception {
-        DaoFactory daoFactory = (DaoFactory) getApplicationContext().getBean("daoFactory");
+        DaoFactory daoFactory = (DaoFactory) getSpringContext().getBean("daoFactory");
 
         XrefDao xrefDao1 = daoFactory.getXrefDao(ExperimentXref.class);
         XrefDao xrefDao2 = daoFactory.getXrefDao(BioSourceXref.class);
@@ -64,7 +64,7 @@ public class DaoFactoryTest extends IntactBasicTestCase {
     @Test
     @NotTransactional
     public void aliasDaoFromDaoFactory_correctInstantiation() throws Exception {
-        DaoFactory daoFactory = (DaoFactory) getApplicationContext().getBean("daoFactory");
+        DaoFactory daoFactory = (DaoFactory) getSpringContext().getBean("daoFactory");
 
         AliasDao aliasDao1 = daoFactory.getAliasDao(ExperimentAlias.class);
         AliasDao aliasDao2 = daoFactory.getAliasDao(BioSourceAlias.class);

@@ -1,7 +1,10 @@
 package uk.ac.ebi.intact.model.util;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import uk.ac.ebi.intact.core.config.impl.SmallCvPrimer;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
@@ -25,9 +28,7 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
         final DataContext dataContext = IntactContext.getCurrentInstance().getDataContext();
         SmallCvPrimer primer = new SmallCvPrimer(dataContext.getDaoFactory());
 
-        dataContext.beginTransaction();
         primer.createCVs();
-        dataContext.commitTransaction();
 
         // add some nucleic acid CVs
         CvDatabase uniprot = new IntactMockBuilder().createCvObject(CvDatabase.class, CvDatabase.UNIPROT_MI_REF, CvDatabase.UNIPROT);
@@ -37,11 +38,6 @@ public class CvObjectUtilsTest extends IntactBasicTestCase {
         CvBiologicalRole bioRoleUnsp = new IntactMockBuilder().createCvObject(CvBiologicalRole.class, CvBiologicalRole.UNSPECIFIED_PSI_REF, CvBiologicalRole.UNSPECIFIED);
 
         PersisterHelper.saveOrUpdate(uniprot, expRoleUnsp, expRoleBait, bioRoleEnzyme, bioRoleUnsp);
-    }
-
-    @AfterClass
-    public static void afterClass() throws Exception {
-        IntactContext.closeCurrentInstance();
     }
 
     @Test

@@ -16,17 +16,15 @@
 package uk.ac.ebi.intact.core.unit;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
-import uk.ac.ebi.intact.core.IntactTransactionException;
 import uk.ac.ebi.intact.core.context.DataContext;
 import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
@@ -47,8 +45,7 @@ import javax.persistence.PersistenceContext;
         "/META-INF/standalone/intact-standalone.spring.xml"})
 @TransactionConfiguration
 @Transactional
-public abstract class IntactBasicTestCase extends AbstractDependencyInjectionSpringContextTests
-{
+public abstract class IntactBasicTestCase {
     @Autowired
     private IntactContext intactContext;
 
@@ -81,25 +78,6 @@ public abstract class IntactBasicTestCase extends AbstractDependencyInjectionSpr
        //((ConfigurableApplicationContext)applicationContext).close();
     }
 
-    @AfterClass
-    public static void afterAll() throws Exception {
-       // IntactContext.getCurrentInstance().close();
-    }
-
-    protected void beginTransaction() {
-        getDataContext().beginTransaction();
-    }
-
-    protected void commitTransaction() throws IntactTestException {
-        //if (getDataContext().isTransactionActive()) {
-            try {
-                getDataContext().commitTransaction();
-            } catch (IntactTransactionException e) {
-                throw new IntactTestException(e);
-            }
-        //}
-    }
-
     protected IntactContext getIntactContext() {
         return intactContext;
     }
@@ -116,9 +94,9 @@ public abstract class IntactBasicTestCase extends AbstractDependencyInjectionSpr
         return mockBuilder;
     }
 
-//    public ApplicationContext getApplicationContext() {
-//        return applicationContext;
-//    }
+    public ConfigurableApplicationContext getSpringContext() {
+        return (ConfigurableApplicationContext) applicationContext;
+    }
 
     public EntityManager getEntityManager() {
         return entityManager;
