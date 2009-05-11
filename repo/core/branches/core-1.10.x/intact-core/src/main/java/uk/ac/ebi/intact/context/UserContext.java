@@ -2,10 +2,6 @@ package uk.ac.ebi.intact.context;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.config.DataConfig;
 
 import java.io.Serializable;
 import java.sql.Connection;

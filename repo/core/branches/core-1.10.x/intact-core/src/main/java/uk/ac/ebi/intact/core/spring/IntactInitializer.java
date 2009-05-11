@@ -15,27 +15,21 @@
  */
 package uk.ac.ebi.intact.core.spring;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Component;
-import org.apache.commons.logging.LogFactory;
-import org.apache.commons.logging.Log;
+import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.intact.config.IntactConfiguration;
 import uk.ac.ebi.intact.config.SchemaVersion;
-import uk.ac.ebi.intact.config.CvPrimer;
-import uk.ac.ebi.intact.config.impl.EssentialCvPrimer;
-import uk.ac.ebi.intact.persistence.dao.InstitutionDao;
-import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
 import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactSession;
 import uk.ac.ebi.intact.context.IntactInitializationError;
-import uk.ac.ebi.intact.model.meta.DbInfo;
-import uk.ac.ebi.intact.model.CvDatabase;
-import uk.ac.ebi.intact.model.util.CvObjectUtils;
 import uk.ac.ebi.intact.core.persister.PersisterHelper;
-import uk.ac.ebi.intact.business.IntactTransactionException;
+import uk.ac.ebi.intact.model.CvDatabase;
+import uk.ac.ebi.intact.model.meta.DbInfo;
+import uk.ac.ebi.intact.model.util.CvObjectUtils;
+import uk.ac.ebi.intact.persistence.dao.DbInfoDao;
 
 /**
  * TODO write description of the class.

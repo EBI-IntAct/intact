@@ -15,29 +15,18 @@
  */
 package uk.ac.ebi.intact.core.persister;
 
+import org.junit.Assert;
 import static org.junit.Assert.*;
-import org.junit.*;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.apache.commons.lang.StringUtils;
-import uk.ac.ebi.intact.config.DataConfig;
-import uk.ac.ebi.intact.config.SequenceManager;
 import uk.ac.ebi.intact.config.IntactAuxiliaryConfigurator;
-import uk.ac.ebi.intact.config.impl.InMemoryDataConfig;
-import uk.ac.ebi.intact.context.IntactContext;
-import uk.ac.ebi.intact.context.IntactEnvironment;
-import uk.ac.ebi.intact.context.IntactSession;
-import uk.ac.ebi.intact.context.impl.StandaloneSession;
+import uk.ac.ebi.intact.config.SequenceManager;
 import uk.ac.ebi.intact.core.persister.stats.PersisterStatistics;
 import uk.ac.ebi.intact.core.unit.IntactBasicTestCase;
-import uk.ac.ebi.intact.core.unit.IntactMockBuilder;
-import uk.ac.ebi.intact.core.spring.IntactInitializer;
-import uk.ac.ebi.intact.core.util.SchemaUtils;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
 import uk.ac.ebi.intact.model.util.CvObjectBuilder;
-
-import javax.persistence.Query;
-import java.util.Properties;
 
 /**
  * PersisterHelper tester.
