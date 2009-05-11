@@ -650,7 +650,7 @@ public class Component extends AnnotatedObjectImpl<ComponentXref, ComponentAlias
         final Component component = ( Component ) o;
 
         // check cvs and interactor first, and then check the interaction
-        if ( !CollectionUtils.isEqualCollection(experimentalRoles, component.getExperimentalRoles()) ) {
+        if ( !CollectionUtils.isEqualCollection(getExperimentalRoles(), component.getExperimentalRoles()) ) {
             return false;
         }
         if ( biologicalRole != null && !biologicalRole.equals( component.getCvBiologicalRole() ) ) {
