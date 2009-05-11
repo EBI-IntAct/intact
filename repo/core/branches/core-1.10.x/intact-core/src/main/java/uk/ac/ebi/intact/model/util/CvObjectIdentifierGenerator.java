@@ -18,16 +18,16 @@ package uk.ac.ebi.intact.model.util;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import uk.ac.ebi.intact.business.IntactException;
-import uk.ac.ebi.intact.config.IntactAuxiliaryConfigurator;
-import uk.ac.ebi.intact.config.SequenceCreationException;
-import uk.ac.ebi.intact.config.SequenceManager;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.IntactException;
+import uk.ac.ebi.intact.core.config.IntactAuxiliaryConfigurator;
+import uk.ac.ebi.intact.core.config.SequenceCreationException;
+import uk.ac.ebi.intact.core.config.SequenceManager;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.CvDatabase;
 import uk.ac.ebi.intact.model.CvObject;
 import uk.ac.ebi.intact.model.CvObjectXref;
 import uk.ac.ebi.intact.model.CvXrefQualifier;
-import uk.ac.ebi.intact.persistence.dao.DaoFactory;
+import uk.ac.ebi.intact.core.persistence.dao.DaoFactory;
 
 import java.util.Collection;
 

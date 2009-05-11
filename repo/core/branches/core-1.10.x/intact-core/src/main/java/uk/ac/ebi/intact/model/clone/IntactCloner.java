@@ -17,14 +17,11 @@ package uk.ac.ebi.intact.model.clone;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.stereotype.*;
 import org.springframework.context.annotation.Scope;
-import org.springframework.beans.factory.config.BeanDefinition;
-import uk.ac.ebi.intact.context.IntactContext;
+import uk.ac.ebi.intact.core.context.IntactContext;
 import uk.ac.ebi.intact.model.*;
 import uk.ac.ebi.intact.model.Component;
 import uk.ac.ebi.intact.model.util.AnnotatedObjectUtils;
-import uk.ac.ebi.intact.persistence.util.CgLibUtil;
 
 import java.lang.reflect.Constructor;
 import java.util.Date;

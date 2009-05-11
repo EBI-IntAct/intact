@@ -18,12 +18,12 @@
     <aop:aspectj-autoproxy/>
 
     <!--- IntAct -->
-    <bean class="uk.ac.ebi.intact.config.SchemaVersion">
+    <bean class="uk.ac.ebi.intact.core.config.SchemaVersion">
         <constructor-arg value="1"/>
         <constructor-arg value="9"/>
         <constructor-arg value="0"/>
     </bean>
 
-    <!--<bean class="uk.ac.ebi.intact.core.spring.IntactInitializer" depends-on="entityManagerFactory"/>-->
+    <!--<bean class="uk.ac.ebi.intact.core.context.IntactInitializer" depends-on="entityManagerFactory"/>-->
 
 </beans>
