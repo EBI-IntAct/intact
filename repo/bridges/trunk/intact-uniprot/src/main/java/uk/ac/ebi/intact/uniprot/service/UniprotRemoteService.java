@@ -452,15 +452,14 @@ public class UniprotRemoteService extends AbstractUniprotService {
                                 log.debug("Loading external parent protein: " + parentProtein);
                             }
 
-                            sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
-                              /*
+                            //sequence = uniProtEntry.getSplicedSequence(isoform.getName().getValue());
+
                             Iterator<UniProtEntry> iterator = getUniProtEntry(parentProtein);
                             int numberOfEntryInIterator = 0;
                             while (iterator.hasNext()) {
 
                                 UniProtEntry uniprotEntryParentProtein = iterator.next();
-                            sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
-                            System.out.println("SEQUENCE before while : " + sequence);
+                            //sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
 
                                 if (numberOfEntryInIterator >= 1) {
                                     // we were expecting to find only one protein - hopefully that should not happen !
@@ -474,18 +473,18 @@ public class UniprotRemoteService extends AbstractUniprotService {
 
                                 } else {
                                     numberOfEntryInIterator++;
-                                    //sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
+                                    sequence = uniprotEntryParentProtein.getSplicedSequence(isoform.getName().getValue());
 
-                                    for (UniprotSpliceVariant uniprotSpliceVariant : findSpliceVariants(uniprotEntryParentProtein, organism)) {
-                                        if (uniprotSpliceVariant.getPrimaryAc().equals(spliceVarId)) {
-                                            sequence = uniprotSpliceVariant.getSequence();
-                                            break;
-                                        }
-                                    }
+//                                    for (UniprotSpliceVariant uniprotSpliceVariant : findSpliceVariants(uniprotEntryParentProtein, organism)) {
+//                                        if (uniprotSpliceVariant.getPrimaryAc().equals(spliceVarId)) {
+//                                            sequence = uniprotSpliceVariant.getSequence();
+//                                            break;
+//                                        }
+//                                    }
 
                                 }
                                 numberOfEntryInIterator++;
-                            }        */
+                            }
                 }
 
                 if ( log.isDebugEnabled() ) {
