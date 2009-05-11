@@ -460,6 +460,22 @@ public class UniprotRemoteServiceTest {
     }
 
     @Test
+    public void retrieveEntryWithExternalSpliceVar2() throws UniprotServiceException {
+        UniprotService uniprotService = getUniprotService();
+        Collection<UniprotProtein> proteins = uniprotService.retrieve("O94833");
+
+        UniprotProtein prot = proteins.iterator().next();
+
+        List<UniprotSpliceVariant> uniprotSpliceVariants = new ArrayList<UniprotSpliceVariant>(prot.getSpliceVariants());
+
+        Assert.assertEquals(10, uniprotSpliceVariants.size());
+
+        for (UniprotSpliceVariant usv : uniprotSpliceVariants) {
+            Assert.assertNotNull("Sequence for "+usv.getPrimaryAc()+" must not be null", usv.getSequence());
+        }
+    }
+
+    @Test
     public void RetreiveSimpleProteinWithCrossReferenceFilter() throws UniprotServiceException {
         CrossReferenceFilter filter = new CrossReferenceFilter() {
 
